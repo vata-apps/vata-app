@@ -8,22 +8,23 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MarsIcon, VenusIcon } from "lucide-react";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  MarsIcon,
+  VenusIcon,
+} from "lucide-react";
+import { useState } from "react";
 import { useIndividualsWithNames } from "../../lib/hooks";
 
 const ITEMS_PER_PAGE = 10;
 
 export const Route = createFileRoute("/individuals/")({
-  validateSearch: (search?: Record<string, unknown> | undefined) => {
-    return {
-      page: Number(search?.page) || 1,
-    };
-  },
   component: IndividualsPage,
 });
 
 function IndividualsPage() {
-  const { page } = Route.useSearch();
+  const [page, setPage] = useState(1);
   const { data, isLoading, error } = useIndividualsWithNames(page);
 
   if (isLoading) {
@@ -37,7 +38,7 @@ function IndividualsPage() {
   const totalPages = data ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
 
   return (
-    <div>
+    <div className="space-y-8">
       <h1>Individuals</h1>
 
       <Table>
@@ -82,25 +83,33 @@ function IndividualsPage() {
         </TableBody>
       </Table>
 
-      <div style={{ marginTop: "20px" }}>
-        <Link
-          disabled={page === 1}
-          to="/individuals"
-          search={{ page: page - 1 }}
-          style={{ marginRight: "10px" }}
-        >
-          Previous
-        </Link>
-        Page {page} of {totalPages}
-        <Link
-          disabled={page === totalPages}
-          to="/individuals"
-          search={{ page: page + 1 }}
-          style={{ marginLeft: "10px" }}
-        >
-          Next
-        </Link>
-      </div>
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Showing page {page} of {totalPages}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+            >
+              <ChevronLeftIcon className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages}
+            >
+              Next
+              <ChevronRightIcon className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
