@@ -14,7 +14,7 @@ import { useIndividualsWithNames } from "../../lib/hooks";
 const ITEMS_PER_PAGE = 10;
 
 export const Route = createFileRoute("/individuals/")({
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search?: Record<string, unknown> | undefined) => {
     return {
       page: Number(search?.page) || 1,
     };
