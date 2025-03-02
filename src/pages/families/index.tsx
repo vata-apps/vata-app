@@ -1,3 +1,4 @@
+import { H2 } from "@/components/typography/h2";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/families/")({
@@ -5,7 +6,7 @@ export const Route = createFileRoute("/families/")({
 });
 
 function FamiliesPage() {
-  return <div>Families Page</div>;
+  return <H2>Families Page</H2>;
 }
 
 export default FamiliesPage;

@@ -1,3 +1,4 @@
+import { H2 } from "@/components/typography/h2";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/individuals/$individualId")({
@@ -6,7 +7,7 @@ export const Route = createFileRoute("/individuals/$individualId")({
 
 function IndividualPage() {
   const { individualId } = Route.useParams();
-  return <div>Individual Page - ID: {individualId}</div>;
+  return <H2>Individual Page - ID: {individualId}</H2>;
 }
 
 export default IndividualPage;

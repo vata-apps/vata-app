@@ -1,3 +1,4 @@
+import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -39,7 +40,7 @@ function IndividualsPage() {
 
   return (
     <div className="space-y-8">
-      <h1>Individuals</h1>
+      <H2>Individuals</H2>
 
       <Table>
         <TableHeader>

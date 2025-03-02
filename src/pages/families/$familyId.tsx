@@ -1,3 +1,4 @@
+import { H2 } from "@/components/typography/h2";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/families/$familyId")({
@@ -6,7 +7,7 @@ export const Route = createFileRoute("/families/$familyId")({
 
 function FamilyPage() {
   const { familyId } = Route.useParams();
-  return <div>Family Page - ID: {familyId}</div>;
+  return <H2>Family Page - ID: {familyId}</H2>;
 }
 
 export default FamilyPage;
