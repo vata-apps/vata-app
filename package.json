@@ -11,6 +11,7 @@
     "supabase:types": "rm -f supabase/database.types.ts && supabase gen types typescript --local > supabase/database.types.ts"
   },
   "dependencies": {
+    "@radix-ui/react-navigation-menu": "^1.2.5",
     "@radix-ui/react-slot": "^1.1.2",
     "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/vite": "^4.0.9",
