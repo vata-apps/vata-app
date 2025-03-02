@@ -44,26 +44,27 @@ export async function fetchIndividualById(id: string) {
   return data;
 }
 
-/**
- * Fetches all individuals with their associated names
- *
- * This query joins the individuals table with the names table
- * to retrieve all individuals along with their name information.
- *
- * @throws Error if there's a problem with the database query
- */
-export async function fetchIndividualsWithNames() {
-  const { data, error } = await supabase.from("individuals").select(`
+export async function fetchIndividualsWithNames(page: number, ipp: number) {
+  const start = (page - 1) * ipp;
+  const end = start + ipp - 1;
+
+  const { data, error, count } = await supabase
+    .from("individuals")
+    .select(
+      `
       id,
       gender,
       gedcom_id,
       names(first_name, last_name, is_primary)
-    `);
+    `,
+      { count: "exact" },
+    )
+    .range(start, end);
 
   if (error) {
     console.error("Error fetching individuals with names:", error);
     throw error;
   }
 
-  return data;
+  return { data, total: count || 0 };
 }

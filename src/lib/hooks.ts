@@ -32,13 +32,14 @@ export function useIndividual(id: string) {
 }
 
 /**
- * Hook to fetch all individuals with their associated names.
+ * Hook to fetch paginated individuals with their associated names.
  * Uses React Query for data fetching and caching.
- * @returns Query object containing individuals with names data, loading state, and error state
+ * @param page The page number to fetch (zero-based)
+ * @returns Query object containing paginated individuals with names data, loading state, and error state
  */
-export function useIndividualsWithNames() {
+export function useIndividualsWithNames(page: number) {
   return useQuery({
-    queryKey: ["individuals", "with-names"],
-    queryFn: fetchIndividualsWithNames,
+    queryKey: ["individuals", "with-names", "paginated", page],
+    queryFn: () => fetchIndividualsWithNames(page, 10),
   });
 }
