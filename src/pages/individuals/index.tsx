@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { MarsIcon, VenusIcon } from "lucide-react";
 import { useIndividualsWithNames } from "../../lib/hooks";
 
 const ITEMS_PER_PAGE = 10;
@@ -56,7 +57,13 @@ function IndividualsPage() {
 
             return (
               <TableRow key={individual.id}>
-                <TableCell>{individual.gender}</TableCell>
+                <TableCell>
+                  {individual.gender === "female" ? (
+                    <VenusIcon className="w-4 h-4" />
+                  ) : (
+                    <MarsIcon className="w-4 h-4" />
+                  )}
+                </TableCell>
                 <TableCell>{primaryName?.first_name || "N/A"}</TableCell>
                 <TableCell>{primaryName?.last_name || "N/A"}</TableCell>
                 <TableCell className="text-right">
