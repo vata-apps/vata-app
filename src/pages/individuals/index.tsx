@@ -1,3 +1,12 @@
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useIndividualsWithNames } from "../../lib/hooks";
 
@@ -30,32 +39,41 @@ function IndividualsPage() {
     <div>
       <h1>Individuals</h1>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Gender</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-8" />
+            <TableHead>First Name</TableHead>
+            <TableHead>Last Name</TableHead>
+            <TableHead className="text-right" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {data?.data.map((individual) => {
             const primaryName = individual.names?.find(
               (name) => name.is_primary,
             );
 
             return (
-              <tr key={individual.id}>
-                <td>{individual.id}</td>
-                <td>{primaryName?.first_name || "N/A"}</td>
-                <td>{primaryName?.last_name || "N/A"}</td>
-                <td>{individual.gender}</td>
-              </tr>
+              <TableRow key={individual.id}>
+                <TableCell>{individual.gender}</TableCell>
+                <TableCell>{primaryName?.first_name || "N/A"}</TableCell>
+                <TableCell>{primaryName?.last_name || "N/A"}</TableCell>
+                <TableCell className="text-right">
+                  <Button variant="secondary" size="sm" asChild>
+                    <Link
+                      to="/individuals/$individualId"
+                      params={{ individualId: individual.id }}
+                    >
+                      View
+                    </Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
             );
           })}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
 
       <div style={{ marginTop: "20px" }}>
         <Link
