@@ -1,5 +1,7 @@
+import { fetchIndividuals } from "@/api";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -8,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ChevronLeftIcon,
@@ -15,8 +18,7 @@ import {
   MarsIcon,
   VenusIcon,
 } from "lucide-react";
-import { useState } from "react";
-import { useIndividualsWithNames } from "../../lib/hooks";
+import { ChangeEvent, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -26,28 +28,51 @@ export const Route = createFileRoute("/individuals/")({
 
 function IndividualsPage() {
   const [page, setPage] = useState(1);
-  const { data, isLoading, error } = useIndividualsWithNames(page);
+  const [query, setQuery] = useState("");
 
-  if (isLoading) {
-    return <div>Loading individuals...</div>;
-  }
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["individuals", page, query],
+    queryFn: () => fetchIndividuals({ page, query }),
+    placeholderData: keepPreviousData,
+    enabled: !query || query.length > 2,
+  });
 
-  if (error) {
-    return <div>Error loading individuals: {error.message}</div>;
-  }
+  const handleSearch = (value: ChangeEvent<HTMLInputElement>) => {
+    setQuery(value.target.value);
+    setPage(1);
+  };
 
-  const totalPages = data ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
+  const totalPages = data?.total ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
 
   return (
     <div className="space-y-8">
       <H2>Individuals</H2>
 
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder="Search individuals"
+          value={query}
+          onChange={handleSearch}
+          className="w-full max-w-sm"
+        />
+
+        {query && (
+          <Button variant="secondary" onClick={() => setQuery("")}>
+            Clear
+          </Button>
+        )}
+      </div>
+
+      {isLoading && <div>Loading individuals...</div>}
+
+      {error && <div>Error loading individuals: {error.message}</div>}
+
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="w-8" />
-            <TableHead>First Name</TableHead>
-            <TableHead>Last Name</TableHead>
+            <TableHead className="w-1/4">First Name</TableHead>
+            <TableHead className="w-1/4">Last Name</TableHead>
             <TableHead className="text-right" />
           </TableRow>
         </TableHeader>
