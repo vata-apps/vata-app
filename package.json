@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "supabase:types": "rm -f supabase/database.types.ts && supabase gen types typescript --local > supabase/database.types.ts"
+    "supabase:types": "rm -f src/database.types.ts && supabase gen types typescript --local > supabase/database.types.ts"
   },
   "dependencies": {
     "@radix-ui/react-navigation-menu": "^1.2.5",

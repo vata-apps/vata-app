@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import displayName from "@/utils/displayName";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -77,35 +78,33 @@ function IndividualsPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.data.map((individual) => {
-            const primaryName = individual.names?.find(
-              (name) => name.is_primary,
-            );
-
-            return (
-              <TableRow key={individual.id}>
-                <TableCell>
-                  {individual.gender === "female" ? (
-                    <VenusIcon className="w-4 h-4" />
-                  ) : (
-                    <MarsIcon className="w-4 h-4" />
-                  )}
-                </TableCell>
-                <TableCell>{primaryName?.first_name || "N/A"}</TableCell>
-                <TableCell>{primaryName?.last_name || "N/A"}</TableCell>
-                <TableCell className="text-right">
-                  <Button variant="secondary" size="sm" asChild>
-                    <Link
-                      to="/individuals/$individualId"
-                      params={{ individualId: individual.id }}
-                    >
-                      View
-                    </Link>
-                  </Button>
-                </TableCell>
-              </TableRow>
-            );
-          })}
+          {data?.data.map((individual) => (
+            <TableRow key={individual.id}>
+              <TableCell>
+                {individual.gender === "female" ? (
+                  <VenusIcon className="w-4 h-4" />
+                ) : (
+                  <MarsIcon className="w-4 h-4" />
+                )}
+              </TableCell>
+              <TableCell>
+                {displayName(individual.names, { part: "first" })}
+              </TableCell>
+              <TableCell>
+                {displayName(individual.names, { part: "last" })}
+              </TableCell>
+              <TableCell className="text-right">
+                <Button variant="secondary" size="sm" asChild>
+                  <Link
+                    to="/individuals/$individualId"
+                    params={{ individualId: individual.id }}
+                  >
+                    View
+                  </Link>
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
 
