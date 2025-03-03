@@ -1,4 +1,5 @@
 import { fetchIndividuals } from "@/api";
+import { GenderIcon } from "@/components/GenderIcon";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,12 +14,7 @@ import {
 import displayName from "@/utils/displayName";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MarsIcon,
-  VenusIcon,
-} from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
@@ -81,11 +77,7 @@ function IndividualsPage() {
           {data?.data.map((individual) => (
             <TableRow key={individual.id}>
               <TableCell>
-                {individual.gender === "female" ? (
-                  <VenusIcon className="w-4 h-4" />
-                ) : (
-                  <MarsIcon className="w-4 h-4" />
-                )}
+                <GenderIcon className="w-4 h-4" gender={individual.gender} />
               </TableCell>
               <TableCell>
                 {displayName(individual.names, { part: "first" })}
