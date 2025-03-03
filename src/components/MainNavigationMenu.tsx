@@ -23,9 +23,7 @@ export function MainNavigationMenu() {
       <NavigationMenuList>
         <NavigationMenuItem>
           <NavigationMenuLink
-            onClick={() =>
-              router.navigate({ to: "/individuals", search: { page: 1 } })
-            }
+            onClick={() => router.navigate({ to: "/individuals" })}
             className={cn(navigationMenuTriggerStyle(), {
               "bg-accent text-accent-foreground": isActive("/individuals"),
             })}
@@ -35,9 +33,7 @@ export function MainNavigationMenu() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <NavigationMenuLink
-            onClick={() =>
-              router.navigate({ to: "/families", search: { page: 1 } })
-            }
+            onClick={() => router.navigate({ to: "/families" })}
             className={cn(navigationMenuTriggerStyle(), {
               "bg-accent text-accent-foreground": isActive("/families"),
             })}
