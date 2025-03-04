@@ -20,12 +20,17 @@ export async function fetchIndividualsByName({
   const namesQuery = await supabase
     .from("names")
     .select("first_name, last_name, individual_id")
-    .ilike("first_name_last_name", `%${query}%`)
+    .or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%`)
     .range(start, end);
 
   if (namesQuery.error) throw namesQuery.error;
 
   const individualIds = namesQuery.data.map((name) => name.individual_id);
+
+  // If no individuals found, return empty result
+  if (individualIds.length === 0) {
+    return { data: [], total: 0 };
+  }
 
   const { count, data, error } = await supabase
     .from("individuals")
