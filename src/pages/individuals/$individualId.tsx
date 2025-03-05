@@ -85,7 +85,7 @@ function IndividualPage() {
         {/* Family Relationships Tab */}
         <TabsContent value="family" className="space-y-4">
           <FamilyAsChild individualId={individualId} />
-          <FamilyAsSpouse />
+          <FamilyAsSpouse individualId={individualId} />
         </TabsContent>
 
         {/* Names Tab */}
