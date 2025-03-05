@@ -14,6 +14,8 @@ export const Route = createFileRoute("/individuals/$individualId")({
 });
 
 function IndividualPage() {
+  const { individualId } = Route.useParams();
+
   return (
     <div className="container mx-auto py-6 space-y-8">
       {/* Header Section */}
@@ -82,7 +84,7 @@ function IndividualPage() {
 
         {/* Family Relationships Tab */}
         <TabsContent value="family" className="space-y-4">
-          <FamilyAsChild />
+          <FamilyAsChild individualId={individualId} />
           <FamilyAsSpouse />
         </TabsContent>
 
