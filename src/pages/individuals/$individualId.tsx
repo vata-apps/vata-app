@@ -90,7 +90,7 @@ function IndividualPage() {
 
         {/* Names Tab */}
         <TabsContent value="names">
-          <Names />
+          <Names individualId={individualId} />
         </TabsContent>
       </Tabs>
     </div>
