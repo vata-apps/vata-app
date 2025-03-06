@@ -2,6 +2,7 @@ import { fetchFamily } from "@/api/fetchFamily";
 import { GenderIcon } from "@/components/GenderIcon";
 import { AddIndividualInfo } from "@/components/individual/AddIndividualInfo";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -17,7 +18,7 @@ import { Tables } from "@/database.types";
 import displayName from "@/utils/displayName";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, MapPin } from "lucide-react";
+import { CalendarDays, MapPin, Pencil } from "lucide-react";
 
 export const Route = createFileRoute("/families/$familyId")({
   component: FamilyPage,
@@ -122,6 +123,10 @@ function FamilyHeader({ family }: { family: FamilyWithRelations }) {
   const familyName = `${husbandName} & ${wifeName}`;
   const initials = `${husbandName?.[0] || "?"}${wifeName?.[0] || "?"}`;
 
+  // Capitalize the family type
+  const capitalizedType =
+    family.type.charAt(0).toUpperCase() + family.type.slice(1);
+
   return (
     <Card>
       <CardHeader>
@@ -131,12 +136,14 @@ function FamilyHeader({ family }: { family: FamilyWithRelations }) {
           </Avatar>
           <div className="flex-1">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-2xl">{familyName}</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Type: {family.type}
-                </p>
-              </div>
+              <CardTitle className="text-2xl">{familyName}</CardTitle>
+              <Button variant="outline" size="sm">
+                <Pencil className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+            </div>
+            <div className="mt-1">
+              <Badge variant="secondary">{capitalizedType}</Badge>
             </div>
             <div className="mt-4 space-y-2 text-sm">
               <div className="flex items-center gap-2 text-muted-foreground">
