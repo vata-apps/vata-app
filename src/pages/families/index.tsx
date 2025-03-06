@@ -1,4 +1,5 @@
 import { fetchFamilies } from "@/api";
+import { FamilyMember } from "@/components/individual/FamilyMember";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Database } from "@/database.types";
-import displayName from "@/utils/displayName";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -113,22 +113,46 @@ function FamiliesPage() {
         <TableBody>
           {data?.data.map((family: FamilyData) => (
             <TableRow key={family.id}>
-              <TableCell>
-                {family.husband?.names
-                  ? displayName(family.husband.names)
-                  : "-"}
+              <TableCell className="align-top py-4">
+                {family.husband ? (
+                  <FamilyMember
+                    individual={{
+                      id: family.husband.id,
+                      names: family.husband.names,
+                    }}
+                  />
+                ) : (
+                  "-"
+                )}
               </TableCell>
-              <TableCell>
-                {family.wife?.names ? displayName(family.wife.names) : "-"}
+              <TableCell className="align-top py-4">
+                {family.wife ? (
+                  <FamilyMember
+                    individual={{
+                      id: family.wife.id,
+                      names: family.wife.names,
+                    }}
+                  />
+                ) : (
+                  "-"
+                )}
               </TableCell>
-              <TableCell>
-                {family.children && family.children.length > 0
-                  ? family.children
-                      .map((child) =>
-                        displayName(child.individual.names, { part: "first" }),
-                      )
-                      .join(", ")
-                  : "-"}
+              <TableCell className="align-top py-4">
+                {family.children && family.children.length > 0 ? (
+                  <div className="flex flex-col gap-1">
+                    {family.children.map((child) => (
+                      <FamilyMember
+                        key={child.individual.id}
+                        individual={{
+                          id: child.individual.id,
+                          names: child.individual.names,
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  "-"
+                )}
               </TableCell>
               <TableCell className="text-right">
                 <Button variant="secondary" size="sm" asChild>
