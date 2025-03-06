@@ -1,54 +1,89 @@
-# React + TypeScript + Vite
+# Vata App - AI-Powered Genealogy Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Vata is a modern genealogy application designed to help you manage and visualize family trees. This application was created primarily with AI assistance, showcasing the power of AI-driven development in building functional and user-friendly web applications.
 
-Currently, two official plugins are available:
+## 🌟 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Individual Management**: Track and manage individual family members with detailed profiles
+- **Family Relationships**: Create and visualize family connections and relationships
+- **Gender Tracking**: Support for gender identification in family trees
+- **Name Variations**: Support for different name types (birth, marriage, nickname)
+- **Modern UI**: Clean, responsive interface built with React and Tailwind CSS
 
-## Expanding the ESLint configuration
+## 🛠️ Technology Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+This application is built using modern web technologies:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+- **Frontend**: React 19 with TypeScript
+- **Routing**: TanStack Router for type-safe routing
+- **Data Management**: TanStack Query for efficient data fetching
+- **Styling**: Tailwind CSS with shadcn/ui components (built on Radix UI primitives)
+- **Backend**: Supabase for database, authentication, and API
+- **Build Tool**: Vite for fast development and optimized builds
+
+## 🤖 AI-Assisted Development
+
+This project demonstrates the capabilities of AI-assisted development:
+
+- **Code Generation**: Core application structure and components generated with AI assistance
+- **Database Design**: Data models and relationships designed with AI guidance
+- **UI/UX**: Interface components and layouts created with AI recommendations
+- **Problem Solving**: Technical challenges addressed through AI collaboration
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (v18 or newer)
+- pnpm package manager
+- Supabase account (for database)
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/vata-app.git
+   cd vata-app
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+3. Set up environment variables:
+   Create a `.env.local` file with your Supabase credentials:
+
+   ```
+   VITE_SUPABASE_URL=your-supabase-url
+   VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
+
+4. Start the development server:
+   ```bash
+   pnpm dev
+   ```
+
+### Database Setup
+
+The application uses Supabase for database management:
+
+```bash
+# Reset the database to initial state
+pnpm db:reset
+
+# Generate TypeScript types from database schema
+pnpm db:types
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📝 License
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+[MIT License](LICENSE)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    "react-x": reactX,
-    "react-dom": reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs["recommended-typescript"].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
-```
+## 🙏 Acknowledgements
+
+- This project was built with the assistance of AI tools like Claude
+- UI components from shadcn/ui (built on Radix UI primitives)
+- Supabase for backend infrastructure
