@@ -1,5 +1,15 @@
 INSERT INTO family_children (id, family_id, individual_id)
 VALUES
+    /* Generation 4 individuals with unknown parents */
+    (get_family_children_id('unknown_fleamont'), get_family_id('unknown_fleamont'), get_individual_id('fleamont_potter')),
+    (get_family_children_id('unknown_euphemia'), get_family_id('unknown_euphemia'), get_individual_id('euphemia_potter')),
+    (get_family_children_id('unknown_john'), get_family_id('unknown_john'), get_individual_id('john_evans')),
+    (get_family_children_id('unknown_mary'), get_family_id('unknown_mary'), get_individual_id('mary_evans')),
+    (get_family_children_id('unknown_septimus'), get_family_id('unknown_septimus'), get_individual_id('septimus_weasley')),
+    (get_family_children_id('unknown_cedrella'), get_family_id('unknown_cedrella'), get_individual_id('cedrella_black')),
+    (get_family_children_id('unknown_ignatius'), get_family_id('unknown_ignatius'), get_individual_id('ignatius_prewett')),
+    (get_family_children_id('unknown_lucretia'), get_family_id('unknown_lucretia'), get_individual_id('lucretia_prewett')),
+
     /* Generation 3 - Children of Generation 4 */
     (get_family_children_id('fleamont_euphemia_james'), get_family_id('fleamont_euphemia'), get_individual_id('james_potter')),
     (get_family_children_id('john_mary_lily'), get_family_id('john_mary'), get_individual_id('lily_evans')),

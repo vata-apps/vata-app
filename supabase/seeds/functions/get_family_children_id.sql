@@ -1,6 +1,16 @@
 CREATE OR REPLACE FUNCTION get_family_children_id(key text) RETURNS uuid AS $$
     BEGIN
         RETURN CASE key
+            /* Generation 4 with unknown parents */
+            WHEN 'unknown_fleamont' THEN      '00000004-0005-0000-0001-000000000001'::uuid
+            WHEN 'unknown_euphemia' THEN      '00000004-0005-0000-0002-000000000001'::uuid
+            WHEN 'unknown_john' THEN          '00000004-0005-0000-0003-000000000001'::uuid
+            WHEN 'unknown_mary' THEN          '00000004-0005-0000-0004-000000000001'::uuid
+            WHEN 'unknown_septimus' THEN      '00000004-0005-0000-0005-000000000001'::uuid
+            WHEN 'unknown_cedrella' THEN      '00000004-0005-0000-0006-000000000001'::uuid
+            WHEN 'unknown_ignatius' THEN      '00000004-0005-0000-0007-000000000001'::uuid
+            WHEN 'unknown_lucretia' THEN      '00000004-0005-0000-0008-000000000001'::uuid
+            
             /* Generation 3 - Children of Generation 4 */
             WHEN 'fleamont_euphemia_james' THEN  '00000004-0004-0000-0001-000000000001'::uuid
             WHEN 'john_mary_lily' THEN           '00000004-0004-0000-0002-000000000001'::uuid

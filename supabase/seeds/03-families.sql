@@ -1,5 +1,15 @@
 INSERT INTO families (id, husband_id, wife_id)
 VALUES
+    /* Generation 5 - Unknown parent families */
+    (get_family_id('unknown_fleamont'), NULL, NULL),
+    (get_family_id('unknown_euphemia'), NULL, NULL),
+    (get_family_id('unknown_john'), NULL, NULL),
+    (get_family_id('unknown_mary'), NULL, NULL),
+    (get_family_id('unknown_septimus'), NULL, NULL),
+    (get_family_id('unknown_cedrella'), NULL, NULL),
+    (get_family_id('unknown_ignatius'), NULL, NULL),
+    (get_family_id('unknown_lucretia'), NULL, NULL),
+    
     /* Generation 4 */
     (get_family_id('fleamont_euphemia'), get_individual_id('fleamont_potter'), get_individual_id('euphemia_potter')),
     (get_family_id('john_mary'), get_individual_id('john_evans'), get_individual_id('mary_evans')),
