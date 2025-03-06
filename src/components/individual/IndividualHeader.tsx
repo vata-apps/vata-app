@@ -17,10 +17,12 @@ type IndividualWithRelations = {
       husband: {
         id: string;
         names: Tables<"names">[];
+        gender: Tables<"individuals">["gender"];
       } | null;
       wife: {
         id: string;
         names: Tables<"names">[];
+        gender: Tables<"individuals">["gender"];
       } | null;
       children: {
         individual: {
@@ -80,22 +82,26 @@ export function IndividualHeader({
                 <AddIndividualInfo type="death" />
               </div>
               <div className="flex items-center gap-2 text-muted-foreground">
-                <GenderIcon gender="male" className="h-4 w-4" />
                 {individual.family_as_child[0]?.family?.husband ? (
                   <FamilyMember
                     individual={individual.family_as_child[0].family.husband}
                   />
                 ) : (
-                  <AddFamilyMember type="father" />
+                  <>
+                    <GenderIcon gender="male" className="h-4 w-4" />
+                    <AddFamilyMember type="father" />
+                  </>
                 )}
                 <span className="mx-2">•</span>
-                <GenderIcon gender="female" className="h-4 w-4" />
                 {individual.family_as_child[0]?.family?.wife ? (
                   <FamilyMember
                     individual={individual.family_as_child[0].family.wife}
                   />
                 ) : (
-                  <AddFamilyMember type="mother" />
+                  <>
+                    <GenderIcon gender="female" className="h-4 w-4" />
+                    <AddFamilyMember type="mother" />
+                  </>
                 )}
                 <span className="mx-2">•</span>
                 <span>

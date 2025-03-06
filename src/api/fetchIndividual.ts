@@ -7,10 +7,12 @@ type Individual = Database["public"]["Tables"]["individuals"]["Row"] & {
     family: {
       husband: {
         id: string;
+        gender: Database["public"]["Enums"]["gender"];
         names: Database["public"]["Tables"]["names"]["Row"][];
       } | null;
       wife: {
         id: string;
+        gender: Database["public"]["Enums"]["gender"];
         names: Database["public"]["Tables"]["names"]["Row"][];
       } | null;
       children: {
@@ -64,10 +66,12 @@ export async function fetchIndividual(
         `
         husband:husband_id (
           id,
+          gender,
           names (*)
         ),
         wife:wife_id (
           id,
+          gender,
           names (*)
         ),
         children:family_children (

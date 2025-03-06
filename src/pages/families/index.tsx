@@ -119,6 +119,7 @@ function FamiliesPage() {
                     individual={{
                       id: family.husband.id,
                       names: family.husband.names,
+                      gender: family.husband.gender,
                     }}
                   />
                 ) : (
@@ -131,6 +132,7 @@ function FamiliesPage() {
                     individual={{
                       id: family.wife.id,
                       names: family.wife.names,
+                      gender: family.wife.gender,
                     }}
                   />
                 ) : (
@@ -146,6 +148,7 @@ function FamiliesPage() {
                         individual={{
                           id: child.individual.id,
                           names: child.individual.names,
+                          gender: child.individual.gender,
                         }}
                       />
                     ))}
