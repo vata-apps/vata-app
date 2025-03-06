@@ -40,6 +40,7 @@ export type Database = {
           gedcom_id: number
           husband_id: string | null
           id: string
+          type: Database["public"]["Enums"]["family_type"]
           wife_id: string | null
         }
         Insert: {
@@ -47,6 +48,7 @@ export type Database = {
           gedcom_id?: number
           husband_id?: string | null
           id?: string
+          type?: Database["public"]["Enums"]["family_type"]
           wife_id?: string | null
         }
         Update: {
@@ -54,6 +56,7 @@ export type Database = {
           gedcom_id?: number
           husband_id?: string | null
           id?: string
+          type?: Database["public"]["Enums"]["family_type"]
           wife_id?: string | null
         }
         Relationships: [
@@ -176,32 +179,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_family_children_id: {
-        Args: {
-          key: string
-        }
-        Returns: string
-      }
-      get_family_id: {
-        Args: {
-          key: string
-        }
-        Returns: string
-      }
-      get_individual_id: {
-        Args: {
-          key: string
-        }
-        Returns: string
-      }
-      get_name_id: {
-        Args: {
-          key: string
-        }
-        Returns: string
-      }
+      [_ in never]: never
     }
     Enums: {
+      family_type: "married" | "civil union" | "unknown" | "unmarried"
       gender: "male" | "female"
       name_type: "birth" | "marriage" | "nickname" | "unknown"
     }

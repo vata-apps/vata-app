@@ -10,6 +10,7 @@ type IndividualWithNames = {
 
 type FamilyWithRelations = {
   id: string;
+  type: Tables<"families">["type"];
   husband: IndividualWithNames | null;
   wife: IndividualWithNames | null;
   children: {
@@ -32,6 +33,7 @@ export async function fetchFamily(
     .select(
       `
       id,
+      type,
       husband:individuals!families_husband_id_fkey(
         id, 
         gender,

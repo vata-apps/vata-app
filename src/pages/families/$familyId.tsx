@@ -36,6 +36,7 @@ type FamilyWithRelations = {
   children: {
     individual: IndividualWithNames;
   }[];
+  type: Tables<"families">["type"];
 };
 
 /**
@@ -121,18 +122,6 @@ function FamilyHeader({ family }: { family: FamilyWithRelations }) {
   const familyName = `${husbandName} & ${wifeName}`;
   const initials = `${husbandName?.[0] || "?"}${wifeName?.[0] || "?"}`;
 
-  // Determine family type
-  let familyType = "unknown";
-
-  // For demonstration purposes - in a real implementation, this would come from the database
-  // This is just a placeholder to show the different types
-  if (family.husband && family.wife) {
-    // Randomly choose between married and civil union for demo purposes
-    familyType = Math.random() > 0.5 ? "married" : "civil union";
-  } else if ((family.husband || family.wife) && family.children.length > 0) {
-    familyType = "unmarried";
-  }
-
   return (
     <Card>
       <CardHeader>
@@ -145,7 +134,7 @@ function FamilyHeader({ family }: { family: FamilyWithRelations }) {
               <div>
                 <CardTitle className="text-2xl">{familyName}</CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Type: {familyType}
+                  Type: {family.type}
                 </p>
               </div>
             </div>
