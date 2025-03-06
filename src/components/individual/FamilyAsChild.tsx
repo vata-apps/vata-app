@@ -17,6 +17,9 @@ interface FamilyAsChildProps {
   individualId: string;
 }
 
+/**
+ * Displays the family information where the individual is a child
+ */
 export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
   const { data: family, isLoading } = useQuery({
     queryKey: ["family-as-child", individualId],
@@ -38,10 +41,56 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
   if (!family) {
     return (
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Family as Child</CardTitle>
         </CardHeader>
-        <CardContent>No family found</CardContent>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[250px]">Father</TableHead>
+                <TableHead className="w-[250px]">Mother</TableHead>
+                <TableHead>Siblings</TableHead>
+                <TableHead className="w-[100px]"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow className="min-h-[4rem]">
+                <TableCell className="align-top py-4">
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link
+                      to="/individuals"
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      Add father
+                    </Link>
+                  </Button>
+                </TableCell>
+                <TableCell className="align-top py-4">
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link
+                      to="/individuals"
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      Add mother
+                    </Link>
+                  </Button>
+                </TableCell>
+                <TableCell className="align-top py-4">
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link
+                      to="/individuals"
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      Add sibling
+                    </Link>
+                  </Button>
+                </TableCell>
+                <TableCell className="text-right py-4">&nbsp;</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </CardContent>
       </Card>
     );
   }
@@ -50,11 +99,6 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Family as Child</CardTitle>
-        <Button variant="secondary" size="sm" asChild>
-          <Link to="/families/$familyId" params={{ familyId: family.id }}>
-            Edit Family
-          </Link>
-        </Button>
       </CardHeader>
       <CardContent>
         <Table>
@@ -63,6 +107,7 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
               <TableHead className="w-[250px]">Father</TableHead>
               <TableHead className="w-[250px]">Mother</TableHead>
               <TableHead>Siblings</TableHead>
+              <TableHead className="w-[100px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,7 +133,7 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
                     </span>
                   </div>
                 ) : (
-                  <Button variant="link" size="sm" asChild className="h-6 p-0">
+                  <Button variant="ghost" size="sm" asChild>
                     <Link
                       to="/individuals"
                       className="text-muted-foreground hover:text-foreground"
@@ -119,7 +164,7 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
                     </span>
                   </div>
                 ) : (
-                  <Button variant="link" size="sm" asChild className="h-6 p-0">
+                  <Button variant="ghost" size="sm" asChild>
                     <Link
                       to="/individuals"
                       className="text-muted-foreground hover:text-foreground"
@@ -129,7 +174,9 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
                   </Button>
                 )}
               </TableCell>
-              <TableCell className="align-top py-4">
+              <TableCell
+                className={`${family.children.filter((child) => child.individual.id !== individualId).length > 0 ? "py-4 align-top" : ""}`}
+              >
                 <div className="flex flex-wrap gap-x-4 gap-y-2">
                   {family.children
                     .filter((child) => child.individual.id !== individualId)
@@ -156,7 +203,29 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
                         </span>
                       </div>
                     ))}
+                  {family.children.filter(
+                    (child) => child.individual.id !== individualId,
+                  ).length === 0 && (
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link
+                        to="/individuals"
+                        className="text-muted-foreground hover:text-foreground"
+                      >
+                        Add sibling
+                      </Link>
+                    </Button>
+                  )}
                 </div>
+              </TableCell>
+              <TableCell className="text-right">
+                <Button variant="ghost" size="sm" asChild>
+                  <Link
+                    to="/families/$familyId"
+                    params={{ familyId: family.id }}
+                  >
+                    Edit
+                  </Link>
+                </Button>
               </TableCell>
             </TableRow>
           </TableBody>
