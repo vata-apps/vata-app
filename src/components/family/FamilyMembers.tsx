@@ -1,6 +1,6 @@
 import EventInfo from "@/components/family/EventInfo";
-import { GenderIcon } from "@/components/GenderIcon";
 import { AddIndividualInfo } from "@/components/individual/AddIndividualInfo";
+import { FamilyMember } from "@/components/individual/FamilyMember";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -11,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import displayName from "@/utils/displayName";
 import { Link } from "@tanstack/react-router";
 import { FamilyWithRelations } from "./types";
 
@@ -50,179 +49,170 @@ function FamilyMembers({ family }: { family: FamilyWithRelations }) {
   const showChildDeath = [false, false];
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Family Members</CardTitle>
-        <Button variant="secondary" size="sm" asChild>
-          <Link to="/individuals">Add Member</Link>
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
-          {/* Parents Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Parents</h3>
-            <Table>
-              <TableHeader>
+    <div className="space-y-6">
+      {/* Parents Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Parents</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12"></TableHead>
+                <TableHead className="w-1/3">Name</TableHead>
+                <TableHead className="w-1/3">Birth</TableHead>
+                <TableHead className="w-1/3">Death</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {family.husband ? (
                 <TableRow>
-                  <TableHead className="w-12"></TableHead>
-                  <TableHead className="w-1/3">Name</TableHead>
-                  <TableHead className="w-1/3">Birth</TableHead>
-                  <TableHead className="w-1/3">Death</TableHead>
+                  <TableCell className="align-top" colSpan={2}>
+                    <FamilyMember individual={family.husband} />
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm align-top">
+                    {showHusbandBirth ? (
+                      <EventInfo
+                        date={birthData.husband.date}
+                        place={birthData.husband.place}
+                      />
+                    ) : (
+                      <AddIndividualInfo type="birth" />
+                    )}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm align-top">
+                    {showHusbandDeath ? (
+                      <EventInfo
+                        date="10 January 2020"
+                        place="Vancouver, Canada"
+                      />
+                    ) : (
+                      <AddIndividualInfo type="death" />
+                    )}
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {family.husband && (
-                  <TableRow>
-                    <TableCell className="align-top">
-                      <GenderIcon gender="male" className="h-4 w-4" />
-                    </TableCell>
-                    <TableCell className="align-top font-medium">
+              ) : (
+                <TableRow>
+                  <TableCell className="align-top" colSpan={2}>
+                    <Button variant="ghost" size="sm" asChild>
                       <Link
-                        to="/individuals/$individualId"
-                        params={{ individualId: family.husband.id }}
-                        className="hover:underline"
+                        to="/individuals"
+                        className="text-muted-foreground hover:text-foreground"
                       >
-                        {displayName(family.husband.names)}
+                        Add father
                       </Link>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm align-top">
-                      {showHusbandBirth ? (
-                        <EventInfo
-                          date={birthData.husband.date}
-                          place={birthData.husband.place}
-                        />
-                      ) : (
-                        <AddIndividualInfo type="birth" />
-                      )}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm align-top">
-                      {showHusbandDeath ? (
-                        <EventInfo
-                          date="10 January 2020"
-                          place="Vancouver, Canada"
-                        />
-                      ) : (
-                        <AddIndividualInfo type="death" />
-                      )}
-                    </TableCell>
-                  </TableRow>
-                )}
-                {family.wife && (
-                  <TableRow>
-                    <TableCell className="align-top">
-                      <GenderIcon gender="female" className="h-4 w-4" />
-                    </TableCell>
-                    <TableCell className="align-top font-medium">
+                    </Button>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm align-top"></TableCell>
+                  <TableCell className="text-muted-foreground text-sm align-top"></TableCell>
+                </TableRow>
+              )}
+              {family.wife ? (
+                <TableRow>
+                  <TableCell className="align-top" colSpan={2}>
+                    <FamilyMember individual={family.wife} />
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm align-top">
+                    {showWifeBirth ? (
+                      <EventInfo
+                        date={birthData.wife.date}
+                        place={birthData.wife.place}
+                      />
+                    ) : (
+                      <AddIndividualInfo type="birth" />
+                    )}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm align-top">
+                    {showWifeDeath ? (
+                      <EventInfo date="5 March 2022" place="Montreal, Canada" />
+                    ) : (
+                      <AddIndividualInfo type="death" />
+                    )}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <TableRow>
+                  <TableCell className="align-top" colSpan={2}>
+                    <Button variant="ghost" size="sm" asChild>
                       <Link
-                        to="/individuals/$individualId"
-                        params={{ individualId: family.wife.id }}
-                        className="hover:underline"
+                        to="/individuals"
+                        className="text-muted-foreground hover:text-foreground"
                       >
-                        {displayName(family.wife.names)}
+                        Add mother
                       </Link>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm align-top">
-                      {showWifeBirth ? (
-                        <EventInfo
-                          date={birthData.wife.date}
-                          place={birthData.wife.place}
-                        />
-                      ) : (
-                        <AddIndividualInfo type="birth" />
-                      )}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm align-top">
-                      {showWifeDeath ? (
-                        <EventInfo
-                          date="5 March 2022"
-                          place="Montreal, Canada"
-                        />
-                      ) : (
-                        <AddIndividualInfo type="death" />
-                      )}
-                    </TableCell>
-                  </TableRow>
-                )}
-                {!family.husband && !family.wife && (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center">
-                      No parents recorded
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                    </Button>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground text-sm align-top"></TableCell>
+                  <TableCell className="text-muted-foreground text-sm align-top"></TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
-          {/* Children Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-2">Children</h3>
-            <Table>
-              <TableHeader>
+      {/* Children Section */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Children</CardTitle>
+          <Button variant="secondary" size="sm" asChild>
+            <Link to="/individuals">Add Child</Link>
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12"></TableHead>
+                <TableHead className="w-1/3">Name</TableHead>
+                <TableHead className="w-1/3">Birth</TableHead>
+                <TableHead className="w-1/3">Death</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {family.children.length === 0 ? (
                 <TableRow>
-                  <TableHead className="w-12"></TableHead>
-                  <TableHead className="w-1/3">Name</TableHead>
-                  <TableHead className="w-1/3">Birth</TableHead>
-                  <TableHead className="w-1/3">Death</TableHead>
+                  <TableCell colSpan={4} className="text-center">
+                    No children
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {family.children.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center">
-                      No children
+              ) : (
+                family.children.map((child, index) => (
+                  <TableRow key={child.individual.id}>
+                    <TableCell className="align-top" colSpan={2}>
+                      <FamilyMember individual={child.individual} />
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm align-top">
+                      {index < showChildBirth.length &&
+                      showChildBirth[index] ? (
+                        <EventInfo
+                          date={birthData.children[index].date}
+                          place={birthData.children[index].place}
+                        />
+                      ) : (
+                        <AddIndividualInfo type="birth" />
+                      )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm align-top">
+                      {index < showChildDeath.length &&
+                      showChildDeath[index] ? (
+                        <EventInfo
+                          date="15 December 2021"
+                          place="Halifax, Canada"
+                        />
+                      ) : (
+                        <AddIndividualInfo type="death" />
+                      )}
                     </TableCell>
                   </TableRow>
-                ) : (
-                  family.children.map((child, index) => (
-                    <TableRow key={child.individual.id}>
-                      <TableCell className="align-top">
-                        <GenderIcon
-                          gender={child.individual.gender}
-                          className="h-4 w-4"
-                        />
-                      </TableCell>
-                      <TableCell className="align-top font-medium">
-                        <Link
-                          to="/individuals/$individualId"
-                          params={{ individualId: child.individual.id }}
-                          className="hover:underline"
-                        >
-                          {displayName(child.individual.names)}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm align-top">
-                        {index < showChildBirth.length &&
-                        showChildBirth[index] ? (
-                          <EventInfo
-                            date={birthData.children[index].date}
-                            place={birthData.children[index].place}
-                          />
-                        ) : (
-                          <AddIndividualInfo type="birth" />
-                        )}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground text-sm align-top">
-                        {index < showChildDeath.length &&
-                        showChildDeath[index] ? (
-                          <EventInfo
-                            date="15 December 2021"
-                            place="Halifax, Canada"
-                          />
-                        ) : (
-                          <AddIndividualInfo type="death" />
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
