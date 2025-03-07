@@ -5,8 +5,8 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu-exports";
 import { cn } from "@/lib/utils";
 import { useLocation, useRouter } from "@tanstack/react-router";
 
@@ -24,7 +24,7 @@ export function MainNavigationMenu() {
         <NavigationMenuItem>
           <NavigationMenuLink
             onClick={() => router.navigate({ to: "/individuals" })}
-            className={cn(navigationMenuTriggerStyle(), {
+            className={cn(navigationMenuTriggerStyle(), "cursor-pointer", {
               "bg-accent text-accent-foreground": isActive("/individuals"),
             })}
           >
@@ -34,7 +34,7 @@ export function MainNavigationMenu() {
         <NavigationMenuItem>
           <NavigationMenuLink
             onClick={() => router.navigate({ to: "/families" })}
-            className={cn(navigationMenuTriggerStyle(), {
+            className={cn(navigationMenuTriggerStyle(), "cursor-pointer", {
               "bg-accent text-accent-foreground": isActive("/families"),
             })}
           >
