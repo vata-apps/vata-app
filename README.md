@@ -1,6 +1,6 @@
-# Vata App - AI-Powered Genealogy Application
+# Vata App - A Genealogy Application Built with AI
 
-Vata is a modern genealogy application designed to help you manage and visualize family trees. This application was created primarily with AI assistance, showcasing the power of AI-driven development in building functional and user-friendly web applications.
+Vata is a modern genealogy application designed to help you manage and visualize family trees. The name "Vata" (वट - vaṭa) is inspired by the Sanskrit word for the banyan tree, which symbolizes family connections with its extensive root system and branches. This application was created primarily with AI assistance, showcasing the power of AI-driven development in building functional and user-friendly web applications.
 
 ## 🌟 Features
 
