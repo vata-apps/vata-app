@@ -112,6 +112,146 @@ export type Database = {
           },
         ]
       }
+      family_event_types: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      family_events: {
+        Row: {
+          created_at: string
+          date: string | null
+          description: string | null
+          family_id: string
+          id: string
+          place_id: string | null
+          type_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string | null
+          description?: string | null
+          family_id: string
+          id?: string
+          place_id?: string | null
+          type_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string | null
+          description?: string | null
+          family_id?: string
+          id?: string
+          place_id?: string | null
+          type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_events_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_events_place_id_fkey"
+            columns: ["place_id"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_events_type_id_fkey"
+            columns: ["type_id"]
+            isOneToOne: false
+            referencedRelation: "family_event_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      individual_event_types: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      individual_events: {
+        Row: {
+          created_at: string
+          date: string | null
+          description: string | null
+          id: string
+          individual_id: string
+          place_id: string | null
+          type_id: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string | null
+          description?: string | null
+          id?: string
+          individual_id: string
+          place_id?: string | null
+          type_id: string
+        }
+        Update: {
+          created_at?: string
+          date?: string | null
+          description?: string | null
+          id?: string
+          individual_id?: string
+          place_id?: string | null
+          type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "individual_events_individual_id_fkey"
+            columns: ["individual_id"]
+            isOneToOne: false
+            referencedRelation: "individuals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "individual_events_place_id_fkey"
+            columns: ["place_id"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "individual_events_type_id_fkey"
+            columns: ["type_id"]
+            isOneToOne: false
+            referencedRelation: "individual_event_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       individuals: {
         Row: {
           created_at: string
@@ -170,6 +310,69 @@ export type Database = {
             columns: ["individual_id"]
             isOneToOne: false
             referencedRelation: "individuals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      place_types: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      places: {
+        Row: {
+          created_at: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          name: string
+          parent_id: string | null
+          type_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          parent_id?: string | null
+          type_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          parent_id?: string | null
+          type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "places_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "places_type_id_fkey"
+            columns: ["type_id"]
+            isOneToOne: false
+            referencedRelation: "place_types"
             referencedColumns: ["id"]
           },
         ]
