@@ -1,8 +1,0 @@
----
-description: 
-globs: *.tsx
-alwaysApply: false
----
-- Always try to use component from shadcn
-- Ask me to install new one if it's missing
-- Don't modify component from "components/ui" and "components/typography" without my authorization

@@ -3,6 +3,4 @@ description:
 globs: *.ts,*.tsx
 alwaysApply: true
 ---
-- Always validate database schema in [database.types.ts](mdc:src/database.types.ts)
-- Never add types in JSDoc
-- Always try to reuse type from Supabase and from [database.types.ts](mdc:src/database.types.ts) before creating new on
+- Try to reuse types from Supabase and/or [database.types.ts](mdc:src/database.types.ts). 

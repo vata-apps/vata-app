@@ -5,3 +5,4 @@ alwaysApply: true
 ---
 - Adds JSDoc on every function you create
 - Never add types, we used TS for that
+- Don't add JSDoc on React Component
