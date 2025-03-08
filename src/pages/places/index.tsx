@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 
@@ -102,8 +102,10 @@ function PlacesPage() {
                 <TableCell>{place.latitude || "-"}</TableCell>
                 <TableCell>{place.longitude || "-"}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="secondary" size="sm">
-                    View
+                  <Button variant="secondary" size="sm" asChild>
+                    <Link to="/places/$placeId" params={{ placeId: place.id }}>
+                      View
+                    </Link>
                   </Button>
                 </TableCell>
               </TableRow>
