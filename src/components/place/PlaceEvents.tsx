@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Enums } from "@/database.types";
+import { supabase } from "@/lib/supabase";
 import { Link } from "@tanstack/react-router";
 import { Pencil, UserIcon, UsersIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -35,7 +36,11 @@ type IndividualEvent = {
     id: string;
     name: string;
     gender: Enums<"gender">;
-    names: { first_name: string; last_name: string; is_primary: boolean }[];
+    names: {
+      first_name: string | null;
+      last_name: string | null;
+      is_primary: boolean;
+    }[];
   };
   date: string;
   eventType: "individual";
@@ -66,90 +71,259 @@ type PlaceEventsProps = {
   placeId: string;
 };
 
+// Define types for the Supabase query results
+type IndividualEventResult = {
+  id: string;
+  date: string | null;
+  description: string | null;
+  type_id: string;
+  individual_event_types: {
+    id: string;
+    name: string;
+  };
+  individual_id: string;
+  individuals: {
+    id: string;
+    gender: Enums<"gender">;
+    names: {
+      first_name: string | null;
+      last_name: string | null;
+      is_primary: boolean;
+    }[];
+  };
+  place_id: string | null;
+  places: {
+    id: string;
+    name: string;
+  } | null;
+};
+
+type FamilyEventResult = {
+  id: string;
+  date: string | null;
+  description: string | null;
+  type_id: string;
+  family_event_types: {
+    id: string;
+    name: string;
+  };
+  family_id: string;
+  families: {
+    id: string;
+    husband_id: string | null;
+    wife_id: string | null;
+    husband: {
+      id: string;
+      gender: Enums<"gender">;
+      names: {
+        first_name: string | null;
+        last_name: string | null;
+        is_primary: boolean;
+      }[];
+    } | null;
+    wife: {
+      id: string;
+      gender: Enums<"gender">;
+      names: {
+        first_name: string | null;
+        last_name: string | null;
+        is_primary: boolean;
+      }[];
+    } | null;
+  };
+  place_id: string | null;
+  places: {
+    id: string;
+    name: string;
+  } | null;
+};
+
 export function PlaceEvents({ placeId }: PlaceEventsProps) {
   const [events, setEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [placeName, setPlaceName] = useState("this place");
 
   useEffect(() => {
-    // This would normally fetch events from the API
-    // For now, we're using mock data
     const fetchEvents = async () => {
       setIsLoading(true);
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        // Fetch place name
+        const { data: placeData, error: placeError } = await supabase
+          .from("places")
+          .select("name")
+          .eq("id", placeId)
+          .single();
 
-      // Mock place name (in a real app, this would come from the API)
-      const mockPlaceName = "New York City";
-      setPlaceName(mockPlaceName);
+        if (placeError) {
+          console.error("Error fetching place:", placeError);
+        } else if (placeData) {
+          setPlaceName(placeData.name);
+        }
 
-      const mockIndividualEvents: IndividualEvent[] = [
-        {
-          id: "1",
-          type: "birth",
-          individual: {
-            id: "ind1",
-            name: "John Doe",
-            gender: "male",
-            names: [{ first_name: "John", last_name: "Doe", is_primary: true }],
-          },
-          date: "1980-05-15",
-          eventType: "individual",
-          place: { id: placeId, name: mockPlaceName },
-          description: "Born at Memorial Hospital",
-        },
-        {
-          id: "2",
-          type: "death",
-          individual: {
-            id: "ind2",
-            name: "Jane Smith",
-            gender: "female",
-            names: [
-              { first_name: "Jane", last_name: "Smith", is_primary: true },
-            ],
-          },
-          date: "2010-11-22",
-          eventType: "individual",
-          place: { id: placeId, name: mockPlaceName },
-          description: "Passed away at home",
-        },
-      ];
+        // Fetch individual events for this place
+        const { data: individualEventsData, error: individualEventsError } =
+          await supabase
+            .from("individual_events")
+            .select(
+              `
+            id, 
+            date, 
+            description,
+            type_id,
+            individual_event_types(id, name),
+            individual_id,
+            individuals(
+              id,
+              gender,
+              names(first_name, last_name, is_primary)
+            ),
+            place_id,
+            places(id, name)
+          `,
+            )
+            .eq("place_id", placeId)
+            .order("date", { ascending: false, nullsFirst: false });
 
-      const mockFamilyEvents: FamilyEvent[] = [
-        {
-          id: "1",
-          type: "marriage",
-          family: "Smith-Johnson Family",
-          familyId: "fam1",
-          date: "1975-06-30",
-          eventType: "family",
-          place: { id: placeId, name: mockPlaceName },
-          description: "Ceremony at St. Patrick's Cathedral",
-        },
-        {
-          id: "2",
-          type: "divorce",
-          family: "Brown-Davis Family",
-          familyId: "fam2",
-          date: "2005-03-12",
-          eventType: "family",
-          place: { id: placeId, name: mockPlaceName },
-          description: "Filed at County Courthouse",
-        },
-      ];
+        if (individualEventsError) {
+          console.error(
+            "Error fetching individual events:",
+            individualEventsError,
+          );
+          return;
+        }
 
-      // Combine and sort all events by date
-      const allEvents: Event[] = [
-        ...mockIndividualEvents,
-        ...mockFamilyEvents,
-      ].sort((a, b) => {
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
-      });
+        // Fetch family events for this place
+        const { data: familyEventsData, error: familyEventsError } =
+          await supabase
+            .from("family_events")
+            .select(
+              `
+            id, 
+            date, 
+            description,
+            type_id,
+            family_event_types(id, name),
+            family_id,
+            families(
+              id,
+              husband_id,
+              wife_id,
+              husband:individuals!families_husband_id_fkey(
+                id,
+                gender,
+                names(first_name, last_name, is_primary)
+              ),
+              wife:individuals!families_wife_id_fkey(
+                id,
+                gender,
+                names(first_name, last_name, is_primary)
+              )
+            ),
+            place_id,
+            places(id, name)
+          `,
+            )
+            .eq("place_id", placeId)
+            .order("date", { ascending: false, nullsFirst: false });
 
-      setEvents(allEvents);
-      setIsLoading(false);
+        if (familyEventsError) {
+          console.error("Error fetching family events:", familyEventsError);
+          return;
+        }
+
+        // Transform individual events to match the component's expected format
+        const formattedIndividualEvents: IndividualEvent[] = (
+          individualEventsData as unknown as IndividualEventResult[]
+        ).map((event) => {
+          const names = event.individuals?.names || [];
+          const primaryName =
+            names.find((name) => name.is_primary) || names[0] || {};
+          const fullName =
+            `${primaryName.first_name || ""} ${primaryName.last_name || ""}`.trim();
+
+          return {
+            id: event.id,
+            type: event.individual_event_types?.name || "",
+            individual: {
+              id: event.individual_id,
+              name: fullName,
+              gender: event.individuals?.gender || "male",
+              names: event.individuals?.names || [],
+            },
+            date: event.date || "",
+            eventType: "individual",
+            place: event.places
+              ? {
+                  id: event.places.id,
+                  name: event.places.name,
+                }
+              : null,
+            description: event.description || undefined,
+          };
+        });
+
+        // Transform family events to match the component's expected format
+        const formattedFamilyEvents: FamilyEvent[] = (
+          familyEventsData as unknown as FamilyEventResult[]
+        ).map((event) => {
+          const husbandNames = event.families?.husband?.names || [];
+          const wifeNames = event.families?.wife?.names || [];
+
+          const husbandPrimaryName =
+            husbandNames.find((name) => name.is_primary) ||
+            husbandNames[0] ||
+            {};
+          const wifePrimaryName =
+            wifeNames.find((name) => name.is_primary) || wifeNames[0] || {};
+
+          const husbandFullName =
+            `${husbandPrimaryName.first_name || ""} ${husbandPrimaryName.last_name || ""}`.trim();
+          const wifeFullName =
+            `${wifePrimaryName.first_name || ""} ${wifePrimaryName.last_name || ""}`.trim();
+
+          const familyName =
+            husbandFullName && wifeFullName
+              ? `${husbandFullName} & ${wifeFullName} Family`
+              : husbandFullName
+                ? `${husbandFullName} Family`
+                : wifeFullName
+                  ? `${wifeFullName} Family`
+                  : "Unknown Family";
+
+          return {
+            id: event.id,
+            type: event.family_event_types?.name || "",
+            family: familyName,
+            familyId: event.family_id,
+            date: event.date || "",
+            eventType: "family",
+            place: event.places
+              ? {
+                  id: event.places.id,
+                  name: event.places.name,
+                }
+              : null,
+            description: event.description || undefined,
+          };
+        });
+
+        // Combine and sort all events by date
+        const allEvents: Event[] = [
+          ...formattedIndividualEvents,
+          ...formattedFamilyEvents,
+        ].sort((a, b) => {
+          if (!a.date) return 1;
+          if (!b.date) return -1;
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        });
+
+        setEvents(allEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchEvents();
