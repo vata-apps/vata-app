@@ -8,6 +8,8 @@ Vata is a modern genealogy application designed to help you manage and visualize
 - **Family Relationships**: Create and visualize family connections and relationships
 - **Gender Tracking**: Support for gender identification in family trees
 - **Name Variations**: Support for different name types (birth, marriage, nickname)
+- **Places Management**: Track and organize geographical locations associated with family events
+- **Hierarchical Places**: Support for nested place relationships (city, county, state, country)
 - **Modern UI**: Clean, responsive interface built with React and Tailwind CSS
 
 ## 🛠️ Technology Stack
