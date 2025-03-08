@@ -4,14 +4,13 @@ Vata is a modern genealogy application designed to help you manage and visualize
 
 ## 🌟 Features
 
-- **Individual Management**: Track and manage individual family members with detailed profiles
-- **Family Relationships**: Create and visualize family connections and relationships
-- **Gender Tracking**: Support for gender identification in family trees
-- **Name Variations**: Support for different name types (birth, marriage, nickname)
-- **Places Management**: Track and organize geographical locations associated with family events
-- **Hierarchical Places**: Support for nested place relationships (city, county, state, country)
-- **Event Tracking**: Record and manage both individual events (birth, death, baptism, etc.) and family events (marriage, divorce, engagement, etc.)
-- **Modern UI**: Clean, responsive interface built with React and Tailwind CSS
+- **Individuals**: Core module for managing family members with detailed profiles
+- **Names**: Support for different name variations (birth, marriage, nickname) associated with individuals
+- **Families**: Module for creating and visualizing relationships between individuals
+- **Places**: Geographic location management with hierarchical relationships (city, county, state, country)
+- **Events**: System for recording life events connected to individuals and families
+- **Relationships**: Interconnections between all modules to create a comprehensive family tree
+- **Sample Data**: Comes with pre-loaded seed data featuring a complete family tree to demonstrate functionality and provide a starting point
 
 ## 🛠️ Technology Stack
 
@@ -88,5 +87,6 @@ pnpm db:types
 ## 🙏 Acknowledgements
 
 - This project was built with the assistance of AI tools like Claude
+- This README file was also created and refined with AI assistance
 - UI components from shadcn/ui (built on Radix UI primitives)
 - Supabase for backend infrastructure
