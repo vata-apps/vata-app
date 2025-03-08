@@ -15,6 +15,8 @@ type FamilyWithRelations = {
   }[];
 };
 
+type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations>;
+
 /**
  * Fetches the family where an individual is a child
  * @param individualId - The ID of the individual
@@ -39,23 +41,23 @@ export async function fetchFamilyAsChild(
   }
 
   // Now fetch the complete family data with parents and siblings
-  const { data, error: familyError } = (await supabase
+  const response = (await supabase
     .from("families")
     .select(
       `
       id,
-      husband:husband_id(
+      husband:individuals!families_husband_id_fkey(
         id, 
         gender,
         names(first_name, last_name, is_primary)
       ),
-      wife:wife_id(
+      wife:individuals!families_wife_id_fkey(
         id, 
         gender,
         names(first_name, last_name, is_primary)
       ),
-      children:family_children(
-        individual:individual_id(
+      children:family_children!family_children_family_id_fkey(
+        individual:individuals(
           id,
           gender,
           names(first_name, last_name, is_primary)
@@ -64,7 +66,9 @@ export async function fetchFamilyAsChild(
       `,
     )
     .eq("id", familyChildData.family_id)
-    .single()) as PostgrestSingleResponse<FamilyWithRelations>;
+    .single()) as FamilyResponse;
+
+  const { data, error: familyError } = response;
 
   if (familyError) throw familyError;
 

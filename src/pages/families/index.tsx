@@ -11,47 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Database } from "@/database.types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
-
-// Define types for the family data structure
-interface FamilyData {
-  id: string;
-  husband: {
-    id: string;
-    gender: Database["public"]["Enums"]["gender"];
-    names: Array<{
-      first_name: string | null;
-      last_name: string | null;
-      is_primary: boolean;
-    }>;
-  } | null;
-  wife: {
-    id: string;
-    gender: Database["public"]["Enums"]["gender"];
-    names: Array<{
-      first_name: string | null;
-      last_name: string | null;
-      is_primary: boolean;
-    }>;
-  } | null;
-  children: Array<{
-    individual: {
-      id: string;
-      gender: Database["public"]["Enums"]["gender"];
-      names: Array<{
-        first_name: string | null;
-        last_name: string | null;
-        is_primary: boolean;
-      }>;
-    };
-  }>;
-}
 
 export const Route = createFileRoute("/families/")({
   component: FamiliesPage,
@@ -63,10 +28,7 @@ function FamiliesPage() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["families", page, query],
-    queryFn: async () => {
-      const result = await fetchFamilies({ page, query });
-      return result as unknown as { data: FamilyData[]; total: number };
-    },
+    queryFn: () => fetchFamilies({ page, query }),
     placeholderData: keepPreviousData,
     enabled: !query || query.length > 2,
   });
@@ -111,7 +73,7 @@ function FamiliesPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.data.map((family: FamilyData) => (
+          {data?.data.map((family) => (
             <TableRow key={family.id}>
               <TableCell className="align-top py-4">
                 {family.husband ? (

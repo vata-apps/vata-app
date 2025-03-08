@@ -2,21 +2,22 @@ import { Tables } from "@/database.types";
 import { supabase } from "@/lib/supabase";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
-type IndividualWithNames = {
-  id: string;
-  gender: Tables<"individuals">["gender"];
-  names: Tables<"names">[];
+type IndividualWithNames = Pick<Tables<"individuals">, "id" | "gender"> & {
+  names: Pick<
+    Tables<"names">,
+    "first_name" | "last_name" | "is_primary" | "type"
+  >[];
 };
 
-type FamilyWithRelations = {
-  id: string;
-  type: Tables<"families">["type"];
+type FamilyWithRelations = Pick<Tables<"families">, "id" | "type"> & {
   husband: IndividualWithNames | null;
   wife: IndividualWithNames | null;
   children: {
     individual: IndividualWithNames;
   }[];
 };
+
+type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations>;
 
 /**
  * Fetches a family with all its relations (husband, wife, children)
@@ -26,9 +27,7 @@ type FamilyWithRelations = {
 export async function fetchFamily(
   familyId: string,
 ): Promise<FamilyWithRelations> {
-  console.log("Fetching family:", familyId);
-
-  const { data, error } = (await supabase
+  const response = (await supabase
     .from("families")
     .select(
       `
@@ -37,41 +36,29 @@ export async function fetchFamily(
       husband:individuals!families_husband_id_fkey(
         id, 
         gender,
-        created_at,
-        gedcom_id,
-        names(*)
+        names(first_name, last_name, is_primary, type)
       ),
       wife:individuals!families_wife_id_fkey(
         id, 
         gender,
-        created_at,
-        gedcom_id,
-        names(*)
+        names(first_name, last_name, is_primary, type)
       ),
-      children:family_children(
+      children:family_children!family_children_family_id_fkey(
         individual:individuals(
           id,
           gender,
-          created_at,
-          gedcom_id,
-          names(*)
+          names(first_name, last_name, is_primary, type)
         )
       )
       `,
     )
     .eq("id", familyId)
-    .single()) as PostgrestSingleResponse<FamilyWithRelations>;
+    .single()) as FamilyResponse;
 
-  if (error) {
-    console.error("Error fetching family:", error);
-    throw error;
-  }
+  const { data, error } = response;
 
-  console.log("Fetched family:", data);
-
-  if (!data) {
-    throw new Error(`Family with ID ${familyId} not found`);
-  }
+  if (error) throw error;
+  if (!data) throw new Error(`Family with ID ${familyId} not found`);
 
   return data;
 }

@@ -1,21 +1,20 @@
+import { PostgrestResponse } from "@supabase/supabase-js";
+import { Database } from "../database.types";
 import { supabase } from "../lib/supabase";
 import { getPageRange } from "./getPageRange";
 
-// Define the structure of the place data returned from the API
-export type PlaceWithType = {
-  id: string;
-  name: string;
-  latitude: number | null;
-  longitude: number | null;
-  type_id: string;
-  parent_id: string | null;
-  place_type: {
-    name: string;
-  };
-  parent?: {
-    name: string;
-  } | null;
+type Place = Database["public"]["Tables"]["places"]["Row"];
+type PlaceType = Database["public"]["Tables"]["place_types"]["Row"];
+
+type PlaceResponse = Place & {
+  place_type: Pick<PlaceType, "name">;
 };
+
+export type PlaceWithType = PlaceResponse & {
+  parent?: Pick<Place, "name"> | null;
+};
+
+type PlacesResponse = PostgrestResponse<PlaceResponse>;
 
 /**
  * Fetches a paginated list of places from the database
@@ -35,23 +34,28 @@ export async function fetchPlaces({
   // First, get the places data
   const queryBuilder = supabase
     .from("places")
-    .select(
-      "id, name, latitude, longitude, type_id, parent_id, place_type:place_types!type_id(name)",
-      {
-        count: "exact",
-      },
-    );
+    .select("*, place_type:place_types!type_id(name)", {
+      count: "exact",
+    });
 
   if (query) {
     queryBuilder.ilike("name", `%${query}%`);
   }
 
-  const { count, data, error } = await queryBuilder.range(start, end);
+  const response = (await queryBuilder.range(start, end)) as PlacesResponse;
+
+  const { count, data, error } = response;
 
   if (error) throw error;
+  if (!data) return { data: [], total: 0 };
+
+  const places = data;
 
   // Now let's fetch the parent places separately for places with parent_id
-  const placesWithParentIds = data.filter((place) => place.parent_id);
+  const placesWithParentIds = places.filter(
+    (place): place is PlaceResponse & { parent_id: string } =>
+      place.parent_id !== null,
+  );
 
   if (placesWithParentIds.length > 0) {
     const parentIds = placesWithParentIds.map((place) => place.parent_id);
@@ -65,24 +69,30 @@ export async function fetchPlaces({
       console.error("Error fetching parent places:", parentError);
     } else if (parentPlaces) {
       // Create a map of parent IDs to parent places
-      const parentMap = new Map();
+      const parentMap = new Map<string, Pick<Place, "name">>();
       parentPlaces.forEach((parent) => {
-        parentMap.set(parent.id, parent);
+        parentMap.set(parent.id, { name: parent.name });
       });
 
       // Add parent data to each place
-      data.forEach((place: any) => {
-        if (place.parent_id && parentMap.has(place.parent_id)) {
-          place.parent = { name: parentMap.get(place.parent_id).name };
-        } else {
-          place.parent = null;
-        }
-      });
+      const placesWithParents = places.map((place) => ({
+        ...place,
+        parent:
+          place.parent_id && parentMap.has(place.parent_id)
+            ? parentMap.get(place.parent_id) || null
+            : null,
+      }));
+
+      return {
+        data: placesWithParents,
+        total: count || 0,
+      };
     }
   }
 
+  // If no parent places to fetch or error fetching parents, return places without parent info
   return {
-    data: data as unknown as PlaceWithType[],
+    data: places.map((place) => ({ ...place, parent: null })),
     total: count || 0,
   };
 }

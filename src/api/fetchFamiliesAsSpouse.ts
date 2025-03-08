@@ -15,6 +15,8 @@ type FamilyWithRelations = {
   }[];
 };
 
+type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations[]>;
+
 /**
  * Fetches all families where an individual is a spouse (husband or wife)
  * @param individualId - The ID of the individual
@@ -23,9 +25,7 @@ type FamilyWithRelations = {
 export async function fetchFamiliesAsSpouse(
   individualId: string,
 ): Promise<FamilyWithRelations[]> {
-  console.log("Fetching families for individual:", individualId);
-
-  const { data, error } = (await supabase
+  const response = (await supabase
     .from("families")
     .select(
       `
@@ -33,23 +33,17 @@ export async function fetchFamiliesAsSpouse(
       husband:individuals!families_husband_id_fkey(
         id, 
         gender,
-        created_at,
-        gedcom_id,
         names(first_name, last_name, is_primary)
       ),
       wife:individuals!families_wife_id_fkey(
         id, 
         gender,
-        created_at,
-        gedcom_id,
         names(first_name, last_name, is_primary)
       ),
-      children:family_children(
+      children:family_children!family_children_family_id_fkey(
         individual:individuals(
           id,
           gender,
-          created_at,
-          gedcom_id,
           names(first_name, last_name, is_primary)
         )
       )
@@ -57,14 +51,11 @@ export async function fetchFamiliesAsSpouse(
     )
     .or(
       `husband_id.eq.${individualId},wife_id.eq.${individualId}`,
-    )) as PostgrestSingleResponse<FamilyWithRelations[]>;
+    )) as FamilyResponse;
 
-  if (error) {
-    console.error("Error fetching families:", error);
-    throw error;
-  }
+  const { data, error } = response;
 
-  console.log("Fetched families:", data);
+  if (error) throw error;
 
   return data || [];
 }

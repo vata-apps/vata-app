@@ -1,6 +1,29 @@
+import { Database } from "@/database.types";
 import { supabase } from "@/lib/supabase";
+import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { fetchFamiliesByMemberName } from "./fetchFamiliesByMemberName";
 import { getPageRange } from "./getPageRange";
+
+type Individual = {
+  id: string;
+  gender: Database["public"]["Enums"]["gender"];
+  names: Array<{
+    first_name: string | null;
+    last_name: string | null;
+    is_primary: boolean;
+  }>;
+};
+
+export type FamilyWithRelations = {
+  id: string;
+  husband: Individual | null;
+  wife: Individual | null;
+  children: Array<{
+    individual: Individual;
+  }>;
+};
+
+type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations[]>;
 
 /**
  * Fetches a paginated list of families from the database
@@ -14,28 +37,30 @@ export async function fetchFamilies({
 }: {
   page: number;
   query: string;
-}) {
+}): Promise<{ data: FamilyWithRelations[]; total: number }> {
   const { start, end } = getPageRange(page);
 
   if (query) return await fetchFamiliesByMemberName({ page, query });
 
-  const { count, data, error } = await supabase
+  const response = (await supabase
     .from("families")
     .select(
       `
         id,
         husband:individuals!families_husband_id_fkey(
           id,
+          gender,
           names(first_name, last_name, is_primary)
         ),
         wife:individuals!families_wife_id_fkey(
           id,
+          gender,
           names(first_name, last_name, is_primary)
         ),
         children:family_children!family_children_family_id_fkey(
-          id,
           individual:individuals(
             id,
+            gender,
             names(first_name, last_name, is_primary)
           )
         )
@@ -44,11 +69,12 @@ export async function fetchFamilies({
         count: "exact",
       },
     )
-    .range(start, end);
+    .range(start, end)) as FamilyResponse;
 
-  console.log(data);
+  const { count, data, error } = response;
 
   if (error) throw error;
+  if (!data) return { data: [], total: 0 };
 
-  return { data, total: count };
+  return { data, total: count || 0 };
 }

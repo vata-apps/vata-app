@@ -4,3 +4,6 @@ globs: *.ts,*.tsx
 alwaysApply: true
 ---
 - Try to reuse types from Supabase and/or [database.types.ts](mdc:src/database.types.ts). 
+- Always validate types after changes.
+- Never use "any"
+- Avoid when is possible to cast type ("as ...")

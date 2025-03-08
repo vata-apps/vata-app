@@ -1,5 +1,9 @@
 import { supabase } from "@/lib/supabase";
+import { PostgrestSingleResponse } from "@supabase/supabase-js";
+import { FamilyWithRelations } from "./fetchFamilies";
 import { getPageRange } from "./getPageRange";
+
+type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations[]>;
 
 /**
  * Fetches families by searching for members with matching names. Searches across first names and last names
@@ -16,7 +20,7 @@ export async function fetchFamiliesByMemberName({
 }: {
   page: number;
   query: string;
-}) {
+}): Promise<{ data: FamilyWithRelations[]; total: number }> {
   const { start, end } = getPageRange(page);
 
   // First find all individuals matching the search term by first name or last name
@@ -66,22 +70,37 @@ export async function fetchFamiliesByMemberName({
   const uniqueFamilyIds = [...new Set(familyData.map((f) => f.id))];
 
   // Now fetch all the family data
-  const { data, error } = await supabase
+  const response = (await supabase
     .from("families")
     .select(
       `
       id, 
-      husband:husband_id(id, gender, names(first_name, last_name, is_primary)),
-      wife:wife_id(id, gender, names(first_name, last_name, is_primary)),
-      children:family_children(
-        individual:individual_id(id, gender, names(first_name, last_name, is_primary))
+      husband:individuals!families_husband_id_fkey(
+        id,
+        gender,
+        names(first_name, last_name, is_primary)
+      ),
+      wife:individuals!families_wife_id_fkey(
+        id,
+        gender,
+        names(first_name, last_name, is_primary)
+      ),
+      children:family_children!family_children_family_id_fkey(
+        individual:individuals(
+          id,
+          gender,
+          names(first_name, last_name, is_primary)
+        )
       )
       `,
     )
     .in("id", uniqueFamilyIds)
-    .range(start, end);
+    .range(start, end)) as FamilyResponse;
+
+  const { data, error } = response;
 
   if (error) throw error;
+  if (!data) return { data: [], total: 0 };
 
   return { data, total: uniqueFamilyIds.length };
 }
