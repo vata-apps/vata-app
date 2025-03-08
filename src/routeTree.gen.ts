@@ -15,9 +15,11 @@ import { Route as IndexImport } from './pages/index'
 import { Route as PlacesIndexImport } from './pages/places/index'
 import { Route as IndividualsIndexImport } from './pages/individuals/index'
 import { Route as FamiliesIndexImport } from './pages/families/index'
+import { Route as EventsIndexImport } from './pages/events/index'
 import { Route as PlacesPlaceIdImport } from './pages/places/$placeId'
 import { Route as IndividualsIndividualIdImport } from './pages/individuals/$individualId'
 import { Route as FamiliesFamilyIdImport } from './pages/families/$familyId'
+import { Route as EventsEventIdImport } from './pages/events/$eventId'
 
 // Create/Update Routes
 
@@ -45,6 +47,12 @@ const FamiliesIndexRoute = FamiliesIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const EventsIndexRoute = EventsIndexImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const PlacesPlaceIdRoute = PlacesPlaceIdImport.update({
   id: '/places/$placeId',
   path: '/places/$placeId',
@@ -63,6 +71,12 @@ const FamiliesFamilyIdRoute = FamiliesFamilyIdImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const EventsEventIdRoute = EventsEventIdImport.update({
+  id: '/events/$eventId',
+  path: '/events/$eventId',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -72,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/events/$eventId': {
+      id: '/events/$eventId'
+      path: '/events/$eventId'
+      fullPath: '/events/$eventId'
+      preLoaderRoute: typeof EventsEventIdImport
       parentRoute: typeof rootRoute
     }
     '/families/$familyId': {
@@ -93,6 +114,13 @@ declare module '@tanstack/react-router' {
       path: '/places/$placeId'
       fullPath: '/places/$placeId'
       preLoaderRoute: typeof PlacesPlaceIdImport
+      parentRoute: typeof rootRoute
+    }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsIndexImport
       parentRoute: typeof rootRoute
     }
     '/families/': {
@@ -123,9 +151,11 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/events/$eventId': typeof EventsEventIdRoute
   '/families/$familyId': typeof FamiliesFamilyIdRoute
   '/individuals/$individualId': typeof IndividualsIndividualIdRoute
   '/places/$placeId': typeof PlacesPlaceIdRoute
+  '/events': typeof EventsIndexRoute
   '/families': typeof FamiliesIndexRoute
   '/individuals': typeof IndividualsIndexRoute
   '/places': typeof PlacesIndexRoute
@@ -133,9 +163,11 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/events/$eventId': typeof EventsEventIdRoute
   '/families/$familyId': typeof FamiliesFamilyIdRoute
   '/individuals/$individualId': typeof IndividualsIndividualIdRoute
   '/places/$placeId': typeof PlacesPlaceIdRoute
+  '/events': typeof EventsIndexRoute
   '/families': typeof FamiliesIndexRoute
   '/individuals': typeof IndividualsIndexRoute
   '/places': typeof PlacesIndexRoute
@@ -144,9 +176,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/events/$eventId': typeof EventsEventIdRoute
   '/families/$familyId': typeof FamiliesFamilyIdRoute
   '/individuals/$individualId': typeof IndividualsIndividualIdRoute
   '/places/$placeId': typeof PlacesPlaceIdRoute
+  '/events/': typeof EventsIndexRoute
   '/families/': typeof FamiliesIndexRoute
   '/individuals/': typeof IndividualsIndexRoute
   '/places/': typeof PlacesIndexRoute
@@ -156,27 +190,33 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/events/$eventId'
     | '/families/$familyId'
     | '/individuals/$individualId'
     | '/places/$placeId'
+    | '/events'
     | '/families'
     | '/individuals'
     | '/places'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/events/$eventId'
     | '/families/$familyId'
     | '/individuals/$individualId'
     | '/places/$placeId'
+    | '/events'
     | '/families'
     | '/individuals'
     | '/places'
   id:
     | '__root__'
     | '/'
+    | '/events/$eventId'
     | '/families/$familyId'
     | '/individuals/$individualId'
     | '/places/$placeId'
+    | '/events/'
     | '/families/'
     | '/individuals/'
     | '/places/'
@@ -185,9 +225,11 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EventsEventIdRoute: typeof EventsEventIdRoute
   FamiliesFamilyIdRoute: typeof FamiliesFamilyIdRoute
   IndividualsIndividualIdRoute: typeof IndividualsIndividualIdRoute
   PlacesPlaceIdRoute: typeof PlacesPlaceIdRoute
+  EventsIndexRoute: typeof EventsIndexRoute
   FamiliesIndexRoute: typeof FamiliesIndexRoute
   IndividualsIndexRoute: typeof IndividualsIndexRoute
   PlacesIndexRoute: typeof PlacesIndexRoute
@@ -195,9 +237,11 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EventsEventIdRoute: EventsEventIdRoute,
   FamiliesFamilyIdRoute: FamiliesFamilyIdRoute,
   IndividualsIndividualIdRoute: IndividualsIndividualIdRoute,
   PlacesPlaceIdRoute: PlacesPlaceIdRoute,
+  EventsIndexRoute: EventsIndexRoute,
   FamiliesIndexRoute: FamiliesIndexRoute,
   IndividualsIndexRoute: IndividualsIndexRoute,
   PlacesIndexRoute: PlacesIndexRoute,
@@ -214,9 +258,11 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/events/$eventId",
         "/families/$familyId",
         "/individuals/$individualId",
         "/places/$placeId",
+        "/events/",
         "/families/",
         "/individuals/",
         "/places/"
@@ -224,6 +270,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/events/$eventId": {
+      "filePath": "events/$eventId.tsx"
     },
     "/families/$familyId": {
       "filePath": "families/$familyId.tsx"
@@ -233,6 +282,9 @@ export const routeTree = rootRoute
     },
     "/places/$placeId": {
       "filePath": "places/$placeId.tsx"
+    },
+    "/events/": {
+      "filePath": "events/index.tsx"
     },
     "/families/": {
       "filePath": "families/index.tsx"
