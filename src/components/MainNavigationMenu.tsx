@@ -41,6 +41,16 @@ export function MainNavigationMenu() {
             Families
           </NavigationMenuLink>
         </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuLink
+            onClick={() => router.navigate({ to: "/places" })}
+            className={cn(navigationMenuTriggerStyle(), "cursor-pointer", {
+              "bg-accent text-accent-foreground": isActive("/places"),
+            })}
+          >
+            Places
+          </NavigationMenuLink>
+        </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
   );

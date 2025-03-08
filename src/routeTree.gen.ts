@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './pages/__root'
 import { Route as IndexImport } from './pages/index'
+import { Route as PlacesIndexImport } from './pages/places/index'
 import { Route as IndividualsIndexImport } from './pages/individuals/index'
 import { Route as FamiliesIndexImport } from './pages/families/index'
 import { Route as IndividualsIndividualIdImport } from './pages/individuals/$individualId'
@@ -22,6 +23,12 @@ import { Route as FamiliesFamilyIdImport } from './pages/families/$familyId'
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PlacesIndexRoute = PlacesIndexImport.update({
+  id: '/places/',
+  path: '/places/',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -88,6 +95,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndividualsIndexImport
       parentRoute: typeof rootRoute
     }
+    '/places/': {
+      id: '/places/'
+      path: '/places'
+      fullPath: '/places'
+      preLoaderRoute: typeof PlacesIndexImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -99,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/individuals/$individualId': typeof IndividualsIndividualIdRoute
   '/families': typeof FamiliesIndexRoute
   '/individuals': typeof IndividualsIndexRoute
+  '/places': typeof PlacesIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -107,6 +122,7 @@ export interface FileRoutesByTo {
   '/individuals/$individualId': typeof IndividualsIndividualIdRoute
   '/families': typeof FamiliesIndexRoute
   '/individuals': typeof IndividualsIndexRoute
+  '/places': typeof PlacesIndexRoute
 }
 
 export interface FileRoutesById {
@@ -116,6 +132,7 @@ export interface FileRoutesById {
   '/individuals/$individualId': typeof IndividualsIndividualIdRoute
   '/families/': typeof FamiliesIndexRoute
   '/individuals/': typeof IndividualsIndexRoute
+  '/places/': typeof PlacesIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -126,6 +143,7 @@ export interface FileRouteTypes {
     | '/individuals/$individualId'
     | '/families'
     | '/individuals'
+    | '/places'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +151,7 @@ export interface FileRouteTypes {
     | '/individuals/$individualId'
     | '/families'
     | '/individuals'
+    | '/places'
   id:
     | '__root__'
     | '/'
@@ -140,6 +159,7 @@ export interface FileRouteTypes {
     | '/individuals/$individualId'
     | '/families/'
     | '/individuals/'
+    | '/places/'
   fileRoutesById: FileRoutesById
 }
 
@@ -149,6 +169,7 @@ export interface RootRouteChildren {
   IndividualsIndividualIdRoute: typeof IndividualsIndividualIdRoute
   FamiliesIndexRoute: typeof FamiliesIndexRoute
   IndividualsIndexRoute: typeof IndividualsIndexRoute
+  PlacesIndexRoute: typeof PlacesIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -157,6 +178,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndividualsIndividualIdRoute: IndividualsIndividualIdRoute,
   FamiliesIndexRoute: FamiliesIndexRoute,
   IndividualsIndexRoute: IndividualsIndexRoute,
+  PlacesIndexRoute: PlacesIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -173,7 +195,8 @@ export const routeTree = rootRoute
         "/families/$familyId",
         "/individuals/$individualId",
         "/families/",
-        "/individuals/"
+        "/individuals/",
+        "/places/"
       ]
     },
     "/": {
@@ -190,6 +213,9 @@ export const routeTree = rootRoute
     },
     "/individuals/": {
       "filePath": "individuals/index.tsx"
+    },
+    "/places/": {
+      "filePath": "places/index.tsx"
     }
   }
 }
