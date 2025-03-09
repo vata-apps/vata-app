@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatDate } from "@/utils/dates";
 import displayName from "@/utils/displayName";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -116,17 +117,6 @@ function EventsPage() {
         return `${eventType} - Unknown Family`;
       }
     }
-  };
-
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Unknown";
-
-    const date = new Date(dateString);
-    return date.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
   };
 
   return (

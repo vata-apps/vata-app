@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Enums } from "@/database.types";
+import { formatDate } from "@/utils/dates";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -93,17 +94,6 @@ export const Route = createFileRoute("/events/$eventId")({
 });
 
 function EventHeader({ event }: { event: Event }) {
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Unknown";
-
-    const date = new Date(dateString);
-    return date.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   const getEventTitle = () => {
     if (event.eventType === "individual") {
       const individual = event.individuals;
