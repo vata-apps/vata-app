@@ -12,6 +12,17 @@ Vata is a modern genealogy application designed to help you manage and visualize
 - **Relationships**: Interconnections between all modules to create a comprehensive family tree
 - **Sample Data**: Comes with pre-loaded seed data featuring a complete family tree to demonstrate functionality and provide a starting point
 
+## 📚 Documentation
+
+The project's documentation is available in the `/documentation` folder, which includes:
+
+- **Database Schema**: Detailed information about tables, relationships, and security settings
+- **Improvements**: Future plans, optimizations, and standardization guidelines
+- **Best Practices**: Coding standards and project-specific guidelines
+- **Decision Records**: Documentation of important technical decisions
+
+For more details, see the [documentation README](/documentation/README.md).
+
 ## 🛠️ Technology Stack
 
 This application is built using modern web technologies:

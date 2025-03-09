@@ -1,4 +1,4 @@
-# Codebase Improvement Suggestions
+# Function Duplication and Utility Extraction Improvements
 
 This document outlines various areas of the codebase that can be improved, including duplicate functions, functions that can be extracted to utilities, and other optimization opportunities. Each suggestion includes what needs to be done, why it should be improved, how to implement the change, and actionable tasks for implementation.
 
