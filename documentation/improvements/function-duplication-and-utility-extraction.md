@@ -47,7 +47,7 @@ Create a new utility file dedicated to string operations that can be imported an
    - `src/pages/places/index.tsx`
    - `src/components/place/PlaceEvents.tsx`
 
-## 2. Create a Date Formatting Utility
+## 2. Create a Date Formatting Utility ✅ ([d578c3c](https://github.com/stivaugoin/vata-app/commit/d578c3c))
 
 ### What?
 
