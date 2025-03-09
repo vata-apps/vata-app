@@ -6,6 +6,7 @@ This folder contains comprehensive documentation for the Vata application. The d
 
 - `/database-schema` - Contains detailed information about database tables, relationships, and security settings
 - `/improvements` - Contains documentation about future improvements, optimizations, and standardizations
+- `/best-practices` - Contains documentation about coding standards and best practices for the project
 - (Other folders will be listed here as they are added)
 
 ## Database Schema
