@@ -1,18 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { capitalize } from "@/utils/strings";
 import { Link } from "@tanstack/react-router";
 import { Globe, MapPinIcon, Pencil } from "lucide-react";
-
-/**
- * Capitalizes the first letter of each word in a string
- */
-function capitalize(str: string) {
-  return str
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-}
 
 // Define a recursive type for the parent hierarchy
 type ParentPlace = {

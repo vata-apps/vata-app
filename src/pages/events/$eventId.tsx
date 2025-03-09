@@ -17,6 +17,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Enums } from "@/database.types";
 import displayName from "@/utils/displayName";
+import { capitalize } from "@/utils/strings";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarIcon, MapPinIcon, UserIcon, UsersIcon } from "lucide-react";
@@ -90,16 +91,6 @@ export const Route = createFileRoute("/events/$eventId")({
     };
   },
 });
-
-/**
- * Capitalizes the first letter of each word in a string
- */
-function capitalize(str: string) {
-  return str
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-}
 
 function EventHeader({ event }: { event: Event }) {
   const formatDate = (dateString: string | null) => {

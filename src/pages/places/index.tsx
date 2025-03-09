@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { capitalize } from "@/utils/strings";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -21,16 +22,6 @@ const ITEMS_PER_PAGE = 10;
 export const Route = createFileRoute("/places/")({
   component: PlacesPage,
 });
-
-/**
- * Capitalizes the first letter of each word in a string
- */
-function capitalize(str: string) {
-  return str
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-}
 
 function PlacesPage() {
   const [page, setPage] = useState(1);

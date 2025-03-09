@@ -15,19 +15,10 @@ import {
 } from "@/components/ui/table";
 import { Enums } from "@/database.types";
 import { supabase } from "@/lib/supabase";
+import { capitalize } from "@/utils/strings";
 import { Link } from "@tanstack/react-router";
 import { Pencil, UserIcon, UsersIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-
-/**
- * Capitalizes the first letter of each word in a string
- */
-function capitalize(str: string) {
-  return str
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-}
 
 type IndividualEvent = {
   id: string;
