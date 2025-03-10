@@ -1,8 +1,8 @@
 import { fetchEvents } from "@/api";
+import { Pagination } from "@/components/Pagination";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pagination } from "@/components/ui/Pagination";
 import {
   Table,
   TableBody,
