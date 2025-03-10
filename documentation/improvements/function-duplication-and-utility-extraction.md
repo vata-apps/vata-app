@@ -97,7 +97,7 @@ Create a new utility file for date operations with a flexible `formatDate` funct
    - `src/pages/events/$eventId.tsx`
    - `src/pages/events/index.tsx`
 
-## 3. Create an Event Utility Module
+## 3. Create an Event Utility Module ✅ ([4ef42a0](https://github.com/stivaugoin/vata-app/commit/4ef42a0))
 
 ### What?
 
@@ -119,7 +119,7 @@ Create a new utility file for event-related operations that handles logic specif
 ### Actionable Tasks
 
 1. Create a new file: `src/utils/events.ts`
-2. Add the `getEventTitle` function to this file, ensuring it works for both contexts:
+2. Add the `getEventTitle` function to this file:
 
    ```typescript
    import { displayName } from "./displayName";
@@ -163,12 +163,14 @@ Create a new utility file for event-related operations that handles logic specif
     */
    export function getEventTitle(event: Event) {
      if (event.eventType === "individual") {
-       const eventType = capitalize(event.individual_event_types?.name || "");
+       const eventType = capitalize(
+         event.individual_event_types?.name || "Event",
+       );
        const personName = displayName(event.individuals?.names || []);
        return `${eventType} - ${personName}`;
      }
 
-     const eventType = capitalize(event.family_event_types?.name || "");
+     const eventType = capitalize(event.family_event_types?.name || "Event");
      let familyName = "";
 
      if (event.families?.husband && event.families?.wife) {
