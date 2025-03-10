@@ -3,6 +3,7 @@ import { GenderIcon } from "@/components/GenderIcon";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/Pagination";
 import {
   Table,
   TableBody,
@@ -12,9 +13,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import displayName from "@/utils/displayName";
+import { usePagination } from "@/utils/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
@@ -40,6 +41,7 @@ function IndividualsPage() {
   };
 
   const totalPages = data?.total ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
+  const pagination = usePagination(page, totalPages);
 
   return (
     <div className="space-y-8">
@@ -100,33 +102,11 @@ function IndividualsPage() {
         </TableBody>
       </Table>
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Showing page {page} of {totalPages}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-            >
-              <ChevronLeftIcon className="h-4 w-4 mr-1" />
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(page + 1)}
-              disabled={page === totalPages}
-            >
-              Next
-              <ChevronRightIcon className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={setPage}
+      />
     </div>
   );
 }

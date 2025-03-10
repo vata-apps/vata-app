@@ -3,6 +3,7 @@ import { FamilyMember } from "@/components/individual/FamilyMember";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Pagination } from "@/components/ui/Pagination";
 import {
   Table,
   TableBody,
@@ -11,9 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { usePagination } from "@/utils/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
@@ -39,6 +40,7 @@ function FamiliesPage() {
   };
 
   const totalPages = data?.total ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
+  const pagination = usePagination(page, totalPages);
 
   return (
     <div className="space-y-8">
@@ -66,58 +68,30 @@ function FamiliesPage() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1/3">Husband</TableHead>
-            <TableHead className="w-1/3">Wife</TableHead>
-            <TableHead className="w-1/3">Children</TableHead>
+            <TableHead className="w-1/4">Husband</TableHead>
+            <TableHead className="w-1/4">Wife</TableHead>
+            <TableHead>Children</TableHead>
             <TableHead className="text-right" />
           </TableRow>
         </TableHeader>
         <TableBody>
           {data?.data.map((family) => (
             <TableRow key={family.id}>
-              <TableCell className="align-top py-4">
-                {family.husband ? (
-                  <FamilyMember
-                    individual={{
-                      id: family.husband.id,
-                      names: family.husband.names,
-                      gender: family.husband.gender,
-                    }}
-                  />
-                ) : (
-                  "-"
-                )}
+              <TableCell>
+                {family.husband && <FamilyMember individual={family.husband} />}
               </TableCell>
-              <TableCell className="align-top py-4">
-                {family.wife ? (
-                  <FamilyMember
-                    individual={{
-                      id: family.wife.id,
-                      names: family.wife.names,
-                      gender: family.wife.gender,
-                    }}
-                  />
-                ) : (
-                  "-"
-                )}
+              <TableCell>
+                {family.wife && <FamilyMember individual={family.wife} />}
               </TableCell>
-              <TableCell className="align-top py-4">
-                {family.children && family.children.length > 0 ? (
-                  <div className="flex flex-col gap-1">
-                    {family.children.map((child) => (
-                      <FamilyMember
-                        key={child.individual.id}
-                        individual={{
-                          id: child.individual.id,
-                          names: child.individual.names,
-                          gender: child.individual.gender,
-                        }}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  "-"
-                )}
+              <TableCell>
+                <div className="flex flex-wrap gap-x-4 gap-y-2">
+                  {family.children.map((child) => (
+                    <FamilyMember
+                      key={child.individual.id}
+                      individual={child.individual}
+                    />
+                  ))}
+                </div>
               </TableCell>
               <TableCell className="text-right">
                 <Button variant="secondary" size="sm" asChild>
@@ -134,33 +108,11 @@ function FamiliesPage() {
         </TableBody>
       </Table>
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Showing page {page} of {totalPages}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(page - 1)}
-              disabled={page === 1}
-            >
-              <ChevronLeftIcon className="h-4 w-4 mr-1" />
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setPage(page + 1)}
-              disabled={page === totalPages}
-            >
-              Next
-              <ChevronRightIcon className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </div>
-      )}
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onPageChange={setPage}
+      />
     </div>
   );
 }

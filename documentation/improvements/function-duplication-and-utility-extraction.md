@@ -256,7 +256,7 @@ Update the existing utility functions to handle edge cases gracefully.
 
 ### What?
 
-Create a utility for common navigation actions.
+Create a utility for common pagination actions.
 
 ### Why?
 
@@ -264,7 +264,7 @@ There are several places in the codebase where pagination logic is duplicated, s
 
 ### How?
 
-Create a navigation utility with a reusable pagination component or hook.
+Create a pagination utility with a reusable pagination component or hook.
 
 ### Actionable Tasks
 
@@ -295,7 +295,7 @@ Create a navigation utility with a reusable pagination component or hook.
    }
    ```
 
-3. Create a reusable pagination component in `src/components/ui/Pagination.tsx`:
+3. Create a reusable pagination component in `src/components/Pagination.tsx`:
 
    ```typescript
    import { Button } from "@/components/ui/button";
