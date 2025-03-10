@@ -191,7 +191,7 @@ Create a new utility file for event-related operations that handles logic specif
    - `src/pages/events/$eventId.tsx`
    - `src/pages/events/index.tsx`
 
-## 4. Improve Error Handling in Utilities
+## 4. Improve Error Handling in Utilities ✅ ([d6d6c92](https://github.com/stivaugoin/vata-app/commit/d6d6c92))
 
 ### What?
 
