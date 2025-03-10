@@ -252,7 +252,7 @@ Update the existing utility functions to handle edge cases gracefully.
    }
    ```
 
-## 5. Create a Navigation Utility
+## 5. Create a Navigation Utility ✅ ([0fa41b7](https://github.com/stivaugoin/vata-app/commit/0fa41b74a353f9146e6621f47fb5cbd7090a91a7))
 
 ### What?
 
@@ -295,7 +295,7 @@ Create a pagination utility with a reusable pagination component or hook.
    }
    ```
 
-3. Create a reusable pagination component in `src/components/Pagination.tsx`:
+3. Create a reusable pagination component in `src/components/ui/Pagination.tsx`:
 
    ```typescript
    import { Button } from "@/components/ui/button";
@@ -363,7 +363,11 @@ Create a pagination utility with a reusable pagination component or hook.
    }
    ```
 
-4. Update all pages with pagination to use this new component.
+4. Update all pages with pagination to use this new component:
+   - `src/pages/events/index.tsx`
+   - `src/pages/individuals/index.tsx`
+   - `src/pages/places/index.tsx`
+   - `src/pages/families/index.tsx`
 
 ## 6. Create a Search Utility
 
