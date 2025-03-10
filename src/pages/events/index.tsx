@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatDate } from "@/utils/dates";
-import displayName from "@/utils/displayName";
+import { getEventTitle } from "@/utils/events";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -95,29 +95,6 @@ function EventsPage() {
   };
 
   const totalPages = data?.total ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
-
-  const getEventTitle = (event: Event) => {
-    if (event.eventType === "individual") {
-      const individual = event.individuals;
-      const eventType = event.individual_event_types?.name || "Event";
-      return `${eventType} - ${displayName(individual?.names)}`;
-    } else {
-      const family = event.families;
-      const eventType = event.family_event_types?.name || "Event";
-      const husband = family?.husband;
-      const wife = family?.wife;
-
-      if (husband && wife) {
-        return `${eventType} - ${displayName(husband.names)} & ${displayName(wife.names)}`;
-      } else if (husband) {
-        return `${eventType} - ${displayName(husband.names)}`;
-      } else if (wife) {
-        return `${eventType} - ${displayName(wife.names)}`;
-      } else {
-        return `${eventType} - Unknown Family`;
-      }
-    }
-  };
 
   return (
     <div className="space-y-8">

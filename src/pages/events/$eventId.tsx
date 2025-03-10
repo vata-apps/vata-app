@@ -18,7 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Enums } from "@/database.types";
 import { formatDate } from "@/utils/dates";
 import displayName from "@/utils/displayName";
-import { capitalize } from "@/utils/strings";
+import { getEventTitle } from "@/utils/events";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarIcon, MapPinIcon, UserIcon, UsersIcon } from "lucide-react";
@@ -94,35 +94,10 @@ export const Route = createFileRoute("/events/$eventId")({
 });
 
 function EventHeader({ event }: { event: Event }) {
-  const getEventTitle = () => {
-    if (event.eventType === "individual") {
-      const individual = event.individuals;
-      const eventType = capitalize(
-        event.individual_event_types?.name || "Event",
-      );
-      return `${eventType} - ${displayName(individual?.names)}`;
-    } else {
-      const family = event.families;
-      const eventType = capitalize(event.family_event_types?.name || "Event");
-      const husband = family?.husband;
-      const wife = family?.wife;
-
-      if (husband && wife) {
-        return `${eventType} - ${displayName(husband.names)} & ${displayName(wife.names)}`;
-      } else if (husband) {
-        return `${eventType} - ${displayName(husband.names)}`;
-      } else if (wife) {
-        return `${eventType} - ${displayName(wife.names)}`;
-      } else {
-        return `${eventType} - Unknown Family`;
-      }
-    }
-  };
-
   return (
     <Card>
       <CardHeader>
-        <H2>{getEventTitle()}</H2>
+        <H2>{getEventTitle(event)}</H2>
         <div className="flex items-center gap-4 text-muted-foreground">
           <div className="flex items-center gap-1">
             <CalendarIcon className="h-4 w-4" />
@@ -160,7 +135,7 @@ function EventHeader({ event }: { event: Event }) {
                   params={{ familyId: event.family_id }}
                   className="text-primary hover:underline"
                 >
-                  {getEventTitle().split(" - ")[1]}
+                  {getEventTitle(event).split(" - ")[1]}
                 </Link>
               </>
             )}
