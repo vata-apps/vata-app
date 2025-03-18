@@ -1,0 +1,50 @@
+---
+description: Rules for using DataTable component and sorting functionality (trigger words: table, sort, grid, list)
+globs: ["src/**/*.tsx"
+alwaysApply: false
+---
+# Table Component Rules
+
+## Mandatory Requirements
+- ALWAYS use DataTable component for ANY tabular data display
+- ALWAYS use useSorting hook for ANY sortable table
+- NO custom table implementations allowed
+- NO direct usage of basic Table component
+
+## DataTable Component Usage
+- Import from "@/components/ui/data-table"
+- Required props:
+  - columns: ColumnDef<TData>[]
+  - data: TData[]
+  - page: number
+  - totalItems: number
+  - itemsPerPage: number
+  - onPageChange: (page: number) => void
+- Optional sorting props:
+  - sorting: SortingState
+  - onSortingChange: (sorting: SortingState) => void
+
+## Sorting Implementation
+- Import useSorting from "@/hooks/useSorting"
+- Define type for sort fields specific to your data
+- Use sortConfig from the hook in API calls
+- Example:
+  ```typescript
+  type SortField = "column1" | "column2";
+  const { sorting, sortConfig, onSortingChange } = useSorting<SortField>({
+    defaultField: "column1"
+  });
+  ```
+
+## Common Patterns
+- For any list or table of data, start with DataTable
+- For any sortable data, add useSorting hook
+- Always implement server-side sorting using sortConfig
+- Always handle pagination using the built-in pagination
+
+## Prohibited Practices
+- Do not create custom table layouts
+- Do not implement manual sorting logic
+- Do not use HTML table elements directly
+- Do not use basic Table component without DataTable wrapper
+- Do not implement client-side sorting 
