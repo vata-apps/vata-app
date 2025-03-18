@@ -1,22 +1,17 @@
 import { fetchIndividuals } from "@/api";
 import { GenderIcon } from "@/components/GenderIcon";
-import { Pagination } from "@/components/Pagination";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Enums, Tables } from "@/database.types";
+import { useSorting } from "@/hooks/useSorting";
+import { SortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
-import { usePagination } from "@/utils/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChangeEvent, useState } from "react";
+import { ColumnDef, SortingState } from "@tanstack/react-table";
+import { useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -24,24 +19,74 @@ export const Route = createFileRoute("/individuals/")({
   component: IndividualsPage,
 });
 
+type Name = Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">;
+
+type Individual = {
+  id: string;
+  gender: Enums<"gender">;
+  names: Name[];
+};
+
+const columns: ColumnDef<Individual>[] = [
+  {
+    accessorKey: "gender",
+    header: "",
+    cell: ({ row }) => (
+      <GenderIcon className="w-4 h-4" gender={row.original.gender} />
+    ),
+    size: 32,
+  },
+  {
+    accessorKey: "names",
+    header: "First Name",
+    cell: ({ row }) => displayName(row.original.names, { part: "first" }),
+    id: "first_name",
+  },
+  {
+    accessorKey: "names",
+    header: "Last Name",
+    cell: ({ row }) => displayName(row.original.names, { part: "last" }),
+    id: "last_name",
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => (
+      <Button variant="secondary" size="sm" asChild>
+        <Link
+          to="/individuals/$individualId"
+          params={{ individualId: row.original.id }}
+        >
+          View
+        </Link>
+      </Button>
+    ),
+    size: 100,
+  },
+];
+
 function IndividualsPage() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
+  const { sorting, sortConfig, onSortingChange } = useSorting<SortField>({
+    defaultField: "last_name",
+  });
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["individuals", page, query],
-    queryFn: () => fetchIndividuals({ page, query }),
+    queryKey: ["individuals", page, query, sortConfig],
+    queryFn: () => fetchIndividuals({ page, query, sort: sortConfig }),
     placeholderData: keepPreviousData,
     enabled: !query || query.length > 2,
   });
 
-  const handleSearch = (value: ChangeEvent<HTMLInputElement>) => {
-    setQuery(value.target.value);
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
     setPage(1);
   };
 
-  const totalPages = data?.total ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
-  const pagination = usePagination(page, totalPages);
+  const handleSortingChange = (updatedSorting: SortingState) => {
+    onSortingChange(updatedSorting);
+    setPage(1);
+  };
 
   return (
     <div className="space-y-8">
@@ -66,45 +111,14 @@ function IndividualsPage() {
 
       {error && <div>Error loading individuals: {error.message}</div>}
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-8" />
-            <TableHead className="w-1/4">First Name</TableHead>
-            <TableHead className="w-1/4">Last Name</TableHead>
-            <TableHead className="text-right" />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data?.data.map((individual) => (
-            <TableRow key={individual.id}>
-              <TableCell>
-                <GenderIcon className="w-4 h-4" gender={individual.gender} />
-              </TableCell>
-              <TableCell>
-                {displayName(individual.names, { part: "first" })}
-              </TableCell>
-              <TableCell>
-                {displayName(individual.names, { part: "last" })}
-              </TableCell>
-              <TableCell className="text-right">
-                <Button variant="secondary" size="sm" asChild>
-                  <Link
-                    to="/individuals/$individualId"
-                    params={{ individualId: individual.id }}
-                  >
-                    View
-                  </Link>
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-
-      <Pagination
-        currentPage={pagination.currentPage}
-        totalPages={pagination.totalPages}
+      <DataTable
+        columns={columns}
+        data={data?.data ?? []}
+        sorting={sorting}
+        onSortingChange={handleSortingChange}
+        page={page}
+        totalItems={data?.total ?? 0}
+        itemsPerPage={ITEMS_PER_PAGE}
         onPageChange={setPage}
       />
     </div>
