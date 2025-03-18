@@ -1,7 +1,6 @@
+import { SortDirection } from "@/types/sort";
 import { SortingState } from "@tanstack/react-table";
 import { useState } from "react";
-
-export type SortDirection = "asc" | "desc";
 
 export interface SortConfig<TField extends string> {
   field: TField;
