@@ -40,6 +40,9 @@ export function DataTable<TData>({
   const table = useReactTable({
     data,
     columns,
+    defaultColumn: {
+      size: undefined,
+    },
     state: {
       sorting: sorting ?? [],
     },
@@ -67,7 +70,11 @@ export function DataTable<TData>({
                 <TableHead
                   key={header.id}
                   className={header.column.id === "actions" ? "text-right" : ""}
-                  style={{ width: header.column.getSize() }}
+                  style={
+                    header.column.columnDef.size
+                      ? { width: header.column.getSize() }
+                      : undefined
+                  }
                   onClick={
                     onSortingChange
                       ? header.column.getToggleSortingHandler()
@@ -104,7 +111,11 @@ export function DataTable<TData>({
                   <TableCell
                     key={cell.id}
                     className={cell.column.id === "actions" ? "text-right" : ""}
-                    style={{ width: cell.column.getSize() }}
+                    style={
+                      cell.column.columnDef.size
+                        ? { width: cell.column.getSize() }
+                        : undefined
+                    }
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

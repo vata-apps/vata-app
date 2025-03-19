@@ -21,6 +21,7 @@ const columns: ColumnDef<Family>[] = [
       const husband = row.original.husband;
       return husband ? <FamilyMember individual={husband} /> : null;
     },
+    size: 250,
   },
   {
     accessorKey: "wife",
@@ -29,6 +30,7 @@ const columns: ColumnDef<Family>[] = [
       const wife = row.original.wife;
       return wife ? <FamilyMember individual={wife} /> : null;
     },
+    size: 250,
   },
   {
     accessorKey: "children",
@@ -55,6 +57,7 @@ const columns: ColumnDef<Family>[] = [
         </Button>
       </div>
     ),
+    size: 120,
   },
 ];
 
