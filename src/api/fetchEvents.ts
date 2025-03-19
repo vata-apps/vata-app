@@ -1,3 +1,4 @@
+import { EventSortField, SortConfig } from "@/types/sort";
 import { supabase } from "../lib/supabase";
 import { getPageRange } from "./getPageRange";
 
@@ -5,14 +6,17 @@ import { getPageRange } from "./getPageRange";
  * Fetches a paginated list of events (both individual and family events) from the database
  * @param params.page - The page number to fetch (1-based)
  * @param params.query - Search query to filter events by description
+ * @param params.sort - Optional sorting configuration
  * @throws When there's an error fetching data from Supabase
  */
 export async function fetchEvents({
   page,
   query,
+  sort,
 }: {
   page: number;
   query: string;
+  sort?: SortConfig<EventSortField>;
 }) {
   const { start, end } = getPageRange(page);
 
@@ -37,7 +41,10 @@ export async function fetchEvents({
     `,
     )
     .ilike("description", `%${query}%`)
-    .order("date", { ascending: false, nullsFirst: false });
+    .order("date", {
+      ascending: sort?.field === "date" ? sort.direction === "asc" : false,
+      nullsFirst: false,
+    });
 
   // Fetch family events
   const familyEventsPromise = supabase
@@ -70,7 +77,10 @@ export async function fetchEvents({
     `,
     )
     .ilike("description", `%${query}%`)
-    .order("date", { ascending: false, nullsFirst: false });
+    .order("date", {
+      ascending: sort?.field === "date" ? sort.direction === "asc" : false,
+      nullsFirst: false,
+    });
 
   const [individualEventsResult, familyEventsResult] = await Promise.all([
     individualEventsPromise,
@@ -92,15 +102,19 @@ export async function fetchEvents({
     })),
   ];
 
-  // Sort by date (most recent first)
-  const sortedEvents = combinedEvents.sort((a, b) => {
-    if (!a.date) return 1;
-    if (!b.date) return -1;
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
+  // Sort combined events if needed
+  if (sort?.field === "date") {
+    combinedEvents.sort((a, b) => {
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return sort.direction === "asc"
+        ? a.date.localeCompare(b.date)
+        : b.date.localeCompare(a.date);
+    });
+  }
 
   // Apply pagination
-  const paginatedEvents = sortedEvents.slice(start, end + 1);
+  const paginatedEvents = combinedEvents.slice(start, end + 1);
 
   return {
     data: paginatedEvents,

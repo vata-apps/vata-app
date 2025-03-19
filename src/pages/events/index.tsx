@@ -1,21 +1,15 @@
 import { fetchEvents } from "@/api";
-import { Pagination } from "@/components/Pagination";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
+import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useSorting } from "@/hooks/useSorting";
+import { EventSortField } from "@/types/sort";
 import { formatDate } from "@/utils/dates";
 import { getEventTitle } from "@/utils/events";
-import { usePagination } from "@/utils/navigation";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ColumnDef, SortingState } from "@tanstack/react-table";
 import { ChangeEvent, useState } from "react";
 
 const ITEMS_PER_PAGE = 10;
@@ -82,10 +76,13 @@ export const Route = createFileRoute("/events/")({
 function EventsPage() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
+  const { sorting, sortConfig, onSortingChange } = useSorting<EventSortField>({
+    defaultField: "date",
+  });
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["events", page, query],
-    queryFn: () => fetchEvents({ page, query }),
+    queryKey: ["events", page, query, sortConfig],
+    queryFn: () => fetchEvents({ page, query, sort: sortConfig }),
     placeholderData: keepPreviousData,
     enabled: !query || query.length > 2,
   });
@@ -95,8 +92,51 @@ function EventsPage() {
     setPage(1);
   };
 
-  const totalPages = data?.total ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
-  const pagination = usePagination(page, totalPages);
+  const handleSortingChange = (updatedSorting: SortingState) => {
+    onSortingChange(updatedSorting);
+    setPage(1);
+  };
+
+  const columns: ColumnDef<Event>[] = [
+    {
+      accessorKey: "date",
+      header: "Date",
+      cell: ({ row }) => formatDate(row.original.date),
+      size: 180,
+      enableSorting: true,
+    },
+    {
+      accessorKey: "event",
+      header: "Event",
+      cell: ({ row }) => getEventTitle(row.original),
+      enableSorting: false,
+    },
+    {
+      accessorKey: "place",
+      header: "Place",
+      cell: ({ row }) => row.original.places?.name || "Unknown",
+      size: 400,
+      enableSorting: false,
+    },
+    {
+      id: "actions",
+      cell: ({ row }) => (
+        <div className="text-right">
+          <Button variant="secondary" size="sm" asChild>
+            <Link
+              to="/events/$eventId"
+              params={{ eventId: row.original.id }}
+              search={{ eventType: row.original.eventType }}
+            >
+              View
+            </Link>
+          </Button>
+        </div>
+      ),
+      size: 120,
+      enableSorting: false,
+    },
+  ];
 
   return (
     <div className="space-y-8">
@@ -121,46 +161,18 @@ function EventsPage() {
 
       {error && <div>Error loading events: {error.message}</div>}
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-1/4">Date</TableHead>
-            <TableHead className="w-1/2">Event</TableHead>
-            <TableHead className="w-1/4">Place</TableHead>
-            <TableHead className="text-right" />
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data?.data.map((event) => {
-            // Cast the event to our Event type
-            const typedEvent = event as unknown as Event;
-            return (
-              <TableRow key={`${typedEvent.eventType}-${typedEvent.id}`}>
-                <TableCell>{formatDate(typedEvent.date)}</TableCell>
-                <TableCell>{getEventTitle(typedEvent)}</TableCell>
-                <TableCell>{typedEvent.places?.name || "Unknown"}</TableCell>
-                <TableCell className="text-right">
-                  <Button variant="secondary" size="sm" asChild>
-                    <Link
-                      to="/events/$eventId"
-                      params={{ eventId: typedEvent.id }}
-                      search={{ eventType: typedEvent.eventType }}
-                    >
-                      View
-                    </Link>
-                  </Button>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-
-      <Pagination
-        currentPage={pagination.currentPage}
-        totalPages={pagination.totalPages}
-        onPageChange={setPage}
-      />
+      <div className="rounded-md border">
+        <DataTable
+          columns={columns}
+          data={(data?.data || []) as unknown as Event[]}
+          sorting={sorting}
+          onSortingChange={handleSortingChange}
+          page={page}
+          totalItems={data?.total || 0}
+          itemsPerPage={ITEMS_PER_PAGE}
+          onPageChange={setPage}
+        />
+      </div>
     </div>
   );
 }
