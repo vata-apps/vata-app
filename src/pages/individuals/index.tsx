@@ -6,7 +6,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Enums, Tables } from "@/database.types";
 import { useSorting } from "@/hooks/useSorting";
-import { SortField } from "@/types/sort";
+import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -67,9 +67,10 @@ const columns: ColumnDef<Individual>[] = [
 function IndividualsPage() {
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState("");
-  const { sorting, sortConfig, onSortingChange } = useSorting<SortField>({
-    defaultField: "last_name",
-  });
+  const { sorting, sortConfig, onSortingChange } =
+    useSorting<IndividualSortField>({
+      defaultField: "last_name",
+    });
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["individuals", page, query, sortConfig],

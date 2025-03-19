@@ -1,3 +1,4 @@
+import { PlaceSortField, SortConfig } from "@/types/sort";
 import { PostgrestResponse } from "@supabase/supabase-js";
 import { Database } from "../database.types";
 import { supabase } from "../lib/supabase";
@@ -20,14 +21,17 @@ type PlacesResponse = PostgrestResponse<PlaceResponse>;
  * Fetches a paginated list of places from the database
  * @param params.page - The page number to fetch (1-based)
  * @param params.query - Search query to filter places by name
+ * @param params.sortConfig - Optional sorting configuration
  * @throws When there's an error fetching data from Supabase
  */
 export async function fetchPlaces({
   page,
   query,
+  sortConfig,
 }: {
   page: number;
   query: string;
+  sortConfig?: SortConfig<PlaceSortField>;
 }): Promise<{ data: PlaceWithType[]; total: number }> {
   const { start, end } = getPageRange(page);
 
@@ -41,6 +45,11 @@ export async function fetchPlaces({
   if (query) {
     queryBuilder.ilike("name", `%${query}%`);
   }
+
+  // Apply sorting if provided
+  queryBuilder.order("name", {
+    ascending: !sortConfig || sortConfig.direction === "asc",
+  });
 
   const response = (await queryBuilder.range(start, end)) as PlacesResponse;
 
