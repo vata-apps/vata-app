@@ -161,18 +161,16 @@ function EventsPage() {
 
       {error && <div>Error loading events: {error.message}</div>}
 
-      <div className="rounded-md border">
-        <DataTable
-          columns={columns}
-          data={(data?.data || []) as unknown as Event[]}
-          sorting={sorting}
-          onSortingChange={handleSortingChange}
-          page={page}
-          totalItems={data?.total || 0}
-          itemsPerPage={ITEMS_PER_PAGE}
-          onPageChange={setPage}
-        />
-      </div>
+      <DataTable
+        columns={columns}
+        data={(data?.data || []) as unknown as Event[]}
+        sorting={sorting}
+        onSortingChange={handleSortingChange}
+        page={page}
+        totalItems={data?.total || 0}
+        itemsPerPage={ITEMS_PER_PAGE}
+        onPageChange={setPage}
+      />
     </div>
   );
 }
