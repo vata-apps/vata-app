@@ -1,6 +1,6 @@
 ---
 description: Rules for using DataTable component and sorting functionality (trigger words: table, sort, grid, list)
-globs: ["src/**/*.tsx"
+globs: *.tsx
 alwaysApply: false
 ---
 # Table Component Rules
