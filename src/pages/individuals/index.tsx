@@ -41,12 +41,14 @@ const columns: ColumnDef<Individual>[] = [
     header: "First Name",
     cell: ({ row }) => displayName(row.original.names, { part: "first" }),
     id: "first_name",
+    size: 250,
   },
   {
     accessorKey: "names",
     header: "Last Name",
     cell: ({ row }) => displayName(row.original.names, { part: "last" }),
     id: "last_name",
+    size: 250,
   },
   {
     id: "actions",
