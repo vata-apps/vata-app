@@ -1,20 +1,6 @@
-import { Enums, Tables } from "@/database.types";
 import { SortConfig } from "@/types/sort";
 import { supabase } from "../lib/supabase";
 import { getPageRange } from "./getPageRange";
-
-type Name = Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">;
-
-type NameWithIndividual = {
-  first_name: string;
-  last_name: string;
-  is_primary: boolean;
-  individuals: {
-    id: string;
-    gender: Enums<"gender">;
-    names: Name[];
-  };
-};
 
 /**
  * Helper function to fetch individuals by searching their names
@@ -35,47 +21,66 @@ export async function fetchIndividualsByName({
 }) {
   const { start, end } = getPageRange(page);
 
-  // Get sorted names with their individual data
-  const { count, data, error } = await supabase
+  // First get matching individual IDs
+  const { data: matchingIds, error: matchingError } = await supabase
     .from("names")
-    .select(
-      `
-      first_name,
-      last_name,
-      is_primary,
-      individuals!inner (
-        id,
-        gender,
-        names (
-          first_name,
-          last_name,
-          is_primary
-        )
-      )
-    `,
-      { count: "exact" },
-    )
-    .eq("is_primary", true)
+    .select("individual_id")
     .or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%`)
-    .order(sort?.field ?? "last_name", {
-      ascending: sort ? sort.direction === "asc" : true,
-    })
-    .range(start, end);
+    .limit(1000); // Set a reasonable limit
 
-  if (error) throw error;
+  if (matchingError) throw matchingError;
 
-  // If no individuals found, return empty result
-  if (data.length === 0) {
+  if (!matchingIds || matchingIds.length === 0) {
     return { data: [], total: 0 };
   }
 
-  // Transform the data to match the expected format
-  const transformedData = (data as unknown as NameWithIndividual[]).map(
-    (item) => ({
-      ...item.individuals,
-      names: item.individuals.names,
-    }),
-  );
+  // Get unique individual IDs
+  const uniqueIds = [...new Set(matchingIds.map((item) => item.individual_id))];
 
-  return { data: transformedData, total: count };
+  // Get primary names first
+  const { data: primaryNames, error: primaryError } = await supabase
+    .from("names")
+    .select("individual_id, first_name, last_name")
+    .eq("is_primary", true)
+    .in("individual_id", uniqueIds)
+    .order(sort?.field ?? "last_name", {
+      ascending: sort ? sort.direction === "asc" : true,
+    });
+
+  if (primaryError) throw primaryError;
+
+  if (!primaryNames || primaryNames.length === 0) {
+    return { data: [], total: 0 };
+  }
+
+  // Sort the IDs based on primary names
+  const sortedIds = primaryNames.map((name) => name.individual_id);
+
+  // Get the individuals with all their names in the sorted order
+  const { data, error } = await supabase
+    .from("individuals")
+    .select(
+      `
+      id,
+      gender,
+      names (
+        first_name,
+        last_name,
+        is_primary
+      )
+    `,
+    )
+    .in("id", sortedIds);
+
+  if (error) throw error;
+
+  // Ensure the data is in the same order as sortedIds
+  const sortedData = sortedIds
+    .map((id) => data?.find((individual) => individual.id === id))
+    .filter(Boolean);
+
+  return {
+    data: sortedData.slice(start, end),
+    total: uniqueIds.length,
+  };
 }

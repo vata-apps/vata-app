@@ -27,6 +27,11 @@ type Individual = {
   names: Name[];
 };
 
+type ApiResponse = {
+  data: Individual[];
+  total: number;
+};
+
 const columns: ColumnDef<Individual>[] = [
   {
     accessorKey: "gender",
@@ -76,7 +81,14 @@ function IndividualsPage() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["individuals", page, query, sortConfig],
-    queryFn: () => fetchIndividuals({ page, query, sort: sortConfig }),
+    queryFn: async () => {
+      const response = await fetchIndividuals({
+        page,
+        query,
+        sort: sortConfig,
+      });
+      return response as ApiResponse;
+    },
     placeholderData: keepPreviousData,
     enabled: !query || query.length > 2,
   });
