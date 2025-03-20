@@ -1,19 +1,19 @@
 import { fetchPlaces, PlaceWithType } from "@/api";
+import { TableData } from "@/components/table-data";
 import { H2 } from "@/components/typography/h2";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
-import { Input } from "@/components/ui/input";
-import { useSorting } from "@/hooks/useSorting";
 import { PlaceSortField } from "@/types/sort";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChangeEvent, useState } from "react";
 
-const ITEMS_PER_PAGE = 10;
+type TableState = {
+  globalFilter: string;
+  sorting: { id: string; desc: boolean } | null;
+  pagination: { pageIndex: number; pageSize: number };
+};
 
-const columns: ColumnDef<PlaceWithType>[] = [
+const columns: ColumnDef<PlaceWithType, unknown>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -59,58 +59,37 @@ export const Route = createFileRoute("/places/")({
 });
 
 function PlacesPage() {
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
-  const { sorting, sortConfig, onSortingChange } = useSorting<PlaceSortField>({
-    defaultField: "name",
-  });
+  const fetchTableData = async (state: TableState) => {
+    const response = await fetchPlaces({
+      page: state.pagination.pageIndex + 1,
+      query: state.globalFilter,
+      sortConfig: state.sorting
+        ? {
+            field: state.sorting.id as PlaceSortField,
+            direction: state.sorting.desc ? "desc" : "asc",
+          }
+        : { field: "name", direction: "asc" },
+    });
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["places", page, query, sortConfig],
-    queryFn: () =>
-      fetchPlaces({ page, query, sortConfig: sortConfig || undefined }),
-    placeholderData: keepPreviousData,
-    enabled: !query || query.length > 2,
-  });
-
-  const handleSearch = (value: ChangeEvent<HTMLInputElement>) => {
-    setQuery(value.target.value);
-    setPage(1);
+    return {
+      data: response.data,
+      totalCount: response.total ?? 0,
+    };
   };
 
   return (
     <div className="space-y-8">
       <H2>Places</H2>
 
-      <div className="flex items-center gap-2">
-        <Input
-          placeholder="Search places"
-          value={query}
-          onChange={handleSearch}
-          className="w-full max-w-sm"
-        />
-
-        {query && (
-          <Button variant="secondary" onClick={() => setQuery("")}>
-            Clear
-          </Button>
-        )}
-      </div>
-
-      {isLoading && <div>Loading places...</div>}
-
-      {error && <div>Error loading places: {error.message}</div>}
-
-      <DataTable
+      <TableData<PlaceWithType>
+        queryKey={["places"]}
+        fetchData={fetchTableData}
         columns={columns}
-        data={data?.data || []}
-        page={page}
-        totalItems={data?.total || 0}
-        itemsPerPage={ITEMS_PER_PAGE}
-        onPageChange={setPage}
-        sorting={sorting}
-        onSortingChange={onSortingChange}
-      />
+        defaultSorting={{ id: "name", desc: false }}
+      >
+        <TableData.Search />
+        <TableData.Table />
+      </TableData>
     </div>
   );
 }
