@@ -22,8 +22,8 @@ const getHeaderContentClassName = (columnId: string) => {
 };
 
 const getCellContentClassName = (columnId: string) => {
-  if (columnId === "actions") return "flex items-center justify-end gap-2 py-4";
-  return "py-4";
+  if (columnId === "actions") return "flex items-center justify-end gap-2";
+  return "";
 };
 
 export function Table<TData extends Record<string, unknown>>() {
