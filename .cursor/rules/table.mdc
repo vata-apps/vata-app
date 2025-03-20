@@ -3,48 +3,62 @@ description: Rules for using DataTable component and sorting functionality (trig
 globs: *.tsx
 alwaysApply: false
 ---
-# Table Component Rules
+# Rules for using TableData component
 
-## Mandatory Requirements
-- ALWAYS use DataTable component for ANY tabular data display
-- ALWAYS use useSorting hook for ANY sortable table
-- NO custom table implementations allowed
-- NO direct usage of basic Table component
+## When to use TableData
+- Use TableData for displaying any list of data that needs:
+  - Server-side pagination
+  - Server-side sorting
+  - Search/filtering
+  - Consistent styling
 
-## DataTable Component Usage
-- Import from "@/components/ui/data-table"
-- Required props:
-  - columns: ColumnDef<TData>[]
-  - data: TData[]
-  - page: number
-  - totalItems: number
-  - itemsPerPage: number
-  - onPageChange: (page: number) => void
-- Optional sorting props:
-  - sorting: SortingState
-  - onSortingChange: (sorting: SortingState) => void
-
-## Sorting Implementation
-- Import useSorting from "@/hooks/useSorting"
-- Define type for sort fields specific to your data
-- Use sortConfig from the hook in API calls
-- Example:
-  ```typescript
-  type SortField = "column1" | "column2";
-  const { sorting, sortConfig, onSortingChange } = useSorting<SortField>({
-    defaultField: "column1"
-  });
+## Component Structure
+- Always import TableData from "@/components/table-data"
+- Use the component structure with children components:
+  ```tsx
+  <TableData>
+    <TableData.Search /> {/* Optional: Include if search is needed */}
+    <TableData.Table />
+  </TableData>
   ```
 
-## Common Patterns
-- For any list or table of data, start with DataTable
-- For any sortable data, add useSorting hook
-- Always implement server-side sorting using sortConfig
-- Always handle pagination using the built-in pagination
+## Required Props
+1. `queryKey`: Array of strings/values for React Query cache key
+2. `fetchData`: Async function that handles data fetching with the following parameters:
+   ```typescript
+   {
+     globalFilter: string;
+     sorting: { id: string; desc: boolean } | null;
+     pagination: { pageIndex: number; pageSize: number };
+   }
+   ```
+3. `columns`: Array of column definitions using @tanstack/react-table ColumnDef
+4. `defaultSorting`: Optional. Define default sorting with { id: string, desc: boolean }
 
-## Prohibited Practices
-- Do not create custom table layouts
-- Do not implement manual sorting logic
-- Do not use HTML table elements directly
-- Do not use basic Table component without DataTable wrapper
-- Do not implement client-side sorting 
+## Column Definition Rules
+- Define columns as ColumnDef array with proper typing
+- Each column should have:
+  - `accessorKey`: The key to access data
+  - `header`: Column header text
+  - `size`: Optional width (number)
+  - `cell`: Optional custom cell renderer
+  - `enableSorting`: Optional boolean to disable sorting
+
+## Data Fetching Implementation
+- Must return an object with:
+  ```typescript
+  {
+    data: T[];
+    totalCount: number;
+  }
+  ```
+- Handle sorting using the sorting parameter
+- Implement pagination using range
+- Handle search/filter if globalFilter is provided
+
+## Best Practices
+- One table per view
+- Keep column definitions in a separate file when they become complex
+- Use semantic column names
+- Handle loading and error states (automatically handled by the component)
+- Always type your data using proper TypeScript interfaces/types
