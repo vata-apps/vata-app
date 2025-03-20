@@ -1,19 +1,13 @@
 import { fetchIndividuals } from "@/api";
 import { GenderIcon } from "@/components/GenderIcon";
+import { TableData } from "@/components/table-data";
 import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
-import { Input } from "@/components/ui/input";
 import { Enums, Tables } from "@/database.types";
-import { useSorting } from "@/hooks/useSorting";
 import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ColumnDef, SortingState } from "@tanstack/react-table";
-import { useState } from "react";
-
-const ITEMS_PER_PAGE = 10;
+import { ColumnDef } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/individuals/")({
   component: IndividualsPage,
@@ -27,12 +21,13 @@ type Individual = {
   names: Name[];
 };
 
-type ApiResponse = {
-  data: Individual[];
-  total: number;
+type TableState = {
+  globalFilter: string;
+  sorting: { id: string; desc: boolean } | null;
+  pagination: { pageIndex: number; pageSize: number };
 };
 
-const columns: ColumnDef<Individual>[] = [
+const columns: ColumnDef<Individual, unknown>[] = [
   {
     accessorKey: "gender",
     header: "",
@@ -40,6 +35,7 @@ const columns: ColumnDef<Individual>[] = [
       <GenderIcon className="w-4 h-4" gender={row.original.gender} />
     ),
     size: 32,
+    enableSorting: false,
   },
   {
     accessorKey: "names",
@@ -68,74 +64,42 @@ const columns: ColumnDef<Individual>[] = [
       </Button>
     ),
     size: 100,
+    enableSorting: false,
   },
 ];
 
 function IndividualsPage() {
-  const [page, setPage] = useState(1);
-  const [query, setQuery] = useState("");
-  const { sorting, sortConfig, onSortingChange } =
-    useSorting<IndividualSortField>({
-      defaultField: "last_name",
+  const fetchTableData = async (state: TableState) => {
+    const response = await fetchIndividuals({
+      page: state.pagination.pageIndex + 1,
+      query: state.globalFilter,
+      sort: state.sorting
+        ? {
+            field: state.sorting.id as IndividualSortField,
+            direction: state.sorting.desc ? "desc" : "asc",
+          }
+        : { field: "last_name", direction: "asc" },
     });
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["individuals", page, query, sortConfig],
-    queryFn: async () => {
-      const response = await fetchIndividuals({
-        page,
-        query,
-        sort: sortConfig,
-      });
-      return response as ApiResponse;
-    },
-    placeholderData: keepPreviousData,
-    enabled: !query || query.length > 2,
-  });
-
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
-    setPage(1);
-  };
-
-  const handleSortingChange = (updatedSorting: SortingState) => {
-    onSortingChange(updatedSorting);
-    setPage(1);
+    return {
+      data: response.data as Individual[],
+      totalCount: response.total ?? 0,
+    };
   };
 
   return (
     <div className="space-y-8">
       <H2>Individuals</H2>
 
-      <div className="flex items-center gap-2">
-        <Input
-          placeholder="Search individuals"
-          value={query}
-          onChange={handleSearch}
-          className="w-full max-w-sm"
-        />
-
-        {query && (
-          <Button variant="secondary" onClick={() => setQuery("")}>
-            Clear
-          </Button>
-        )}
-      </div>
-
-      {isLoading && <div>Loading individuals...</div>}
-
-      {error && <div>Error loading individuals: {error.message}</div>}
-
-      <DataTable
+      <TableData<Individual>
+        queryKey={["individuals"]}
+        fetchData={fetchTableData}
         columns={columns}
-        data={data?.data ?? []}
-        sorting={sorting}
-        onSortingChange={handleSortingChange}
-        page={page}
-        totalItems={data?.total ?? 0}
-        itemsPerPage={ITEMS_PER_PAGE}
-        onPageChange={setPage}
-      />
+        defaultSorting={{ id: "last_name", desc: false }}
+      >
+        <TableData.Search />
+        <TableData.Table />
+      </TableData>
     </div>
   );
 }
