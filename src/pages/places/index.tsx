@@ -1,9 +1,9 @@
 import { fetchPlaces, PlaceWithType } from "@/api";
 import { TableData } from "@/components/table-data";
-import { H2 } from "@/components/typography/h2";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PlaceSortField } from "@/types/sort";
+import { Stack, Title } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -78,8 +78,8 @@ function PlacesPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <H2>Places</H2>
+    <Stack>
+      <Title>Places</Title>
 
       <TableData<PlaceWithType>
         queryKey={["places"]}
@@ -90,7 +90,7 @@ function PlacesPage() {
         <TableData.Search />
         <TableData.Table />
       </TableData>
-    </div>
+    </Stack>
   );
 }
 

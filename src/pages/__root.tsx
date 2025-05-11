@@ -67,13 +67,13 @@ function RootComponent() {
             component={Link}
             label="Places"
             style={{ borderRadius: "var(--mantine-radius-md)" }}
-            to="/events"
+            to="/places"
           />
           <NavLink
             component={Link}
             label="Events"
             style={{ borderRadius: "var(--mantine-radius-md)" }}
-            to="/places"
+            to="/events"
           />
         </AppShell.Navbar>
 

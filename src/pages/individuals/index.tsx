@@ -1,11 +1,11 @@
 import { fetchIndividuals } from "@/api";
 import { GenderIcon } from "@/components/GenderIcon";
 import { TableData } from "@/components/table-data";
-import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
 import { Enums, Tables } from "@/database.types";
 import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
+import { Stack, Title } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -88,8 +88,8 @@ function IndividualsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <H2>Individuals</H2>
+    <Stack>
+      <Title>Individuals</Title>
 
       <TableData<Individual>
         queryKey={["individuals"]}
@@ -100,7 +100,7 @@ function IndividualsPage() {
         <TableData.Search />
         <TableData.Table />
       </TableData>
-    </div>
+    </Stack>
   );
 }
 

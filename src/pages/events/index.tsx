@@ -1,10 +1,10 @@
 import { fetchEvents } from "@/api";
 import { TableData } from "@/components/table-data";
-import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
 import { EventSortField } from "@/types/sort";
 import { formatDate } from "@/utils/dates";
 import { getEventTitle } from "@/utils/events";
+import { Stack, Title } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -163,8 +163,8 @@ function EventsPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <H2>Events</H2>
+    <Stack>
+      <Title>Events</Title>
 
       <TableData<Event>
         queryKey={["events"]}
@@ -175,7 +175,7 @@ function EventsPage() {
         <TableData.Search />
         <TableData.Table />
       </TableData>
-    </div>
+    </Stack>
   );
 }
 

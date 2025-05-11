@@ -1,8 +1,8 @@
 import { fetchFamilies } from "@/api";
 import { FamilyMember } from "@/components/individual/FamilyMember";
 import { TableData } from "@/components/table-data";
-import { H2 } from "@/components/typography/h2";
 import { Button } from "@/components/ui/button";
+import { Stack, Title } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -81,8 +81,8 @@ function FamiliesPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <H2>Families</H2>
+    <Stack>
+      <Title>Families</Title>
 
       <TableData<Family>
         queryKey={["families"]}
@@ -92,7 +92,7 @@ function FamiliesPage() {
         <TableData.Search />
         <TableData.Table />
       </TableData>
-    </div>
+    </Stack>
   );
 }
 
