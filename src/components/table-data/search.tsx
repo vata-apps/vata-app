@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
+import { ActionIcon, TextInput } from "@mantine/core";
+import { Search as SearchIcon, X } from "lucide-react";
+import { useRef } from "react";
 import { useTableData } from "./use-table-data";
 
 interface SearchProps {
@@ -10,25 +10,37 @@ interface SearchProps {
 export function Search({ placeholder = "Search..." }: SearchProps) {
   const { table } = useTableData();
   const value = table.getState().globalFilter ?? "";
+  const ref = useRef<HTMLInputElement>(null);
+
+  const handleClear = () => {
+    table.setGlobalFilter("");
+    ref.current?.focus();
+  };
 
   return (
-    <div className="relative max-w-sm mb-4">
-      <Input
-        type="text"
-        value={value}
-        onChange={(e) => table.setGlobalFilter(e.target.value)}
-        placeholder={placeholder}
-      />
-      {value && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
-          onClick={() => table.setGlobalFilter("")}
-        >
-          <X className="h-4 w-4" />
-        </Button>
-      )}
-    </div>
+    <TextInput
+      ref={ref}
+      radius="xl"
+      size="md"
+      maw="300px"
+      placeholder={placeholder}
+      rightSectionWidth={42}
+      leftSection={<SearchIcon size={18} />}
+      rightSection={
+        value && (
+          <ActionIcon
+            color="gray"
+            onClick={handleClear}
+            radius="xl"
+            size={32}
+            variant="subtle"
+          >
+            <X size={18} />
+          </ActionIcon>
+        )
+      }
+      value={value}
+      onChange={(e) => table.setGlobalFilter(e.target.value)}
+    />
   );
 }
