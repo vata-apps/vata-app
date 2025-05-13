@@ -1,9 +1,9 @@
 import { fetchPlaces, PlaceWithType } from "@/api";
+import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { PlaceSortField } from "@/types/sort";
-import { Stack, Title } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -42,7 +42,7 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
     id: "actions",
     cell: ({ row }) => (
       <div className="text-right">
-        <Button variant="secondary" size="sm" asChild>
+        <Button variant="secondary" size="sm">
           <Link to="/places/$placeId" params={{ placeId: row.original.id }}>
             View
           </Link>
@@ -79,7 +79,7 @@ function PlacesPage() {
 
   return (
     <Stack>
-      <Title>Places</Title>
+      <PageHeader addTo="/places/new" title="Places" />
 
       <TableData<PlaceWithType>
         queryKey={["places"]}

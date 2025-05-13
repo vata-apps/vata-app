@@ -1,11 +1,11 @@
 import { fetchIndividuals } from "@/api";
 import { GenderIcon } from "@/components/GenderIcon";
+import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
-import { Button } from "@/components/ui/button";
 import { Enums, Tables } from "@/database.types";
 import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
-import { Stack, Title } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -54,7 +54,7 @@ const columns: ColumnDef<Individual, unknown>[] = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <Button variant="secondary" size="sm" asChild>
+      <Button variant="light" size="sm">
         <Link
           to="/individuals/$individualId"
           params={{ individualId: row.original.id }}
@@ -89,7 +89,7 @@ function IndividualsPage() {
 
   return (
     <Stack>
-      <Title>Individuals</Title>
+      <PageHeader addTo="/individuals/new" title="Individuals" />
 
       <TableData<Individual>
         queryKey={["individuals"]}

@@ -1,10 +1,10 @@
 import { fetchEvents } from "@/api";
+import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
-import { Button } from "@/components/ui/button";
 import { EventSortField } from "@/types/sort";
 import { formatDate } from "@/utils/dates";
 import { getEventTitle } from "@/utils/events";
-import { Stack, Title } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -104,7 +104,7 @@ const columns: ColumnDef<Event, unknown>[] = [
     id: "actions",
     cell: ({ row }) => (
       <div className="text-right">
-        <Button variant="secondary" size="sm" asChild>
+        <Button variant="secondary" size="sm">
           <Link
             to="/events/$eventId"
             params={{ eventId: row.original.id }}
@@ -164,7 +164,7 @@ function EventsPage() {
 
   return (
     <Stack>
-      <Title>Events</Title>
+      <PageHeader addTo="/events/new" title="Events" />
 
       <TableData<Event>
         queryKey={["events"]}

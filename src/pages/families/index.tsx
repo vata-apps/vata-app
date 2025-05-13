@@ -1,8 +1,8 @@
 import { fetchFamilies } from "@/api";
 import { FamilyMember } from "@/components/individual/FamilyMember";
+import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
-import { Button } from "@/components/ui/button";
-import { Stack, Title } from "@mantine/core";
+import { Button, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -51,7 +51,7 @@ const columns: ColumnDef<Family, unknown>[] = [
     id: "actions",
     cell: ({ row }) => (
       <div className="text-right">
-        <Button variant="secondary" size="sm" asChild>
+        <Button variant="secondary" size="sm">
           <Link to="/families/$familyId" params={{ familyId: row.original.id }}>
             View
           </Link>
@@ -82,7 +82,7 @@ function FamiliesPage() {
 
   return (
     <Stack>
-      <Title>Families</Title>
+      <PageHeader addTo="/families/new" title="Families" />
 
       <TableData<Family>
         queryKey={["families"]}
