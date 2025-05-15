@@ -89,7 +89,7 @@ function IndividualsPage() {
 
   return (
     <Stack>
-      <PageHeader addTo="/individuals/new" title="Individuals" />
+      <PageHeader title="Individuals" />
 
       <TableData<Individual>
         queryKey={["individuals"]}
@@ -97,7 +97,7 @@ function IndividualsPage() {
         columns={columns}
         defaultSorting={{ id: "last_name", desc: false }}
       >
-        <TableData.Search />
+        <TableData.Filters createPagePath="/individuals/new" />
         <TableData.Table />
       </TableData>
     </Stack>

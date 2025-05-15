@@ -79,7 +79,7 @@ function PlacesPage() {
 
   return (
     <Stack>
-      <PageHeader addTo="/places/new" title="Places" />
+      <PageHeader title="Places" />
 
       <TableData<PlaceWithType>
         queryKey={["places"]}
@@ -87,7 +87,7 @@ function PlacesPage() {
         columns={columns}
         defaultSorting={{ id: "name", desc: false }}
       >
-        <TableData.Search />
+        <TableData.Filters createPagePath="/places/new" />
         <TableData.Table />
       </TableData>
     </Stack>

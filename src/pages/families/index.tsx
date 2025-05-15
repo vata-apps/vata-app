@@ -82,14 +82,14 @@ function FamiliesPage() {
 
   return (
     <Stack>
-      <PageHeader addTo="/families/new" title="Families" />
+      <PageHeader title="Families" />
 
       <TableData<Family>
         queryKey={["families"]}
         fetchData={fetchTableData}
         columns={columns}
       >
-        <TableData.Search />
+        <TableData.Filters createPagePath="/families/new" />
         <TableData.Table />
       </TableData>
     </Stack>

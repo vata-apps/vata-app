@@ -164,7 +164,7 @@ function EventsPage() {
 
   return (
     <Stack>
-      <PageHeader addTo="/events/new" title="Events" />
+      <PageHeader title="Events" />
 
       <TableData<Event>
         queryKey={["events"]}
@@ -172,7 +172,7 @@ function EventsPage() {
         columns={columns}
         defaultSorting={{ id: "date", desc: false }}
       >
-        <TableData.Search />
+        <TableData.Filters createPagePath="/events/new" />
         <TableData.Table />
       </TableData>
     </Stack>
