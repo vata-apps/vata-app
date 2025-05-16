@@ -25,9 +25,10 @@ export function Filters({
   return (
     <Group gap="md">
       <Button
+        w={{ base: "100%", xs: "auto" }}
         component={Link}
-        leftSection={<PlusIcon width={24} />}
-        size="md"
+        leftSection={<PlusIcon width={16} />}
+        size="sm"
         to={createPagePath}
         variant="primary"
         radius="xl"
@@ -38,8 +39,9 @@ export function Filters({
       <TextInput
         ref={ref}
         radius="xl"
-        size="md"
-        maw="300px"
+        size="sm"
+        w="100%"
+        maw={{ base: "100%", xs: "320px" }}
         placeholder={placeholder}
         rightSectionWidth={42}
         leftSection={<SearchIcon size={18} />}

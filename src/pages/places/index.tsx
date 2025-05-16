@@ -42,10 +42,13 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
     id: "actions",
     cell: ({ row }) => (
       <div className="text-right">
-        <Button variant="secondary" size="sm">
-          <Link to="/places/$placeId" params={{ placeId: row.original.id }}>
-            View
-          </Link>
+        <Button
+          component={Link}
+          size="sm"
+          to={`/places/${row.original.id}`}
+          variant="default"
+        >
+          View
         </Button>
       </div>
     ),

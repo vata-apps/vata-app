@@ -10,7 +10,12 @@ import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import { TableDataContext } from "./context";
-import { TableDataContextType, TableDataProps, TableState } from "./types";
+import {
+  TableDataContextType,
+  TableDataProps,
+  TableMeta,
+  TableState,
+} from "./types";
 
 export function TableData<TData extends Record<string, unknown>>({
   queryKey,
@@ -57,6 +62,9 @@ export function TableData<TData extends Record<string, unknown>>({
     data: queryResponse?.data ?? [],
     columns,
     pageCount: queryResponse ? Math.ceil(queryResponse.totalCount / 10) : 0,
+    meta: {
+      totalCount: queryResponse?.totalCount,
+    } as TableMeta,
 
     manualPagination: true,
     manualSorting: true,

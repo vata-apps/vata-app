@@ -1,33 +1,21 @@
-import { Pagination } from "@/components/Pagination";
 import {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Table as UITable,
-} from "@/components/ui/table";
+  AppShell,
+  Group,
+  Table as MantineTable,
+  Pagination,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
 import { flexRender } from "@tanstack/react-table";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { TableMeta } from "./types";
 import { useTableData } from "./use-table-data";
 
-const COLUMNS_WITHOUT_PADDING = ["actions", "buttons"];
-
-const hasNoPadding = (columnId: string) =>
-  COLUMNS_WITHOUT_PADDING.includes(columnId);
-
-const getHeaderContentClassName = (columnId: string) => {
-  if (columnId === "actions") return "flex items-center justify-end";
-  return "flex items-center gap-2";
-};
-
-const getCellContentClassName = (columnId: string) => {
-  if (columnId === "actions") return "flex items-center justify-end gap-2";
-  return "";
-};
+const { Thead, Tr, Th, Tbody, Td } = MantineTable;
 
 export function Table<TData extends Record<string, unknown>>() {
   const { table, isLoading } = useTableData<TData>();
+  const mantine = useMantineTheme();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -37,88 +25,109 @@ export function Table<TData extends Record<string, unknown>>() {
   const totalPages = table.getPageCount();
 
   return (
-    <div className="space-y-4">
-      <UITable>
-        <TableHeader>
+    <>
+      <MantineTable>
+        <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <Tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 const sortHandler = header.column.getToggleSortingHandler();
+
+                const width = (() => {
+                  if (!header.column.columnDef.size) return undefined;
+                  return header.column.getSize();
+                })();
+
+                const cursor = (() => {
+                  if (!header.column.getCanSort()) return "default";
+                  return "pointer";
+                })();
+
                 return (
-                  <TableHead
+                  <Th
                     key={header.id}
                     onClick={sortHandler}
-                    className={[
-                      hasNoPadding(header.column.id) ? "p-0" : "",
-                      header.column.id === "actions" ? "text-right" : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                    style={{
-                      cursor: header.column.getCanSort()
-                        ? "pointer"
-                        : "default",
-                      width: header.column.columnDef.size
-                        ? header.column.getSize()
-                        : undefined,
-                    }}
+                    ta={header.column.id === "actions" ? "right" : "left"}
+                    style={{ cursor, width }}
                   >
-                    {header.isPlaceholder ? null : (
-                      <div
-                        className={getHeaderContentClassName(header.column.id)}
-                      >
+                    {!header.isPlaceholder && (
+                      <Group gap="xs" align="center">
                         {flexRender(
                           header.column.columnDef.header,
                           header.getContext(),
                         )}
                         {header.column.getIsSorted() && (
-                          <div className="text-muted-foreground">
+                          <>
                             {header.column.getIsSorted() === "asc" && (
-                              <ChevronUp className="h-4 w-4" />
+                              <ChevronUp
+                                color={mantine.colors.gray[4]}
+                                size={16}
+                              />
                             )}
                             {header.column.getIsSorted() === "desc" && (
-                              <ChevronDown className="h-4 w-4" />
+                              <ChevronDown
+                                color={mantine.colors.gray[4]}
+                                size={16}
+                              />
                             )}
-                          </div>
+                          </>
                         )}
-                      </div>
+                      </Group>
                     )}
-                  </TableHead>
+                  </Th>
                 );
               })}
-            </TableRow>
+            </Tr>
           ))}
-        </TableHeader>
+        </Thead>
 
-        <TableBody>
+        <Tbody>
           {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell
-                  key={cell.id}
-                  style={{
-                    width: cell.column.columnDef.size
-                      ? cell.column.getSize()
-                      : undefined,
-                  }}
-                >
-                  <div className={getCellContentClassName(cell.column.id)}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </div>
-                </TableCell>
-              ))}
-            </TableRow>
+            <Tr key={row.id}>
+              {row.getVisibleCells().map((cell) => {
+                return (
+                  <Td key={cell.id}>
+                    <Group
+                      gap="xs"
+                      justify={
+                        cell.column.id === "actions" ? "flex-end" : "flex-start"
+                      }
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </Group>
+                  </Td>
+                );
+              })}
+            </Tr>
           ))}
-        </TableBody>
-      </UITable>
+        </Tbody>
+      </MantineTable>
 
-      <div className="mt-4">
+      <AppShell.Footer
+        style={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          display: "flex",
+          borderLeft: "1px solid var(--app-shell-border-color)",
+          left: "calc(var(--app-shell-navbar-offset) - 1px)",
+          padding: "var(--app-shell-padding)",
+        }}
+      >
         <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={(page) => table.setPageIndex(page - 1)}
+          total={totalPages}
+          value={currentPage}
+          onChange={(page) => table.setPageIndex(page - 1)}
         />
-      </div>
-    </div>
+
+        <Text>
+          {(table.options.meta as TableMeta)?.totalCount ?? 0}{" "}
+          {(table.options.meta as TableMeta)?.totalCount === 1 ? "row" : "rows"}{" "}
+          found
+        </Text>
+      </AppShell.Footer>
+    </>
   );
 }

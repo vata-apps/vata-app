@@ -114,7 +114,7 @@ export async function fetchEvents({
   }
 
   // Apply pagination
-  const paginatedEvents = combinedEvents.slice(start, end + 1);
+  const paginatedEvents = combinedEvents.slice(start, end);
 
   return {
     data: paginatedEvents,

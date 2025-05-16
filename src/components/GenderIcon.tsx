@@ -2,12 +2,12 @@ import { Enums } from "@/database.types";
 import { MarsIcon, VenusIcon } from "lucide-react";
 
 export function GenderIcon({
-  className,
+  size,
   gender,
 }: {
-  className?: string;
+  size?: number;
   gender: Enums<"gender">;
 }) {
-  if (gender === "female") return <VenusIcon className={className} />;
-  return <MarsIcon className={className} />;
+  if (gender === "female") return <VenusIcon size={size} />;
+  return <MarsIcon size={size} />;
 }

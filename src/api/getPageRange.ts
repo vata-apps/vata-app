@@ -14,6 +14,6 @@ const ITEMS_PER_PAGE = 10;
 export function getPageRange(page: number) {
   return {
     start: (page - 1) * ITEMS_PER_PAGE,
-    end: page * ITEMS_PER_PAGE,
+    end: page * ITEMS_PER_PAGE - 1,
   };
 }

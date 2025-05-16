@@ -87,9 +87,7 @@ type Event = IndividualEvent | FamilyEvent;
 export const Route = createFileRoute("/events/$eventId")({
   component: EventPage,
   validateSearch: (search: Record<string, unknown>) => {
-    return {
-      eventType: (search.eventType as "individual" | "family") || "individual",
-    };
+    return search as { eventType: "individual" | "family" };
   },
 });
 

@@ -51,10 +51,13 @@ const columns: ColumnDef<Family, unknown>[] = [
     id: "actions",
     cell: ({ row }) => (
       <div className="text-right">
-        <Button variant="secondary" size="sm">
-          <Link to="/families/$familyId" params={{ familyId: row.original.id }}>
-            View
-          </Link>
+        <Button
+          component={Link}
+          size="sm"
+          to={`/families/${row.original.id}`}
+          variant="default"
+        >
+          View
         </Button>
       </div>
     ),

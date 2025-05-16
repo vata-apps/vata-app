@@ -104,14 +104,13 @@ const columns: ColumnDef<Event, unknown>[] = [
     id: "actions",
     cell: ({ row }) => (
       <div className="text-right">
-        <Button variant="secondary" size="sm">
-          <Link
-            to="/events/$eventId"
-            params={{ eventId: row.original.id }}
-            search={{ eventType: row.original.eventType }}
-          >
-            View
-          </Link>
+        <Button
+          component={Link}
+          to={`/events/${row.original.id}?eventType=${row.original.eventType}`}
+          variant="default"
+          size="sm"
+        >
+          View
         </Button>
       </div>
     ),

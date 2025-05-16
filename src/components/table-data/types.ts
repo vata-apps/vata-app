@@ -1,5 +1,12 @@
 import { ColumnDef, Table } from "@tanstack/react-table";
 
+/**
+ * Represents the meta object used in TanStack Table configuration
+ */
+export interface TableMeta {
+  totalCount: number;
+}
+
 export interface TableState {
   sorting: {
     id: string;

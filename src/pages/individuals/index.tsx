@@ -31,10 +31,8 @@ const columns: ColumnDef<Individual, unknown>[] = [
   {
     accessorKey: "gender",
     header: "",
-    cell: ({ row }) => (
-      <GenderIcon className="w-4 h-4" gender={row.original.gender} />
-    ),
-    size: 32,
+    cell: ({ row }) => <GenderIcon size={16} gender={row.original.gender} />,
+    size: 16,
     enableSorting: false,
   },
   {
@@ -54,13 +52,13 @@ const columns: ColumnDef<Individual, unknown>[] = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <Button variant="light" size="sm">
-        <Link
-          to="/individuals/$individualId"
-          params={{ individualId: row.original.id }}
-        >
-          View
-        </Link>
+      <Button
+        component={Link}
+        to={`/individuals/${row.original.id}`}
+        variant="default"
+        size="sm"
+      >
+        View
       </Button>
     ),
     size: 100,
@@ -88,7 +86,7 @@ function IndividualsPage() {
   };
 
   return (
-    <Stack>
+    <Stack h="100%">
       <PageHeader title="Individuals" />
 
       <TableData<Individual>
