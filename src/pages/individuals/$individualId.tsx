@@ -4,7 +4,7 @@ import { FamilyAsSpouse } from "@/components/individual/FamilyAsSpouse";
 import { IndividualHeader } from "@/components/individual/IndividualHeader";
 import { Names } from "@/components/individual/Names";
 import { Card, CardHeader } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Stack, Tabs } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -56,29 +56,31 @@ function IndividualPage() {
   }
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
+    <Stack>
       {/* Header Section */}
       <IndividualHeader individual={individual} />
 
       {/* Tabs Section */}
-      <Tabs defaultValue="family" className="w-full">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="family">Family Relationships</TabsTrigger>
-          <TabsTrigger value="names">Names</TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="family" mt="lg" variant="default">
+        <Tabs.List>
+          <Tabs.Tab value="family">Family Relationships</Tabs.Tab>
+          <Tabs.Tab value="names">Names</Tabs.Tab>
+        </Tabs.List>
 
         {/* Family Relationships Tab */}
-        <TabsContent value="family" className="space-y-4">
-          <FamilyAsChild individualId={individualId} />
-          <FamilyAsSpouse individualId={individualId} />
-        </TabsContent>
+        <Tabs.Panel py="lg" value="family">
+          <Stack gap="lg">
+            <FamilyAsChild individualId={individualId} />
+            <FamilyAsSpouse individualId={individualId} />
+          </Stack>
+        </Tabs.Panel>
 
         {/* Names Tab */}
-        <TabsContent value="names">
+        <Tabs.Panel py="lg" value="names">
           <Names individualId={individualId} />
-        </TabsContent>
+        </Tabs.Panel>
       </Tabs>
-    </div>
+    </Stack>
   );
 }
 

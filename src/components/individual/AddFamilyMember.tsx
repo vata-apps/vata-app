@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 
 /**
@@ -10,13 +10,13 @@ export function AddFamilyMember({
   type: "father" | "mother" | "sibling";
 }) {
   return (
-    <Button variant="ghost" size="sm" asChild>
-      <Link
-        to="/individuals"
-        className="text-muted-foreground hover:text-foreground"
-      >
-        Add {type}
-      </Link>
+    <Button
+      component={Link}
+      size="compact-sm"
+      to="/individuals"
+      variant="transparent"
+    >
+      Add {type}
     </Button>
   );
 }

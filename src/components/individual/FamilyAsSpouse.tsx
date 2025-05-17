@@ -1,9 +1,7 @@
 import { fetchFamiliesAsSpouse } from "@/api/fetchFamiliesAsSpouse";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Stack, Title } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { FamiliesAsSpouseTable } from "./FamiliesAsSpouseTable";
 
 interface FamilyAsSpouseProps {
@@ -25,41 +23,35 @@ export function FamilyAsSpouse({ individualId }: FamilyAsSpouseProps) {
   });
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Families as Spouse</CardTitle>
-        <Button variant="secondary" size="sm" asChild>
-          <Link to="/families">Add Family</Link>
-        </Button>
-      </CardHeader>
-      <CardContent>
-        {(() => {
-          if (status === "pending") return "Loading...";
+    <Stack gap="sm">
+      <Title order={4}>Families as Spouse</Title>
 
-          if (status === "error") {
-            return (
-              <div className="text-destructive">
-                Error loading families data: {error.message}
-              </div>
-            );
+      {(() => {
+        if (status === "pending") return "Loading...";
+
+        if (status === "error") {
+          return (
+            <div className="text-destructive">
+              Error loading families data: {error.message}
+            </div>
+          );
+        }
+
+        if (status === "success") {
+          if (!families || families.length === 0) {
+            return "No families found";
           }
 
-          if (status === "success") {
-            if (!families || families.length === 0) {
-              return "No families found";
-            }
+          return (
+            <FamiliesAsSpouseTable
+              families={families}
+              individualId={individualId}
+            />
+          );
+        }
 
-            return (
-              <FamiliesAsSpouseTable
-                families={families}
-                individualId={individualId}
-              />
-            );
-          }
-
-          return null;
-        })()}
-      </CardContent>
-    </Card>
+        return null;
+      })()}
+    </Stack>
   );
 }

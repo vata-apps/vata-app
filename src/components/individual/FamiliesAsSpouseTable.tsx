@@ -3,17 +3,8 @@ import {
   FamilyMember,
   IndividualWithNames,
 } from "@/components/individual/FamilyMember";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Tables } from "@/database.types";
-import { cn } from "@/lib/utils";
+import { Button, Group, Table } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 
 export type FamilyWithRelations = {
@@ -37,37 +28,29 @@ export function FamiliesAsSpouseTable({
 }) {
   return (
     <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[250px]">Spouse</TableHead>
-          <TableHead>Children</TableHead>
-          <TableHead className="w-[100px]"></TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>Spouse</Table.Th>
+          <Table.Th>Children</Table.Th>
+          <Table.Th />
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
         {families.map((family) => {
           const spouse =
             family.husband?.id === individualId ? family.wife : family.husband;
 
           return (
-            <TableRow key={family.id} className="min-h-[4rem]">
-              <TableCell
-                className={cn({
-                  "align-top py-4": Boolean(spouse),
-                })}
-              >
+            <Table.Tr key={family.id}>
+              <Table.Td>
                 {spouse ? (
                   <FamilyMember individual={spouse} />
                 ) : (
                   <AddFamilyMember type="father" />
                 )}
-              </TableCell>
-              <TableCell
-                className={cn({
-                  "align-top py-4": family.children.length > 0,
-                })}
-              >
-                <div className="flex flex-wrap gap-x-4 gap-y-2">
+              </Table.Td>
+              <Table.Td>
+                <Group gap="xs">
                   {family.children.map((child) => (
                     <FamilyMember
                       key={child.individual.id}
@@ -77,22 +60,22 @@ export function FamiliesAsSpouseTable({
                   {family.children.length === 0 && (
                     <AddFamilyMember type="sibling" />
                   )}
-                </div>
-              </TableCell>
-              <TableCell className="text-right">
-                <Button variant="ghost" size="sm" asChild>
-                  <Link
-                    to="/families/$familyId"
-                    params={{ familyId: family.id }}
-                  >
-                    Edit
-                  </Link>
+                </Group>
+              </Table.Td>
+              <Table.Td ta="right">
+                <Button
+                  component={Link}
+                  to={`/families/${family.id}`}
+                  size="xs"
+                  variant="default"
+                >
+                  Edit
                 </Button>
-              </TableCell>
-            </TableRow>
+              </Table.Td>
+            </Table.Tr>
           );
         })}
-      </TableBody>
+      </Table.Tbody>
     </Table>
   );
 }

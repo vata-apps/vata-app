@@ -1,6 +1,6 @@
 import { fetchFamilyAsChild } from "@/api/fetchFamilyAsChild";
 import { FamilyTable } from "@/components/individual/FamilyTable";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Stack, Title } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 interface FamilyAsChildProps {
@@ -22,29 +22,26 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
   });
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Family as Child</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {(() => {
-          if (status === "pending") return "Loading...";
+    <Stack gap="sm">
+      <Title order={4}>Family as Child</Title>
 
-          if (status === "error") {
-            return (
-              <div className="text-destructive">
-                Error loading family data: {error.message}
-              </div>
-            );
-          }
+      {(() => {
+        if (status === "pending") return "Loading...";
 
-          if (status === "success") {
-            return <FamilyTable family={family} individualId={individualId} />;
-          }
+        if (status === "error") {
+          return (
+            <div className="text-destructive">
+              Error loading family data: {error.message}
+            </div>
+          );
+        }
 
-          return null;
-        })()}
-      </CardContent>
-    </Card>
+        if (status === "success") {
+          return <FamilyTable family={family} individualId={individualId} />;
+        }
+
+        return null;
+      })()}
+    </Stack>
   );
 }

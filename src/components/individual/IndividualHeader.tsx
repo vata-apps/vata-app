@@ -1,12 +1,13 @@
-import { GenderIcon } from "@/components/GenderIcon";
-import { AddFamilyMember } from "@/components/individual/AddFamilyMember";
-import { AddIndividualInfo } from "@/components/individual/AddIndividualInfo";
-import { FamilyMember } from "@/components/individual/FamilyMember";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tables } from "@/database.types";
 import displayName from "@/utils/displayName";
+import { Badge, Group, Stack } from "@mantine/core";
 import { CalendarDays } from "lucide-react";
+import { GenderIcon } from "../GenderIcon";
+import { PageHeader } from "../PageHeader";
+import { AddFamilyMember } from "./AddFamilyMember";
+import { AddIndividualInfo } from "./AddIndividualInfo";
+import { FamilyMember } from "./FamilyMember";
 
 type IndividualWithRelations = {
   id: string;
@@ -59,69 +60,55 @@ export function IndividualHeader({
     : "??";
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-start gap-4">
-          <Avatar className="h-20 w-20">
-            <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
-          </Avatar>
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CardTitle className="text-2xl">
-                  {displayName(individual.names)}
-                </CardTitle>
-                <GenderIcon gender={individual.gender} className="h-5 w-5" />
-              </div>
-            </div>
-            <div className="mt-4 space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <CalendarDays className="h-4 w-4" />
-                <AddIndividualInfo type="birth" />
-                <span className="mx-2">•</span>
-                <AddIndividualInfo type="death" />
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                {individual.family_as_child[0]?.family?.husband ? (
-                  <FamilyMember
-                    individual={individual.family_as_child[0].family.husband}
-                  />
-                ) : (
-                  <>
-                    <GenderIcon gender="male" className="h-4 w-4" />
-                    <AddFamilyMember type="father" />
-                  </>
-                )}
-                <span className="mx-2">•</span>
-                {individual.family_as_child[0]?.family?.wife ? (
-                  <FamilyMember
-                    individual={individual.family_as_child[0].family.wife}
-                  />
-                ) : (
-                  <>
-                    <GenderIcon gender="female" className="h-4 w-4" />
-                    <AddFamilyMember type="mother" />
-                  </>
-                )}
-                <span className="mx-2">•</span>
-                <span>
-                  {individual.family_as_child[0]?.family?.children.length
-                    ? `${individual.family_as_child[0].family.children.length - 1} siblings`
-                    : "No siblings"}
-                </span>
-                <span className="mx-2">•</span>
-                <span>
-                  {individual.families_as_spouse.reduce(
-                    (acc, family) => acc + family.children.length,
-                    0,
-                  )}{" "}
-                  children
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-    </Card>
+    <PageHeader avatar={initials} backTo="/individuals" title={displayedName}>
+      <Stack gap={4}>
+        <Group gap="xs">
+          {individual.family_as_child[0]?.family?.husband ? (
+            <FamilyMember
+              individual={individual.family_as_child[0].family.husband}
+            />
+          ) : (
+            <>
+              <GenderIcon gender="male" size={16} />
+              <AddFamilyMember type="father" />
+            </>
+          )}
+
+          <span>•</span>
+
+          {individual.family_as_child[0]?.family?.wife ? (
+            <FamilyMember
+              individual={individual.family_as_child[0].family.wife}
+            />
+          ) : (
+            <>
+              <GenderIcon gender="female" size={16} />
+              <AddFamilyMember type="mother" />
+            </>
+          )}
+
+          <Badge variant="default">
+            {individual.family_as_child[0]?.family?.children.length
+              ? `${individual.family_as_child[0].family.children.length - 1} siblings`
+              : "No siblings"}
+          </Badge>
+
+          <Badge variant="default">
+            {individual.families_as_spouse.reduce(
+              (acc, family) => acc + family.children.length,
+              0,
+            )}{" "}
+            children
+          </Badge>
+        </Group>
+
+        <Group gap="xs">
+          <CalendarDays size={16} />
+          <AddIndividualInfo type="birth" />
+          <span>•</span>
+          <AddIndividualInfo type="death" />
+        </Group>
+      </Stack>
+    </PageHeader>
   );
 }
