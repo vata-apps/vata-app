@@ -3,8 +3,7 @@ import { FamilyAsChild } from "@/components/individual/FamilyAsChild";
 import { FamilyAsSpouse } from "@/components/individual/FamilyAsSpouse";
 import { IndividualHeader } from "@/components/individual/IndividualHeader";
 import { Names } from "@/components/individual/Names";
-import { Card, CardHeader } from "@/components/ui/card";
-import { Stack, Tabs } from "@mantine/core";
+import { Loader, Stack, Tabs, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -25,34 +24,10 @@ function IndividualPage() {
     placeholderData: keepPreviousData,
   });
 
-  if (status === "pending") {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Loading...</CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  if (status === "pending") return <Loader />;
 
   if (status === "error") {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Error loading individual: {error.message}</CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
-  if (!individual) {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Individual not found</CardHeader>
-        </Card>
-      </div>
-    );
+    return <Text>Error loading individual: {error.message}</Text>;
   }
 
   return (
