@@ -1,7 +1,7 @@
 import { GenderIcon } from "@/components/GenderIcon";
-import { Button } from "@/components/ui/button";
 import { Enums, Tables } from "@/database.types";
 import displayName from "@/utils/displayName";
+import { Button, Group } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 
 type Name = Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">;
@@ -21,20 +21,17 @@ export function FamilyMember({
   individual: IndividualWithNames;
 }) {
   return (
-    <div className="flex items-center gap-2">
-      <GenderIcon
-        gender={individual.gender}
-        className="h-4 w-4 text-muted-foreground"
-      />
-      <Button variant="link" size="sm" asChild className="h-6 p-0">
-        <Link
-          to="/individuals/$individualId"
-          params={{ individualId: individual.id }}
-        >
-          {displayName(individual.names)}
-        </Link>
+    <Group align="center" gap={0}>
+      <GenderIcon gender={individual.gender} size={16} />
+      <Button
+        variant="transparent"
+        size="compact-sm"
+        component={Link}
+        to={`/individuals/${individual.id}`}
+      >
+        {displayName(individual.names)}
       </Button>
       <span className="text-sm text-muted-foreground">(xxxx-xxxx)</span>
-    </div>
+    </Group>
   );
 }

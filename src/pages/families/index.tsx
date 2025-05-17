@@ -20,18 +20,34 @@ const columns: ColumnDef<Family, unknown>[] = [
     header: "Husband",
     cell: ({ row }) => {
       const husband = row.original.husband;
-      return husband ? <FamilyMember individual={husband} /> : null;
+
+      if (!husband) {
+        return (
+          <Button disabled size="compact-sm" variant="subtle">
+            Add Husband
+          </Button>
+        );
+      }
+
+      return <FamilyMember individual={husband} />;
     },
-    size: 250,
   },
   {
     accessorKey: "wife",
     header: "Wife",
     cell: ({ row }) => {
       const wife = row.original.wife;
-      return wife ? <FamilyMember individual={wife} /> : null;
+
+      if (!wife) {
+        return (
+          <Button disabled size="compact-sm" variant="subtle">
+            Add Wife
+          </Button>
+        );
+      }
+
+      return <FamilyMember individual={wife} />;
     },
-    size: 250,
   },
   {
     accessorKey: "children",
@@ -53,7 +69,7 @@ const columns: ColumnDef<Family, unknown>[] = [
       <div className="text-right">
         <Button
           component={Link}
-          size="sm"
+          size="xs"
           to={`/families/${row.original.id}`}
           variant="default"
         >

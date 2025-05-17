@@ -47,8 +47,8 @@ export function Table<TData extends Record<string, unknown>>() {
                   <Th
                     key={header.id}
                     onClick={sortHandler}
-                    ta={header.column.id === "actions" ? "right" : "left"}
                     style={{ cursor, width }}
+                    ta={header.column.id === "actions" ? "right" : "left"}
                   >
                     {!header.isPlaceholder && (
                       <Group gap="xs" align="center">

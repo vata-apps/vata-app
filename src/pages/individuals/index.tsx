@@ -54,9 +54,9 @@ const columns: ColumnDef<Individual, unknown>[] = [
     cell: ({ row }) => (
       <Button
         component={Link}
+        size="xs"
         to={`/individuals/${row.original.id}`}
         variant="default"
-        size="sm"
       >
         View
       </Button>

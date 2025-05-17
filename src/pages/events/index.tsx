@@ -106,9 +106,9 @@ const columns: ColumnDef<Event, unknown>[] = [
       <div className="text-right">
         <Button
           component={Link}
+          size="xs"
           to={`/events/${row.original.id}?eventType=${row.original.eventType}`}
           variant="default"
-          size="sm"
         >
           View
         </Button>

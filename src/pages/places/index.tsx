@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
 import { Badge } from "@/components/ui/badge";
 import { PlaceSortField } from "@/types/sort";
+import { capitalize } from "@/utils/strings";
 import { Button, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
@@ -25,7 +26,7 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
     header: "Type",
     cell: ({ row }) => (
       <Badge variant="outline" className="capitalize">
-        {row.original.place_type?.name || ""}
+        {capitalize(row.original.place_type?.name || "")}
       </Badge>
     ),
     size: 150,
@@ -44,7 +45,7 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
       <div className="text-right">
         <Button
           component={Link}
-          size="sm"
+          size="xs"
           to={`/places/${row.original.id}`}
           variant="default"
         >
