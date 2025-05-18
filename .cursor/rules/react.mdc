@@ -3,9 +3,8 @@ description:
 globs: *.tsx
 alwaysApply: true
 ---
-- shadcn is the main source of component
+- MantineUI is the main source of component
 - Everytime we show a family member, use the component FamilyMember
 - Everytime we show the gender, use GenderIcon
 - Try to reuse existing component in "src/components" before create new one
 - Only on component by file
-- Don't modify component from "components/ui" and "components/typography" without my authorization. Their from shadcn.
