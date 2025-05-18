@@ -2,8 +2,7 @@ import { fetchFamily } from "@/api/fetchFamily";
 import FamilyEvents from "@/components/family/FamilyEvents";
 import FamilyHeader from "@/components/family/FamilyHeader";
 import FamilyMembers from "@/components/family/FamilyMembers";
-import { Card, CardHeader } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader, Stack, Tabs, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -27,59 +26,37 @@ function FamilyPage() {
     placeholderData: keepPreviousData,
   });
 
-  if (status === "pending") {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Loading...</CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  if (status === "pending") return <Loader />;
 
   if (status === "error") {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Error loading family: {error.message}</CardHeader>
-        </Card>
-      </div>
-    );
+    return <Text>Error loading family: {error.message}</Text>;
   }
 
-  if (!family) {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Family not found</CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  if (!family) return <Text>Family not found</Text>;
 
   return (
-    <div className="container mx-auto py-6 space-y-8">
+    <Stack>
       {/* Header Section */}
       <FamilyHeader family={family} />
 
       {/* Tabs Section */}
-      <Tabs defaultValue="members" className="w-full">
-        <TabsList className="w-full justify-start">
-          <TabsTrigger value="members">Family Members</TabsTrigger>
-          <TabsTrigger value="events">Family Events</TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="members" mt="lg" variant="default">
+        <Tabs.List className="w-full justify-start">
+          <Tabs.Tab value="members">Family Members</Tabs.Tab>
+          <Tabs.Tab value="events">Family Events</Tabs.Tab>
+        </Tabs.List>
 
         {/* Family Members Tab */}
-        <TabsContent value="members" className="space-y-4">
+        <Tabs.Panel py="lg" value="members">
           <FamilyMembers family={family} />
-        </TabsContent>
+        </Tabs.Panel>
 
         {/* Family Events Tab */}
-        <TabsContent value="events">
+        <Tabs.Panel py="lg" value="events">
           <FamilyEvents familyId={familyId} />
-        </TabsContent>
+        </Tabs.Panel>
       </Tabs>
-    </div>
+    </Stack>
   );
 }
 

@@ -1,21 +1,7 @@
+import { FamilyWithRelations } from "@/components/family/types";
 import { Tables } from "@/database.types";
 import { supabase } from "@/lib/supabase";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
-
-type IndividualWithNames = Pick<Tables<"individuals">, "id" | "gender"> & {
-  names: Pick<
-    Tables<"names">,
-    "first_name" | "last_name" | "is_primary" | "type"
-  >[];
-};
-
-type FamilyWithRelations = Pick<Tables<"families">, "id" | "type"> & {
-  husband: IndividualWithNames | null;
-  wife: IndividualWithNames | null;
-  children: {
-    individual: IndividualWithNames;
-  }[];
-};
 
 type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations>;
 
@@ -25,7 +11,7 @@ type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations>;
  * @throws When there's an error fetching data from Supabase
  */
 export async function fetchFamily(
-  familyId: string,
+  familyId: Tables<"families">["id"],
 ): Promise<FamilyWithRelations> {
   const response = (await supabase
     .from("families")

@@ -1,27 +1,8 @@
-import { Database } from "@/database.types";
+import { FamilyWithRelations } from "@/components/family/types";
 import { supabase } from "@/lib/supabase";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 import { fetchFamiliesByMemberName } from "./fetchFamiliesByMemberName";
 import { getPageRange } from "./getPageRange";
-
-type Individual = {
-  id: string;
-  gender: Database["public"]["Enums"]["gender"];
-  names: Array<{
-    first_name: string | null;
-    last_name: string | null;
-    is_primary: boolean;
-  }>;
-};
-
-export type FamilyWithRelations = {
-  id: string;
-  husband: Individual | null;
-  wife: Individual | null;
-  children: Array<{
-    individual: Individual;
-  }>;
-};
 
 type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations[]>;
 

@@ -7,7 +7,7 @@ export type IndividualWithNames = {
 };
 
 export type FamilyWithRelations = {
-  id: string;
+  id: Tables<"families">["id"];
   husband: IndividualWithNames | null;
   wife: IndividualWithNames | null;
   children: {
