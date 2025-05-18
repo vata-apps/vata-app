@@ -2,133 +2,67 @@ import { fetchPlaceById } from "@/api/fetchPlaceById";
 import { PlaceChildren } from "@/components/place/PlaceChildren";
 import { PlaceEvents } from "@/components/place/PlaceEvents";
 import { PlaceHeader } from "@/components/place/PlaceHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader, Stack, Tabs, Text } from "@mantine/core";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarIcon, CornerDownRightIcon, MapIcon } from "lucide-react";
-import { useEffect, useState } from "react";
-
-// Define a recursive type for the parent hierarchy
-type ParentPlace = {
-  id: string;
-  name: string;
-  parent: ParentPlace | null;
-};
 
 export const Route = createFileRoute("/places/$placeId")({
   component: PlaceDetailPage,
 });
 
+/**
+ * Displays the place page with details, sublocations, events and map
+ */
 function PlaceDetailPage() {
   const { placeId } = Route.useParams();
-  const [place, setPlace] = useState<null | {
-    id: string;
-    name: string;
-    type: { name: string };
-    parent: ParentPlace | null;
-    latitude?: number | null;
-    longitude?: number | null;
-    created_at: string;
-  }>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [notFound, setNotFound] = useState(false);
 
-  useEffect(() => {
-    const loadPlace = async () => {
-      try {
-        setIsLoading(true);
-        setErrorMessage(null);
-        setNotFound(false);
+  const {
+    data: place,
+    status,
+    error,
+  } = useQuery({
+    queryKey: ["place", placeId],
+    queryFn: () => fetchPlaceById(placeId),
+    placeholderData: keepPreviousData,
+  });
 
-        const placeData = await fetchPlaceById(placeId);
+  if (status === "pending") return <Loader />;
 
-        if (!placeData) {
-          setNotFound(true);
-          return;
-        }
-
-        setPlace(placeData);
-      } catch (error) {
-        console.error("Error loading place:", error);
-        setErrorMessage(
-          error instanceof Error ? error.message : "Unknown error occurred",
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadPlace();
-  }, [placeId]);
-
-  if (isLoading) {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Loading...</CardHeader>
-        </Card>
-      </div>
-    );
+  if (status === "error") {
+    return <Text>Error loading place: {error.message}</Text>;
   }
 
-  if (errorMessage) {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Error loading place: {errorMessage}</CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
-  if (notFound) {
-    return (
-      <div className="container mx-auto py-6">
-        <Card>
-          <CardHeader>Place not found</CardHeader>
-        </Card>
-      </div>
-    );
-  }
+  if (!place) return <Text>Place not found</Text>;
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
-      {place && <PlaceHeader place={place} />}
+    <Stack>
+      {/* Header Section */}
+      <PlaceHeader place={place} />
 
-      <Tabs defaultValue="sublocations">
-        <TabsList>
-          <TabsTrigger value="sublocations">
-            <CornerDownRightIcon className="h-4 w-4 mr-2" />
-            Sublocations
-          </TabsTrigger>
-          <TabsTrigger value="events">
-            <CalendarIcon className="h-4 w-4 mr-2" />
-            Events
-          </TabsTrigger>
-          <TabsTrigger value="map">
-            <MapIcon className="h-4 w-4 mr-2" />
-            Map
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="sublocations" className="mt-4">
-          {place && <PlaceChildren placeId={placeId} placeName={place.name} />}
-        </TabsContent>
-        <TabsContent value="events" className="mt-4">
+      {/* Tabs Section */}
+      <Tabs defaultValue="sublocations" mt="lg" variant="default">
+        <Tabs.List className="w-full justify-start">
+          <Tabs.Tab value="sublocations">Sublocations</Tabs.Tab>
+          <Tabs.Tab value="events">Events</Tabs.Tab>
+          <Tabs.Tab value="map">Map</Tabs.Tab>
+        </Tabs.List>
+
+        {/* Sublocations Tab */}
+        <Tabs.Panel py="lg" value="sublocations">
+          <PlaceChildren placeId={placeId} placeName={place.name} />
+        </Tabs.Panel>
+
+        {/* Events Tab */}
+        <Tabs.Panel py="lg" value="events">
           <PlaceEvents placeId={placeId} />
-        </TabsContent>
-        <TabsContent value="map" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Map</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>Map view will be implemented here</p>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        </Tabs.Panel>
+
+        {/* Map Tab */}
+        <Tabs.Panel py="lg" value="map">
+          <Text>Map view will be implemented here</Text>
+        </Tabs.Panel>
       </Tabs>
-    </div>
+    </Stack>
   );
 }
 

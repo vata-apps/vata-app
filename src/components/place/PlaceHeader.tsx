@@ -1,9 +1,6 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { capitalize } from "@/utils/strings";
-import { Link } from "@tanstack/react-router";
-import { Globe, MapPinIcon, Pencil } from "lucide-react";
+import { Badge, Group } from "@mantine/core";
+import { PageHeader } from "../PageHeader";
 
 // Define a recursive type for the parent hierarchy
 type ParentPlace = {
@@ -25,6 +22,9 @@ type PlaceHeaderProps = {
   };
 };
 
+/**
+ * Displays the header card with place information
+ */
 export function PlaceHeader({ place }: PlaceHeaderProps) {
   // Build the parent hierarchy from the recursive parent structure
   const getParentHierarchy = () => {
@@ -44,73 +44,26 @@ export function PlaceHeader({ place }: PlaceHeaderProps) {
 
     const hierarchy = flattenParentHierarchy(place.parent);
 
-    return (
-      <span>
-        {hierarchy.map((parent, index) => (
-          <span key={parent.id}>
-            <Link
-              to="/places/$placeId"
-              params={{ placeId: parent.id }}
-              className="text-primary hover:underline"
-            >
-              {parent.name}
-            </Link>
-            {index < hierarchy.length - 1 ? " - " : ""}
-          </span>
-        ))}
-      </span>
-    );
+    return hierarchy
+      .map((parent) => parent.name)
+      .reverse()
+      .join(" - ");
   };
 
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-col space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CardTitle className="text-2xl">{place.name}</CardTitle>
-              <Badge variant="secondary">{capitalize(place.type.name)}</Badge>
-            </div>
-            <Button variant="outline" size="sm">
-              <Pencil className="h-4 w-4 mr-1" />
-              Edit
-            </Button>
-          </div>
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Globe className="h-4 w-4" />
-              {place.parent ? (
-                <span>
-                  Part of{" "}
-                  {getParentHierarchy() || (
-                    <Link
-                      to="/places/$placeId"
-                      params={{ placeId: place.parent.id }}
-                      className="text-primary hover:underline"
-                    >
-                      {place.parent.name}
-                    </Link>
-                  )}
-                </span>
-              ) : (
-                <span>No parent location</span>
-              )}
+  const parentLocation =
+    getParentHierarchy() || place.parent?.name || "No parent location";
+  const coordinates =
+    place.latitude && place.longitude
+      ? `${place.latitude}, ${place.longitude}`
+      : "No coordinates";
 
-              <span className="mx-2">•</span>
-              <MapPinIcon className="h-4 w-4" />
-              {place.latitude && place.longitude ? (
-                <span>
-                  {place.latitude}, {place.longitude}
-                </span>
-              ) : (
-                <Button variant="ghost" size="sm" className="h-6 px-2 text-xs">
-                  <span className="ml-1">Add coordinates</span>
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-    </Card>
+  return (
+    <PageHeader backTo="/places" title={place.name}>
+      <Group gap="xs">
+        <Badge variant="default">{capitalize(place.type.name)}</Badge>
+        <Badge variant="default">{parentLocation}</Badge>
+        <Badge variant="default">{coordinates}</Badge>
+      </Group>
+    </PageHeader>
   );
 }
