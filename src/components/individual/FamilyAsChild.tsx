@@ -1,5 +1,5 @@
 import { fetchFamilyAsChild } from "@/api/fetchFamilyAsChild";
-import { FamilyTable } from "@/components/individual/FamilyTable";
+import { FamilyAsChildTable } from "@/components/individual/FamilyAsChildTable";
 import { Stack, Title } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
@@ -37,7 +37,9 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
         }
 
         if (status === "success") {
-          return <FamilyTable family={family} individualId={individualId} />;
+          return (
+            <FamilyAsChildTable family={family} individualId={individualId} />
+          );
         }
 
         return null;

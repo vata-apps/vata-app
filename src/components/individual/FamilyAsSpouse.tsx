@@ -2,7 +2,7 @@ import { fetchFamiliesAsSpouse } from "@/api/fetchFamiliesAsSpouse";
 
 import { Stack, Title } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { FamiliesAsSpouseTable } from "./FamiliesAsSpouseTable";
+import { FamiliesAsSpouseTable } from "./FamilyAsSpouseTable";
 
 interface FamilyAsSpouseProps {
   individualId: string;

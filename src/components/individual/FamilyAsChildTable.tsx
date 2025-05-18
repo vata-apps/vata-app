@@ -18,7 +18,7 @@ export type FamilyWithRelations = {
 /**
  * Displays the table with family information
  */
-export function FamilyTable({
+export function FamilyAsChildTable({
   family,
   individualId,
 }: {

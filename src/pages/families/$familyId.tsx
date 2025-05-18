@@ -1,7 +1,8 @@
 import { fetchFamily } from "@/api/fetchFamily";
+import { FamilyChildren } from "@/components/family/FamilyChildren";
 import FamilyEvents from "@/components/family/FamilyEvents";
 import FamilyHeader from "@/components/family/FamilyHeader";
-import FamilyMembers from "@/components/family/FamilyMembers";
+import { FamilyParents } from "@/components/family/FamilyParents";
 import { Loader, Stack, Tabs, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -48,7 +49,10 @@ function FamilyPage() {
 
         {/* Family Members Tab */}
         <Tabs.Panel py="lg" value="members">
-          <FamilyMembers family={family} />
+          <Stack gap="lg">
+            <FamilyParents family={family} />
+            <FamilyChildren family={family} />
+          </Stack>
         </Tabs.Panel>
 
         {/* Family Events Tab */}
