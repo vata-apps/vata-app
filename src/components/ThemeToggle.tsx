@@ -2,11 +2,10 @@
 
 import {
   ActionIcon,
-  Group,
   useComputedColorScheme,
   useMantineColorScheme,
 } from "@mantine/core";
-import { cx } from "class-variance-authority";
+import clsx from "clsx";
 import { Moon, Sun } from "lucide-react";
 
 import classes from "./ThemeToggle.module.css";
@@ -18,19 +17,18 @@ export function ThemeToggle() {
   });
 
   return (
-    <Group ml="auto" justify="center">
-      <ActionIcon
-        onClick={() =>
-          setColorScheme(computedColorScheme === "light" ? "dark" : "light")
-        }
-        variant="default"
-        size="lg"
-        radius="md"
-        aria-label="Toggle color scheme"
-      >
-        <Sun className={cx(classes.icon, classes.light)} />
-        <Moon className={cx(classes.icon, classes.dark)} />
-      </ActionIcon>
-    </Group>
+    <ActionIcon
+      onClick={() =>
+        setColorScheme(computedColorScheme === "light" ? "dark" : "light")
+      }
+      ml="auto"
+      variant="default"
+      size="lg"
+      radius="md"
+      aria-label="Toggle color scheme"
+    >
+      <Sun className={clsx(classes.icon, classes.light)} />
+      <Moon className={clsx(classes.icon, classes.dark)} />
+    </ActionIcon>
   );
 }

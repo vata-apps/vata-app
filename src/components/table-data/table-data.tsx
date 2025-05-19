@@ -1,3 +1,4 @@
+import { Alert, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   getCoreRowModel,
@@ -125,10 +126,9 @@ export function TableData<TData extends Record<string, unknown>>({
 
   if (isError && error instanceof Error) {
     return (
-      <div role="alert">
-        <p>Something went wrong:</p>
-        <pre>{error.message}</pre>
-      </div>
+      <Alert color="red" title="Something went wrong">
+        <Text>{error.message}</Text>
+      </Alert>
     );
   }
 

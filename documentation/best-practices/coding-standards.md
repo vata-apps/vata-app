@@ -46,7 +46,7 @@ const message = (() => {
 ## Styling
 
 - Use Tailwind CSS for styling
-- Follow shadcn/ui component patterns
+- Follow Mantine component patterns
 - Maintain consistent spacing and layout using Tailwind's utility classes
 
 ## Data Management
