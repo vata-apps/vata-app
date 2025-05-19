@@ -2,20 +2,18 @@ import {
   FamilyMember,
   IndividualWithNames,
 } from "@/components/individual/FamilyMember";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Enums } from "@/database.types";
 import { supabase } from "@/lib/supabase";
 import { capitalize } from "@/utils/strings";
+import {
+  Button,
+  Group,
+  Loader,
+  Stack,
+  Table,
+  Text,
+  Title,
+} from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { Pencil, UserIcon, UsersIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -320,108 +318,82 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
     fetchEvents();
   }, [placeId]);
 
-  if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Loading events...</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">Loading events...</div>
-        </CardContent>
-      </Card>
-    );
+  if (isLoading) return <Loader />;
+
+  if (events.length === 0) {
+    return <Text c="dimmed">No events found at {placeName}</Text>;
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Events at {placeName}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        {events.length > 0 ? (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Date</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Person/Family</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="text-right"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {events.map((event) => (
-                <TableRow key={`${event.eventType}-${event.id}`}>
-                  <TableCell>{event.date}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {event.eventType === "individual" ? (
-                        <UserIcon className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <UsersIcon className="h-4 w-4 text-muted-foreground" />
-                      )}
-                      <Badge variant="outline">{capitalize(event.type)}</Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {event.eventType === "individual" ? (
-                      <FamilyMember
-                        individual={event.individual as IndividualWithNames}
-                      />
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <UsersIcon className="h-4 w-4 text-muted-foreground" />
-                        <Button
-                          variant="link"
-                          size="sm"
-                          asChild
-                          className="h-6 p-0"
-                        >
-                          <Link
-                            to="/families/$familyId"
-                            params={{ familyId: event.familyId }}
-                          >
-                            {event.family}
-                          </Link>
-                        </Button>
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {event.description || "-"}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm" asChild>
-                      {event.eventType === "individual" ? (
-                        <Link
-                          to="/individuals/$individualId"
-                          params={{ individualId: event.individual.id }}
-                        >
-                          <Pencil className="h-4 w-4 mr-1" />
-                          Edit
-                        </Link>
-                      ) : (
-                        <Link
-                          to="/families/$familyId"
-                          params={{ familyId: event.familyId }}
-                        >
-                          <Pencil className="h-4 w-4 mr-1" />
-                          Edit
-                        </Link>
-                      )}
+    <Stack gap="sm">
+      <Title order={4}>Events at {placeName}</Title>
+
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Date</Table.Th>
+            <Table.Th>Type</Table.Th>
+            <Table.Th>Person/Family</Table.Th>
+            <Table.Th>Description</Table.Th>
+            <Table.Th style={{ textAlign: "right" }}></Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {events.map((event) => (
+            <Table.Tr key={`${event.eventType}-${event.id}`}>
+              <Table.Td>{event.date}</Table.Td>
+              <Table.Td>
+                <Group gap="xs">
+                  {event.eventType === "individual" ? (
+                    <UserIcon size={16} />
+                  ) : (
+                    <UsersIcon size={16} />
+                  )}
+
+                  <Text>{capitalize(event.type)}</Text>
+                </Group>
+              </Table.Td>
+              <Table.Td>
+                {event.eventType === "individual" ? (
+                  <FamilyMember
+                    individual={event.individual as IndividualWithNames}
+                  />
+                ) : (
+                  <Group gap={0}>
+                    <UsersIcon size={16} />
+                    <Button
+                      variant="transparent"
+                      size="compact-sm"
+                      component={Link}
+                      to={`/families/${event.familyId}`}
+                    >
+                      {event.family}
                     </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <div className="text-muted-foreground text-center py-8">
-            No events found at {placeName}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                  </Group>
+                )}
+              </Table.Td>
+              <Table.Td>{event.description || "-"}</Table.Td>
+              <Table.Td align="right">
+                <Button
+                  variant="default"
+                  size="xs"
+                  component={Link}
+                  to={
+                    event.eventType === "individual"
+                      ? `/individuals/${event.individual.id}`
+                      : `/families/${event.familyId}`
+                  }
+                >
+                  <Group gap="xs">
+                    <Pencil size={14} />
+                    <Text size="sm">Edit</Text>
+                  </Group>
+                </Button>
+              </Table.Td>
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </Stack>
   );
 }

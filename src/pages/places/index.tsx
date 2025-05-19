@@ -1,10 +1,9 @@
 import { fetchPlaces, PlaceWithType } from "@/api";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
-import { Badge } from "@/components/ui/badge";
 import { PlaceSortField } from "@/types/sort";
 import { capitalize } from "@/utils/strings";
-import { Button, Stack } from "@mantine/core";
+import { Badge, Button, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -25,7 +24,7 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
     accessorKey: "type",
     header: "Type",
     cell: ({ row }) => (
-      <Badge variant="outline" className="capitalize">
+      <Badge variant="default">
         {capitalize(row.original.place_type?.name || "")}
       </Badge>
     ),
