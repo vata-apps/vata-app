@@ -23,7 +23,7 @@ export async function fetchIndividuals({
 
   if (query) return await fetchIndividualsByName({ page, query, sort });
 
-  // Get all individuals with their names
+  // Get all individuals with their names and events
   const {
     count,
     data: individuals,
@@ -36,6 +36,20 @@ export async function fetchIndividuals({
         first_name,
         last_name,
         is_primary
+      ),
+      individual_events!inner (
+        id,
+        date,
+        type_id,
+        place_id,
+        places (
+          id,
+          name
+        ),
+        individual_event_types (
+          id,
+          name
+        )
       )
     `,
     { count: "exact" },

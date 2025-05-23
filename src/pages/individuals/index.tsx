@@ -6,7 +6,7 @@ import { Enums, Tables } from "@/database.types";
 import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
-import { Button, Group, Stack } from "@mantine/core";
+import { Button, Group, Stack, Text } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -16,10 +16,26 @@ export const Route = createFileRoute("/individuals/")({
 
 type Name = Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">;
 
+type IndividualEvent = {
+  id: string;
+  date: string | null;
+  type_id: string;
+  place_id: string | null;
+  places: {
+    id: string;
+    name: string;
+  } | null;
+  individual_event_types: {
+    id: string;
+    name: string;
+  };
+};
+
 type Individual = {
   id: string;
   gender: Enums<"gender">;
   names: Name[];
+  individual_events: IndividualEvent[];
 };
 
 type TableState = {
@@ -58,7 +74,49 @@ const columns: ColumnDef<Individual, unknown>[] = [
         {capitalize(row.original.gender)}
       </Group>
     ),
-    // size: 128,
+    size: 128,
+  },
+  {
+    accessorKey: "birth",
+    header: "Birth",
+    cell: ({ row }) => {
+      const birthEvent = row.original.individual_events.find(
+        (event) => event.individual_event_types.name === "birth",
+      );
+      if (!birthEvent) return null;
+      return (
+        <Stack gap={0}>
+          <Text size="sm">{birthEvent.date}</Text>
+          {birthEvent.places && (
+            <Text size="sm" c="dimmed">
+              {birthEvent.places.name}
+            </Text>
+          )}
+        </Stack>
+      );
+    },
+    size: 200,
+  },
+  {
+    accessorKey: "death",
+    header: "Death",
+    cell: ({ row }) => {
+      const deathEvent = row.original.individual_events.find(
+        (event) => event.individual_event_types.name === "death",
+      );
+      if (!deathEvent) return null;
+      return (
+        <Stack gap={0}>
+          <Text size="sm">{deathEvent.date}</Text>
+          {deathEvent.places && (
+            <Text size="sm" c="dimmed">
+              {deathEvent.places.name}
+            </Text>
+          )}
+        </Stack>
+      );
+    },
+    size: 200,
   },
 ];
 
