@@ -1,21 +1,7 @@
-import { Enums, Tables } from "@/database.types";
 import { SortConfig } from "@/types/sort";
 import { supabase } from "../lib/supabase";
 import { fetchIndividualsByName } from "./fetchIndividualsByName";
 import { getPageRange } from "./getPageRange";
-
-type Name = Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">;
-
-type NameWithIndividual = {
-  first_name: string;
-  last_name: string;
-  is_primary: boolean;
-  individuals: {
-    id: string;
-    gender: Enums<"gender">;
-    names: Name[];
-  };
-};
 
 /**
  * Fetches a paginated list of individuals from the database
@@ -37,41 +23,50 @@ export async function fetchIndividuals({
 
   if (query) return await fetchIndividualsByName({ page, query, sort });
 
-  // First get the sorted primary names with their individual data
-  const { count, data, error } = await supabase
-    .from("names")
-    .select(
-      `
-      first_name,
-      last_name,
-      is_primary,
-      individuals!inner (
-        id,
-        gender,
-        names (
-          first_name,
-          last_name,
-          is_primary
-        )
+  // Get all individuals with their names
+  const {
+    count,
+    data: individuals,
+    error: individualsError,
+  } = await supabase.from("individuals").select(
+    `
+      id,
+      gender,
+      names (
+        first_name,
+        last_name,
+        is_primary
       )
     `,
-      { count: "exact" },
-    )
-    .eq("is_primary", true)
-    .order(sort?.field ?? "last_name", {
-      ascending: sort ? sort.direction === "asc" : true,
-    })
-    .range(start, end);
-
-  if (error) throw error;
-
-  // Transform the data to match the expected format
-  const transformedData = (data as unknown as NameWithIndividual[]).map(
-    (item) => ({
-      ...item.individuals,
-      names: item.individuals.names,
-    }),
+    { count: "exact" },
   );
 
-  return { data: transformedData, total: count };
+  if (individualsError) throw individualsError;
+
+  // Sort the data if needed
+  const sortedData = sort
+    ? [...individuals].sort((a, b) => {
+        const aPrimaryName = a.names.find((n) => n.is_primary);
+        const bPrimaryName = b.names.find((n) => n.is_primary);
+
+        if (!aPrimaryName || !bPrimaryName) return 0;
+
+        const aValue =
+          sort.field === "first_name"
+            ? aPrimaryName.first_name
+            : aPrimaryName.last_name;
+        const bValue =
+          sort.field === "first_name"
+            ? bPrimaryName.first_name
+            : bPrimaryName.last_name;
+
+        const comparison = aValue.localeCompare(bValue);
+        return sort.direction === "asc" ? comparison : -comparison;
+      })
+    : individuals;
+
+  // Apply pagination
+  const paginatedData = sortedData.slice(start, end);
+
+  return { data: paginatedData, total: count };
 }
