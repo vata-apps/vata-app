@@ -5,7 +5,8 @@ import { TableData } from "@/components/table-data";
 import { Enums, Tables } from "@/database.types";
 import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
-import { Button, Stack } from "@mantine/core";
+import { capitalize } from "@/utils/strings";
+import { Button, Group, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -29,40 +30,35 @@ type TableState = {
 
 const columns: ColumnDef<Individual, unknown>[] = [
   {
+    accessorKey: "names",
+    header: "Name",
+    cell: ({ row, table }) => {
+      const sorting = table.getState().sorting;
+      const part = sorting?.[0]?.id === "last_name" ? "fullInverted" : "full";
+      return (
+        <Button
+          component={Link}
+          to={`/individuals/${row.original.id}`}
+          size="compact-sm"
+          variant="transparent"
+        >
+          {displayName(row.original.names, { part })}
+        </Button>
+      );
+    },
+    id: "name",
+    size: 380,
+  },
+  {
     accessorKey: "gender",
-    header: "",
-    cell: ({ row }) => <GenderIcon size={16} gender={row.original.gender} />,
-    size: 16,
-    enableSorting: false,
-  },
-  {
-    accessorKey: "names",
-    header: "First Name",
-    cell: ({ row }) => displayName(row.original.names, { part: "first" }),
-    id: "first_name",
-    size: 250,
-  },
-  {
-    accessorKey: "names",
-    header: "Last Name",
-    cell: ({ row }) => displayName(row.original.names, { part: "last" }),
-    id: "last_name",
-    size: 250,
-  },
-  {
-    id: "actions",
+    header: "Gender",
     cell: ({ row }) => (
-      <Button
-        component={Link}
-        size="xs"
-        to={`/individuals/${row.original.id}`}
-        variant="default"
-      >
-        View
-      </Button>
+      <Group gap="sm">
+        <GenderIcon size={16} gender={row.original.gender} />
+        {capitalize(row.original.gender)}
+      </Group>
     ),
-    size: 100,
-    enableSorting: false,
+    // size: 128,
   },
 ];
 
@@ -95,7 +91,19 @@ function IndividualsPage() {
         columns={columns}
         defaultSorting={{ id: "last_name", desc: false }}
       >
-        <TableData.Filters createPagePath="/individuals/new" />
+        <TableData.Toolbar>
+          <TableData.AddButton to="/individuals/new" />
+          <TableData.Search placeholder="Search by name" />
+          <TableData.SortBy
+            sortOptions={[
+              { desc: false, id: "first_name", label: "First Name (A - Z)" },
+              { desc: true, id: "first_name", label: "First Name (Z - A)" },
+              { desc: false, id: "last_name", label: "Last Name (A - Z)" },
+              { desc: true, id: "last_name", label: "Last Name (Z - A)" },
+            ]}
+          />
+        </TableData.Toolbar>
+
         <TableData.Table />
       </TableData>
     </Stack>

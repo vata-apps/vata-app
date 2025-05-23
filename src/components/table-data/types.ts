@@ -7,11 +7,13 @@ export interface TableMeta {
   totalCount: number;
 }
 
+export interface TableSortOption {
+  id: string;
+  desc: boolean;
+}
+
 export interface TableState {
-  sorting: {
-    id: string;
-    desc: boolean;
-  } | null;
+  sorting: TableSortOption | null;
   pagination: {
     pageIndex: number;
     pageSize: number;
@@ -28,7 +30,7 @@ export interface TableDataProps<TData> {
   queryKey: string[];
   fetchData: (state: TableState) => Promise<TableDataResponse<TData>>;
   columns: ColumnDef<TData, unknown>[];
-  defaultSorting?: { id: string; desc: boolean };
+  defaultSorting?: TableSortOption;
   children: React.ReactNode;
 }
 

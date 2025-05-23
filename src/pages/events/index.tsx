@@ -171,7 +171,7 @@ function EventsPage() {
         columns={columns}
         defaultSorting={{ id: "date", desc: false }}
       >
-        <TableData.Filters createPagePath="/events/new" />
+        {/* <TableData.Filters createPagePath="/events/new" /> */}
         <TableData.Table />
       </TableData>
     </Stack>

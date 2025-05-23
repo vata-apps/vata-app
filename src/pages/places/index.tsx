@@ -90,7 +90,7 @@ function PlacesPage() {
         columns={columns}
         defaultSorting={{ id: "name", desc: false }}
       >
-        <TableData.Filters createPagePath="/places/new" />
+        {/* <TableData.Filters createPagePath="/places/new" /> */}
         <TableData.Table />
       </TableData>
     </Stack>

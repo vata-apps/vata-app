@@ -108,7 +108,7 @@ function FamiliesPage() {
         fetchData={fetchTableData}
         columns={columns}
       >
-        <TableData.Filters createPagePath="/families/new" />
+        {/* <TableData.Filters createPagePath="/families/new" /> */}
         <TableData.Table />
       </TableData>
     </Stack>

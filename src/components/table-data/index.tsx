@@ -1,8 +1,14 @@
-import { Filters } from "./filters";
-import { Table } from "./table";
+import { AddButton } from "./AddButton";
+import { Search } from "./Search";
+import { SortBy } from "./SortBy";
+import { Table } from "./Table";
 import { TableData as TableDataComponent } from "./table-data";
+import { Toolbar } from "./Toolbar";
 
 export const TableData = Object.assign(TableDataComponent, {
-  Filters,
+  AddButton,
+  Search,
+  SortBy,
   Table,
+  Toolbar,
 });
