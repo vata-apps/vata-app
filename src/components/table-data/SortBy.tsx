@@ -28,6 +28,8 @@ export function SortBy({ sortOptions }: SortByProps) {
       }}
       ml="auto"
       value={`${table.getState().sorting?.[0]?.id}-${table.getState().sorting?.[0]?.desc ? "desc" : "asc"}`}
+      w="100%"
+      maw={250}
     />
   );
 }
