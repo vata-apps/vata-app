@@ -1,6 +1,6 @@
 import { Select } from "@mantine/core";
 import { TableSortOption } from "./types";
-import { useTableData } from "./use-table-data";
+import { useTableData } from "./useTableData";
 
 interface SortByProps {
   sortOptions: (TableSortOption & { label: string })[];

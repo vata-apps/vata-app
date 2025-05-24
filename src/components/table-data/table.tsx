@@ -8,7 +8,7 @@ import {
 } from "@mantine/core";
 import { flexRender } from "@tanstack/react-table";
 import { TableMeta } from "./types";
-import { useTableData } from "./use-table-data";
+import { useTableData } from "./useTableData";
 
 const { Thead, Tr, Th, Tbody, Td } = MantineTable;
 

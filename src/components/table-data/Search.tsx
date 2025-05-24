@@ -1,7 +1,7 @@
 import { ActionIcon, TextInput } from "@mantine/core";
 import { SearchIcon, X } from "lucide-react";
 import { useRef } from "react";
-import { useTableData } from "./use-table-data";
+import { useTableData } from "./useTableData";
 
 interface SearchProps {
   placeholder?: string;
