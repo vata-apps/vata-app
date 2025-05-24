@@ -17,7 +17,12 @@ alwaysApply: false
 - Use the component structure with children components:
   ```tsx
   <TableData>
-    <TableData.Search /> {/* Optional: Include if search is needed */}
+    <TableData.Toolbar> {/* Optional */}
+      <TableData.AddButton /> {/* Optional */}
+      <TableData.Search /> {/* Optional */}
+      <TableData.SortBy /> {/* Optional */}
+    </TableData.Toolbar>
+
     <TableData.Table />
   </TableData>
   ```
@@ -42,7 +47,6 @@ alwaysApply: false
   - `header`: Column header text
   - `size`: Optional width (number)
   - `cell`: Optional custom cell renderer
-  - `enableSorting`: Optional boolean to disable sorting
 
 ## Data Fetching Implementation
 - Must return an object with:

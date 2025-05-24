@@ -1,10 +1,6 @@
 ---
 description: 
 globs: *.tsx
-alwaysApply: true
+alwaysApply: false
 ---
-- MantineUI is the main source of component
-- Everytime we show a family member, use the component FamilyMember
-- Everytime we show the gender, use GenderIcon
-- Try to reuse existing component in "src/components" before create new one
 - Only on component by file
