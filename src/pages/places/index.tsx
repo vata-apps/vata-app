@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
 import { PlaceSortField } from "@/types/sort";
 import { capitalize } from "@/utils/strings";
-import { Badge, Stack, Text } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -24,17 +24,21 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
     accessorKey: "type",
     header: "Type",
     cell: ({ row }) => (
-      <Badge variant="default">
-        {capitalize(row.original.place_type?.name || "")}
-      </Badge>
+      <Text>{capitalize(row.original.place_type?.name || "")}</Text>
     ),
     size: 150,
-    enableSorting: false,
   },
   {
     accessorKey: "parent",
     header: "Parent",
-    cell: ({ row }) => row.original.parent?.name || "None",
+    cell: ({ row }) =>
+      row.original.parent?.name ? (
+        <Text>{row.original.parent.name}</Text>
+      ) : (
+        <Text fs="italic" c="dimmed">
+          None
+        </Text>
+      ),
     size: 300,
     enableSorting: false,
   },
@@ -80,7 +84,19 @@ function PlacesPage() {
         defaultSorting={{ id: "name", desc: false }}
         onRowClick={handleRowClick}
       >
-        {/* <TableData.Filters createPagePath="/places/new" /> */}
+        <TableData.Toolbar>
+          <TableData.AddButton to="/places/new" />
+          <TableData.Search placeholder="Search places" />
+          <TableData.SortBy
+            sortOptions={[
+              { desc: false, id: "name", label: "Name (A - Z)" },
+              { desc: true, id: "name", label: "Name (Z - A)" },
+              { desc: false, id: "type", label: "Type (A - Z)" },
+              { desc: true, id: "type", label: "Type (Z - A)" },
+            ]}
+          />
+        </TableData.Toolbar>
+
         <TableData.Table />
       </TableData>
     </Stack>

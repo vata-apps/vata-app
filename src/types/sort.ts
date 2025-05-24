@@ -1,7 +1,7 @@
 export type SortDirection = "asc" | "desc";
 
 export type IndividualSortField = "first_name" | "last_name";
-export type PlaceSortField = "name";
+export type PlaceSortField = "name" | "type";
 export type EventSortField = "date" | "place";
 export type FamilySortField =
   | "husband_first_name"

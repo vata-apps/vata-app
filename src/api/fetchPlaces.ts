@@ -36,20 +36,30 @@ export async function fetchPlaces({
   const { start, end } = getPageRange(page);
 
   // First, get the places data
-  const queryBuilder = supabase
-    .from("places")
-    .select("*, place_type:place_types!type_id(name)", {
+  const queryBuilder = supabase.from("places").select(
+    `
+      *,
+      place_type:place_types!type_id(name)
+    `,
+    {
       count: "exact",
-    });
+    },
+  );
 
   if (query) {
     queryBuilder.ilike("name", `%${query}%`);
   }
 
   // Apply sorting if provided
-  queryBuilder.order("name", {
-    ascending: !sortConfig || sortConfig.direction === "asc",
-  });
+  if (sortConfig?.field === "type") {
+    queryBuilder.order("place_type(name)", {
+      ascending: sortConfig.direction === "asc",
+    });
+  } else {
+    queryBuilder.order("name", {
+      ascending: !sortConfig || sortConfig.direction === "asc",
+    });
+  }
 
   const response = (await queryBuilder.range(start, end)) as PlacesResponse;
 
