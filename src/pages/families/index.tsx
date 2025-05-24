@@ -3,7 +3,9 @@ import { FamilyMember } from "@/components/individual/FamilyMember";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
 import { FamilySortField } from "@/types/sort";
-import { Button, Stack } from "@mantine/core";
+import displayName from "@/utils/displayName";
+import { capitalize } from "@/utils/strings";
+import { Button, Group, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -17,72 +19,62 @@ type TableState = {
 
 const columns: ColumnDef<Family, unknown>[] = [
   {
-    accessorKey: "husband",
-    header: "Husband",
+    accessorKey: "name",
+    header: "Name",
     cell: ({ row }) => {
       const husband = row.original.husband;
-
-      if (!husband) {
-        return (
-          <Button disabled size="compact-sm" variant="subtle">
-            Add Husband
-          </Button>
-        );
-      }
-
-      return <FamilyMember individual={husband} />;
-    },
-    id: "husband",
-  },
-  {
-    accessorKey: "wife",
-    header: "Wife",
-    cell: ({ row }) => {
       const wife = row.original.wife;
 
-      if (!wife) {
-        return (
-          <Button disabled size="compact-sm" variant="subtle">
-            Add Wife
-          </Button>
-        );
-      }
+      return (
+        <Button
+          component={Link}
+          size="compact-sm"
+          to={`/families/${row.original.id}`}
+          variant="transparent"
+        >
+          {(() => {
+            if (husband && !wife) {
+              return `${displayName(husband.names)} • Unknown mother`;
+            }
 
-      return <FamilyMember individual={wife} />;
+            if (!husband && wife) {
+              return `Unknown father • ${displayName(wife.names)}`;
+            }
+
+            if (husband && wife) {
+              return `${displayName(husband.names)} • ${displayName(wife.names)}`;
+            }
+
+            return "Unknown parents";
+          })()}
+        </Button>
+      );
     },
-    id: "wife",
+    id: "name",
+    size: 500,
   },
+
+  {
+    accessorKey: "type",
+    header: "Type",
+    cell: ({ row }) => capitalize(row.original.type),
+    id: "type",
+    size: 100,
+  },
+
   {
     accessorKey: "children",
     header: "Children",
     cell: ({ row }) => (
-      <div className="flex flex-wrap gap-x-4 gap-y-2">
+      <Group align="center" gap="xs">
         {row.original.children.map((child) => (
           <FamilyMember
             key={child.individual.id}
             individual={child.individual}
           />
         ))}
-      </div>
+      </Group>
     ),
-    enableSorting: false,
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <div className="text-right">
-        <Button
-          component={Link}
-          size="xs"
-          to={`/families/${row.original.id}`}
-          variant="default"
-        >
-          View
-        </Button>
-      </div>
-    ),
-    size: 120,
-    enableSorting: false,
   },
 ];
 
