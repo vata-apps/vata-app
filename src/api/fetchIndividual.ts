@@ -1,42 +1,12 @@
-import { Enums, Tables } from "@/database.types";
 import { supabase } from "@/lib/supabase";
-
-type Individual = Tables<"individuals"> & {
-  names: Tables<"names">[];
-  family_as_child: {
-    family: {
-      husband: {
-        id: string;
-        gender: Enums<"gender">;
-        names: Tables<"names">[];
-      } | null;
-      wife: {
-        id: string;
-        gender: Enums<"gender">;
-        names: Tables<"names">[];
-      } | null;
-      children: {
-        individual: {
-          id: string;
-        };
-      }[];
-    } | null;
-  }[];
-  families_as_spouse: {
-    children: {
-      individual: {
-        id: string;
-      };
-    }[];
-  }[];
-};
+import { IndividualWithRelations } from "@/types";
 
 /**
  * Fetch individual data with their names and family relationships
  */
 export async function fetchIndividual(
   individualId: string,
-): Promise<Individual> {
+): Promise<IndividualWithRelations> {
   // First, fetch the individual with their names
   const { data: individual, error: individualError } = await supabase
     .from("individuals")

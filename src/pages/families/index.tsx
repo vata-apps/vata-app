@@ -107,8 +107,8 @@ function FamiliesPage() {
     });
 
     return {
-      data: response.data as Family[],
-      totalCount: response.total ?? 0,
+      data: response.data,
+      total: response.total ?? 0,
     };
   };
 

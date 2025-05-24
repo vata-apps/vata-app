@@ -76,7 +76,7 @@ function EventsPage() {
 
     return {
       data: response.data,
-      totalCount: response.total,
+      total: response.total,
     };
   };
 

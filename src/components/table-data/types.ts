@@ -4,7 +4,7 @@ import { ColumnDef, Table } from "@tanstack/react-table";
  * Represents the meta object used in TanStack Table configuration
  */
 export interface TableMeta {
-  totalCount: number;
+  total: number;
 }
 
 export interface TableSortOption {
@@ -23,7 +23,7 @@ export interface TableState {
 
 export interface TableDataResponse<TData> {
   data: TData[];
-  totalCount: number;
+  total: number;
 }
 
 export interface TableDataProps<TData> {

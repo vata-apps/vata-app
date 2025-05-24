@@ -1,7 +1,7 @@
 import { FamilyMember } from "@/components/individual/FamilyMember";
 import { Enums } from "@/database.types";
 import { supabase } from "@/lib/supabase";
-import { IndividualWithNames } from "@/types/individual";
+import { IndividualWithNames } from "@/types";
 import { capitalize } from "@/utils/strings";
 import {
   Button,

@@ -2,7 +2,7 @@ import { fetchIndividuals } from "@/api";
 import { GenderIcon } from "@/components/GenderIcon";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
-import { Enums, Tables } from "@/database.types";
+import { IndividualWithNames } from "@/types";
 import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
@@ -13,8 +13,6 @@ import { ColumnDef } from "@tanstack/react-table";
 export const Route = createFileRoute("/individuals/")({
   component: IndividualsPage,
 });
-
-type Name = Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">;
 
 type IndividualEvent = {
   id: string;
@@ -33,10 +31,7 @@ type IndividualEvent = {
   }[];
 };
 
-type Individual = {
-  id: string;
-  gender: Enums<"gender">;
-  names: Name[];
+type Individual = IndividualWithNames & {
   individual_events: IndividualEvent[];
 };
 
@@ -135,7 +130,7 @@ function IndividualsPage() {
 
     return {
       data: response.data as Individual[],
-      totalCount: response.total ?? 0,
+      total: response.total ?? 0,
     };
   };
 

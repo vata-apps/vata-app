@@ -1,5 +1,5 @@
 // import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Tables } from "@/database.types";
+import { IndividualWithRelations } from "@/types";
 import displayName from "@/utils/displayName";
 import { Badge, Group, Stack } from "@mantine/core";
 import { CalendarDays } from "lucide-react";
@@ -8,38 +8,6 @@ import { PageHeader } from "../PageHeader";
 import { AddFamilyMember } from "./AddFamilyMember";
 import { AddIndividualInfo } from "./AddIndividualInfo";
 import { FamilyMember } from "./FamilyMember";
-
-type IndividualWithRelations = {
-  id: string;
-  gender: Tables<"individuals">["gender"];
-  names: Tables<"names">[];
-  family_as_child: {
-    family: {
-      husband: {
-        id: string;
-        names: Tables<"names">[];
-        gender: Tables<"individuals">["gender"];
-      } | null;
-      wife: {
-        id: string;
-        names: Tables<"names">[];
-        gender: Tables<"individuals">["gender"];
-      } | null;
-      children: {
-        individual: {
-          id: string;
-        };
-      }[];
-    } | null;
-  }[];
-  families_as_spouse: {
-    children: {
-      individual: {
-        id: string;
-      };
-    }[];
-  }[];
-};
 
 /**
  * Displays the header card with individual's information

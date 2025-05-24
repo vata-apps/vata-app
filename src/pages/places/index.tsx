@@ -64,7 +64,7 @@ function PlacesPage() {
 
     return {
       data: response.data,
-      totalCount: response.total ?? 0,
+      total: response.total ?? 0,
     };
   };
 

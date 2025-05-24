@@ -12,15 +12,29 @@ export type { Event, EventBase, FamilyEvent, IndividualEvent } from "./event";
 
 export type { PlaceWithType } from "./place";
 
+// API response types
+export type {
+  ErrorResponse,
+  PaginatedResponse,
+  SingleResponse,
+  toPaginatedResponse,
+  toSingleResponse,
+} from "./api";
+
 // Utility types
 export type {
   DatabaseRecord,
   ExtractFields,
   Insert,
+  PartialExcept,
   Row,
   Update,
+  PaginatedResponse as UtilsPaginatedResponse,
+  SingleResponse as UtilsSingleResponse,
   WithPagination,
+  WithParent,
   WithRelation,
+  WithType,
 } from "./utils";
 
 // Type guard functions
