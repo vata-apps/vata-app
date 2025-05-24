@@ -33,32 +33,19 @@ export function Table<TData extends Record<string, unknown>>() {
           {table.getHeaderGroups().map((headerGroup) => (
             <Tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
-                const width = (() => {
-                  if (!header.column.columnDef.size) return undefined;
-                  return `${header.column.getSize()}px`;
-                })();
-
                 return (
                   <Th
                     key={header.id}
-                    style={{
-                      width,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                    ta="left"
+                    style={(() => {
+                      if (!header.column.columnDef.size) return undefined;
+                      return { width: `${header.column.getSize()}px` };
+                    })()}
                   >
-                    {!header.isPlaceholder && (
-                      <Group gap="xs" align="center" style={{ minWidth: 0 }}>
-                        <Text truncate="end" style={{ flex: 1 }}>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                        </Text>
-                      </Group>
-                    )}
+                    {!header.isPlaceholder &&
+                      flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </Th>
                 );
               })}
