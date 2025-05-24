@@ -23,6 +23,9 @@ export type {
   WithRelation,
 } from "./utils";
 
+// Type guard functions
+export { isFamilyEvent, isIndividualEvent } from "./guards";
+
 // Re-export sorting types
 export type {
   EventSortField,

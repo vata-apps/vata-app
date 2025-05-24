@@ -4,7 +4,7 @@ import {
   FamilyMember,
   IndividualWithNames,
 } from "@/components/individual/FamilyMember";
-import { Enums } from "@/database.types";
+import { Event, isFamilyEvent, isIndividualEvent } from "@/types";
 import {
   Badge,
   Button,
@@ -18,67 +18,6 @@ import {
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-// Define types for our events
-type EventBase = {
-  id: string;
-  date: string | null;
-  description: string | null;
-  place_id: string | null;
-  places?: {
-    id: string;
-    name: string;
-    latitude: number | null;
-    longitude: number | null;
-  } | null;
-  eventType: "individual" | "family";
-};
-
-type IndividualEvent = EventBase & {
-  eventType: "individual";
-  individual_id: string;
-  individuals: {
-    id: string;
-    gender: Enums<"gender">;
-    names: Array<{
-      first_name: string | null;
-      last_name: string | null;
-      is_primary: boolean;
-    }>;
-  };
-  individual_event_types: { id: string; name: string };
-};
-
-type FamilyEvent = EventBase & {
-  eventType: "family";
-  family_id: string;
-  families: {
-    id: string;
-    husband_id: string | null;
-    wife_id: string | null;
-    husband?: {
-      id: string;
-      gender: Enums<"gender">;
-      names: Array<{
-        first_name: string | null;
-        last_name: string | null;
-        is_primary: boolean;
-      }>;
-    } | null;
-    wife?: {
-      id: string;
-      gender: Enums<"gender">;
-      names: Array<{
-        first_name: string | null;
-        last_name: string | null;
-        is_primary: boolean;
-      }>;
-    } | null;
-  };
-  family_event_types: { id: string; name: string };
-};
-
-type Event = IndividualEvent | FamilyEvent;
-
 export const Route = createFileRoute("/events/$eventId")({
   component: EventPage,
   validateSearch: (search: Record<string, unknown>) => {
@@ -89,14 +28,14 @@ export const Route = createFileRoute("/events/$eventId")({
 function EventIndividuals({ event }: { event: Event }) {
   const individuals = [];
 
-  if (event.eventType === "individual") {
+  if (isIndividualEvent(event)) {
     individuals.push({
       id: event.individual_id,
       gender: event.individuals.gender,
       names: event.individuals.names,
       relationship: "Primary",
     });
-  } else {
+  } else if (isFamilyEvent(event)) {
     const family = event.families;
 
     if (family.husband) {

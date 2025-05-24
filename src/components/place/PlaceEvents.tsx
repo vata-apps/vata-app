@@ -56,6 +56,11 @@ type FamilyEvent = {
 
 type Event = IndividualEvent | FamilyEvent;
 
+// Local type guard for this component's Event type
+function isIndividualEventLocal(event: Event): event is IndividualEvent {
+  return event.eventType === "individual";
+}
+
 type PlaceEventsProps = {
   placeId: string;
 };
@@ -344,7 +349,7 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
               <Table.Td>{event.date}</Table.Td>
               <Table.Td>
                 <Group gap="xs">
-                  {event.eventType === "individual" ? (
+                  {isIndividualEventLocal(event) ? (
                     <UserIcon size={16} />
                   ) : (
                     <UsersIcon size={16} />
@@ -354,7 +359,7 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
                 </Group>
               </Table.Td>
               <Table.Td>
-                {event.eventType === "individual" ? (
+                {isIndividualEventLocal(event) ? (
                   <FamilyMember
                     individual={event.individual as IndividualWithNames}
                   />
@@ -379,7 +384,7 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
                   size="xs"
                   component={Link}
                   to={
-                    event.eventType === "individual"
+                    isIndividualEventLocal(event)
                       ? `/individuals/${event.individual.id}`
                       : `/families/${event.familyId}`
                   }
