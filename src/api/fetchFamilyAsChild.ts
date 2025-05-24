@@ -1,19 +1,6 @@
-import { Tables } from "@/database.types";
 import { supabase } from "@/lib/supabase";
+import { FamilyWithRelations } from "@/types/family";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
-
-type IndividualWithNames = Tables<"individuals"> & {
-  names: Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">[];
-};
-
-type FamilyWithRelations = {
-  id: Tables<"families">["id"];
-  husband: IndividualWithNames | null;
-  wife: IndividualWithNames | null;
-  children: {
-    individual: IndividualWithNames;
-  }[];
-};
 
 type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations>;
 

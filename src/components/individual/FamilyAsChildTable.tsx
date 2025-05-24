@@ -1,19 +1,8 @@
 import { AddFamilyMember } from "@/components/individual/AddFamilyMember";
-import {
-  FamilyMember,
-  IndividualWithNames,
-} from "@/components/individual/FamilyMember";
+import { FamilyMember } from "@/components/individual/FamilyMember";
+import { FamilyWithRelations } from "@/types/family";
 import { Button, Group, Table } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
-
-export type FamilyWithRelations = {
-  id: string;
-  husband: IndividualWithNames | null;
-  wife: IndividualWithNames | null;
-  children: {
-    individual: IndividualWithNames;
-  }[];
-};
 
 /**
  * Displays the table with family information

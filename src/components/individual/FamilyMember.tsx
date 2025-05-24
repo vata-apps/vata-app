@@ -4,15 +4,13 @@ import displayName from "@/utils/displayName";
 import { Button, Group } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 
-export type IndividualWithNames = IndividualWithNamesVariant;
-
 /**
  * Displays an individual family member with name and lifespan
  */
 export function FamilyMember({
   individual,
 }: {
-  individual: IndividualWithNames;
+  individual: IndividualWithNamesVariant;
 }) {
   return (
     <Group align="center" gap={0}>

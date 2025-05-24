@@ -1,10 +1,8 @@
 import { fetchEvent } from "@/api";
 import { EventHeader } from "@/components/event/EventHeader";
-import {
-  FamilyMember,
-  IndividualWithNames,
-} from "@/components/individual/FamilyMember";
+import { FamilyMember } from "@/components/individual/FamilyMember";
 import { Event, isFamilyEvent, isIndividualEvent } from "@/types";
+import { IndividualWithNames } from "@/types/individual";
 import {
   Badge,
   Button,

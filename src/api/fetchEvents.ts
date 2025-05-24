@@ -1,17 +1,9 @@
-import { Tables } from "@/database.types";
+import { IndividualWithNames } from "@/types/individual";
 import { EventSortField, SortConfig } from "@/types/sort";
 import { supabase } from "../lib/supabase";
 import { getPageRange } from "./getPageRange";
 
-// Define types for the processed events we export
-type NameRow = Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">;
-
-type IndividualWithNames = {
-  id: string;
-  gender: Tables<"individuals">["gender"];
-  names: NameRow[];
-};
-
+// Define specific types for this API's response structure
 type FamilyWithSpouses = {
   id: string;
   husband_id: string | null;
@@ -20,7 +12,7 @@ type FamilyWithSpouses = {
   wife?: IndividualWithNames | null;
 };
 
-// Event base properties
+// Event base properties for this API response
 type EventBase = {
   id: string;
   date: string | null;
