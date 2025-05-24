@@ -104,6 +104,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "family_children_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "family_sorting_view"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "family_children_individual_id_fkey"
             columns: ["individual_id"]
             isOneToOne: false
@@ -164,6 +171,13 @@ export type Database = {
             columns: ["family_id"]
             isOneToOne: false
             referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_events_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "family_sorting_view"
             referencedColumns: ["id"]
           },
           {
@@ -379,7 +393,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      family_sorting_view: {
+        Row: {
+          created_at: string | null
+          gedcom_id: number | null
+          husband_first_name: string | null
+          husband_gender: Database["public"]["Enums"]["gender"] | null
+          husband_id: string | null
+          husband_last_name: string | null
+          id: string | null
+          searchable_names: string | null
+          type: Database["public"]["Enums"]["family_type"] | null
+          wife_first_name: string | null
+          wife_gender: Database["public"]["Enums"]["gender"] | null
+          wife_id: string | null
+          wife_last_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "families_husband_id_fkey"
+            columns: ["husband_id"]
+            isOneToOne: false
+            referencedRelation: "individuals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "families_wife_id_fkey"
+            columns: ["wife_id"]
+            isOneToOne: false
+            referencedRelation: "individuals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never

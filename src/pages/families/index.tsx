@@ -2,6 +2,7 @@ import { fetchFamilies } from "@/api";
 import { FamilyMember } from "@/components/individual/FamilyMember";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
+import { FamilySortField } from "@/types/sort";
 import { Button, Stack } from "@mantine/core";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
@@ -31,6 +32,7 @@ const columns: ColumnDef<Family, unknown>[] = [
 
       return <FamilyMember individual={husband} />;
     },
+    id: "husband",
   },
   {
     accessorKey: "wife",
@@ -48,6 +50,7 @@ const columns: ColumnDef<Family, unknown>[] = [
 
       return <FamilyMember individual={wife} />;
     },
+    id: "wife",
   },
   {
     accessorKey: "children",
@@ -62,6 +65,7 @@ const columns: ColumnDef<Family, unknown>[] = [
         ))}
       </div>
     ),
+    enableSorting: false,
   },
   {
     id: "actions",
@@ -91,6 +95,12 @@ function FamiliesPage() {
     const response = await fetchFamilies({
       page: state.pagination.pageIndex + 1,
       query: state.globalFilter,
+      sort: state.sorting
+        ? {
+            field: state.sorting.id as FamilySortField,
+            direction: state.sorting.desc ? "desc" : "asc",
+          }
+        : null,
     });
 
     return {
@@ -107,8 +117,57 @@ function FamiliesPage() {
         queryKey={["families"]}
         fetchData={fetchTableData}
         columns={columns}
+        defaultSorting={{ id: "husband_last_name", desc: false }}
       >
-        {/* <TableData.Filters createPagePath="/families/new" /> */}
+        <TableData.Toolbar>
+          <TableData.AddButton to="/families/new" />
+          <TableData.Search placeholder="Search by member name" />
+          <TableData.SortBy
+            sortOptions={[
+              {
+                desc: false,
+                id: "husband_first_name",
+                label: "Husband First Name (A - Z)",
+              },
+              {
+                desc: true,
+                id: "husband_first_name",
+                label: "Husband First Name (Z - A)",
+              },
+              {
+                desc: false,
+                id: "husband_last_name",
+                label: "Husband Last Name (A - Z)",
+              },
+              {
+                desc: true,
+                id: "husband_last_name",
+                label: "Husband Last Name (Z - A)",
+              },
+              {
+                desc: false,
+                id: "wife_first_name",
+                label: "Wife First Name (A - Z)",
+              },
+              {
+                desc: true,
+                id: "wife_first_name",
+                label: "Wife First Name (Z - A)",
+              },
+              {
+                desc: false,
+                id: "wife_last_name",
+                label: "Wife Last Name (A - Z)",
+              },
+              {
+                desc: true,
+                id: "wife_last_name",
+                label: "Wife Last Name (Z - A)",
+              },
+            ]}
+          />
+        </TableData.Toolbar>
+
         <TableData.Table />
       </TableData>
     </Stack>
