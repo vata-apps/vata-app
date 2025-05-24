@@ -112,8 +112,8 @@ export function Table<TData extends Record<string, unknown>>() {
         />
 
         <Text>
-          {(table.options.meta as TableMeta)?.totalCount ?? 0}{" "}
-          {(table.options.meta as TableMeta)?.totalCount === 1 ? "row" : "rows"}{" "}
+          {(table.options.meta as TableMeta)?.total ?? 0}{" "}
+          {(table.options.meta as TableMeta)?.total === 1 ? "row" : "rows"}{" "}
           found
         </Text>
       </AppShell.Footer>

@@ -63,9 +63,9 @@ export function TableData<TData extends Record<string, unknown>>({
   const table = useReactTable<TData>({
     data: queryResponse?.data ?? [],
     columns,
-    pageCount: queryResponse ? Math.ceil(queryResponse.totalCount / 10) : 0,
+    pageCount: queryResponse ? Math.ceil(queryResponse.total / 10) : 0,
     meta: {
-      totalCount: queryResponse?.totalCount,
+      total: queryResponse?.total ?? 0,
     } as TableMeta,
 
     manualPagination: true,
