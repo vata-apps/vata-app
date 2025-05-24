@@ -1,3 +1,4 @@
+import { PlaceWithType } from "@/types";
 import { PlaceSortField, SortConfig } from "@/types/sort";
 import { PostgrestResponse } from "@supabase/supabase-js";
 import { Tables } from "../database.types";
@@ -9,10 +10,6 @@ type PlaceType = Tables<"place_types">;
 
 type PlaceResponse = Place & {
   place_type: Pick<PlaceType, "name">;
-};
-
-export type PlaceWithType = PlaceResponse & {
-  parent?: Pick<Place, "name"> | null;
 };
 
 type PlacesResponse = PostgrestResponse<PlaceResponse>;

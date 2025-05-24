@@ -1,18 +1,10 @@
-import { Tables } from "../database.types";
+import { PlaceWithType } from "@/types";
 import { supabase } from "../lib/supabase";
-
-type Place = Tables<"places">;
-type PlaceType = Tables<"place_types">;
 
 // Define a recursive type for the parent hierarchy
 type ParentPlace = {
   id: string;
   name: string;
-  parent: ParentPlace | null;
-};
-
-type PlaceWithType = Place & {
-  type: Pick<PlaceType, "name">;
   parent: ParentPlace | null;
 };
 

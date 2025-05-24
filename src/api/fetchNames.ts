@@ -1,7 +1,5 @@
-import { Tables } from "@/database.types";
 import { supabase } from "@/lib/supabase";
-
-type Name = Tables<"names">;
+import { Name } from "@/types";
 
 /**
  * Fetch all names for a specific individual

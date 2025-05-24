@@ -12,7 +12,6 @@ This folder contains documentation about planned and potential improvements for 
 
 - `sql-schema-optimization.md` - Specific technical details about SQL schema improvements, including indexes, constraints, and data type optimizations.
 - `data-fetching-standardization.md` - Implementation details for standardizing data fetching patterns, API functions, and React hooks.
-- `typescript-type-standardization.md` - Guidelines for improving and standardizing TypeScript type definitions across the codebase.
 - `react-component-optimization.md` - Best practices and improvements for React components and their performance.
 - `function-duplication-and-utility-extraction.md` - Guidelines for reducing code duplication and creating reusable utility functions.
 
