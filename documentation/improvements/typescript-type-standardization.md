@@ -2,6 +2,14 @@
 
 This document outlines opportunities to improve and standardize TypeScript type definitions across the codebase. These suggestions focus on reducing duplication, creating a more consistent type system, and improving type safety. Each suggestion includes what needs to be done, why it matters, how to implement it, and actionable tasks.
 
+## Progress Status
+
+- ✅ **Partially Complete**: Basic types directory exists with sorting utilities
+- ❌ **Still Needed**: Centralized entity type definitions
+- ❌ **Still Needed**: Type utilities and database type standardization
+- ❌ **Still Needed**: Type guard functions
+- ✅ **Partially Complete**: Some API response patterns exist but need standardization
+
 ## 1. Create Centralized Type Definitions
 
 ### What?
@@ -12,25 +20,32 @@ Create a centralized type system with shared type definitions for common entitie
 
 Currently, there are duplicate and inconsistent type definitions for the same entities across different files:
 
-- `IndividualWithNames` is defined in at least four places:
+- `IndividualWithNames` is defined in **at least 8 places**:
 
   - `src/components/family/types.ts`
-  - `src/api/fetchFamiliesAsSpouse.ts`
+  - `src/api/fetchEvents.ts`
+  - `src/pages/individuals/index.tsx`
   - `src/api/fetchFamilyAsChild.ts`
+  - `src/api/fetchFamiliesAsSpouse.ts`
   - `src/components/individual/FamilyMember.tsx`
+  - `src/components/individual/IndividualHeader.tsx`
+  - `src/components/individual/Names.tsx`
 
-- `FamilyWithRelations` is defined in at least five places:
+- `FamilyWithRelations` is defined in **at least 7 places**:
 
   - `src/components/family/types.ts`
   - `src/api/fetchFamily.ts`
   - `src/api/fetchFamilies.ts`
   - `src/api/fetchFamiliesAsSpouse.ts`
-  - `src/components/individual/FamilyTable.tsx`
+  - `src/api/fetchFamilyAsChild.ts`
+  - `src/components/individual/FamilyAsChildTable.tsx`
+  - `src/components/individual/FamilyAsSpouseTable.tsx`
 
-- Event types (`EventBase`, `IndividualEvent`, `FamilyEvent`) are duplicated in:
+- Event types (`EventBase`, `IndividualEvent`, `FamilyEvent`) are duplicated in **at least 4 places**:
   - `src/pages/events/$eventId.tsx`
-  - `src/pages/events/index.tsx`
+  - `src/components/event/EventHeader.tsx`
   - `src/components/place/PlaceEvents.tsx`
+  - `src/utils/events.ts`
 
 This duplication makes maintenance difficult and can lead to inconsistencies. When changes are needed, they must be applied in multiple places.
 
@@ -38,11 +53,13 @@ This duplication makes maintenance difficult and can lead to inconsistencies. Wh
 
 Create a centralized type definition file for each major entity and have all components import from these files.
 
+### Current State
+
+Currently, only `src/types/sort.ts` exists with basic sorting types. No centralized entity types are implemented.
+
 ### Actionable Tasks
 
-1. Create a new directory: `src/types`
-
-2. Create entity-specific type files:
+1. **Create entity-specific type files:**
 
    - `src/types/individual.ts`:
 
@@ -58,16 +75,16 @@ Create a centralized type definition file for each major entity and have all com
    >;
 
    /**
-    * Individual with associated names
+    * Individual with associated names (most common pattern)
     */
    export type IndividualWithNames = {
      id: string;
      gender: Enums<"gender">;
-     names: Name[] | Name;
+     names: Name[];
    };
 
    /**
-    * Extended individual with more relationships
+    * Extended individual with full family relationships
     */
    export type IndividualWithRelations = {
      id: string;
@@ -198,24 +215,17 @@ Create a centralized type definition file for each major entity and have all com
    import { Tables } from "@/database.types";
 
    /**
-    * Recursive type for place parent hierarchy
+    * Place with type information - matches current API usage
     */
-   export type ParentPlace = {
-     id: string;
-     name: string;
-     parent: ParentPlace | null;
-   };
-
-   /**
-    * Place with type information
-    */
-   export type PlaceWithType = Tables<"places">["Row"] & {
-     type: Tables<"place_types">["Row"];
-     parent?: ParentPlace | null;
+   export type PlaceWithType = Tables<"places"> & {
+     place_type: Pick<Tables<"place_types">, "name">;
+     parent?: Pick<Tables<"places">, "name"> | null;
    };
    ```
 
-3. Replace all instances of duplicate types with imports from the centralized type definitions.
+2. **Replace duplicate type definitions** - Update these files to import from centralized types:
+   - All files listed in the "Why?" section above
+   - Start with the most frequently used types (`IndividualWithNames`, `FamilyWithRelations`)
 
 ## 2. Create Type Utilities
 
@@ -226,6 +236,10 @@ Create utility types to handle common type transformations and database relation
 ### Why?
 
 The codebase contains many similar type patterns that could be abstracted to improve consistency and maintainability. Many components need to extract specific fields from database types or handle relationships in a consistent way.
+
+### Current State
+
+No utility types exist beyond the basic sorting types in `src/types/sort.ts`.
 
 ### How?
 
@@ -280,9 +294,15 @@ Create a consistent approach to using database types from the generated `databas
 
 The codebase uses different patterns to access database types:
 
-- Some files use `Tables<"tableName">` directly
-- Some use `Database["public"]["Tables"]["tableName"]["Row"]`
-- Some define custom types that mirror the database schema
+- Most files use `Tables<"tableName">` (✅ **Good**)
+- Some still use `Database["public"]["Tables"]["tableName"]["Row"]` (❌ **Inconsistent**)
+
+**Files still using old pattern:**
+
+- `src/api/fetchNames.ts`
+- `src/api/fetchIndividual.ts`
+- `src/api/fetchPlaces.ts`
+- `src/api/fetchPlaceById.ts`
 
 This inconsistency makes it harder to understand and maintain the type system.
 
@@ -313,7 +333,11 @@ Standardize on a consistent pattern for database type access and augmentation.
    export type Update<T extends keyof Tables> = Tables<T>["Update"];
    ```
 
-2. Update component and API files to use these standardized type patterns.
+2. **Update these specific files** to use `Tables<"tableName">` instead of the old pattern:
+   - `src/api/fetchNames.ts` - Replace `Database["public"]["Tables"]["names"]["Row"]` with `Tables<"names">`
+   - `src/api/fetchIndividual.ts` - Replace all `Database["public"]["Tables"]["x"]["Row"]` patterns
+   - `src/api/fetchPlaces.ts` - Replace `Database["public"]["Tables"]["places"]["Row"]`
+   - `src/api/fetchPlaceById.ts` - Replace database type patterns
 
 ## 4. Type Guard Functions
 
@@ -323,7 +347,11 @@ Create type guard functions for discriminated union types like `Event`.
 
 ### Why?
 
-The codebase uses discriminated unions (like `Event = IndividualEvent | FamilyEvent`), but lacks proper type guards to safely narrow these types. This can lead to type casting or potential runtime errors.
+The codebase uses discriminated unions (like `Event = IndividualEvent | FamilyEvent`), but lacks proper type guards to safely narrow these types. Current code uses direct property checking like `event.eventType === "individual"` which works but could be centralized for consistency.
+
+### Current State
+
+No type guard functions exist. Direct property checking is used in multiple places.
 
 ### How?
 
@@ -351,21 +379,11 @@ Create type guard functions for union types to improve type safety.
    }
    ```
 
-2. Update components that work with union types to use these type guards:
-
-   ```typescript
-   import { Event } from "@/types/event";
-   import { isIndividualEvent, isFamilyEvent } from "@/types/guards";
-
-   function getEventTitle(event: Event) {
-     if (isIndividualEvent(event)) {
-       return `${event.individual_event_types.name} - ${getIndividualName(event.individuals)}`;
-     } else if (isFamilyEvent(event)) {
-       return `${event.family_event_types.name} - ${getFamilyName(event.families)}`;
-     }
-     return "Unknown Event";
-   }
-   ```
+2. **Update these components** to use type guards instead of direct property checking:
+   - `src/pages/events/$eventId.tsx` - Replace `event.eventType === "individual"` checks
+   - `src/components/event/EventHeader.tsx` - Replace property checks
+   - `src/components/place/PlaceEvents.tsx` - Replace property checks
+   - `src/utils/events.ts` - Update `getEventTitle` function
 
 ## 5. API Response Types
 
@@ -375,7 +393,18 @@ Create standardized types for API responses.
 
 ### Why?
 
-The current API functions have inconsistent return types, sometimes using raw database types, sometimes wrapping in custom response objects. This inconsistency makes it harder to work with API responses.
+The current API functions have inconsistent return types. Some patterns exist but aren't standardized:
+
+**Current patterns:**
+
+- `{ data: T[], total: number }` (used in `fetchFamilies`, `fetchIndividuals`)
+- `{ data: T[], totalCount: number }` (used in `fetchEvents`)
+- Direct return of data (used in some fetch functions)
+
+### Current State
+
+✅ **Partially implemented**: Some APIs use pagination patterns
+❌ **Still needed**: Standardized response types and utilities
 
 ### How?
 
@@ -403,6 +432,13 @@ Create standardized response types for API calls.
    }
 
    /**
+    * Standard response for single items
+    */
+   export interface SingleResponse<T> {
+     data: T;
+   }
+
+   /**
     * Converter for Postgrest responses to our standard format
     */
    export function toPaginatedResponse<T>(
@@ -420,10 +456,31 @@ Create standardized response types for API calls.
    }
    ```
 
-2. Update API functions to use these standardized response types.
+2. **Update these API functions** to use standardized response types:
+   - `src/api/fetchEvents.ts` - Change `totalCount` to `total` to match other APIs
+   - Create wrapper functions for single-item APIs to return standardized responses
+   - Update any remaining APIs to use consistent pagination patterns
+
+## Implementation Priority
+
+### High Priority (Immediate Impact)
+
+1. **Create centralized `IndividualWithNames` and `FamilyWithRelations` types** - These are used most frequently
+2. **Fix database type inconsistencies** - Update the 4 files still using old patterns
+3. **Standardize API response property names** - Fix `totalCount` vs `total` inconsistency
+
+### Medium Priority (Consistency)
+
+1. **Create event types and type guards** - Improve event handling consistency
+2. **Create utility types** - Reduce repetitive patterns
+
+### Low Priority (Enhancement)
+
+1. **Create place types** - Less frequently used
+2. **Add API response utilities** - Nice to have but not critical
 
 ## Conclusion
 
-Implementing these TypeScript type standardization improvements will enhance code maintainability, reduce duplication, and provide better type safety across the application. These tasks are suitable for developers looking to improve the type system architecture.
+While some progress has been made with basic type organization, the majority of the TypeScript type standardization improvements are still needed. The highest impact will come from centralizing the most frequently duplicated types (`IndividualWithNames`, `FamilyWithRelations`) and fixing the database type access inconsistencies.
 
-By creating a centralized, consistent type system, the codebase will become more robust against errors and easier to maintain as the application grows. Type errors will be caught earlier in the development process, and code that accesses shared entities will be more predictable.
+These improvements will enhance code maintainability, reduce duplication, and provide better type safety across the application. Type errors will be caught earlier in the development process, and code that accesses shared entities will be more predictable.

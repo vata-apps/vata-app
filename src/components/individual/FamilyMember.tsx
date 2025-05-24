@@ -1,16 +1,10 @@
 import { GenderIcon } from "@/components/GenderIcon";
-import { Enums, Tables } from "@/database.types";
+import { IndividualWithNamesVariant } from "@/types/individual";
 import displayName from "@/utils/displayName";
 import { Button, Group } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 
-type Name = Pick<Tables<"names">, "first_name" | "last_name" | "is_primary">;
-
-export type IndividualWithNames = {
-  id: string;
-  names: Name | Name[];
-  gender: Enums<"gender">;
-};
+export type IndividualWithNames = IndividualWithNamesVariant;
 
 /**
  * Displays an individual family member with name and lifespan

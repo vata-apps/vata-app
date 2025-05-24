@@ -21,14 +21,16 @@ type IndividualEvent = {
   date: string | null;
   type_id: string;
   place_id: string | null;
-  places: {
-    id: string;
-    name: string;
-  } | null;
+  places:
+    | {
+        id: string;
+        name: string;
+      }[]
+    | null;
   individual_event_types: {
     id: string;
     name: string;
-  };
+  }[];
 };
 
 type Individual = {
@@ -71,15 +73,15 @@ const columns: ColumnDef<Individual, unknown>[] = [
     header: "Birth",
     cell: ({ row }) => {
       const birthEvent = row.original.individual_events.find(
-        (event) => event.individual_event_types.name === "birth",
+        (event) => event.individual_event_types[0]?.name === "birth",
       );
       if (!birthEvent) return null;
       return (
         <Stack gap={0}>
           <Text size="sm">{birthEvent.date}</Text>
-          {birthEvent.places ? (
+          {birthEvent.places && birthEvent.places[0] ? (
             <Text size="sm" c="dimmed">
-              {birthEvent.places.name}
+              {birthEvent.places[0].name}
             </Text>
           ) : (
             <Text size="sm" fs="italic" c="dimmed">
@@ -95,15 +97,15 @@ const columns: ColumnDef<Individual, unknown>[] = [
     header: "Death",
     cell: ({ row }) => {
       const deathEvent = row.original.individual_events.find(
-        (event) => event.individual_event_types.name === "death",
+        (event) => event.individual_event_types[0]?.name === "death",
       );
       if (!deathEvent) return null;
       return (
         <Stack gap={0}>
           <Text size="sm">{deathEvent.date}</Text>
-          {deathEvent.places ? (
+          {deathEvent.places && deathEvent.places[0] ? (
             <Text size="sm" c="dimmed">
-              {deathEvent.places.name}
+              {deathEvent.places[0].name}
             </Text>
           ) : (
             <Text size="sm" fs="italic" c="dimmed">

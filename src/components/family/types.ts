@@ -1,17 +1,3 @@
-import { Tables } from "@/database.types";
-
-export type IndividualWithNames = {
-  id: string;
-  gender: Tables<"individuals">["gender"];
-  names: Tables<"names">[];
-};
-
-export type FamilyWithRelations = {
-  id: Tables<"families">["id"];
-  husband: IndividualWithNames | null;
-  wife: IndividualWithNames | null;
-  children: {
-    individual: IndividualWithNames;
-  }[];
-  type: Tables<"families">["type"];
-};
+// Re-export centralized types for family components
+export type { FamilyWithRelations } from "@/types/family";
+export type { IndividualWithNames, Name } from "@/types/individual";
