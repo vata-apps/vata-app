@@ -4,8 +4,8 @@ import { TableData } from "@/components/table-data";
 import { EventSortField } from "@/types/sort";
 import { formatDate } from "@/utils/dates";
 import { getEventTitle } from "@/utils/events";
-import { Button, Stack } from "@mantine/core";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Stack } from "@mantine/core";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
 // Define types for our events
@@ -100,26 +100,11 @@ const columns: ColumnDef<Event, unknown>[] = [
     size: 400,
     enableSorting: false,
   },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <div className="text-right">
-        <Button
-          component={Link}
-          size="xs"
-          to={`/events/${row.original.id}?eventType=${row.original.eventType}`}
-          variant="default"
-        >
-          View
-        </Button>
-      </div>
-    ),
-    size: 120,
-    enableSorting: false,
-  },
 ];
 
 function EventsPage() {
+  const navigate = useNavigate();
+
   const fetchTableData = async (state: TableState) => {
     const response = await fetchEvents({
       page: state.pagination.pageIndex + 1,
@@ -161,6 +146,13 @@ function EventsPage() {
     };
   };
 
+  const handleRowClick = (event: Event) => {
+    navigate({
+      to: `/events/${event.id}`,
+      search: { eventType: event.eventType },
+    });
+  };
+
   return (
     <Stack>
       <PageHeader title="Events" />
@@ -170,6 +162,7 @@ function EventsPage() {
         fetchData={fetchTableData}
         columns={columns}
         defaultSorting={{ id: "date", desc: false }}
+        onRowClick={handleRowClick}
       >
         {/* <TableData.Filters createPagePath="/events/new" /> */}
         <TableData.Table />

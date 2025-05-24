@@ -5,8 +5,8 @@ import { TableData } from "@/components/table-data";
 import { FamilySortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
-import { Button, Group, Stack } from "@mantine/core";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Group, Stack, Text } from "@mantine/core";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
 type Family = Awaited<ReturnType<typeof fetchFamilies>>["data"][number];
@@ -26,12 +26,7 @@ const columns: ColumnDef<Family, unknown>[] = [
       const wife = row.original.wife;
 
       return (
-        <Button
-          component={Link}
-          size="compact-sm"
-          to={`/families/${row.original.id}`}
-          variant="transparent"
-        >
+        <Text>
           {(() => {
             if (husband && !wife) {
               return `${displayName(husband.names)} • Unknown mother`;
@@ -47,7 +42,7 @@ const columns: ColumnDef<Family, unknown>[] = [
 
             return "Unknown parents";
           })()}
-        </Button>
+        </Text>
       );
     },
     id: "name",
@@ -83,6 +78,8 @@ export const Route = createFileRoute("/families/")({
 });
 
 function FamiliesPage() {
+  const navigate = useNavigate();
+
   const fetchTableData = async (state: TableState) => {
     const response = await fetchFamilies({
       page: state.pagination.pageIndex + 1,
@@ -101,6 +98,10 @@ function FamiliesPage() {
     };
   };
 
+  const handleRowClick = (family: Family) => {
+    navigate({ to: `/families/${family.id}` });
+  };
+
   return (
     <Stack>
       <PageHeader title="Families" />
@@ -110,6 +111,7 @@ function FamiliesPage() {
         fetchData={fetchTableData}
         columns={columns}
         defaultSorting={{ id: "husband_last_name", desc: false }}
+        onRowClick={handleRowClick}
       >
         <TableData.Toolbar>
           <TableData.AddButton to="/families/new" />

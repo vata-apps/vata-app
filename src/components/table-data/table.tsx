@@ -13,7 +13,7 @@ import { useTableData } from "./useTableData";
 const { Thead, Tr, Th, Tbody, Td } = MantineTable;
 
 export function Table<TData extends Record<string, unknown>>() {
-  const { table, isLoading } = useTableData<TData>();
+  const { table, isLoading, onRowClick } = useTableData<TData>();
 
   if (isLoading) {
     return <Loader />;
@@ -24,7 +24,11 @@ export function Table<TData extends Record<string, unknown>>() {
 
   return (
     <>
-      <MantineTable verticalSpacing="sm" style={{ tableLayout: "fixed" }}>
+      <MantineTable
+        verticalSpacing="sm"
+        style={{ tableLayout: "fixed" }}
+        highlightOnHover={true}
+      >
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Tr key={headerGroup.id}>
@@ -64,7 +68,13 @@ export function Table<TData extends Record<string, unknown>>() {
 
         <Tbody>
           {table.getRowModel().rows.map((row) => (
-            <Tr key={row.id}>
+            <Tr
+              key={row.id}
+              onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+              style={{
+                cursor: onRowClick ? "pointer" : undefined,
+              }}
+            >
               {row.getVisibleCells().map((cell) => {
                 const width = (() => {
                   if (!cell.column.columnDef.size) return undefined;

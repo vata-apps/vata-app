@@ -3,8 +3,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
 import { PlaceSortField } from "@/types/sort";
 import { capitalize } from "@/utils/strings";
-import { Badge, Button, Stack } from "@mantine/core";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Badge, Stack, Text } from "@mantine/core";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
 type TableState = {
@@ -17,7 +17,7 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    cell: ({ row }) => <span className="font-medium">{row.original.name}</span>,
+    cell: ({ row }) => <Text fw={500}>{row.original.name}</Text>,
     size: 400,
   },
   {
@@ -38,23 +38,6 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
     size: 300,
     enableSorting: false,
   },
-  {
-    id: "actions",
-    cell: ({ row }) => (
-      <div className="text-right">
-        <Button
-          component={Link}
-          size="xs"
-          to={`/places/${row.original.id}`}
-          variant="default"
-        >
-          View
-        </Button>
-      </div>
-    ),
-    size: 100,
-    enableSorting: false,
-  },
 ];
 
 export const Route = createFileRoute("/places/")({
@@ -62,6 +45,8 @@ export const Route = createFileRoute("/places/")({
 });
 
 function PlacesPage() {
+  const navigate = useNavigate();
+
   const fetchTableData = async (state: TableState) => {
     const response = await fetchPlaces({
       page: state.pagination.pageIndex + 1,
@@ -80,6 +65,10 @@ function PlacesPage() {
     };
   };
 
+  const handleRowClick = (place: PlaceWithType) => {
+    navigate({ to: `/places/${place.id}` });
+  };
+
   return (
     <Stack>
       <PageHeader title="Places" />
@@ -89,6 +78,7 @@ function PlacesPage() {
         fetchData={fetchTableData}
         columns={columns}
         defaultSorting={{ id: "name", desc: false }}
+        onRowClick={handleRowClick}
       >
         {/* <TableData.Filters createPagePath="/places/new" /> */}
         <TableData.Table />

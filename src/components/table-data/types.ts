@@ -31,6 +31,7 @@ export interface TableDataProps<TData> {
   fetchData: (state: TableState) => Promise<TableDataResponse<TData>>;
   columns: ColumnDef<TData, unknown>[];
   defaultSorting?: TableSortOption;
+  onRowClick?: (row: TData) => void;
   children: React.ReactNode;
 }
 
@@ -40,4 +41,5 @@ export interface TableDataContextType<TData> {
   isError: boolean;
   error: Error | null;
   columns: ColumnDef<TData, unknown>[];
+  onRowClick?: (row: TData) => void;
 }

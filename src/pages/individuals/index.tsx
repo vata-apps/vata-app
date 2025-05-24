@@ -6,8 +6,8 @@ import { Enums, Tables } from "@/database.types";
 import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
-import { Button, Group, Stack, Text } from "@mantine/core";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Group, Stack, Text } from "@mantine/core";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/individuals/")({
@@ -51,16 +51,7 @@ const columns: ColumnDef<Individual, unknown>[] = [
     cell: ({ row, table }) => {
       const sorting = table.getState().sorting;
       const part = sorting?.[0]?.id === "last_name" ? "fullInverted" : "full";
-      return (
-        <Button
-          component={Link}
-          to={`/individuals/${row.original.id}`}
-          size="compact-sm"
-          variant="transparent"
-        >
-          {displayName(row.original.names, { part })}
-        </Button>
-      );
+      return <Text>{displayName(row.original.names, { part })}</Text>;
     },
     id: "name",
   },
@@ -86,9 +77,13 @@ const columns: ColumnDef<Individual, unknown>[] = [
       return (
         <Stack gap={0}>
           <Text size="sm">{birthEvent.date}</Text>
-          {birthEvent.places && (
+          {birthEvent.places ? (
             <Text size="sm" c="dimmed">
               {birthEvent.places.name}
+            </Text>
+          ) : (
+            <Text size="sm" fs="italic" c="dimmed">
+              Unknown location
             </Text>
           )}
         </Stack>
@@ -106,9 +101,13 @@ const columns: ColumnDef<Individual, unknown>[] = [
       return (
         <Stack gap={0}>
           <Text size="sm">{deathEvent.date}</Text>
-          {deathEvent.places && (
+          {deathEvent.places ? (
             <Text size="sm" c="dimmed">
               {deathEvent.places.name}
+            </Text>
+          ) : (
+            <Text size="sm" fs="italic" c="dimmed">
+              Unknown location
             </Text>
           )}
         </Stack>
@@ -118,6 +117,8 @@ const columns: ColumnDef<Individual, unknown>[] = [
 ];
 
 function IndividualsPage() {
+  const navigate = useNavigate();
+
   const fetchTableData = async (state: TableState) => {
     const response = await fetchIndividuals({
       page: state.pagination.pageIndex + 1,
@@ -136,6 +137,10 @@ function IndividualsPage() {
     };
   };
 
+  const handleRowClick = (individual: Individual) => {
+    navigate({ to: `/individuals/${individual.id}` });
+  };
+
   return (
     <Stack h="100%">
       <PageHeader title="Individuals" />
@@ -145,6 +150,7 @@ function IndividualsPage() {
         fetchData={fetchTableData}
         columns={columns}
         defaultSorting={{ id: "last_name", desc: false }}
+        onRowClick={handleRowClick}
       >
         <TableData.Toolbar>
           <TableData.AddButton to="/individuals/new" />
