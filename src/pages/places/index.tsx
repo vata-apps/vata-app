@@ -40,7 +40,6 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
         </Text>
       ),
     size: 300,
-    enableSorting: false,
   },
 ];
 

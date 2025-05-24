@@ -15,20 +15,17 @@ const columns: ColumnDef<EventWithRelations, unknown>[] = [
     header: "Date",
     cell: ({ row }) => formatDate(row.original.date),
     size: 180,
-    enableSorting: true,
   },
   {
     accessorKey: "event",
     header: "Event",
     cell: ({ row }) => getEventTitle(row.original),
-    enableSorting: false,
     size: 400,
   },
   {
     accessorKey: "place",
     header: "Place",
     cell: ({ row }) => row.original.places?.name || "Unknown",
-    enableSorting: false,
   },
 ];
 
