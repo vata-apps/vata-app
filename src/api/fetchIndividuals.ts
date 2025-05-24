@@ -1,13 +1,12 @@
 import { SortConfig } from "@/types/sort";
 import { supabase } from "../lib/supabase";
-import { fetchIndividualsByName } from "./fetchIndividualsByName";
 import { getPageRange } from "./getPageRange";
 
 /**
- * Fetches a paginated list of individuals from the database
+ * Fetches a paginated list of individuals from the database with server-side sorting and filtering
  * @param params.page - The page number to fetch (1-based)
- * @param params.query - Search query to filter individuals by name
- * @param params.sort - Sorting configuration
+ * @param params.query - Optional search query to filter individuals by name
+ * @param params.sort - Optional sorting configuration
  * @throws When there's an error fetching data from Supabase
  */
 export async function fetchIndividuals({
@@ -16,20 +15,74 @@ export async function fetchIndividuals({
   sort,
 }: {
   page: number;
-  query: string;
-  sort: SortConfig;
+  query?: string;
+  sort?: SortConfig;
 }) {
   const { start, end } = getPageRange(page);
 
-  if (query) return await fetchIndividualsByName({ page, query, sort });
+  // Step 1: If there's a search query, get matching individual IDs first
+  let matchingIds: string[] | null = null;
 
-  // Get all individuals with their names and events
-  const {
-    count,
-    data: individuals,
-    error: individualsError,
-  } = await supabase.from("individuals").select(
-    `
+  if (query) {
+    const { data: matchingData, error: matchingError } = await supabase
+      .from("names")
+      .select("individual_id")
+      .or(`first_name.ilike.%${query}%,last_name.ilike.%${query}%`);
+
+    if (matchingError) throw matchingError;
+
+    if (!matchingData || matchingData.length === 0) {
+      return { data: [], total: 0 };
+    }
+
+    matchingIds = [...new Set(matchingData.map((item) => item.individual_id))];
+  }
+
+  // Step 2: Build base query for primary names
+  let baseQuery = supabase
+    .from("names")
+    .select("individual_id, first_name, last_name")
+    .eq("is_primary", true);
+
+  if (matchingIds) {
+    baseQuery = baseQuery.in("individual_id", matchingIds);
+  }
+
+  // Step 3: Get total count for pagination
+  let countQuery = supabase
+    .from("names")
+    .select("individual_id", { count: "exact" })
+    .eq("is_primary", true);
+
+  if (matchingIds) {
+    countQuery = countQuery.in("individual_id", matchingIds);
+  }
+
+  const { count: totalCount, error: countError } = await countQuery;
+
+  if (countError) throw countError;
+
+  // Step 4: Apply server-side sorting and pagination
+  const sortField = sort?.field ?? "last_name";
+  const sortDirection = sort?.direction ?? "asc";
+
+  const { data: primaryNames, error: primaryError } = await baseQuery
+    .order(sortField, { ascending: sortDirection === "asc" })
+    .range(start, end - 1);
+
+  if (primaryError) throw primaryError;
+
+  if (!primaryNames || primaryNames.length === 0) {
+    return { data: [], total: totalCount || 0 };
+  }
+
+  // Step 5: Get full individual data for the paginated and sorted IDs
+  const sortedIds = primaryNames.map((name) => name.individual_id);
+
+  const { data: individuals, error: individualsError } = await supabase
+    .from("individuals")
+    .select(
+      `
       id,
       gender,
       names (
@@ -42,45 +95,28 @@ export async function fetchIndividuals({
         date,
         type_id,
         place_id,
-        places (
+        places!individual_events_place_id_fkey (
           id,
           name
         ),
-        individual_event_types (
+        individual_event_types!individual_events_type_id_fkey (
           id,
           name
         )
       )
     `,
-    { count: "exact" },
-  );
+    )
+    .in("id", sortedIds);
 
   if (individualsError) throw individualsError;
 
-  // Sort the data if needed
-  const sortedData = sort
-    ? [...individuals].sort((a, b) => {
-        const aPrimaryName = a.names.find((n) => n.is_primary);
-        const bPrimaryName = b.names.find((n) => n.is_primary);
+  // Maintain the sorted order from the primary names query
+  const sortedData = sortedIds
+    .map((id) => individuals?.find((individual) => individual.id === id))
+    .filter(Boolean);
 
-        if (!aPrimaryName || !bPrimaryName) return 0;
-
-        const aValue =
-          sort.field === "first_name"
-            ? aPrimaryName.first_name
-            : aPrimaryName.last_name;
-        const bValue =
-          sort.field === "first_name"
-            ? bPrimaryName.first_name
-            : bPrimaryName.last_name;
-
-        const comparison = aValue.localeCompare(bValue);
-        return sort.direction === "asc" ? comparison : -comparison;
-      })
-    : individuals;
-
-  // Apply pagination
-  const paginatedData = sortedData.slice(start, end);
-
-  return { data: paginatedData, total: count };
+  return {
+    data: sortedData,
+    total: totalCount || 0,
+  };
 }
