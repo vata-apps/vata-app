@@ -353,7 +353,7 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
                     <UsersIcon size={16} />
                   )}
 
-                  <Text>{capitalize(event.type)}</Text>
+                  {capitalize(event.type)}
                 </Group>
               </Table.Td>
               <Table.Td>
@@ -389,7 +389,9 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
                 >
                   <Group gap="xs">
                     <Pencil size={14} />
-                    <Text size="sm">Edit</Text>
+                    <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>
+                      Edit
+                    </span>
                   </Group>
                 </Button>
               </Table.Td>

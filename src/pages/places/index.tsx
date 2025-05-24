@@ -1,9 +1,10 @@
-import { fetchPlaces, PlaceWithType } from "@/api";
+import { fetchPlaces } from "@/api";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
+import { PlaceWithType } from "@/types";
 import { PlaceSortField } from "@/types/sort";
 import { capitalize } from "@/utils/strings";
-import { Stack, Text } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -17,15 +18,15 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
   {
     accessorKey: "name",
     header: "Name",
-    cell: ({ row }) => <Text fw={500}>{row.original.name}</Text>,
+    cell: ({ row }) => (
+      <span style={{ fontWeight: 500 }}>{row.original.name}</span>
+    ),
     size: 400,
   },
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => (
-      <Text>{capitalize(row.original.place_type?.name || "")}</Text>
-    ),
+    cell: ({ row }) => capitalize(row.original.place_type?.name || ""),
     size: 150,
   },
   {
@@ -33,11 +34,13 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
     header: "Parent",
     cell: ({ row }) =>
       row.original.parent?.name ? (
-        <Text>{row.original.parent.name}</Text>
+        row.original.parent.name
       ) : (
-        <Text fs="italic" c="dimmed">
+        <span
+          style={{ fontStyle: "italic", color: "var(--mantine-color-dimmed)" }}
+        >
           None
-        </Text>
+        </span>
       ),
     size: 300,
   },

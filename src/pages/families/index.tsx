@@ -4,7 +4,7 @@ import { TableData } from "@/components/table-data";
 import { FamilySortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
-import { Stack, Text } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -24,16 +24,21 @@ const columns: ColumnDef<Family, unknown>[] = [
       const husband = row.original.husband;
       if (!husband)
         return (
-          <Text fs="italic" c="dimmed">
+          <span
+            style={{
+              fontStyle: "italic",
+              color: "var(--mantine-color-dimmed)",
+            }}
+          >
             Unknown
-          </Text>
+          </span>
         );
 
       const sorting = table.getState().sorting;
       const part = sorting?.[0]?.id?.includes("last_name")
         ? "fullInverted"
         : "full";
-      return <Text>{displayName(husband.names, { part })}</Text>;
+      return displayName(husband.names, { part });
     },
     id: "husband",
     size: 250,
@@ -45,16 +50,21 @@ const columns: ColumnDef<Family, unknown>[] = [
       const wife = row.original.wife;
       if (!wife)
         return (
-          <Text fs="italic" c="dimmed">
+          <span
+            style={{
+              fontStyle: "italic",
+              color: "var(--mantine-color-dimmed)",
+            }}
+          >
             Unknown
-          </Text>
+          </span>
         );
 
       const sorting = table.getState().sorting;
       const part = sorting?.[0]?.id?.includes("last_name")
         ? "fullInverted"
         : "full";
-      return <Text>{displayName(wife.names, { part })}</Text>;
+      return displayName(wife.names, { part });
     },
     id: "wife",
     size: 250,
@@ -62,7 +72,7 @@ const columns: ColumnDef<Family, unknown>[] = [
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => <Text>{capitalize(row.original.type)}</Text>,
+    cell: ({ row }) => capitalize(row.original.type),
     id: "type",
     size: 150,
   },
@@ -79,9 +89,9 @@ const columns: ColumnDef<Family, unknown>[] = [
         displayName(child.individual.names, { part }),
       );
       return (
-        <Text style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
+        <span style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
           {childrenNames.join(" • ")}
-        </Text>
+        </span>
       );
     },
   },

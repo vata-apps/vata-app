@@ -6,7 +6,7 @@ import { IndividualWithNames } from "@/types";
 import { IndividualSortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
-import { Group, Stack, Text } from "@mantine/core";
+import { Group, Stack } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -48,7 +48,7 @@ const columns: ColumnDef<Individual, unknown>[] = [
     cell: ({ row, table }) => {
       const sorting = table.getState().sorting;
       const part = sorting?.[0]?.id === "last_name" ? "fullInverted" : "full";
-      return <Text>{displayName(row.original.names, { part })}</Text>;
+      return displayName(row.original.names, { part });
     },
     id: "name",
   },
@@ -73,15 +73,28 @@ const columns: ColumnDef<Individual, unknown>[] = [
       if (!birthEvent) return null;
       return (
         <Stack gap={0}>
-          <Text size="sm">{birthEvent.date}</Text>
+          <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>
+            {birthEvent.date}
+          </span>
           {birthEvent.places && birthEvent.places[0] ? (
-            <Text size="sm" c="dimmed">
+            <span
+              style={{
+                fontSize: "var(--mantine-font-size-sm)",
+                color: "var(--mantine-color-dimmed)",
+              }}
+            >
               {birthEvent.places[0].name}
-            </Text>
+            </span>
           ) : (
-            <Text size="sm" fs="italic" c="dimmed">
+            <span
+              style={{
+                fontSize: "var(--mantine-font-size-sm)",
+                fontStyle: "italic",
+                color: "var(--mantine-color-dimmed)",
+              }}
+            >
               Unknown location
-            </Text>
+            </span>
           )}
         </Stack>
       );
@@ -97,15 +110,28 @@ const columns: ColumnDef<Individual, unknown>[] = [
       if (!deathEvent) return null;
       return (
         <Stack gap={0}>
-          <Text size="sm">{deathEvent.date}</Text>
+          <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>
+            {deathEvent.date}
+          </span>
           {deathEvent.places && deathEvent.places[0] ? (
-            <Text size="sm" c="dimmed">
+            <span
+              style={{
+                fontSize: "var(--mantine-font-size-sm)",
+                color: "var(--mantine-color-dimmed)",
+              }}
+            >
               {deathEvent.places[0].name}
-            </Text>
+            </span>
           ) : (
-            <Text size="sm" fs="italic" c="dimmed">
+            <span
+              style={{
+                fontSize: "var(--mantine-font-size-sm)",
+                fontStyle: "italic",
+                color: "var(--mantine-color-dimmed)",
+              }}
+            >
               Unknown location
-            </Text>
+            </span>
           )}
         </Stack>
       );
