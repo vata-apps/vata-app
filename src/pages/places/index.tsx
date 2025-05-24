@@ -19,7 +19,7 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => (
-      <span style={{ fontWeight: 500 }}>{row.original.name}</span>
+      <TableData.Text fw={500}>{row.original.name}</TableData.Text>
     ),
     size: 400,
   },
@@ -36,11 +36,9 @@ const columns: ColumnDef<PlaceWithType, unknown>[] = [
       row.original.parent?.name ? (
         row.original.parent.name
       ) : (
-        <span
-          style={{ fontStyle: "italic", color: "var(--mantine-color-dimmed)" }}
-        >
+        <TableData.Text c="dimmed" fs="italic">
           None
-        </span>
+        </TableData.Text>
       ),
     size: 300,
   },

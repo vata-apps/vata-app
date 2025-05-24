@@ -24,14 +24,9 @@ const columns: ColumnDef<Family, unknown>[] = [
       const husband = row.original.husband;
       if (!husband)
         return (
-          <span
-            style={{
-              fontStyle: "italic",
-              color: "var(--mantine-color-dimmed)",
-            }}
-          >
+          <TableData.Text c="dimmed" fs="italic">
             Unknown
-          </span>
+          </TableData.Text>
         );
 
       const sorting = table.getState().sorting;
@@ -50,14 +45,9 @@ const columns: ColumnDef<Family, unknown>[] = [
       const wife = row.original.wife;
       if (!wife)
         return (
-          <span
-            style={{
-              fontStyle: "italic",
-              color: "var(--mantine-color-dimmed)",
-            }}
-          >
+          <TableData.Text c="dimmed" fs="italic">
             Unknown
-          </span>
+          </TableData.Text>
         );
 
       const sorting = table.getState().sorting;
@@ -89,9 +79,11 @@ const columns: ColumnDef<Family, unknown>[] = [
         displayName(child.individual.names, { part }),
       );
       return (
-        <span style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
+        <TableData.Text
+          style={{ whiteSpace: "normal", wordBreak: "break-word" }}
+        >
           {childrenNames.join(" • ")}
-        </span>
+        </TableData.Text>
       );
     },
   },

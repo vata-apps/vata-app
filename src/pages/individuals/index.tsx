@@ -78,28 +78,13 @@ const columns: ColumnDef<Individual, unknown>[] = [
       if (!birthEvent) return null;
       return (
         <Stack gap={0}>
-          <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>
-            {birthEvent.date}
-          </span>
+          <TableData.Text>{birthEvent.date}</TableData.Text>
           {birthEvent.places && birthEvent.places.name ? (
-            <span
-              style={{
-                fontSize: "var(--mantine-font-size-sm)",
-                color: "var(--mantine-color-dimmed)",
-              }}
-            >
-              {birthEvent.places.name}
-            </span>
+            <TableData.Text c="dimmed">{birthEvent.places.name}</TableData.Text>
           ) : (
-            <span
-              style={{
-                fontSize: "var(--mantine-font-size-sm)",
-                fontStyle: "italic",
-                color: "var(--mantine-color-dimmed)",
-              }}
-            >
+            <TableData.Text c="dimmed" fs="italic">
               Unknown location
-            </span>
+            </TableData.Text>
           )}
         </Stack>
       );
@@ -115,28 +100,13 @@ const columns: ColumnDef<Individual, unknown>[] = [
       if (!deathEvent) return null;
       return (
         <Stack gap={0}>
-          <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>
-            {deathEvent.date}
-          </span>
+          <TableData.Text>{deathEvent.date}</TableData.Text>
           {deathEvent.places && deathEvent.places.name ? (
-            <span
-              style={{
-                fontSize: "var(--mantine-font-size-sm)",
-                color: "var(--mantine-color-dimmed)",
-              }}
-            >
-              {deathEvent.places.name}
-            </span>
+            <TableData.Text c="dimmed">{deathEvent.places.name}</TableData.Text>
           ) : (
-            <span
-              style={{
-                fontSize: "var(--mantine-font-size-sm)",
-                fontStyle: "italic",
-                color: "var(--mantine-color-dimmed)",
-              }}
-            >
+            <TableData.Text c="dimmed" fs="italic">
               Unknown location
-            </span>
+            </TableData.Text>
           )}
         </Stack>
       );
