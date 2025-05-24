@@ -53,7 +53,7 @@ alwaysApply: false
   ```typescript
   {
     data: T[];
-    totalCount: number;
+    total: number;
   }
   ```
 - Handle sorting using the sorting parameter

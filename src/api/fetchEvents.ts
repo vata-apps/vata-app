@@ -214,6 +214,6 @@ export async function fetchEvents({
 
   return {
     data: paginatedEvents,
-    totalCount: combinedEvents.length,
+    total: combinedEvents.length,
   };
 }
