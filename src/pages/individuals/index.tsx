@@ -63,7 +63,6 @@ const columns: ColumnDef<Individual, unknown>[] = [
       );
     },
     id: "name",
-    size: 380,
   },
   {
     accessorKey: "gender",
@@ -95,7 +94,6 @@ const columns: ColumnDef<Individual, unknown>[] = [
         </Stack>
       );
     },
-    size: 200,
   },
   {
     accessorKey: "death",
@@ -116,7 +114,6 @@ const columns: ColumnDef<Individual, unknown>[] = [
         </Stack>
       );
     },
-    size: 200,
   },
 ];
 

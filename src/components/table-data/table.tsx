@@ -24,24 +24,35 @@ export function Table<TData extends Record<string, unknown>>() {
 
   return (
     <>
-      <MantineTable verticalSpacing="sm">
+      <MantineTable verticalSpacing="sm" style={{ tableLayout: "fixed" }}>
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <Tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 const width = (() => {
                   if (!header.column.columnDef.size) return undefined;
-                  return header.column.getSize();
+                  return `${header.column.getSize()}px`;
                 })();
 
                 return (
-                  <Th key={header.id} style={{ width }} ta="left">
+                  <Th
+                    key={header.id}
+                    style={{
+                      width,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                    ta="left"
+                  >
                     {!header.isPlaceholder && (
-                      <Group gap="xs" align="center">
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                      <Group gap="xs" align="center" style={{ minWidth: 0 }}>
+                        <Text truncate="end" style={{ flex: 1 }}>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                        </Text>
                       </Group>
                     )}
                   </Th>
@@ -55,13 +66,28 @@ export function Table<TData extends Record<string, unknown>>() {
           {table.getRowModel().rows.map((row) => (
             <Tr key={row.id}>
               {row.getVisibleCells().map((cell) => {
+                const width = (() => {
+                  if (!cell.column.columnDef.size) return undefined;
+                  return `${cell.column.getSize()}px`;
+                })();
+
                 return (
-                  <Td key={cell.id}>
-                    <Group gap="xs">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                  <Td
+                    key={cell.id}
+                    style={{
+                      width,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <Group gap="xs" style={{ minWidth: 0 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </div>
                     </Group>
                   </Td>
                 );
