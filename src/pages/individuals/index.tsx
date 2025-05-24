@@ -14,21 +14,26 @@ export const Route = createFileRoute("/individuals/")({
   component: IndividualsPage,
 });
 
+/**
+ * Helper function to safely extract first element from array or return the value
+ */
+function getFirstOrValue<T>(value: T | T[]): T {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 type IndividualEvent = {
   id: string;
   date: string | null;
   type_id: string;
   place_id: string | null;
-  places:
-    | {
-        id: string;
-        name: string;
-      }[]
-    | null;
+  places: {
+    id: string;
+    name: string;
+  } | null;
   individual_event_types: {
     id: string;
     name: string;
-  }[];
+  };
 };
 
 type Individual = IndividualWithNames & {
@@ -68,7 +73,7 @@ const columns: ColumnDef<Individual, unknown>[] = [
     header: "Birth",
     cell: ({ row }) => {
       const birthEvent = row.original.individual_events.find(
-        (event) => event.individual_event_types[0]?.name === "birth",
+        (event) => event.individual_event_types.name === "birth",
       );
       if (!birthEvent) return null;
       return (
@@ -76,14 +81,14 @@ const columns: ColumnDef<Individual, unknown>[] = [
           <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>
             {birthEvent.date}
           </span>
-          {birthEvent.places && birthEvent.places[0] ? (
+          {birthEvent.places && birthEvent.places.name ? (
             <span
               style={{
                 fontSize: "var(--mantine-font-size-sm)",
                 color: "var(--mantine-color-dimmed)",
               }}
             >
-              {birthEvent.places[0].name}
+              {birthEvent.places.name}
             </span>
           ) : (
             <span
@@ -105,7 +110,7 @@ const columns: ColumnDef<Individual, unknown>[] = [
     header: "Death",
     cell: ({ row }) => {
       const deathEvent = row.original.individual_events.find(
-        (event) => event.individual_event_types[0]?.name === "death",
+        (event) => event.individual_event_types.name === "death",
       );
       if (!deathEvent) return null;
       return (
@@ -113,14 +118,14 @@ const columns: ColumnDef<Individual, unknown>[] = [
           <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>
             {deathEvent.date}
           </span>
-          {deathEvent.places && deathEvent.places[0] ? (
+          {deathEvent.places && deathEvent.places.name ? (
             <span
               style={{
                 fontSize: "var(--mantine-font-size-sm)",
                 color: "var(--mantine-color-dimmed)",
               }}
             >
-              {deathEvent.places[0].name}
+              {deathEvent.places.name}
             </span>
           ) : (
             <span
@@ -154,8 +159,35 @@ function IndividualsPage() {
         : { field: "last_name", direction: "asc" },
     });
 
+    // Transform the data to handle Supabase's array returns for joined data
+    const transformedData = response.data.map((individual: unknown) => {
+      const ind = individual as Record<string, unknown>;
+      return {
+        ...ind,
+        individual_events: ((ind.individual_events as unknown[]) || []).map(
+          (event: unknown) => {
+            const evt = event as Record<string, unknown>;
+            return {
+              ...evt,
+              individual_event_types: getFirstOrValue(
+                evt.individual_event_types as
+                  | { id: string; name: string }
+                  | { id: string; name: string }[],
+              ),
+              places: getFirstOrValue(
+                evt.places as
+                  | { id: string; name: string }
+                  | { id: string; name: string }[]
+                  | null,
+              ),
+            };
+          },
+        ),
+      };
+    });
+
     return {
-      data: response.data as Individual[],
+      data: transformedData as Individual[],
       total: response.total ?? 0,
     };
   };

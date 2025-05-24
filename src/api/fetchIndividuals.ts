@@ -90,7 +90,7 @@ export async function fetchIndividuals({
         last_name,
         is_primary
       ),
-      individual_events!inner (
+      individual_events (
         id,
         date,
         type_id,
