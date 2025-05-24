@@ -1,7 +1,0 @@
----
-description: 
-globs: *
-alwaysApply: true
----
-- Uses pnpm instead of npm or yarn
-- Follow best practices defined in /documentation/best-practices/

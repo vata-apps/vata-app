@@ -3,4 +3,4 @@ description:
 globs: 
 alwaysApply: true
 ---
-- Everytime we made changes in database schema, update files in "documentation/database-schema"
+Always keep schema up to date in /documentation/database-schema 
