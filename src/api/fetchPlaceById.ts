@@ -1,8 +1,8 @@
-import { Database } from "../database.types";
+import { Tables } from "../database.types";
 import { supabase } from "../lib/supabase";
 
-type Place = Database["public"]["Tables"]["places"]["Row"];
-type PlaceType = Database["public"]["Tables"]["place_types"]["Row"];
+type Place = Tables<"places">;
+type PlaceType = Tables<"place_types">;
 
 // Define a recursive type for the parent hierarchy
 type ParentPlace = {

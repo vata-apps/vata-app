@@ -1,7 +1,7 @@
-import type { Database } from "@/database.types";
+import { Tables } from "@/database.types";
 import { supabase } from "@/lib/supabase";
 
-type Name = Database["public"]["Tables"]["names"]["Row"];
+type Name = Tables<"names">;
 
 /**
  * Fetch all names for a specific individual

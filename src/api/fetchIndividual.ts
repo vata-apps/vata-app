@@ -1,19 +1,19 @@
-import type { Database } from "@/database.types";
+import { Enums, Tables } from "@/database.types";
 import { supabase } from "@/lib/supabase";
 
-type Individual = Database["public"]["Tables"]["individuals"]["Row"] & {
-  names: Database["public"]["Tables"]["names"]["Row"][];
+type Individual = Tables<"individuals"> & {
+  names: Tables<"names">[];
   family_as_child: {
     family: {
       husband: {
         id: string;
-        gender: Database["public"]["Enums"]["gender"];
-        names: Database["public"]["Tables"]["names"]["Row"][];
+        gender: Enums<"gender">;
+        names: Tables<"names">[];
       } | null;
       wife: {
         id: string;
-        gender: Database["public"]["Enums"]["gender"];
-        names: Database["public"]["Tables"]["names"]["Row"][];
+        gender: Enums<"gender">;
+        names: Tables<"names">[];
       } | null;
       children: {
         individual: {

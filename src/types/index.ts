@@ -12,6 +12,17 @@ export type { Event, EventBase, FamilyEvent, IndividualEvent } from "./event";
 
 export type { PlaceWithType } from "./place";
 
+// Utility types
+export type {
+  DatabaseRecord,
+  ExtractFields,
+  Insert,
+  Row,
+  Update,
+  WithPagination,
+  WithRelation,
+} from "./utils";
+
 // Re-export sorting types
 export type {
   EventSortField,
