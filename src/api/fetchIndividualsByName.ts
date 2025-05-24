@@ -67,6 +67,20 @@ export async function fetchIndividualsByName({
         first_name,
         last_name,
         is_primary
+      ),
+      individual_events!inner (
+        id,
+        date,
+        type_id,
+        place_id,
+        places (
+          id,
+          name
+        ),
+        individual_event_types (
+          id,
+          name
+        )
       )
     `,
     )
