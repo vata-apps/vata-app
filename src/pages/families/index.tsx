@@ -1,11 +1,10 @@
 import { fetchFamilies } from "@/api";
-import { FamilyMember } from "@/components/individual/FamilyMember";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
 import { FamilySortField } from "@/types/sort";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
-import { Group, Stack, Text } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
@@ -19,57 +18,72 @@ type TableState = {
 
 const columns: ColumnDef<Family, unknown>[] = [
   {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => {
+    accessorKey: "husband",
+    header: "Husband",
+    cell: ({ row, table }) => {
       const husband = row.original.husband;
-      const wife = row.original.wife;
+      if (!husband)
+        return (
+          <Text fs="italic" c="dimmed">
+            Unknown
+          </Text>
+        );
 
-      return (
-        <Text>
-          {(() => {
-            if (husband && !wife) {
-              return `${displayName(husband.names)} • Unknown mother`;
-            }
-
-            if (!husband && wife) {
-              return `Unknown father • ${displayName(wife.names)}`;
-            }
-
-            if (husband && wife) {
-              return `${displayName(husband.names)} • ${displayName(wife.names)}`;
-            }
-
-            return "Unknown parents";
-          })()}
-        </Text>
-      );
+      const sorting = table.getState().sorting;
+      const part = sorting?.[0]?.id?.includes("last_name")
+        ? "fullInverted"
+        : "full";
+      return <Text>{displayName(husband.names, { part })}</Text>;
     },
-    id: "name",
-    size: 500,
+    id: "husband",
+    size: 250,
   },
+  {
+    accessorKey: "wife",
+    header: "Wife",
+    cell: ({ row, table }) => {
+      const wife = row.original.wife;
+      if (!wife)
+        return (
+          <Text fs="italic" c="dimmed">
+            Unknown
+          </Text>
+        );
 
+      const sorting = table.getState().sorting;
+      const part = sorting?.[0]?.id?.includes("last_name")
+        ? "fullInverted"
+        : "full";
+      return <Text>{displayName(wife.names, { part })}</Text>;
+    },
+    id: "wife",
+    size: 250,
+  },
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => capitalize(row.original.type),
+    cell: ({ row }) => <Text>{capitalize(row.original.type)}</Text>,
     id: "type",
-    size: 100,
+    size: 150,
   },
-
   {
     accessorKey: "children",
     header: "Children",
-    cell: ({ row }) => (
-      <Group align="center" gap="xs">
-        {row.original.children.map((child) => (
-          <FamilyMember
-            key={child.individual.id}
-            individual={child.individual}
-          />
-        ))}
-      </Group>
-    ),
+    cell: ({ row, table }) => {
+      const sorting = table.getState().sorting;
+      const part = sorting?.[0]?.id?.includes("last_name")
+        ? "fullInverted"
+        : "full";
+
+      const childrenNames = row.original.children.map((child) =>
+        displayName(child.individual.names, { part }),
+      );
+      return (
+        <Text style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
+          {childrenNames.join(" • ")}
+        </Text>
+      );
+    },
   },
 ];
 

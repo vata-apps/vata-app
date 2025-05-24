@@ -84,6 +84,7 @@ export function Table<TData extends Record<string, unknown>>() {
                 return (
                   <Td
                     key={cell.id}
+                    valign="top"
                     style={{
                       width,
                       overflow: "hidden",
