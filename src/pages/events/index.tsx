@@ -1,6 +1,7 @@
-import { fetchEvents } from "@/api";
+import { EventWithRelations, fetchEvents } from "@/api";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
+import { TableState } from "@/components/table-data/types";
 import { EventSortField } from "@/types/sort";
 import { formatDate } from "@/utils/dates";
 import { getEventTitle } from "@/utils/events";
@@ -8,78 +9,7 @@ import { Stack } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
-// Define types for our events
-type EventBase = {
-  id: string;
-  date: string | null;
-  description: string | null;
-  place_id: string | null;
-  places?: { name: string } | null;
-};
-
-type IndividualEvent = EventBase & {
-  eventType: "individual";
-  individual_id: string;
-  individuals: {
-    id: string;
-    gender: string;
-    names: Array<{
-      first_name: string | null;
-      last_name: string | null;
-      is_primary: boolean;
-    }>;
-  };
-  individual_event_types: { name: string };
-};
-
-type FamilyEvent = EventBase & {
-  eventType: "family";
-  family_id: string;
-  families: {
-    id: string;
-    husband_id: string | null;
-    wife_id: string | null;
-    husband?: {
-      id: string;
-      gender: string;
-      names: Array<{
-        first_name: string | null;
-        last_name: string | null;
-        is_primary: boolean;
-      }>;
-    } | null;
-    wife?: {
-      id: string;
-      gender: string;
-      names: Array<{
-        first_name: string | null;
-        last_name: string | null;
-        is_primary: boolean;
-      }>;
-    } | null;
-  };
-  family_event_types: { name: string };
-};
-
-type Event = IndividualEvent | FamilyEvent;
-
-type RawEvent = Omit<Event, "eventType" | "places"> & {
-  places?: { name: string }[] | { name: string } | null;
-  individual_id?: string;
-  family_id?: string;
-};
-
-type TableState = {
-  globalFilter: string;
-  sorting: { id: string; desc: boolean } | null;
-  pagination: { pageIndex: number; pageSize: number };
-};
-
-export const Route = createFileRoute("/events/")({
-  component: EventsPage,
-});
-
-const columns: ColumnDef<Event, unknown>[] = [
+const columns: ColumnDef<EventWithRelations, unknown>[] = [
   {
     accessorKey: "date",
     header: "Date",
@@ -92,15 +22,19 @@ const columns: ColumnDef<Event, unknown>[] = [
     header: "Event",
     cell: ({ row }) => getEventTitle(row.original),
     enableSorting: false,
+    size: 400,
   },
   {
     accessorKey: "place",
     header: "Place",
     cell: ({ row }) => row.original.places?.name || "Unknown",
-    size: 400,
     enableSorting: false,
   },
 ];
+
+export const Route = createFileRoute("/events/")({
+  component: EventsPage,
+});
 
 function EventsPage() {
   const navigate = useNavigate();
@@ -117,36 +51,13 @@ function EventsPage() {
         : { field: "date", direction: "asc" },
     });
 
-    // Transform the response data to match our Event type
-    const events = response.data.map((event: RawEvent) => {
-      const places = Array.isArray(event.places)
-        ? event.places[0]
-        : event.places;
-
-      const baseEvent = {
-        ...event,
-        places: places ? { name: places.name } : null,
-      };
-
-      if ("individual_id" in event) {
-        return {
-          ...baseEvent,
-          eventType: "individual" as const,
-        };
-      }
-      return {
-        ...baseEvent,
-        eventType: "family" as const,
-      };
-    });
-
     return {
-      data: events as Event[],
-      totalCount: response.total ?? 0,
+      data: response.data,
+      totalCount: response.totalCount,
     };
   };
 
-  const handleRowClick = (event: Event) => {
+  const handleRowClick = (event: EventWithRelations) => {
     navigate({
       to: `/events/${event.id}`,
       search: { eventType: event.eventType },
@@ -157,14 +68,24 @@ function EventsPage() {
     <Stack>
       <PageHeader title="Events" />
 
-      <TableData<Event>
+      <TableData<EventWithRelations>
         queryKey={["events"]}
         fetchData={fetchTableData}
         columns={columns}
         defaultSorting={{ id: "date", desc: false }}
         onRowClick={handleRowClick}
       >
-        {/* <TableData.Filters createPagePath="/events/new" /> */}
+        <TableData.Toolbar>
+          <TableData.AddButton to="/events/new" />
+          <TableData.Search placeholder="Search events" />
+          <TableData.SortBy
+            sortOptions={[
+              { desc: false, id: "date", label: "Date (Oldest First)" },
+              { desc: true, id: "date", label: "Date (Newest First)" },
+            ]}
+          />
+        </TableData.Toolbar>
+
         <TableData.Table />
       </TableData>
     </Stack>
