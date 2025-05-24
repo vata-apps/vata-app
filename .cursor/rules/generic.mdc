@@ -3,7 +3,4 @@ description:
 globs: *
 alwaysApply: true
 ---
-- Always write immutable. Avoid to use "let"
-- Avoid ternary conditions
-- Use IIFE instead of ternary or mutable variables
-- Always use pnpm to install dependencies or run npm script
+- Follow best practices defined in /documentation/best-practices/
