@@ -1,62 +1,79 @@
-import { Event, isIndividualEvent } from "@/types";
-import { formatDate } from "@/utils/dates";
+import { PageCard } from "@/components/PageCard";
+import type { Event } from "@/types";
+import { isIndividualEvent } from "@/types";
 import { getEventTitle } from "@/utils/events";
-import { Badge, Button, Group } from "@mantine/core";
-import { Link } from "@tanstack/react-router";
-import { CalendarIcon, MapPinIcon, UsersIcon } from "lucide-react";
-import { FamilyMember } from "../individual/FamilyMember";
-import { PageHeader } from "../PageHeader";
+import { Button, Group, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { Calendar, Edit, MapPin, Trash2, User, Users } from "lucide-react";
 
-export function EventHeader({ event }: { event: Event }) {
+interface EventHeaderCardProps {
+  readonly event: Event;
+}
+
+export function EventHeader({ event }: EventHeaderCardProps) {
+  const isIndividual = isIndividualEvent(event);
+
   return (
-    <PageHeader backTo="/events" title={getEventTitle(event)}>
-      <Group gap="xs">
-        <Badge variant="default">
-          {isIndividualEvent(event) ? "Individual Event" : "Family Event"}
-        </Badge>
-
-        <Group align="center" gap={0}>
-          <CalendarIcon size={16} />
-          {event.date ? (
-            <Button variant="transparent" size="compact-sm">
-              {formatDate(event.date)}
-            </Button>
-          ) : (
-            <Button variant="transparent" size="compact-sm">
-              Add Date
-            </Button>
-          )}
+    <PageCard>
+      <Group justify="space-between" align="flex-start">
+        <Group>
+          <ThemeIcon
+            size={60}
+            radius="xl"
+            variant="gradient"
+            gradient={{ from: "blue.6", to: "blue.4", deg: 135 }}
+          >
+            {isIndividual ? <User size={24} /> : <Users size={24} />}
+          </ThemeIcon>
+          <Stack gap="xs">
+            <Title order={2} fw={600}>
+              {getEventTitle(event)}
+            </Title>
+            <Text c="dimmed">
+              {isIndividual ? "Individual Event" : "Family Event"}
+            </Text>
+          </Stack>
         </Group>
 
-        <Group align="center" gap={0}>
-          <MapPinIcon size={16} />
-          {event.places ? (
-            <Button variant="transparent" size="compact-sm">
-              {event.places.name}
-            </Button>
-          ) : (
-            <Button variant="transparent" size="compact-sm">
-              Add Place
-            </Button>
-          )}
+        <Group gap="sm">
+          <Button
+            variant="subtle"
+            leftSection={<Edit size={16} />}
+            onClick={() => {
+              // TODO: Open edit form
+              console.log("Edit event:", event.id);
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="subtle"
+            size="sm"
+            onClick={() => {
+              // TODO: Delete event
+              console.log("Delete event:", event.id);
+            }}
+          >
+            <Trash2 size={16} />
+          </Button>
         </Group>
+      </Group>
 
-        {isIndividualEvent(event) ? (
-          <FamilyMember individual={event.individuals} />
-        ) : (
-          <Group align="center" gap={0}>
-            <UsersIcon size={16} />
-            <Button
-              variant="transparent"
-              size="compact-sm"
-              component={Link}
-              to={`/families/${event.family_id}`}
-            >
-              {getEventTitle(event).split(" - ")[1]}
+      <Stack gap="sm">
+        <Group gap="xl">
+          <Group gap={0}>
+            <Calendar size={16} />
+            <Button variant="transparent" size="compact-md">
+              {event.date || "Add date"}
             </Button>
           </Group>
-        )}
-      </Group>
-    </PageHeader>
+          <Group gap={0}>
+            <MapPin size={16} />
+            <Button variant="transparent" size="compact-md">
+              {event.places?.name || "Add location"}
+            </Button>
+          </Group>
+        </Group>
+      </Stack>
+    </PageCard>
   );
 }

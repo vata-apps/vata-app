@@ -47,6 +47,11 @@ CREATE OR REPLACE FUNCTION get_individual_event_id(key text) RETURNS uuid AS $$
             WHEN 'lily_luna_potter_birth' THEN    '00000010-0001-0000-0003-000000000001'::uuid
             WHEN 'rose_weasley_birth' THEN        '00000010-0001-0000-0004-000000000001'::uuid
             WHEN 'hugo_weasley_birth' THEN        '00000010-0001-0000-0005-000000000001'::uuid
+
+            /* Test Events for EventStoryCard */
+            WHEN 'test_no_date_no_location' THEN  '00000010-9999-0000-0001-000000000001'::uuid
+            WHEN 'test_date_no_location' THEN     '00000010-9999-0000-0002-000000000001'::uuid
+            WHEN 'test_no_date_location' THEN     '00000010-9999-0000-0003-000000000001'::uuid
             
             ELSE NULL
         END;

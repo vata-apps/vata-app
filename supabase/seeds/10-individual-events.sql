@@ -45,4 +45,9 @@ VALUES
     (get_individual_event_id('albus_potter_birth'), get_individual_id('albus_potter'), get_individual_event_type_id('birth'), '2006-01-25', get_place_id('st_mungos'), 'Birth of Albus Severus Potter'),
     (get_individual_event_id('lily_luna_potter_birth'), get_individual_id('lily_luna_potter'), get_individual_event_type_id('birth'), '2008-07-03', get_place_id('st_mungos'), 'Birth of Lily Luna Potter'),
     (get_individual_event_id('rose_weasley_birth'), get_individual_id('rose_weasley'), get_individual_event_type_id('birth'), '2005-11-21', get_place_id('st_mungos'), 'Birth of Rose Weasley'),
-    (get_individual_event_id('hugo_weasley_birth'), get_individual_id('hugo_weasley'), get_individual_event_type_id('birth'), '2008-05-09', get_place_id('st_mungos'), 'Birth of Hugo Weasley');
+    (get_individual_event_id('hugo_weasley_birth'), get_individual_id('hugo_weasley'), get_individual_event_type_id('birth'), '2008-05-09', get_place_id('st_mungos'), 'Birth of Hugo Weasley'),
+
+    /* Test Events for EventStoryCard - Different data scenarios */
+    (get_individual_event_id('test_no_date_no_location'), get_individual_id('harry_potter'), get_individual_event_type_id('birth'), NULL, NULL, 'Test event with no date and no location'),
+    (get_individual_event_id('test_date_no_location'), get_individual_id('harry_potter'), get_individual_event_type_id('birth'), '1985-12-25', NULL, 'Test event with date but no location'),
+    (get_individual_event_id('test_no_date_location'), get_individual_id('harry_potter'), get_individual_event_type_id('birth'), NULL, get_place_id('hogwarts'), 'Test event with location but no date');

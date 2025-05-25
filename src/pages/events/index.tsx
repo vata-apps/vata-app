@@ -4,36 +4,10 @@ import { TableData } from "@/components/table-data";
 import { TableState } from "@/components/table-data/types";
 import { EventSortField } from "@/types/sort";
 import { formatDate } from "@/utils/dates";
-import displayName from "@/utils/displayName";
-import { capitalize } from "@/utils/strings";
+import { getEventTitle } from "@/utils/events";
 import { Stack } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
-
-/**
- * Get event title for EventWithRelations
- */
-function getEventTitleForTable(event: EventWithRelations): string {
-  if (event.eventType === "individual") {
-    const eventType = capitalize(event.individual_event_types?.name || "Event");
-    const personName = displayName(event.individuals?.names || []);
-    return `${eventType} - ${personName}`;
-  } else {
-    const eventType = capitalize(event.family_event_types?.name || "Event");
-    const husband = event.families?.husband;
-    const wife = event.families?.wife;
-
-    if (husband && wife) {
-      return `${eventType} - ${displayName(husband.names)} & ${displayName(wife.names)}`;
-    } else if (husband) {
-      return `${eventType} - ${displayName(husband.names)}`;
-    } else if (wife) {
-      return `${eventType} - ${displayName(wife.names)}`;
-    }
-
-    return `${eventType} - Unknown Family`;
-  }
-}
 
 const columns: ColumnDef<EventWithRelations, unknown>[] = [
   {
@@ -45,7 +19,7 @@ const columns: ColumnDef<EventWithRelations, unknown>[] = [
   {
     accessorKey: "event",
     header: "Event",
-    cell: ({ row }) => getEventTitleForTable(row.original),
+    cell: ({ row }) => getEventTitle(row.original),
     size: 400,
   },
   {
