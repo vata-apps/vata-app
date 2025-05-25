@@ -1,15 +1,16 @@
-import { EventWithRelations, fetchEvents } from "@/api";
+import { fetchEvents } from "@/api";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
 import { TableState } from "@/components/table-data/types";
+import type { EventListItem } from "@/types/event";
 import { EventSortField } from "@/types/sort";
 import { formatDate } from "@/utils/dates";
-import { getEventTitle } from "@/utils/events";
+import { getEventListTitle } from "@/utils/events";
 import { Stack } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
-const columns: ColumnDef<EventWithRelations, unknown>[] = [
+const columns: ColumnDef<EventListItem, unknown>[] = [
   {
     accessorKey: "date",
     header: "Date",
@@ -19,13 +20,13 @@ const columns: ColumnDef<EventWithRelations, unknown>[] = [
   {
     accessorKey: "event",
     header: "Event",
-    cell: ({ row }) => getEventTitle(row.original),
+    cell: ({ row }) => getEventListTitle(row.original),
     size: 400,
   },
   {
-    accessorKey: "place",
+    accessorKey: "place_name",
     header: "Place",
-    cell: ({ row }) => row.original.places?.name || "Unknown",
+    cell: ({ row }) => row.original.place_name || "Unknown",
   },
 ];
 
@@ -54,10 +55,9 @@ function EventsPage() {
     };
   };
 
-  const handleRowClick = (event: EventWithRelations) => {
+  const handleRowClick = (event: EventListItem) => {
     navigate({
       to: `/events/${event.id}`,
-      search: { eventType: event.eventType },
     });
   };
 
@@ -65,7 +65,7 @@ function EventsPage() {
     <Stack>
       <PageHeader title="Events" />
 
-      <TableData<EventWithRelations>
+      <TableData<EventListItem>
         queryKey={["events"]}
         fetchData={fetchTableData}
         columns={columns}
@@ -79,6 +79,12 @@ function EventsPage() {
             sortOptions={[
               { desc: false, id: "date", label: "Date (Oldest First)" },
               { desc: true, id: "date", label: "Date (Newest First)" },
+              { desc: false, id: "event_type_name", label: "Event Type (A-Z)" },
+              { desc: true, id: "event_type_name", label: "Event Type (Z-A)" },
+              { desc: false, id: "place_name", label: "Place (A-Z)" },
+              { desc: true, id: "place_name", label: "Place (Z-A)" },
+              { desc: false, id: "subjects", label: "People (A-Z)" },
+              { desc: true, id: "subjects", label: "People (Z-A)" },
             ]}
           />
         </TableData.Toolbar>

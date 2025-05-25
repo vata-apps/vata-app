@@ -1,35 +1,39 @@
-import type { EventWithRelations } from "@/api";
-import { Event } from "@/types";
+import type { Event, EventListItem } from "@/types/event";
+import { getEventSubjects } from "@/types/guards";
 import displayName from "./displayName";
 import { capitalize } from "./strings";
 
 /**
  * Gets a formatted title for an event
- * @param event The event object (either Event or EventWithRelations)
- * @returns A formatted event title including the event type and individual/family names
+ * @param event The event object
+ * @returns A formatted event title including the event type and subject names
  */
-export function getEventTitle(event: Event | EventWithRelations) {
-  if (event.eventType === "individual") {
-    const eventType = capitalize(event.individual_event_types?.name || "Event");
-    const personName = displayName(event.individuals?.names || []);
-    return `${eventType} - ${personName}`;
+export function getEventTitle(event: Event): string {
+  const eventType = capitalize(event.event_type.name);
+  const subjects = getEventSubjects(event);
+
+  if (subjects.length === 0) {
+    return `${eventType} - Unknown`;
   }
 
-  if (event.eventType === "family") {
-    const eventType = capitalize(event.family_event_types?.name || "Event");
-    const husband = event.families?.husband;
-    const wife = event.families?.wife;
+  const subjectNames = subjects
+    .map((subject) => {
+      const primaryName =
+        subject.individual.names.find((name) => name.is_primary) ||
+        subject.individual.names[0];
+      return displayName([primaryName]);
+    })
+    .join(" & ");
 
-    if (husband && wife) {
-      return `${eventType} - ${displayName(husband.names)} & ${displayName(wife.names)}`;
-    } else if (husband) {
-      return `${eventType} - ${displayName(husband.names)}`;
-    } else if (wife) {
-      return `${eventType} - ${displayName(wife.names)}`;
-    }
+  return `${eventType} - ${subjectNames}`;
+}
 
-    return `${eventType} - Unknown Family`;
-  }
-
-  return "Unknown Event";
+/**
+ * Gets a formatted title for an event list item
+ * @param event The event list item
+ * @returns A formatted event title
+ */
+export function getEventListTitle(event: EventListItem): string {
+  const eventType = capitalize(event.event_type_name);
+  return `${eventType} - ${event.subjects}`;
 }

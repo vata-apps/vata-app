@@ -8,7 +8,17 @@ export type {
 
 export type { FamilyWithRelations } from "./family";
 
-export type { Event, EventBase, FamilyEvent, IndividualEvent } from "./event";
+export type {
+  Event,
+  EventIndividual,
+  EventListItem,
+  EventParticipant,
+  EventParticipantRow,
+  EventRoleRow,
+  EventRow,
+  EventSubjectRow,
+  EventTypeRow,
+} from "./event";
 
 export type { PlaceWithType } from "./place";
 
@@ -38,7 +48,12 @@ export type {
 } from "./utils";
 
 // Type guard functions
-export { isFamilyEvent, isIndividualEvent } from "./guards";
+export {
+  getEventParticipants,
+  getEventSubjects,
+  isFamilyEvent,
+  isIndividualEvent,
+} from "./guards";
 
 // Re-export sorting types
 export type {

@@ -1,73 +1,82 @@
-import { Enums } from "@/database.types";
+import type { Tables } from "@/database.types";
 
 /**
- * Base properties for all event types
+ * Base event from the database
  */
-export type EventBase = {
-  id: string;
-  date: string | null;
-  description: string | null;
-  place_id: string | null;
-  places?: {
-    id: string;
-    name: string;
-    latitude?: number | null;
-    longitude?: number | null;
+export type EventRow = Tables<"events">;
+
+/**
+ * Event type from the database
+ */
+export type EventTypeRow = Tables<"event_types">;
+
+/**
+ * Event role from the database
+ */
+export type EventRoleRow = Tables<"event_roles">;
+
+/**
+ * Event subject from the database
+ */
+export type EventSubjectRow = Tables<"event_subjects">;
+
+/**
+ * Event participant from the database
+ */
+export type EventParticipantRow = Tables<"event_participants">;
+
+/**
+ * Individual with names for event participants
+ */
+export type EventIndividual = {
+  readonly id: string;
+  readonly gender: "male" | "female";
+  readonly names: Array<{
+    readonly first_name: string | null;
+    readonly last_name: string | null;
+    readonly is_primary: boolean;
+  }>;
+};
+
+/**
+ * Event participant with role and individual information
+ */
+export type EventParticipant = {
+  readonly id: string;
+  readonly individual_id: string;
+  readonly role_name: string;
+  readonly is_subject: boolean;
+  readonly individual: EventIndividual;
+};
+
+/**
+ * Complete event with all related information
+ */
+export type Event = {
+  readonly id: string;
+  readonly date: string | null;
+  readonly description: string | null;
+  readonly place_id: string | null;
+  readonly event_type: {
+    readonly id: string;
+    readonly name: string;
+    readonly category: string;
+  };
+  readonly place?: {
+    readonly id: string;
+    readonly name: string;
   } | null;
-  eventType: "individual" | "family";
+  readonly participants: readonly EventParticipant[];
 };
 
 /**
- * Event related to an individual
+ * Event for list display (simplified)
  */
-export type IndividualEvent = EventBase & {
-  eventType: "individual";
-  individual_id: string;
-  individuals: {
-    id: string;
-    gender: Enums<"gender">;
-    names: Array<{
-      first_name: string | null;
-      last_name: string | null;
-      is_primary: boolean;
-    }>;
-  };
-  individual_event_types: { id: string; name: string };
+export type EventListItem = {
+  readonly id: string;
+  readonly date: string | null;
+  readonly description: string | null;
+  readonly event_type_name: string;
+  readonly place_name: string | null;
+  readonly subjects: string; // Comma-separated names
 };
-
-/**
- * Event related to a family
- */
-export type FamilyEvent = EventBase & {
-  eventType: "family";
-  family_id: string;
-  families: {
-    id: string;
-    husband_id: string | null;
-    wife_id: string | null;
-    husband?: {
-      id: string;
-      gender: Enums<"gender">;
-      names: Array<{
-        first_name: string | null;
-        last_name: string | null;
-        is_primary: boolean;
-      }>;
-    } | null;
-    wife?: {
-      id: string;
-      gender: Enums<"gender">;
-      names: Array<{
-        first_name: string | null;
-        last_name: string | null;
-        is_primary: boolean;
-      }>;
-    } | null;
-  };
-  family_event_types: { id: string; name: string };
-};
-
-/**
- * Union type for all event types
- */
-export type Event = IndividualEvent | FamilyEvent;

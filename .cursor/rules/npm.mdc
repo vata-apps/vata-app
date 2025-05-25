@@ -1,0 +1,8 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This project uses `pnpm` instead `npm`.
+
+All useful command are available in script from package.json

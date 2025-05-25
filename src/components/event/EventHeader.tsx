@@ -1,6 +1,6 @@
 import { PageCard } from "@/components/PageCard";
-import type { Event } from "@/types";
-import { isIndividualEvent } from "@/types";
+import type { Event } from "@/types/event";
+import { isIndividualEvent } from "@/types/guards";
 import { getEventTitle } from "@/utils/events";
 import { Button, Group, Stack, Text, ThemeIcon, Title } from "@mantine/core";
 import { Calendar, Edit, MapPin, Trash2, User, Users } from "lucide-react";
@@ -28,9 +28,7 @@ export function EventHeader({ event }: EventHeaderCardProps) {
             <Title order={2} fw={600}>
               {getEventTitle(event)}
             </Title>
-            <Text c="dimmed">
-              {isIndividual ? "Individual Event" : "Family Event"}
-            </Text>
+            <Text c="dimmed">{event.event_type.category} event</Text>
           </Stack>
         </Group>
 
@@ -69,7 +67,7 @@ export function EventHeader({ event }: EventHeaderCardProps) {
           <Group gap={0}>
             <MapPin size={16} />
             <Button variant="transparent" size="compact-md">
-              {event.places?.name || "Add location"}
+              {event.place?.name || "Add location"}
             </Button>
           </Group>
         </Group>

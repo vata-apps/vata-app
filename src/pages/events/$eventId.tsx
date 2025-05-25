@@ -6,7 +6,6 @@ import {
   PeopleInvolvedCard,
   SourcesCard,
 } from "@/components/event";
-import type { Event } from "@/types";
 import { getEventTitle } from "@/utils/events";
 import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -14,22 +13,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/events/$eventId")({
   component: EventPage,
-  validateSearch: (search: Record<string, unknown>) => {
-    return search as { eventType: "individual" | "family" };
-  },
 });
 
 function EventPage() {
   const { eventId } = Route.useParams();
-  const { eventType } = Route.useSearch();
 
   const {
     data: event,
     status,
     error,
   } = useQuery({
-    queryKey: ["event", eventId, eventType],
-    queryFn: () => fetchEvent(eventId, eventType),
+    queryKey: ["event", eventId],
+    queryFn: () => fetchEvent(eventId),
     placeholderData: keepPreviousData,
   });
 
@@ -59,8 +54,6 @@ function EventPage() {
     );
   }
 
-  const typedEvent = event as unknown as Event;
-
   return (
     <Container fluid py="md">
       <Stack gap="xl">
@@ -68,12 +61,12 @@ function EventPage() {
           <Anchor component={Link} to="/events">
             Events
           </Anchor>
-          <Text c="dimmed">{getEventTitle(typedEvent)}</Text>
+          <Text c="dimmed">{getEventTitle(event)}</Text>
         </Breadcrumbs>
 
-        <EventHeader event={typedEvent} />
+        <EventHeader event={event} />
 
-        <PeopleInvolvedCard event={typedEvent} />
+        <PeopleInvolvedCard event={event} />
 
         <SourcesCard />
 

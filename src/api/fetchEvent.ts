@@ -1,76 +1,65 @@
+import type { Event } from "@/types/event";
 import { supabase } from "../lib/supabase";
 
 /**
- * Fetches a single event by ID, checking both individual and family events
+ * Fetches a single event by ID from the unified event system
  * @param eventId - The ID of the event to fetch
- * @param eventType - The type of event (individual or family)
  * @throws When there's an error fetching data from Supabase
  */
-export async function fetchEvent(
-  eventId: string,
-  eventType: "individual" | "family",
-) {
-  if (eventType === "individual") {
-    const { data, error } = await supabase
-      .from("individual_events")
-      .select(
-        `
-        id, 
-        date, 
-        description,
-        type_id,
-        individual_event_types(id, name),
-        individual_id,
-        individuals(
-          id,
-          gender,
-          names(first_name, last_name, is_primary)
-        ),
-        place_id,
-        places(id, name, latitude, longitude)
-      `,
-      )
-      .eq("id", eventId)
-      .single();
+export async function fetchEvent(eventId: string): Promise<Event> {
+  // Use the RPC function to get event with all participants
+  const { data, error } = await supabase.rpc("get_event_participants", {
+    event_id: eventId,
+  });
 
-    if (error) throw error;
+  if (error) throw error;
+  if (!data) throw new Error("Event not found");
 
-    return { ...data, eventType: "individual" };
-  } else {
-    const { data, error } = await supabase
-      .from("family_events")
-      .select(
-        `
-        id, 
-        date, 
-        description,
-        type_id,
-        family_event_types(id, name),
-        family_id,
-        families(
-          id,
-          husband_id,
-          wife_id,
-          husband:individuals!families_husband_id_fkey(
-            id,
-            gender,
-            names(first_name, last_name, is_primary)
-          ),
-          wife:individuals!families_wife_id_fkey(
-            id,
-            gender,
-            names(first_name, last_name, is_primary)
-          )
-        ),
-        place_id,
-        places(id, name, latitude, longitude)
-      `,
-      )
-      .eq("id", eventId)
-      .single();
+  // Transform the RPC result to match our Event type
+  const event: Event = {
+    id: data.id,
+    date: data.date,
+    description: data.description,
+    place_id: data.place_id,
+    event_type: {
+      id: data.event_type.id,
+      name: data.event_type.name,
+      category: data.event_type.category,
+    },
+    place: data.place
+      ? {
+          id: data.place.id,
+          name: data.place.name,
+        }
+      : null,
+    participants: (data.participants || []).map(
+      (participant: {
+        id: string;
+        individual_id: string;
+        role_name: string;
+        is_subject: boolean;
+        individual: {
+          id: string;
+          gender: "male" | "female";
+          names: Array<{
+            first_name: string | null;
+            last_name: string | null;
+            is_primary: boolean;
+          }>;
+        };
+      }) => ({
+        id: participant.id,
+        individual_id: participant.individual_id,
+        role_name: participant.role_name,
+        is_subject: participant.is_subject,
+        individual: {
+          id: participant.individual.id,
+          gender: participant.individual.gender,
+          names: participant.individual.names,
+        },
+      }),
+    ),
+  };
 
-    if (error) throw error;
-
-    return { ...data, eventType: "family" };
-  }
+  return event;
 }
