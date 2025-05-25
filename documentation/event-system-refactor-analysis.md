@@ -199,8 +199,8 @@ event_subjects: [
 
 -- Participants (everyone involved with roles)
 event_participants: [
-  { event_id: "marriage-456", individual_id: "john-doe", role: "groom" },
-  { event_id: "marriage-456", individual_id: "jane-smith", role: "bride" },
+  { event_id: "marriage-456", individual_id: "john-doe", role: "husband" },
+  { event_id: "marriage-456", individual_id: "jane-smith", role: "wife" },
   { event_id: "marriage-456", individual_id: "mike-johnson", role: "witness" },
   { event_id: "marriage-456", individual_id: "father-brown", role: "officiant" }
 ]
@@ -285,8 +285,8 @@ INSERT INTO event_types (name, category) VALUES
 -- Event roles
 INSERT INTO event_roles (name) VALUES
 ('subject'),
-('groom'),
-('bride'),
+('husband'),
+('wife'),
 ('deceased'),
 ('mother'),
 ('father'),
@@ -712,12 +712,12 @@ We validated the new schema against these specific use cases:
   "participants": [
     {
       "individual": { "names": [{ "first_name": "John" }] },
-      "role_name": "groom",
+      "role_name": "husband",
       "is_subject": true
     },
     {
       "individual": { "names": [{ "first_name": "Jane" }] },
-      "role_name": "bride",
+      "role_name": "wife",
       "is_subject": true
     },
     {

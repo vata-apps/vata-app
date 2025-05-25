@@ -73,8 +73,8 @@ alter table "public"."event_roles" enable row level security;
 -- Insert initial event roles
 INSERT INTO "public"."event_roles" ("name") VALUES
 ('Subject'),
-('Groom'),
-('Bride'),
+('Husband'),
+('Wife'),
 ('Deceased'),
 ('Mother'),
 ('Father'),
@@ -88,10 +88,10 @@ INSERT INTO "public"."event_roles" ("name") VALUES
 ('Guardian'),
 ('Executor'),
 ('Beneficiary'),
-('Father of Groom'),
-('Mother of Groom'),
-('Father of Bride'),
-('Mother of Bride'),
+('Father of Husband'),
+('Mother of Husband'),
+('Father of Wife'),
+('Mother of Wife'),
 ('Other');
 
 -- Main events table
