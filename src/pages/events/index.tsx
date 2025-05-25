@@ -5,12 +5,21 @@ import { TableState } from "@/components/table-data/types";
 import type { EventListItem } from "@/types/event";
 import { EventSortField } from "@/types/sort";
 import { formatDate } from "@/utils/dates";
-import { getEventListTitle } from "@/utils/events";
+import { capitalize } from "@/utils/strings";
 import { Stack } from "@mantine/core";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ColumnDef } from "@tanstack/react-table";
 
 const columns: ColumnDef<EventListItem, unknown>[] = [
+  {
+    accessorKey: "event_type_name",
+    header: "Type",
+    cell: ({ row }) => {
+      const type = row.original.event_type_name;
+      return type ? capitalize(type) : "Unknown";
+    },
+    size: 150,
+  },
   {
     accessorKey: "date",
     header: "Date",
@@ -18,10 +27,13 @@ const columns: ColumnDef<EventListItem, unknown>[] = [
     size: 180,
   },
   {
-    accessorKey: "event",
-    header: "Event",
-    cell: ({ row }) => getEventListTitle(row.original),
-    size: 400,
+    accessorKey: "subjects",
+    header: "Subject(s)",
+    cell: ({ row }) => {
+      const subjects = row.original.subjects;
+      return subjects ? subjects.replace(/,/g, " •") : "Unknown";
+    },
+    size: 300,
   },
   {
     accessorKey: "place_name",
@@ -79,12 +91,10 @@ function EventsPage() {
             sortOptions={[
               { desc: false, id: "date", label: "Date (Oldest First)" },
               { desc: true, id: "date", label: "Date (Newest First)" },
-              { desc: false, id: "event_type_name", label: "Event Type (A-Z)" },
-              { desc: true, id: "event_type_name", label: "Event Type (Z-A)" },
+              { desc: false, id: "event_type_name", label: "Type (A-Z)" },
+              { desc: true, id: "event_type_name", label: "Type (Z-A)" },
               { desc: false, id: "place_name", label: "Place (A-Z)" },
               { desc: true, id: "place_name", label: "Place (Z-A)" },
-              { desc: false, id: "subjects", label: "People (A-Z)" },
-              { desc: true, id: "subjects", label: "People (Z-A)" },
             ]}
           />
         </TableData.Toolbar>
