@@ -13,7 +13,7 @@ export function getEventTitle(event: Event): string {
   const subjects = getEventSubjects(event);
 
   if (subjects.length === 0) {
-    return `${eventType} - Unknown`;
+    return `${eventType} of Unknown`;
   }
 
   const subjectNames = subjects
@@ -25,7 +25,7 @@ export function getEventTitle(event: Event): string {
     })
     .join(" & ");
 
-  return `${eventType} - ${subjectNames}`;
+  return `${eventType} of ${subjectNames}`;
 }
 
 /**

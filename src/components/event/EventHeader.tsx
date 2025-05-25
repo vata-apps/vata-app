@@ -2,7 +2,7 @@ import { PageCard } from "@/components/PageCard";
 import type { Event } from "@/types/event";
 import { isIndividualEvent } from "@/types/guards";
 import { getEventTitle } from "@/utils/events";
-import { Button, Group, Stack, Text, ThemeIcon, Title } from "@mantine/core";
+import { Button, Group, Stack, ThemeIcon, Title } from "@mantine/core";
 import { Calendar, Edit, MapPin, Trash2, User, Users } from "lucide-react";
 
 interface EventHeaderCardProps {
@@ -28,7 +28,20 @@ export function EventHeader({ event }: EventHeaderCardProps) {
             <Title order={2} fw={600}>
               {getEventTitle(event)}
             </Title>
-            <Text c="dimmed">{event.event_type.name} event</Text>
+            <Group gap="xl">
+              <Group gap={0}>
+                <Calendar size={16} />
+                <Button variant="transparent" size="compact-md">
+                  {event.date || "Add date"}
+                </Button>
+              </Group>
+              <Group gap={0}>
+                <MapPin size={16} />
+                <Button variant="transparent" size="compact-md">
+                  {event.place?.name || "Add location"}
+                </Button>
+              </Group>
+            </Group>
           </Stack>
         </Group>
 
@@ -55,23 +68,6 @@ export function EventHeader({ event }: EventHeaderCardProps) {
           </Button>
         </Group>
       </Group>
-
-      <Stack gap="sm">
-        <Group gap="xl">
-          <Group gap={0}>
-            <Calendar size={16} />
-            <Button variant="transparent" size="compact-md">
-              {event.date || "Add date"}
-            </Button>
-          </Group>
-          <Group gap={0}>
-            <MapPin size={16} />
-            <Button variant="transparent" size="compact-md">
-              {event.place?.name || "Add location"}
-            </Button>
-          </Group>
-        </Group>
-      </Stack>
     </PageCard>
   );
 }
