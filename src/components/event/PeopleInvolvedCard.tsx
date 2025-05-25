@@ -4,6 +4,7 @@ import { PageCard } from "@/components/PageCard";
 import type { Event } from "@/types/event";
 import { getEventParticipants, getEventSubjects } from "@/types/guards";
 import type { IndividualWithNames } from "@/types/individual";
+
 import {
   ActionIcon,
   Avatar,
