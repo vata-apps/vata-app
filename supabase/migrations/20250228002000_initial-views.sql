@@ -33,7 +33,6 @@ CREATE VIEW event_details AS
 SELECT
   e.*,
   et.name as event_type_name,
-  et.category as event_category,
   p.name as place_name,
   -- Subjects as JSON array
   (

@@ -24,7 +24,6 @@ export async function fetchEvent(eventId: string): Promise<Event> {
     event_type: {
       id: data.event_type.id,
       name: data.event_type.name,
-      category: data.event_type.category,
     },
     place: data.place
       ? {

@@ -34,32 +34,31 @@ create table "public"."event_types" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
     "name" text not null,
-    "category" text not null,
     CONSTRAINT event_types_name_key UNIQUE (name)
 );
 
 alter table "public"."event_types" enable row level security;
 
 -- Insert initial event types
-INSERT INTO "public"."event_types" ("name", "category") VALUES
-('birth', 'vital'),
-('death', 'vital'),
-('marriage', 'vital'),
-('baptism', 'religious'),
-('burial', 'religious'),
-('graduation', 'civil'),
-('immigration', 'civil'),
-('emigration', 'civil'),
-('naturalization', 'civil'),
-('census', 'civil'),
-('will', 'civil'),
-('probate', 'civil'),
-('engagement', 'vital'),
-('divorce', 'vital'),
-('annulment', 'vital'),
-('separation', 'vital'),
-('retirement', 'civil'),
-('other', 'other');
+INSERT INTO "public"."event_types" ("name") VALUES
+('birth'),
+('death'),
+('marriage'),
+('baptism'),
+('burial'),
+('graduation'),
+('immigration'),
+('emigration'),
+('naturalization'),
+('census'),
+('will'),
+('probate'),
+('engagement'),
+('divorce'),
+('annulment'),
+('separation'),
+('retirement'),
+('other');
 
 -- Event roles
 create table "public"."event_roles" (

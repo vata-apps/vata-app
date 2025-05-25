@@ -55,8 +55,7 @@ BEGIN
     'place_id', e.place_id,
     'event_type', json_build_object(
       'id', et.id,
-      'name', et.name,
-      'category', et.category
+      'name', et.name
     ),
     'place', CASE WHEN p.id IS NOT NULL THEN json_build_object(
       'id', p.id,

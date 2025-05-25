@@ -60,7 +60,6 @@ export type Event = {
   readonly event_type: {
     readonly id: string;
     readonly name: string;
-    readonly category: string;
   };
   readonly place?: {
     readonly id: string;

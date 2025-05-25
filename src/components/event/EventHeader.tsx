@@ -28,7 +28,7 @@ export function EventHeader({ event }: EventHeaderCardProps) {
             <Title order={2} fw={600}>
               {getEventTitle(event)}
             </Title>
-            <Text c="dimmed">{event.event_type.category} event</Text>
+            <Text c="dimmed">{event.event_type.name} event</Text>
           </Stack>
         </Group>
 
