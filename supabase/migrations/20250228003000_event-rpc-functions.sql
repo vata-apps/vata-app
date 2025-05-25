@@ -34,7 +34,11 @@ BEGIN
   GROUP BY e.id, e.date, e.description, et.name, p.name
   ORDER BY
     CASE WHEN sort_field = 'date' AND sort_direction = 'desc' THEN e.date END DESC,
-    CASE WHEN sort_field = 'date' AND sort_direction = 'asc' THEN e.date END ASC;
+    CASE WHEN sort_field = 'date' AND sort_direction = 'asc' THEN e.date END ASC,
+    CASE WHEN sort_field = 'event_type_name' AND sort_direction = 'desc' THEN et.name END DESC,
+    CASE WHEN sort_field = 'event_type_name' AND sort_direction = 'asc' THEN et.name END ASC,
+    CASE WHEN sort_field = 'place_name' AND sort_direction = 'desc' THEN p.name END DESC,
+    CASE WHEN sort_field = 'place_name' AND sort_direction = 'asc' THEN p.name END ASC;
 END;
 $$ LANGUAGE plpgsql;
 
