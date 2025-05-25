@@ -43,7 +43,7 @@ export function PageCard({
   const hasHeader = title || actionLabel || headerContent;
 
   return (
-    <Card shadow="sm" padding="xl" radius="md" withBorder>
+    <Card shadow="sm" padding="lg" radius="md" withBorder>
       <Stack gap="lg">
         {hasHeader && (
           <Group justify="space-between">
