@@ -88,4 +88,42 @@ VALUES
     (get_event_id('james_potter_death'), get_individual_id('james_potter'), get_event_role_id('Deceased')),
 
     -- Lily Evans' death
-    (get_event_id('lily_evans_death'), get_individual_id('lily_evans'), get_event_role_id('Deceased')); 
+    (get_event_id('lily_evans_death'), get_individual_id('lily_evans'), get_event_role_id('Deceased')),
+
+    -- Fred Weasley's death
+    (get_event_id('fred_weasley_death'), get_individual_id('fred_weasley'), get_event_role_id('Deceased')),
+
+    /* Incomplete Genealogical Events Participants */
+    -- Tom Riddle's birth (without date and location)
+    (get_event_id('tom_riddle_birth'), get_individual_id('tom_riddle'), get_event_role_id('Subject')),
+
+    -- Godric Gryffindor's death (without date and location)
+    (get_event_id('godric_gryffindor_death'), get_individual_id('godric_gryffindor'), get_event_role_id('Deceased')),
+
+    -- Tom Riddle's graduation (with date but without location)
+    (get_event_id('tom_riddle_graduation'), get_individual_id('tom_riddle'), get_event_role_id('Subject')),
+
+    -- Lily Evans' graduation (with date but without location)
+    (get_event_id('lily_evans_graduation'), get_individual_id('lily_evans'), get_event_role_id('Subject')),
+
+    -- Salazar Slytherin's burial (without date but with location)
+    (get_event_id('salazar_slytherin_burial'), get_individual_id('salazar_slytherin'), get_event_role_id('Deceased')),
+
+    -- Helga Hufflepuff's burial (without date but with location)
+    (get_event_id('helga_hufflepuff_burial'), get_individual_id('helga_hufflepuff'), get_event_role_id('Deceased')),
+
+    /* Incomplete Marriage Events for Weasley Children */
+    -- Bill Weasley's marriage (spouse, date and location unknown)
+    (get_event_id('bill_weasley_marriage'), get_individual_id('bill_weasley'), get_event_role_id('Husband')),
+    (get_event_id('bill_weasley_marriage'), get_individual_id('arthur_weasley'), get_event_role_id('Father of Husband')),
+    (get_event_id('bill_weasley_marriage'), get_individual_id('molly_prewett'), get_event_role_id('Mother of Husband')),
+
+    -- Percy Weasley's marriage (spouse and location unknown)
+    (get_event_id('percy_weasley_marriage'), get_individual_id('percy_weasley'), get_event_role_id('Husband')),
+    (get_event_id('percy_weasley_marriage'), get_individual_id('arthur_weasley'), get_event_role_id('Father of Husband')),
+    (get_event_id('percy_weasley_marriage'), get_individual_id('molly_prewett'), get_event_role_id('Mother of Husband')),
+
+    -- George Weasley's marriage (spouse and location unknown)
+    (get_event_id('george_weasley_marriage'), get_individual_id('george_weasley'), get_event_role_id('Husband')),
+    (get_event_id('george_weasley_marriage'), get_individual_id('arthur_weasley'), get_event_role_id('Father of Husband')),
+    (get_event_id('george_weasley_marriage'), get_individual_id('molly_prewett'), get_event_role_id('Mother of Husband')); 

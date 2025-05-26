@@ -49,6 +49,12 @@ CREATE OR REPLACE FUNCTION get_name_id(key text) RETURNS uuid AS $func$
       WHEN 'lily_luna_potter_nickname' THEN     '00000002-0001-0000-0003-000000000002'::uuid
       WHEN 'rose_weasley_birth' THEN            '00000002-0001-0000-0004-000000000001'::uuid
       WHEN 'hugo_weasley_birth' THEN            '00000002-0001-0000-0005-000000000001'::uuid
+
+      /* Historical Figures */
+      WHEN 'tom_riddle_birth' THEN              '00000002-0000-0000-0001-000000000001'::uuid
+      WHEN 'godric_gryffindor_birth' THEN       '00000002-0000-0000-0002-000000000001'::uuid
+      WHEN 'salazar_slytherin_birth' THEN       '00000002-0000-0000-0003-000000000001'::uuid
+      WHEN 'helga_hufflepuff_birth' THEN        '00000002-0000-0000-0004-000000000001'::uuid
             
       ELSE NULL
     END;

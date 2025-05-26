@@ -47,4 +47,10 @@ VALUES
     (get_name_id('lily_luna_potter_birth'), get_individual_id('lily_luna_potter'), 'Lily', 'Potter', 'birth', true),
     (get_name_id('lily_luna_potter_nickname'), get_individual_id('lily_luna_potter'), 'Lily Luna', 'Potter', 'nickname', false),
     (get_name_id('rose_weasley_birth'), get_individual_id('rose_weasley'), 'Rose', 'Weasley', 'birth', true),
-    (get_name_id('hugo_weasley_birth'), get_individual_id('hugo_weasley'), 'Hugo', 'Weasley', 'birth', true);
+    (get_name_id('hugo_weasley_birth'), get_individual_id('hugo_weasley'), 'Hugo', 'Weasley', 'birth', true),
+
+    /* Historical Figures (genealogically relevant) */
+    (get_name_id('tom_riddle_birth'), get_individual_id('tom_riddle'), 'Tom', 'Riddle', 'birth', true),
+    (get_name_id('godric_gryffindor_birth'), get_individual_id('godric_gryffindor'), 'Godric', 'Gryffindor', 'birth', true),
+    (get_name_id('salazar_slytherin_birth'), get_individual_id('salazar_slytherin'), 'Salazar', 'Slytherin', 'birth', true),
+    (get_name_id('helga_hufflepuff_birth'), get_individual_id('helga_hufflepuff'), 'Helga', 'Hufflepuff', 'birth', true);

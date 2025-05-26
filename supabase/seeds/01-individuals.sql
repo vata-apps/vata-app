@@ -34,4 +34,10 @@ VALUES
     (get_individual_id('albus_potter'), 'male'),
     (get_individual_id('lily_luna_potter'), 'female'),
     (get_individual_id('rose_weasley'), 'female'),
-    (get_individual_id('hugo_weasley'), 'male');
+    (get_individual_id('hugo_weasley'), 'male'),
+
+    /* Historical Figures (genealogically relevant) */
+    (get_individual_id('tom_riddle'), 'male'),
+    (get_individual_id('godric_gryffindor'), 'male'),
+    (get_individual_id('salazar_slytherin'), 'male'),
+    (get_individual_id('helga_hufflepuff'), 'female');

@@ -37,6 +37,12 @@ CREATE OR REPLACE FUNCTION get_individual_id(key text) RETURNS uuid AS $$
             WHEN 'rose_weasley' THEN        '00000001-0001-0000-0000-000000000004'::uuid
             WHEN 'hugo_weasley' THEN        '00000001-0001-0000-0000-000000000005'::uuid
 
+            /* Historical Figures */
+            WHEN 'tom_riddle' THEN          '00000001-0000-0000-0000-000000000001'::uuid
+            WHEN 'godric_gryffindor' THEN   '00000001-0000-0000-0000-000000000002'::uuid
+            WHEN 'salazar_slytherin' THEN   '00000001-0000-0000-0000-000000000003'::uuid
+            WHEN 'helga_hufflepuff' THEN    '00000001-0000-0000-0000-000000000004'::uuid
+
             ELSE NULL
         END;
     END;
