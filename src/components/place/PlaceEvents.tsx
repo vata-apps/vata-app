@@ -105,6 +105,7 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
             showAddButton={false}
             defaultSorting={{ id: "date", desc: true }}
             searchPlaceholder="Search events at this place"
+            onDeleteEvent={() => {}}
           />
         );
       })()}
