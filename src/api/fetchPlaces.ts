@@ -1,4 +1,4 @@
-import { PlaceWithType } from "@/types";
+import { PlaceWithTypeSimple } from "@/types";
 import { PlaceSortField, SortConfig } from "@/types/sort";
 import { PostgrestResponse } from "@supabase/supabase-js";
 import { Tables } from "../database.types";
@@ -29,7 +29,7 @@ export async function fetchPlaces({
   page: number;
   query: string;
   sortConfig?: SortConfig<PlaceSortField>;
-}): Promise<{ data: PlaceWithType[]; total: number }> {
+}): Promise<{ data: PlaceWithTypeSimple[]; total: number }> {
   const { start, end } = getPageRange(page);
 
   // First, get the places data

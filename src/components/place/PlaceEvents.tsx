@@ -1,18 +1,11 @@
+import { fetchEventsFiltered } from "@/api";
+import { BlankState } from "@/components/BlankState";
+import { EventsTable } from "@/components/events";
+import { PageCard } from "@/components/PageCard";
+import type { TableState } from "@/components/table-data/types";
 import { supabase } from "@/lib/supabase";
-import type { EventListItem } from "@/types/event";
-import { formatDate } from "@/utils/dates";
-import { capitalize } from "@/utils/strings";
-import {
-  Button,
-  Group,
-  Loader,
-  Stack,
-  Table,
-  Text,
-  Title,
-} from "@mantine/core";
-import { Link } from "@tanstack/react-router";
-import { Pencil, UserIcon, UsersIcon } from "lucide-react";
+import type { EventSortField } from "@/types/sort";
+import { Calendar } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type PlaceEventsProps = {
@@ -20,14 +13,11 @@ type PlaceEventsProps = {
 };
 
 export function PlaceEvents({ placeId }: PlaceEventsProps) {
-  const [events, setEvents] = useState<EventListItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [placeName, setPlaceName] = useState("this place");
+  const [hasEvents, setHasEvents] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      setIsLoading(true);
-
+    const fetchPlaceInfo = async () => {
       try {
         // Fetch place name
         const { data: placeData, error: placeError } = await supabase
@@ -42,118 +32,82 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
           setPlaceName(placeData.name);
         }
 
-        // Fetch events for this place using the new unified system
+        // Check if there are any events for this place
         const { data: eventsData, error: eventsError } = await supabase
           .from("event_details")
-          .select("*")
+          .select("id")
           .eq("place_id", placeId)
-          .order("date", { ascending: false, nullsFirst: false });
+          .limit(1);
 
         if (eventsError) {
-          console.error("Error fetching events:", eventsError);
-          return;
+          console.error("Error checking events:", eventsError);
+          setHasEvents(false);
+        } else {
+          setHasEvents((eventsData || []).length > 0);
         }
-
-        // Transform the data to match EventListItem format
-        const formattedEvents: EventListItem[] = (eventsData || []).map(
-          (event) => ({
-            id: event.id,
-            date: event.date,
-            description: event.description,
-            event_type_name: event.event_type_name,
-            place_name: event.place_name,
-            subjects: Array.isArray(event.subjects)
-              ? event.subjects.map((s: { name: string }) => s.name).join(", ")
-              : "Unknown",
-          }),
-        );
-
-        setEvents(formattedEvents);
       } catch (error) {
-        console.error("Error fetching events:", error);
-      } finally {
-        setIsLoading(false);
+        console.error("Error fetching place info:", error);
+        setHasEvents(false);
       }
     };
 
-    fetchEvents();
+    fetchPlaceInfo();
   }, [placeId]);
 
-  if (isLoading) return <Loader />;
+  const fetchTableData = async (state: TableState) => {
+    const response = await fetchEventsFiltered({
+      page: state.pagination.pageIndex + 1,
+      query: state.globalFilter,
+      sort: state.sorting
+        ? {
+            field: state.sorting.id as EventSortField,
+            direction: state.sorting.desc ? "desc" : "asc",
+          }
+        : { field: "date", direction: "desc" },
+      placeId,
+    });
 
-  if (events.length === 0) {
-    return <Text c="dimmed">No events found at {placeName}</Text>;
-  }
-
-  const isIndividualEventType = (eventTypeName: string): boolean => {
-    const individualEventTypes = [
-      "birth",
-      "death",
-      "baptism",
-      "burial",
-      "graduation",
-      "retirement",
-      "immigration",
-      "emigration",
-      "naturalization",
-      "census",
-      "will",
-      "probate",
-    ];
-    return individualEventTypes.includes(eventTypeName);
+    return {
+      data: response.data,
+      total: response.total,
+    };
   };
 
   return (
-    <Stack gap="sm">
-      <Title order={4}>Events at {placeName}</Title>
+    <PageCard title="Events" icon={Calendar} actionLabel="Add event">
+      {(() => {
+        if (hasEvents === null) {
+          return (
+            <BlankState
+              icon={Calendar}
+              title="Loading..."
+              description="Loading events..."
+            />
+          );
+        }
 
-      <Table>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Date</Table.Th>
-            <Table.Th>Type</Table.Th>
-            <Table.Th>People</Table.Th>
-            <Table.Th>Description</Table.Th>
-            <Table.Th style={{ textAlign: "right" }}></Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {events.map((event) => (
-            <Table.Tr key={event.id}>
-              <Table.Td>{formatDate(event.date)}</Table.Td>
-              <Table.Td>
-                <Group gap="xs">
-                  {isIndividualEventType(event.event_type_name) ? (
-                    <UserIcon size={16} />
-                  ) : (
-                    <UsersIcon size={16} />
-                  )}
-                  {capitalize(event.event_type_name)}
-                </Group>
-              </Table.Td>
-              <Table.Td>
-                <Text size="sm">{event.subjects}</Text>
-              </Table.Td>
-              <Table.Td>{event.description || "-"}</Table.Td>
-              <Table.Td align="right">
-                <Button
-                  variant="default"
-                  size="xs"
-                  component={Link}
-                  to={`/events/${event.id}`}
-                >
-                  <Group gap="xs">
-                    <Pencil size={14} />
-                    <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>
-                      View
-                    </span>
-                  </Group>
-                </Button>
-              </Table.Td>
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
-    </Stack>
+        if (hasEvents === false) {
+          return (
+            <BlankState
+              icon={Calendar}
+              title="No Events"
+              description={`No events found at ${placeName}.`}
+            />
+          );
+        }
+
+        return (
+          <EventsTable
+            queryKey={["place-events", placeId]}
+            fetchData={fetchTableData}
+            showPlaceColumn={false}
+            showToolbar={true}
+            showAddButton={false}
+            defaultSorting={{ id: "date", desc: true }}
+            searchPlaceholder="Search events at this place"
+          />
+        );
+      })()}
+    </PageCard>
   );
 }

@@ -5,7 +5,7 @@ import { Enums, Tables } from "@/database.types";
  */
 export type Name = Pick<
   Tables<"names">,
-  "first_name" | "last_name" | "is_primary"
+  "id" | "first_name" | "last_name" | "is_primary" | "type"
 >;
 
 /**

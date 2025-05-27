@@ -1,5 +1,4 @@
 import {
-  AppShell,
   Group,
   Loader,
   Table as MantineTable,
@@ -95,16 +94,7 @@ export function Table<TData extends Record<string, unknown>>() {
         </Tbody>
       </MantineTable>
 
-      <AppShell.Footer
-        style={{
-          justifyContent: "space-between",
-          alignItems: "center",
-          display: "flex",
-          borderLeft: "1px solid var(--app-shell-border-color)",
-          left: "calc(var(--app-shell-navbar-offset) - 1px)",
-          padding: "var(--app-shell-padding)",
-        }}
-      >
+      <Group justify="space-between">
         <Pagination
           total={totalPages}
           value={currentPage}
@@ -116,7 +106,7 @@ export function Table<TData extends Record<string, unknown>>() {
           {(table.options.meta as TableMeta)?.total === 1 ? "row" : "rows"}{" "}
           found
         </Text>
-      </AppShell.Footer>
+      </Group>
     </>
   );
 }

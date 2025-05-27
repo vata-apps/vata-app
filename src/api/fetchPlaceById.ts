@@ -67,7 +67,6 @@ export async function fetchPlaceById(
 
     return {
       ...place,
-      type: { name: place.place_type.name },
       parent: parentHierarchy,
     };
   }
@@ -75,7 +74,6 @@ export async function fetchPlaceById(
   // Return the place without parent info if there's no parent
   return {
     ...place,
-    type: { name: place.place_type.name },
     parent: null,
   };
 }

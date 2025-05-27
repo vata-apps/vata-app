@@ -1,10 +1,14 @@
 import { fetchPlaceById } from "@/api/fetchPlaceById";
-import { PlaceChildren } from "@/components/place/PlaceChildren";
-import { PlaceEvents } from "@/components/place/PlaceEvents";
-import { PlaceHeader } from "@/components/place/PlaceHeader";
-import { Loader, Stack, Tabs, Text } from "@mantine/core";
+import { ErrorState, LoadingState, NotFoundState } from "@/components";
+import {
+  MapCard,
+  PlaceChildren,
+  PlaceEvents,
+  PlaceHeader,
+} from "@/components/place";
+import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/places/$placeId")({
   component: PlaceDetailPage,
@@ -26,43 +30,51 @@ function PlaceDetailPage() {
     placeholderData: keepPreviousData,
   });
 
-  if (status === "pending") return <Loader />;
-
-  if (status === "error") {
-    return <Text>Error loading place: {error.message}</Text>;
+  if (status === "pending") {
+    return <LoadingState message="Loading place details..." />;
   }
 
-  if (!place) return <Text>Place not found</Text>;
+  if (status === "error") {
+    return (
+      <ErrorState
+        error={error}
+        title="Something went wrong"
+        backTo="/places"
+        backLabel="← Back to places"
+      />
+    );
+  }
+
+  if (!place) {
+    return (
+      <NotFoundState
+        title="Place Not Found"
+        description="This place doesn't exist or may have been removed."
+        backTo="/places"
+        backLabel="← Back to places"
+      />
+    );
+  }
 
   return (
-    <Stack>
-      {/* Header Section */}
-      <PlaceHeader place={place} />
+    <Container fluid py="md">
+      <Stack gap="xl">
+        <Breadcrumbs>
+          <Anchor component={Link} to="/places">
+            Places
+          </Anchor>
+          <Text c="dimmed">{place.name}</Text>
+        </Breadcrumbs>
 
-      {/* Tabs Section */}
-      <Tabs defaultValue="sublocations" mt="lg" variant="default">
-        <Tabs.List className="w-full justify-start">
-          <Tabs.Tab value="sublocations">Sublocations</Tabs.Tab>
-          <Tabs.Tab value="events">Events</Tabs.Tab>
-          <Tabs.Tab value="map">Map</Tabs.Tab>
-        </Tabs.List>
+        <PlaceHeader place={place} />
 
-        {/* Sublocations Tab */}
-        <Tabs.Panel py="lg" value="sublocations">
-          <PlaceChildren placeId={placeId} placeName={place.name} />
-        </Tabs.Panel>
+        <MapCard />
 
-        {/* Events Tab */}
-        <Tabs.Panel py="lg" value="events">
-          <PlaceEvents placeId={placeId} />
-        </Tabs.Panel>
+        <PlaceChildren placeId={placeId} placeName={place.name} />
 
-        {/* Map Tab */}
-        <Tabs.Panel py="lg" value="map">
-          <Text>Map view will be implemented here</Text>
-        </Tabs.Panel>
-      </Tabs>
-    </Stack>
+        <PlaceEvents placeId={placeId} />
+      </Stack>
+    </Container>
   );
 }
 

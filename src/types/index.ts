@@ -20,7 +20,7 @@ export type {
   EventTypeRow,
 } from "./event";
 
-export type { PlaceWithType } from "./place";
+export type { PlaceWithType, PlaceWithTypeSimple } from "./place";
 
 // API response types
 export type {

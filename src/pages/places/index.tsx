@@ -1,7 +1,7 @@
 import { fetchPlaces } from "@/api";
 import { PageHeader } from "@/components/PageHeader";
 import { TableData } from "@/components/table-data";
-import { PlaceWithType } from "@/types";
+import { PlaceWithTypeSimple } from "@/types";
 import { PlaceSortField } from "@/types/sort";
 import { capitalize } from "@/utils/strings";
 import { Stack } from "@mantine/core";
@@ -14,7 +14,7 @@ type TableState = {
   pagination: { pageIndex: number; pageSize: number };
 };
 
-const columns: ColumnDef<PlaceWithType, unknown>[] = [
+const columns: ColumnDef<PlaceWithTypeSimple, unknown>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -69,7 +69,7 @@ function PlacesPage() {
     };
   };
 
-  const handleRowClick = (place: PlaceWithType) => {
+  const handleRowClick = (place: PlaceWithTypeSimple) => {
     navigate({ to: `/places/${place.id}` });
   };
 
@@ -77,7 +77,7 @@ function PlacesPage() {
     <Stack>
       <PageHeader title="Places" />
 
-      <TableData<PlaceWithType>
+      <TableData<PlaceWithTypeSimple>
         queryKey={["places"]}
         fetchData={fetchTableData}
         columns={columns}

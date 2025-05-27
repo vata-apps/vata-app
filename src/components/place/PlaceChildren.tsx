@@ -2,13 +2,16 @@ import {
   fetchPlacesRecursively,
   flattenPlaces,
 } from "@/api/fetchPlacesRecursively";
+import { BlankState } from "@/components/BlankState";
+import { PageCard } from "@/components/PageCard";
 import { PlaceChildrenTable } from "@/components/place/PlaceChildrenTable";
-import { Stack, Text, Title } from "@mantine/core";
+import { Center, Loader, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { MapPin } from "lucide-react";
 
 type PlaceChildrenProps = {
-  placeId: string;
-  placeName: string;
+  readonly placeId: string;
+  readonly placeName: string;
 };
 
 /**
@@ -29,22 +32,47 @@ export function PlaceChildren({ placeId, placeName }: PlaceChildrenProps) {
   });
 
   return (
-    <Stack gap="sm">
-      <Title order={4}>Places within {placeName}</Title>
-
+    <PageCard title="Sub Locations" icon={MapPin} actionLabel="Add location">
       {(() => {
-        if (status === "pending") return "Loading...";
+        if (status === "pending") {
+          return (
+            <Center py="xl">
+              <Stack align="center" gap="md">
+                <Loader size="lg" />
+                <Text c="dimmed">Loading sub locations...</Text>
+              </Stack>
+            </Center>
+          );
+        }
 
         if (status === "error") {
-          return <Text c="red">Error loading places: {error.message}</Text>;
+          return (
+            <Center py="xl">
+              <Stack align="center" gap="md">
+                <MapPin size={48} color="var(--mantine-color-red-6)" />
+                <Text c="red" ta="center">
+                  Error loading places: {error.message}
+                </Text>
+              </Stack>
+            </Center>
+          );
         }
 
         if (status === "success") {
-          return <PlaceChildrenTable places={places} placeName={placeName} />;
+          if (places.length === 0) {
+            return (
+              <BlankState
+                icon={MapPin}
+                title="No Sub Locations"
+                description={`No places found within ${placeName}.`}
+              />
+            );
+          }
+          return <PlaceChildrenTable places={places} />;
         }
 
         return null;
       })()}
-    </Stack>
+    </PageCard>
   );
 }

@@ -20,7 +20,6 @@ function RootComponent() {
   return (
     <MantineProvider defaultColorScheme="dark">
       <AppShell
-        footer={{ height: 60, offset: true }}
         header={{ height: 60 }}
         navbar={{
           breakpoint: "sm",
