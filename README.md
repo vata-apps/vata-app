@@ -30,7 +30,7 @@ This application is built using modern web technologies:
 - **Frontend**: React 19 with TypeScript
 - **Routing**: TanStack Router for type-safe routing
 - **Data Management**: TanStack Query for efficient data fetching
-- **Styling**: Tailwind CSS with Mantine components
+- **Styling**: MantineUI library, Lucide for icons
 - **Backend**: Supabase for database, authentication, and API
 - **Build Tool**: Vite for fast development and optimized builds
 
