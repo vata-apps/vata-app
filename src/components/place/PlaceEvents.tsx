@@ -77,22 +77,12 @@ export function PlaceEvents({ placeId }: PlaceEventsProps) {
     <PageCard title="Events" icon={Calendar} actionLabel="Add event">
       {(() => {
         if (hasEvents === null) {
-          return (
-            <BlankState
-              icon={Calendar}
-              title="Loading..."
-              description="Loading events..."
-            />
-          );
+          return <BlankState icon={Calendar} title="Loading events..." />;
         }
 
         if (hasEvents === false) {
           return (
-            <BlankState
-              icon={Calendar}
-              title="No Events"
-              description={`No events found at ${placeName}.`}
-            />
+            <BlankState icon={Calendar} title={`No events at ${placeName}`} />
           );
         }
 

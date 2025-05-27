@@ -29,11 +29,7 @@ export function PeopleInvolvedCard({ event }: PeopleInvolvedCardProps) {
       {/* Subjects Section */}
       <PageCard title="Primary People" icon={Users}>
         {subjects.length === 0 ? (
-          <BlankState
-            icon={Users}
-            title="No Primary People"
-            description="This event doesn't have any primary people associated with it yet."
-          />
+          <BlankState icon={Users} title="No primary people yet" />
         ) : (
           <Stack gap="md">
             {subjects.map((participant) => (
@@ -66,11 +62,7 @@ export function PeopleInvolvedCard({ event }: PeopleInvolvedCardProps) {
       {/* Participants Section */}
       <PageCard title="Participants" icon={Users} actionLabel="Add participant">
         {participants.length === 0 ? (
-          <BlankState
-            icon={Users}
-            title="No Participants"
-            description="This event doesn't have any participants associated with it yet."
-          />
+          <BlankState icon={Users} title="No participants yet" />
         ) : (
           <Stack gap="md">
             {participants.map((participant) => (

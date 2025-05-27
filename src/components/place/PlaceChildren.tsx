@@ -63,8 +63,7 @@ export function PlaceChildren({ placeId, placeName }: PlaceChildrenProps) {
             return (
               <BlankState
                 icon={MapPin}
-                title="No Sub Locations"
-                description={`No places found within ${placeName}.`}
+                title={`No sub locations in ${placeName}`}
               />
             );
           }
