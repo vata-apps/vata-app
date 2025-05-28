@@ -1,4 +1,5 @@
 import { ColumnDef, Table } from "@tanstack/react-table";
+import type { LucideIcon } from "lucide-react";
 
 /**
  * Represents the meta object used in TanStack Table configuration
@@ -33,6 +34,12 @@ export interface TableDataProps<TData> {
   defaultSorting?: TableSortOption;
   onRowClick?: (row: TData) => void;
   children: React.ReactNode;
+  blankState?: {
+    icon: LucideIcon;
+    title: string;
+    actionLabel?: string;
+    onAction?: () => void;
+  };
 }
 
 export interface TableDataContextType<TData> {
@@ -42,4 +49,10 @@ export interface TableDataContextType<TData> {
   error: Error | null;
   columns: ColumnDef<TData, unknown>[];
   onRowClick?: (row: TData) => void;
+  blankState?: {
+    icon: LucideIcon;
+    title: string;
+    actionLabel?: string;
+    onAction?: () => void;
+  };
 }

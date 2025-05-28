@@ -25,6 +25,7 @@ export function TableData<TData extends Record<string, unknown>>({
   defaultSorting,
   onRowClick,
   children,
+  blankState,
 }: TableDataProps<TData>) {
   const [tableState, setTableState] = useState<TableState>({
     sorting: defaultSorting || {
@@ -143,6 +144,7 @@ export function TableData<TData extends Record<string, unknown>>({
           error: error instanceof Error ? error : null,
           columns,
           onRowClick,
+          blankState,
         } as TableDataContextType<TData>
       }
     >

@@ -6,6 +6,7 @@ import { capitalize } from "@/utils/strings";
 import { ActionIcon, Group } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { LucideIcon } from "lucide-react";
 import { X } from "lucide-react";
 
 interface EventsTableProps {
@@ -44,6 +45,15 @@ interface EventsTableProps {
    * Callback function called when delete button is clicked
    */
   onDeleteEvent?: (eventId: string) => void;
+  /**
+   * Blank state configuration
+   */
+  blankState?: {
+    icon: LucideIcon;
+    title: string;
+    actionLabel?: string;
+    onAction?: () => void;
+  };
 }
 
 export function EventsTable({
@@ -55,6 +65,7 @@ export function EventsTable({
   defaultSorting = { id: "date", desc: false },
   searchPlaceholder = "Search events",
   onDeleteEvent,
+  blankState,
 }: EventsTableProps) {
   const navigate = useNavigate();
 
@@ -156,6 +167,7 @@ export function EventsTable({
       columns={tableColumns}
       defaultSorting={defaultSorting}
       onRowClick={handleRowClick}
+      blankState={blankState}
     >
       {showToolbar && (
         <TableData.Toolbar>

@@ -1,3 +1,4 @@
+import { BlankState } from "@/components/BlankState";
 import {
   Group,
   Loader,
@@ -12,10 +13,24 @@ import { useTableData } from "./useTableData";
 const { Thead, Tr, Th, Tbody, Td } = MantineTable;
 
 export function Table<TData extends Record<string, unknown>>() {
-  const { table, isLoading, onRowClick } = useTableData<TData>();
+  const { table, isLoading, onRowClick, blankState } = useTableData<TData>();
 
   if (isLoading) {
     return <Loader />;
+  }
+
+  const totalRows = (table.options.meta as TableMeta)?.total ?? 0;
+
+  // Show blank state if no data and blank state is configured
+  if (totalRows === 0 && blankState) {
+    return (
+      <BlankState
+        icon={blankState.icon}
+        title={blankState.title}
+        actionLabel={blankState.actionLabel}
+        onAction={blankState.onAction}
+      />
+    );
   }
 
   const currentPage = table.getState().pagination.pageIndex + 1;
