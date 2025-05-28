@@ -8,6 +8,7 @@ import { supabase } from "../lib/supabase";
  * @param params.query - Search query to filter events by description or subject names
  * @param params.sort - Optional sorting configuration
  * @param params.placeId - Optional place ID to filter events by location
+ * @param params.familyId - Optional family ID to filter events by family members
  * @throws When there's an error fetching data from Supabase
  */
 export async function fetchEventsFiltered({
@@ -15,16 +16,18 @@ export async function fetchEventsFiltered({
   query,
   sort,
   placeId,
+  familyId,
 }: {
   page: number;
   query: string;
   sort?: SortConfig<EventSortField>;
   placeId?: string;
+  familyId?: string;
 }): Promise<{
   data: EventListItem[];
   total: number;
 }> {
-  // Use the new unified RPC function that supports place filtering
+  // Use the new unified RPC function that supports place and family filtering
   const { data, error } = await supabase.rpc(
     "get_events_with_subjects_filtered",
     {
@@ -33,6 +36,7 @@ export async function fetchEventsFiltered({
       sort_field: sort?.field || "date",
       sort_direction: sort?.direction || "desc",
       place_filter_id: placeId || null,
+      family_filter_id: familyId || null,
     },
   );
 

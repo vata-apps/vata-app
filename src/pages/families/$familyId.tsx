@@ -1,7 +1,7 @@
 import { fetchFamily } from "@/api/fetchFamily";
 import { ErrorState, LoadingState, NotFoundState } from "@/components";
 import { FamilyChildren } from "@/components/family/FamilyChildren";
-import FamilyEvents from "@/components/family/FamilyEvents";
+import { FamilyEvents } from "@/components/family/FamilyEvents";
 import FamilyHeader from "@/components/family/FamilyHeader";
 import { FamilyParents } from "@/components/family/FamilyParents";
 import displayName from "@/utils/displayName";
@@ -77,7 +77,7 @@ function FamilyPage() {
 
         <FamilyChildren family={family} />
 
-        <FamilyEvents />
+        <FamilyEvents familyId={familyId} />
       </Stack>
     </Container>
   );

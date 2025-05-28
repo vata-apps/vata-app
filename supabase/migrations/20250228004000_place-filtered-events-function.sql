@@ -1,10 +1,11 @@
--- Function for events list with search, pagination, and optional place filtering
+-- Function for events list with search, pagination, and optional place/family filtering
 CREATE OR REPLACE FUNCTION get_events_with_subjects_filtered(
   search_text TEXT DEFAULT NULL,
   page_number INTEGER DEFAULT 1,
   sort_field TEXT DEFAULT 'date',
   sort_direction TEXT DEFAULT 'desc',
-  place_filter_id UUID DEFAULT NULL
+  place_filter_id UUID DEFAULT NULL,
+  family_filter_id UUID DEFAULT NULL
 )
 RETURNS TABLE (
   id UUID,
@@ -33,6 +34,32 @@ BEGIN
          CONCAT(n.first_name, ' ', n.last_name) ILIKE '%' || search_text || '%' OR
          e.description ILIKE '%' || search_text || '%')
     AND (place_filter_id IS NULL OR e.place_id = place_filter_id)
+    AND (family_filter_id IS NULL OR 
+         (
+           -- Include family events (marriage, divorce, etc.) where spouses are subjects
+           (et.name IN ('marriage', 'divorce', 'engagement', 'annulment', 'separation') AND
+            i.id IN (
+              SELECT f.husband_id FROM families f WHERE f.id = family_filter_id AND f.husband_id IS NOT NULL
+              UNION
+              SELECT f.wife_id FROM families f WHERE f.id = family_filter_id AND f.wife_id IS NOT NULL
+            ))
+           OR
+           -- Include birth events of children
+           (et.name = 'birth' AND
+            i.id IN (
+              SELECT fc.individual_id FROM family_children fc WHERE fc.family_id = family_filter_id
+            ))
+           OR
+           -- Include death events of all family members (spouses and children)
+           (et.name = 'death' AND
+            i.id IN (
+              SELECT f.husband_id FROM families f WHERE f.id = family_filter_id AND f.husband_id IS NOT NULL
+              UNION
+              SELECT f.wife_id FROM families f WHERE f.id = family_filter_id AND f.wife_id IS NOT NULL
+              UNION
+              SELECT fc.individual_id FROM family_children fc WHERE fc.family_id = family_filter_id
+            ))
+         ))
   GROUP BY e.id, e.date, e.description, et.name, p.name
   ORDER BY
     CASE WHEN sort_field = 'date' AND sort_direction = 'desc' THEN e.date END DESC,
