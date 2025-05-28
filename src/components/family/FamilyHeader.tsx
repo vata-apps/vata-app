@@ -1,7 +1,8 @@
+import { PageCard } from "@/components/PageCard";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
-import { Badge, Group } from "@mantine/core";
-import { PageHeader } from "../PageHeader";
+import { Badge, Button, Group, Stack, ThemeIcon, Title } from "@mantine/core";
+import { Edit, Trash2, Users } from "lucide-react";
 import { FamilyWithRelations } from "./types";
 
 /**
@@ -13,15 +14,54 @@ function FamilyHeader({ family }: { family: FamilyWithRelations }) {
     : "Unknown";
   const wifeName = family.wife ? displayName(family.wife.names) : "Unknown";
   const familyName = `${husbandName} & ${wifeName}`;
-  const initials = `${husbandName?.[0] || "?"}${wifeName?.[0] || "?"}`;
 
   return (
-    <PageHeader avatar={initials} backTo="/families" title={familyName}>
-      <Group gap="xs">
-        <Badge variant="default">{capitalize(family.type)}</Badge>
-        <Badge variant="default">{family.children.length} children</Badge>
+    <PageCard>
+      <Group justify="space-between" align="flex-start">
+        <Group>
+          <ThemeIcon
+            size={60}
+            radius="xl"
+            variant="gradient"
+            gradient={{ from: "purple.6", to: "purple.4", deg: 135 }}
+          >
+            <Users size={24} />
+          </ThemeIcon>
+          <Stack gap="xs">
+            <Title order={2} fw={600}>
+              {familyName}
+            </Title>
+            <Group gap="md">
+              <Badge variant="default">{capitalize(family.type)}</Badge>
+              <Badge variant="default">{family.children.length} children</Badge>
+            </Group>
+          </Stack>
+        </Group>
+
+        <Group gap="sm">
+          <Button
+            variant="subtle"
+            leftSection={<Edit size={16} />}
+            onClick={() => {
+              // TODO: Open edit form
+              console.log("Edit family:", family.id);
+            }}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="subtle"
+            size="sm"
+            onClick={() => {
+              // TODO: Delete family
+              console.log("Delete family:", family.id);
+            }}
+          >
+            <Trash2 size={16} />
+          </Button>
+        </Group>
       </Group>
-    </PageHeader>
+    </PageCard>
   );
 }
 

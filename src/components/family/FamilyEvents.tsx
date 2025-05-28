@@ -1,14 +1,15 @@
-import { Stack, Text, Title } from "@mantine/core";
+import { BlankState } from "@/components/BlankState";
+import { PageCard } from "@/components/PageCard";
+import { Calendar } from "lucide-react";
 
 /**
  * Displays the family events section
  */
-function FamilyEvents({ familyId }: { familyId: string }) {
+function FamilyEvents() {
   return (
-    <Stack gap="sm">
-      <Title order={4}>Family Events</Title>
-      <Text>No events recorded for family ID: {familyId}</Text>
-    </Stack>
+    <PageCard title="Family Events" icon={Calendar} actionLabel="Add event">
+      <BlankState icon={Calendar} title="No family events recorded" />
+    </PageCard>
   );
 }
 

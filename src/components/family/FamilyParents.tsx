@@ -1,4 +1,6 @@
-import { Stack, Title } from "@mantine/core";
+import { BlankState } from "@/components/BlankState";
+import { PageCard } from "@/components/PageCard";
+import { Users } from "lucide-react";
 import { useState } from "react";
 import { FamilyParentsTable } from "./FamilyParentsTable";
 import { FamilyWithRelations } from "./types";
@@ -10,22 +12,25 @@ interface FamilyParentsProps {
 export function FamilyParents({ family }: FamilyParentsProps) {
   // TODO: Fetch data
   const [status] = useState("success");
-  const error = { message: "Error loading parents data" };
 
   return (
-    <Stack gap="sm">
-      <Title order={4}>Parents</Title>
-
+    <PageCard title="Parents" icon={Users} actionLabel="Add parent">
       {(() => {
-        if (status === "pending") return "Loading...";
+        if (status === "pending") {
+          return <BlankState icon={Users} title="Loading parents..." />;
+        }
 
         if (status === "error") {
-          return <div>Error loading parents data: {error.message}</div>;
+          return <BlankState icon={Users} title="Error loading parents data" />;
         }
 
         if (status === "success") {
           if (!family) {
-            return <div>No family found</div>;
+            return <BlankState icon={Users} title="No family found" />;
+          }
+
+          if (!family.husband && !family.wife) {
+            return <BlankState icon={Users} title="No parents recorded" />;
           }
 
           return <FamilyParentsTable family={family} />;
@@ -33,6 +38,6 @@ export function FamilyParents({ family }: FamilyParentsProps) {
 
         return null;
       })()}
-    </Stack>
+    </PageCard>
   );
 }

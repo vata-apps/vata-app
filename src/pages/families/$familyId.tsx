@@ -1,11 +1,12 @@
 import { fetchFamily } from "@/api/fetchFamily";
+import { ErrorState, LoadingState, NotFoundState } from "@/components";
 import { FamilyChildren } from "@/components/family/FamilyChildren";
 import FamilyEvents from "@/components/family/FamilyEvents";
 import FamilyHeader from "@/components/family/FamilyHeader";
 import { FamilyParents } from "@/components/family/FamilyParents";
-import { Loader, Stack, Tabs, Text } from "@mantine/core";
+import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/families/$familyId")({
   component: FamilyPage,
@@ -27,40 +28,59 @@ function FamilyPage() {
     placeholderData: keepPreviousData,
   });
 
-  if (status === "pending") return <Loader />;
-
-  if (status === "error") {
-    return <Text>Error loading family: {error.message}</Text>;
+  if (status === "pending") {
+    return <LoadingState message="Loading family details..." />;
   }
 
-  if (!family) return <Text>Family not found</Text>;
+  if (status === "error") {
+    return (
+      <ErrorState
+        error={error}
+        title="Something went wrong"
+        backTo="/families"
+        backLabel="← Back to families"
+      />
+    );
+  }
+
+  if (!family) {
+    return (
+      <NotFoundState
+        title="Family Not Found"
+        description="This family doesn't exist or may have been removed."
+        backTo="/families"
+        backLabel="← Back to families"
+      />
+    );
+  }
+
+  const husbandName = family.husband
+    ? family.husband.names?.[0]?.first_name || "Unknown"
+    : "Unknown";
+  const wifeName = family.wife
+    ? family.wife.names?.[0]?.first_name || "Unknown"
+    : "Unknown";
+  const familyName = `${husbandName} & ${wifeName}`;
 
   return (
-    <Stack>
-      {/* Header Section */}
-      <FamilyHeader family={family} />
+    <Container fluid py="md">
+      <Stack gap="xl">
+        <Breadcrumbs>
+          <Anchor component={Link} to="/families">
+            Families
+          </Anchor>
+          <Text c="dimmed">{familyName}</Text>
+        </Breadcrumbs>
 
-      {/* Tabs Section */}
-      <Tabs defaultValue="members" mt="lg" variant="default">
-        <Tabs.List className="w-full justify-start">
-          <Tabs.Tab value="members">Family Members</Tabs.Tab>
-          <Tabs.Tab value="events">Family Events</Tabs.Tab>
-        </Tabs.List>
+        <FamilyHeader family={family} />
 
-        {/* Family Members Tab */}
-        <Tabs.Panel py="lg" value="members">
-          <Stack gap="lg">
-            <FamilyParents family={family} />
-            <FamilyChildren family={family} />
-          </Stack>
-        </Tabs.Panel>
+        <FamilyParents family={family} />
 
-        {/* Family Events Tab */}
-        <Tabs.Panel py="lg" value="events">
-          <FamilyEvents familyId={familyId} />
-        </Tabs.Panel>
-      </Tabs>
-    </Stack>
+        <FamilyChildren family={family} />
+
+        <FamilyEvents />
+      </Stack>
+    </Container>
   );
 }
 
