@@ -4,6 +4,7 @@ import { FamilyChildren } from "@/components/family/FamilyChildren";
 import FamilyEvents from "@/components/family/FamilyEvents";
 import FamilyHeader from "@/components/family/FamilyHeader";
 import { FamilyParents } from "@/components/family/FamilyParents";
+import displayName from "@/utils/displayName";
 import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -55,11 +56,9 @@ function FamilyPage() {
   }
 
   const husbandName = family.husband
-    ? family.husband.names?.[0]?.first_name || "Unknown"
+    ? displayName(family.husband.names)
     : "Unknown";
-  const wifeName = family.wife
-    ? family.wife.names?.[0]?.first_name || "Unknown"
-    : "Unknown";
+  const wifeName = family.wife ? displayName(family.wife.names) : "Unknown";
   const familyName = `${husbandName} & ${wifeName}`;
 
   return (

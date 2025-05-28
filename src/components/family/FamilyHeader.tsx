@@ -23,7 +23,7 @@ function FamilyHeader({ family }: { family: FamilyWithRelations }) {
             size={60}
             radius="xl"
             variant="gradient"
-            gradient={{ from: "purple.6", to: "purple.4", deg: 135 }}
+            gradient={{ from: "violet.6", to: "violet.4", deg: 135 }}
           >
             <Users size={24} />
           </ThemeIcon>
