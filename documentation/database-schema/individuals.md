@@ -14,7 +14,8 @@ The `individuals` table stores basic information about each person in the geneal
 ## Relationships
 
 - Has many `names` through `individual_id`
-- Has many `individual_events` through `individual_id`
+- Has many `event_subjects` through `individual_id` (for events they are the subject of)
+- Has many `event_participants` through `individual_id` (for events they participated in)
 - Can be a husband in multiple `families` through `husband_id`
 - Can be a wife in multiple `families` through `wife_id`
 - Can be a child in multiple `family_children` through `individual_id`

@@ -89,20 +89,6 @@ export async function fetchIndividuals({
         first_name,
         last_name,
         is_primary
-      ),
-      individual_events (
-        id,
-        date,
-        type_id,
-        place_id,
-        places!individual_events_place_id_fkey (
-          id,
-          name
-        ),
-        individual_event_types!individual_events_type_id_fkey (
-          id,
-          name
-        )
       )
     `,
     )
@@ -110,9 +96,75 @@ export async function fetchIndividuals({
 
   if (individualsError) throw individualsError;
 
+  // Step 6: Get events for these individuals using the new unified event system
+  const { data: eventSubjects, error: eventsError } = await supabase
+    .from("event_subjects")
+    .select(
+      `
+      individual_id,
+      events (
+        id,
+        date,
+        type_id,
+        place_id,
+        places (
+          id,
+          name
+        ),
+        event_types (
+          id,
+          name
+        )
+      )
+    `,
+    )
+    .in("individual_id", sortedIds);
+
+  if (eventsError) throw eventsError;
+
+  // Step 7: Transform the data to match the expected format
+  const eventsByIndividual = (eventSubjects || []).reduce(
+    (acc, subject) => {
+      const individualId = subject.individual_id;
+      if (!acc[individualId]) {
+        acc[individualId] = [];
+      }
+      if (subject.events) {
+        // Handle potential array returns from Supabase joins
+        const events = Array.isArray(subject.events)
+          ? subject.events
+          : [subject.events];
+        events.forEach((event) => {
+          acc[individualId].push({
+            id: event.id,
+            date: event.date,
+            type_id: event.type_id,
+            place_id: event.place_id,
+            places: Array.isArray(event.places)
+              ? event.places[0]
+              : event.places,
+            individual_event_types: Array.isArray(event.event_types)
+              ? event.event_types[0]
+              : event.event_types,
+          });
+        });
+      }
+      return acc;
+    },
+    {} as Record<string, unknown[]>,
+  );
+
   // Maintain the sorted order from the primary names query
   const sortedData = sortedIds
-    .map((id) => individuals?.find((individual) => individual.id === id))
+    .map((id) => {
+      const individual = individuals?.find((ind) => ind.id === id);
+      if (!individual) return null;
+
+      return {
+        ...individual,
+        individual_events: eventsByIndividual[id] || [],
+      };
+    })
     .filter(Boolean);
 
   return {
