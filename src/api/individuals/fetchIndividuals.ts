@@ -1,9 +1,9 @@
 import { SortConfig } from "@/types/sort";
 import { getPageRange } from "../getPageRange";
-import { fetchAllIndividuals } from "./fetchAll";
-import { filterIndividuals } from "./filter";
-import { sortIndividuals } from "./sort";
 import type { IndividualFilters } from "./types";
+import { fetchAllIndividuals } from "./utils/fetchAll";
+import { filterIndividuals } from "./utils/filter";
+import { sortIndividuals } from "./utils/sort";
 
 /**
  * Fetches a paginated list of individuals with client-side filtering, sorting, and pagination
@@ -48,5 +48,5 @@ export async function fetchIndividuals({
 }
 
 // Re-export utility functions and types
-export { clearIndividualsCache } from "./fetchAll";
 export type { Individual, IndividualFilters } from "./types";
+export { clearIndividualsCache } from "./utils/fetchAll";
