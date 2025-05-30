@@ -8,12 +8,16 @@ import { router } from "./router";
 import "@mantine/core/styles.css";
 
 // Ensure the router is ready before rendering
-await router.load();
+async function initializeApp() {
+  await router.load();
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  </React.StrictMode>,
-);
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </React.StrictMode>,
+  );
+}
+
+initializeApp();
