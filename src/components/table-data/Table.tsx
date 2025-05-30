@@ -13,7 +13,13 @@ import { useTableData } from "./useTableData";
 const { Thead, Tr, Th, Tbody, Td } = MantineTable;
 
 export function Table<TData extends Record<string, unknown>>() {
-  const { table, isLoading, onRowClick, blankState } = useTableData<TData>();
+  const {
+    table,
+    isLoading,
+    onRowClick,
+    showPagination = true,
+    blankState,
+  } = useTableData<TData>();
 
   if (isLoading) {
     return <Loader />;
@@ -109,19 +115,21 @@ export function Table<TData extends Record<string, unknown>>() {
         </Tbody>
       </MantineTable>
 
-      <Group justify="space-between">
-        <Pagination
-          total={totalPages}
-          value={currentPage}
-          onChange={(page) => table.setPageIndex(page - 1)}
-        />
+      {showPagination && (
+        <Group justify="space-between">
+          <Pagination
+            total={totalPages}
+            value={currentPage}
+            onChange={(page) => table.setPageIndex(page - 1)}
+          />
 
-        <Text>
-          {(table.options.meta as TableMeta)?.total ?? 0}{" "}
-          {(table.options.meta as TableMeta)?.total === 1 ? "row" : "rows"}{" "}
-          found
-        </Text>
-      </Group>
+          <Text>
+            {(table.options.meta as TableMeta)?.total ?? 0}{" "}
+            {(table.options.meta as TableMeta)?.total === 1 ? "row" : "rows"}{" "}
+            found
+          </Text>
+        </Group>
+      )}
     </>
   );
 }

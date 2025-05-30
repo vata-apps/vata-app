@@ -34,6 +34,7 @@ export interface TableDataProps<TData> {
   defaultSorting?: TableSortOption;
   onRowClick?: (row: TData) => void;
   children: React.ReactNode;
+  showPagination?: boolean;
   blankState?: {
     icon: LucideIcon;
     title: string;
@@ -49,6 +50,7 @@ export interface TableDataContextType<TData> {
   error: Error | null;
   columns: ColumnDef<TData, unknown>[];
   onRowClick?: (row: TData) => void;
+  showPagination?: boolean;
   blankState?: {
     icon: LucideIcon;
     title: string;

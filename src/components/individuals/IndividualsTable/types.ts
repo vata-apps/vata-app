@@ -19,9 +19,23 @@ export type IndividualEvent = {
 
 export type Individual = IndividualWithNames & {
   individual_events: IndividualEvent[];
+  role_name?: string; // Optional role information for event-related displays
 };
 
-export type IndividualColumnId = "name" | "gender" | "birth" | "death";
+export type IndividualColumnId = "name" | "gender" | "birth" | "death" | "role";
+
+export interface ColumnConfig {
+  visible?: boolean;
+  width?: number;
+}
+
+export interface ColumnsConfig {
+  name?: ColumnConfig;
+  gender?: ColumnConfig;
+  birth?: ColumnConfig;
+  death?: ColumnConfig;
+  role?: ColumnConfig;
+}
 
 export interface AddButtonConfig {
   path?: string;
@@ -54,9 +68,13 @@ export interface IndividualsTableProps {
 
   // Column Configuration
   hideColumns?: IndividualColumnId[];
+  showColumns?: IndividualColumnId[]; // Explicitly show only these columns
+  columnsConfig?: ColumnsConfig; // Fine-grained column configuration
 
   // Behavior
   defaultSorting?: SortingConfig;
   onRowClick?: (individual: Individual) => void;
+  onDeleteIndividual?: (individualId: string) => void;
   blankState?: BlankStateConfig;
+  showPagination?: boolean;
 }

@@ -20,15 +20,24 @@ export function IndividualsTable({
   showSort = true,
   searchPlaceholder = DEFAULT_SEARCH_PLACEHOLDER,
   hideColumns,
+  showColumns,
+  columnsConfig,
   defaultSorting = DEFAULT_SORTING,
   onRowClick,
+  onDeleteIndividual,
   blankState,
+  showPagination = true,
 }: IndividualsTableProps) {
   const navigate = useNavigate();
 
   // Get configuration values
   const finalAddButtonPath = addButton?.path ?? DEFAULT_ADD_BUTTON_PATH;
-  const columns = getVisibleColumns(hideColumns);
+  const columns = getVisibleColumns(
+    hideColumns,
+    showColumns,
+    columnsConfig,
+    onDeleteIndividual,
+  );
   const queryKey = generateQueryKey(filters);
   const sortOptions = getSortOptions(hideColumns);
 
@@ -50,6 +59,7 @@ export function IndividualsTable({
       columns={columns}
       defaultSorting={defaultSorting}
       onRowClick={handleRowClick}
+      showPagination={showPagination}
       blankState={blankState}
     >
       {showToolbar && (

@@ -25,6 +25,7 @@ export function TableData<TData extends Record<string, unknown>>({
   defaultSorting,
   onRowClick,
   children,
+  showPagination = true,
   blankState,
 }: TableDataProps<TData>) {
   const [tableState, setTableState] = useState<TableState>({
@@ -144,6 +145,7 @@ export function TableData<TData extends Record<string, unknown>>({
           error: error instanceof Error ? error : null,
           columns,
           onRowClick,
+          showPagination,
           blankState,
         } as TableDataContextType<TData>
       }
