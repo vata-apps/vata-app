@@ -9,4 +9,4 @@ export type {
   EventFilters,
   EventsTableProps,
   SortingConfig,
-} from "./EventsTable";
+} from "./types";
