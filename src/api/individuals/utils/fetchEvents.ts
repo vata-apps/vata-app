@@ -1,5 +1,5 @@
-import { supabase } from "../../lib/supabase";
-import type { Individual } from "./types";
+import { supabase } from "../../../lib/supabase";
+import type { Individual } from "../types";
 
 // Type definitions for Supabase responses
 type EventResponse = {
@@ -152,7 +152,7 @@ function processParticipantEvents(
       events.forEach((event: EventResponse) => {
         // Check if event already exists for this individual
         const existingEvent = eventsByIndividual[individualId].find(
-          (e) => e.id === event.id,
+          (e: { id: string }) => e.id === event.id,
         );
         if (!existingEvent) {
           eventsByIndividual[individualId].push(normalizeEventData(event));

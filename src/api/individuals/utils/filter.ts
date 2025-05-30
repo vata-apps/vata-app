@@ -1,5 +1,5 @@
-import { supabase } from "../../lib/supabase";
-import type { Individual, IndividualFilters } from "./types";
+import { supabase } from "../../../lib/supabase";
+import type { Individual, IndividualFilters } from "../types";
 
 /**
  * Filters individuals based on search query and filters
@@ -16,7 +16,11 @@ export async function filterIndividuals(
     const searchTerm = query.toLowerCase();
     filtered = filtered.filter((individual) =>
       individual.names.some(
-        (name) =>
+        (name: {
+          first_name: string;
+          last_name: string;
+          is_primary: boolean;
+        }) =>
           name.first_name?.toLowerCase().includes(searchTerm) ||
           name.last_name?.toLowerCase().includes(searchTerm),
       ),
@@ -37,7 +41,9 @@ export async function filterIndividuals(
       if (error) throw error;
 
       const subjectIds = new Set(
-        eventSubjects?.map((es) => es.individual_id) || [],
+        eventSubjects?.map(
+          (es: { individual_id: string }) => es.individual_id,
+        ) || [],
       );
       filtered = filtered.filter((individual) => subjectIds.has(individual.id));
     } else if (role === "participant") {
@@ -50,7 +56,9 @@ export async function filterIndividuals(
       if (error) throw error;
 
       const participantIds = new Set(
-        eventParticipants?.map((ep) => ep.individual_id) || [],
+        eventParticipants?.map(
+          (ep: { individual_id: string }) => ep.individual_id,
+        ) || [],
       );
       filtered = filtered.filter((individual) =>
         participantIds.has(individual.id),
@@ -86,7 +94,9 @@ export async function filterIndividuals(
       if (error) throw error;
 
       const childrenIds = new Set(
-        familyChildren?.map((fc) => fc.individual_id) || [],
+        familyChildren?.map(
+          (fc: { individual_id: string }) => fc.individual_id,
+        ) || [],
       );
       filtered = filtered.filter((individual) =>
         childrenIds.has(individual.id),

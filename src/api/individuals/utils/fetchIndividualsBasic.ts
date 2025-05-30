@@ -1,4 +1,4 @@
-import { supabase } from "../../lib/supabase";
+import { supabase } from "../../../lib/supabase";
 
 /**
  * Fetches basic individual data with names from the database

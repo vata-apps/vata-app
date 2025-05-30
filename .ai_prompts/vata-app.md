@@ -27,7 +27,7 @@ Vata is a modern genealogy application designed to help you manage and visualize
 ## Core Commands [PRESERVE]
 
 - `pnpm dev` - Start development server
-- `npx tsc --noEmit` - Typescript
+- `pnpm type-check` - TypeScript type checking
 - `pnpm build` - Build app
 - `pnpm lint` - Eslint
 - `pnpm db:reset` - Reset database

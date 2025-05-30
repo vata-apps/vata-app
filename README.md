@@ -79,6 +79,25 @@ This project demonstrates the capabilities of AI-assisted development:
    pnpm dev
    ```
 
+### Development Commands
+
+```bash
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Run TypeScript type checking
+pnpm type-check
+
+# Run ESLint
+pnpm lint
+
+# Preview production build
+pnpm preview
+```
+
 ### Database Setup
 
 The application uses Supabase for database management:

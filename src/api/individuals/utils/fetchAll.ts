@@ -1,6 +1,17 @@
+import type { Individual } from "../types";
 import { fetchAndCombineEvents } from "./fetchEvents";
 import { fetchIndividualsWithNames } from "./fetchIndividualsBasic";
-import type { Individual } from "./types";
+
+// Type for individual data without events (as returned by fetchIndividualsWithNames)
+type PartialIndividual = {
+  id: string;
+  gender: string | null;
+  names: {
+    first_name: string;
+    last_name: string;
+    is_primary: boolean;
+  }[];
+};
 
 // Cache for all individuals data
 let individualsCache: Individual[] | null = null;
@@ -23,18 +34,18 @@ export async function fetchAllIndividuals(): Promise<Individual[]> {
   }
 
   // Get individual IDs for event queries
-  const individualIds = individuals.map((ind) => ind.id);
+  const individualIds = individuals.map((ind: { id: string }) => ind.id);
 
   // Fetch and combine all events
   const eventsByIndividual = await fetchAndCombineEvents(individualIds);
 
   // Combine all data
-  individualsCache = individuals.map((individual) => ({
+  individualsCache = individuals.map((individual: PartialIndividual) => ({
     ...individual,
     individual_events: eventsByIndividual[individual.id] || [],
   }));
 
-  return individualsCache;
+  return individualsCache!;
 }
 
 /**
