@@ -1,7 +1,8 @@
 import { fetchFamilyAsChild } from "@/api/fetchFamilyAsChild";
 import { FamilyAsChildTable } from "@/components/individual/FamilyAsChildTable";
-import { Stack, Title } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { Baby } from "lucide-react";
+import { PageCard } from "../PageCard";
 
 interface FamilyAsChildProps {
   individualId: string;
@@ -22,9 +23,7 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
   });
 
   return (
-    <Stack gap="sm">
-      <Title order={4}>Family as Child</Title>
-
+    <PageCard title="Family as Child" icon={Baby} actionLabel="Edit family">
       {(() => {
         if (status === "pending") return "Loading...";
 
@@ -44,6 +43,6 @@ export function FamilyAsChild({ individualId }: FamilyAsChildProps) {
 
         return null;
       })()}
-    </Stack>
+    </PageCard>
   );
 }

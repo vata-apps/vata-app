@@ -1,7 +1,9 @@
 import { fetchNames } from "@/api/fetchNames";
 import { capitalize } from "@/utils/strings";
-import { Badge, Button, Group, Stack, Table } from "@mantine/core";
+import { Badge, Button, Table } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { User } from "lucide-react";
+import { PageCard } from "../PageCard";
 
 interface NamesProps {
   individualId: string;
@@ -18,13 +20,7 @@ export function Names({ individualId }: NamesProps) {
   });
 
   return (
-    <Stack gap="sm">
-      <Group justify="space-between">
-        <Button radius="xl" size="xs" variant="filled">
-          Add name
-        </Button>
-      </Group>
-
+    <PageCard title="Names" icon={User} actionLabel="Add name">
       <Table>
         <Table.Thead>
           <Table.Tr>
@@ -75,67 +71,6 @@ export function Names({ individualId }: NamesProps) {
           })()}
         </Table.Tbody>
       </Table>
-    </Stack>
+    </PageCard>
   );
-
-  // return (
-  //   <Card>
-  //     <CardHeader className="flex flex-row items-center justify-between">
-  //       <CardTitle>Names</CardTitle>
-  //       <Button variant="secondary" size="sm">
-  //         Add Name
-  //       </Button>
-  //     </CardHeader>
-  //     <CardContent>
-  //       <Table>
-  //         <TableHeader>
-  //           <TableRow>
-  //             <TableHead className="w-[100px]"></TableHead>
-  //             <TableHead>Name</TableHead>
-  //             <TableHead>Last Name</TableHead>
-  //             <TableHead>Type</TableHead>
-  //             <TableHead className="text-right" />
-  //           </TableRow>
-  //         </TableHeader>
-  //         <TableBody>
-  //           {isLoading ? (
-  //             <TableRow>
-  //               <TableCell colSpan={5} className="text-center">
-  //                 Loading...
-  //               </TableCell>
-  //             </TableRow>
-  //           ) : !names || names.length === 0 ? (
-  //             <TableRow>
-  //               <TableCell colSpan={5} className="text-center">
-  //                 No names found
-  //               </TableCell>
-  //             </TableRow>
-  //           ) : (
-  //             names.map((name) => (
-  //               <TableRow key={name.id}>
-  //                 <TableCell>
-  //                   {name.is_primary && (
-  //                     <Badge variant="secondary">Default</Badge>
-  //                   )}
-  //                 </TableCell>
-  //                 <TableCell className="font-medium">
-  //                   {name.first_name}
-  //                 </TableCell>
-  //                 <TableCell>{name.last_name}</TableCell>
-  //                 <TableCell>
-  //                   <Badge variant="outline">{name.type}</Badge>
-  //                 </TableCell>
-  //                 <TableCell className="text-right">
-  //                   <Button variant="ghost" size="sm">
-  //                     View
-  //                   </Button>
-  //                 </TableCell>
-  //               </TableRow>
-  //             ))
-  //           )}
-  //         </TableBody>
-  //       </Table>
-  //     </CardContent>
-  //   </Card>
-  // );
 }

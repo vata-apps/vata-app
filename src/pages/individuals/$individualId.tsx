@@ -1,17 +1,22 @@
 import { fetchIndividual } from "@/api/fetchIndividual";
+import { ErrorState, LoadingState, NotFoundState } from "@/components";
 import { FamilyAsChild } from "@/components/individual/FamilyAsChild";
 import { FamilyAsSpouse } from "@/components/individual/FamilyAsSpouse";
 import { IndividualHeader } from "@/components/individual/IndividualHeader";
 import { Names } from "@/components/individual/Names";
-import { Loader, Stack, Tabs, Text } from "@mantine/core";
+import displayName from "@/utils/displayName";
+import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/individuals/$individualId")({
-  component: IndividualPage,
+  component: IndividualDetailPage,
 });
 
-function IndividualPage() {
+/**
+ * Displays the individual page with details, family relationships, and names
+ */
+function IndividualDetailPage() {
   const { individualId } = Route.useParams();
 
   const {
@@ -24,39 +29,54 @@ function IndividualPage() {
     placeholderData: keepPreviousData,
   });
 
-  if (status === "pending") return <Loader />;
+  if (status === "pending") {
+    return <LoadingState message="Loading individual details..." />;
+  }
 
   if (status === "error") {
-    return <Text>Error loading individual: {error.message}</Text>;
+    return (
+      <ErrorState
+        error={error}
+        title="Something went wrong"
+        backTo="/individuals"
+        backLabel="← Back to individuals"
+      />
+    );
+  }
+
+  if (!individual) {
+    return (
+      <NotFoundState
+        title="Individual Not Found"
+        description="This individual doesn't exist or may have been removed."
+        backTo="/individuals"
+        backLabel="← Back to individuals"
+      />
+    );
   }
 
   return (
-    <Stack>
-      {/* Header Section */}
-      <IndividualHeader individual={individual} />
+    <Container fluid py="md">
+      <Stack gap="xl">
+        <Breadcrumbs>
+          <Anchor component={Link} to="/individuals">
+            Individuals
+          </Anchor>
+          <Text c="dimmed">
+            {displayName(individual.names) || "Unknown Individual"}
+          </Text>
+        </Breadcrumbs>
 
-      {/* Tabs Section */}
-      <Tabs defaultValue="family" mt="lg" variant="default">
-        <Tabs.List>
-          <Tabs.Tab value="family">Family Relationships</Tabs.Tab>
-          <Tabs.Tab value="names">Names</Tabs.Tab>
-        </Tabs.List>
+        <IndividualHeader individual={individual} />
 
-        {/* Family Relationships Tab */}
-        <Tabs.Panel py="lg" value="family">
-          <Stack gap="lg">
-            <FamilyAsChild individualId={individualId} />
-            <FamilyAsSpouse individualId={individualId} />
-          </Stack>
-        </Tabs.Panel>
+        <FamilyAsChild individualId={individualId} />
 
-        {/* Names Tab */}
-        <Tabs.Panel py="lg" value="names">
-          <Names individualId={individualId} />
-        </Tabs.Panel>
-      </Tabs>
-    </Stack>
+        <FamilyAsSpouse individualId={individualId} />
+
+        <Names individualId={individualId} />
+      </Stack>
+    </Container>
   );
 }
 
-export default IndividualPage;
+export default IndividualDetailPage;

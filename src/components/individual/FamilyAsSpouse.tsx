@@ -1,7 +1,8 @@
 import { fetchFamiliesAsSpouse } from "@/api/fetchFamiliesAsSpouse";
 
-import { Stack, Title } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { User } from "lucide-react";
+import { PageCard } from "../PageCard";
 import { FamiliesAsSpouseTable } from "./FamilyAsSpouseTable";
 
 interface FamilyAsSpouseProps {
@@ -23,9 +24,7 @@ export function FamilyAsSpouse({ individualId }: FamilyAsSpouseProps) {
   });
 
   return (
-    <Stack gap="sm">
-      <Title order={4}>Families as Spouse</Title>
-
+    <PageCard title="Families as Spouse" icon={User} actionLabel="Add family">
       {(() => {
         if (status === "pending") return "Loading...";
 
@@ -52,6 +51,6 @@ export function FamilyAsSpouse({ individualId }: FamilyAsSpouseProps) {
 
         return null;
       })()}
-    </Stack>
+    </PageCard>
   );
 }
