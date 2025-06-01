@@ -1,21 +1,23 @@
 # Places
 
-The `places` table stores locations relevant to genealogical events, with support for hierarchical relationships between places.
+The `places` table stores locations relevant to genealogical events, with support for hierarchical relationships between places. All places belong to a specific family tree.
 
 ## Schema
 
-| Column     | Type                     | Description                                  |
-| ---------- | ------------------------ | -------------------------------------------- |
-| id         | uuid                     | Primary key, automatically generated         |
-| created_at | timestamp with time zone | Timestamp of record creation                 |
-| name       | text                     | Name of the place                            |
-| type_id    | uuid                     | Reference to the place type                  |
-| parent_id  | uuid                     | Reference to the parent place (nullable)     |
-| latitude   | decimal                  | Geographical latitude coordinate (nullable)  |
-| longitude  | decimal                  | Geographical longitude coordinate (nullable) |
+| Column     | Type                     | Description                                            |
+| ---------- | ------------------------ | ------------------------------------------------------ |
+| id         | uuid                     | Primary key, automatically generated                   |
+| created_at | timestamp with time zone | Timestamp of record creation                           |
+| name       | text                     | Name of the place                                      |
+| type_id    | uuid                     | Reference to the place type                            |
+| parent_id  | uuid                     | Reference to the parent place (nullable)               |
+| latitude   | decimal                  | Geographical latitude coordinate (nullable)            |
+| longitude  | decimal                  | Geographical longitude coordinate (nullable)           |
+| tree_id    | uuid                     | Reference to the tree this place belongs to (NOT NULL) |
 
 ## Relationships
 
+- Belongs to one `tree` through `tree_id`
 - Belongs to one `place_type` through `type_id`
 - Can have one parent `place` through `parent_id`
 - Can have many child `places` referencing this place as their parent
@@ -31,3 +33,5 @@ Row level security is enabled on this table.
 - Geographical coordinates are optional but useful for mapping
 - The `type_id` helps categorize places (e.g., country, state, city, cemetery)
 - Places can be referenced by events in the unified event system
+- All places must belong to a valid tree via `tree_id`
+- When a tree is deleted, all associated places are automatically deleted (CASCADE)

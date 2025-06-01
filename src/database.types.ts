@@ -41,6 +41,7 @@ export type Database = {
           id: string
           individual_id: string
           role_id: string
+          tree_id: string
         }
         Insert: {
           created_at?: string
@@ -48,6 +49,7 @@ export type Database = {
           id?: string
           individual_id: string
           role_id: string
+          tree_id: string
         }
         Update: {
           created_at?: string
@@ -55,6 +57,7 @@ export type Database = {
           id?: string
           individual_id?: string
           role_id?: string
+          tree_id?: string
         }
         Relationships: [
           {
@@ -85,6 +88,13 @@ export type Database = {
             referencedRelation: "event_roles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "event_participants_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
         ]
       }
       event_roles: {
@@ -92,18 +102,29 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          tree_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          tree_id: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          tree_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "event_roles_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       event_subjects: {
         Row: {
@@ -111,18 +132,21 @@ export type Database = {
           event_id: string
           id: string
           individual_id: string
+          tree_id: string
         }
         Insert: {
           created_at?: string
           event_id: string
           id?: string
           individual_id: string
+          tree_id: string
         }
         Update: {
           created_at?: string
           event_id?: string
           id?: string
           individual_id?: string
+          tree_id?: string
         }
         Relationships: [
           {
@@ -146,6 +170,13 @@ export type Database = {
             referencedRelation: "individuals"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "event_subjects_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
         ]
       }
       event_types: {
@@ -153,18 +184,29 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          tree_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          tree_id: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          tree_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "event_types_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       events: {
         Row: {
@@ -173,6 +215,7 @@ export type Database = {
           description: string | null
           id: string
           place_id: string | null
+          tree_id: string
           type_id: string
         }
         Insert: {
@@ -181,6 +224,7 @@ export type Database = {
           description?: string | null
           id?: string
           place_id?: string | null
+          tree_id: string
           type_id: string
         }
         Update: {
@@ -189,6 +233,7 @@ export type Database = {
           description?: string | null
           id?: string
           place_id?: string | null
+          tree_id?: string
           type_id?: string
         }
         Relationships: [
@@ -197,6 +242,13 @@ export type Database = {
             columns: ["place_id"]
             isOneToOne: false
             referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
             referencedColumns: ["id"]
           },
           {
@@ -214,6 +266,7 @@ export type Database = {
           gedcom_id: number
           husband_id: string | null
           id: string
+          tree_id: string
           type: Database["public"]["Enums"]["family_type"]
           wife_id: string | null
         }
@@ -222,6 +275,7 @@ export type Database = {
           gedcom_id?: number
           husband_id?: string | null
           id?: string
+          tree_id: string
           type?: Database["public"]["Enums"]["family_type"]
           wife_id?: string | null
         }
@@ -230,6 +284,7 @@ export type Database = {
           gedcom_id?: number
           husband_id?: string | null
           id?: string
+          tree_id?: string
           type?: Database["public"]["Enums"]["family_type"]
           wife_id?: string | null
         }
@@ -239,6 +294,13 @@ export type Database = {
             columns: ["husband_id"]
             isOneToOne: false
             referencedRelation: "individuals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "families_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
             referencedColumns: ["id"]
           },
           {
@@ -256,18 +318,21 @@ export type Database = {
           family_id: string
           id: string
           individual_id: string
+          tree_id: string
         }
         Insert: {
           created_at?: string
           family_id: string
           id?: string
           individual_id: string
+          tree_id: string
         }
         Update: {
           created_at?: string
           family_id?: string
           id?: string
           individual_id?: string
+          tree_id?: string
         }
         Relationships: [
           {
@@ -291,6 +356,13 @@ export type Database = {
             referencedRelation: "individuals"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "family_children_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
         ]
       }
       individuals: {
@@ -299,20 +371,31 @@ export type Database = {
           gedcom_id: number
           gender: Database["public"]["Enums"]["gender"]
           id: string
+          tree_id: string
         }
         Insert: {
           created_at?: string
           gedcom_id?: number
           gender: Database["public"]["Enums"]["gender"]
           id?: string
+          tree_id: string
         }
         Update: {
           created_at?: string
           gedcom_id?: number
           gender?: Database["public"]["Enums"]["gender"]
           id?: string
+          tree_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "individuals_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       names: {
         Row: {
@@ -323,6 +406,7 @@ export type Database = {
           is_primary: boolean
           last_name: string | null
           surname: string | null
+          tree_id: string
           type: Database["public"]["Enums"]["name_type"]
         }
         Insert: {
@@ -333,6 +417,7 @@ export type Database = {
           is_primary?: boolean
           last_name?: string | null
           surname?: string | null
+          tree_id: string
           type?: Database["public"]["Enums"]["name_type"]
         }
         Update: {
@@ -343,6 +428,7 @@ export type Database = {
           is_primary?: boolean
           last_name?: string | null
           surname?: string | null
+          tree_id?: string
           type?: Database["public"]["Enums"]["name_type"]
         }
         Relationships: [
@@ -353,6 +439,13 @@ export type Database = {
             referencedRelation: "individuals"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "names_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
         ]
       }
       place_types: {
@@ -360,18 +453,29 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          tree_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          tree_id: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          tree_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "place_types_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       places: {
         Row: {
@@ -381,6 +485,7 @@ export type Database = {
           longitude: number | null
           name: string
           parent_id: string | null
+          tree_id: string
           type_id: string
         }
         Insert: {
@@ -390,6 +495,7 @@ export type Database = {
           longitude?: number | null
           name: string
           parent_id?: string | null
+          tree_id: string
           type_id: string
         }
         Update: {
@@ -399,6 +505,7 @@ export type Database = {
           longitude?: number | null
           name?: string
           parent_id?: string | null
+          tree_id?: string
           type_id?: string
         }
         Relationships: [
@@ -410,6 +517,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "places_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "places_type_id_fkey"
             columns: ["type_id"]
             isOneToOne: false
@@ -417,6 +531,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      trees: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_default: boolean
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_default?: boolean
+          name?: string
+        }
+        Relationships: []
       }
     }
     Views: {
@@ -430,6 +568,7 @@ export type Database = {
           place_id: string | null
           place_name: string | null
           subjects: Json | null
+          tree_id: string | null
           type_id: string | null
         }
         Relationships: [
@@ -438,6 +577,13 @@ export type Database = {
             columns: ["place_id"]
             isOneToOne: false
             referencedRelation: "places"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_tree_id_fkey"
+            columns: ["tree_id"]
+            isOneToOne: false
+            referencedRelation: "trees"
             referencedColumns: ["id"]
           },
           {

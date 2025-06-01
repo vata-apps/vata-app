@@ -1,6 +1,6 @@
 # Events
 
-The `events` table is the main table for recording all types of events in the genealogical database. This unified system handles both individual and family events through a flexible participant-based model.
+The `events` table is the main table for recording all types of events in the genealogical database. This unified system handles both individual and family events through a flexible participant-based model. All events belong to a specific family tree.
 
 ## Schema
 
@@ -12,9 +12,11 @@ The `events` table is the main table for recording all types of events in the ge
 | date        | text                     | Date of the event (nullable)                               |
 | place_id    | uuid                     | Reference to the place where the event occurred (nullable) |
 | description | text                     | Additional details about the event (nullable)              |
+| tree_id     | uuid                     | Reference to the tree this event belongs to (NOT NULL)     |
 
 ## Relationships
 
+- Belongs to one `tree` through `tree_id`
 - Belongs to one `event_type` through `type_id`
 - Can belong to one `place` through `place_id`
 - Has many `event_subjects` (who the event is about)
@@ -38,3 +40,5 @@ Events use a flexible participation model:
 - The `place_id` is optional but helps track where events occurred
 - The `description` field allows for additional context about the event
 - Events are connected to individuals through the `event_subjects` and `event_participants` tables
+- All events must belong to a valid tree via `tree_id`
+- When a tree is deleted, all associated events are automatically deleted (CASCADE)

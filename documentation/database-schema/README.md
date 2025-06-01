@@ -1,9 +1,10 @@
 # Database Schema Documentation
 
-This directory contains documentation for the database schema used in the Vata App. The schema is designed to store genealogical data including individuals, families, events, places, and their relationships using a unified event system.
+This directory contains documentation for the database schema used in the Vata App. The schema is designed to store genealogical data including individuals, families, events, places, and their relationships using a unified event system with support for multiple family trees.
 
 ## Core Entities
 
+- [Trees](./trees.md) - Manages multiple family trees and organizes all genealogical data
 - [Families](./families.md) - Represents family units and their relationships
 - [Family Children](./family-children.md) - Links children to their families
 - [Individuals](./individuals.md) - Represents individual persons
