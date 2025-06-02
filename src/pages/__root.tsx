@@ -1,4 +1,6 @@
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { TreeSelector } from "@/components/TreeSelector";
+import { TreeProvider } from "@/lib/tree-provider";
 import {
   AppShell,
   Burger,
@@ -19,68 +21,75 @@ function RootComponent() {
 
   return (
     <MantineProvider defaultColorScheme="dark">
-      <AppShell
-        header={{ height: 60 }}
-        navbar={{
-          breakpoint: "sm",
-          collapsed: { mobile: !opened },
-          width: 240,
-        }}
-        padding="md"
-      >
-        <AppShell.Header>
-          <Group h="100%" px="md">
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              hiddenFrom="sm"
-              size="sm"
+      <TreeProvider>
+        <AppShell
+          header={{ height: 60 }}
+          navbar={{
+            breakpoint: "sm",
+            collapsed: { mobile: !opened },
+            width: 240,
+          }}
+          padding="md"
+        >
+          <AppShell.Header>
+            <Group h="100%" px="md" justify="space-between">
+              <Group>
+                <Burger
+                  opened={opened}
+                  onClick={toggle}
+                  hiddenFrom="sm"
+                  size="sm"
+                />
+                <Text fw={600} size="xl">
+                  vata
+                </Text>
+              </Group>
+
+              <Group gap="md">
+                <TreeSelector />
+                <ThemeToggle />
+              </Group>
+            </Group>
+          </AppShell.Header>
+
+          <AppShell.Navbar p="md">
+            <NavLink
+              component={Link}
+              label="Home"
+              style={{ borderRadius: "var(--mantine-radius-md)" }}
+              to="/"
             />
-            <Text fw={600} size="xl">
-              vata
-            </Text>
+            <NavLink
+              component={Link}
+              label="Individuals"
+              style={{ borderRadius: "var(--mantine-radius-md)" }}
+              to="/individuals"
+            />
+            <NavLink
+              component={Link}
+              label="Families"
+              style={{ borderRadius: "var(--mantine-radius-md)" }}
+              to="/families"
+            />
+            <NavLink
+              component={Link}
+              label="Places"
+              style={{ borderRadius: "var(--mantine-radius-md)" }}
+              to="/places"
+            />
+            <NavLink
+              component={Link}
+              label="Events"
+              style={{ borderRadius: "var(--mantine-radius-md)" }}
+              to="/events"
+            />
+          </AppShell.Navbar>
 
-            <ThemeToggle />
-          </Group>
-        </AppShell.Header>
-
-        <AppShell.Navbar p="md">
-          <NavLink
-            component={Link}
-            label="Home"
-            style={{ borderRadius: "var(--mantine-radius-md)" }}
-            to="/"
-          />
-          <NavLink
-            component={Link}
-            label="Individuals"
-            style={{ borderRadius: "var(--mantine-radius-md)" }}
-            to="/individuals"
-          />
-          <NavLink
-            component={Link}
-            label="Families"
-            style={{ borderRadius: "var(--mantine-radius-md)" }}
-            to="/families"
-          />
-          <NavLink
-            component={Link}
-            label="Places"
-            style={{ borderRadius: "var(--mantine-radius-md)" }}
-            to="/places"
-          />
-          <NavLink
-            component={Link}
-            label="Events"
-            style={{ borderRadius: "var(--mantine-radius-md)" }}
-            to="/events"
-          />
-        </AppShell.Navbar>
-
-        <AppShell.Main>
-          <Outlet />
-        </AppShell.Main>
-      </AppShell>
+          <AppShell.Main>
+            <Outlet />
+          </AppShell.Main>
+        </AppShell>
+      </TreeProvider>
     </MantineProvider>
   );
 }

@@ -7,3 +7,4 @@ export { PageCard } from "./PageCard";
 export { PageHeader } from "./PageHeader";
 export { SearchInput } from "./SearchInput";
 export { ThemeToggle } from "./ThemeToggle";
+export { TreeSelector } from "./TreeSelector";
