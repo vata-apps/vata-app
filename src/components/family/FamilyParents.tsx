@@ -1,6 +1,6 @@
-import { IndividualsTable } from "@/components/individuals/IndividualsTable";
 import { PageCard } from "@/components/PageCard";
 import { Users } from "lucide-react";
+import { TableIndividuals } from "../TableIndividuals";
 import { FamilyWithRelations } from "./types";
 
 interface FamilyParentsProps {
@@ -8,21 +8,13 @@ interface FamilyParentsProps {
 }
 
 export function FamilyParents({ family }: FamilyParentsProps) {
+  const parentIds = [family.husband?.id, family.wife?.id].filter(
+    Boolean,
+  ) as string[];
+
   return (
     <PageCard title="Parents" icon={Users} actionLabel="Add parent">
-      <IndividualsTable
-        filters={{ family: { familyId: family.id, role: "parent" } }}
-        showToolbar={false}
-        showPagination={false}
-        onDeleteIndividual={() => {}}
-        columnsConfig={{
-          role: { visible: false },
-        }}
-        blankState={{
-          icon: Users,
-          title: "No parents recorded",
-        }}
-      />
+      <TableIndividuals hideToolbar individualIds={parentIds} />
     </PageCard>
   );
 }

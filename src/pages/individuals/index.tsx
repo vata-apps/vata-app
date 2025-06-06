@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
-import { IndividualsTable } from "@/components/individuals/IndividualsTable";
+import { TableIndividuals } from "@/components/TableIndividuals";
 import { Stack } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -9,9 +9,9 @@ export const Route = createFileRoute("/individuals/")({
 
 function IndividualsPage() {
   return (
-    <Stack h="100%">
+    <Stack gap="xl">
       <PageHeader title="Individuals" />
-      <IndividualsTable hideColumns={["role"]} />
+      <TableIndividuals />
     </Stack>
   );
 }
