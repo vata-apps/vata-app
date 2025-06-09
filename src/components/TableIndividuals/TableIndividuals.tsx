@@ -3,7 +3,7 @@ import { IndividualGender, IndividualSort } from "@/api/individuals/types";
 import { useTree } from "@/lib/use-tree";
 import { Loader, Stack, Table } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { TableRow } from "./TableRow";
 import { Toolbar } from "./Toolbar";
@@ -25,15 +25,8 @@ export function TableIndividuals({
 
   const [debouncedSearch] = useDebounce(search, 300);
 
-  const { data, isLoading } = useQuery({
-    queryKey: [
-      "individuals",
-      currentTreeId,
-      debouncedSearch,
-      gender,
-      sort,
-      individualIds,
-    ],
+  const individuals = useQuery({
+    queryKey: ["individuals", currentTreeId, individualIds],
     queryFn: () =>
       fetchIndividualsForTable(currentTreeId ?? "", {
         gender,
@@ -45,7 +38,70 @@ export function TableIndividuals({
     placeholderData: keepPreviousData,
   });
 
-  if (isLoading) return <Loader size="lg" />;
+  const data = useMemo(() => {
+    if (!individuals.data) return [];
+
+    let result = [...individuals.data];
+
+    if (debouncedSearch) {
+      result = result.filter((individual) => {
+        const completeName = `${individual.firstName} ${individual.lastName}`;
+        const completeNameInverted = `${individual.lastName} ${individual.firstName}`;
+        const regex = new RegExp(debouncedSearch, "i");
+        return (
+          regex.test(completeName) ||
+          regex.test(completeNameInverted) ||
+          regex.test(individual.birth.place ?? "") ||
+          regex.test(individual.death.place ?? "")
+        );
+      });
+    }
+
+    if (gender !== "all") {
+      result = result.filter((individual) => individual.gender === gender);
+    }
+
+    result = result.sort((a, b) => {
+      const firstNameA = a.firstName?.toLocaleLowerCase() ?? "";
+      const firstNameB = b.firstName?.toLocaleLowerCase() ?? "";
+      const lastNameA = a.lastName?.toLocaleLowerCase() ?? "";
+      const lastNameB = b.lastName?.toLocaleLowerCase() ?? "";
+
+      if (sort === "last_name_asc") {
+        const firstNameComparison = firstNameA?.localeCompare(firstNameB) ?? 0;
+        const lastNameComparison = lastNameA?.localeCompare(lastNameB) ?? 0;
+
+        return lastNameComparison || firstNameComparison;
+      }
+
+      if (sort === "last_name_desc") {
+        const firstNameComparison = firstNameB?.localeCompare(firstNameA) ?? 0;
+        const lastNameComparison = lastNameB?.localeCompare(lastNameA) ?? 0;
+
+        return lastNameComparison || firstNameComparison;
+      }
+
+      if (sort === "first_name_asc") {
+        const firstNameComparison = firstNameA?.localeCompare(firstNameB) ?? 0;
+        const lastNameComparison = lastNameA?.localeCompare(lastNameB) ?? 0;
+
+        return firstNameComparison || lastNameComparison;
+      }
+
+      if (sort === "first_name_desc") {
+        const firstNameComparison = firstNameB?.localeCompare(firstNameA) ?? 0;
+        const lastNameComparison = lastNameB?.localeCompare(lastNameA) ?? 0;
+
+        return firstNameComparison || lastNameComparison;
+      }
+
+      return 0;
+    });
+
+    return result;
+  }, [individuals.data, debouncedSearch, gender, sort]);
+
+  if (individuals.isLoading) return <Loader size="lg" />;
 
   return (
     <Stack>

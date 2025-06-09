@@ -9,7 +9,7 @@ export interface TableMeta {
 }
 
 export interface TableSortOption {
-  id: string;
+  column: string;
   desc: boolean;
 }
 
@@ -29,18 +29,12 @@ export interface TableDataResponse<TData> {
 
 export interface TableDataProps<TData> {
   queryKey: string[];
-  fetchData: (state: TableState) => Promise<TableDataResponse<TData>>;
+  fetchData: (state: {
+    globalFilter: string;
+  }) => Promise<TableDataResponse<TData>>;
   columns: ColumnDef<TData, unknown>[];
-  defaultSorting?: TableSortOption;
   onRowClick?: (row: TData) => void;
   children: React.ReactNode;
-  showPagination?: boolean;
-  blankState?: {
-    icon: LucideIcon;
-    title: string;
-    actionLabel?: string;
-    onAction?: () => void;
-  };
 }
 
 export interface TableDataContextType<TData> {

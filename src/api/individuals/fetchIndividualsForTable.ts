@@ -22,7 +22,7 @@ export async function fetchIndividualsForTable(treeId: string, params: Params) {
   });
 
   // Combine the individuals with their events
-  let data = individualsWithNames.map((individual) => {
+  const data = individualsWithNames.map((individual) => {
     const events = eventsByIndividual.filter(
       (event) => event.individualId === individual.id,
     );
@@ -42,63 +42,6 @@ export async function fetchIndividualsForTable(treeId: string, params: Params) {
       },
     };
   });
-
-  if (params.search) {
-    data = data.filter((individual) => {
-      const completeName = `${individual.firstName} ${individual.lastName}`;
-      const completeNameInverted = `${individual.lastName} ${individual.firstName}`;
-      const regex = new RegExp(params.search, "i");
-      return (
-        regex.test(completeName) ||
-        regex.test(completeNameInverted) ||
-        regex.test(individual.birth.place ?? "") ||
-        regex.test(individual.death.place ?? "")
-      );
-    });
-  }
-
-  if (params.gender !== "all") {
-    data = data.filter((individual) => individual.gender === params.gender);
-  }
-
-  if (params.sort) {
-    data = data.sort((a, b) => {
-      const firstNameA = a.firstName?.toLocaleLowerCase() ?? "";
-      const firstNameB = b.firstName?.toLocaleLowerCase() ?? "";
-      const lastNameA = a.lastName?.toLocaleLowerCase() ?? "";
-      const lastNameB = b.lastName?.toLocaleLowerCase() ?? "";
-
-      if (params.sort === "last_name_asc") {
-        const firstNameComparison = firstNameA?.localeCompare(firstNameB) ?? 0;
-        const lastNameComparison = lastNameA?.localeCompare(lastNameB) ?? 0;
-
-        return lastNameComparison || firstNameComparison;
-      }
-
-      if (params.sort === "last_name_desc") {
-        const firstNameComparison = firstNameB?.localeCompare(firstNameA) ?? 0;
-        const lastNameComparison = lastNameB?.localeCompare(lastNameA) ?? 0;
-
-        return lastNameComparison || firstNameComparison;
-      }
-
-      if (params.sort === "first_name_asc") {
-        const firstNameComparison = firstNameA?.localeCompare(firstNameB) ?? 0;
-        const lastNameComparison = lastNameA?.localeCompare(lastNameB) ?? 0;
-
-        return firstNameComparison || lastNameComparison;
-      }
-
-      if (params.sort === "first_name_desc") {
-        const firstNameComparison = firstNameB?.localeCompare(firstNameA) ?? 0;
-        const lastNameComparison = lastNameB?.localeCompare(lastNameA) ?? 0;
-
-        return firstNameComparison || lastNameComparison;
-      }
-
-      return 0;
-    });
-  }
 
   return data;
 }
