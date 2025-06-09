@@ -61,6 +61,22 @@ export function TableIndividuals({
       result = result.filter((individual) => individual.gender === gender);
     }
 
+    // Helper function to compare names while pushing empty values to the end
+    const compareWithEmpty = (
+      nameA: string,
+      nameB: string,
+      desc = false,
+    ): number => {
+      const isEmptyA = !nameA || nameA.trim() === "";
+      const isEmptyB = !nameB || nameB.trim() === "";
+
+      if (isEmptyA && isEmptyB) return 0;
+      if (isEmptyA) return 1; // Push empty A to the end
+      if (isEmptyB) return -1; // Push empty B to the end
+
+      return desc ? nameB.localeCompare(nameA) : nameA.localeCompare(nameB);
+    };
+
     result = result.sort((a, b) => {
       const firstNameA = a.firstName?.toLocaleLowerCase() ?? "";
       const firstNameB = b.firstName?.toLocaleLowerCase() ?? "";
@@ -68,29 +84,37 @@ export function TableIndividuals({
       const lastNameB = b.lastName?.toLocaleLowerCase() ?? "";
 
       if (sort === "last_name_asc") {
-        const firstNameComparison = firstNameA?.localeCompare(firstNameB) ?? 0;
-        const lastNameComparison = lastNameA?.localeCompare(lastNameB) ?? 0;
+        const lastNameComparison = compareWithEmpty(lastNameA, lastNameB);
+        const firstNameComparison = compareWithEmpty(firstNameA, firstNameB);
 
         return lastNameComparison || firstNameComparison;
       }
 
       if (sort === "last_name_desc") {
-        const firstNameComparison = firstNameB?.localeCompare(firstNameA) ?? 0;
-        const lastNameComparison = lastNameB?.localeCompare(lastNameA) ?? 0;
+        const lastNameComparison = compareWithEmpty(lastNameA, lastNameB, true);
+        const firstNameComparison = compareWithEmpty(
+          firstNameA,
+          firstNameB,
+          true,
+        );
 
         return lastNameComparison || firstNameComparison;
       }
 
       if (sort === "first_name_asc") {
-        const firstNameComparison = firstNameA?.localeCompare(firstNameB) ?? 0;
-        const lastNameComparison = lastNameA?.localeCompare(lastNameB) ?? 0;
+        const firstNameComparison = compareWithEmpty(firstNameA, firstNameB);
+        const lastNameComparison = compareWithEmpty(lastNameA, lastNameB);
 
         return firstNameComparison || lastNameComparison;
       }
 
       if (sort === "first_name_desc") {
-        const firstNameComparison = firstNameB?.localeCompare(firstNameA) ?? 0;
-        const lastNameComparison = lastNameB?.localeCompare(lastNameA) ?? 0;
+        const firstNameComparison = compareWithEmpty(
+          firstNameA,
+          firstNameB,
+          true,
+        );
+        const lastNameComparison = compareWithEmpty(lastNameA, lastNameB, true);
 
         return firstNameComparison || lastNameComparison;
       }
