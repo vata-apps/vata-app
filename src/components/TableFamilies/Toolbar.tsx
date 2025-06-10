@@ -50,6 +50,7 @@ export function Toolbar({ search, setSearch, sort, setSort }: ToolbarProps) {
         radius="xl"
         value={sort}
         w="14rem"
+        allowDeselect={false}
       />
     </Group>
   );

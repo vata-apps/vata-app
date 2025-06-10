@@ -41,6 +41,7 @@ export function Toolbar({
         onChange={(value) => setPlaceType(value as string)}
         radius="xl"
         value={placeType}
+        allowDeselect={false}
       />
 
       <Select
@@ -54,6 +55,7 @@ export function Toolbar({
         radius="xl"
         value={sort}
         w="14rem"
+        allowDeselect={false}
       />
     </Group>
   );

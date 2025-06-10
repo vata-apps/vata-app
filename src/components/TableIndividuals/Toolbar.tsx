@@ -37,6 +37,7 @@ export function Toolbar({
         onChange={(value) => setGender(value as IndividualGender)}
         radius="xl"
         value={gender}
+        allowDeselect={false}
       />
 
       <Select
@@ -52,6 +53,7 @@ export function Toolbar({
         radius="xl"
         value={sort}
         w="14rem"
+        allowDeselect={false}
       />
     </Group>
   );

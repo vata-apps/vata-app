@@ -21,6 +21,7 @@ export const TreeSelector = () => {
       comboboxProps={{
         withinPortal: false,
       }}
+      allowDeselect={false}
     />
   );
 };
