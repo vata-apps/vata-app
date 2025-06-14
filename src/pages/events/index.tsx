@@ -1,5 +1,5 @@
-import { EventsTable } from "@/components/events";
 import { PageHeader } from "@/components/PageHeader";
+import { TableEvents } from "@/components/TableEvents";
 import { Stack } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -9,15 +9,10 @@ export const Route = createFileRoute("/events/")({
 
 function EventsPage() {
   return (
-    <Stack>
+    <Stack gap="xl">
       <PageHeader title="Events" />
 
-      <EventsTable
-        showToolbar={true}
-        showAddButton={true}
-        defaultSorting={{ id: "date", desc: false }}
-        searchPlaceholder="Search events"
-      />
+      <TableEvents />
     </Stack>
   );
 }

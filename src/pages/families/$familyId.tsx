@@ -77,7 +77,7 @@ function FamilyPage() {
 
         <FamilyChildren family={family} />
 
-        <FamilyEvents familyId={familyId} />
+        <FamilyEvents family={family} />
       </Stack>
     </Container>
   );

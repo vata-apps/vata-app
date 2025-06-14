@@ -1,29 +1,22 @@
-import { EventsTable } from "@/components/events";
 import { PageCard } from "@/components/PageCard";
 import { Calendar } from "lucide-react";
+import { TableEvents } from "../TableEvents/TableEvents";
+import { FamilyWithRelations } from "./types";
 
-type FamilyEventsProps = {
-  familyId: string;
-};
+interface FamilyEventsProps {
+  readonly family: FamilyWithRelations;
+}
 
-export function FamilyEvents({ familyId }: FamilyEventsProps) {
+export function FamilyEvents({ family }: FamilyEventsProps) {
+  const childIds = family.children?.map((child) => child.individual.id) ?? [];
+  const parentIds = [family.husband?.id, family.wife?.id].filter(
+    Boolean,
+  ) as string[];
+  const individualIds = [...parentIds, ...childIds];
+
   return (
     <PageCard title="Family Events" icon={Calendar} actionLabel="Add event">
-      <EventsTable
-        filters={{ familyId }}
-        hideColumns={["place"]}
-        showToolbar={true}
-        showAddButton={false}
-        defaultSorting={{ id: "date", desc: true }}
-        searchPlaceholder="Search family events"
-        onDeleteEvent={() => {}}
-        blankState={{
-          icon: Calendar,
-          title: "No family events",
-        }}
-      />
+      <TableEvents individualIds={individualIds} />
     </PageCard>
   );
 }
-
-export default FamilyEvents;
