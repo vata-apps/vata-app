@@ -1,4 +1,4 @@
-import { fetchIndividualsForTable } from "@/api/individuals";
+import { fetchIndividualsForTable } from "@/api/individuals/fetchIndividualsForTable";
 import { IndividualGender, IndividualSort } from "@/api/individuals/types";
 import { useTree } from "@/lib/use-tree";
 import { Loader, Stack, Table } from "@mantine/core";

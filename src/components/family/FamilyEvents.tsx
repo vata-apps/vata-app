@@ -1,7 +1,7 @@
 import { PageCard } from "@/components/PageCard";
+import { FamilyWithRelations } from "@/types";
 import { Calendar } from "lucide-react";
-import { TableEvents } from "../TableEvents/TableEvents";
-import { FamilyWithRelations } from "./types";
+import { TableEvents } from "../tables/TableEvents";
 
 interface FamilyEventsProps {
   readonly family: FamilyWithRelations;
@@ -12,11 +12,10 @@ export function FamilyEvents({ family }: FamilyEventsProps) {
   const parentIds = [family.husband?.id, family.wife?.id].filter(
     Boolean,
   ) as string[];
-  const individualIds = [...parentIds, ...childIds];
 
   return (
     <PageCard title="Family Events" icon={Calendar} actionLabel="Add event">
-      <TableEvents individualIds={individualIds} />
+      <TableEvents individualIds={[...parentIds, ...childIds]} />
     </PageCard>
   );
 }

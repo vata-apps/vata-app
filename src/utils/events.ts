@@ -1,4 +1,4 @@
-import type { Event, EventListItem } from "@/types/event";
+import type { Event } from "@/types/event";
 import { getEventSubjects } from "@/types/guards";
 import displayName from "./displayName";
 import { capitalize } from "./strings";
@@ -26,14 +26,4 @@ export function getEventTitle(event: Event): string {
     .join(" & ");
 
   return `${eventType} of ${subjectNames}`;
-}
-
-/**
- * Gets a formatted title for an event list item
- * @param event The event list item
- * @returns A formatted event title
- */
-export function getEventListTitle(event: EventListItem): string {
-  const eventType = capitalize(event.event_type_name);
-  return `${eventType} - ${event.subjects}`;
 }

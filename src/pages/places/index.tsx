@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
-import { TablePlaces } from "@/components/TablePlaces/TablePlaces";
+import { TablePlaces } from "@/components/tables/TablePlaces";
 import { Stack } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 

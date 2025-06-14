@@ -1,8 +1,8 @@
 import { EventForTable } from "@/api/events/fetchEventsForTable";
+import { GenderIcon } from "@/components/GenderIcon";
 import displayName from "@/utils/displayName";
 import { Code, Group, Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
-import { GenderIcon } from "../GenderIcon";
 import { EventTableColumn } from "./types";
 
 interface TableRowProps {

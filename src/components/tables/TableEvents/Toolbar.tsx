@@ -1,23 +1,23 @@
 import { Button, Select } from "@mantine/core";
 
+import { SearchInput } from "@/components/SearchInput";
 import { Group } from "@mantine/core";
-import { SearchInput } from "../SearchInput";
-import { PlaceSort, PlaceType } from "./types";
+import { EventSort, EventType } from "./types";
 
 interface ToolbarProps {
-  placeTypes: PlaceType[];
-  placeType: PlaceType["id"];
-  setPlaceType: (value: PlaceType["id"]) => void;
+  eventTypes: EventType[];
+  eventType: EventType["id"];
+  setEventType: (value: EventType["id"]) => void;
   search: string;
   setSearch: (value: string) => void;
-  sort: PlaceSort;
-  setSort: (value: PlaceSort) => void;
+  sort: EventSort;
+  setSort: (value: EventSort) => void;
 }
 
 export function Toolbar({
-  placeType,
-  setPlaceType,
-  placeTypes,
+  eventType,
+  setEventType,
+  eventTypes,
   search,
   setSearch,
   sort,
@@ -25,7 +25,7 @@ export function Toolbar({
 }: ToolbarProps) {
   return (
     <Group>
-      <Button radius="xl">Add place</Button>
+      <Button radius="xl">Add event</Button>
 
       <SearchInput value={search} onChange={setSearch} />
 
@@ -33,25 +33,25 @@ export function Toolbar({
         checkIconPosition="right"
         data={[
           { label: "All types", value: "all" },
-          ...placeTypes.map((placeType) => ({
-            label: placeType.name,
-            value: placeType.id,
+          ...eventTypes.map((eventType) => ({
+            label: eventType.name,
+            value: eventType.id,
           })),
         ]}
-        onChange={(value) => setPlaceType(value as string)}
+        onChange={(value) => setEventType(value as string)}
         radius="xl"
-        value={placeType}
+        value={eventType}
         allowDeselect={false}
       />
 
       <Select
         checkIconPosition="right"
         data={[
-          { label: "Name (A-Z)", value: "name_asc" },
-          { label: "Name (Z-A)", value: "name_desc" },
+          { label: "Date (oldest first)", value: "date_asc" },
+          { label: "Date (newest first)", value: "date_desc" },
         ]}
         ml="auto"
-        onChange={(value) => setSort(value as PlaceSort)}
+        onChange={(value) => setSort(value as EventSort)}
         radius="xl"
         value={sort}
         w="14rem"

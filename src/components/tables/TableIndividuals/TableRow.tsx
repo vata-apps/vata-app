@@ -1,10 +1,10 @@
 import { Group } from "@mantine/core";
 
 import { IndividualForTable } from "@/api/individuals/fetchIndividualsForTable";
+import { GenderIcon } from "@/components/GenderIcon";
 import { capitalize } from "@/utils/strings";
 import { Code, Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
-import { GenderIcon } from "../GenderIcon";
 
 export function TableRow({ individual }: { individual: IndividualForTable }) {
   const navigate = useNavigate();

@@ -1,11 +1,10 @@
 import { fetchEvent } from "@/api";
 import { ErrorState, LoadingState, NotFoundState } from "@/components";
-import {
-  EventHeader,
-  MediaCard,
-  PeopleInvolvedCard,
-  SourcesCard,
-} from "@/components/event";
+import { EventHeader } from "@/components/event/EventHeader";
+import { MediaCard } from "@/components/event/MediaCard";
+import { PeopleInvolvedCard } from "@/components/event/PeopleInvolvedCard";
+import { SourcesCard } from "@/components/event/SourcesCard";
+
 import { getEventTitle } from "@/utils/events";
 import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";

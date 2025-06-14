@@ -1,8 +1,8 @@
 import { Button, Select } from "@mantine/core";
 
 import { IndividualGender, IndividualSort } from "@/api/individuals/types";
+import { SearchInput } from "@/components/SearchInput";
 import { Group } from "@mantine/core";
-import { SearchInput } from "../SearchInput";
 
 interface ToolbarProps {
   search: string;

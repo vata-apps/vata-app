@@ -1,7 +1,7 @@
 import { Button, Select } from "@mantine/core";
 
+import { SearchInput } from "@/components/SearchInput";
 import { Group } from "@mantine/core";
-import { SearchInput } from "../SearchInput";
 import { FamilySort } from "./types";
 
 interface ToolbarProps {

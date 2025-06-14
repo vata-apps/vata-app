@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
-import { TableEvents } from "@/components/TableEvents";
+import { TableEvents } from "@/components/tables/TableEvents";
 import { Stack } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 

@@ -1,9 +1,9 @@
 import { PageCard } from "@/components/PageCard";
+import { FamilyWithRelations } from "@/types";
 import displayName from "@/utils/displayName";
 import { capitalize } from "@/utils/strings";
 import { Badge, Button, Group, Stack, ThemeIcon, Title } from "@mantine/core";
 import { Edit, Trash2, Users } from "lucide-react";
-import { FamilyWithRelations } from "./types";
 
 /**
  * Displays the header card with family information

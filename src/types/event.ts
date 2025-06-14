@@ -67,15 +67,3 @@ export type Event = {
   } | null;
   readonly participants: readonly EventParticipant[];
 };
-
-/**
- * Event for list display (simplified)
- */
-export type EventListItem = {
-  readonly id: string;
-  readonly date: string | null;
-  readonly description: string | null;
-  readonly event_type_name: string;
-  readonly place_name: string | null;
-  readonly subjects: string; // Comma-separated names
-};

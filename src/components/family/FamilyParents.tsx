@@ -1,7 +1,7 @@
 import { PageCard } from "@/components/PageCard";
+import { TableIndividuals } from "@/components/tables/TableIndividuals";
+import { FamilyWithRelations } from "@/types";
 import { Users } from "lucide-react";
-import { TableIndividuals } from "../TableIndividuals";
-import { FamilyWithRelations } from "./types";
 
 interface FamilyParentsProps {
   readonly family: FamilyWithRelations;

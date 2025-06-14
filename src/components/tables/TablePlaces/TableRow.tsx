@@ -2,7 +2,11 @@ import { PlaceForTable } from "@/api/places/fetchPlacesForTable";
 import { Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 
-export function TableRow({ place }: { place: PlaceForTable }) {
+interface TableRowProps {
+  readonly place: PlaceForTable;
+}
+
+export function TableRow({ place }: TableRowProps) {
   const navigate = useNavigate();
 
   return (

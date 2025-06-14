@@ -1,6 +1,6 @@
-import { FamilyWithRelations } from "@/components/family/types";
 import { Tables } from "@/database.types";
 import { supabase } from "@/lib/supabase";
+import { FamilyWithRelations } from "@/types";
 import { PostgrestSingleResponse } from "@supabase/supabase-js";
 
 type FamilyResponse = PostgrestSingleResponse<FamilyWithRelations>;

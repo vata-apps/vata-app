@@ -1,5 +1,5 @@
-import { fetchEventsByIndividualSubjects } from "../events";
-import { fetchIndividualsWithNames } from "./";
+import { fetchEventsByIndividualSubjects } from "@/api/events/fetchEventsByIndividualSubjects";
+import { fetchIndividualsWithNames } from "./fetchIndividualsWithNames";
 import { IndividualGender, IndividualSort } from "./types";
 
 interface Params {

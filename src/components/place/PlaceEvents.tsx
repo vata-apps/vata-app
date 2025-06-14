@@ -1,6 +1,6 @@
 import { PageCard } from "@/components/PageCard";
+import { TableEvents } from "@/components/tables/TableEvents";
 import { Calendar } from "lucide-react";
-import { TableEvents } from "../TableEvents/TableEvents";
 
 type PlaceEventsProps = {
   placeId: string;

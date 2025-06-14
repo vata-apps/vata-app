@@ -1,5 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
-import { TableIndividuals } from "@/components/TableIndividuals";
+import { TableIndividuals } from "@/components/tables/TableIndividuals";
 import { Stack } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 

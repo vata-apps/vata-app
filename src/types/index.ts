@@ -11,7 +11,6 @@ export type { FamilyWithRelations } from "./family";
 export type {
   Event,
   EventIndividual,
-  EventListItem,
   EventParticipant,
   EventParticipantRow,
   EventRoleRow,

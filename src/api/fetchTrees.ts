@@ -13,17 +13,3 @@ export const fetchTrees = async () => {
 
   return data || [];
 };
-
-export const fetchTreeById = async (id: string) => {
-  const { data, error } = await supabase
-    .from("trees")
-    .select("id, name, is_default")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw new Error(`Failed to fetch tree: ${error.message}`);
-  }
-
-  return data;
-};
