@@ -1,12 +1,12 @@
 import { Group } from "@mantine/core";
 
-import { IndividualForTable } from "@/api/individuals/fetchIndividualsForTable";
+import { Individual } from "@/api/individuals/fetchIndividual";
 import { GenderIcon } from "@/components/GenderIcon";
 import { capitalize } from "@/utils/strings";
 import { Code, Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 
-export function TableRow({ individual }: { individual: IndividualForTable }) {
+export function TableRow({ individual }: { individual: Individual }) {
   const navigate = useNavigate();
 
   return (
@@ -42,13 +42,13 @@ export function TableRow({ individual }: { individual: IndividualForTable }) {
 
       <Table.Td maw="120px" valign="top">
         <Text>{individual.birth?.date}</Text>
-        <Text c="dimmed">{individual.birth?.place}</Text>
+        <Text c="dimmed">{individual.birth?.place?.name}</Text>
       </Table.Td>
 
       <Table.Td maw="120px" valign="top">
         <Text>{individual.death?.date}</Text>
         <Text c="dimmed" truncate>
-          {individual.death?.place}
+          {individual.death?.place?.name}
         </Text>
       </Table.Td>
     </Table.Tr>

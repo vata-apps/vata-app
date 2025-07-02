@@ -1,4 +1,8 @@
-import { Tables } from "@/database.types";
+type Name = {
+  firstName: string | null;
+  lastName: string | null;
+  isPrimary?: boolean;
+};
 
 /**
  * Generates a display name from either a single name record or an array of name records
@@ -10,11 +14,7 @@ import { Tables } from "@/database.types";
  *          Returns trimmed full name by default, or just first/last name if specified in options
  */
 export default function displayName(
-  names:
-    | Partial<Tables<"names">>[]
-    | Partial<Tables<"names">>
-    | null
-    | undefined,
+  names: Name | Name[] | null | undefined,
   options?: {
     part?: "first" | "last" | "fullInverted" | "full";
   },
@@ -26,21 +26,21 @@ export default function displayName(
     // Handle empty array
     if (names.length === 0) return "";
 
-    const primaryName = names.find((name) => name.is_primary);
+    const primaryName = names.find((name) => name.isPrimary);
     const namesToUse = primaryName || names[0] || {};
 
-    if (options?.part === "first") return namesToUse.first_name || "";
-    if (options?.part === "last") return namesToUse.last_name || "";
+    if (options?.part === "first") return namesToUse.firstName ?? "";
+    if (options?.part === "last") return namesToUse.lastName ?? "";
     if (options?.part === "fullInverted") {
-      return `${namesToUse.last_name || ""}, ${namesToUse.first_name || ""}`.trim();
+      return `${namesToUse.lastName ?? ""}, ${namesToUse.firstName ?? ""}`.trim();
     }
-    return `${namesToUse.first_name || ""} ${namesToUse.last_name || ""}`.trim();
+    return `${namesToUse.firstName ?? ""} ${namesToUse.lastName ?? ""}`.trim();
   }
 
-  if (options?.part === "first") return names.first_name || "";
-  if (options?.part === "last") return names.last_name || "";
+  if (options?.part === "first") return names.firstName ?? "";
+  if (options?.part === "last") return names.lastName ?? "";
   if (options?.part === "fullInverted") {
-    return `${names.last_name || ""}, ${names.first_name || ""}`.trim();
+    return `${names.lastName ?? ""}, ${names.firstName ?? ""}`.trim();
   }
-  return `${names.first_name || ""} ${names.last_name || ""}`.trim();
+  return `${names.firstName ?? ""} ${names.lastName ?? ""}`.trim();
 }

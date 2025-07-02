@@ -1,4 +1,4 @@
-import { fetchFamiliesForTable } from "@/api/families/fetchFamiliesForTable";
+import { fetchFamilies } from "@/api/families/fetchFamilies";
 import { useTree } from "@/lib/use-tree";
 import displayName from "@/utils/displayName";
 import { Loader, Stack, Table } from "@mantine/core";
@@ -19,7 +19,7 @@ export function TableFamilies() {
 
   const families = useQuery({
     queryKey: ["families", currentTreeId],
-    queryFn: () => fetchFamiliesForTable(currentTreeId ?? ""),
+    queryFn: () => fetchFamilies(currentTreeId ?? "", {}),
     enabled: Boolean(currentTreeId),
     placeholderData: keepPreviousData,
   });
@@ -31,12 +31,12 @@ export function TableFamilies() {
 
     if (debouncedSearch) {
       result = result.filter((family) => {
-        const husbandName = displayName(family.husband?.names);
-        const husbandNameInverted = displayName(family.husband?.names, {
+        const husbandName = displayName(family.husband);
+        const husbandNameInverted = displayName(family.husband, {
           part: "fullInverted",
         });
-        const wifeName = displayName(family.wife?.names);
-        const wifeNameInverted = displayName(family.wife?.names, {
+        const wifeName = displayName(family.wife);
+        const wifeNameInverted = displayName(family.wife, {
           part: "fullInverted",
         });
 
@@ -52,31 +52,31 @@ export function TableFamilies() {
     }
 
     result = result.sort((a, b) => {
-      const husbandFirstNameA = displayName(a.husband?.names, {
+      const husbandFirstNameA = displayName(a.husband, {
         part: "first",
       }).toLocaleLowerCase();
-      const husbandFirstNameB = displayName(b.husband?.names, {
-        part: "first",
-      }).toLocaleLowerCase();
-
-      const husbandLastNameA = displayName(a.husband?.names, {
-        part: "last",
-      }).toLocaleLowerCase();
-      const husbandLastNameB = displayName(b.husband?.names, {
-        part: "last",
-      }).toLocaleLowerCase();
-
-      const wifeFirstNameA = displayName(a.wife?.names, {
-        part: "first",
-      }).toLocaleLowerCase();
-      const wifeFirstNameB = displayName(b.wife?.names, {
+      const husbandFirstNameB = displayName(b.husband, {
         part: "first",
       }).toLocaleLowerCase();
 
-      const wifeLastNameA = displayName(a.wife?.names, {
+      const husbandLastNameA = displayName(a.husband, {
         part: "last",
       }).toLocaleLowerCase();
-      const wifeLastNameB = displayName(b.wife?.names, {
+      const husbandLastNameB = displayName(b.husband, {
+        part: "last",
+      }).toLocaleLowerCase();
+
+      const wifeFirstNameA = displayName(a.wife, {
+        part: "first",
+      }).toLocaleLowerCase();
+      const wifeFirstNameB = displayName(b.wife, {
+        part: "first",
+      }).toLocaleLowerCase();
+
+      const wifeLastNameA = displayName(a.wife, {
+        part: "last",
+      }).toLocaleLowerCase();
+      const wifeLastNameB = displayName(b.wife, {
         part: "last",
       }).toLocaleLowerCase();
 

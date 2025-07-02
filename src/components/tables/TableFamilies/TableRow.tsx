@@ -1,11 +1,11 @@
-import { FamilyForTable } from "@/api/families/fetchFamiliesForTable";
+import { Families } from "@/api/families/fetchFamilies";
 import { GenderIcon } from "@/components/GenderIcon";
 import displayName from "@/utils/displayName";
 import { Code, Group, Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 
 interface TableRowProps {
-  family: FamilyForTable;
+  family: Families[number];
   sortedBy: "first_name" | "last_name";
 }
 
@@ -23,14 +23,14 @@ export function TableRow({ family, sortedBy }: TableRowProps) {
       }}
     >
       <Table.Td valign="top">
-        <Code>F-{family.gedcomId.toString().padStart(4, "0")}</Code>
+        <Code>{family.gedcomId}</Code>
       </Table.Td>
       <Table.Td valign="top">
         {family.husband && (
           <Group>
             <GenderIcon gender={family.husband.gender} size={16} />
             <Text>
-              {displayName(family.husband.names, {
+              {displayName(family.husband, {
                 part: sortedBy === "first_name" ? "full" : "fullInverted",
               })}
             </Text>
@@ -42,7 +42,7 @@ export function TableRow({ family, sortedBy }: TableRowProps) {
           <Group>
             <GenderIcon gender={family.wife.gender} size={16} />
             <Text>
-              {displayName(family.wife.names, {
+              {displayName(family.wife, {
                 part: sortedBy === "first_name" ? "full" : "fullInverted",
               })}
             </Text>
@@ -55,7 +55,7 @@ export function TableRow({ family, sortedBy }: TableRowProps) {
             <Group key={child.id} gap="xs">
               <GenderIcon gender={child.gender} size={16} />
               <Text>
-                {displayName(child.names, {
+                {displayName(child, {
                   part: sortedBy === "first_name" ? "full" : "fullInverted",
                 })}
               </Text>

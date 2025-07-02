@@ -1,13 +1,25 @@
-import { fetchIndividual } from "@/api/fetchIndividual";
+import { fetchIndividualForPage } from "@/api/individuals/fetchIndividualForPage";
 import { ErrorState, LoadingState, NotFoundState } from "@/components";
-import { FamilyAsChild } from "@/components/individual/FamilyAsChild";
-import { FamilyAsSpouse } from "@/components/individual/FamilyAsSpouse";
-import { IndividualHeader } from "@/components/individual/IndividualHeader";
-import { Names } from "@/components/individual/Names";
+import { useTree } from "@/lib/use-tree";
 import displayName from "@/utils/displayName";
-import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
+import {
+  Avatar,
+  Button,
+  Card,
+  Code,
+  Container,
+  Grid,
+  Group,
+  Stack,
+  Text,
+  Timeline,
+  Title,
+  UnstyledButton,
+} from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Fragment } from "react/jsx-runtime";
 
 export const Route = createFileRoute("/individuals/$individualId")({
   component: IndividualDetailPage,
@@ -18,6 +30,7 @@ export const Route = createFileRoute("/individuals/$individualId")({
  */
 function IndividualDetailPage() {
   const { individualId } = Route.useParams();
+  const { currentTreeId } = useTree();
 
   const {
     data: individual,
@@ -25,8 +38,9 @@ function IndividualDetailPage() {
     error,
   } = useQuery({
     queryKey: ["individual", individualId],
-    queryFn: () => fetchIndividual(individualId),
+    queryFn: () => fetchIndividualForPage(currentTreeId ?? "", individualId),
     placeholderData: keepPreviousData,
+    enabled: Boolean(currentTreeId),
   });
 
   if (status === "pending") {
@@ -55,28 +69,295 @@ function IndividualDetailPage() {
     );
   }
 
+  console.log(individual);
+
   return (
-    <Container fluid py="md">
-      <Stack gap="xl">
-        <Breadcrumbs>
-          <Anchor component={Link} to="/individuals">
-            Individuals
-          </Anchor>
-          <Text c="dimmed">
-            {displayName(individual.names) || "Unknown Individual"}
-          </Text>
-        </Breadcrumbs>
+    <Container fluid>
+      <Stack gap="xl" w="100%">
+        <Stack w="100%">
+          <Group w="100%">
+            <Avatar name={displayName(individual)} size="xl" />
+            <Stack gap={0} style={{ flexGrow: 1 }}>
+              <Group grow>
+                <Title order={2}>{displayName(individual)}</Title>
+                <Group>
+                  <Code ml="auto">{individual.gedcomId}</Code>
+                </Group>
+              </Group>
 
-        <IndividualHeader individual={individual} />
+              <Stack gap={0}>
+                <Group>
+                  <Text w={48}>Birth</Text>
+                  {individual.birth ? (
+                    <Group gap={0}>
+                      <Button
+                        color="gray"
+                        component={Link}
+                        to={`/events/date=${individual.birth?.date}`}
+                        size="compact-sm"
+                        variant="transparent"
+                      >
+                        {individual.birth?.date}
+                      </Button>
+                      <Text>•</Text>
+                      <Button
+                        color="gray"
+                        component={Link}
+                        to={`/places/${individual.birth?.place?.id}`}
+                        size="compact-sm"
+                        variant="transparent"
+                      >
+                        {individual.birth?.place?.name}
+                      </Button>
+                    </Group>
+                  ) : (
+                    <Button
+                      color="gray"
+                      size="compact-sm"
+                      variant="transparent"
+                    >
+                      Add birth information
+                    </Button>
+                  )}
+                </Group>
+                <Group>
+                  <Text w={48}>Death</Text>
+                  {individual.death ? (
+                    <Group gap={0}>
+                      <Button
+                        color="gray"
+                        component={Link}
+                        to={`/events/date=${individual.death?.date}`}
+                        size="compact-sm"
+                        variant="transparent"
+                      >
+                        {individual.death?.date}
+                      </Button>
+                      <Text>•</Text>
+                      <Button
+                        color="gray"
+                        component={Link}
+                        to={`/places/${individual.death?.place?.id}`}
+                        size="compact-sm"
+                        variant="transparent"
+                      >
+                        {individual.death?.place?.name}
+                      </Button>
+                    </Group>
+                  ) : (
+                    <Button
+                      color="gray"
+                      size="compact-sm"
+                      variant="transparent"
+                    >
+                      Add death information
+                    </Button>
+                  )}
+                </Group>
+              </Stack>
+            </Stack>
+          </Group>
+        </Stack>
 
-        <FamilyAsChild individualId={individualId} />
+        <Grid gutter={64}>
+          {/* Events */}
+          <Grid.Col span={4}>
+            <Stack gap="xs">
+              <Title order={4}>Events</Title>
+              <Timeline bulletSize={40} lineWidth={3}>
+                {individual.events.map((event, index) => (
+                  <Timeline.Item
+                    key={event.id}
+                    bullet={<event.Icon />}
+                    title={
+                      <UnstyledButton
+                        component={Link}
+                        to={`/events/${event.id}`}
+                      >
+                        {event.description}
+                      </UnstyledButton>
+                    }
+                    lineVariant={
+                      index === individual.events.length - 1
+                        ? "dashed"
+                        : "solid"
+                    }
+                  >
+                    <Text c="dimmed" size="sm">
+                      {event.place?.name}
+                    </Text>
+                    <Text size="xs" mt={4}>
+                      {event.date}
+                    </Text>
+                  </Timeline.Item>
+                ))}
 
-        <FamilyAsSpouse individualId={individualId} />
+                <Timeline.Item bullet={<IconPlus />}>
+                  <Button variant="default">Add new event</Button>
+                </Timeline.Item>
+              </Timeline>
+            </Stack>
+          </Grid.Col>
 
-        <Names individualId={individualId} />
+          {/* Parents and siblings */}
+          <Grid.Col span={4}>
+            <Stack gap="xs">
+              <Title order={4}>Parents and Siblings</Title>
+              {/* Father */}
+              {!individual.parents.father && (
+                <Button variant="default" radius="lg">
+                  Add father
+                </Button>
+              )}
+
+              {individual.parents.father && (
+                <Card
+                  component={Link}
+                  to={`/individuals/${individual.parents.father.id}`}
+                  withBorder
+                  radius="lg"
+                  p="xs"
+                >
+                  <Group>
+                    <Avatar name={displayName(individual.parents.father)} />
+
+                    <Stack gap={0}>
+                      <Text fw={600}>
+                        {displayName(individual.parents.father)}
+                      </Text>
+                      <Text size="sm">
+                        {individual.parents.father.lifeSpan}
+                      </Text>
+                    </Stack>
+                  </Group>
+                </Card>
+              )}
+
+              {/* Mother */}
+              {!individual.parents.mother && (
+                <Button variant="default" radius="lg">
+                  Add mother
+                </Button>
+              )}
+
+              {individual.parents.mother && (
+                <Card
+                  component={Link}
+                  to={`/individuals/${individual.parents.mother.id}`}
+                  withBorder
+                  radius="lg"
+                  p="xs"
+                >
+                  <Group>
+                    <Avatar name={displayName(individual.parents.mother)} />
+
+                    <Stack gap={0}>
+                      <Text fw={600}>
+                        {displayName(individual.parents.mother)}
+                      </Text>
+                      <Text size="sm">
+                        {individual.parents.mother.lifeSpan}
+                      </Text>
+                    </Stack>
+                  </Group>
+                </Card>
+              )}
+
+              {/* Siblings */}
+              {individual.siblings.map((sibling) => (
+                <Card
+                  key={sibling.id}
+                  component={Link}
+                  to={`/individuals/${sibling.id}`}
+                  withBorder
+                  radius="lg"
+                  p="xs"
+                  ml="xl"
+                >
+                  <Group>
+                    <Avatar name={displayName(sibling)} />
+
+                    <Stack gap={0}>
+                      <Text fw={600}>{displayName(sibling)}</Text>
+                      <Text size="sm">{sibling.lifeSpan}</Text>
+                    </Stack>
+                  </Group>
+                </Card>
+              ))}
+
+              <Button ml="xl" variant="default" radius="lg">
+                Add sibling
+              </Button>
+            </Stack>
+          </Grid.Col>
+
+          {/* Spouses and children */}
+          <Grid.Col span={4}>
+            <Stack gap="xs">
+              <Title order={4}>Spouses and Children</Title>
+
+              {/* Spouses */}
+              {individual.families.map((family) => {
+                const spouse =
+                  individual.gender === "male" ? family.wife : family.husband;
+
+                return (
+                  <Fragment key={family.id}>
+                    <Card
+                      component={Link}
+                      to={`/individuals/${spouse?.id}`}
+                      withBorder
+                      radius="lg"
+                      p="xs"
+                    >
+                      <Group>
+                        <Avatar name={displayName(spouse)} />
+
+                        <Stack gap={0}>
+                          <Text fw={600}>{displayName(spouse)}</Text>
+                          <Text size="sm">{spouse?.lifeSpan}</Text>
+                        </Stack>
+                      </Group>
+                    </Card>
+
+                    {/* Children */}
+                    {family.children.map((child) => (
+                      <Card
+                        key={child.id}
+                        component={Link}
+                        to={`/individuals/${child.id}`}
+                        ml="xl"
+                        withBorder
+                        radius="lg"
+                        p="xs"
+                      >
+                        <Group>
+                          <Avatar name={displayName(child)} />
+
+                          <Stack gap={0}>
+                            <Text fw={600}>{displayName(child)}</Text>
+                            <Text size="sm">{child.lifeSpan}</Text>
+                          </Stack>
+                        </Group>
+                      </Card>
+                    ))}
+
+                    {/* Add child */}
+                    <Button ml="xl" variant="default" radius="lg">
+                      Add child
+                    </Button>
+                  </Fragment>
+                );
+              })}
+
+              {/* Add family */}
+              <Button variant="default" radius="lg">
+                Add family
+              </Button>
+            </Stack>
+          </Grid.Col>
+        </Grid>
       </Stack>
     </Container>
   );
 }
-
-export default IndividualDetailPage;

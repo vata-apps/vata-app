@@ -1,4 +1,4 @@
-import { fetchIndividualsForTable } from "@/api/individuals/fetchIndividualsForTable";
+import { fetchIndividuals } from "@/api/individuals/fetchIndividuals";
 import { IndividualGender, IndividualSort } from "@/api/individuals/types";
 import { useTree } from "@/lib/use-tree";
 import { Loader, Stack, Table } from "@mantine/core";
@@ -28,11 +28,8 @@ export function TableIndividuals({
   const individuals = useQuery({
     queryKey: ["individuals", currentTreeId, individualIds],
     queryFn: () =>
-      fetchIndividualsForTable(currentTreeId ?? "", {
-        gender,
+      fetchIndividuals(currentTreeId ?? "", {
         individualIds,
-        search: debouncedSearch,
-        sort,
       }),
     enabled: Boolean(currentTreeId),
     placeholderData: keepPreviousData,
@@ -51,8 +48,8 @@ export function TableIndividuals({
         return (
           regex.test(completeName) ||
           regex.test(completeNameInverted) ||
-          regex.test(individual.birth.place ?? "") ||
-          regex.test(individual.death.place ?? "")
+          regex.test(individual.birth?.place?.name ?? "") ||
+          regex.test(individual.death?.place?.name ?? "")
         );
       });
     }
