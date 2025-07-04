@@ -30,6 +30,10 @@ The database uses a unified event system that handles both individual and family
 
 - [Functions](./functions.md) - Database functions for complex operations
 
+## Special Systems
+
+- [GEDCOM ID System](./gedcom-id-system.md) - Tree-specific auto-incrementing identifiers for GEDCOM compatibility
+
 ## Enums
 
 - `gender` - Values: `male`, `female`

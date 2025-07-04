@@ -12,6 +12,7 @@ The `events` table is the main table for recording all types of events in the ge
 | date        | text                     | Date of the event (nullable)                               |
 | place_id    | uuid                     | Reference to the place where the event occurred (nullable) |
 | description | text                     | Additional details about the event (nullable)              |
+| gedcom_id   | bigint                   | Tree-specific auto-incrementing readable ID                |
 | tree_id     | uuid                     | Reference to the tree this event belongs to (NOT NULL)     |
 
 ## Relationships
@@ -39,6 +40,7 @@ Events use a flexible participation model:
 - The `date` field is stored as text to accommodate various date formats and partial dates
 - The `place_id` is optional but helps track where events occurred
 - The `description` field allows for additional context about the event
+- The `gedcom_id` is unique within each tree (composite unique constraint with `tree_id`) and starts from 1 for each tree
 - Events are connected to individuals through the `event_subjects` and `event_participants` tables
 - All events must belong to a valid tree via `tree_id`
 - When a tree is deleted, all associated events are automatically deleted (CASCADE)

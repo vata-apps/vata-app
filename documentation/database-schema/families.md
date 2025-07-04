@@ -10,7 +10,7 @@ The `families` table represents family units, typically consisting of a couple (
 | created_at | timestamp with time zone | Timestamp of record creation                                                 |
 | husband_id | uuid                     | Reference to the individual who is the husband (nullable)                    |
 | wife_id    | uuid                     | Reference to the individual who is the wife (nullable)                       |
-| gedcom_id  | bigint                   | Auto-incrementing ID for GEDCOM compatibility                                |
+| gedcom_id  | bigint                   | Tree-specific auto-incrementing ID for GEDCOM compatibility                  |
 | type       | family_type              | Type of family relationship (enum: married, civil union, unknown, unmarried) |
 | tree_id    | uuid                     | Reference to the tree this family belongs to (NOT NULL)                      |
 

@@ -213,6 +213,7 @@ export type Database = {
           created_at: string
           date: string | null
           description: string | null
+          gedcom_id: number | null
           id: string
           place_id: string | null
           tree_id: string
@@ -222,6 +223,7 @@ export type Database = {
           created_at?: string
           date?: string | null
           description?: string | null
+          gedcom_id?: number | null
           id?: string
           place_id?: string | null
           tree_id: string
@@ -231,6 +233,7 @@ export type Database = {
           created_at?: string
           date?: string | null
           description?: string | null
+          gedcom_id?: number | null
           id?: string
           place_id?: string | null
           tree_id?: string
@@ -272,7 +275,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          gedcom_id?: number
+          gedcom_id: number
           husband_id?: string | null
           id?: string
           tree_id: string
@@ -375,7 +378,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          gedcom_id?: number
+          gedcom_id: number
           gender: Database["public"]["Enums"]["gender"]
           id?: string
           tree_id: string
@@ -480,6 +483,7 @@ export type Database = {
       places: {
         Row: {
           created_at: string
+          gedcom_id: number | null
           id: string
           latitude: number | null
           longitude: number | null
@@ -490,6 +494,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          gedcom_id?: number | null
           id?: string
           latitude?: number | null
           longitude?: number | null
@@ -500,6 +505,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          gedcom_id?: number | null
           id?: string
           latitude?: number | null
           longitude?: number | null
@@ -628,6 +634,13 @@ export type Database = {
       }
     }
     Functions: {
+      get_current_gedcom_id: {
+        Args: {
+          table_name: string
+          tree_id: string
+        }
+        Returns: number
+      }
       get_event_participants: {
         Args: {
           event_id: string
@@ -667,6 +680,13 @@ export type Database = {
           place_name: string
           subjects: string
         }[]
+      }
+      get_next_gedcom_id: {
+        Args: {
+          table_name: string
+          tree_id: string
+        }
+        Returns: number
       }
     }
     Enums: {

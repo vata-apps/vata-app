@@ -9,7 +9,7 @@ The `individuals` table stores basic information about each person in the geneal
 | id         | uuid                     | Primary key, automatically generated                        |
 | created_at | timestamp with time zone | Timestamp of record creation                                |
 | gender     | gender                   | Gender of the individual (enum: male, female)               |
-| gedcom_id  | bigint                   | Auto-incrementing ID for GEDCOM compatibility               |
+| gedcom_id  | bigint                   | Tree-specific auto-incrementing ID for GEDCOM compatibility |
 | tree_id    | uuid                     | Reference to the tree this individual belongs to (NOT NULL) |
 
 ## Relationships
@@ -28,6 +28,6 @@ Row level security is enabled on this table.
 
 ## Notes
 
-- The `gedcom_id` is unique within each tree (composite unique constraint with `tree_id`)
+- The `gedcom_id` is unique within each tree (composite unique constraint with `tree_id`) and starts from 1 for each tree
 - All individuals must belong to a valid tree via `tree_id`
 - When a tree is deleted, all associated individuals are automatically deleted (CASCADE)
