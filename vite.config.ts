@@ -1,4 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import react from "@vitejs/plugin-react";
 import path from "path";
@@ -13,7 +12,6 @@ export default defineConfig({
       autoCodeSplitting: true,
     }),
     react(),
-    tailwindcss(),
   ],
   resolve: {
     alias: {
