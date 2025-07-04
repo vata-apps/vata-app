@@ -22,7 +22,7 @@ export function TableRow({ individual }: { individual: Individual }) {
       }}
     >
       <Table.Td valign="top" w="100px">
-        <Code>I-{individual.gedcomId.toString().padStart(4, "0")}</Code>
+        <Code>{individual.gedcomId}</Code>
       </Table.Td>
 
       <Table.Td valign="top">
