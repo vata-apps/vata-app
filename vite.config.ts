@@ -7,12 +7,13 @@ import { defineConfig } from "vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
-    tailwindcss(),
     TanStackRouterVite({
       routesDirectory: "./src/pages",
       generatedRouteTree: "./src/routeTree.gen.ts",
+      autoCodeSplitting: true,
     }),
+    react(),
+    tailwindcss(),
   ],
   resolve: {
     alias: {
