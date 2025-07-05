@@ -64,13 +64,6 @@ export type Database = {
             foreignKeyName: "event_participants_event_id_fkey";
             columns: ["event_id"];
             isOneToOne: false;
-            referencedRelation: "event_details";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "event_participants_event_id_fkey";
-            columns: ["event_id"];
-            isOneToOne: false;
             referencedRelation: "events";
             referencedColumns: ["id"];
           },
@@ -149,13 +142,6 @@ export type Database = {
           tree_id?: string;
         };
         Relationships: [
-          {
-            foreignKeyName: "event_subjects_event_id_fkey";
-            columns: ["event_id"];
-            isOneToOne: false;
-            referencedRelation: "event_details";
-            referencedColumns: ["id"];
-          },
           {
             foreignKeyName: "event_subjects_event_id_fkey";
             columns: ["event_id"];
@@ -558,43 +544,7 @@ export type Database = {
       };
     };
     Views: {
-      event_details: {
-        Row: {
-          created_at: string | null;
-          date: string | null;
-          description: string | null;
-          event_type_name: string | null;
-          id: string | null;
-          place_id: string | null;
-          place_name: string | null;
-          subjects: Json | null;
-          tree_id: string | null;
-          type_id: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "events_place_id_fkey";
-            columns: ["place_id"];
-            isOneToOne: false;
-            referencedRelation: "places";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "events_tree_id_fkey";
-            columns: ["tree_id"];
-            isOneToOne: false;
-            referencedRelation: "trees";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "events_type_id_fkey";
-            columns: ["type_id"];
-            isOneToOne: false;
-            referencedRelation: "event_types";
-            referencedColumns: ["id"];
-          },
-        ];
-      };
+      [_ in never]: never;
     };
     Functions: {
       get_current_gedcom_id: {
