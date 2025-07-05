@@ -29,8 +29,12 @@ create table "public"."place_types" (
     "created_at" timestamp with time zone not null default now(),
     "name" text not null,
     "tree_id" uuid not null,
+    "key" text,
+    "is_system" boolean not null default false,
     constraint "place_types_pkey" PRIMARY KEY (id),
     constraint "place_types_name_tree_key" UNIQUE (name, tree_id),
+    constraint "place_types_key_tree_key" UNIQUE (key, tree_id),
+    constraint "place_types_key_system_check" CHECK (is_system = true OR key IS NULL),
     constraint "place_types_tree_id_fkey" FOREIGN KEY (tree_id) REFERENCES trees(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 

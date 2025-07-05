@@ -437,18 +437,24 @@ export type Database = {
           id: string;
           name: string;
           tree_id: string;
+          key: string | null;
+          is_system: boolean;
         };
         Insert: {
           created_at?: string;
           id?: string;
           name: string;
           tree_id: string;
+          key?: string | null;
+          is_system?: boolean;
         };
         Update: {
           created_at?: string;
           id?: string;
           name?: string;
           tree_id?: string;
+          key?: string | null;
+          is_system?: boolean;
         };
         Relationships: [
           {
