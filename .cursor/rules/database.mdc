@@ -1,0 +1,10 @@
+---
+description: 
+globs: *.sql
+alwaysApply: false
+---
+- After every changes, update documentation in /documentation/database-schema
+- Never use ALTER TABLE statements when modifying database schema
+- Since the app is in development and the database is reset frequently, always update the table creation scripts directly in the migration files
+- When making schema changes, modify the CREATE TABLE statements in the appropriate migration file under /supabase/migrations/
+- This ensures that when the database is reset, all changes are properly applied 
