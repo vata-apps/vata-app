@@ -1,4 +1,4 @@
-import { fetchPlacesForTable } from "@/api/places/fetchPlacesForTable";
+import { fetchPlaces } from "@/api/places/fetchPlaces";
 import { fetchPlaceTypes } from "@/api/places/fetchPlaceTypes";
 import { useTree } from "@/lib/use-tree";
 import { Loader, Stack, Table } from "@mantine/core";
@@ -25,7 +25,7 @@ export function TablePlaces({ hideToolbar = false }: TablePlacesProps) {
   // Fetch data from supabase
   const places = useQuery({
     queryKey: ["places", currentTreeId],
-    queryFn: () => fetchPlacesForTable(currentTreeId ?? ""),
+    queryFn: () => fetchPlaces(currentTreeId ?? ""),
     enabled: Boolean(currentTreeId),
     placeholderData: keepPreviousData,
   });
@@ -43,7 +43,7 @@ export function TablePlaces({ hideToolbar = false }: TablePlacesProps) {
     let result = [...places.data];
 
     if (placeType !== "all") {
-      result = result.filter((place) => place.place_types.id === placeType);
+      result = result.filter((place) => place.placeType.id === placeType);
     }
 
     if (debouncedSearch) {
@@ -54,6 +54,13 @@ export function TablePlaces({ hideToolbar = false }: TablePlacesProps) {
       });
     }
 
+    if (sort === "id_asc") {
+      result = result.sort((a, b) => a.id.localeCompare(b.id));
+    }
+
+    if (sort === "id_desc") {
+      result = result.sort((a, b) => b.id.localeCompare(a.id));
+    }
     if (sort === "name_asc") {
       result = result.sort((a, b) => a.name.localeCompare(b.name));
     }
@@ -89,6 +96,7 @@ export function TablePlaces({ hideToolbar = false }: TablePlacesProps) {
       >
         <Table.Thead>
           <Table.Tr>
+            <Table.Th>ID</Table.Th>
             <Table.Th>Name</Table.Th>
             <Table.Th>Type</Table.Th>
             <Table.Th>Latitude</Table.Th>

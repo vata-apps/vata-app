@@ -47,6 +47,8 @@ export function Toolbar({
       <Select
         checkIconPosition="right"
         data={[
+          { label: "ID (asc)", value: "id_asc" },
+          { label: "ID (desc)", value: "id_desc" },
           { label: "Name (A-Z)", value: "name_asc" },
           { label: "Name (Z-A)", value: "name_desc" },
         ]}

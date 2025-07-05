@@ -1,0 +1,40 @@
+import { supabase } from "@/lib/supabase";
+
+interface Params {
+  placeIds?: string[];
+}
+
+export async function fetchPlaces(treeId: string, params?: Params) {
+  let query = supabase
+    .from("places")
+    .select(
+      `
+        id,
+        gedcom_id,
+        name,
+        latitude,
+        longitude,
+        placeType:place_types(id, name)
+      `,
+    )
+    .eq("tree_id", treeId);
+
+  if (params?.placeIds) {
+    query = query.in("id", params.placeIds);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+
+  return data.map((place) => ({
+    id: place.id,
+    name: place.name,
+    latitude: place.latitude,
+    longitude: place.longitude,
+    placeType: place.placeType,
+    gedcomId: `P-${place.gedcom_id?.toString().padStart(4, "0") ?? "0000"}`,
+  }));
+}
+
+export type Places = Awaited<ReturnType<typeof fetchPlaces>>;

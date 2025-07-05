@@ -1,9 +1,9 @@
-import { PlaceForTable } from "@/api/places/fetchPlacesForTable";
-import { Table, Text } from "@mantine/core";
+import { Places } from "@/api/places/fetchPlaces";
+import { Code, Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 
 interface TableRowProps {
-  readonly place: PlaceForTable;
+  readonly place: Places[number];
 }
 
 export function TableRow({ place }: TableRowProps) {
@@ -11,7 +11,6 @@ export function TableRow({ place }: TableRowProps) {
 
   return (
     <Table.Tr
-      key={place.id}
       style={{ cursor: "pointer" }}
       onClick={() => {
         navigate({
@@ -20,12 +19,16 @@ export function TableRow({ place }: TableRowProps) {
         });
       }}
     >
+      <Table.Td w="100px">
+        <Code>{place.gedcomId}</Code>
+      </Table.Td>
+
       <Table.Td>
         <Text>{place.name}</Text>
       </Table.Td>
 
       <Table.Td>
-        <Text>{place.place_types.name}</Text>
+        <Text>{place.placeType.name}</Text>
       </Table.Td>
 
       <Table.Td>
