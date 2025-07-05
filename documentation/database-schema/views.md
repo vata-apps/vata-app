@@ -28,35 +28,6 @@ This view is useful for:
 - Searching events by type or location
 - Getting event details without multiple joins
 
-## family_sorting_view
-
-A view that provides family information with searchable names for sorting and filtering.
-
-### Schema
-
-| Column             | Type   | Description                              |
-| ------------------ | ------ | ---------------------------------------- |
-| id                 | string | Family ID                                |
-| created_at         | string | Family creation timestamp                |
-| gedcom_id          | number | GEDCOM identifier                        |
-| type               | string | Family type (married, civil union, etc.) |
-| husband_id         | string | Husband's individual ID                  |
-| husband_first_name | string | Husband's first name                     |
-| husband_last_name  | string | Husband's last name                      |
-| wife_id            | string | Wife's individual ID                     |
-| wife_first_name    | string | Wife's first name                        |
-| wife_last_name     | string | Wife's last name                         |
-| searchable_names   | string | Combined searchable names string         |
-
-### Usage
-
-This view is useful for:
-
-- Displaying family lists with spouse names
-- Searching families by spouse names
-- Sorting families alphabetically
-- Family selection interfaces
-
 ## Notes
 
 - Views are read-only and automatically updated when underlying tables change
