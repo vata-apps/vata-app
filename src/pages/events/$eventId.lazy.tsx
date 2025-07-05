@@ -8,9 +8,9 @@ import { SourcesCard } from "@/components/event/SourcesCard";
 import { getEventTitle } from "@/utils/events";
 import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/events/$eventId")({
+export const Route = createLazyFileRoute("/events/$eventId")({
   component: EventPage,
 });
 

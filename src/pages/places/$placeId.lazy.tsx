@@ -8,9 +8,9 @@ import {
 } from "@/components/place";
 import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/places/$placeId")({
+export const Route = createLazyFileRoute("/places/$placeId")({
   component: PlaceDetailPage,
 });
 

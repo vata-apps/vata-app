@@ -1,7 +1,9 @@
 import displayName from "@/utils/displayName";
-import IconBabyCarriage from "@tabler/icons-react/dist/esm/icons/IconBabyCarriage";
-import IconHeartHandshake from "@tabler/icons-react/dist/esm/icons/IconHeartHandshake";
-import IconSkull from "@tabler/icons-react/dist/esm/icons/IconSkull";
+import {
+  IconBabyCarriage,
+  IconHeartHandshake,
+  IconSkull,
+} from "@tabler/icons-react";
 import { Events } from "../events/fetchEvents";
 
 interface Params {

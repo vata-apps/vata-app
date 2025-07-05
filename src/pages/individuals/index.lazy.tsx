@@ -1,9 +1,9 @@
 import { PageHeader } from "@/components/PageHeader";
 import { TableIndividuals } from "@/components/tables/TableIndividuals";
 import { Stack } from "@mantine/core";
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/individuals/")({
+export const Route = createLazyFileRoute("/individuals/")({
   component: IndividualsPage,
 });
 

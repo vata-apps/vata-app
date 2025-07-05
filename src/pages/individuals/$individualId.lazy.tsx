@@ -18,10 +18,10 @@ import {
 } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { Fragment } from "react/jsx-runtime";
 
-export const Route = createFileRoute("/individuals/$individualId")({
+export const Route = createLazyFileRoute("/individuals/$individualId")({
   component: IndividualDetailPage,
 });
 

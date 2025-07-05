@@ -7,9 +7,9 @@ import { FamilyParents } from "@/components/family/FamilyParents";
 import displayName from "@/utils/displayName";
 import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/families/$familyId")({
+export const Route = createLazyFileRoute("/families/$familyId")({
   component: FamilyPage,
 });
 

@@ -1,9 +1,9 @@
 import { PageHeader } from "@/components/PageHeader";
 import { TablePlaces } from "@/components/tables/TablePlaces";
 import { Stack } from "@mantine/core";
-import { createFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/places/")({
+export const Route = createLazyFileRoute("/places/")({
   component: PlacesPage,
 });
 
