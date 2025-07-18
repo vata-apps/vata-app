@@ -1,5 +1,10 @@
 import { fetchIndividualForPage } from "@/api/individuals/fetchIndividualForPage";
-import { ErrorState, LoadingState, NotFoundState } from "@/components";
+import {
+  ErrorState,
+  LoadingState,
+  NotFoundState,
+  PageHeader,
+} from "@/components";
 import { useTree } from "@/lib/use-tree";
 import displayName from "@/utils/displayName";
 import {
@@ -74,20 +79,13 @@ function IndividualDetailPage() {
   return (
     <Container fluid>
       <Stack gap="xl" w="100%">
-        <Stack w="100%">
-          <Group w="100%">
-            <Avatar name={displayName(individual)} size="xl" />
-            <Stack gap={0} style={{ flexGrow: 1 }}>
-              <Group grow>
-                <Title order={2}>{displayName(individual)}</Title>
-                <Group>
-                  <Code ml="auto">{individual.gedcomId}</Code>
-                </Group>
-              </Group>
-
-              <Stack gap={0}>
-                <Group>
-                  <Text w={48}>Birth</Text>
+        <PageHeader
+          avatar={displayName(individual)}
+          metadata={[
+            {
+              title: "Birth",
+              value: (
+                <>
                   {individual.birth ? (
                     <Group gap={0}>
                       <Button
@@ -119,9 +117,13 @@ function IndividualDetailPage() {
                       Add birth information
                     </Button>
                   )}
-                </Group>
-                <Group>
-                  <Text w={48}>Death</Text>
+                </>
+              ),
+            },
+            {
+              title: "Death",
+              value: (
+                <>
                   {individual.death ? (
                     <Group gap={0}>
                       <Button
@@ -153,11 +155,13 @@ function IndividualDetailPage() {
                       Add death information
                     </Button>
                   )}
-                </Group>
-              </Stack>
-            </Stack>
-          </Group>
-        </Stack>
+                </>
+              ),
+            },
+          ]}
+          rightSection={<Code>{individual.gedcomId}</Code>}
+          title={displayName(individual)}
+        />
 
         <Grid gutter={64}>
           {/* Events */}

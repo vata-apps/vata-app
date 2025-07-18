@@ -1,36 +1,49 @@
-import { ActionIcon, Avatar, Group, Stack, Title } from "@mantine/core";
-import { Link } from "@tanstack/react-router";
-import { ChevronLeft } from "lucide-react";
+import { Avatar, Box, Group, Stack, Text, Title } from "@mantine/core";
+import { Fragment } from "react";
+
+interface PageHeaderProps {
+  avatar?: string | React.ReactNode;
+
+  metadata?: { title: string; value: string | React.ReactNode }[];
+  rightSection?: React.ReactNode;
+  title: string;
+}
 
 export function PageHeader({
   avatar,
-  backTo,
-  children,
+  metadata,
+  rightSection,
   title,
-}: {
-  avatar?: string;
-  backTo?: string;
-  children?: React.ReactNode;
-  title: string;
-}) {
+}: PageHeaderProps) {
   return (
-    <Stack gap="xs">
-      <Group align="center" gap="md">
-        {backTo && (
-          <ActionIcon
-            component={Link}
-            size="compact-xl"
-            to={backTo}
-            variant="transparent"
-          >
-            <ChevronLeft size={32} />
-          </ActionIcon>
+    <Stack w="100%">
+      <Group align="flex-start" w="100%">
+        {avatar && typeof avatar === "string" && (
+          <Avatar name={avatar} size="xl" />
         )}
-        {avatar && <Avatar size="md">{avatar}</Avatar>}
-        <Title>{title}</Title>
-      </Group>
+        {avatar && typeof avatar !== "string" && (
+          <Avatar size="xl">{avatar}</Avatar>
+        )}
 
-      {children}
+        <Stack gap={0} style={{ flexGrow: 1 }}>
+          <Group grow>
+            <Title order={2}>{title}</Title>
+            <Group justify="flex-end">{rightSection}</Group>
+          </Group>
+
+          <Box
+            display="grid"
+            style={{ columnGap: 16, gridTemplateColumns: "min-content 1fr" }}
+          >
+            {metadata?.map(({ title, value }) => (
+              <Fragment key={title}>
+                <Text c="dimmed">{title}</Text>
+                <Text>{value}</Text>
+              </Fragment>
+            ))}
+          </Box>
+        </Stack>
+      </Group>
     </Stack>
   );
 }
