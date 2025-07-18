@@ -6,11 +6,6 @@ import {
 } from "@tabler/icons-react";
 import { Events } from "../events/fetchEvents";
 
-interface Params {
-  gender: "male" | "female";
-  individualId: string;
-}
-
 function isBefore(
   date: string | undefined | null,
   date2: string | undefined | null,
@@ -25,6 +20,11 @@ function isAfter(
 ) {
   if (!date || !date2) return false;
   return new Date(date).getTime() > new Date(date2).getTime();
+}
+
+interface Params {
+  gender: "male" | "female";
+  individualId: string;
 }
 
 export function formatEventsForIndividual(events: Events, params: Params) {
@@ -42,8 +42,6 @@ export function formatEventsForIndividual(events: Events, params: Params) {
       event.participants.find((participant) => participant.role === "Deceased")
         ?.id === individualId,
   );
-
-  console.log(birth, death);
 
   return events
     .map((event) => {
