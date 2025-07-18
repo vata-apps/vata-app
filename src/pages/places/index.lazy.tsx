@@ -1,6 +1,6 @@
 import { PageHeader } from "@/components/PageHeader";
 import { TablePlaces } from "@/components/tables/TablePlaces";
-import { Stack } from "@mantine/core";
+import { Container, Stack } from "@mantine/core";
 import { createLazyFileRoute } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/places/")({
@@ -9,10 +9,12 @@ export const Route = createLazyFileRoute("/places/")({
 
 function PlacesPage() {
   return (
-    <Stack gap="xl">
-      <PageHeader title="Places" />
-      <TablePlaces />
-    </Stack>
+    <Container fluid>
+      <Stack gap="xl" w="100%">
+        <PageHeader title="Places" />
+        <TablePlaces />
+      </Stack>
+    </Container>
   );
 }
 
