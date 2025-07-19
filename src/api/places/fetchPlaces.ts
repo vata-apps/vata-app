@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 
 interface Params {
+  parentId?: string;
   placeIds?: string[];
 }
 
@@ -14,6 +15,7 @@ export async function fetchPlaces(treeId: string, params?: Params) {
         name,
         latitude,
         longitude,
+        parent_id,
         placeType:place_types(id, name)
       `,
     )
@@ -21,6 +23,10 @@ export async function fetchPlaces(treeId: string, params?: Params) {
 
   if (params?.placeIds) {
     query = query.in("id", params.placeIds);
+  }
+
+  if (params?.parentId) {
+    query = query.eq("parent_id", params.parentId);
   }
 
   const { data, error } = await query;
@@ -34,6 +40,7 @@ export async function fetchPlaces(treeId: string, params?: Params) {
     longitude: place.longitude,
     placeType: place.placeType,
     gedcomId: `P-${place.gedcom_id?.toString().padStart(4, "0") ?? "0000"}`,
+    parentId: place.parent_id,
   }));
 }
 
