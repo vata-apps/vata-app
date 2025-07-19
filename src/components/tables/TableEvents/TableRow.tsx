@@ -1,16 +1,13 @@
-import { EventForTable } from "@/api/events/fetchEventsForTable";
-import { GenderIcon } from "@/components/GenderIcon";
-import displayName from "@/utils/displayName";
-import { Code, Group, Table, Text } from "@mantine/core";
+import { Event } from "@/api/events/fetchEvent";
+import { getEventTitle } from "@/utils/events";
+import { Code, Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
-import { EventTableColumn } from "./types";
 
 interface TableRowProps {
-  event: EventForTable;
-  hideColumns: EventTableColumn[];
+  event: Event;
 }
 
-export function TableRow({ event, hideColumns }: TableRowProps) {
+export function TableRow({ event }: TableRowProps) {
   const navigate = useNavigate();
 
   return (
@@ -23,38 +20,21 @@ export function TableRow({ event, hideColumns }: TableRowProps) {
         });
       }}
     >
-      {!hideColumns.includes("id") && (
-        <Table.Td>
-          <Code>E-xxxxx</Code>
-        </Table.Td>
-      )}
-      {!hideColumns.includes("eventType") && (
-        <Table.Td>
-          <Text>{event.eventType.name}</Text>
-        </Table.Td>
-      )}
-      {!hideColumns.includes("date") && (
-        <Table.Td>
-          <Text>{event.date}</Text>
-        </Table.Td>
-      )}
-      {!hideColumns.includes("place") && (
-        <Table.Td>
-          <Text truncate>{event.place?.name}</Text>
-        </Table.Td>
-      )}
-      {!hideColumns.includes("individuals") && (
-        <Table.Td>
-          <Group gap="lg">
-            {event.individuals?.map((individual) => (
-              <Group key={individual.id} gap="xs">
-                <GenderIcon gender={individual.gender} size={16} />
-                <Text>{displayName(individual.names)}</Text>
-              </Group>
-            ))}
-          </Group>
-        </Table.Td>
-      )}
+      <Table.Td valign="top">
+        <Code>{event.gedcomId}</Code>
+      </Table.Td>
+
+      <Table.Td valign="top">
+        <Text>{getEventTitle(event)}</Text>
+      </Table.Td>
+
+      <Table.Td valign="top">
+        <Text>{event.date}</Text>
+      </Table.Td>
+
+      <Table.Td valign="top">
+        <Text truncate>{event.place?.name}</Text>
+      </Table.Td>
     </Table.Tr>
   );
 }

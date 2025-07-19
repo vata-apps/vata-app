@@ -2,60 +2,67 @@ import { supabase } from "@/lib/supabase";
 import { fetchIndividuals } from "../individuals/fetchIndividuals";
 
 interface Params {
+  eventIds?: string[];
   eventTypes?: string[];
   individualIds?: string[];
+  placeIds?: string[];
 }
 
 export async function fetchEvents(
   treeId: string,
-  { eventTypes, individualIds }: Params,
+  { eventIds, eventTypes, individualIds, placeIds }: Params = {},
 ) {
-  let query = supabase
-    .from("event_subjects")
-    .select(
-      `
+  let query = supabase.from("events").select(`
+    id, 
+    date,
+    gedcom_id,
+    event_types!inner(id, name),
+    place:places!inner(id, name),
+    participants:event_participants!inner(
+      individual_id,
+      role:event_roles!inner(name)
+    ),
+    subjects:event_subjects!inner(
       id,
-      event:events!inner(
-        id,
-        date,
-        event_types!inner(name),
-        place:places(id, name),
-        participants:event_participants!inner(individual_id, role:event_roles!inner(name))
-      )
-    `,
+      individual_id
     )
-    .eq("tree_id", treeId);
+  `);
+
+  if (eventIds) {
+    query = query.in("id", eventIds);
+  }
 
   if (eventTypes) {
-    query = query.in("event.event_types.name", eventTypes);
+    query = query.in("event_types.name", eventTypes);
   }
 
   if (individualIds) {
-    query = query.in("individual_id", individualIds);
+    query = query.in("subjects.individual_id", individualIds);
+  }
+
+  if (placeIds) {
+    query = query.in("place.id", placeIds);
   }
 
   const { data, error } = await query;
 
   if (error) throw error;
 
-  const participantsIndividualIds = data.flatMap((event_subject) => {
-    return event_subject.event.participants.map(
-      (participant) => participant.individual_id,
-    );
+  const participantsIndividualIds = data.flatMap((event) => {
+    return event.participants.map((participant) => participant.individual_id);
   });
 
   const participants = await fetchIndividuals(treeId, {
     individualIds: participantsIndividualIds,
   });
 
-  return data.map((event_subject) => {
-    const { event } = event_subject;
-
+  return data.map((event) => {
     return {
       id: event.id,
       date: event.date,
+      gedcomId: `E-${event.gedcom_id?.toString().padStart(4, "0")}`,
       place: event.place,
-      type: event.event_types.name,
+      type: event.event_types,
       participants: event.participants
         .map((participant) => {
           const participantIndividual = participants.find(
