@@ -22,7 +22,7 @@ export function getEventTitle({ event, participants }: Params) {
       (participant) => participant.role === "wife",
     );
 
-    return `Marriage of ${displayName(husband)} and ${displayName(wife)}`;
+    return `Marriage of ${displayName(husband)} & ${displayName(wife)}`;
   }
 
   const subject = participants.find(
