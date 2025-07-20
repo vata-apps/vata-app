@@ -24,6 +24,7 @@ alter table "public"."trees" enable row level security;
 INSERT INTO "public"."trees" ("name", "description", "is_default") VALUES
 ('Default Family Tree', 'The main family tree', true);
 
+-- Place types
 create table "public"."place_types" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
@@ -40,16 +41,18 @@ create table "public"."place_types" (
 
 alter table "public"."place_types" enable row level security;
 
--- NEW UNIFIED EVENT SYSTEM TABLES
-
--- Event types (unified)
+-- Event types
 create table "public"."event_types" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
     "name" text not null,
     "tree_id" uuid not null,
+    "key" text,
+    "is_system" boolean not null default false,
     constraint "event_types_pkey" PRIMARY KEY (id),
     constraint "event_types_name_tree_key" UNIQUE (name, tree_id),
+    constraint "event_types_key_tree_key" UNIQUE (key, tree_id),
+    constraint "event_types_key_system_check" CHECK (is_system = true OR key IS NULL),
     constraint "event_types_tree_id_fkey" FOREIGN KEY (tree_id) REFERENCES trees(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -61,13 +64,18 @@ create table "public"."event_roles" (
     "created_at" timestamp with time zone not null default now(),
     "name" text not null,
     "tree_id" uuid not null,
+    "key" text,
+    "is_system" boolean not null default false,
     constraint "event_roles_pkey" PRIMARY KEY (id),
     constraint "event_roles_name_tree_key" UNIQUE (name, tree_id),
+    constraint "event_roles_key_tree_key" UNIQUE (key, tree_id),
+    constraint "event_roles_key_system_check" CHECK (is_system = true OR key IS NULL),
     constraint "event_roles_tree_id_fkey" FOREIGN KEY (tree_id) REFERENCES trees(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 alter table "public"."event_roles" enable row level security;
 
+-- Individuals
 create table "public"."individuals" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
@@ -81,6 +89,7 @@ create table "public"."individuals" (
 
 alter table "public"."individuals" enable row level security;
 
+-- Names
 create table "public"."names" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
@@ -98,6 +107,7 @@ create table "public"."names" (
 
 alter table "public"."names" enable row level security;
 
+-- Places
 create table "public"."places" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
@@ -117,7 +127,7 @@ create table "public"."places" (
 
 alter table "public"."places" enable row level security;
 
--- Main events table
+-- Events
 create table "public"."events" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
@@ -151,7 +161,7 @@ create table "public"."event_subjects" (
 
 alter table "public"."event_subjects" enable row level security;
 
--- Event participants (everyone involved with roles)
+-- Event participants (everyone involved with roles, including subjects)
 create table "public"."event_participants" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
@@ -168,6 +178,7 @@ create table "public"."event_participants" (
 
 alter table "public"."event_participants" enable row level security;
 
+-- Families
 create table "public"."families" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),
@@ -185,6 +196,7 @@ create table "public"."families" (
 
 alter table "public"."families" enable row level security;
 
+-- Family children
 create table "public"."family_children" (
     "id" uuid not null default gen_random_uuid(),
     "created_at" timestamp with time zone not null default now(),

@@ -32,14 +32,14 @@ export function formatEventsForIndividual(events: Events, params: Params) {
 
   const birth = events.find(
     (event) =>
-      event.type === "Birth" &&
+      event.type.key === "birth" &&
       event.participants.find((participant) => participant.role === "Subject")
         ?.id === individualId,
   );
   const death = events.find(
     (event) =>
-      event.type === "Death" &&
-      event.participants.find((participant) => participant.role === "Deceased")
+      event.type.key === "death" &&
+      event.participants.find((participant) => participant.role === "Subject")
         ?.id === individualId,
   );
 
@@ -52,13 +52,13 @@ export function formatEventsForIndividual(events: Events, params: Params) {
         type: event.type,
       };
 
-      if (event.type === "Birth") {
+      if (event.type.key === "birth") {
         if (isBefore(event.date, birth?.date ?? "")) {
           return null;
         }
 
         const subject = event.participants.find(
-          (participant) => participant.role === "Subject",
+          (participant) => participant.role === "subject",
         );
 
         if (!subject) return null;
@@ -71,13 +71,13 @@ export function formatEventsForIndividual(events: Events, params: Params) {
         };
       }
 
-      if (event.type === "Death") {
+      if (event.type.key === "death") {
         if (isAfter(event.date, death?.date ?? null)) {
           return null;
         }
 
         const subject = event.participants.find(
-          (participant) => participant.role === "Deceased",
+          (participant) => participant.role === "subject",
         );
 
         if (!subject) return null;
@@ -90,12 +90,12 @@ export function formatEventsForIndividual(events: Events, params: Params) {
         };
       }
 
-      if (event.type === "Marriage") {
+      if (event.type.key === "marriage") {
         const husband = event.participants.find(
-          (participant) => participant.role === "Husband",
+          (participant) => participant.role === "husband",
         );
         const wife = event.participants.find(
-          (participant) => participant.role === "Wife",
+          (participant) => participant.role === "wife",
         );
 
         const partner = gender === "male" ? wife : husband;

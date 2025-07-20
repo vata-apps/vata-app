@@ -1,7 +1,6 @@
 import { fetchEvents } from "@/api/events/fetchEvents";
 import { fetchEventTypes } from "@/api/events/fetchEventTypes";
 import { useTree } from "@/lib/use-tree";
-import { getEventTitle } from "@/utils/events";
 import { Stack, Table } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
@@ -43,9 +42,7 @@ export function TableEvents() {
 
     if (debouncedSearch) {
       result = result.filter((event) =>
-        getEventTitle(event)
-          .toLowerCase()
-          .includes(debouncedSearch.toLowerCase()),
+        event.title.toLowerCase().includes(debouncedSearch.toLowerCase()),
       );
     }
 

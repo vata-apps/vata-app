@@ -59,9 +59,14 @@ export async function fetchIndividuals(treeId: string, params: Params) {
       return "Unknown";
     })();
 
+    const gedcomId = (() => {
+      if (!individuals.gedcom_id) return null;
+      return `I-${individuals.gedcom_id.toString().padStart(4, "0")}`;
+    })();
+
     return {
       id: individuals.id,
-      gedcomId: `I-${individuals.gedcom_id.toString().padStart(4, "0")}`,
+      gedcomId,
       gender: individuals.gender,
       firstName: first_name,
       lastName: last_name,

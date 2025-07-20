@@ -32,10 +32,10 @@ VALUES
 
     -- Generation 4 Death Event Participants
     -- Fleamont Potter's death
-    (get_tree_id('hp'), get_event_id('fleamont_potter_death'),      get_individual_id('fleamont_potter'),     get_event_role_id('deceased')),
+    (get_tree_id('hp'), get_event_id('fleamont_potter_death'),      get_individual_id('fleamont_potter'),     get_event_role_id('subject')),
 
     -- Euphemia Potter's death
-    (get_tree_id('hp'), get_event_id('euphemia_potter_death'),      get_individual_id('euphemia_potter'),     get_event_role_id('deceased')),
+    (get_tree_id('hp'), get_event_id('euphemia_potter_death'),      get_individual_id('euphemia_potter'),     get_event_role_id('subject')),
 
     -- Generation 4 Marriage Event Participants
     -- Fleamont and Euphemia's marriage
@@ -77,10 +77,10 @@ VALUES
 
     -- Generation 3 Death Event Participants
     -- James Potter's death
-    (get_tree_id('hp'), get_event_id('james_potter_death'),         get_individual_id('james_potter'),        get_event_role_id('deceased')),
+    (get_tree_id('hp'), get_event_id('james_potter_death'),         get_individual_id('james_potter'),        get_event_role_id('subject')),
 
     -- Lily Evans' death
-    (get_tree_id('hp'), get_event_id('lily_evans_death'),           get_individual_id('lily_evans'),          get_event_role_id('deceased')),
+    (get_tree_id('hp'), get_event_id('lily_evans_death'),           get_individual_id('lily_evans'),          get_event_role_id('subject')),
 
     -- Generation 3 Marriage Event Participants
     -- James and Lily's marriage
@@ -155,7 +155,7 @@ VALUES
 
     -- Generation 2 Death Event Participants
     -- Fred Weasley's death
-    (get_tree_id('hp'), get_event_id('fred_weasley_death'),         get_individual_id('fred_weasley'),        get_event_role_id('deceased')),
+    (get_tree_id('hp'), get_event_id('fred_weasley_death'),         get_individual_id('fred_weasley'),        get_event_role_id('subject')),
 
     -- Generation 2 Marriage Event Participants
     -- Harry and Ginny's marriage

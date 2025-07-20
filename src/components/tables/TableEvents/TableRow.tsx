@@ -1,5 +1,4 @@
 import { Event } from "@/api/events/fetchEvent";
-import { getEventTitle } from "@/utils/events";
 import { Code, Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -25,7 +24,7 @@ export function TableRow({ event }: TableRowProps) {
       </Table.Td>
 
       <Table.Td valign="top">
-        <Text>{getEventTitle(event)}</Text>
+        <Text>{event.title}</Text>
       </Table.Td>
 
       <Table.Td valign="top">

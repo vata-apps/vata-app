@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { fetchIndividuals } from "../individuals/fetchIndividuals";
+import { getEventTitle } from "./utils/getEventTitle";
 
 interface Params {
   eventIds?: string[];
@@ -16,11 +17,11 @@ export async function fetchEvents(
     id, 
     date,
     gedcom_id,
-    event_types!inner(id, name),
+    event_types!inner(id, key, name),
     place:places!inner(id, name),
     participants:event_participants!inner(
       individual_id,
-      role:event_roles!inner(name)
+      role:event_roles!inner(key, name)
     ),
     subjects:event_subjects!inner(
       id,
@@ -52,31 +53,34 @@ export async function fetchEvents(
     return event.participants.map((participant) => participant.individual_id);
   });
 
-  const participants = await fetchIndividuals(treeId, {
+  const individuals = await fetchIndividuals(treeId, {
     individualIds: participantsIndividualIds,
   });
 
   return data.map((event) => {
+    const participants = event.participants
+      .map((participant) => {
+        const participantIndividual = individuals.find(
+          (individual) => individual.id === participant.individual_id,
+        );
+
+        if (!participantIndividual) return null;
+
+        return {
+          ...participantIndividual,
+          role: participant.role.key ?? participant.role.name,
+        };
+      })
+      .filter((participant) => participant !== null);
+
     return {
       id: event.id,
       date: event.date,
       gedcomId: `E-${event.gedcom_id?.toString().padStart(4, "0")}`,
+      participants,
       place: event.place,
+      title: getEventTitle({ event, participants }),
       type: event.event_types,
-      participants: event.participants
-        .map((participant) => {
-          const participantIndividual = participants.find(
-            (individual) => individual.id === participant.individual_id,
-          );
-
-          if (!participantIndividual) return null;
-
-          return {
-            ...participantIndividual,
-            role: participant.role.name,
-          };
-        })
-        .filter((participant) => participant !== null),
     };
   });
 }
