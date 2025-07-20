@@ -1,4 +1,4 @@
-import { Avatar, Box, Group, Stack, Text, Title } from "@mantine/core";
+import { Avatar, Box, Grid, Group, Stack, Text, Title } from "@mantine/core";
 import { Fragment } from "react";
 
 interface PageHeaderProps {
@@ -26,10 +26,14 @@ export function PageHeader({
         )}
 
         <Stack gap={0} style={{ flexGrow: 1 }}>
-          <Group grow>
-            <Title order={2}>{title}</Title>
-            <Group justify="flex-end">{rightSection}</Group>
-          </Group>
+          <Grid grow>
+            <Grid.Col span={10} style={{ flexGrow: 1 }}>
+              <Title order={2}>{title}</Title>
+            </Grid.Col>
+            <Grid.Col span={2} style={{ flexGrow: 0 }}>
+              <Group justify="flex-end">{rightSection}</Group>
+            </Grid.Col>
+          </Grid>
 
           <Box
             display="grid"
