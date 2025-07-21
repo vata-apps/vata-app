@@ -149,20 +149,22 @@ function PlaceDetailPage() {
             </Stack>
           </Grid.Col>
           <Grid.Col span={4}>
-            <Stack gap="xs">
-              <Title order={4}>Included in</Title>
-              <PlaceCard place={place.parent} />
+            <Stack gap="xl">
+              <Stack gap="xs">
+                <Title order={4}>Included in</Title>
+                <PlaceCard place={place.parent} />
+              </Stack>
 
-              <Title order={4} mt="md">
-                Includes
-              </Title>
-              {place.children.length > 0 ? (
-                place.children.map((child) => (
-                  <PlaceCard key={child.id} place={child} />
-                ))
-              ) : (
-                <PlaceCard place={null} />
-              )}
+              <Stack gap="xs">
+                <Title order={4}>Includes</Title>
+                {place.children.length > 0 ? (
+                  place.children.map((child) => (
+                    <PlaceCard key={child.id} place={child} />
+                  ))
+                ) : (
+                  <PlaceCard place={null} />
+                )}
+              </Stack>
             </Stack>
           </Grid.Col>
           <Grid.Col span={4}>
