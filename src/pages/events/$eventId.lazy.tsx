@@ -1,14 +1,29 @@
-import { fetchEvent } from "@/api";
-import { ErrorState, LoadingState, NotFoundState } from "@/components";
-import { EventHeader } from "@/components/event/EventHeader";
-import { MediaCard } from "@/components/event/MediaCard";
-import { PeopleInvolvedCard } from "@/components/event/PeopleInvolvedCard";
-import { SourcesCard } from "@/components/event/SourcesCard";
+import { fetchEventForPage } from "@/api/events/fetchEventForPage";
+import {
+  ErrorState,
+  LoadingState,
+  NotFoundState,
+  PageHeader,
+} from "@/components";
+import { CardIndividual } from "@/components/CardIndividual";
+import { useTree } from "@/lib/use-tree";
+import displayName from "@/utils/displayName";
 
-import { getEventTitle } from "@/utils/events";
-import { Anchor, Breadcrumbs, Container, Stack, Text } from "@mantine/core";
+import {
+  Button,
+  Code,
+  Container,
+  Grid,
+  Group,
+  Stack,
+  Title,
+} from "@mantine/core";
+import { IconCalendar } from "@tabler/icons-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
+
+import { createLazyFileRoute } from "@tanstack/react-router";
+
+const SUBJECT_ROLES = ["subject", "husband", "wife"];
 
 export const Route = createLazyFileRoute("/events/$eventId")({
   component: EventPage,
@@ -16,14 +31,12 @@ export const Route = createLazyFileRoute("/events/$eventId")({
 
 function EventPage() {
   const { eventId } = Route.useParams();
+  const { currentTreeId } = useTree();
 
-  const {
-    data: event,
-    status,
-    error,
-  } = useQuery({
+  const { data, status, error } = useQuery({
     queryKey: ["event", eventId],
-    queryFn: () => fetchEvent(eventId),
+    queryFn: () => fetchEventForPage(currentTreeId ?? "", eventId),
+    enabled: Boolean(currentTreeId && eventId),
     placeholderData: keepPreviousData,
   });
 
@@ -42,7 +55,7 @@ function EventPage() {
     );
   }
 
-  if (!event) {
+  if (!data) {
     return (
       <NotFoundState
         title="Event Not Found"
@@ -53,26 +66,84 @@ function EventPage() {
     );
   }
 
+  const subjects = data.participants.filter((participant) =>
+    SUBJECT_ROLES.includes(participant.role.key ?? ""),
+  );
+  const witnesses = data.participants.filter(
+    (participant) => !SUBJECT_ROLES.includes(participant.role.key ?? ""),
+  );
+
   return (
-    <Container fluid py="md">
-      <Stack gap="xl">
-        <Breadcrumbs>
-          <Anchor component={Link} to="/events">
-            Events
-          </Anchor>
-          <Text c="dimmed">{getEventTitle(event)}</Text>
-        </Breadcrumbs>
+    <Container fluid>
+      <Stack gap="xl" w="100%">
+        <PageHeader
+          avatar={<IconCalendar size={48} />}
+          title={data.title}
+          rightSection={<Code>{data.gedcomId}</Code>}
+          metadata={[
+            { title: "Place", value: data.place?.name ?? "Unknown" },
+            { title: "Date", value: data.date ?? "Unknown" },
+          ]}
+        />
 
-        <EventHeader event={event} />
+        <Grid gutter={64}>
+          <Grid.Col span={6}>
+            <Stack gap="xs">
+              <Title order={4}>Subjects</Title>
 
-        <PeopleInvolvedCard event={event} />
+              {subjects.map((subject) => (
+                <CardIndividual
+                  key={subject.id}
+                  individualId={subject.id}
+                  lifeSpan={subject.lifeSpan}
+                  name={displayName(subject)}
+                  role={
+                    subject.role.key !== "subject"
+                      ? subject.role.name
+                      : undefined
+                  }
+                />
+              ))}
 
-        <SourcesCard />
+              {data.type.key === "marriage" && subjects.length !== 2 && (
+                <Button variant="default">Add spouse</Button>
+              )}
 
-        <MediaCard />
+              <Title order={4} mt="md">
+                Witnesses
+              </Title>
+
+              {witnesses.length > 0 &&
+                witnesses.map((witness) => (
+                  <CardIndividual
+                    key={witness.id}
+                    individualId={witness.id}
+                    lifeSpan={witness.lifeSpan}
+                    name={displayName(witness)}
+                    role={witness.role.name}
+                  />
+                ))}
+
+              <Group>
+                <Button variant="default">Add witness</Button>
+              </Group>
+            </Stack>
+          </Grid.Col>
+
+          <Grid.Col span={6}>
+            <Stack gap="xl">
+              <Stack gap="xs">
+                <Title order={4}>Sources</Title>
+                TODO
+              </Stack>
+              <Stack gap="xs">
+                <Title order={4}>Medias</Title>
+                TODO
+              </Stack>
+            </Stack>
+          </Grid.Col>
+        </Grid>
       </Stack>
     </Container>
   );
 }
-
-export default EventPage;

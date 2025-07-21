@@ -5,12 +5,11 @@ import {
   NotFoundState,
   PageHeader,
 } from "@/components";
+import { CardIndividual } from "@/components/CardIndividual";
 import { useTree } from "@/lib/use-tree";
 import displayName from "@/utils/displayName";
 import {
-  Avatar,
   Button,
-  Card,
   Code,
   Container,
   Grid,
@@ -215,26 +214,11 @@ function IndividualDetailPage() {
               )}
 
               {individual.parents.father && (
-                <Card
-                  component={Link}
-                  to={`/individuals/${individual.parents.father.id}`}
-                  withBorder
-                  radius="lg"
-                  p="xs"
-                >
-                  <Group>
-                    <Avatar name={displayName(individual.parents.father)} />
-
-                    <Stack gap={0}>
-                      <Text fw={600}>
-                        {displayName(individual.parents.father)}
-                      </Text>
-                      <Text size="sm">
-                        {individual.parents.father.lifeSpan}
-                      </Text>
-                    </Stack>
-                  </Group>
-                </Card>
+                <CardIndividual
+                  individualId={individual.parents.father.id}
+                  lifeSpan={individual.parents.father.lifeSpan}
+                  name={displayName(individual.parents.father)}
+                />
               )}
 
               {/* Mother */}
@@ -245,48 +229,21 @@ function IndividualDetailPage() {
               )}
 
               {individual.parents.mother && (
-                <Card
-                  component={Link}
-                  to={`/individuals/${individual.parents.mother.id}`}
-                  withBorder
-                  radius="lg"
-                  p="xs"
-                >
-                  <Group>
-                    <Avatar name={displayName(individual.parents.mother)} />
-
-                    <Stack gap={0}>
-                      <Text fw={600}>
-                        {displayName(individual.parents.mother)}
-                      </Text>
-                      <Text size="sm">
-                        {individual.parents.mother.lifeSpan}
-                      </Text>
-                    </Stack>
-                  </Group>
-                </Card>
+                <CardIndividual
+                  individualId={individual.parents.mother.id}
+                  lifeSpan={individual.parents.mother.lifeSpan}
+                  name={displayName(individual.parents.mother)}
+                />
               )}
 
               {/* Siblings */}
               {individual.siblings.map((sibling) => (
-                <Card
+                <CardIndividual
                   key={sibling.id}
-                  component={Link}
-                  to={`/individuals/${sibling.id}`}
-                  withBorder
-                  radius="lg"
-                  p="xs"
-                  ml="xl"
-                >
-                  <Group>
-                    <Avatar name={displayName(sibling)} />
-
-                    <Stack gap={0}>
-                      <Text fw={600}>{displayName(sibling)}</Text>
-                      <Text size="sm">{sibling.lifeSpan}</Text>
-                    </Stack>
-                  </Group>
-                </Card>
+                  individualId={sibling.id}
+                  lifeSpan={sibling.lifeSpan}
+                  name={displayName(sibling)}
+                />
               ))}
 
               <Button ml="xl" variant="default" radius="lg">
@@ -307,43 +264,22 @@ function IndividualDetailPage() {
 
                 return (
                   <Fragment key={family.id}>
-                    <Card
-                      component={Link}
-                      to={`/individuals/${spouse?.id}`}
-                      withBorder
-                      radius="lg"
-                      p="xs"
-                    >
-                      <Group>
-                        <Avatar name={displayName(spouse)} />
-
-                        <Stack gap={0}>
-                          <Text fw={600}>{displayName(spouse)}</Text>
-                          <Text size="sm">{spouse?.lifeSpan}</Text>
-                        </Stack>
-                      </Group>
-                    </Card>
+                    {spouse && (
+                      <CardIndividual
+                        individualId={spouse.id}
+                        lifeSpan={spouse.lifeSpan}
+                        name={displayName(spouse)}
+                      />
+                    )}
 
                     {/* Children */}
                     {family.children.map((child) => (
-                      <Card
+                      <CardIndividual
                         key={child.id}
-                        component={Link}
-                        to={`/individuals/${child.id}`}
-                        ml="xl"
-                        withBorder
-                        radius="lg"
-                        p="xs"
-                      >
-                        <Group>
-                          <Avatar name={displayName(child)} />
-
-                          <Stack gap={0}>
-                            <Text fw={600}>{displayName(child)}</Text>
-                            <Text size="sm">{child.lifeSpan}</Text>
-                          </Stack>
-                        </Group>
-                      </Card>
+                        individualId={child.id}
+                        lifeSpan={child.lifeSpan}
+                        name={displayName(child)}
+                      />
                     ))}
 
                     {/* Add child */}

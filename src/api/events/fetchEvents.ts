@@ -21,7 +21,7 @@ export async function fetchEvents(
     place:places!inner(id, name),
     participants:event_participants!inner(
       individual_id,
-      role:event_roles!inner(key, name)
+      role:event_roles!inner(id, key, name)
     ),
     subjects:event_subjects!inner(
       id,
@@ -68,7 +68,11 @@ export async function fetchEvents(
 
         return {
           ...participantIndividual,
-          role: participant.role.key ?? participant.role.name,
+          role: {
+            id: participant.role.id,
+            key: participant.role.key,
+            name: participant.role.name,
+          },
         };
       })
       .filter((participant) => participant !== null);

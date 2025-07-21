@@ -18,35 +18,35 @@ export function formatEventsForPlace(events: Events) {
         type: event.type,
       };
 
-      if (event.type.name === "Birth") {
+      if (event.type.key === "birth") {
         return {
           ...commonEvent,
           Icon: IconBabyCarriage,
         };
       }
 
-      if (event.type.name === "Death") {
+      if (event.type.key === "death") {
         return {
           ...commonEvent,
           Icon: IconSkull,
         };
       }
 
-      if (event.type.name === "Marriage") {
+      if (event.type.key === "marriage") {
         return {
           ...commonEvent,
           Icon: IconHeartHandshake,
         };
       }
 
-      if (event.type.name === "Baptism") {
+      if (event.type.key === "baptism") {
         return {
           ...commonEvent,
           Icon: IconBible,
         };
       }
 
-      if (event.type.name === "Burial") {
+      if (event.type.key === "burial") {
         return {
           ...commonEvent,
           Icon: IconGrave,

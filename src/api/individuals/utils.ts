@@ -33,14 +33,16 @@ export function formatEventsForIndividual(events: Events, params: Params) {
   const birth = events.find(
     (event) =>
       event.type.key === "birth" &&
-      event.participants.find((participant) => participant.role === "Subject")
-        ?.id === individualId,
+      event.participants.find(
+        (participant) => participant.role.key === "subject",
+      )?.id === individualId,
   );
   const death = events.find(
     (event) =>
       event.type.key === "death" &&
-      event.participants.find((participant) => participant.role === "Subject")
-        ?.id === individualId,
+      event.participants.find(
+        (participant) => participant.role.key === "subject",
+      )?.id === individualId,
   );
 
   return events
@@ -58,7 +60,7 @@ export function formatEventsForIndividual(events: Events, params: Params) {
         }
 
         const subject = event.participants.find(
-          (participant) => participant.role === "subject",
+          (participant) => participant.role.key === "subject",
         );
 
         if (!subject) return null;
@@ -77,7 +79,7 @@ export function formatEventsForIndividual(events: Events, params: Params) {
         }
 
         const subject = event.participants.find(
-          (participant) => participant.role === "subject",
+          (participant) => participant.role.key === "subject",
         );
 
         if (!subject) return null;
@@ -92,10 +94,10 @@ export function formatEventsForIndividual(events: Events, params: Params) {
 
       if (event.type.key === "marriage") {
         const husband = event.participants.find(
-          (participant) => participant.role === "husband",
+          (participant) => participant.role.key === "husband",
         );
         const wife = event.participants.find(
-          (participant) => participant.role === "wife",
+          (participant) => participant.role.key === "wife",
         );
 
         const partner = gender === "male" ? wife : husband;

@@ -9,24 +9,24 @@ interface Params {
     place: { id: string; name: string } | null;
     event_types: { key: string | null; id: string; name: string };
   };
-  participants: (Individuals[number] & { role: string })[];
+  participants: (Individuals[number] & { role: { key: string | null } })[];
 }
 
 export function getEventTitle({ event, participants }: Params) {
   if (event.event_types.key === "marriage") {
     const husband = participants.find(
-      (participant) => participant.role === "husband",
+      (participant) => participant.role.key === "husband",
     );
 
     const wife = participants.find(
-      (participant) => participant.role === "wife",
+      (participant) => participant.role.key === "wife",
     );
 
     return `Marriage of ${displayName(husband)} & ${displayName(wife)}`;
   }
 
   const subject = participants.find(
-    (participant) => participant.role === "subject",
+    (participant) => participant.role.key === "subject",
   );
 
   return `${capitalize(event.event_types.name ?? "Unknown event")} of ${displayName(subject)}`;
