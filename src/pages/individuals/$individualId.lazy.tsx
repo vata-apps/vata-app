@@ -238,15 +238,16 @@ function IndividualDetailPage() {
 
               {/* Siblings */}
               {individual.siblings.map((sibling) => (
-                <CardIndividual
-                  key={sibling.id}
-                  individualId={sibling.id}
-                  lifeSpan={sibling.lifeSpan}
-                  name={displayName(sibling)}
-                />
+                <Group key={sibling.id} ml="lg" grow>
+                  <CardIndividual
+                    individualId={sibling.id}
+                    lifeSpan={sibling.lifeSpan}
+                    name={displayName(sibling)}
+                  />
+                </Group>
               ))}
 
-              <Button ml="xl" variant="default" radius="lg">
+              <Button ml="lg" variant="default" radius="lg">
                 Add sibling
               </Button>
             </Stack>
@@ -274,16 +275,17 @@ function IndividualDetailPage() {
 
                     {/* Children */}
                     {family.children.map((child) => (
-                      <CardIndividual
-                        key={child.id}
-                        individualId={child.id}
-                        lifeSpan={child.lifeSpan}
-                        name={displayName(child)}
-                      />
+                      <Group key={child.id} ml="lg" grow>
+                        <CardIndividual
+                          individualId={child.id}
+                          lifeSpan={child.lifeSpan}
+                          name={displayName(child)}
+                        />
+                      </Group>
                     ))}
 
                     {/* Add child */}
-                    <Button ml="xl" variant="default" radius="lg">
+                    <Button ml="lg" variant="default" radius="lg">
                       Add child
                     </Button>
                   </Fragment>

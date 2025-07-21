@@ -117,7 +117,7 @@ function PlaceDetailPage() {
         />
 
         <Grid gutter={64}>
-          <Grid.Col span={4}>
+          <Grid.Col span={6}>
             <Stack gap="xs">
               <Title order={4}>Events</Title>
               <Timeline bulletSize={40} lineWidth={3}>
@@ -148,8 +148,12 @@ function PlaceDetailPage() {
               </Timeline>
             </Stack>
           </Grid.Col>
-          <Grid.Col span={4}>
+          <Grid.Col span={6}>
             <Stack gap="xl">
+              <Stack gap="xs">
+                <Title order={4}>Map</Title>
+                TODO
+              </Stack>
               <Stack gap="xs">
                 <Title order={4}>Included in</Title>
                 <PlaceCard place={place.parent} />
@@ -165,12 +169,6 @@ function PlaceDetailPage() {
                   <PlaceCard place={null} />
                 )}
               </Stack>
-            </Stack>
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Stack gap="xs">
-              <Title order={4}>Map</Title>
-              TODO
             </Stack>
           </Grid.Col>
         </Grid>
