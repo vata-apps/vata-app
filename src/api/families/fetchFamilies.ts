@@ -65,7 +65,7 @@ export async function fetchFamilies(treeId: string, params: Params) {
 
     return {
       id: family.id,
-      gedcomId: `F-${family.gedcom_id.toString().padStart(4, "0")}`,
+      gedcomId: `F-${family.gedcom_id?.toString().padStart(4, "0") ?? "0000"}`,
       husband,
       wife,
       children,
