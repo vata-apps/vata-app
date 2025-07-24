@@ -73,8 +73,6 @@ function IndividualDetailPage() {
     );
   }
 
-  console.log(individual);
-
   return (
     <Container fluid>
       <Stack gap="xl" w="100%">

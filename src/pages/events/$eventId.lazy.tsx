@@ -88,45 +88,47 @@ function EventPage() {
 
         <Grid gutter={64}>
           <Grid.Col span={6}>
-            <Stack gap="xs">
-              <Title order={4}>Subjects</Title>
+            <Stack gap="xl">
+              <Stack gap="xs">
+                <Title order={4}>Subjects</Title>
 
-              {subjects.map((subject) => (
-                <CardIndividual
-                  key={subject.id}
-                  individualId={subject.id}
-                  lifeSpan={subject.lifeSpan}
-                  name={displayName(subject)}
-                  role={
-                    subject.role.key !== "subject"
-                      ? subject.role.name
-                      : undefined
-                  }
-                />
-              ))}
-
-              {data.type.key === "marriage" && subjects.length !== 2 && (
-                <Button variant="default">Add spouse</Button>
-              )}
-
-              <Title order={4} mt="md">
-                Witnesses
-              </Title>
-
-              {witnesses.length > 0 &&
-                witnesses.map((witness) => (
+                {subjects.map((subject) => (
                   <CardIndividual
-                    key={witness.id}
-                    individualId={witness.id}
-                    lifeSpan={witness.lifeSpan}
-                    name={displayName(witness)}
-                    role={witness.role.name}
+                    key={subject.id}
+                    individualId={subject.id}
+                    lifeSpan={subject.lifeSpan}
+                    name={displayName(subject)}
+                    role={
+                      subject.role.key !== "subject"
+                        ? subject.role.name
+                        : undefined
+                    }
                   />
                 ))}
 
-              <Group>
-                <Button variant="default">Add witness</Button>
-              </Group>
+                {data.type.key === "marriage" && subjects.length !== 2 && (
+                  <Button variant="default">Add spouse</Button>
+                )}
+              </Stack>
+
+              <Stack gap="xs">
+                <Title order={4}>Witnesses</Title>
+
+                {witnesses.length > 0 &&
+                  witnesses.map((witness) => (
+                    <CardIndividual
+                      key={witness.id}
+                      individualId={witness.id}
+                      lifeSpan={witness.lifeSpan}
+                      name={displayName(witness)}
+                      role={witness.role.name}
+                    />
+                  ))}
+
+                <Group>
+                  <Button variant="default">Add witness</Button>
+                </Group>
+              </Stack>
             </Stack>
           </Grid.Col>
 

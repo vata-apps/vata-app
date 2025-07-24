@@ -25,14 +25,14 @@ export async function fetchIndividualForPage(
   });
 
   const eventsParents = await fetchEvents(treeId, {
-    eventTypes: ["Death"],
+    eventTypes: ["death"],
     individualIds: [parents.father?.id, parents.mother?.id].filter(
       (id) => id !== undefined,
     ),
   });
 
   const eventsChildren = await fetchEvents(treeId, {
-    eventTypes: ["Birth", "Death"],
+    eventTypes: ["birth", "death"],
     individualIds: families
       .flatMap((family) => family.children)
       .map((child) => child.id),

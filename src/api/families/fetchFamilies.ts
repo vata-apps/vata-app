@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase";
 import { fetchIndividuals } from "../individuals/fetchIndividuals";
 
 interface Params {
+  familyIds?: string[];
   individualIds?: string[];
 }
 
@@ -11,6 +12,10 @@ export async function fetchFamilies(treeId: string, params: Params) {
     .from("families")
     .select("id, gedcom_id, husband_id, wife_id")
     .eq("tree_id", treeId);
+
+  if (params.familyIds) {
+    query = query.in("id", params.familyIds);
+  }
 
   if (params.individualIds) {
     query = query.or(

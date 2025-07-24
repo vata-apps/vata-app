@@ -34,7 +34,7 @@ export async function fetchEvents(
   }
 
   if (eventTypes) {
-    query = query.in("event_types.name", eventTypes);
+    query = query.in("event_types.key", eventTypes);
   }
 
   if (individualIds) {
