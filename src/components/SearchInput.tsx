@@ -1,7 +1,5 @@
-import { SearchIcon } from "lucide-react";
-
 import { ActionIcon, TextInput } from "@mantine/core";
-import { X } from "lucide-react";
+import { IconSearch, IconX } from "@tabler/icons-react";
 
 interface SearchInputProps {
   value: string;
@@ -26,7 +24,7 @@ export function SearchInput({
       maw={{ base: "100%", xs: "320px" }}
       placeholder={placeholder}
       rightSectionWidth={42}
-      leftSection={<SearchIcon size={18} />}
+      leftSection={<IconSearch size={18} />}
       rightSection={
         value && (
           <ActionIcon
@@ -36,7 +34,7 @@ export function SearchInput({
             size={32}
             variant="subtle"
           >
-            <X size={18} />
+            <IconX size={18} />
           </ActionIcon>
         )
       }

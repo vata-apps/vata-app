@@ -9,9 +9,9 @@ The `place_types` table defines the different types of places that can be record
 | id         | uuid                     | Primary key, automatically generated                        |
 | created_at | timestamp with time zone | Timestamp of record creation                                |
 | name       | text                     | Name of the place type                                      |
-| tree_id    | uuid                     | Reference to the tree this place type belongs to (NOT NULL) |
 | key        | text                     | Unique identifier for system place types (nullable)         |
 | is_system  | boolean                  | Indicates if this is a system type (default: false)         |
+| tree_id    | uuid                     | Reference to the tree this place type belongs to (NOT NULL) |
 
 ## Relationships
 

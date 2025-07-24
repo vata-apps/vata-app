@@ -29,8 +29,9 @@ This application is built using modern web technologies:
 
 - **Frontend**: React 19 with TypeScript
 - **Routing**: TanStack Router for type-safe routing
-- **Data Management**: TanStack Query for efficient data fetching
-- **Styling**: MantineUI library, Lucide for icons
+- **Data Management**: TanStack Query for efficient data fetching and caching
+- **Data Grids**: Mantine Table for advanced table features (sorting, filtering, pagination)
+- **Styling**: MantineUI library, Tabler icons, PostCSS
 - **Backend**: Supabase for database, authentication, and API
 - **Build Tool**: Vite for fast development and optimized builds
 
@@ -119,4 +120,5 @@ pnpm db:types
 - This project was built with the assistance of AI tools like Claude
 - This README file was also created and refined with AI assistance
 - UI components from Mantine
+- Tabler icons for all iconography
 - Supabase for backend infrastructure

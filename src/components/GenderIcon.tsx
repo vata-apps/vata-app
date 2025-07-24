@@ -1,5 +1,5 @@
 import { Enums } from "@/database.types";
-import { MarsIcon, VenusIcon } from "lucide-react";
+import { IconMars, IconVenus } from "@tabler/icons-react";
 
 export function GenderIcon({
   size,
@@ -8,6 +8,6 @@ export function GenderIcon({
   size?: number;
   gender: Enums<"gender">;
 }) {
-  if (gender === "female") return <VenusIcon size={size} />;
-  return <MarsIcon size={size} />;
+  if (gender === "female") return <IconVenus size={size} />;
+  return <IconMars size={size} />;
 }

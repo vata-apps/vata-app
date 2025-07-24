@@ -2,78 +2,43 @@
 
 The database includes several functions that provide complex data operations and aggregations.
 
-## get_event_participants
+## get_next_gedcom_id
 
-Returns detailed information about all participants in a specific event, including their roles and individual details.
-
-### Signature
-
-```sql
-get_event_participants(event_id: string) RETURNS Json
-```
-
-### Parameters
-
-- `event_id` (string): The UUID of the event to get participants for
-
-### Returns
-
-Returns a JSON object containing detailed event and participant information, including:
-
-- Event details (date, description, type, place)
-- All participants with their roles and individual information
-- Nested individual names and other details
-
-### Usage
-
-This function is useful for:
-
-- Displaying complete event details with all participants
-- Event detail pages
-- Generating event reports
-- API endpoints that need full event context
-
-## get_events_with_subjects
-
-Returns a paginated list of events with their subjects, supporting search and sorting.
+Returns the next available `gedcom_id` for a specific table and tree.
 
 ### Signature
 
 ```sql
-get_events_with_subjects(
-  search_text?: string,
-  page_number?: number,
-  sort_field?: string,
-  sort_direction?: string
-) RETURNS TABLE
+get_next_gedcom_id(table_name: string, tree_id: string) RETURNS number
 ```
 
 ### Parameters
 
-- `search_text` (optional string): Text to search in event descriptions, types, and places
-- `page_number` (optional number): Page number for pagination (default: 1)
-- `sort_field` (optional string): Field to sort by (date, event_type_name, place_name, etc.)
-- `sort_direction` (optional string): Sort direction ('asc' or 'desc')
+- `table_name` (string): The name of the table (e.g., 'individuals', 'families', 'events', 'places')
+- `tree_id` (string): The UUID of the tree
 
 ### Returns
 
-Returns a table with the following columns:
+- The next available `gedcom_id` (number) for the specified table and tree.
 
-- `id` (string): Event ID
-- `date` (string): Event date
-- `description` (string): Event description
-- `event_type_name` (string): Name of the event type
-- `place_name` (string): Name of the place where event occurred
-- `subjects` (string): Comma-separated list of subject names
+## get_current_gedcom_id
 
-### Usage
+Returns the current sequence value for a specific table and tree (for debugging or inspection).
 
-This function is useful for:
+### Signature
 
-- Event listing pages with search and pagination
-- Event browsing interfaces
-- Generating event summaries
-- API endpoints for event lists
+```sql
+get_current_gedcom_id(table_name: string, tree_id: string) RETURNS number
+```
+
+### Parameters
+
+- `table_name` (string): The name of the table
+- `tree_id` (string): The UUID of the tree
+
+### Returns
+
+- The current value of the `gedcom_id` sequence (number) for the specified table and tree.
 
 ## Notes
 

@@ -571,46 +571,6 @@ export type Database = {
         }
         Returns: number
       }
-      get_event_participants: {
-        Args: {
-          event_id: string
-        }
-        Returns: Json
-      }
-      get_events_with_subjects: {
-        Args: {
-          search_text?: string
-          page_number?: number
-          sort_field?: string
-          sort_direction?: string
-        }
-        Returns: {
-          id: string
-          date: string
-          description: string
-          event_type_name: string
-          place_name: string
-          subjects: string
-        }[]
-      }
-      get_events_with_subjects_filtered: {
-        Args: {
-          search_text?: string
-          page_number?: number
-          sort_field?: string
-          sort_direction?: string
-          place_filter_id?: string
-          family_filter_id?: string
-        }
-        Returns: {
-          id: string
-          date: string
-          description: string
-          event_type_name: string
-          place_name: string
-          subjects: string
-        }[]
-      }
       get_next_gedcom_id: {
         Args: {
           table_name: string
