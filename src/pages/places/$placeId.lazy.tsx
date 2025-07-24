@@ -76,21 +76,20 @@ function PlaceDetailPage() {
   }
 
   if (status === "error") {
+    if (error.message === "not_found") {
+      return (
+        <NotFoundState
+          title="Place Not Found"
+          description="This place doesn't exist or may have been removed."
+          backTo="/places"
+          backLabel="← Back to places"
+        />
+      );
+    }
     return (
       <ErrorState
         error={error}
         title="Something went wrong"
-        backTo="/places"
-        backLabel="← Back to places"
-      />
-    );
-  }
-
-  if (!place) {
-    return (
-      <NotFoundState
-        title="Place Not Found"
-        description="This place doesn't exist or may have been removed."
         backTo="/places"
         backLabel="← Back to places"
       />

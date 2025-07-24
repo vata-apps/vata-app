@@ -52,21 +52,20 @@ function IndividualDetailPage() {
   }
 
   if (status === "error") {
+    if (error.message === "not_found") {
+      return (
+        <NotFoundState
+          title="Individual Not Found"
+          description="This individual doesn't exist or may have been removed."
+          backTo="/individuals"
+          backLabel="← Back to individuals"
+        />
+      );
+    }
     return (
       <ErrorState
         error={error}
         title="Something went wrong"
-        backTo="/individuals"
-        backLabel="← Back to individuals"
-      />
-    );
-  }
-
-  if (!individual) {
-    return (
-      <NotFoundState
-        title="Individual Not Found"
-        description="This individual doesn't exist or may have been removed."
         backTo="/individuals"
         backLabel="← Back to individuals"
       />

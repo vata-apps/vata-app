@@ -5,8 +5,8 @@ export async function fetchIndividual(treeId: string, individualId: string) {
     individualIds: [individualId],
   });
 
-  if (individuals.length === 0) throw new Error("Individual not found");
-  if (individuals.length > 1) throw new Error("Multiple individuals found");
+  if (individuals.length === 0) throw new Error("not_found");
+  if (individuals.length > 1) throw new Error("multiple_found");
 
   return individuals[0];
 }

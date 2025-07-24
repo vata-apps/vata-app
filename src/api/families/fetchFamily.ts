@@ -5,8 +5,8 @@ export async function fetchFamily(treeId: string, familyId: string) {
     familyIds: [familyId],
   });
 
-  if (!families[0]) throw new Error("Family not found");
-  if (families.length > 1) throw new Error("Multiple families found");
+  if (!families[0]) throw new Error("not_found");
+  if (families.length > 1) throw new Error("multiple_found");
 
   return families[0];
 }

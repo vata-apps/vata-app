@@ -51,21 +51,21 @@ function FamilyPage() {
   }
 
   if (status === "error") {
+    if (error.message === "not_found") {
+      return (
+        <NotFoundState
+          title="Family Not Found"
+          description="This family doesn't exist or may have been removed."
+          backTo="/families"
+          backLabel="← Back to families"
+        />
+      );
+    }
+
     return (
       <ErrorState
         error={error}
         title="Something went wrong"
-        backTo="/families"
-        backLabel="← Back to families"
-      />
-    );
-  }
-
-  if (!family) {
-    return (
-      <NotFoundState
-        title="Family Not Found"
-        description="This family doesn't exist or may have been removed."
         backTo="/families"
         backLabel="← Back to families"
       />

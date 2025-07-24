@@ -45,21 +45,20 @@ function EventPage() {
   }
 
   if (status === "error") {
+    if (error.message === "not_found") {
+      return (
+        <NotFoundState
+          title="Event Not Found"
+          description="This event doesn't exist or may have been removed."
+          backTo="/events"
+          backLabel="← Back to events"
+        />
+      );
+    }
     return (
       <ErrorState
         error={error}
         title="Something went wrong"
-        backTo="/events"
-        backLabel="← Back to events"
-      />
-    );
-  }
-
-  if (!data) {
-    return (
-      <NotFoundState
-        title="Event Not Found"
-        description="This event doesn't exist or may have been removed."
         backTo="/events"
         backLabel="← Back to events"
       />
