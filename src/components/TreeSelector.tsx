@@ -1,4 +1,4 @@
-import { useTree } from "@/lib/use-tree";
+import { useTree } from "@/hooks/use-tree";
 import { Select } from "@mantine/core";
 
 export const TreeSelector = () => {

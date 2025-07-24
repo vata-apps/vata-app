@@ -1,6 +1,6 @@
 import { fetchIndividuals } from "@/api/individuals/fetchIndividuals";
 import { IndividualGender, IndividualSort } from "@/api/individuals/types";
-import { useTree } from "@/lib/use-tree";
+import { useTree } from "@/hooks/use-tree";
 import { Loader, Stack, Table } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";

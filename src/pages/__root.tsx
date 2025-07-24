@@ -1,6 +1,6 @@
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeToggle } from "@/components/theme-toggle/ThemeToggle";
 import { TreeSelector } from "@/components/TreeSelector";
-import { TreeProvider } from "@/lib/tree-provider";
+import { TreeProvider } from "@/contexts/tree/tree-provider";
 import {
   AppShell,
   Burger,

@@ -1,12 +1,7 @@
 import { fetchFamilyForPage } from "@/api/families/fetchFamilyForPage";
-import {
-  ErrorState,
-  LoadingState,
-  NotFoundState,
-  PageHeader,
-} from "@/components";
+import { ErrorState, LoadingState, PageHeader } from "@/components";
 import { CardIndividual } from "@/components/CardIndividual";
-import { useTree } from "@/lib/use-tree";
+import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 import {
   Button,
@@ -51,25 +46,7 @@ function FamilyPage() {
   }
 
   if (status === "error") {
-    if (error.message === "not_found") {
-      return (
-        <NotFoundState
-          title="Family Not Found"
-          description="This family doesn't exist or may have been removed."
-          backTo="/families"
-          backLabel="← Back to families"
-        />
-      );
-    }
-
-    return (
-      <ErrorState
-        error={error}
-        title="Something went wrong"
-        backTo="/families"
-        backLabel="← Back to families"
-      />
-    );
+    return <ErrorState error={error} backTo="/families" />;
   }
 
   const husbandName = family.husband ? displayName(family.husband) : "Unknown";

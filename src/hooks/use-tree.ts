@@ -1,6 +1,6 @@
-import type { TreeContextValue } from "@/types/tree";
 import { useContext } from "react";
-import { TreeContext } from "./tree-context";
+import { TreeContext } from "../contexts/tree/tree-context";
+import type { TreeContextValue } from "../contexts/tree/types";
 
 export const useTree = (): TreeContextValue => {
   const context = useContext(TreeContext);

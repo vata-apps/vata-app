@@ -1,9 +1,9 @@
-import { fetchTrees } from "@/api/fetchTrees";
-import type { TreeContextValue } from "@/types/tree";
+import { fetchTrees } from "@/api/trees/fetchTrees";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { TreeContext } from "./tree-context";
+import type { TreeContextValue } from "./types";
 
 const STORAGE_KEY = "vata-selected-tree-id";
 

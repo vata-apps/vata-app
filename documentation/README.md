@@ -5,8 +5,8 @@ This folder contains comprehensive documentation for the Vata application. The d
 ## Structure
 
 - `/database-schema` - Contains detailed information about database tables, relationships, and security settings
-- `/improvements` - Contains documentation about future improvements, optimizations, and standardizations
 - `/best-practices` - Contains documentation about coding standards and best practices for the project
+- `/decision-records` - Contains documentation about important technical decisions and their rationales
 - (Other folders will be listed here as they are added)
 
 ## Database Schema
@@ -25,7 +25,6 @@ The documentation in this folder serves several key purposes:
 1. **Knowledge Sharing** - Helps team members understand different aspects of the application
 2. **Decision Records** - Documents important technical decisions and their rationales
 3. **Best Practices** - Outlines coding standards and best practices specific to this project
-4. **Future Planning** - Contains roadmaps and improvement plans for various parts of the application
 
 ## Contributing
 

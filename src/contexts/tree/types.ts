@@ -1,4 +1,4 @@
-import type { fetchTrees } from "@/api/fetchTrees";
+import type { fetchTrees } from "@/api/trees/fetchTrees";
 
 type TreesResponse = Awaited<ReturnType<typeof fetchTrees>>;
 type Tree = TreesResponse[number];

@@ -42,7 +42,11 @@ export function PageHeader({
             {metadata?.map(({ title, value }) => (
               <Fragment key={title}>
                 <Text c="dimmed">{title}</Text>
-                <Text>{value}</Text>
+                {typeof value === "string" ? (
+                  <Text>{value}</Text>
+                ) : (
+                  <Group>{value}</Group>
+                )}
               </Fragment>
             ))}
           </Box>

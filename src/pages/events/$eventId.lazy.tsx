@@ -1,12 +1,7 @@
 import { fetchEventForPage } from "@/api/events/fetchEventForPage";
-import {
-  ErrorState,
-  LoadingState,
-  NotFoundState,
-  PageHeader,
-} from "@/components";
+import { ErrorState, LoadingState, PageHeader } from "@/components";
 import { CardIndividual } from "@/components/CardIndividual";
-import { useTree } from "@/lib/use-tree";
+import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 
 import {
@@ -45,24 +40,7 @@ function EventPage() {
   }
 
   if (status === "error") {
-    if (error.message === "not_found") {
-      return (
-        <NotFoundState
-          title="Event Not Found"
-          description="This event doesn't exist or may have been removed."
-          backTo="/events"
-          backLabel="← Back to events"
-        />
-      );
-    }
-    return (
-      <ErrorState
-        error={error}
-        title="Something went wrong"
-        backTo="/events"
-        backLabel="← Back to events"
-      />
-    );
+    return <ErrorState error={error} backTo="/events" />;
   }
 
   const subjects = data.participants.filter((participant) =>

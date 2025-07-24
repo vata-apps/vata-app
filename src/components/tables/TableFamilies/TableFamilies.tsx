@@ -1,5 +1,5 @@
 import { fetchFamilies } from "@/api/families/fetchFamilies";
-import { useTree } from "@/lib/use-tree";
+import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 import { Loader, Stack, Table } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";

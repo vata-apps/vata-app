@@ -1,12 +1,7 @@
 import { Place } from "@/api/places/fetchPlace";
 import { fetchPlaceForPage } from "@/api/places/fetchPlaceForPage";
-import {
-  ErrorState,
-  LoadingState,
-  NotFoundState,
-  PageHeader,
-} from "@/components";
-import { useTree } from "@/lib/use-tree";
+import { ErrorState, LoadingState, PageHeader } from "@/components";
+import { useTree } from "@/hooks/use-tree";
 import {
   Button,
   Card,
@@ -76,24 +71,7 @@ function PlaceDetailPage() {
   }
 
   if (status === "error") {
-    if (error.message === "not_found") {
-      return (
-        <NotFoundState
-          title="Place Not Found"
-          description="This place doesn't exist or may have been removed."
-          backTo="/places"
-          backLabel="← Back to places"
-        />
-      );
-    }
-    return (
-      <ErrorState
-        error={error}
-        title="Something went wrong"
-        backTo="/places"
-        backLabel="← Back to places"
-      />
-    );
+    return <ErrorState error={error} backTo="/places" />;
   }
 
   return (

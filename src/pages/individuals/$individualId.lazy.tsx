@@ -1,12 +1,7 @@
 import { fetchIndividualForPage } from "@/api/individuals/fetchIndividualForPage";
-import {
-  ErrorState,
-  LoadingState,
-  NotFoundState,
-  PageHeader,
-} from "@/components";
+import { ErrorState, LoadingState, PageHeader } from "@/components";
 import { CardIndividual } from "@/components/CardIndividual";
-import { useTree } from "@/lib/use-tree";
+import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 import {
   Button,
@@ -52,24 +47,7 @@ function IndividualDetailPage() {
   }
 
   if (status === "error") {
-    if (error.message === "not_found") {
-      return (
-        <NotFoundState
-          title="Individual Not Found"
-          description="This individual doesn't exist or may have been removed."
-          backTo="/individuals"
-          backLabel="← Back to individuals"
-        />
-      );
-    }
-    return (
-      <ErrorState
-        error={error}
-        title="Something went wrong"
-        backTo="/individuals"
-        backLabel="← Back to individuals"
-      />
-    );
+    return <ErrorState error={error} backTo="/individuals" />;
   }
 
   return (

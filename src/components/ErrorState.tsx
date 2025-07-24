@@ -1,39 +1,45 @@
 import { Anchor, Center, Container, Stack, Text, Title } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
-import { PageCard } from "./PageCard";
 
 interface ErrorStateProps {
   readonly error: Error;
-  readonly title?: string;
-  readonly backTo?: string;
-  readonly backLabel?: string;
+  readonly backTo: string;
 }
 
-export function ErrorState({
-  error,
-  title = "Something went wrong",
-  backTo,
-  backLabel = "← Go back",
-}: ErrorStateProps) {
+export function ErrorState({ error, backTo }: ErrorStateProps) {
+  const title = (() => {
+    switch (error.message) {
+      case "not_found":
+        return "Not Found";
+      default:
+        return "Something went wrong";
+    }
+  })();
+
+  const description = (() => {
+    switch (error.message) {
+      case "not_found":
+        return "The item you're looking for doesn't exist or may have been removed.";
+      default:
+        return "An error occurred while loading the item.";
+    }
+  })();
+
   return (
     <Container fluid py="md">
-      <PageCard>
-        <Center py="xl">
-          <Stack align="center" gap="lg">
-            <Title order={3} c="red">
-              {title}
-            </Title>
-            <Text c="dimmed" ta="center">
-              {error.message}
-            </Text>
-            {backTo && (
-              <Anchor component={Link} to={backTo}>
-                {backLabel}
-              </Anchor>
-            )}
-          </Stack>
-        </Center>
-      </PageCard>
+      <Center py="xl">
+        <Stack align="center" gap="lg">
+          <Title order={3} c="red">
+            {title}
+          </Title>
+          <Text c="dimmed" ta="center">
+            {description}
+          </Text>
+          <Anchor component={Link} to={backTo}>
+            ← Go back
+          </Anchor>
+        </Stack>
+      </Center>
     </Container>
   );
 }
