@@ -13,7 +13,10 @@ export async function fetchEvents(
   treeId: string,
   { eventIds, eventTypes, individualIds, placeIds }: Params = {},
 ) {
-  let query = supabase.from("events").select(`
+  let query = supabase
+    .from("events")
+    .select(
+      `
     id, 
     date,
     gedcom_id,
@@ -27,7 +30,9 @@ export async function fetchEvents(
       id,
       individual_id
     )
-  `);
+  `,
+    )
+    .eq("tree_id", treeId);
 
   if (eventIds) {
     query = query.in("id", eventIds);
