@@ -5,7 +5,6 @@ import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 import {
   Button,
-  Code,
   Container,
   Grid,
   Group,
@@ -58,11 +57,11 @@ function FamilyPage() {
       <Stack gap="xl" w="100%">
         <PageHeader
           avatar={<IconUsersGroup size={48} />}
+          gedcomId={family.gedcomId}
           metadata={[
             { title: "Husband", value: husbandName },
             { title: "Wife", value: wifeName },
           ]}
-          rightSection={<Code>{family.gedcomId}</Code>}
           title={familyName}
         />
 

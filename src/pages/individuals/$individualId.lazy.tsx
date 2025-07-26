@@ -5,7 +5,6 @@ import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 import {
   Button,
-  Code,
   Container,
   Grid,
   Group,
@@ -55,6 +54,7 @@ function IndividualDetailPage() {
       <Stack gap="xl" w="100%">
         <PageHeader
           avatar={displayName(individual)}
+          gedcomId={individual.gedcomId ?? undefined}
           metadata={[
             {
               title: "Birth",
@@ -133,7 +133,6 @@ function IndividualDetailPage() {
               ),
             },
           ]}
-          rightSection={<Code>{individual.gedcomId}</Code>}
           title={displayName(individual)}
         />
 

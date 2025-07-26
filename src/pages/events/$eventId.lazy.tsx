@@ -4,15 +4,7 @@ import { CardIndividual } from "@/components/CardIndividual";
 import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 
-import {
-  Button,
-  Code,
-  Container,
-  Grid,
-  Group,
-  Stack,
-  Title,
-} from "@mantine/core";
+import { Button, Container, Grid, Group, Stack, Title } from "@mantine/core";
 import { IconCalendar } from "@tabler/icons-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
@@ -55,12 +47,12 @@ function EventPage() {
       <Stack gap="xl" w="100%">
         <PageHeader
           avatar={<IconCalendar size={48} />}
-          title={data.title}
-          rightSection={<Code>{data.gedcomId}</Code>}
+          gedcomId={data.gedcomId}
           metadata={[
             { title: "Place", value: data.place?.name ?? "Unknown" },
             { title: "Date", value: data.date ?? "Unknown" },
           ]}
+          title={data.title}
         />
 
         <Grid gutter={64}>

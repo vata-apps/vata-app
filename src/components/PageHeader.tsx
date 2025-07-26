@@ -1,9 +1,18 @@
-import { Avatar, Box, Grid, Group, Stack, Text, Title } from "@mantine/core";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Grid,
+  Group,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { Fragment } from "react";
 
 interface PageHeaderProps {
   avatar?: string | React.ReactNode;
-
+  gedcomId?: string;
   metadata?: { title: string; value: string | React.ReactNode }[];
   rightSection?: React.ReactNode;
   title: string;
@@ -11,6 +20,7 @@ interface PageHeaderProps {
 
 export function PageHeader({
   avatar,
+  gedcomId,
   metadata,
   rightSection,
   title,
@@ -28,7 +38,10 @@ export function PageHeader({
         <Stack gap={0} style={{ flexGrow: 1 }}>
           <Grid grow>
             <Grid.Col span={10} style={{ flexGrow: 1 }}>
-              <Title order={2}>{title}</Title>
+              <Group align="center">
+                <Title order={2}>{title}</Title>
+                {gedcomId && <Badge variant="default">{gedcomId}</Badge>}
+              </Group>
             </Grid.Col>
             <Grid.Col span={2} style={{ flexGrow: 0 }}>
               <Group justify="flex-end">{rightSection}</Group>

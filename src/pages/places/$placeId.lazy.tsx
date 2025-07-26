@@ -5,7 +5,6 @@ import { useTree } from "@/hooks/use-tree";
 import {
   Button,
   Card,
-  Code,
   Container,
   Grid,
   Stack,
@@ -79,6 +78,7 @@ function PlaceDetailPage() {
       <Stack gap="xl" w="100%">
         <PageHeader
           avatar={<IconMapPin size={48} />}
+          gedcomId={place.gedcomId}
           metadata={[
             { title: "Type", value: place.placeType.name },
             {
@@ -89,7 +89,6 @@ function PlaceDetailPage() {
                   : "N/A",
             },
           ]}
-          rightSection={<Code>{place.gedcomId}</Code>}
           title={place.name}
         />
 
