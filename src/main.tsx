@@ -6,6 +6,7 @@ import { queryClient } from "./lib/query-client";
 import { router } from "./router";
 
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 
 // Ensure the router is ready before rendering
 async function initializeApp() {

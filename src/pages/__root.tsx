@@ -10,6 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { Notifications } from "@mantine/notifications";
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
 
 export const Route = createRootRoute({
@@ -21,6 +22,7 @@ function RootComponent() {
 
   return (
     <MantineProvider defaultColorScheme="dark">
+      <Notifications />
       <TreeProvider>
         <AppShell
           header={{ height: 60 }}

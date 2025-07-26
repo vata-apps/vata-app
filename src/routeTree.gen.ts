@@ -21,6 +21,7 @@ const PlacesIndexLazyImport = createFileRoute('/places/')()
 const IndividualsIndexLazyImport = createFileRoute('/individuals/')()
 const FamiliesIndexLazyImport = createFileRoute('/families/')()
 const EventsIndexLazyImport = createFileRoute('/events/')()
+const PlacesAddLazyImport = createFileRoute('/places/add')()
 const PlacesPlaceIdLazyImport = createFileRoute('/places/$placeId')()
 const IndividualsIndividualIdLazyImport = createFileRoute(
   '/individuals/$individualId',
@@ -61,6 +62,12 @@ const EventsIndexLazyRoute = EventsIndexLazyImport.update({
   path: '/events/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./pages/events/index.lazy').then((d) => d.Route))
+
+const PlacesAddLazyRoute = PlacesAddLazyImport.update({
+  id: '/places/add',
+  path: '/places/add',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./pages/places/add.lazy').then((d) => d.Route))
 
 const PlacesPlaceIdLazyRoute = PlacesPlaceIdLazyImport.update({
   id: '/places/$placeId',
@@ -134,6 +141,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlacesPlaceIdLazyImport
       parentRoute: typeof rootRoute
     }
+    '/places/add': {
+      id: '/places/add'
+      path: '/places/add'
+      fullPath: '/places/add'
+      preLoaderRoute: typeof PlacesAddLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/events/': {
       id: '/events/'
       path: '/events'
@@ -173,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/families/$familyId': typeof FamiliesFamilyIdLazyRoute
   '/individuals/$individualId': typeof IndividualsIndividualIdLazyRoute
   '/places/$placeId': typeof PlacesPlaceIdLazyRoute
+  '/places/add': typeof PlacesAddLazyRoute
   '/events': typeof EventsIndexLazyRoute
   '/families': typeof FamiliesIndexLazyRoute
   '/individuals': typeof IndividualsIndexLazyRoute
@@ -185,6 +200,7 @@ export interface FileRoutesByTo {
   '/families/$familyId': typeof FamiliesFamilyIdLazyRoute
   '/individuals/$individualId': typeof IndividualsIndividualIdLazyRoute
   '/places/$placeId': typeof PlacesPlaceIdLazyRoute
+  '/places/add': typeof PlacesAddLazyRoute
   '/events': typeof EventsIndexLazyRoute
   '/families': typeof FamiliesIndexLazyRoute
   '/individuals': typeof IndividualsIndexLazyRoute
@@ -198,6 +214,7 @@ export interface FileRoutesById {
   '/families/$familyId': typeof FamiliesFamilyIdLazyRoute
   '/individuals/$individualId': typeof IndividualsIndividualIdLazyRoute
   '/places/$placeId': typeof PlacesPlaceIdLazyRoute
+  '/places/add': typeof PlacesAddLazyRoute
   '/events/': typeof EventsIndexLazyRoute
   '/families/': typeof FamiliesIndexLazyRoute
   '/individuals/': typeof IndividualsIndexLazyRoute
@@ -212,6 +229,7 @@ export interface FileRouteTypes {
     | '/families/$familyId'
     | '/individuals/$individualId'
     | '/places/$placeId'
+    | '/places/add'
     | '/events'
     | '/families'
     | '/individuals'
@@ -223,6 +241,7 @@ export interface FileRouteTypes {
     | '/families/$familyId'
     | '/individuals/$individualId'
     | '/places/$placeId'
+    | '/places/add'
     | '/events'
     | '/families'
     | '/individuals'
@@ -234,6 +253,7 @@ export interface FileRouteTypes {
     | '/families/$familyId'
     | '/individuals/$individualId'
     | '/places/$placeId'
+    | '/places/add'
     | '/events/'
     | '/families/'
     | '/individuals/'
@@ -247,6 +267,7 @@ export interface RootRouteChildren {
   FamiliesFamilyIdLazyRoute: typeof FamiliesFamilyIdLazyRoute
   IndividualsIndividualIdLazyRoute: typeof IndividualsIndividualIdLazyRoute
   PlacesPlaceIdLazyRoute: typeof PlacesPlaceIdLazyRoute
+  PlacesAddLazyRoute: typeof PlacesAddLazyRoute
   EventsIndexLazyRoute: typeof EventsIndexLazyRoute
   FamiliesIndexLazyRoute: typeof FamiliesIndexLazyRoute
   IndividualsIndexLazyRoute: typeof IndividualsIndexLazyRoute
@@ -259,6 +280,7 @@ const rootRouteChildren: RootRouteChildren = {
   FamiliesFamilyIdLazyRoute: FamiliesFamilyIdLazyRoute,
   IndividualsIndividualIdLazyRoute: IndividualsIndividualIdLazyRoute,
   PlacesPlaceIdLazyRoute: PlacesPlaceIdLazyRoute,
+  PlacesAddLazyRoute: PlacesAddLazyRoute,
   EventsIndexLazyRoute: EventsIndexLazyRoute,
   FamiliesIndexLazyRoute: FamiliesIndexLazyRoute,
   IndividualsIndexLazyRoute: IndividualsIndexLazyRoute,
@@ -280,6 +302,7 @@ export const routeTree = rootRoute
         "/families/$familyId",
         "/individuals/$individualId",
         "/places/$placeId",
+        "/places/add",
         "/events/",
         "/families/",
         "/individuals/",
@@ -300,6 +323,9 @@ export const routeTree = rootRoute
     },
     "/places/$placeId": {
       "filePath": "places/$placeId.lazy.tsx"
+    },
+    "/places/add": {
+      "filePath": "places/add.lazy.tsx"
     },
     "/events/": {
       "filePath": "events/index.lazy.tsx"

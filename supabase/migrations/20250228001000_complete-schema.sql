@@ -516,6 +516,15 @@ grant trigger on table "public"."places" to "service_role";
 grant truncate on table "public"."places" to "service_role";
 grant update on table "public"."places" to "service_role";
 
+-- Grant permissions to public role for places table
+grant delete on table "public"."places" to "public";
+grant insert on table "public"."places" to "public";
+grant references on table "public"."places" to "public";
+grant select on table "public"."places" to "public";
+grant trigger on table "public"."places" to "public";
+grant truncate on table "public"."places" to "public";
+grant update on table "public"."places" to "public";
+
 grant delete on table "public"."place_types" to "anon";
 grant insert on table "public"."place_types" to "anon";
 grant references on table "public"."place_types" to "anon";
@@ -537,6 +546,15 @@ grant select on table "public"."place_types" to "service_role";
 grant trigger on table "public"."place_types" to "service_role";
 grant truncate on table "public"."place_types" to "service_role";
 grant update on table "public"."place_types" to "service_role";
+
+-- Grant permissions to public role for place_types table
+grant delete on table "public"."place_types" to "public";
+grant insert on table "public"."place_types" to "public";
+grant references on table "public"."place_types" to "public";
+grant select on table "public"."place_types" to "public";
+grant trigger on table "public"."place_types" to "public";
+grant truncate on table "public"."place_types" to "public";
+grant update on table "public"."place_types" to "public";
 
 -- NEW EVENT SYSTEM GRANTS
 
@@ -694,10 +712,54 @@ for select
 to public
 using (true);
 
+create policy "Enable insert access for all users"
+on "public"."places"
+as permissive
+for insert
+to public
+with check (true);
+
+create policy "Enable update access for all users"
+on "public"."places"
+as permissive
+for update
+to public
+using (true)
+with check (true);
+
+create policy "Enable delete access for all users"
+on "public"."places"
+as permissive
+for delete
+to public
+using (true);
+
 create policy "Enable read access for all users"
 on "public"."place_types"
 as permissive
 for select
+to public
+using (true);
+
+create policy "Enable insert access for all users"
+on "public"."place_types"
+as permissive
+for insert
+to public
+with check (true);
+
+create policy "Enable update access for all users"
+on "public"."place_types"
+as permissive
+for update
+to public
+using (true)
+with check (true);
+
+create policy "Enable delete access for all users"
+on "public"."place_types"
+as permissive
+for delete
 to public
 using (true);
 
@@ -745,4 +807,10 @@ GRANT EXECUTE ON FUNCTION set_family_gedcom_id() TO anon, authenticated, service
 GRANT EXECUTE ON FUNCTION set_event_gedcom_id() TO anon, authenticated, service_role;
 GRANT EXECUTE ON FUNCTION set_place_gedcom_id() TO anon, authenticated, service_role;
 GRANT EXECUTE ON FUNCTION cleanup_tree_sequences() TO anon, authenticated, service_role;
-GRANT EXECUTE ON FUNCTION get_current_gedcom_id(text, uuid) TO anon, authenticated, service_role; 
+GRANT EXECUTE ON FUNCTION get_current_gedcom_id(text, uuid) TO anon, authenticated, service_role;
+
+-- Grant schema usage permissions
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT USAGE ON SCHEMA public TO public;
+GRANT CREATE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT CREATE ON SCHEMA public TO public; 
