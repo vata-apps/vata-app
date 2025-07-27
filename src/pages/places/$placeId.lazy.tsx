@@ -59,12 +59,15 @@ function PlaceDetailPage() {
     data: place,
     status,
     error,
+    ...rest
   } = useQuery({
-    queryKey: ["place", placeId],
+    queryKey: ["placeForPage", placeId],
     queryFn: () => fetchPlaceForPage(currentTreeId ?? "", placeId),
     placeholderData: keepPreviousData,
+    enabled: Boolean(currentTreeId && placeId),
   });
 
+  console.log({ status, error, data: place, ...rest });
   if (status === "pending") {
     return <LoadingState message="Loading place details..." />;
   }
@@ -89,6 +92,15 @@ function PlaceDetailPage() {
                   : "N/A",
             },
           ]}
+          rightSection={
+            <Button
+              component={Link}
+              to={`/places/${placeId}/edit`}
+              variant="filled"
+            >
+              Edit
+            </Button>
+          }
           title={place.name}
         />
 
