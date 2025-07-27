@@ -59,7 +59,6 @@ function PlaceDetailPage() {
     data: place,
     status,
     error,
-    ...rest
   } = useQuery({
     queryKey: ["placeForPage", placeId],
     queryFn: () => fetchPlaceForPage(currentTreeId ?? "", placeId),
@@ -67,7 +66,6 @@ function PlaceDetailPage() {
     enabled: Boolean(currentTreeId && placeId),
   });
 
-  console.log({ status, error, data: place, ...rest });
   if (status === "pending") {
     return <LoadingState message="Loading place details..." />;
   }
