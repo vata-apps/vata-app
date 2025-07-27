@@ -1,8 +1,16 @@
 import { fetchPlace } from "@/api/places/fetchPlace";
-import { ErrorState, LoadingState, PageHeader, PlaceForm } from "@/components";
+import { updatePlace } from "@/api/places/updatePlace";
+import {
+  ErrorState,
+  LoadingState,
+  PageHeader,
+  PlaceForm,
+  type PlaceFormData,
+} from "@/components";
 import { useTree } from "@/hooks/use-tree";
 import { Container, Stack } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
+import { showNotification } from "@mantine/notifications";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createLazyFileRoute,
   useNavigate,
@@ -17,6 +25,7 @@ function PlaceEditPage() {
   const { placeId } = useParams({ from: "/places/$placeId_/edit" });
   const { currentTreeId } = useTree();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Fetch the current place data
   const {
@@ -27,6 +36,44 @@ function PlaceEditPage() {
     queryKey: ["place", placeId],
     queryFn: () => fetchPlace(currentTreeId ?? "", placeId),
     enabled: Boolean(currentTreeId && placeId),
+  });
+
+  const updatePlaceMutation = useMutation({
+    mutationFn: (data: PlaceFormData) => {
+      return updatePlace(currentTreeId!, placeId, {
+        name: data.name,
+        typeId: data.placeTypeId,
+        parentId: data.parentPlaceId || undefined,
+        latitude: data.latitude || undefined,
+        longitude: data.longitude || undefined,
+      });
+    },
+    onSuccess: async (_, variables) => {
+      showNotification({
+        title: "Success",
+        message: `Place "${variables.name}" updated successfully`,
+        color: "green",
+      });
+
+      // Invalidate all related queries that could be affected by the place update
+      queryClient.invalidateQueries({ queryKey: ["placeForPage", placeId] });
+      queryClient.invalidateQueries({ queryKey: ["place", placeId] });
+      queryClient.invalidateQueries({ queryKey: ["places", currentTreeId] });
+
+      navigate({ to: `/places/${placeId}` });
+    },
+    onError: (error) => {
+      const errorMessage = (() => {
+        if (error instanceof Error) return error.message;
+        return "An unknown error occurred";
+      })();
+
+      showNotification({
+        title: "Error",
+        message: `Failed to update place: ${errorMessage}`,
+        color: "red",
+      });
+    },
   });
 
   if (status === "pending") {
@@ -43,6 +90,7 @@ function PlaceEditPage() {
 
   // Transform place data to match PlaceForm format
   const initialValues = {
+    id: place.id,
     name: place.name,
     placeTypeId: place.placeType.id,
     parentPlaceId: place.parentId || "",
@@ -50,11 +98,11 @@ function PlaceEditPage() {
     longitude: place.longitude?.toString() || "",
   };
 
-  const handleCancel = () => {
-    navigate({ to: `/places/${placeId}` });
+  const handleSubmit = async (values: PlaceFormData) => {
+    await updatePlaceMutation.mutateAsync(values);
   };
 
-  const handleSuccess = () => {
+  const handleCancel = () => {
     navigate({ to: `/places/${placeId}` });
   };
 
@@ -64,10 +112,10 @@ function PlaceEditPage() {
         <PageHeader title={`Edit Place: ${place.name}`} />
         <PlaceForm
           mode="edit"
-          placeId={placeId}
           initialValues={initialValues}
-          onSuccess={handleSuccess}
+          onSubmit={handleSubmit}
           onCancel={handleCancel}
+          isPending={updatePlaceMutation.isPending}
         />
       </Stack>
     </Container>

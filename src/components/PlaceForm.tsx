@@ -1,7 +1,5 @@
-import { createPlace } from "@/api/places/createPlace";
 import { fetchPlaceTypes } from "@/api/places/fetchPlaceTypes";
 import { fetchPlaces } from "@/api/places/fetchPlaces";
-import { updatePlace } from "@/api/places/updatePlace";
 import { useTree } from "@/hooks/use-tree";
 import {
   Button,
@@ -13,12 +11,11 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { showNotification } from "@mantine/notifications";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
-interface PlaceFormData {
+export interface PlaceFormData {
+  id?: string;
   name: string;
   placeTypeId: string;
   parentPlaceId: string;
@@ -28,22 +25,20 @@ interface PlaceFormData {
 
 interface PlaceFormProps {
   mode: "create" | "edit";
-  placeId?: string; // Required for edit mode
   initialValues?: Partial<PlaceFormData>;
-  onSuccess?: () => void;
-  onCancel?: () => void;
+  onSubmit: (values: PlaceFormData) => Promise<void>;
+  onCancel: () => void;
+  isPending?: boolean;
 }
 
 export function PlaceForm({
   mode,
-  placeId,
   initialValues,
-  onSuccess,
+  onSubmit,
   onCancel,
+  isPending = false,
 }: PlaceFormProps) {
   const { currentTreeId } = useTree();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [createAnother, setCreateAnother] = useState(false);
 
   // Fetch place types from the database
@@ -58,100 +53,6 @@ export function PlaceForm({
     queryKey: ["places", currentTreeId],
     queryFn: () => fetchPlaces(currentTreeId ?? ""),
     enabled: Boolean(currentTreeId),
-  });
-
-  // Create place mutation
-  const createPlaceMutation = useMutation({
-    mutationFn: (data: PlaceFormData) => {
-      return createPlace(currentTreeId!, {
-        name: data.name,
-        typeId: data.placeTypeId,
-        parentId: data.parentPlaceId || undefined,
-        latitude: data.latitude || undefined,
-        longitude: data.longitude || undefined,
-      });
-    },
-    onSuccess: (_, variables) => {
-      // Invalidate all related queries that could be affected by the place creation
-      queryClient.invalidateQueries({ queryKey: ["places", currentTreeId] });
-
-      showNotification({
-        title: "Success",
-        message: `Place "${variables.name}" created successfully`,
-        color: "green",
-      });
-
-      if (createAnother) {
-        form.setValues({
-          name: "",
-          placeTypeId: "",
-          parentPlaceId: "",
-          latitude: "",
-          longitude: "",
-        });
-      } else {
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          navigate({ to: "/places" });
-        }
-      }
-    },
-    onError: (error) => {
-      const errorMessage = (() => {
-        if (error instanceof Error) return error.message;
-        return "An unknown error occurred";
-      })();
-
-      showNotification({
-        title: "Error",
-        message: `Failed to create place: ${errorMessage}`,
-        color: "red",
-      });
-    },
-  });
-
-  // Update place mutation
-  const updatePlaceMutation = useMutation({
-    mutationFn: (data: PlaceFormData) => {
-      if (!placeId) throw new Error("Place ID is required for update");
-      return updatePlace(currentTreeId!, placeId, {
-        name: data.name,
-        typeId: data.placeTypeId,
-        parentId: data.parentPlaceId || undefined,
-        latitude: data.latitude || undefined,
-        longitude: data.longitude || undefined,
-      });
-    },
-    onSuccess: async (_, variables) => {
-      showNotification({
-        title: "Success",
-        message: `Place "${variables.name}" updated successfully`,
-        color: "green",
-      });
-
-      // Invalidate all related queries that could be affected by the place update
-      queryClient.invalidateQueries({ queryKey: ["placeForPage", placeId] });
-      queryClient.invalidateQueries({ queryKey: ["place", placeId] });
-
-      if (onSuccess) {
-        onSuccess();
-      } else {
-        navigate({ to: `/places/${placeId}` });
-      }
-    },
-    onError: (error) => {
-      const errorMessage = (() => {
-        if (error instanceof Error) return error.message;
-        return "An unknown error occurred";
-      })();
-
-      showNotification({
-        title: "Error",
-        message: `Failed to update place: ${errorMessage}`,
-        color: "red",
-      });
-    },
   });
 
   const form = useForm({
@@ -187,23 +88,19 @@ export function PlaceForm({
   });
 
   const handleSubmit = async (values: typeof form.values) => {
-    if (mode === "create") {
-      await createPlaceMutation.mutateAsync(values);
-    } else {
-      await updatePlaceMutation.mutateAsync(values);
+    await onSubmit(values);
+
+    // Reset form if creating another place
+    if (mode === "create" && createAnother) {
+      form.setValues({
+        name: "",
+        placeTypeId: "",
+        parentPlaceId: "",
+        latitude: "",
+        longitude: "",
+      });
     }
   };
-
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel();
-    } else {
-      navigate({ to: "/places" });
-    }
-  };
-
-  const isPending =
-    createPlaceMutation.isPending || updatePlaceMutation.isPending;
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -245,8 +142,8 @@ export function PlaceForm({
             { value: "", label: "Select a place" },
             ...(places.data?.reduce(
               (acc, place) => {
-                // Filter out the current place when in edit mode
-                if (mode === "edit" && place.id === placeId) {
+                // Skip the current place if editing to prevent circular references
+                if (mode === "edit" && initialValues?.id === place.id) {
                   return acc;
                 }
 
@@ -304,7 +201,7 @@ export function PlaceForm({
           <Button type="submit" loading={isPending} disabled={isPending}>
             {mode === "create" ? "Create Place" : "Update Place"}
           </Button>
-          <Button variant="light" onClick={handleCancel} disabled={isPending}>
+          <Button variant="light" onClick={onCancel} disabled={isPending}>
             Cancel
           </Button>
           {mode === "create" && (
