@@ -10,192 +10,92 @@
 
 import { createFileRoute } from '@tanstack/react-router'
 
-// Import Routes
+import { Route as rootRouteImport } from './pages/__root'
+import { Route as IndexRouteImport } from './pages/index'
 
-import { Route as rootRoute } from './pages/__root'
-import { Route as IndexImport } from './pages/index'
-
-// Create Virtual Routes
-
-const PlacesIndexLazyImport = createFileRoute('/places/')()
-const IndividualsIndexLazyImport = createFileRoute('/individuals/')()
-const FamiliesIndexLazyImport = createFileRoute('/families/')()
-const EventsIndexLazyImport = createFileRoute('/events/')()
-const PlacesAddLazyImport = createFileRoute('/places/add')()
-const PlacesPlaceIdLazyImport = createFileRoute('/places/$placeId')()
-const IndividualsIndividualIdLazyImport = createFileRoute(
+const PlacesIndexLazyRouteImport = createFileRoute('/places/')()
+const IndividualsIndexLazyRouteImport = createFileRoute('/individuals/')()
+const FamiliesIndexLazyRouteImport = createFileRoute('/families/')()
+const EventsIndexLazyRouteImport = createFileRoute('/events/')()
+const PlacesAddLazyRouteImport = createFileRoute('/places/add')()
+const PlacesPlaceIdLazyRouteImport = createFileRoute('/places/$placeId')()
+const IndividualsIndividualIdLazyRouteImport = createFileRoute(
   '/individuals/$individualId',
 )()
-const FamiliesFamilyIdLazyImport = createFileRoute('/families/$familyId')()
-const EventsEventIdLazyImport = createFileRoute('/events/$eventId')()
-const PlacesPlaceIdEditLazyImport = createFileRoute('/places/$placeId_/edit')()
+const FamiliesFamilyIdLazyRouteImport = createFileRoute('/families/$familyId')()
+const EventsEventIdLazyRouteImport = createFileRoute('/events/$eventId')()
+const PlacesPlaceIdEditLazyRouteImport = createFileRoute(
+  '/places/$placeId_/edit',
+)()
 
-// Create/Update Routes
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const PlacesIndexLazyRoute = PlacesIndexLazyImport.update({
+const PlacesIndexLazyRoute = PlacesIndexLazyRouteImport.update({
   id: '/places/',
   path: '/places/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./pages/places/index.lazy').then((d) => d.Route))
-
-const IndividualsIndexLazyRoute = IndividualsIndexLazyImport.update({
+const IndividualsIndexLazyRoute = IndividualsIndexLazyRouteImport.update({
   id: '/individuals/',
   path: '/individuals/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./pages/individuals/index.lazy').then((d) => d.Route),
 )
-
-const FamiliesIndexLazyRoute = FamiliesIndexLazyImport.update({
+const FamiliesIndexLazyRoute = FamiliesIndexLazyRouteImport.update({
   id: '/families/',
   path: '/families/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./pages/families/index.lazy').then((d) => d.Route))
-
-const EventsIndexLazyRoute = EventsIndexLazyImport.update({
+const EventsIndexLazyRoute = EventsIndexLazyRouteImport.update({
   id: '/events/',
   path: '/events/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./pages/events/index.lazy').then((d) => d.Route))
-
-const PlacesAddLazyRoute = PlacesAddLazyImport.update({
+const PlacesAddLazyRoute = PlacesAddLazyRouteImport.update({
   id: '/places/add',
   path: '/places/add',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./pages/places/add.lazy').then((d) => d.Route))
-
-const PlacesPlaceIdLazyRoute = PlacesPlaceIdLazyImport.update({
+const PlacesPlaceIdLazyRoute = PlacesPlaceIdLazyRouteImport.update({
   id: '/places/$placeId',
   path: '/places/$placeId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./pages/places/$placeId.lazy').then((d) => d.Route),
 )
-
 const IndividualsIndividualIdLazyRoute =
-  IndividualsIndividualIdLazyImport.update({
+  IndividualsIndividualIdLazyRouteImport.update({
     id: '/individuals/$individualId',
     path: '/individuals/$individualId',
-    getParentRoute: () => rootRoute,
+    getParentRoute: () => rootRouteImport,
   } as any).lazy(() =>
     import('./pages/individuals/$individualId.lazy').then((d) => d.Route),
   )
-
-const FamiliesFamilyIdLazyRoute = FamiliesFamilyIdLazyImport.update({
+const FamiliesFamilyIdLazyRoute = FamiliesFamilyIdLazyRouteImport.update({
   id: '/families/$familyId',
   path: '/families/$familyId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./pages/families/$familyId.lazy').then((d) => d.Route),
 )
-
-const EventsEventIdLazyRoute = EventsEventIdLazyImport.update({
+const EventsEventIdLazyRoute = EventsEventIdLazyRouteImport.update({
   id: '/events/$eventId',
   path: '/events/$eventId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./pages/events/$eventId.lazy').then((d) => d.Route),
 )
-
-const PlacesPlaceIdEditLazyRoute = PlacesPlaceIdEditLazyImport.update({
+const PlacesPlaceIdEditLazyRoute = PlacesPlaceIdEditLazyRouteImport.update({
   id: '/places/$placeId_/edit',
   path: '/places/$placeId/edit',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
   import('./pages/places/$placeId_/edit.lazy').then((d) => d.Route),
 )
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/events/$eventId': {
-      id: '/events/$eventId'
-      path: '/events/$eventId'
-      fullPath: '/events/$eventId'
-      preLoaderRoute: typeof EventsEventIdLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/families/$familyId': {
-      id: '/families/$familyId'
-      path: '/families/$familyId'
-      fullPath: '/families/$familyId'
-      preLoaderRoute: typeof FamiliesFamilyIdLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/individuals/$individualId': {
-      id: '/individuals/$individualId'
-      path: '/individuals/$individualId'
-      fullPath: '/individuals/$individualId'
-      preLoaderRoute: typeof IndividualsIndividualIdLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/places/$placeId': {
-      id: '/places/$placeId'
-      path: '/places/$placeId'
-      fullPath: '/places/$placeId'
-      preLoaderRoute: typeof PlacesPlaceIdLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/places/add': {
-      id: '/places/add'
-      path: '/places/add'
-      fullPath: '/places/add'
-      preLoaderRoute: typeof PlacesAddLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/events/': {
-      id: '/events/'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsIndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/families/': {
-      id: '/families/'
-      path: '/families'
-      fullPath: '/families'
-      preLoaderRoute: typeof FamiliesIndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/individuals/': {
-      id: '/individuals/'
-      path: '/individuals'
-      fullPath: '/individuals'
-      preLoaderRoute: typeof IndividualsIndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/places/': {
-      id: '/places/'
-      path: '/places'
-      fullPath: '/places'
-      preLoaderRoute: typeof PlacesIndexLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/places/$placeId_/edit': {
-      id: '/places/$placeId_/edit'
-      path: '/places/$placeId/edit'
-      fullPath: '/places/$placeId/edit'
-      preLoaderRoute: typeof PlacesPlaceIdEditLazyImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -210,7 +110,6 @@ export interface FileRoutesByFullPath {
   '/places': typeof PlacesIndexLazyRoute
   '/places/$placeId/edit': typeof PlacesPlaceIdEditLazyRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/events/$eventId': typeof EventsEventIdLazyRoute
@@ -224,9 +123,8 @@ export interface FileRoutesByTo {
   '/places': typeof PlacesIndexLazyRoute
   '/places/$placeId/edit': typeof PlacesPlaceIdEditLazyRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/events/$eventId': typeof EventsEventIdLazyRoute
   '/families/$familyId': typeof FamiliesFamilyIdLazyRoute
@@ -239,7 +137,6 @@ export interface FileRoutesById {
   '/places/': typeof PlacesIndexLazyRoute
   '/places/$placeId_/edit': typeof PlacesPlaceIdEditLazyRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
@@ -282,7 +179,6 @@ export interface FileRouteTypes {
     | '/places/$placeId_/edit'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EventsEventIdLazyRoute: typeof EventsEventIdLazyRoute
@@ -295,6 +191,88 @@ export interface RootRouteChildren {
   IndividualsIndexLazyRoute: typeof IndividualsIndexLazyRoute
   PlacesIndexLazyRoute: typeof PlacesIndexLazyRoute
   PlacesPlaceIdEditLazyRoute: typeof PlacesPlaceIdEditLazyRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/places/': {
+      id: '/places/'
+      path: '/places'
+      fullPath: '/places'
+      preLoaderRoute: typeof PlacesIndexLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/individuals/': {
+      id: '/individuals/'
+      path: '/individuals'
+      fullPath: '/individuals'
+      preLoaderRoute: typeof IndividualsIndexLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/families/': {
+      id: '/families/'
+      path: '/families'
+      fullPath: '/families'
+      preLoaderRoute: typeof FamiliesIndexLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsIndexLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/places/add': {
+      id: '/places/add'
+      path: '/places/add'
+      fullPath: '/places/add'
+      preLoaderRoute: typeof PlacesAddLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/places/$placeId': {
+      id: '/places/$placeId'
+      path: '/places/$placeId'
+      fullPath: '/places/$placeId'
+      preLoaderRoute: typeof PlacesPlaceIdLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/individuals/$individualId': {
+      id: '/individuals/$individualId'
+      path: '/individuals/$individualId'
+      fullPath: '/individuals/$individualId'
+      preLoaderRoute: typeof IndividualsIndividualIdLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/families/$familyId': {
+      id: '/families/$familyId'
+      path: '/families/$familyId'
+      fullPath: '/families/$familyId'
+      preLoaderRoute: typeof FamiliesFamilyIdLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$eventId': {
+      id: '/events/$eventId'
+      path: '/events/$eventId'
+      fullPath: '/events/$eventId'
+      preLoaderRoute: typeof EventsEventIdLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/places/$placeId_/edit': {
+      id: '/places/$placeId_/edit'
+      path: '/places/$placeId/edit'
+      fullPath: '/places/$placeId/edit'
+      preLoaderRoute: typeof PlacesPlaceIdEditLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -310,63 +288,6 @@ const rootRouteChildren: RootRouteChildren = {
   PlacesIndexLazyRoute: PlacesIndexLazyRoute,
   PlacesPlaceIdEditLazyRoute: PlacesPlaceIdEditLazyRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/events/$eventId",
-        "/families/$familyId",
-        "/individuals/$individualId",
-        "/places/$placeId",
-        "/places/add",
-        "/events/",
-        "/families/",
-        "/individuals/",
-        "/places/",
-        "/places/$placeId_/edit"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/events/$eventId": {
-      "filePath": "events/$eventId.lazy.tsx"
-    },
-    "/families/$familyId": {
-      "filePath": "families/$familyId.lazy.tsx"
-    },
-    "/individuals/$individualId": {
-      "filePath": "individuals/$individualId.lazy.tsx"
-    },
-    "/places/$placeId": {
-      "filePath": "places/$placeId.lazy.tsx"
-    },
-    "/places/add": {
-      "filePath": "places/add.lazy.tsx"
-    },
-    "/events/": {
-      "filePath": "events/index.lazy.tsx"
-    },
-    "/families/": {
-      "filePath": "families/index.lazy.tsx"
-    },
-    "/individuals/": {
-      "filePath": "individuals/index.lazy.tsx"
-    },
-    "/places/": {
-      "filePath": "places/index.lazy.tsx"
-    },
-    "/places/$placeId_/edit": {
-      "filePath": "places/$placeId_/edit.lazy.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
