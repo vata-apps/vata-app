@@ -15,13 +15,13 @@ export async function fetchIndividuals(treeId: string, params: Params) {
           id,
           gedcom_id,
           gender,
-          event_subjects:event_subjects!inner(
+          event_subjects:event_subjects(
             id,
-            event:events!inner(
+            event:events(
               id,
-              event_type:event_types!inner(id, name),
+              event_type:event_types(id, name),
               date,
-              place:places!inner(id, name)
+              place:places(id, name)
             )
           )
         )
@@ -39,14 +39,14 @@ export async function fetchIndividuals(treeId: string, params: Params) {
   if (error) throw error;
 
   return data?.map(({ individuals, first_name, last_name }) => {
-    const birth = individuals.event_subjects.find(
+    const birth = individuals.event_subjects?.find(
       ({ event }) => event.event_type.name === "Birth",
     );
 
     const birthDate = birth?.event.date;
     const birthPlace = birth?.event.place;
 
-    const death = individuals.event_subjects.find(
+    const death = individuals.event_subjects?.find(
       ({ event }) => event.event_type.name === "Death",
     );
 

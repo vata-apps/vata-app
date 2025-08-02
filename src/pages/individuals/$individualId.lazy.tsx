@@ -14,7 +14,7 @@ import {
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { IconPlus } from "@tabler/icons-react";
+import { IconEdit, IconPlus } from "@tabler/icons-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createLazyFileRoute, Link } from "@tanstack/react-router";
 import { Fragment } from "react/jsx-runtime";
@@ -35,7 +35,7 @@ function IndividualDetailPage() {
     status,
     error,
   } = useQuery({
-    queryKey: ["individual", individualId],
+    queryKey: ["individualForPage", individualId],
     queryFn: () => fetchIndividualForPage(currentTreeId ?? "", individualId),
     placeholderData: keepPreviousData,
     enabled: Boolean(currentTreeId),
@@ -55,6 +55,16 @@ function IndividualDetailPage() {
         <PageHeader
           avatar={displayName(individual)}
           gedcomId={individual.gedcomId ?? undefined}
+          rightSection={
+            <Button
+              component={Link}
+              to={`/individuals/${individualId}/edit`}
+              leftSection={<IconEdit size={16} />}
+              radius="xl"
+            >
+              Edit
+            </Button>
+          }
           metadata={[
             {
               title: "Birth",

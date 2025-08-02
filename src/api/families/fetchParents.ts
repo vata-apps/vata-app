@@ -15,7 +15,10 @@ export async function fetchParents(treeId: string, individualId: string) {
     .eq("individual_id", individualId)
     .single();
 
-  if (familyAsChildQuery.error) throw familyAsChildQuery.error;
+  if (familyAsChildQuery.error) {
+    if (familyAsChildQuery.error.code === "PGRST116") return result;
+    throw familyAsChildQuery.error;
+  }
 
   const individualIds = [
     familyAsChildQuery.data.family.husband_id,

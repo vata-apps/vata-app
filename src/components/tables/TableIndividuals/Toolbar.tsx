@@ -3,6 +3,8 @@ import { Button, Select } from "@mantine/core";
 import { IndividualGender, IndividualSort } from "@/api/individuals/types";
 import { SearchInput } from "@/components/SearchInput";
 import { Group } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
+import { Link } from "@tanstack/react-router";
 
 interface ToolbarProps {
   search: string;
@@ -23,7 +25,14 @@ export function Toolbar({
 }: ToolbarProps) {
   return (
     <Group>
-      <Button radius="xl">Add individual</Button>
+      <Button
+        component={Link}
+        to="/individuals/add"
+        leftSection={<IconPlus size={16} />}
+        radius="xl"
+      >
+        Add individual
+      </Button>
 
       <SearchInput value={search} onChange={setSearch} />
 

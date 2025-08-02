@@ -8,7 +8,10 @@ export async function fetchSiblings(treeId: string, individualId: string) {
     .eq("individual_id", individualId)
     .single();
 
-  if (familyAsChildQuery.error) throw familyAsChildQuery.error;
+  if (familyAsChildQuery.error) {
+    if (familyAsChildQuery.error.code === "PGRST116") return [];
+    throw familyAsChildQuery.error;
+  }
 
   const familyId = familyAsChildQuery.data.family_id;
 
