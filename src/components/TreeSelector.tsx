@@ -17,7 +17,7 @@ export const TreeSelector = () => {
       placeholder="Select tree..."
       disabled={isLoading || trees.length === 0}
       size="sm"
-      w={200}
+      w="100%"
       comboboxProps={{
         withinPortal: false,
       }}

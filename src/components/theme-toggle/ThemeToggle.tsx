@@ -21,7 +21,6 @@ export function ThemeToggle() {
       onClick={() =>
         setColorScheme(computedColorScheme === "light" ? "dark" : "light")
       }
-      ml="auto"
       variant="default"
       size="lg"
       radius="md"
