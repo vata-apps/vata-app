@@ -1,3 +1,4 @@
+import { deleteIndividual } from "@/api/individuals/deleteIndividual";
 import { fetchIndividualForPage } from "@/api/individuals/fetchIndividualForPage";
 import { ErrorState, LoadingState, PageHeader } from "@/components";
 import { CardIndividual } from "@/components/CardIndividual";
@@ -8,16 +9,22 @@ import {
   Container,
   Grid,
   Group,
+  Modal,
   Stack,
   Text,
   Timeline,
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { IconEdit, IconPlus } from "@tabler/icons-react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
-import { Fragment } from "react/jsx-runtime";
+import { IconEdit, IconPlus, IconTrash } from "@tabler/icons-react";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Fragment, useState } from "react";
 
 export const Route = createLazyFileRoute("/individuals/$individualId")({
   component: IndividualDetailPage,
@@ -29,6 +36,9 @@ export const Route = createLazyFileRoute("/individuals/$individualId")({
 function IndividualDetailPage() {
   const { individualId } = Route.useParams();
   const { currentTreeId } = useTree();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const {
     data: individual,
@@ -39,6 +49,19 @@ function IndividualDetailPage() {
     queryFn: () => fetchIndividualForPage(currentTreeId ?? "", individualId),
     placeholderData: keepPreviousData,
     enabled: Boolean(currentTreeId),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteIndividual(currentTreeId ?? "", individualId),
+    onSuccess: () => {
+      // Invalidate and refetch related queries
+      queryClient.invalidateQueries({ queryKey: ["individuals"] });
+      queryClient.invalidateQueries({ queryKey: ["families"] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+
+      // Navigate back to individuals list
+      navigate({ to: "/individuals" });
+    },
   });
 
   if (status === "pending") {
@@ -56,14 +79,25 @@ function IndividualDetailPage() {
           avatar={displayName(individual)}
           gedcomId={individual.gedcomId ?? undefined}
           rightSection={
-            <Button
-              component={Link}
-              to={`/individuals/${individualId}/edit`}
-              leftSection={<IconEdit size={16} />}
-              radius="xl"
-            >
-              Edit
-            </Button>
+            <>
+              <Button
+                component={Link}
+                to={`/individuals/${individualId}/edit`}
+                leftSection={<IconEdit size={16} />}
+                radius="xl"
+              >
+                Edit
+              </Button>
+              <Button
+                color="red"
+                radius="xl"
+                variant="light"
+                onClick={() => setDeleteModalOpen(true)}
+                loading={deleteMutation.isPending}
+              >
+                <IconTrash size={16} />
+              </Button>
+            </>
           }
           metadata={[
             {
@@ -284,6 +318,78 @@ function IndividualDetailPage() {
           </Grid.Col>
         </Grid>
       </Stack>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        opened={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title={
+          <Group gap="sm">
+            <IconTrash size={24} color="var(--mantine-color-red-6)" />
+            <Text fw={600} size="lg">
+              Delete Individual
+            </Text>
+          </Group>
+        }
+        centered
+        size="md"
+        padding="xl"
+        radius="md"
+      >
+        <Stack gap="lg">
+          <Text size="md" c="dimmed" ta="center">
+            Are you sure you want to delete
+          </Text>
+
+          <Text size="xl" fw={700} c="white" ta="center" mb="md">
+            {displayName(individual)}?
+          </Text>
+
+          <Stack gap="md">
+            <Text size="md" c="dimmed" fw={500}>
+              This will delete:
+            </Text>
+            <Stack gap={8} pl="md">
+              <Text size="md" c="dimmed">
+                • All names and family relationships
+              </Text>
+              <Text size="md" c="dimmed">
+                • Events where this person is the main subject
+              </Text>
+              <Text size="md" c="dimmed">
+                • Remove this person from shared events
+              </Text>
+              <Text size="md" c="dimmed">
+                • Update family records (remove as spouse)
+              </Text>
+            </Stack>
+          </Stack>
+
+          <Text size="md" c="red" fw={600} ta="center">
+            This action cannot be undone
+          </Text>
+
+          <Group justify="flex-end" gap="md" mt="md">
+            <Button
+              variant="light"
+              size="md"
+              onClick={() => setDeleteModalOpen(false)}
+              disabled={deleteMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="red"
+              size="md"
+              onClick={() => deleteMutation.mutate()}
+              loading={deleteMutation.isPending}
+              leftSection={<IconTrash size={16} />}
+            >
+              Delete
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Container>
   );
 }

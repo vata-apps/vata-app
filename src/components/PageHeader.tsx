@@ -44,7 +44,9 @@ export function PageHeader({
               </Group>
             </Grid.Col>
             <Grid.Col span={2} style={{ flexGrow: 0 }}>
-              <Group justify="flex-end">{rightSection}</Group>
+              <Group gap="xs" justify="flex-end">
+                {rightSection}
+              </Group>
             </Grid.Col>
           </Grid>
 
