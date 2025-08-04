@@ -26,9 +26,10 @@ export async function fetchFamilyForPage(treeId: string, familyId: string) {
   return {
     id: family.id,
     gedcomId: family.gedcomId,
+    type: family.type,
     husband: family.husband,
     wife: family.wife,
     children: family.children,
-    events: formatEventsForPlace(allEvents),
+    events: formatEventsForPlace(allEvents) || [],
   };
 }

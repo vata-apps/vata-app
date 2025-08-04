@@ -1,5 +1,6 @@
 export { ErrorState } from "./ErrorState";
 export { EventForm, type EventFormData } from "./EventForm";
+export { FamilyForm, type FamilyFormData } from "./FamilyForm";
 export { GenderIcon } from "./GenderIcon";
 export { IndividualForm, type IndividualFormData } from "./IndividualForm";
 export { LoadingState } from "./LoadingState";

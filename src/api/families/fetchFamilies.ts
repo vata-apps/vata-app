@@ -10,7 +10,7 @@ export async function fetchFamilies(treeId: string, params: Params) {
   // Fetch families entities
   let query = supabase
     .from("families")
-    .select("id, gedcom_id, husband_id, wife_id")
+    .select("id, gedcom_id, husband_id, wife_id, type")
     .eq("tree_id", treeId);
 
   if (params.familyIds) {
@@ -71,6 +71,7 @@ export async function fetchFamilies(treeId: string, params: Params) {
     return {
       id: family.id,
       gedcomId: `F-${family.gedcom_id?.toString().padStart(4, "0") ?? "0000"}`,
+      type: family.type,
       husband,
       wife,
       children,

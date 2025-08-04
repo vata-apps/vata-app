@@ -16,7 +16,12 @@ import {
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { IconPlus, IconTrash, IconUsersGroup } from "@tabler/icons-react";
+import {
+  IconEdit,
+  IconPlus,
+  IconTrash,
+  IconUsersGroup,
+} from "@tabler/icons-react";
 import {
   keepPreviousData,
   useMutation,
@@ -86,15 +91,25 @@ function FamilyPage() {
             { title: "Wife", value: wifeName },
           ]}
           rightSection={
-            <Button
-              color="red"
-              variant="light"
-              onClick={() => setDeleteModalOpen(true)}
-              loading={deleteMutation.isPending}
-              radius="xl"
-            >
-              <IconTrash size={16} />
-            </Button>
+            <>
+              <Button
+                component={Link}
+                to={`/families/${familyId}/edit`}
+                leftSection={<IconEdit size={16} />}
+                radius="xl"
+              >
+                Edit
+              </Button>
+              <Button
+                color="red"
+                variant="light"
+                onClick={() => setDeleteModalOpen(true)}
+                loading={deleteMutation.isPending}
+                radius="xl"
+              >
+                <IconTrash size={16} />
+              </Button>
+            </>
           }
           title={familyName}
         />

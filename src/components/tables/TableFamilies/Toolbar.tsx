@@ -2,6 +2,7 @@ import { Button, Select } from "@mantine/core";
 
 import { SearchInput } from "@/components/SearchInput";
 import { Group } from "@mantine/core";
+import { Link } from "@tanstack/react-router";
 import { FamilySort } from "./types";
 
 interface ToolbarProps {
@@ -14,7 +15,9 @@ interface ToolbarProps {
 export function Toolbar({ search, setSearch, sort, setSort }: ToolbarProps) {
   return (
     <Group>
-      <Button radius="xl">Add family</Button>
+      <Button component={Link} to="/families/add" radius="xl">
+        Add family
+      </Button>
 
       <SearchInput value={search} onChange={setSearch} />
 
