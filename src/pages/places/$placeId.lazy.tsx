@@ -1,3 +1,4 @@
+import { deletePlace } from "@/api/places/deletePlace";
 import { Place } from "@/api/places/fetchPlace";
 import { fetchPlaceForPage } from "@/api/places/fetchPlaceForPage";
 import { ErrorState, LoadingState, PageHeader } from "@/components";
@@ -7,15 +8,23 @@ import {
   Card,
   Container,
   Grid,
+  Group,
+  Modal,
   Stack,
   Text,
   Timeline,
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { IconMapPin, IconPlus } from "@tabler/icons-react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 
 export const Route = createLazyFileRoute("/places/$placeId")({
   component: PlaceDetailPage,
@@ -54,6 +63,9 @@ function PlaceCard({ place }: { place: Place | null }) {
 function PlaceDetailPage() {
   const { placeId } = Route.useParams();
   const { currentTreeId } = useTree();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const {
     data: place,
@@ -64,6 +76,18 @@ function PlaceDetailPage() {
     queryFn: () => fetchPlaceForPage(currentTreeId ?? "", placeId),
     placeholderData: keepPreviousData,
     enabled: Boolean(currentTreeId && placeId),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deletePlace(currentTreeId ?? "", placeId),
+    onSuccess: () => {
+      // Invalidate and refetch related queries
+      queryClient.invalidateQueries({ queryKey: ["places"] });
+      queryClient.invalidateQueries({ queryKey: ["events"] });
+
+      // Navigate back to places list
+      navigate({ to: "/places" });
+    },
   });
 
   if (status === "pending") {
@@ -91,13 +115,23 @@ function PlaceDetailPage() {
             },
           ]}
           rightSection={
-            <Button
-              component={Link}
-              to={`/places/${placeId}/edit`}
-              variant="filled"
-            >
-              Edit
-            </Button>
+            <>
+              <Button
+                component={Link}
+                to={`/places/${placeId}/edit`}
+                variant="filled"
+              >
+                Edit
+              </Button>
+              <Button
+                color="red"
+                variant="light"
+                onClick={() => setDeleteModalOpen(true)}
+                loading={deleteMutation.isPending}
+              >
+                <IconTrash size={16} />
+              </Button>
+            </>
           }
           title={place.name}
         />
@@ -159,6 +193,75 @@ function PlaceDetailPage() {
           </Grid.Col>
         </Grid>
       </Stack>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        opened={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title={
+          <Group gap="sm">
+            <IconTrash size={24} color="var(--mantine-color-red-6)" />
+            <Text fw={600} size="lg">
+              Delete Place
+            </Text>
+          </Group>
+        }
+        centered
+        size="md"
+        padding="xl"
+        radius="md"
+      >
+        <Stack gap="lg">
+          <Text size="md" c="dimmed" ta="center">
+            Are you sure you want to delete
+          </Text>
+
+          <Text size="xl" fw={700} c="white" ta="center" mb="md">
+            {place.name}
+          </Text>
+
+          <Stack gap="md">
+            <Text size="md" c="dimmed" fw={500}>
+              This will delete:
+            </Text>
+            <Stack gap={8} pl="md">
+              <Text size="md" c="dimmed">
+                • The place itself
+              </Text>
+              <Text size="md" c="dimmed">
+                • Remove place reference from events
+              </Text>
+              <Text size="md" c="dimmed">
+                • Child places will become top-level
+              </Text>
+            </Stack>
+          </Stack>
+
+          <Text size="md" c="red" fw={600} ta="center">
+            This action cannot be undone
+          </Text>
+
+          <Group justify="flex-end" gap="md" mt="md">
+            <Button
+              variant="light"
+              size="md"
+              onClick={() => setDeleteModalOpen(false)}
+              disabled={deleteMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="red"
+              size="md"
+              onClick={() => deleteMutation.mutate()}
+              loading={deleteMutation.isPending}
+              leftSection={<IconTrash size={16} />}
+            >
+              Delete
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Container>
   );
 }
