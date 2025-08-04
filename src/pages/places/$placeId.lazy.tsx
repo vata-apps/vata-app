@@ -16,7 +16,7 @@ import {
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
 import {
   keepPreviousData,
   useMutation,
@@ -120,6 +120,7 @@ function PlaceDetailPage() {
                 component={Link}
                 to={`/places/${placeId}/edit`}
                 variant="filled"
+                leftSection={<IconEdit size={16} />}
                 radius="xl"
               >
                 Edit
