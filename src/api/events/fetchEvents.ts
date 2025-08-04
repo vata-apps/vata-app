@@ -17,22 +17,44 @@ export async function fetchEvents(
     .from("events")
     .select(
       `
-    id, 
-    date,
-    gedcom_id,
-    event_types!inner(id, key, name),
-    place:places!inner(id, name),
-    participants:event_participants!inner(
-      individual_id,
-      role:event_roles!inner(id, key, name)
-    ),
-    subjects:event_subjects!inner(
-      id,
-      individual_id
-    )
-  `,
+        id, 
+        date,
+        description,
+        gedcom_id,
+        event_types!inner(id, key, name),
+        place:places(id, name),
+        participants:event_participants(
+          individual_id,
+          role:event_roles(id, key, name)
+        ),
+        subjects:event_subjects(
+          id,
+          individual_id
+        )
+      `,
     )
     .eq("tree_id", treeId);
+
+  // If filtering by individual IDs, we need to use a different approach
+  if (individualIds) {
+    // First, get the event IDs that have the specified individuals as subjects
+    const { data: eventIdsWithSubjects, error: subjectsError } = await supabase
+      .from("event_subjects")
+      .select("event_id")
+      .in("individual_id", individualIds)
+      .eq("tree_id", treeId);
+
+    if (subjectsError) throw subjectsError;
+
+    const eventIdsToFilter = eventIdsWithSubjects.map((row) => row.event_id);
+
+    if (eventIdsToFilter.length > 0) {
+      query = query.in("id", eventIdsToFilter);
+    } else {
+      // If no events found for these individuals, return empty array
+      return [];
+    }
+  }
 
   if (eventIds) {
     query = query.in("id", eventIds);
@@ -40,10 +62,6 @@ export async function fetchEvents(
 
   if (eventTypes) {
     query = query.in("event_types.key", eventTypes);
-  }
-
-  if (individualIds) {
-    query = query.in("subjects.individual_id", individualIds);
   }
 
   if (placeIds) {
@@ -55,7 +73,9 @@ export async function fetchEvents(
   if (error) throw error;
 
   const participantsIndividualIds = data.flatMap((event) => {
-    return event.participants.map((participant) => participant.individual_id);
+    return (event.participants || []).map(
+      (participant) => participant.individual_id,
+    );
   });
 
   const individuals = await fetchIndividuals(treeId, {
@@ -63,7 +83,7 @@ export async function fetchEvents(
   });
 
   return data.map((event) => {
-    const participants = event.participants
+    const participants = (event.participants || [])
       .map((participant) => {
         const participantIndividual = individuals.find(
           (individual) => individual.id === participant.individual_id,
@@ -85,6 +105,7 @@ export async function fetchEvents(
     return {
       id: event.id,
       date: event.date,
+      description: event.description,
       gedcomId: `E-${event.gedcom_id?.toString().padStart(4, "0")}`,
       participants,
       place: event.place,

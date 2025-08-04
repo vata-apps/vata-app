@@ -29,5 +29,9 @@ export function getEventTitle({ event, participants }: Params) {
     (participant) => participant.role.key === "subject",
   );
 
+  if (!subject) {
+    return `${capitalize(event.event_types.name ?? "Unknown event")}`;
+  }
+
   return `${capitalize(event.event_types.name ?? "Unknown event")} of ${displayName(subject)}`;
 }

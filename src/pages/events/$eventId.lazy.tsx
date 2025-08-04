@@ -5,10 +5,10 @@ import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 
 import { Button, Container, Grid, Group, Stack, Title } from "@mantine/core";
-import { IconCalendar } from "@tabler/icons-react";
+import { IconCalendar, IconEdit } from "@tabler/icons-react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
-import { createLazyFileRoute } from "@tanstack/react-router";
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
 
 const SUBJECT_ROLES = ["subject", "husband", "wife"];
 
@@ -52,6 +52,16 @@ function EventPage() {
             { title: "Place", value: data.place?.name ?? "Unknown" },
             { title: "Date", value: data.date ?? "Unknown" },
           ]}
+          rightSection={
+            <Button
+              component={Link}
+              to={`/events/${eventId}/edit`}
+              leftSection={<IconEdit size={16} />}
+              radius="xl"
+            >
+              Edit
+            </Button>
+          }
           title={data.title}
         />
 

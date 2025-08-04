@@ -2,6 +2,7 @@ import { Button, Select } from "@mantine/core";
 
 import { SearchInput } from "@/components/SearchInput";
 import { Group } from "@mantine/core";
+import { useNavigate } from "@tanstack/react-router";
 import { EventSort, EventType } from "./types";
 
 interface ToolbarProps {
@@ -23,9 +24,13 @@ export function Toolbar({
   sort,
   setSort,
 }: ToolbarProps) {
+  const navigate = useNavigate();
+
   return (
     <Group>
-      <Button radius="xl">Add event</Button>
+      <Button radius="xl" onClick={() => navigate({ to: "/events/add" })}>
+        Add event
+      </Button>
 
       <SearchInput value={search} onChange={setSearch} />
 

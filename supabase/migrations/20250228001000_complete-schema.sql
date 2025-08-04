@@ -844,6 +844,75 @@ for select
 to public
 using (true);
 
+-- Events table mutation policies
+create policy "Enable insert access for all users"
+on "public"."events"
+as permissive
+for insert
+to public
+with check (true);
+
+create policy "Enable update access for all users"
+on "public"."events"
+as permissive
+for update
+to public
+using (true)
+with check (true);
+
+create policy "Enable delete access for all users"
+on "public"."events"
+as permissive
+for delete
+to public
+using (true);
+
+-- Event subjects table mutation policies
+create policy "Enable insert access for all users"
+on "public"."event_subjects"
+as permissive
+for insert
+to public
+with check (true);
+
+create policy "Enable update access for all users"
+on "public"."event_subjects"
+as permissive
+for update
+to public
+using (true)
+with check (true);
+
+create policy "Enable delete access for all users"
+on "public"."event_subjects"
+as permissive
+for delete
+to public
+using (true);
+
+-- Event participants table mutation policies
+create policy "Enable insert access for all users"
+on "public"."event_participants"
+as permissive
+for insert
+to public
+with check (true);
+
+create policy "Enable update access for all users"
+on "public"."event_participants"
+as permissive
+for update
+to public
+using (true)
+with check (true);
+
+create policy "Enable delete access for all users"
+on "public"."event_participants"
+as permissive
+for delete
+to public
+using (true);
+
 -- Grant necessary permissions for GEDCOM functions
 GRANT EXECUTE ON FUNCTION get_next_gedcom_id(text, uuid) TO anon, authenticated, service_role;
 GRANT EXECUTE ON FUNCTION set_individual_gedcom_id() TO anon, authenticated, service_role;
