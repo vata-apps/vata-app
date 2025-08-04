@@ -1,3 +1,4 @@
+import { deleteFamily } from "@/api/families/deleteFamily";
 import { fetchFamilyForPage } from "@/api/families/fetchFamilyForPage";
 import { ErrorState, LoadingState, PageHeader } from "@/components";
 import { CardIndividual } from "@/components/CardIndividual";
@@ -8,15 +9,22 @@ import {
   Container,
   Grid,
   Group,
+  Modal,
   Stack,
   Text,
   Timeline,
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import { IconPlus, IconUsersGroup } from "@tabler/icons-react";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { IconPlus, IconTrash, IconUsersGroup } from "@tabler/icons-react";
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { createLazyFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 
 export const Route = createLazyFileRoute("/families/$familyId")({
   component: FamilyPage,
@@ -28,6 +36,9 @@ export const Route = createLazyFileRoute("/families/$familyId")({
 function FamilyPage() {
   const { familyId } = Route.useParams();
   const { currentTreeId } = useTree();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const {
     data: family,
@@ -38,6 +49,18 @@ function FamilyPage() {
     queryFn: () => fetchFamilyForPage(currentTreeId ?? "", familyId),
     placeholderData: keepPreviousData,
     enabled: Boolean(currentTreeId),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => deleteFamily(currentTreeId ?? "", familyId),
+    onSuccess: () => {
+      // Invalidate and refetch related queries
+      queryClient.invalidateQueries({ queryKey: ["families"] });
+      queryClient.invalidateQueries({ queryKey: ["individuals"] });
+
+      // Navigate back to families list
+      navigate({ to: "/families" });
+    },
   });
 
   if (status === "pending") {
@@ -62,6 +85,16 @@ function FamilyPage() {
             { title: "Husband", value: husbandName },
             { title: "Wife", value: wifeName },
           ]}
+          rightSection={
+            <Button
+              color="red"
+              variant="light"
+              onClick={() => setDeleteModalOpen(true)}
+              loading={deleteMutation.isPending}
+            >
+              <IconTrash size={16} />
+            </Button>
+          }
           title={familyName}
         />
 
@@ -161,6 +194,79 @@ function FamilyPage() {
           </Grid.Col>
         </Grid>
       </Stack>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        opened={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        title={
+          <Group gap="sm">
+            <IconTrash size={24} color="var(--mantine-color-red-6)" />
+            <Text fw={600} size="lg">
+              Delete Family
+            </Text>
+          </Group>
+        }
+        centered
+        size="md"
+        padding="xl"
+        radius="md"
+      >
+        <Stack gap="lg">
+          <Text size="md" c="dimmed" ta="center">
+            Are you sure you want to delete
+          </Text>
+
+          <Text size="xl" fw={700} c="white" ta="center" mb="md">
+            {familyName}
+          </Text>
+
+          <Stack gap="md">
+            <Text size="md" c="dimmed" fw={500}>
+              This will delete:
+            </Text>
+            <Stack gap={8} pl="md">
+              <Text size="md" c="dimmed">
+                • The family itself
+              </Text>
+              <Text size="md" c="dimmed">
+                • All family-child relationships
+              </Text>
+              <Text size="md" c="dimmed">
+                • Family structure and connections
+              </Text>
+            </Stack>
+          </Stack>
+
+          <Text size="md" c="dimmed" ta="center">
+            Note: Individual family members will be preserved
+          </Text>
+
+          <Text size="md" c="red" fw={600} ta="center">
+            This action cannot be undone
+          </Text>
+
+          <Group justify="flex-end" gap="md" mt="md">
+            <Button
+              variant="light"
+              size="md"
+              onClick={() => setDeleteModalOpen(false)}
+              disabled={deleteMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="red"
+              size="md"
+              onClick={() => deleteMutation.mutate()}
+              loading={deleteMutation.isPending}
+              leftSection={<IconTrash size={16} />}
+            >
+              Delete
+            </Button>
+          </Group>
+        </Stack>
+      </Modal>
     </Container>
   );
 }
