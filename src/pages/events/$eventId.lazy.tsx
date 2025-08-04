@@ -98,6 +98,7 @@ function EventPage() {
                 variant="light"
                 onClick={() => setDeleteModalOpen(true)}
                 loading={deleteMutation.isPending}
+                radius="xl"
               >
                 <IconTrash size={16} />
               </Button>

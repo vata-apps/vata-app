@@ -120,6 +120,7 @@ function PlaceDetailPage() {
                 component={Link}
                 to={`/places/${placeId}/edit`}
                 variant="filled"
+                radius="xl"
               >
                 Edit
               </Button>
@@ -128,6 +129,7 @@ function PlaceDetailPage() {
                 variant="light"
                 onClick={() => setDeleteModalOpen(true)}
                 loading={deleteMutation.isPending}
+                radius="xl"
               >
                 <IconTrash size={16} />
               </Button>
