@@ -65,7 +65,7 @@ export async function fetchEvents(
   }
 
   if (placeIds) {
-    query = query.in("place.id", placeIds);
+    query = query.in("place_id", placeIds);
   }
 
   const { data, error } = await query;
