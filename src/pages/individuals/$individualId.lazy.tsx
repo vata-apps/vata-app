@@ -214,7 +214,13 @@ function IndividualDetailPage() {
                 ))}
 
                 <Timeline.Item bullet={<IconPlus />}>
-                  <Button variant="default">Add new event</Button>
+                  <Button
+                    variant="default"
+                    component={Link}
+                    to={`/events/add?individualId=${individualId}`}
+                  >
+                    Add new event
+                  </Button>
                 </Timeline.Item>
               </Timeline>
             </Stack>

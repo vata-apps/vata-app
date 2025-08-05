@@ -1,9 +1,11 @@
 import { createEvent } from "@/api/events/createEvent";
+import { fetchIndividual } from "@/api/individuals/fetchIndividual";
 import { EventForm, PageHeader, type EventFormData } from "@/components";
 import { useTree } from "@/hooks/use-tree";
+import displayName from "@/utils/displayName";
 import { Container, Stack } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createLazyFileRoute, useNavigate } from "@tanstack/react-router";
 
 export const Route = createLazyFileRoute("/events/add")({
@@ -14,6 +16,17 @@ function AddEventPage() {
   const { currentTreeId, isLoading: treeLoading } = useTree();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const preselectedIndividualId =
+    new URLSearchParams(window.location.search).get("individualId") ||
+    undefined;
+
+  // Fetch individual data if preselected
+  const { data: preselectedIndividual } = useQuery({
+    queryKey: ["individual", preselectedIndividualId],
+    queryFn: () =>
+      fetchIndividual(currentTreeId ?? "", preselectedIndividualId!),
+    enabled: Boolean(currentTreeId && preselectedIndividualId),
+  });
 
   const createEventMutation = useMutation({
     mutationFn: (data: EventFormData) => createEvent(currentTreeId!, data),
@@ -25,7 +38,12 @@ function AddEventPage() {
         message: "Event created successfully",
         color: "green",
       });
-      navigate({ to: "/events" });
+      // Navigate back to individual page if we came from there, otherwise to events list
+      if (preselectedIndividualId) {
+        navigate({ to: `/individuals/${preselectedIndividualId}` });
+      } else {
+        navigate({ to: "/events" });
+      }
     },
     onError: (error) => {
       showNotification({
@@ -74,15 +92,26 @@ function AddEventPage() {
   };
 
   const handleCancel = () => {
-    navigate({ to: "/events" });
+    // Navigate back to individual page if we came from there, otherwise to events list
+    if (preselectedIndividualId) {
+      navigate({ to: `/individuals/${preselectedIndividualId}` });
+    } else {
+      navigate({ to: "/events" });
+    }
   };
+
+  // Generate page title
+  const pageTitle = preselectedIndividual
+    ? `Add Event for ${displayName(preselectedIndividual)}`
+    : "Add Event";
 
   return (
     <Container fluid>
       <Stack gap="xl" w="100%" align="flex-start">
-        <PageHeader title="Add Event" />
+        <PageHeader title={pageTitle} />
         <EventForm
           mode="create"
+          preselectedIndividualId={preselectedIndividualId}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           isPending={createEventMutation.isPending}

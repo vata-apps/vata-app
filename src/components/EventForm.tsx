@@ -40,6 +40,7 @@ export interface EventFormData {
 interface EventFormProps {
   mode: "create" | "edit";
   initialValues?: Partial<EventFormData>;
+  preselectedIndividualId?: string;
   onSubmit: (values: EventFormData) => Promise<void>;
   onCancel: () => void;
   isPending?: boolean;
@@ -48,6 +49,7 @@ interface EventFormProps {
 export function EventForm({
   mode,
   initialValues,
+  preselectedIndividualId,
   onSubmit,
   onCancel,
   isPending = false,
@@ -83,6 +85,12 @@ export function EventForm({
     enabled: Boolean(currentTreeId),
   });
 
+  // Get the preselected individual's gender for proper placement in marriage events
+  const preselectedIndividual = individuals.data?.find(
+    (individual) => individual.id === preselectedIndividualId,
+  );
+  const preselectedGender = preselectedIndividual?.gender;
+
   const form = useForm({
     mode: "controlled",
     initialValues: {
@@ -90,7 +98,7 @@ export function EventForm({
       date: "",
       placeId: "",
       description: "",
-      subjects: [{ individualId: "" }],
+      subjects: [{ individualId: preselectedIndividualId || "" }],
       participants: [],
       ...initialValues,
     },
@@ -105,12 +113,29 @@ export function EventForm({
           "marriage";
 
         if (isMarriageEvent) {
-          form.setFieldValue("subjects", [
-            { individualId: "" },
-            { individualId: "" },
-          ]);
+          // For marriage events, place the preselected individual in the correct field based on gender
+          if (preselectedIndividualId && preselectedGender) {
+            if (preselectedGender === "male") {
+              form.setFieldValue("subjects", [
+                { individualId: preselectedIndividualId },
+                { individualId: "" },
+              ]);
+            } else {
+              form.setFieldValue("subjects", [
+                { individualId: "" },
+                { individualId: preselectedIndividualId },
+              ]);
+            }
+          } else {
+            form.setFieldValue("subjects", [
+              { individualId: "" },
+              { individualId: "" },
+            ]);
+          }
         } else {
-          form.setFieldValue("subjects", [{ individualId: "" }]);
+          form.setFieldValue("subjects", [
+            { individualId: preselectedIndividualId || "" },
+          ]);
         }
       }
     },
@@ -152,6 +177,7 @@ export function EventForm({
   const getIndividualOptions = (
     gender?: "male" | "female",
     excludeSubjectIds?: string[],
+    forSubjects = false,
   ) => {
     const data = (() => {
       let filtered = individuals.data;
@@ -167,6 +193,13 @@ export function EventForm({
       if (excludeSubjectIds && excludeSubjectIds.length > 0) {
         filtered = filtered?.filter(
           (individual) => !excludeSubjectIds.includes(individual.id),
+        );
+      }
+
+      // Filter out preselected individual from participants, but not from subjects
+      if (preselectedIndividualId && !forSubjects) {
+        filtered = filtered?.filter(
+          (individual) => individual.id !== preselectedIndividualId,
         );
       }
 
@@ -302,7 +335,7 @@ export function EventForm({
           <Group w="100%" grow>
             <Select
               label="Husband"
-              data={getIndividualOptions("male")}
+              data={getIndividualOptions("male", undefined, true)}
               {...form.getInputProps("subjects.0.individualId")}
               required
               searchable
@@ -310,10 +343,15 @@ export function EventForm({
               maw="30rem"
               selectFirstOptionOnChange
               checkIconPosition="right"
+              disabled={
+                preselectedIndividualId ===
+                  form.values.subjects[0]?.individualId &&
+                preselectedGender === "male"
+              }
             />
             <Select
               label="Wife"
-              data={getIndividualOptions("female")}
+              data={getIndividualOptions("female", undefined, true)}
               {...form.getInputProps("subjects.1.individualId")}
               required
               searchable
@@ -321,6 +359,11 @@ export function EventForm({
               maw="30rem"
               selectFirstOptionOnChange
               checkIconPosition="right"
+              disabled={
+                preselectedIndividualId ===
+                  form.values.subjects[1]?.individualId &&
+                preselectedGender === "female"
+              }
             />
           </Group>
         )}
@@ -334,13 +377,17 @@ export function EventForm({
                   ? "Loading individuals..."
                   : "Select individual"
               }
-              data={getIndividualOptions()}
+              data={getIndividualOptions(undefined, undefined, true)}
               {...form.getInputProps("subjects.0.individualId")}
               searchable
               size="md"
               maw="30rem"
               selectFirstOptionOnChange
               checkIconPosition="right"
+              disabled={
+                preselectedIndividualId ===
+                form.values.subjects[0]?.individualId
+              }
             />
           </Group>
         )}
