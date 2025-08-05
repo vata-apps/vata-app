@@ -16,12 +16,7 @@ import {
   Title,
   UnstyledButton,
 } from "@mantine/core";
-import {
-  IconEdit,
-  IconPlus,
-  IconTrash,
-  IconUsersGroup,
-} from "@tabler/icons-react";
+import { IconEdit, IconTrash, IconUsersGroup } from "@tabler/icons-react";
 import {
   keepPreviousData,
   useMutation,
@@ -180,7 +175,7 @@ function FamilyPage() {
               <Stack gap="xs">
                 <Title order={4}>Events</Title>
                 <Timeline bulletSize={40} lineWidth={3}>
-                  {family.events.map((event, index) => (
+                  {family.events.map((event) => (
                     <Timeline.Item
                       key={event.id}
                       bullet={<event.Icon />}
@@ -192,18 +187,12 @@ function FamilyPage() {
                           {event.description}
                         </UnstyledButton>
                       }
-                      lineVariant={
-                        index === family.events.length - 1 ? "dashed" : "solid"
-                      }
                     >
                       <Text size="xs" mt={4}>
                         {event.date}
                       </Text>
                     </Timeline.Item>
                   ))}
-                  <Timeline.Item bullet={<IconPlus />}>
-                    <Button variant="default">Add event</Button>
-                  </Timeline.Item>
                 </Timeline>
               </Stack>
             </Stack>
