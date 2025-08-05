@@ -41,6 +41,7 @@ interface EventFormProps {
   mode: "create" | "edit";
   initialValues?: Partial<EventFormData>;
   preselectedIndividualId?: string;
+  preselectedPlaceId?: string;
   onSubmit: (values: EventFormData) => Promise<void>;
   onCancel: () => void;
   isPending?: boolean;
@@ -50,6 +51,7 @@ export function EventForm({
   mode,
   initialValues,
   preselectedIndividualId,
+  preselectedPlaceId,
   onSubmit,
   onCancel,
   isPending = false,
@@ -96,7 +98,7 @@ export function EventForm({
     initialValues: {
       typeId: "",
       date: "",
-      placeId: "",
+      placeId: preselectedPlaceId || "",
       description: "",
       subjects: [{ individualId: preselectedIndividualId || "" }],
       participants: [],
@@ -320,6 +322,7 @@ export function EventForm({
           size="md"
           maw="30rem"
           checkIconPosition="right"
+          disabled={Boolean(preselectedPlaceId)}
         />
 
         <Textarea

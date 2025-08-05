@@ -1,5 +1,6 @@
 import { createEvent } from "@/api/events/createEvent";
 import { fetchIndividual } from "@/api/individuals/fetchIndividual";
+import { fetchPlace } from "@/api/places/fetchPlace";
 import { EventForm, PageHeader, type EventFormData } from "@/components";
 import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
@@ -19,6 +20,8 @@ function AddEventPage() {
   const preselectedIndividualId =
     new URLSearchParams(window.location.search).get("individualId") ||
     undefined;
+  const preselectedPlaceId =
+    new URLSearchParams(window.location.search).get("placeId") || undefined;
 
   // Fetch individual data if preselected
   const { data: preselectedIndividual } = useQuery({
@@ -28,11 +31,20 @@ function AddEventPage() {
     enabled: Boolean(currentTreeId && preselectedIndividualId),
   });
 
+  // Fetch place data if preselected
+  const { data: preselectedPlace } = useQuery({
+    queryKey: ["place", preselectedPlaceId],
+    queryFn: () => fetchPlace(currentTreeId ?? "", preselectedPlaceId!),
+    enabled: Boolean(currentTreeId && preselectedPlaceId),
+  });
+
   const createEventMutation = useMutation({
     mutationFn: (data: EventFormData) => createEvent(currentTreeId!, data),
     onSuccess: () => {
-      // Invalidate and refetch events list
+      // Invalidate and refetch related queries
       queryClient.invalidateQueries({ queryKey: ["events", currentTreeId] });
+      queryClient.invalidateQueries({ queryKey: ["places", currentTreeId] });
+      queryClient.invalidateQueries({ queryKey: ["placeForPage"] });
       showNotification({
         title: "Success",
         message: "Event created successfully",
@@ -41,6 +53,8 @@ function AddEventPage() {
       // Navigate back to individual page if we came from there, otherwise to events list
       if (preselectedIndividualId) {
         navigate({ to: `/individuals/${preselectedIndividualId}` });
+      } else if (preselectedPlaceId) {
+        navigate({ to: `/places/${preselectedPlaceId}` });
       } else {
         navigate({ to: "/events" });
       }
@@ -95,6 +109,8 @@ function AddEventPage() {
     // Navigate back to individual page if we came from there, otherwise to events list
     if (preselectedIndividualId) {
       navigate({ to: `/individuals/${preselectedIndividualId}` });
+    } else if (preselectedPlaceId) {
+      navigate({ to: `/places/${preselectedPlaceId}` });
     } else {
       navigate({ to: "/events" });
     }
@@ -103,7 +119,9 @@ function AddEventPage() {
   // Generate page title
   const pageTitle = preselectedIndividual
     ? `Add Event for ${displayName(preselectedIndividual)}`
-    : "Add Event";
+    : preselectedPlace
+      ? `Add Event at ${preselectedPlace.name}`
+      : "Add Event";
 
   return (
     <Container fluid>
@@ -112,6 +130,7 @@ function AddEventPage() {
         <EventForm
           mode="create"
           preselectedIndividualId={preselectedIndividualId}
+          preselectedPlaceId={preselectedPlaceId}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
           isPending={createEventMutation.isPending}

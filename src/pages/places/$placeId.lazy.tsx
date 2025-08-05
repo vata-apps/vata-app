@@ -166,7 +166,13 @@ function PlaceDetailPage() {
                   </Timeline.Item>
                 ))}
                 <Timeline.Item bullet={<IconPlus />}>
-                  <Button variant="default">Add event</Button>
+                  <Button 
+                    variant="default"
+                    component={Link}
+                    to={`/events/add?placeId=${placeId}`}
+                  >
+                    Add event
+                  </Button>
                 </Timeline.Item>
               </Timeline>
             </Stack>
