@@ -6,7 +6,7 @@ import { Button, Checkbox, Group, Select, Stack } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export interface FamilyChildData {
   individualId: string;
@@ -23,6 +23,8 @@ export interface FamilyFormData {
 interface FamilyFormProps {
   mode: "create" | "edit";
   initialValues?: Partial<FamilyFormData>;
+  preselectedIndividualId?: string;
+  preselectedGender?: "male" | "female";
   onSubmit: (values: FamilyFormData) => Promise<void>;
   onCancel: () => void;
   isPending?: boolean;
@@ -51,6 +53,8 @@ function getFamilyTypeOptions(): Array<{ value: string; label: string }> {
 export function FamilyForm({
   mode,
   initialValues,
+  preselectedIndividualId,
+  preselectedGender,
   onSubmit,
   onCancel,
   isPending = false,
@@ -90,6 +94,18 @@ export function FamilyForm({
       type: (value) => (!value ? "Family type is required" : null),
     },
   });
+
+  // Set preselected individual when data is available
+  React.useEffect(() => {
+    if (preselectedIndividualId && preselectedGender) {
+      if (preselectedGender === "male") {
+        form.setFieldValue("husbandId", preselectedIndividualId);
+      } else if (preselectedGender === "female") {
+        form.setFieldValue("wifeId", preselectedIndividualId);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselectedIndividualId, preselectedGender]);
 
   const handleSubmit = async (values: typeof form.values) => {
     await onSubmit(values);
@@ -187,6 +203,7 @@ export function FamilyForm({
             selectFirstOptionOnChange
             checkIconPosition="right"
             clearable
+            disabled={preselectedGender === "male"}
           />
           <Select
             label="Wife"
@@ -201,6 +218,7 @@ export function FamilyForm({
             selectFirstOptionOnChange
             checkIconPosition="right"
             clearable
+            disabled={preselectedGender === "female"}
           />
         </Group>
 

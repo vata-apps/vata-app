@@ -317,7 +317,12 @@ function IndividualDetailPage() {
               })}
 
               {/* Add family */}
-              <Button variant="default" radius="lg">
+              <Button
+                variant="default"
+                radius="lg"
+                component={Link}
+                to={`/families/add?individualId=${individualId}`}
+              >
                 Add family
               </Button>
             </Stack>
