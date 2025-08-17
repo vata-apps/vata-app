@@ -5,7 +5,9 @@ interface Params {
   placeIds?: string[];
 }
 
-export async function fetchPlaces(treeId: string, params?: Params) {
+// TODO: Use fetchPlaces from $db
+
+export async function getPlaces(treeId: string, params?: Params) {
   let query = supabase
     .from("places")
     .select(
@@ -44,4 +46,4 @@ export async function fetchPlaces(treeId: string, params?: Params) {
   }));
 }
 
-export type Places = Awaited<ReturnType<typeof fetchPlaces>>;
+export type Places = Awaited<ReturnType<typeof getPlaces>>;

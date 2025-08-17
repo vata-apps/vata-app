@@ -1,5 +1,5 @@
-import { fetchPlaces } from "@/api/places/fetchPlaces";
-import { fetchPlaceTypes } from "@/api/places/fetchPlaceTypes";
+import { getPlaces } from "@/api/places/getPlaces";
+import { fetchPlaceTypes } from "@/db";
 import { useTree } from "@/hooks/use-tree";
 import { Loader, Stack, Table } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -25,14 +25,14 @@ export function TablePlaces({ hideToolbar = false }: TablePlacesProps) {
   // Fetch data from supabase
   const places = useQuery({
     queryKey: ["places", currentTreeId],
-    queryFn: () => fetchPlaces(currentTreeId ?? ""),
+    queryFn: () => getPlaces(currentTreeId ?? ""),
     enabled: Boolean(currentTreeId),
     placeholderData: keepPreviousData,
   });
 
   const placeTypes = useQuery({
     queryKey: ["placeTypes", currentTreeId],
-    queryFn: () => fetchPlaceTypes(currentTreeId ?? ""),
+    queryFn: () => fetchPlaceTypes({ treeId: currentTreeId ?? "" }),
     enabled: Boolean(currentTreeId),
   });
 

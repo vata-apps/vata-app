@@ -1,5 +1,5 @@
-import { createPlace } from "@/api/places/createPlace";
 import { PageHeader, PlaceForm, type PlaceFormData } from "@/components";
+import { insertPlace } from "@/db";
 import { useTree } from "@/hooks/use-tree";
 import { Container, Stack } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
@@ -16,13 +16,16 @@ function AddPlacePage() {
   const queryClient = useQueryClient();
 
   const createPlaceMutation = useMutation({
-    mutationFn: (data: PlaceFormData) => {
-      return createPlace(currentTreeId!, {
+    mutationFn: async (data: PlaceFormData) => {
+      if (!currentTreeId) return;
+
+      return insertPlace({
+        treeId: currentTreeId,
         name: data.name,
         typeId: data.placeTypeId,
         parentId: data.parentPlaceId || undefined,
-        latitude: data.latitude || undefined,
-        longitude: data.longitude || undefined,
+        latitude: data.latitude ? parseFloat(data.latitude) : undefined,
+        longitude: data.longitude ? parseFloat(data.longitude) : undefined,
       });
     },
     onSuccess: (_, variables) => {

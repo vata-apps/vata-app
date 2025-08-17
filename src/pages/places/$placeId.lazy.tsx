@@ -1,7 +1,7 @@
-import { deletePlace } from "@/api/places/deletePlace";
-import { Place } from "@/api/places/fetchPlace";
-import { fetchPlaceForPage } from "@/api/places/fetchPlaceForPage";
+import { Place } from "@/api/places/getPlace";
+import { getPlaceForPage } from "@/api/places/getPlaceForPage";
 import { ErrorState, LoadingState, PageHeader } from "@/components";
+import { deletePlace } from "@/db";
 import { useTree } from "@/hooks/use-tree";
 import {
   Button,
@@ -73,13 +73,13 @@ function PlaceDetailPage() {
     error,
   } = useQuery({
     queryKey: ["placeForPage", placeId],
-    queryFn: () => fetchPlaceForPage(currentTreeId ?? "", placeId),
+    queryFn: () => getPlaceForPage(currentTreeId ?? "", placeId),
     placeholderData: keepPreviousData,
     enabled: Boolean(currentTreeId && placeId),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => deletePlace(currentTreeId ?? "", placeId),
+    mutationFn: () => deletePlace({ placeId }),
     onSuccess: () => {
       // Invalidate and refetch related queries
       queryClient.invalidateQueries({ queryKey: ["places"] });
@@ -166,7 +166,7 @@ function PlaceDetailPage() {
                   </Timeline.Item>
                 ))}
                 <Timeline.Item bullet={<IconPlus />}>
-                  <Button 
+                  <Button
                     variant="default"
                     component={Link}
                     to={`/events/add?placeId=${placeId}`}

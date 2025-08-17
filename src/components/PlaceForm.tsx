@@ -1,5 +1,5 @@
-import { fetchPlaceTypes } from "@/api/places/fetchPlaceTypes";
-import { fetchPlaces } from "@/api/places/fetchPlaces";
+import { getPlaces } from "@/api/places/getPlaces";
+import { fetchPlaceTypes } from "@/db";
 import { useTree } from "@/hooks/use-tree";
 import {
   Button,
@@ -44,14 +44,14 @@ export function PlaceForm({
   // Fetch place types from the database
   const placeTypes = useQuery({
     queryKey: ["placeTypes", currentTreeId],
-    queryFn: () => fetchPlaceTypes(currentTreeId ?? ""),
+    queryFn: () => fetchPlaceTypes({ treeId: currentTreeId ?? "" }),
     enabled: Boolean(currentTreeId),
   });
 
   // Fetch places from the database for parent selection
   const places = useQuery({
     queryKey: ["places", currentTreeId],
-    queryFn: () => fetchPlaces(currentTreeId ?? ""),
+    queryFn: () => getPlaces(currentTreeId ?? ""),
     enabled: Boolean(currentTreeId),
   });
 

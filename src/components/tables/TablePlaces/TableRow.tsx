@@ -1,4 +1,4 @@
-import { Places } from "@/api/places/fetchPlaces";
+import { Places } from "@/api/places/getPlaces";
 import { Code, Table, Text } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 

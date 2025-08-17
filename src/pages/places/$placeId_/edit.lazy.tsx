@@ -1,5 +1,4 @@
-import { fetchPlace } from "@/api/places/fetchPlace";
-import { updatePlace } from "@/api/places/updatePlace";
+import { getPlace } from "@/api/places/getPlace";
 import {
   ErrorState,
   LoadingState,
@@ -7,6 +6,7 @@ import {
   PlaceForm,
   type PlaceFormData,
 } from "@/components";
+import { updatePlace } from "@/db";
 import { useTree } from "@/hooks/use-tree";
 import { Container, Stack } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
@@ -34,18 +34,19 @@ function PlaceEditPage() {
     error,
   } = useQuery({
     queryKey: ["place", placeId],
-    queryFn: () => fetchPlace(currentTreeId ?? "", placeId),
+    queryFn: () => getPlace(currentTreeId ?? "", placeId),
     enabled: Boolean(currentTreeId && placeId),
   });
 
   const updatePlaceMutation = useMutation({
-    mutationFn: (data: PlaceFormData) => {
-      return updatePlace(currentTreeId!, placeId, {
+    mutationFn: async (data: PlaceFormData) => {
+      return updatePlace({
+        placeId,
         name: data.name,
         typeId: data.placeTypeId,
         parentId: data.parentPlaceId || undefined,
-        latitude: data.latitude || undefined,
-        longitude: data.longitude || undefined,
+        latitude: data.latitude ? parseFloat(data.latitude) : undefined,
+        longitude: data.longitude ? parseFloat(data.longitude) : undefined,
       });
     },
     onSuccess: async (_, variables) => {

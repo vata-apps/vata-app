@@ -1,6 +1,6 @@
 import { createEvent } from "@/api/events/createEvent";
 import { fetchIndividual } from "@/api/individuals/fetchIndividual";
-import { fetchPlace } from "@/api/places/fetchPlace";
+import { getPlace } from "@/api/places/getPlace";
 import { EventForm, PageHeader, type EventFormData } from "@/components";
 import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
@@ -34,7 +34,7 @@ function AddEventPage() {
   // Fetch place data if preselected
   const { data: preselectedPlace } = useQuery({
     queryKey: ["place", preselectedPlaceId],
-    queryFn: () => fetchPlace(currentTreeId ?? "", preselectedPlaceId!),
+    queryFn: () => getPlace(currentTreeId ?? "", preselectedPlaceId!),
     enabled: Boolean(currentTreeId && preselectedPlaceId),
   });
 

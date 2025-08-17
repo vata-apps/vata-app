@@ -1,7 +1,7 @@
 import { fetchEventRoles } from "@/api/events/fetchEventRoles";
 import { fetchEventTypes } from "@/api/events/fetchEventTypes";
 import { fetchIndividuals } from "@/api/individuals/fetchIndividuals";
-import { fetchPlaces } from "@/api/places/fetchPlaces";
+import { getPlaces } from "@/api/places/getPlaces";
 import { useTree } from "@/hooks/use-tree";
 import displayName from "@/utils/displayName";
 import {
@@ -83,7 +83,7 @@ export function EventForm({
   // Fetch places for selection
   const places = useQuery({
     queryKey: ["places", currentTreeId],
-    queryFn: () => fetchPlaces(currentTreeId ?? ""),
+    queryFn: () => getPlaces(currentTreeId ?? ""),
     enabled: Boolean(currentTreeId),
   });
 
