@@ -1,9 +1,9 @@
-import { TreeArgs } from "@/api/types";
 import { Database, TablesInsert } from "@/database.types";
 import { supabase } from "@/lib/supabase";
 
-interface Params extends TreeArgs {
+interface Params {
   gender: Database["public"]["Enums"]["gender"];
+  treeId: string;
 }
 
 /**

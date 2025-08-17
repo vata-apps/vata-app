@@ -1,11 +1,11 @@
-import { TreeArgs } from "@/api/types";
 import { TablesUpdate } from "@/database.types";
 import { supabase } from "@/lib/supabase";
 
-interface Params extends TreeArgs {
+interface Params {
   name?: string;
   description?: string | null;
   isDefault?: boolean;
+  treeId: string;
 }
 
 /**

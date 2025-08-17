@@ -1,5 +1,8 @@
-import { TreeArgs } from "@/api/types";
 import { supabase } from "@/lib/supabase";
+
+interface Params {
+  treeId: string;
+}
 
 /**
  * Fetches a single tree by its ID
@@ -8,8 +11,8 @@ import { supabase } from "@/lib/supabase";
  * @returns Promise that resolves to the tree data or null if not found
  * @throws {Error} When the database query fails
  */
-export async function fetchTreeById(data: TreeArgs) {
-  const { treeId } = data;
+export async function fetchTreeById(params: Params) {
+  const { treeId } = params;
 
   const { data: tree, error } = await supabase
     .from("trees")
