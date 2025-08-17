@@ -1,14 +1,14 @@
-import { fetchTrees } from "@/api/trees/fetchTrees";
+import { fetchTrees } from "@/db";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { TreeContext } from "./tree-context";
 import type { TreeContextValue } from "./types";
 
 const STORAGE_KEY = "vata-selected-tree-id";
 
 interface TreeProviderProps {
-  readonly children: React.ReactNode;
+  readonly children: ReactNode;
 }
 
 export const TreeProvider = ({ children }: TreeProviderProps) => {
