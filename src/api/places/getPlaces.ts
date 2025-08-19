@@ -1,48 +1,29 @@
-import { supabase } from "@/lib/supabase";
+import { fetchPlaceTypes, fetchPlaces } from "@/db";
 
 interface Params {
   parentId?: string;
   placeIds?: string[];
+  treeId: string;
 }
 
-// TODO: Use fetchPlaces from $db
+export async function getPlaces(params: Params) {
+  const { parentId, placeIds, treeId } = params;
 
-export async function getPlaces(treeId: string, params?: Params) {
-  let query = supabase
-    .from("places")
-    .select(
-      `
-        id,
-        gedcom_id,
-        name,
-        latitude,
-        longitude,
-        parent_id,
-        placeType:place_types(id, name)
-      `,
-    )
-    .eq("tree_id", treeId);
+  const places = await fetchPlaces({ treeId, filters: { parentId, placeIds } });
+  const placeTypes = await fetchPlaceTypes({ treeId });
 
-  if (params?.placeIds) {
-    query = query.in("id", params.placeIds);
-  }
+  const placeTypeMap = new Map(
+    placeTypes.map((placeType) => [placeType.id, placeType]),
+  );
 
-  if (params?.parentId) {
-    query = query.eq("parent_id", params.parentId);
-  }
-
-  const { data, error } = await query;
-
-  if (error) throw error;
-
-  return data.map((place) => ({
+  return places.map((place) => ({
     id: place.id,
-    name: place.name,
+    gedcomId: `P-${place.gedcom_id?.toString().padStart(4, "0") ?? "0000"}`,
     latitude: place.latitude,
     longitude: place.longitude,
-    placeType: place.placeType,
-    gedcomId: `P-${place.gedcom_id?.toString().padStart(4, "0") ?? "0000"}`,
+    name: place.name,
     parentId: place.parent_id,
+    placeType: placeTypeMap.get(place.type_id),
   }));
 }
 

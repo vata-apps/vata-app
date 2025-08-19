@@ -16,7 +16,7 @@ export async function fetchPlaceTypes(params: Params) {
 
   const { data: placeTypes, error } = await supabase
     .from("place_types")
-    .select("*")
+    .select("id, is_system, key, name")
     .eq("tree_id", treeId)
     .order("name");
 

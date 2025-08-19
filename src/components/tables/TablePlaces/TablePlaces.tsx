@@ -25,7 +25,7 @@ export function TablePlaces({ hideToolbar = false }: TablePlacesProps) {
   // Fetch data from supabase
   const places = useQuery({
     queryKey: ["places", currentTreeId],
-    queryFn: () => getPlaces(currentTreeId ?? ""),
+    queryFn: () => getPlaces({ treeId: currentTreeId ?? "" }),
     enabled: Boolean(currentTreeId),
     placeholderData: keepPreviousData,
   });
@@ -43,7 +43,7 @@ export function TablePlaces({ hideToolbar = false }: TablePlacesProps) {
     let result = [...places.data];
 
     if (placeType !== "all") {
-      result = result.filter((place) => place.placeType.id === placeType);
+      result = result.filter((place) => place.placeType?.id === placeType);
     }
 
     if (debouncedSearch) {
@@ -96,11 +96,11 @@ export function TablePlaces({ hideToolbar = false }: TablePlacesProps) {
       >
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>ID</Table.Th>
+            <Table.Th w="10rem">ID</Table.Th>
             <Table.Th>Name</Table.Th>
-            <Table.Th>Type</Table.Th>
-            <Table.Th>Latitude</Table.Th>
-            <Table.Th>Longitude</Table.Th>
+            <Table.Th w="10rem">Type</Table.Th>
+            <Table.Th w="10rem">Latitude</Table.Th>
+            <Table.Th w="10rem">Longitude</Table.Th>
           </Table.Tr>
         </Table.Thead>
 
