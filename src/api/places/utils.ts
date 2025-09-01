@@ -5,9 +5,9 @@ import {
   IconHeartHandshake,
   IconSkull,
 } from "@tabler/icons-react";
-import { Events } from "../events/fetchEvents";
+import { GetEventsByPlaceId } from "../getEventsByPlaceId";
 
-export function formatEventsForPlace(events: Events) {
+export function formatEventsForPlace(events: GetEventsByPlaceId) {
   return events
     .map((event) => {
       const commonEvent = {
@@ -18,35 +18,35 @@ export function formatEventsForPlace(events: Events) {
         type: event.type,
       };
 
-      if (event.type.key === "birth") {
+      if (event.type?.key === "birth") {
         return {
           ...commonEvent,
           Icon: IconBabyCarriage,
         };
       }
 
-      if (event.type.key === "death") {
+      if (event.type?.key === "death") {
         return {
           ...commonEvent,
           Icon: IconSkull,
         };
       }
 
-      if (event.type.key === "marriage") {
+      if (event.type?.key === "marriage") {
         return {
           ...commonEvent,
           Icon: IconHeartHandshake,
         };
       }
 
-      if (event.type.key === "baptism") {
+      if (event.type?.key === "baptism") {
         return {
           ...commonEvent,
           Icon: IconBible,
         };
       }
 
-      if (event.type.key === "burial") {
+      if (event.type?.key === "burial") {
         return {
           ...commonEvent,
           Icon: IconGrave,

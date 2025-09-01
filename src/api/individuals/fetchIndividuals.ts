@@ -1,4 +1,5 @@
 import { supabase } from "../../lib/supabase";
+import { formatGedcomId } from "../utils/formatGedcomId";
 
 interface Params {
   individualIds?: string[];
@@ -59,10 +60,10 @@ export async function fetchIndividuals(treeId: string, params: Params) {
       return "Unknown";
     })();
 
-    const gedcomId = (() => {
-      if (!individuals.gedcom_id) return null;
-      return `I-${individuals.gedcom_id.toString().padStart(4, "0")}`;
-    })();
+    const gedcomId = formatGedcomId({
+      id: individuals.gedcom_id,
+      module: "individuals",
+    });
 
     return {
       id: individuals.id,
