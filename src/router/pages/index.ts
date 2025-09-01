@@ -1,0 +1,10 @@
+export { EventPage } from "./EventPage";
+export { EventsPage } from "./EventsPage";
+export { FamiliesPage } from "./FamiliesPage";
+export { FamilyPage } from "./FamilyPage";
+export { HomePage } from "./HomePage";
+export { IndividualPage } from "./IndividualPage";
+export { IndividualsPage } from "./IndividualsPage";
+export { PlacePage } from "./PlacePage";
+export { PlacesPage } from "./PlacesPage";
+export { SettingsPage } from "./SettingsPage";
