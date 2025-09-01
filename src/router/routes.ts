@@ -1,11 +1,12 @@
 import { createRootRoute, createRoute } from "@tanstack/react-router";
+import { RootLayout } from "./layouts/RootLayout";
 
-// Root route with new layout
+// Root route with new layout - no path, just provides the layout
 export const rootRoute = createRootRoute({
-  component: () => import("./layouts/RootLayout").then((m) => m.RootLayout),
+  component: RootLayout,
 });
 
-// Home route
+// Home route - index route (renders at root path "/")
 export const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
