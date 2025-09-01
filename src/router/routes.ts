@@ -1,8 +1,8 @@
 import { createRootRoute, createRoute } from "@tanstack/react-router";
 
-// Root route
+// Root route with new layout
 export const rootRoute = createRootRoute({
-  component: () => null, // We'll handle the layout in the main router
+  component: () => import("./layouts/RootLayout").then((m) => m.RootLayout),
 });
 
 // Home route

@@ -1,6 +1,33 @@
 import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import {
+  eventRoute,
+  eventsRoute,
+  familiesRoute,
+  familyRoute,
+  homeRoute,
+  individualRoute,
+  individualsRoute,
+  placeRoute,
+  placesRoute,
+  rootRoute,
+  settingsRoute,
+} from "./router/routes";
 
+// Create the route tree
+const routeTree = rootRoute.addChildren([
+  homeRoute,
+  individualsRoute,
+  individualRoute,
+  familiesRoute,
+  familyRoute,
+  placesRoute,
+  placeRoute,
+  eventsRoute,
+  eventRoute,
+  settingsRoute,
+]);
+
+// Create the router
 export const router = createRouter({ routeTree });
 
 declare module "@tanstack/react-router" {
