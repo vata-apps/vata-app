@@ -1,4 +1,6 @@
+import { formatGedcomId } from "@/api/utils/formatGedcomId";
 import { supabase } from "@/lib/supabase";
+import { select } from "./utils";
 
 interface Params {
   placeId: string;
@@ -16,7 +18,7 @@ export async function fetchPlaceById(params: Params) {
 
   const { data: place, error } = await supabase
     .from("places")
-    .select("*")
+    .select(select)
     .eq("id", placeId)
     .single();
 
@@ -25,5 +27,13 @@ export async function fetchPlaceById(params: Params) {
     throw error;
   }
 
-  return place;
+  return {
+    id: place.id,
+    gedcomId: formatGedcomId({ id: place.gedcom_id, module: "places" }),
+    latitude: place.latitude,
+    longitude: place.longitude,
+    name: place.name,
+    parentId: place.parent_id,
+    typeId: place.type_id,
+  };
 }

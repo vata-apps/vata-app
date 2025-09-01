@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { select } from "./utils";
 
 interface Params {
   filters?: {
@@ -23,7 +24,7 @@ export async function fetchPlaces(params: Params) {
 
   let query = supabase
     .from("places")
-    .select("id, gedcom_id, latitude, longitude, name, parent_id, type_id")
+    .select(select)
     .eq("tree_id", treeId)
     .order("name");
 

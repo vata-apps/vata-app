@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { select } from "./utils";
 
 interface Params {
   treeId: string;
@@ -16,7 +17,7 @@ export async function fetchEventRoles(params: Params) {
 
   const { data: eventRoles, error } = await supabase
     .from("event_roles")
-    .select("*")
+    .select(select)
     .eq("tree_id", treeId)
     .order("name");
 

@@ -45,6 +45,7 @@ export { updatePlaceType } from "./place-types/updatePlaceType";
 export { deletePlace } from "./places/deletePlace";
 export { fetchPlaceById } from "./places/fetchPlaceById";
 export { fetchPlaces } from "./places/fetchPlaces";
+export { fetchPlacesByIds } from "./places/fetchPlacesByIds";
 export { insertPlace } from "./places/insertPlace";
 export { updatePlace } from "./places/updatePlace";
 
@@ -66,6 +67,7 @@ export { updateEventRole } from "./event-roles/updateEventRole";
 export { deleteEvent } from "./events/deleteEvent";
 export { fetchEventById } from "./events/fetchEventById";
 export { fetchEvents } from "./events/fetchEvents";
+export { fetchEventsByPlaceId } from "./events/fetchEventsByPlaceId";
 export { insertEvent } from "./events/insertEvent";
 export { updateEvent } from "./events/updateEvent";
 
@@ -73,6 +75,7 @@ export { updateEvent } from "./events/updateEvent";
 export { deleteEventParticipant } from "./event-participants/deleteEventParticipant";
 export { fetchEventParticipantById } from "./event-participants/fetchEventParticipantById";
 export { fetchEventParticipantsByEventId } from "./event-participants/fetchEventParticipantsByEventId";
+export { fetchEventParticipantsByEventIds } from "./event-participants/fetchEventParticipantsByEventIds";
 export { insertEventParticipant } from "./event-participants/insertEventParticipant";
 export { updateEventParticipant } from "./event-participants/updateEventParticipant";
 

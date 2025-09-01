@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { select } from "./utils";
 
 interface Params {
   placeTypeId: string;
@@ -16,7 +17,7 @@ export async function fetchPlaceTypeById(params: Params) {
 
   const { data: placeType, error } = await supabase
     .from("place_types")
-    .select("*")
+    .select(select)
     .eq("id", placeTypeId)
     .single();
 

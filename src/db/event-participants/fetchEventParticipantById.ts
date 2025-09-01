@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { select } from "./utils";
 
 interface Params {
   eventParticipantId: string;
@@ -16,7 +17,7 @@ export async function fetchEventParticipantById(params: Params) {
 
   const { data: eventParticipant, error } = await supabase
     .from("event_participants")
-    .select("*")
+    .select(select)
     .eq("id", eventParticipantId)
     .single();
 

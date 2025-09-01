@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { select } from "./utils";
 
 interface Params {
   eventRoleId: string;
@@ -16,7 +17,7 @@ export async function fetchEventRoleById(params: Params) {
 
   const { data: eventRole, error } = await supabase
     .from("event_roles")
-    .select("*")
+    .select(select)
     .eq("id", eventRoleId)
     .single();
 

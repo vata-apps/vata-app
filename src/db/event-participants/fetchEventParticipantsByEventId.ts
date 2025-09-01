@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { select } from "./utils";
 
 interface Params {
   eventId: string;
@@ -16,7 +17,7 @@ export async function fetchEventParticipantsByEventId(params: Params) {
 
   const { data: eventParticipants, error } = await supabase
     .from("event_participants")
-    .select("*")
+    .select(select)
     .eq("event_id", eventId)
     .order("created_at");
 
