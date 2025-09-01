@@ -1,22 +1,20 @@
-import { Place } from "@/api/places/getPlace";
-import { getPlaceForPage } from "@/api/places/getPlaceForPage";
-import { ErrorState, LoadingState, PageHeader } from "@/components";
+import { getPlaceDetails } from "@/api/getPlaceDetails";
+import { ErrorState, LoadingState } from "@/components";
+import { PageHeaderNew } from "@/components/PageHeaderNew";
+import { TableEvents } from "@/components/tables/TableEvents/TableEvents";
 import { deletePlace } from "@/db";
 import { useTree } from "@/hooks/use-tree";
 import {
+  Badge,
   Button,
-  Card,
   Container,
-  Grid,
   Group,
   Modal,
   Stack,
+  Tabs,
   Text,
-  Timeline,
-  Title,
-  UnstyledButton,
 } from "@mantine/core";
-import { IconEdit, IconMapPin, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconEdit, IconMapPin, IconTag, IconTrash } from "@tabler/icons-react";
 import {
   keepPreviousData,
   useMutation,
@@ -30,36 +28,6 @@ export const Route = createLazyFileRoute("/places/$placeId")({
   component: PlaceDetailPage,
 });
 
-function PlaceCard({ place }: { place: Place | null }) {
-  if (!place) {
-    return (
-      <Card withBorder radius="lg" py="xs">
-        <Stack gap={0}>
-          <Text fw={600}>No place</Text>
-        </Stack>
-      </Card>
-    );
-  }
-
-  return (
-    <Card
-      component={Link}
-      to={`/places/${place.id}`}
-      withBorder
-      radius="lg"
-      py="xs"
-    >
-      <Stack gap={0}>
-        <Text fw={600}>{place.name}</Text>
-        <Text size="sm">{place.placeType.name}</Text>
-      </Stack>
-    </Card>
-  );
-}
-
-/**
- * Displays the place page with details, sublocations, events and map
- */
 function PlaceDetailPage() {
   const { placeId } = Route.useParams();
   const { currentTreeId } = useTree();
@@ -67,16 +35,27 @@ function PlaceDetailPage() {
   const queryClient = useQueryClient();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const {
-    data: place,
-    status,
-    error,
-  } = useQuery({
-    queryKey: ["placeForPage", placeId],
-    queryFn: () => getPlaceForPage(currentTreeId ?? "", placeId),
+  const placeDetailsQuery = useQuery({
+    queryKey: ["placeDetails", placeId],
+    queryFn: () => getPlaceDetails({ placeId }),
     placeholderData: keepPreviousData,
-    enabled: Boolean(currentTreeId && placeId),
   });
+
+  const childrenQuery = useQuery({
+    queryKey: ["placeChildren", placeId],
+    queryFn: () => [],
+    placeholderData: keepPreviousData,
+  });
+
+  console.log("childrenQuery", childrenQuery.data);
+
+  const parentQuery = useQuery({
+    queryKey: ["placeParent", placeId],
+    queryFn: () => [],
+    placeholderData: keepPreviousData,
+  });
+
+  console.log("parentQuery", parentQuery.data);
 
   const deleteMutation = useMutation({
     mutationFn: () => deletePlace({ placeId }),
@@ -90,30 +69,22 @@ function PlaceDetailPage() {
     },
   });
 
-  if (status === "pending") {
+  if (placeDetailsQuery.status === "pending") {
     return <LoadingState message="Loading place details..." />;
   }
 
-  if (status === "error") {
-    return <ErrorState error={error} backTo="/places" />;
+  if (placeDetailsQuery.status === "error") {
+    return <ErrorState error={placeDetailsQuery.error} backTo="/places" />;
   }
+
+  const placeDetails = placeDetailsQuery.data;
 
   return (
     <Container fluid>
       <Stack gap="xl" w="100%">
-        <PageHeader
-          avatar={<IconMapPin size={48} />}
-          gedcomId={place.gedcomId}
-          metadata={[
-            { title: "Type", value: place.placeType.name },
-            {
-              title: "Lat/Long",
-              value:
-                place.latitude && place.longitude
-                  ? `${place.latitude}, ${place.longitude}`
-                  : "N/A",
-            },
-          ]}
+        <PageHeaderNew
+          avatar={<IconMapPin size={36} />}
+          gedcomId={placeDetails.gedcomId}
           rightSection={
             <>
               <Button
@@ -136,71 +107,31 @@ function PlaceDetailPage() {
               </Button>
             </>
           }
-          title={place.name}
-        />
+          title={placeDetails.name}
+        >
+          {placeDetails.placeType && (
+            <Badge leftSection={<IconTag size={12} />} variant="default">
+              {placeDetails.placeType.name}
+            </Badge>
+          )}
+          {placeDetails.latitude && placeDetails.longitude && (
+            <Badge
+              leftSection={<IconMapPin size={12} />}
+              variant="default"
+            >{`${placeDetails.latitude}, ${placeDetails.longitude}`}</Badge>
+          )}
+        </PageHeaderNew>
 
-        <Grid gutter={64}>
-          <Grid.Col span={6}>
-            <Stack gap="xs">
-              <Title order={4}>Events</Title>
-              <Timeline bulletSize={40} lineWidth={3}>
-                {place.events.map((event, index) => (
-                  <Timeline.Item
-                    key={event.id}
-                    bullet={<event.Icon />}
-                    title={
-                      <UnstyledButton
-                        component={Link}
-                        to={`/events/${event.id}`}
-                      >
-                        {event.description}
-                      </UnstyledButton>
-                    }
-                    lineVariant={
-                      index === place.events.length - 1 ? "dashed" : "solid"
-                    }
-                  >
-                    <Text size="xs" mt={4}>
-                      {event.date}
-                    </Text>
-                  </Timeline.Item>
-                ))}
-                <Timeline.Item bullet={<IconPlus />}>
-                  <Button
-                    variant="default"
-                    component={Link}
-                    to={`/events/add?placeId=${placeId}`}
-                  >
-                    Add event
-                  </Button>
-                </Timeline.Item>
-              </Timeline>
-            </Stack>
-          </Grid.Col>
-          <Grid.Col span={6}>
-            <Stack gap="xl">
-              <Stack gap="xs">
-                <Title order={4}>Map</Title>
-                TODO
-              </Stack>
-              <Stack gap="xs">
-                <Title order={4}>Included in</Title>
-                <PlaceCard place={place.parent} />
-              </Stack>
-
-              <Stack gap="xs">
-                <Title order={4}>Includes</Title>
-                {place.children.length > 0 ? (
-                  place.children.map((child) => (
-                    <PlaceCard key={child.id} place={child} />
-                  ))
-                ) : (
-                  <PlaceCard place={null} />
-                )}
-              </Stack>
-            </Stack>
-          </Grid.Col>
-        </Grid>
+        <Tabs defaultValue="details" keepMounted={false}>
+          <Tabs.List>
+            <Tabs.Tab value="details">Details</Tabs.Tab>
+            <Tabs.Tab value="events">Events</Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="details">DETAILS</Tabs.Panel>
+          <Tabs.Panel pt="xl" value="events">
+            <TableEvents placeId={placeId} />
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
 
       {/* Delete Confirmation Modal */}
@@ -226,7 +157,7 @@ function PlaceDetailPage() {
           </Text>
 
           <Text size="xl" fw={700} c="white" ta="center" mb="md">
-            {place.name}
+            {placeDetails.name}
           </Text>
 
           <Stack gap="md">

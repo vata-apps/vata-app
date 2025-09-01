@@ -9,7 +9,11 @@ import { TableRow } from "./TableRow";
 import { Toolbar } from "./Toolbar";
 import { EventSort, EventType } from "./types";
 
-export function TableEvents() {
+interface Props {
+  placeId?: string;
+}
+
+export function TableEvents({ placeId }: Props) {
   const { currentTreeId } = useTree();
 
   const [search, setSearch] = useState("");
@@ -18,8 +22,11 @@ export function TableEvents() {
   const [debouncedSearch] = useDebounce(search, 300);
 
   const queryEvents = useQuery({
-    queryKey: ["events", currentTreeId],
-    queryFn: () => fetchEvents(currentTreeId ?? ""),
+    queryKey: ["events", currentTreeId, placeId],
+    queryFn: () =>
+      fetchEvents(currentTreeId ?? "", {
+        ...(placeId && { placeIds: [placeId] }),
+      }),
     enabled: Boolean(currentTreeId),
     placeholderData: keepPreviousData,
   });
