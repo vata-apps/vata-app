@@ -1,6 +1,6 @@
 import { createRootRoute, createRoute } from "@tanstack/react-router";
 import { RootLayout } from "./layouts/RootLayout";
-import { TreeLayout } from "./layouts/TreeLayout";
+import { TreeLayout } from "./layouts/tree/TreeLayout";
 import { EventPage } from "./pages/EventPage";
 import { EventsPage } from "./pages/EventsPage";
 import { FamiliesPage } from "./pages/FamiliesPage";

@@ -1,4 +1,4 @@
-import { createRouter } from "@tanstack/react-router";
+import { createRouter, RouteIds } from "@tanstack/react-router";
 import {
   eventRoute,
   eventsRoute,
@@ -34,6 +34,11 @@ const routeTree = rootRoute.addChildren([
 
 // Create the router
 export const router = createRouter({ routeTree });
+
+export type AppPath = Exclude<
+  RouteIds<typeof routeTree>,
+  "__root__" | "/$treeId/"
+>;
 
 declare module "@tanstack/react-router" {
   interface Register {
