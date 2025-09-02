@@ -1,18 +1,12 @@
-import { MantineProvider } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
 import { Link, Outlet, useParams } from "@tanstack/react-router";
 
 export function TreeLayout() {
   const { treeId } = useParams({ from: "/$treeId" });
   return (
-    <MantineProvider defaultColorScheme="dark">
-      <Notifications />
-
+    <>
       <div
         style={{
           padding: "20px",
-          backgroundColor: "#f5f5f5",
-          borderBottom: "1px solid #ddd",
         }}
       >
         <h3>Navigation (Testing)</h3>
@@ -111,7 +105,13 @@ export function TreeLayout() {
         </div>
       </div>
 
-      <Outlet />
-    </MantineProvider>
+      <div
+        style={{
+          padding: "20px",
+        }}
+      >
+        <Outlet />
+      </div>
+    </>
   );
 }
