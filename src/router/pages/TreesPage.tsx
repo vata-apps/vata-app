@@ -21,12 +21,15 @@ export function TreesPage() {
             <Card mih={150} radius="md" shadow="sm" withBorder>
               <Stack justify="space-between" h="100%">
                 <Stack gap="xs">
-                  <Text fw={500}>Tree {index + 1}</Text>
-                  <Text c="dimmed" fz="xs">
-                    Updated 1 hour ago
+                  <Text fz="lg" fw={500}>
+                    Tree {index + 1}
                   </Text>
                 </Stack>
-                <Link params={{ treeId: `${index + 1}` }} to="/$treeId">
+                <Link
+                  params={{ treeId: `${index + 1}` }}
+                  style={{ width: "min-content" }}
+                  to="/$treeId"
+                >
                   <Button radius="xl" variant="default">
                     Open tree
                   </Button>
