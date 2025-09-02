@@ -1,12 +1,13 @@
+import { PageHeader } from "@/components/PageHeader";
 import { useParams } from "@tanstack/react-router";
 
 export function HomePage() {
   const { treeId } = useParams({ from: "/$treeId" });
 
   return (
-    <div>
-      <h1>Home Page</h1>
+    <>
+      <PageHeader title="Home" />
       <p>Tree ID: {treeId}</p>
-    </div>
+    </>
   );
 }

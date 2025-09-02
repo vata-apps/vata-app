@@ -1,3 +1,6 @@
+import { PageHeader } from "@/components/PageHeader";
+import { Stack } from "@mantine/core";
+import { IconTrash } from "@tabler/icons-react";
 import { useParams } from "@tanstack/react-router";
 
 export function FamilyPage() {
@@ -5,11 +8,34 @@ export function FamilyPage() {
     from: "/$treeId/families/$familyId",
   });
 
+  const handleEdit = () => {
+    console.log("edit");
+  };
+
+  const handleDelete = () => {
+    console.log("delete");
+  };
+
   return (
-    <div>
-      <h1>Family</h1>
-      <p>Tree ID: {treeId}</p>
-      <p>Family ID: {familyId}</p>
-    </div>
+    <>
+      <PageHeader
+        title="Family"
+        onBackTo="/$treeId/families"
+        onClickEdit={handleEdit}
+        menuItems={[
+          {
+            label: "Delete",
+            icon: IconTrash,
+            onClick: handleDelete,
+            color: "red",
+          },
+        ]}
+      />
+
+      <Stack>
+        <p>Tree ID: {treeId}</p>
+        <p>Family ID: {familyId}</p>
+      </Stack>
+    </>
   );
 }
