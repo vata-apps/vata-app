@@ -1,75 +1,103 @@
 import { createRootRoute, createRoute } from "@tanstack/react-router";
 import { RootLayout } from "./layouts/RootLayout";
+import { TreeLayout } from "./layouts/TreeLayout";
+import { EventPage } from "./pages/EventPage";
+import { EventsPage } from "./pages/EventsPage";
+import { FamiliesPage } from "./pages/FamiliesPage";
+import { FamilyPage } from "./pages/FamilyPage";
+import { HomePage } from "./pages/HomePage";
+import { IndividualPage } from "./pages/IndividualPage";
+import { IndividualsPage } from "./pages/IndividualsPage";
+import { PlacePage } from "./pages/PlacePage";
+import { PlacesPage } from "./pages/PlacesPage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { TreesPage } from "./pages/TreesPage";
 
-// Root route with new layout - no path, just provides the layout
+/**
+ * Root route
+ */
 export const rootRoute = createRootRoute({
   component: RootLayout,
 });
 
-// Home route - index route (renders at root path "/")
-export const homeRoute = createRoute({
+export const treesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: () => import("./pages/HomePage").then((m) => m.HomePage),
+  component: TreesPage,
 });
 
-// Individuals routes
-export const individualsRoute = createRoute({
+/**
+ * Tree route, provides treeId parameter
+ */
+
+export const treeLayout = createRoute({
   getParentRoute: () => rootRoute,
+  path: "/$treeId",
+  component: TreeLayout,
+});
+
+// Home route within tree context
+export const homeRoute = createRoute({
+  getParentRoute: () => treeLayout,
+  path: "/",
+  component: HomePage,
+});
+
+// Individuals routes within tree context
+export const individualsRoute = createRoute({
+  getParentRoute: () => treeLayout,
   path: "/individuals",
-  component: () =>
-    import("./pages/IndividualsPage").then((m) => m.IndividualsPage),
+  component: IndividualsPage,
 });
 
 export const individualRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => treeLayout,
   path: "/individuals/$individualId",
-  component: () =>
-    import("./pages/IndividualPage").then((m) => m.IndividualPage),
+  component: IndividualPage,
 });
 
-// Families routes
+// Families routes within tree context
 export const familiesRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => treeLayout,
   path: "/families",
-  component: () => import("./pages/FamiliesPage").then((m) => m.FamiliesPage),
+  component: FamiliesPage,
 });
 
 export const familyRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => treeLayout,
   path: "/families/$familyId",
-  component: () => import("./pages/FamilyPage").then((m) => m.FamilyPage),
+  component: FamilyPage,
 });
 
-// Places routes
+// Places routes within tree context
 export const placesRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => treeLayout,
   path: "/places",
-  component: () => import("./pages/PlacesPage").then((m) => m.PlacesPage),
+  component: PlacesPage,
 });
 
 export const placeRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => treeLayout,
   path: "/places/$placeId",
-  component: () => import("./pages/PlacePage").then((m) => m.PlacePage),
+  component: PlacePage,
 });
 
-// Events routes
+// Events routes within tree context
 export const eventsRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => treeLayout,
   path: "/events",
-  component: () => import("./pages/EventsPage").then((m) => m.EventsPage),
+  component: EventsPage,
 });
 
 export const eventRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => treeLayout,
   path: "/events/$eventId",
-  component: () => import("./pages/EventPage").then((m) => m.EventPage),
+  component: EventPage,
 });
 
-// Settings route
+// Settings route within tree context
 export const settingsRoute = createRoute({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => treeLayout,
   path: "/settings",
-  component: () => import("./pages/SettingsPage").then((m) => m.SettingsPage),
+  component: SettingsPage,
 });

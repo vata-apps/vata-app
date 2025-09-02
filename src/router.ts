@@ -11,20 +11,25 @@ import {
   placesRoute,
   rootRoute,
   settingsRoute,
+  treeLayout,
+  treesRoute,
 } from "./router/routes";
 
 // Create the route tree
 const routeTree = rootRoute.addChildren([
-  homeRoute,
-  individualsRoute,
-  individualRoute,
-  familiesRoute,
-  familyRoute,
-  placesRoute,
-  placeRoute,
-  eventsRoute,
-  eventRoute,
-  settingsRoute,
+  treesRoute,
+  treeLayout.addChildren([
+    homeRoute,
+    individualsRoute,
+    individualRoute,
+    familiesRoute,
+    familyRoute,
+    placesRoute,
+    placeRoute,
+    eventsRoute,
+    eventRoute,
+    settingsRoute,
+  ]),
 ]);
 
 // Create the router
