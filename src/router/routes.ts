@@ -11,7 +11,7 @@ import { IndividualsPage } from "./pages/IndividualsPage";
 import { PlacePage } from "./pages/PlacePage";
 import { PlacesPage } from "./pages/PlacesPage";
 import { SettingsPage } from "./pages/SettingsPage";
-import { TreesPage } from "./pages/TreesPage";
+import { TreesPage } from "./pages/trees/TreesPage";
 
 /**
  * Root route
