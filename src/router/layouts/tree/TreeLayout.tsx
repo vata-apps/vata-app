@@ -1,6 +1,6 @@
 import { LoadingState } from "@/components";
 import { fetchTreeById } from "@/db/trees/fetchTreeById";
-import { AppShell, Stack } from "@mantine/core";
+import { AppShell, Container, Stack } from "@mantine/core";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Outlet, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
@@ -42,8 +42,13 @@ export function TreeLayout() {
       </AppShell.Navbar>
 
       <AppShell.Main>
-        {isLoading && <LoadingState message="Loading tree..." />}
-        {!isLoading && tree && <Outlet />}
+        {isLoading ? (
+          <LoadingState message="Loading tree..." />
+        ) : (
+          <Container fluid px="md">
+            <Outlet />
+          </Container>
+        )}
       </AppShell.Main>
     </AppShell>
   );
