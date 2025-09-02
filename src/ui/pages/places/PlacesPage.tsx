@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/PageHeader";
 import { Stack } from "@mantine/core";
-import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
+import { PlacesTable } from "./PlacesTable";
 import { PlacesToolbar } from "./PlacesToolbar";
 import { PlacesFilters } from "./types";
 
@@ -21,10 +21,7 @@ export function PlacesPage() {
       <Stack gap="md">
         <PlacesToolbar filters={filters} setFilters={setFilters} />
 
-        <p>Tree ID: {treeId}</p>
-        <Link to="/$treeId/places/$placeId" params={{ treeId, placeId: "1" }}>
-          Place 1
-        </Link>
+        <PlacesTable filters={filters} />
       </Stack>
     </>
   );
