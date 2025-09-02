@@ -5,8 +5,8 @@ import { PlaceTypesFilter } from "./PlaceTypesFilter";
 import { PlacesFilters, PlacesSort } from "./types";
 
 interface PlacesToolbarProps {
-  readonly filter: PlacesFilters;
-  readonly setFilter: Dispatch<SetStateAction<PlacesFilters>>;
+  readonly filters: PlacesFilters;
+  readonly setFilters: Dispatch<SetStateAction<PlacesFilters>>;
 }
 
 const SORT_OPTIONS = [
@@ -16,7 +16,7 @@ const SORT_OPTIONS = [
   { value: "id_desc", label: "ID (9-1)" },
 ] as const;
 
-export function PlacesToolbar({ filter, setFilter }: PlacesToolbarProps) {
+export function PlacesToolbar({ filters, setFilters }: PlacesToolbarProps) {
   return (
     <Flex gap="md" justify="space-between">
       <Flex gap="md" flex={1}>
@@ -25,18 +25,18 @@ export function PlacesToolbar({ filter, setFilter }: PlacesToolbarProps) {
         </Button>
 
         <SearchInput
-          value={filter.query}
-          onChange={(value) => setFilter({ ...filter, query: value })}
+          value={filters.query}
+          onChange={(value) => setFilters({ ...filters, query: value })}
         />
 
-        <PlaceTypesFilter filter={filter} setFilter={setFilter} />
+        <PlaceTypesFilter filter={filters} setFilter={setFilters} />
       </Flex>
 
       <Select
-        value={filter.sort}
+        value={filters.sort}
         data={SORT_OPTIONS}
         onChange={(value) =>
-          setFilter({ ...filter, sort: value as PlacesSort })
+          setFilters({ ...filters, sort: value as PlacesSort })
         }
         checkIconPosition="right"
         radius="xl"

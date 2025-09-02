@@ -12,16 +12,14 @@ const INITIAL_FILTER = {
 } satisfies PlacesFilters;
 
 export function PlacesPage() {
-  const { treeId } = useParams({ from: "/$treeId/places" });
-
-  const [filter, setFilter] = useState<PlacesFilters>(INITIAL_FILTER);
+  const [filters, setFilters] = useState<PlacesFilters>(INITIAL_FILTER);
 
   return (
     <>
       <PageHeader title="Places" />
 
       <Stack gap="md">
-        <PlacesToolbar filter={filter} setFilter={setFilter} />
+        <PlacesToolbar filters={filters} setFilters={setFilters} />
 
         <p>Tree ID: {treeId}</p>
         <Link to="/$treeId/places/$placeId" params={{ treeId, placeId: "1" }}>
