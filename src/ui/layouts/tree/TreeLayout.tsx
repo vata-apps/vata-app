@@ -45,8 +45,10 @@ export function TreeLayout() {
         {isLoading ? (
           <LoadingState message="Loading tree..." />
         ) : (
-          <Container fluid px="md">
-            <Outlet />
+          <Container fluid px="md" miw={1024}>
+            <Stack gap="xs">
+              <Outlet />
+            </Stack>
           </Container>
         )}
       </AppShell.Main>

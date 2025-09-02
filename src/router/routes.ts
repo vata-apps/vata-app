@@ -9,7 +9,7 @@ import { HomePage } from "../ui/pages/HomePage";
 import { IndividualPage } from "../ui/pages/IndividualPage";
 import { IndividualsPage } from "../ui/pages/IndividualsPage";
 import { PlacePage } from "../ui/pages/PlacePage";
-import { PlacesPage } from "../ui/pages/PlacesPage";
+import { PlacesPage } from "../ui/pages/places/PlacesPage";
 import { SettingsPage } from "../ui/pages/SettingsPage";
 import { TreesPage } from "../ui/pages/trees/TreesPage";
 
