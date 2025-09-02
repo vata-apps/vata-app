@@ -13,7 +13,7 @@ import {
   settingsRoute,
   treeLayout,
   treesRoute,
-} from "./router/routes";
+} from "./routes";
 
 // Create the route tree
 const routeTree = rootRoute.addChildren([

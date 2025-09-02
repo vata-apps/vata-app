@@ -2,9 +2,9 @@ import { ActionIcon, TextInput } from "@mantine/core";
 import { IconSearch, IconX } from "@tabler/icons-react";
 
 interface SearchInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+  readonly placeholder?: string;
 }
 
 export function SearchInput({

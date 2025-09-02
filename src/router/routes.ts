@@ -1,17 +1,17 @@
 import { createRootRoute, createRoute } from "@tanstack/react-router";
-import { RootLayout } from "./layouts/RootLayout";
-import { TreeLayout } from "./layouts/tree/TreeLayout";
-import { EventPage } from "./pages/EventPage";
-import { EventsPage } from "./pages/EventsPage";
-import { FamiliesPage } from "./pages/FamiliesPage";
-import { FamilyPage } from "./pages/FamilyPage";
-import { HomePage } from "./pages/HomePage";
-import { IndividualPage } from "./pages/IndividualPage";
-import { IndividualsPage } from "./pages/IndividualsPage";
-import { PlacePage } from "./pages/PlacePage";
-import { PlacesPage } from "./pages/PlacesPage";
-import { SettingsPage } from "./pages/SettingsPage";
-import { TreesPage } from "./pages/trees/TreesPage";
+import { RootLayout } from "../ui/layouts/RootLayout";
+import { TreeLayout } from "../ui/layouts/tree/TreeLayout";
+import { EventPage } from "../ui/pages/EventPage";
+import { EventsPage } from "../ui/pages/EventsPage";
+import { FamiliesPage } from "../ui/pages/FamiliesPage";
+import { FamilyPage } from "../ui/pages/FamilyPage";
+import { HomePage } from "../ui/pages/HomePage";
+import { IndividualPage } from "../ui/pages/IndividualPage";
+import { IndividualsPage } from "../ui/pages/IndividualsPage";
+import { PlacePage } from "../ui/pages/PlacePage";
+import { PlacesPage } from "../ui/pages/PlacesPage";
+import { SettingsPage } from "../ui/pages/SettingsPage";
+import { TreesPage } from "../ui/pages/trees/TreesPage";
 
 /**
  * Root route
