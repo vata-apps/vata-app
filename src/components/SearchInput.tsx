@@ -1,5 +1,7 @@
 import { ActionIcon, TextInput } from "@mantine/core";
+import { useDebouncedCallback } from "@mantine/hooks";
 import { IconSearch, IconX } from "@tabler/icons-react";
+import { useState } from "react";
 
 interface SearchInputProps {
   readonly value: string;
@@ -12,8 +14,16 @@ export function SearchInput({
   onChange,
   placeholder = "Search...",
 }: SearchInputProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+  const [localValue, setLocalValue] = useState(value);
+
+  const debouncedOnChange = useDebouncedCallback(
+    () => onChange(localValue),
+    500,
+  );
+
+  const handleChange = (value: string) => {
+    setLocalValue(value);
+    debouncedOnChange();
   };
 
   return (
@@ -26,20 +36,20 @@ export function SearchInput({
       rightSectionWidth={42}
       leftSection={<IconSearch size={18} />}
       rightSection={
-        value && (
+        localValue && (
           <ActionIcon
             color="gray"
-            onClick={() => onChange("")}
+            onClick={() => handleChange("")}
             radius="xl"
-            size={32}
+            size={24}
             variant="subtle"
           >
-            <IconX size={18} />
+            <IconX size={16} />
           </ActionIcon>
         )
       }
-      value={value}
-      onChange={handleChange}
+      value={localValue}
+      onChange={(e) => handleChange(e.target.value)}
     />
   );
 }
