@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 
 interface ErrorStateProps {
   readonly error: Error;
-  readonly backTo: string;
+  readonly backTo?: string;
 }
 
 export function ErrorState({ error, backTo }: ErrorStateProps) {
@@ -35,9 +35,11 @@ export function ErrorState({ error, backTo }: ErrorStateProps) {
           <Text c="dimmed" ta="center">
             {description}
           </Text>
-          <Anchor component={Link} to={backTo}>
-            ← Go back
-          </Anchor>
+          {backTo && (
+            <Anchor component={Link} to={backTo}>
+              ← Go back
+            </Anchor>
+          )}
         </Stack>
       </Center>
     </Container>
