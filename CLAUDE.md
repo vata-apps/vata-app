@@ -6,27 +6,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Development
-pnpm dev              # Start development server
+pnpm dev              # Start Vite development server (frontend only)
+pnpm tauri dev        # Start Tauri development mode (frontend + desktop app)
 pnpm build            # Build for production (includes TypeScript compilation)
-pnpm lint             # Run ESLint
-pnpm type-check       # Run TypeScript type checking
+pnpm tauri build      # Build desktop application for production
 pnpm preview          # Preview production build
 
 # Database
-pnpm db:reset         # Reset Supabase database to initial state (includes seed data)
-pnpm db:types         # Generate TypeScript types from Supabase schema
-pnpm db:diff          # Generate diff for database changes
+pnpm db:generate      # Generate Drizzle migrations from schema changes
+pnpm db:migrate       # Apply migrations to SQLite database
+pnpm db:studio        # Launch Drizzle Studio for database management
 ```
 
 ## Project Architecture
 
 ### Core Technology Stack
+- **Desktop Framework**: Tauri v2 for cross-platform desktop apps
 - **Frontend**: React 19 with TypeScript and Vite
-- **Routing**: TanStack Router (v1.130+) with type-safe routing
-- **State Management**: TanStack Query for server state
+- **Routing**: TanStack Router (v1.131+) with type-safe routing
+- **State Management**: TanStack Query for data fetching and caching
 - **UI Framework**: Mantine UI v8 with Tabler icons
-- **Backend**: Supabase (database, auth, API)
-- **Database**: PostgreSQL via Supabase with RLS policies
+- **Database**: SQLite with Drizzle ORM for type-safe queries
+- **Backend**: Rust via Tauri (minimal, mostly for SQLite access)
 
 ### Application Structure
 This is a genealogy application with these core modules:
@@ -40,30 +41,30 @@ This is a genealogy application with these core modules:
 ### Key Directories
 ```
 src/
-├── api/           # Supabase API functions organized by module
+├── lib/
+│   ├── db/        # Drizzle schema, client, and migrations
+│   └── tauri/     # Tauri commands and database operations
 ├── components/    # Shared React components
-├── db/           # Database utilities and types
-├── lib/          # Core libraries (Supabase client, Query client)
-├── router/       # TanStack Router configuration
+├── router/        # TanStack Router configuration
 ├── ui/           # Page components and layouts
+├── hooks/        # Custom hooks for data fetching
 └── utils/        # Utility functions
+src-tauri/        # Rust backend code (minimal)
 ```
 
 ### Database Architecture
-- Uses Supabase with PostgreSQL
-- All tables have RLS (Row Level Security) policies
+- Uses SQLite with Drizzle ORM for type-safe operations
 - GEDCOM ID system for genealogy standards compliance
 - Hierarchical relationships for places (country → state → city)
 - Event system with participants, subjects, and roles
-- See `/documentation/database-schema/` for detailed schema docs
 
 ## Coding Standards
 
 ### TypeScript Rules
 - Never use `any` type
 - Avoid type casting with `as` when possible
-- Reuse types from `database.types.ts` and Supabase `Table<>` generic
-- Always validate types after changes
+- Use Drizzle's inferred types from schema definitions
+- Always validate types after schema changes
 - Prefix generic type parameters with `T` (e.g., `TKey`, `TValue`)
 
 ### Naming Conventions
@@ -79,17 +80,18 @@ src/
 - Implement proper error handling for database operations
 
 ### Database Changes
-- Never use ALTER TABLE statements in development
-- Modify CREATE TABLE statements directly in migration files
-- Update documentation in `/documentation/database-schema/` after changes
-- Database is reset frequently during development
+- Use Drizzle migrations for all schema changes
+- Generate migrations with `pnpm db:generate` after schema updates
+- Apply migrations with `pnpm db:migrate`
+- Use Drizzle Studio (`pnpm db:studio`) for database inspection
 
 ## Important Files
-- `src/database.types.ts` - Generated Supabase types (regenerated via `pnpm db:types`)
-- `src/lib/supabase.ts` - Supabase client configuration
+- `src/lib/db/schema.ts` - Drizzle database schema definitions
+- `src/lib/db/client.ts` - SQLite database client setup
+- `src/lib/tauri/commands.ts` - Tauri command wrappers
 - `src/router/index.ts` - Main router configuration
-- `/documentation/` - Comprehensive project documentation
-- `/supabase/migrations/` - Database schema and migration files
+- `src-tauri/src/main.rs` - Tauri backend entry point (minimal Rust)
+- `drizzle.config.ts` - Drizzle configuration
 
 ## Commit Message Standards
 
@@ -118,8 +120,9 @@ chore: update dependencies to latest versions
 ```
 
 ## Development Notes
-- Application comes with comprehensive seed data for testing
-- Uses TanStack Query for all data fetching with proper caching
+- Desktop-first application with offline functionality
+- Uses TanStack Query for data fetching and caching
+- All database operations go through Tauri commands and Drizzle ORM
 - Implements proper loading and error states throughout
-- Follows React 19 best practices and patterns
-- All database operations go through dedicated API functions in `src/api/`
+- Follows React 19 and Tauri best practices
+- Minimal Rust code - most logic stays in TypeScript
