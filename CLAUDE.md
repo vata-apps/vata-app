@@ -91,6 +91,32 @@ src/
 - `/documentation/` - Comprehensive project documentation
 - `/supabase/migrations/` - Database schema and migration files
 
+## Commit Message Standards
+
+Messages must follow conventional commit format:
+- Use English only
+- Keep under 100 characters
+- Single line format
+- Always check `git status` and `git diff` before committing
+
+### Conventional Commit Types
+- `feat:` - New features
+- `fix:` - Bug fixes  
+- `docs:` - Documentation changes
+- `style:` - Code formatting (no logic changes)
+- `refactor:` - Code restructuring (no feature changes)
+- `test:` - Adding or modifying tests
+- `chore:` - Maintenance tasks, dependency updates
+
+### Examples
+```bash
+feat: add user authentication system
+fix: resolve login page crash on mobile devices
+docs: update API documentation for Places module
+refactor: simplify database query functions
+chore: update dependencies to latest versions
+```
+
 ## Development Notes
 - Application comes with comprehensive seed data for testing
 - Uses TanStack Query for all data fetching with proper caching
