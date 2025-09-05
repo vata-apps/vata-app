@@ -59,7 +59,7 @@ export async function initializeDatabase(treeName: string): Promise<void> {
     const existingTypes = await database.select(
       "SELECT COUNT(*) as count FROM place_types WHERE is_system = 1"
     );
-    const count = existingTypes[0]?.count || 0;
+    const count = (existingTypes as { count: number }[])[0]?.count || 0;
 
     // Insert default place types if they don't exist
     if (count === 0) {
