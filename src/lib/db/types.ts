@@ -1,6 +1,11 @@
 // Database result types for raw SQL queries
 // These types represent the raw data structure returned from SQLite
 
+// Utility types for cleaner API signatures
+export type CreatePlaceInput = Omit<import('./schema').NewPlace, 'id' | 'createdAt'>;
+export type CreatePlaceTypeInput = Omit<import('./schema').NewPlaceType, 'id' | 'createdAt'>;
+export type UpdatePlaceInput = Partial<Omit<import('./schema').Place, 'id' | 'createdAt'>>;
+
 export interface RawPlaceRow {
   readonly id: number;
   readonly created_at: number; // SQLite timestamp
@@ -24,17 +29,25 @@ export interface CountResult {
   readonly count: number;
 }
 
+// Helper function to safely access properties on unknown objects
+function hasProperty<T extends PropertyKey>(
+  obj: unknown,
+  key: T
+): obj is Record<T, unknown> {
+  return typeof obj === 'object' && obj !== null && key in obj;
+}
+
 // Type guards for runtime validation
 export function isRawPlaceRow(obj: unknown): obj is RawPlaceRow {
   return (
     typeof obj === 'object' &&
     obj !== null &&
-    'id' in obj &&
-    'name' in obj &&
-    'type_id' in obj &&
-    typeof (obj as any).id === 'number' &&
-    typeof (obj as any).name === 'string' &&
-    typeof (obj as any).type_id === 'number'
+    hasProperty(obj, 'id') &&
+    hasProperty(obj, 'name') &&
+    hasProperty(obj, 'type_id') &&
+    typeof obj.id === 'number' &&
+    typeof obj.name === 'string' &&
+    typeof obj.type_id === 'number'
   );
 }
 
@@ -42,10 +55,10 @@ export function isRawPlaceTypeRow(obj: unknown): obj is RawPlaceTypeRow {
   return (
     typeof obj === 'object' &&
     obj !== null &&
-    'id' in obj &&
-    'name' in obj &&
-    typeof (obj as any).id === 'number' &&
-    typeof (obj as any).name === 'string'
+    hasProperty(obj, 'id') &&
+    hasProperty(obj, 'name') &&
+    typeof obj.id === 'number' &&
+    typeof obj.name === 'string'
   );
 }
 
@@ -53,8 +66,8 @@ export function isCountResult(obj: unknown): obj is CountResult {
   return (
     typeof obj === 'object' &&
     obj !== null &&
-    'count' in obj &&
-    typeof (obj as any).count === 'number'
+    hasProperty(obj, 'count') &&
+    typeof obj.count === 'number'
   );
 }
 
