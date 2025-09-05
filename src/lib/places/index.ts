@@ -1,6 +1,14 @@
 import Database from '@tauri-apps/plugin-sql';
 import { PlaceType, Place, NewPlace, NewPlaceType } from '../db/schema';
 import { initializeDatabase } from '../db/migrations';
+import { 
+  RawPlaceRow, 
+  RawPlaceTypeRow, 
+  isRawPlaceRow, 
+  isRawPlaceTypeRow,
+  rawPlaceToPlace,
+  rawPlaceTypeToPlaceType
+} from '../db/types';
 
 export const places = {
   // Initialize database with schema and default place types
@@ -11,7 +19,12 @@ export const places = {
   // Place Types CRUD
   async getPlaceTypes(treeName: string): Promise<PlaceType[]> {
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    return await db.select('SELECT * FROM place_types ORDER BY name');
+    const result = await db.select('SELECT * FROM place_types ORDER BY name');
+    
+    // Tauri database.select() returns unknown[] - cast for runtime validation with type guards
+    return (result as unknown[])
+      .filter((row): row is RawPlaceTypeRow => isRawPlaceTypeRow(row))
+      .map(rawPlaceTypeToPlaceType);
   },
 
   async createPlaceType(treeName: string, placeType: Omit<NewPlaceType, 'id' | 'createdAt'>): Promise<PlaceType> {
@@ -20,49 +33,49 @@ export const places = {
       'INSERT INTO place_types (name, key, is_system) VALUES ($1, $2, $3)',
       [placeType.name, placeType.key, placeType.isSystem]
     );
-    return await this.getPlaceType(treeName, result.lastInsertId as number);
+    
+    if (typeof result.lastInsertId !== 'number') {
+      throw new Error('Failed to get insert ID for place type');
+    }
+    
+    return await this.getPlaceType(treeName, result.lastInsertId);
   },
 
   async getPlaceType(treeName: string, id: number): Promise<PlaceType> {
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
     const result = await db.select('SELECT * FROM place_types WHERE id = $1', [id]);
-    return (result as PlaceType[])[0];
+    
+    // Tauri database.select() returns unknown[] - cast for runtime validation
+    const firstResult = (result as unknown[])[0];
+    if (!isRawPlaceTypeRow(firstResult)) {
+      throw new Error(`Place type with id ${id} not found or invalid data structure`);
+    }
+    
+    return rawPlaceTypeToPlaceType(firstResult);
   },
 
   // Places CRUD
   async getAll(treeName: string): Promise<Place[]> {
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    return await db.select(`
-      SELECT 
-        id,
-        created_at as createdAt,
-        name,
-        type_id as typeId,
-        parent_id as parentId,
-        latitude,
-        longitude,
-        gedcom_id as gedcomId
-      FROM places 
-      ORDER BY name
-    `) as Place[];
+    const result = await db.select('SELECT * FROM places ORDER BY name');
+    
+    // Tauri database.select() returns unknown[] - cast for runtime validation with type guards
+    return (result as unknown[])
+      .filter((row): row is RawPlaceRow => isRawPlaceRow(row))
+      .map(rawPlaceToPlace);
   },
 
   async getById(treeName: string, id: number): Promise<Place | null> {
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await db.select(`
-      SELECT 
-        id,
-        created_at as createdAt,
-        name,
-        type_id as typeId,
-        parent_id as parentId,
-        latitude,
-        longitude,
-        gedcom_id as gedcomId
-      FROM places 
-      WHERE id = $1
-    `, [id]) as Place[];
-    return result.length > 0 ? result[0] : null;
+    const result = await db.select('SELECT * FROM places WHERE id = $1', [id]);
+    
+    // Tauri database.select() returns unknown[] - cast for runtime validation
+    const firstResult = (result as unknown[])[0];
+    if (!firstResult || !isRawPlaceRow(firstResult)) {
+      return null;
+    }
+    
+    return rawPlaceToPlace(firstResult);
   },
 
   async create(treeName: string, place: Omit<NewPlace, 'id' | 'createdAt'>): Promise<Place> {
@@ -72,7 +85,11 @@ export const places = {
       [place.name, place.typeId, place.parentId, place.latitude, place.longitude, place.gedcomId]
     );
     
-    const createdPlace = await this.getById(treeName, result.lastInsertId as number);
+    if (typeof result.lastInsertId !== 'number') {
+      throw new Error('Failed to get insert ID for place');
+    }
+    
+    const createdPlace = await this.getById(treeName, result.lastInsertId);
     if (!createdPlace) {
       throw new Error(`Failed to create place: ${place.name}`);
     }
@@ -80,13 +97,15 @@ export const places = {
   },
 
   async update(treeName: string, id: number, place: Partial<Omit<Place, 'id' | 'createdAt'>>): Promise<Place> {
-    console.log('places.update called with:', { treeName, id, place });
-    
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
     const updates = Object.entries(place).filter(([_, value]) => value !== undefined);
-    if (updates.length === 0) return await this.getById(treeName, id) as Place;
-    
-    console.log('Updates to apply:', updates);
+    if (updates.length === 0) {
+      const existingPlace = await this.getById(treeName, id);
+      if (!existingPlace) {
+        throw new Error(`Place with id ${id} not found`);
+      }
+      return existingPlace;
+    }
     
     // Map TypeScript property names to database column names
     const propertyToColumnMap: Record<string, string> = {
@@ -105,15 +124,14 @@ export const places = {
     const values = [id, ...updates.map(([_, value]) => value)];
     
     const query = `UPDATE places SET ${setClause} WHERE id = $1`;
-    console.log('SQL Query:', query);
-    console.log('SQL Values:', values);
-    
     await db.execute(query, values);
     
-    const result = await this.getById(treeName, id) as Place;
-    console.log('Updated place from DB:', result);
+    const updatedPlace = await this.getById(treeName, id);
+    if (!updatedPlace) {
+      throw new Error(`Failed to retrieve updated place with id ${id}`);
+    }
     
-    return result;
+    return updatedPlace;
   },
 
   async delete(treeName: string, id: number): Promise<void> {
@@ -123,30 +141,35 @@ export const places = {
 
   // Get places with hierarchy info
   async getAllWithTypes(treeName: string): Promise<(Place & { type: PlaceType })[]> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    return await db.select(`
-      SELECT p.*, pt.name as type_name, pt.key as type_key, pt.is_system as type_is_system 
-      FROM places p 
-      JOIN place_types pt ON p.type_id = pt.id 
-      ORDER BY p.name
-    `);
+    // Get all places and place types separately for type safety
+    const [places, placeTypes] = await Promise.all([
+      this.getAll(treeName),
+      this.getPlaceTypes(treeName)
+    ]);
+    
+    // Create a map of place types by id for efficient lookup
+    const placeTypeMap = new Map<number, PlaceType>();
+    placeTypes.forEach(type => placeTypeMap.set(type.id, type));
+    
+    // Join places with their types
+    return places
+      .map(place => {
+        const type = placeTypeMap.get(place.typeId);
+        if (!type) {
+          throw new Error(`Place type with id ${place.typeId} not found for place ${place.name}`);
+        }
+        return { ...place, type };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
   },
 
   async getChildren(treeName: string, parentId: number): Promise<Place[]> {
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    return await db.select(`
-      SELECT 
-        id,
-        created_at as createdAt,
-        name,
-        type_id as typeId,
-        parent_id as parentId,
-        latitude,
-        longitude,
-        gedcom_id as gedcomId
-      FROM places 
-      WHERE parent_id = $1 
-      ORDER BY name
-    `, [parentId]) as Place[];
+    const result = await db.select('SELECT * FROM places WHERE parent_id = $1 ORDER BY name', [parentId]);
+    
+    // Tauri database.select() returns unknown[] - cast for runtime validation with type guards
+    return (result as unknown[])
+      .filter((row): row is RawPlaceRow => isRawPlaceRow(row))
+      .map(rawPlaceToPlace);
   },
 };
