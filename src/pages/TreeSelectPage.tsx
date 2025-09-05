@@ -39,10 +39,9 @@ function TreeSelectPage() {
   }
 
   async function deleteTree(name: string) {
-    if (!confirm(`Are you sure you want to delete tree "${name}"?`)) {
-      return;
-    }
-
+    // TODO: Replace with proper Tauri dialog API
+    // For now, skip confirmation - direct deletion
+    
     try {
       await trees.delete(name);
       setTreesList(treesList.filter(tree => tree.name !== name));
