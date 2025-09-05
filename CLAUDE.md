@@ -85,6 +85,12 @@ src-tauri/        # Rust backend code (minimal)
 - Apply migrations with `pnpm db:migrate`
 - Use Drizzle Studio (`pnpm db:studio`) for database inspection
 
+### Database Best Practices
+- ALWAYS use Drizzle ORM (`getDb()`) for all database operations - NEVER use Tauri Database API directly
+- All foreign key relationships MUST include appropriate ON DELETE actions (SET NULL, CASCADE, etc.)
+- Use Drizzle's type-safe queries instead of raw SQL to maintain type safety
+- Leverage Drizzle's inferred types for consistent typing across the application
+
 ## Important Files
 - `src/lib/db/schema.ts` - Drizzle database schema definitions
 - `src/lib/db/client.ts` - SQLite database client setup

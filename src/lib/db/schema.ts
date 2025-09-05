@@ -20,7 +20,7 @@ export const places = sqliteTable('places', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`CURRENT_TIMESTAMP`),
   name: text('name').notNull(),
   typeId: integer('type_id').notNull().references(() => placeTypes.id, { onDelete: 'restrict' }),
-  parentId: integer('parent_id'),
+  parentId: integer('parent_id').references((): any => places.id, { onDelete: 'set null' }),
   latitude: real('latitude'),
   longitude: real('longitude'),
   gedcomId: integer('gedcom_id'),

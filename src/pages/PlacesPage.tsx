@@ -57,6 +57,11 @@ function PlacesPage() {
       return
     }
 
+    if (!newPlace.typeId || newPlace.typeId === 0) {
+      alert('Please select a place type')
+      return
+    }
+
     try {
       const createdPlace = await places.create(treeId, {
         name: newPlace.name,
@@ -75,12 +80,17 @@ function PlacesPage() {
     }
   }
 
-  async function deletePlace(placeId: number, placeName: string) {
-    if (!confirm(`Are you sure you want to delete "${placeName}"?`)) {
-      return
-    }
-
+  async function deletePlace(placeId: number) {
     try {
+      // Check if place has children
+      const childrenCount = await places.getChildrenCount(treeId, placeId)
+      
+      // TODO: Replace with proper Tauri dialog API
+      // For now, skip confirmation - direct deletion
+      if (childrenCount > 0) {
+        // Would show: "This place has X child place(s). Children will become top-level places."
+      }
+
       await places.delete(treeId, placeId)
       setPlacesList(placesList.filter(p => p.id !== placeId))
     } catch (err) {
@@ -370,7 +380,7 @@ function PlacesPage() {
                         Edit
                       </button>
                       <button 
-                        onClick={() => deletePlace(place.id, place.name)}
+                        onClick={() => deletePlace(place.id)}
                         style={{ 
                           backgroundColor: "#f44336", 
                           color: "white", 

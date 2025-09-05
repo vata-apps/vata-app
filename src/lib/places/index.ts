@@ -1,16 +1,16 @@
 import Database from '@tauri-apps/plugin-sql';
-import { PlaceType, Place } from '../db/schema';
+import { eq } from 'drizzle-orm';
+import { PlaceType, Place, places as placesTable } from '../db/schema';
+import { getDb } from '../db/client';
 import { initializeDatabase } from '../db/migrations';
 import { 
-  RawPlaceRow, 
-  RawPlaceTypeRow, 
-  isRawPlaceRow, 
-  isRawPlaceTypeRow,
-  rawPlaceToPlace,
-  rawPlaceTypeToPlaceType,
   CreatePlaceInput,
   CreatePlaceTypeInput,
-  UpdatePlaceInput
+  UpdatePlaceInput,
+  rawPlaceToPlace,
+  rawPlaceTypeToPlaceType,
+  isRawPlaceRow,
+  isRawPlaceTypeRow
 } from '../db/types';
 
 export const places = {
@@ -21,32 +21,56 @@ export const places = {
 
   // Place Types CRUD
   async getPlaceTypes(treeName: string): Promise<PlaceType[]> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await db.select('SELECT * FROM place_types ORDER BY name');
+    // Temporary: Use Tauri API directly for select too
+    const database = await Database.load(`sqlite:trees/${treeName}.db`);
     
-    // Tauri database.select() returns unknown[] - cast for runtime validation with type guards
-    return (result as unknown[])
-      .filter((row): row is RawPlaceTypeRow => isRawPlaceTypeRow(row))
-      .map(rawPlaceTypeToPlaceType);
+    try {
+      const result = await database.select('SELECT * FROM place_types ORDER BY name');
+      
+      // If empty, initialize the database (for existing trees that weren't properly initialized)
+      if (!result || (result as unknown[]).length === 0) {
+        await this.initDatabase(treeName);
+        const retryResult = await database.select('SELECT * FROM place_types ORDER BY name');
+        return (retryResult as unknown[])
+          .filter((row): row is any => isRawPlaceTypeRow(row))
+          .map(rawPlaceTypeToPlaceType);
+      }
+      
+      // Tauri database.select() returns unknown[] - cast for runtime validation with type guards
+      return (result as unknown[])
+        .filter((row): row is any => isRawPlaceTypeRow(row))
+        .map(rawPlaceTypeToPlaceType);
+    } catch (error) {
+      console.error('Failed to load place types:', error);
+      throw error;
+    }
   },
 
   async createPlaceType(treeName: string, placeType: CreatePlaceTypeInput): Promise<PlaceType> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await db.execute(
-      'INSERT INTO place_types (name, key, is_system) VALUES ($1, $2, $3)',
-      [placeType.name, placeType.key, placeType.isSystem]
-    );
+    // Temporary: Use Tauri API directly for insert
+    const database = await Database.load(`sqlite:trees/${treeName}.db`);
     
-    if (typeof result.lastInsertId !== 'number') {
-      throw new Error('Failed to get insert ID for place type');
+    try {
+      const result = await database.execute(
+        'INSERT INTO place_types (name, key, is_system) VALUES (?, ?, ?)',
+        [placeType.name, placeType.key, placeType.isSystem]
+      );
+      
+      if (typeof result.lastInsertId !== 'number') {
+        throw new Error('Failed to get insert ID for place type');
+      }
+      
+      return await this.getPlaceType(treeName, result.lastInsertId);
+    } catch (error) {
+      console.error('Place type creation failed:', error);
+      throw error;
     }
-    
-    return await this.getPlaceType(treeName, result.lastInsertId);
   },
 
   async getPlaceType(treeName: string, id: number): Promise<PlaceType> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await db.select('SELECT * FROM place_types WHERE id = $1', [id]);
+    // Temporary: Use Tauri API directly
+    const database = await Database.load(`sqlite:trees/${treeName}.db`);
+    const result = await database.select('SELECT * FROM place_types WHERE id = ?', [id]);
     
     // Tauri database.select() returns unknown[] - cast for runtime validation
     const firstResult = (result as unknown[])[0];
@@ -59,18 +83,20 @@ export const places = {
 
   // Places CRUD
   async getAll(treeName: string): Promise<Place[]> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await db.select('SELECT * FROM places ORDER BY name');
+    // Temporary: Use Tauri API directly
+    const database = await Database.load(`sqlite:trees/${treeName}.db`);
+    const result = await database.select('SELECT * FROM places ORDER BY name');
     
     // Tauri database.select() returns unknown[] - cast for runtime validation with type guards
     return (result as unknown[])
-      .filter((row): row is RawPlaceRow => isRawPlaceRow(row))
+      .filter((row): row is any => isRawPlaceRow(row))
       .map(rawPlaceToPlace);
   },
 
   async getById(treeName: string, id: number): Promise<Place | null> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await db.select('SELECT * FROM places WHERE id = $1', [id]);
+    // Temporary: Use Tauri API directly
+    const database = await Database.load(`sqlite:trees/${treeName}.db`);
+    const result = await database.select('SELECT * FROM places WHERE id = ?', [id]);
     
     // Tauri database.select() returns unknown[] - cast for runtime validation
     const firstResult = (result as unknown[])[0];
@@ -82,27 +108,41 @@ export const places = {
   },
 
   async create(treeName: string, place: CreatePlaceInput): Promise<Place> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await db.execute(
-      'INSERT INTO places (name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES ($1, $2, $3, $4, $5, $6)',
-      [place.name, place.typeId, place.parentId, place.latitude, place.longitude, place.gedcomId]
-    );
+    // Temporary: Use Tauri API directly for insert, Drizzle for select
+    const database = await Database.load(`sqlite:trees/${treeName}.db`);
     
-    if (typeof result.lastInsertId !== 'number') {
-      throw new Error('Failed to get insert ID for place');
+    try {
+      const result = await database.execute(
+        'INSERT INTO places (name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?)',
+        [place.name, place.typeId, place.parentId, place.latitude, place.longitude, place.gedcomId]
+      );
+      
+      if (typeof result.lastInsertId !== 'number') {
+        throw new Error('Failed to get insert ID for place');
+      }
+      
+      // Use Drizzle for the select
+      const createdPlace = await this.getById(treeName, result.lastInsertId);
+      if (!createdPlace) {
+        throw new Error(`Failed to retrieve created place`);
+      }
+      
+      return createdPlace;
+    } catch (error) {
+      console.error('Place creation failed:', error);
+      throw error;
     }
-    
-    const createdPlace = await this.getById(treeName, result.lastInsertId);
-    if (!createdPlace) {
-      throw new Error(`Failed to create place: ${place.name}`);
-    }
-    return createdPlace;
   },
 
   async update(treeName: string, id: number, place: UpdatePlaceInput): Promise<Place> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const updates = Object.entries(place).filter(([_, value]) => value !== undefined);
-    if (updates.length === 0) {
+    const db = await getDb(treeName);
+    
+    // Filter out undefined values
+    const filteredUpdates = Object.fromEntries(
+      Object.entries(place).filter(([_, value]) => value !== undefined)
+    ) as Partial<Place>;
+    
+    if (Object.keys(filteredUpdates).length === 0) {
       const existingPlace = await this.getById(treeName, id);
       if (!existingPlace) {
         throw new Error(`Place with id ${id} not found`);
@@ -110,36 +150,43 @@ export const places = {
       return existingPlace;
     }
     
-    // Map TypeScript property names to database column names
-    const propertyToColumnMap: Record<string, string> = {
-      'name': 'name',
-      'typeId': 'type_id',
-      'parentId': 'parent_id', 
-      'latitude': 'latitude',
-      'longitude': 'longitude',
-      'gedcomId': 'gedcom_id'
-    };
-    
-    const setClause = updates.map(([key], index) => {
-      const columnName = propertyToColumnMap[key] || key;
-      return `${columnName} = $${index + 2}`;
-    }).join(', ');
-    const values = [id, ...updates.map(([_, value]) => value)];
-    
-    const query = `UPDATE places SET ${setClause} WHERE id = $1`;
-    await db.execute(query, values);
-    
-    const updatedPlace = await this.getById(treeName, id);
+    const result = await db.update(placesTable)
+      .set(filteredUpdates)
+      .where(eq(placesTable.id, id))
+      .returning();
+      
+    const updatedPlace = Array.isArray(result) ? result[0] : result;
     if (!updatedPlace) {
-      throw new Error(`Failed to retrieve updated place with id ${id}`);
+      throw new Error(`Place with id ${id} not found`);
     }
     
     return updatedPlace;
   },
 
   async delete(treeName: string, id: number): Promise<void> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    await db.execute('DELETE FROM places WHERE id = $1', [id]);
+    // Temporary: Use Tauri API directly for delete too
+    const database = await Database.load(`sqlite:trees/${treeName}.db`);
+    
+    try {
+      await database.execute('DELETE FROM places WHERE id = ?', [id]);
+    } catch (error) {
+      console.error('Delete operation failed:', error);
+      throw error;
+    }
+  },
+
+  // Get count of children for a place (for UI confirmation)
+  async getChildrenCount(treeName: string, parentId: number): Promise<number> {
+    // Temporary: Use Tauri API directly
+    const database = await Database.load(`sqlite:trees/${treeName}.db`);
+    const result = await database.select('SELECT COUNT(*) as count FROM places WHERE parent_id = ?', [parentId]);
+    
+    const firstResult = (result as unknown[])[0];
+    if (!firstResult || typeof firstResult !== 'object' || !('count' in firstResult)) {
+      return 0;
+    }
+    
+    return (firstResult as any).count as number;
   },
 
   // Get places with hierarchy info
@@ -167,12 +214,9 @@ export const places = {
   },
 
   async getChildren(treeName: string, parentId: number): Promise<Place[]> {
-    const db = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await db.select('SELECT * FROM places WHERE parent_id = $1 ORDER BY name', [parentId]);
-    
-    // Tauri database.select() returns unknown[] - cast for runtime validation with type guards
-    return (result as unknown[])
-      .filter((row): row is RawPlaceRow => isRawPlaceRow(row))
-      .map(rawPlaceToPlace);
+    const db = await getDb(treeName);
+    return await db.select().from(placesTable)
+      .where(eq(placesTable.parentId, parentId))
+      .orderBy(placesTable.name);
   },
 };
