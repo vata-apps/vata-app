@@ -21,7 +21,8 @@ export async function getDb(treeName: string) {
   const asyncCallback: AsyncRemoteCallback = async (sql, params, method) => {
     try {
       if (method === 'all' || method === 'values') {
-        const result = await database.select(sql, params) as any[];
+        // Note: Tauri database.select() returns unknown[] - type validation should be done by callers
+        const result = await database.select(sql, params) as unknown[];
         return { rows: result };
       } else {
         await database.execute(sql, params);

@@ -1,4 +1,5 @@
 import Database from "@tauri-apps/plugin-sql";
+import { isCountResult } from "./types";
 
 const SCHEMA_SQL = `
   CREATE TABLE IF NOT EXISTS place_types (
@@ -59,7 +60,13 @@ export async function initializeDatabase(treeName: string): Promise<void> {
     const existingTypes = await database.select(
       "SELECT COUNT(*) as count FROM place_types WHERE is_system = 1"
     );
-    const count = (existingTypes as { count: number }[])[0]?.count || 0;
+    
+    // Tauri database.select() returns unknown[] - we need to cast before runtime validation
+    const firstResult = (existingTypes as unknown[])[0];
+    if (!isCountResult(firstResult)) {
+      throw new Error("Invalid count result from database");
+    }
+    const count = firstResult.count;
 
     // Insert default place types if they don't exist
     if (count === 0) {
