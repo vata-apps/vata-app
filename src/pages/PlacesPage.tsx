@@ -13,19 +13,31 @@ function PlacesPage() {
   // Form states
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingPlace, setEditingPlace] = useState<number | null>(null)
-  const [newPlace, setNewPlace] = useState({
+  const [newPlace, setNewPlace] = useState<{
+    name: string;
+    typeId: number;
+    parentId: number | null;
+    latitude: number | null;
+    longitude: number | null;
+  }>({
     name: '',
     typeId: 0,
-    parentId: null as number | null,
-    latitude: null as number | null,
-    longitude: null as number | null
+    parentId: null,
+    latitude: null,
+    longitude: null
   })
-  const [editPlace, setEditPlace] = useState({
+  const [editPlace, setEditPlace] = useState<{
+    name: string;
+    typeId: number;
+    parentId: number | null;
+    latitude: number | null;
+    longitude: number | null;
+  }>({
     name: '',
     typeId: 0,
-    parentId: null as number | null,
-    latitude: null as number | null,
-    longitude: null as number | null
+    parentId: null,
+    latitude: null,
+    longitude: null
   })
 
   useEffect(() => {
@@ -125,15 +137,6 @@ function PlacesPage() {
     }
 
     try {
-      console.log('Updating place with:', {
-        placeId,
-        name: editPlace.name,
-        typeId: editPlace.typeId,
-        parentId: editPlace.parentId,
-        latitude: editPlace.latitude,
-        longitude: editPlace.longitude
-      })
-      
       const updatedPlace = await places.update(treeId, placeId, {
         name: editPlace.name,
         typeId: editPlace.typeId,
@@ -142,12 +145,9 @@ function PlacesPage() {
         longitude: editPlace.longitude
       })
       
-      console.log('Updated place result:', updatedPlace)
-      
       setPlacesList(placesList.map(p => p.id === placeId ? updatedPlace : p))
       setEditingPlace(null)
     } catch (err) {
-      console.error('Error updating place:', err)
       setError(`Error updating place: ${err}`)
     }
   }
