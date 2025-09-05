@@ -6,6 +6,11 @@ export type CreatePlaceInput = Omit<import('./schema').NewPlace, 'id' | 'created
 export type CreatePlaceTypeInput = Omit<import('./schema').NewPlaceType, 'id' | 'createdAt'>;
 export type UpdatePlaceInput = Partial<Omit<import('./schema').Place, 'id' | 'createdAt'>>;
 
+// Form data types for UI components
+export type PlaceFormData = Omit<CreatePlaceInput, 'gedcomId'> & {
+  gedcomId?: number | null;
+};
+
 export interface RawPlaceRow {
   readonly id: number;
   readonly created_at: number; // SQLite timestamp

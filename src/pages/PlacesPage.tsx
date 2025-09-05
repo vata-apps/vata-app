@@ -2,6 +2,7 @@ import { Link, useParams } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
 import { places } from '../lib/places'
 import { Place, PlaceType } from '../lib/db/schema'
+import { PlaceFormData } from '../lib/db/types'
 
 function PlacesPage() {
   const { treeId } = useParams({ from: '/$treeId/places' })
@@ -10,35 +11,20 @@ function PlacesPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
+  // Helper function for empty form data
+  const createEmptyFormData = (defaultTypeId = 0): PlaceFormData => ({
+    name: '',
+    typeId: defaultTypeId,
+    parentId: null,
+    latitude: null,
+    longitude: null
+  })
+  
   // Form states
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [editingPlace, setEditingPlace] = useState<number | null>(null)
-  const [newPlace, setNewPlace] = useState<{
-    name: string;
-    typeId: number;
-    parentId: number | null;
-    latitude: number | null;
-    longitude: number | null;
-  }>({
-    name: '',
-    typeId: 0,
-    parentId: null,
-    latitude: null,
-    longitude: null
-  })
-  const [editPlace, setEditPlace] = useState<{
-    name: string;
-    typeId: number;
-    parentId: number | null;
-    latitude: number | null;
-    longitude: number | null;
-  }>({
-    name: '',
-    typeId: 0,
-    parentId: null,
-    latitude: null,
-    longitude: null
-  })
+  const [newPlace, setNewPlace] = useState<PlaceFormData>(createEmptyFormData())
+  const [editPlace, setEditPlace] = useState<PlaceFormData>(createEmptyFormData())
 
   useEffect(() => {
     loadData()
@@ -82,13 +68,7 @@ function PlacesPage() {
       })
       
       setPlacesList([...placesList, createdPlace])
-      setNewPlace({
-        name: '',
-        typeId: placeTypes[0]?.id || 0,
-        parentId: null,
-        latitude: null,
-        longitude: null
-      })
+      setNewPlace(createEmptyFormData(placeTypes[0]?.id || 0))
       setShowCreateForm(false)
     } catch (err) {
       setError(`Error creating place: ${err}`)
@@ -121,13 +101,7 @@ function PlacesPage() {
 
   function cancelEdit() {
     setEditingPlace(null)
-    setEditPlace({
-      name: '',
-      typeId: 0,
-      parentId: null,
-      latitude: null,
-      longitude: null
-    })
+    setEditPlace(createEmptyFormData())
   }
 
   async function saveEdit(placeId: number) {

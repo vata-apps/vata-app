@@ -3,10 +3,13 @@ import { drizzle } from 'drizzle-orm/sqlite-proxy';
 import type { AsyncRemoteCallback } from 'drizzle-orm/sqlite-proxy';
 import * as schema from './schema';
 
-let dbInstance: ReturnType<typeof drizzle> | null = null;
+// Type for the Drizzle database instance with schema
+type DrizzleDatabase = ReturnType<typeof drizzle<typeof schema>>;
+
+let dbInstance: DrizzleDatabase | null = null;
 let currentDbPath: string | null = null;
 
-export async function getDb(treeName: string) {
+export async function getDb(treeName: string): Promise<DrizzleDatabase> {
   const dbPath = `sqlite:trees/${treeName}.db`;
   
   // Return existing connection if same tree
