@@ -1,5 +1,5 @@
 import Database from '@tauri-apps/plugin-sql';
-import { PlaceType, Place, NewPlace, NewPlaceType } from '../db/schema';
+import { PlaceType, Place } from '../db/schema';
 import { initializeDatabase } from '../db/migrations';
 import { 
   RawPlaceRow, 
@@ -7,7 +7,10 @@ import {
   isRawPlaceRow, 
   isRawPlaceTypeRow,
   rawPlaceToPlace,
-  rawPlaceTypeToPlaceType
+  rawPlaceTypeToPlaceType,
+  CreatePlaceInput,
+  CreatePlaceTypeInput,
+  UpdatePlaceInput
 } from '../db/types';
 
 export const places = {
@@ -27,7 +30,7 @@ export const places = {
       .map(rawPlaceTypeToPlaceType);
   },
 
-  async createPlaceType(treeName: string, placeType: Omit<NewPlaceType, 'id' | 'createdAt'>): Promise<PlaceType> {
+  async createPlaceType(treeName: string, placeType: CreatePlaceTypeInput): Promise<PlaceType> {
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
     const result = await db.execute(
       'INSERT INTO place_types (name, key, is_system) VALUES ($1, $2, $3)',
@@ -78,7 +81,7 @@ export const places = {
     return rawPlaceToPlace(firstResult);
   },
 
-  async create(treeName: string, place: Omit<NewPlace, 'id' | 'createdAt'>): Promise<Place> {
+  async create(treeName: string, place: CreatePlaceInput): Promise<Place> {
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
     const result = await db.execute(
       'INSERT INTO places (name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES ($1, $2, $3, $4, $5, $6)',
@@ -96,7 +99,7 @@ export const places = {
     return createdPlace;
   },
 
-  async update(treeName: string, id: number, place: Partial<Omit<Place, 'id' | 'createdAt'>>): Promise<Place> {
+  async update(treeName: string, id: number, place: UpdatePlaceInput): Promise<Place> {
     const db = await Database.load(`sqlite:trees/${treeName}.db`);
     const updates = Object.entries(place).filter(([_, value]) => value !== undefined);
     if (updates.length === 0) {
