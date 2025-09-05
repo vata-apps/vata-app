@@ -1,6 +1,6 @@
-use std::path::PathBuf;
 use std::fs;
 use serde::{Deserialize, Serialize};
+use tauri::Manager;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TreeInfo {
@@ -16,9 +16,11 @@ fn greet(name: &str) -> String {
 }
 
 #[tauri::command]
-async fn create_tree(name: String) -> Result<TreeInfo, String> {
-    // Create trees directory if it doesn't exist
-    let trees_dir = PathBuf::from("trees");
+async fn create_tree(app_handle: tauri::AppHandle, name: String) -> Result<TreeInfo, String> {
+    // Get app data directory and create trees subdirectory
+    let app_data_dir = app_handle.path().app_data_dir().map_err(|e| format!("Failed to get app data directory: {}", e))?;
+    let trees_dir = app_data_dir.join("trees");
+    
     if !trees_dir.exists() {
         fs::create_dir_all(&trees_dir).map_err(|e| format!("Failed to create trees directory: {}", e))?;
     }
@@ -47,8 +49,9 @@ async fn create_tree(name: String) -> Result<TreeInfo, String> {
 }
 
 #[tauri::command]
-async fn list_trees() -> Result<Vec<TreeInfo>, String> {
-    let trees_dir = PathBuf::from("trees");
+async fn list_trees(app_handle: tauri::AppHandle) -> Result<Vec<TreeInfo>, String> {
+    let app_data_dir = app_handle.path().app_data_dir().map_err(|e| format!("Failed to get app data directory: {}", e))?;
+    let trees_dir = app_data_dir.join("trees");
     
     if !trees_dir.exists() {
         return Ok(vec![]);
@@ -83,8 +86,9 @@ async fn list_trees() -> Result<Vec<TreeInfo>, String> {
 }
 
 #[tauri::command]
-async fn delete_tree(name: String) -> Result<(), String> {
-    let db_path = PathBuf::from("trees").join(format!("{}.db", name));
+async fn delete_tree(app_handle: tauri::AppHandle, name: String) -> Result<(), String> {
+    let app_data_dir = app_handle.path().app_data_dir().map_err(|e| format!("Failed to get app data directory: {}", e))?;
+    let db_path = app_data_dir.join("trees").join(format!("{}.db", name));
     
     if !db_path.exists() {
         return Err(format!("Tree '{}' does not exist", name));

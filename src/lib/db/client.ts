@@ -1,12 +1,13 @@
 import Database from '@tauri-apps/plugin-sql';
 import { drizzle } from 'drizzle-orm/sqlite-proxy';
+import type { AsyncRemoteCallback } from 'drizzle-orm/sqlite-proxy';
 import * as schema from './schema';
 
 let dbInstance: ReturnType<typeof drizzle> | null = null;
 let currentDbPath: string | null = null;
 
 export async function getDb(treeName: string) {
-  const dbPath = `trees/${treeName}.db`;
+  const dbPath = `sqlite:trees/${treeName}.db`;
   
   // Return existing connection if same tree
   if (dbInstance && currentDbPath === dbPath) {
@@ -14,18 +15,26 @@ export async function getDb(treeName: string) {
   }
 
   // Connect to SQLite database via Tauri
-  const database = await Database.load(`sqlite:${dbPath}`);
+  const database = await Database.load(dbPath);
   
+  // Create async callback for Drizzle
+  const asyncCallback: AsyncRemoteCallback = async (sql, params, method) => {
+    try {
+      if (method === 'all' || method === 'values') {
+        const result = await database.select(sql, params) as any[];
+        return { rows: result };
+      } else {
+        await database.execute(sql, params);
+        return { rows: [] };
+      }
+    } catch (error) {
+      console.error('Database operation failed:', error);
+      throw error;
+    }
+  };
+
   // Create Drizzle instance with SQLite proxy
-  dbInstance = drizzle(
-    {
-      async execute(sql) {
-        const result = await database.execute(sql.sql, sql.params);
-        return { rows: result.rows || [] };
-      },
-    },
-    { schema }
-  );
+  dbInstance = drizzle(asyncCallback, { schema });
 
   currentDbPath = dbPath;
   return dbInstance;

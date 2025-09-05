@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer, real, uniqueIndex } from 'drizzle-orm/sqlite-core';
+import { relations } from 'drizzle-orm';
 import { sql } from 'drizzle-orm';
 
 // Place Types table - defines the different types of places
@@ -19,7 +20,7 @@ export const places = sqliteTable('places', {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`CURRENT_TIMESTAMP`),
   name: text('name').notNull(),
   typeId: integer('type_id').notNull().references(() => placeTypes.id, { onDelete: 'restrict' }),
-  parentId: integer('parent_id').references(() => places.id, { onDelete: 'set null' }),
+  parentId: integer('parent_id'),
   latitude: real('latitude'),
   longitude: real('longitude'),
   gedcomId: integer('gedcom_id'),
@@ -33,6 +34,23 @@ export type PlaceType = typeof placeTypes.$inferSelect;
 export type NewPlaceType = typeof placeTypes.$inferInsert;
 export type Place = typeof places.$inferSelect;
 export type NewPlace = typeof places.$inferInsert;
+
+// Relations
+export const placeTypesRelations = relations(placeTypes, ({ many }) => ({
+  places: many(places),
+}));
+
+export const placesRelations = relations(places, ({ one, many }) => ({
+  type: one(placeTypes, {
+    fields: [places.typeId],
+    references: [placeTypes.id],
+  }),
+  parent: one(places, {
+    fields: [places.parentId],
+    references: [places.id],
+  }),
+  children: many(places),
+}));
 
 // Extended types with relations
 export type PlaceWithType = Place & {
