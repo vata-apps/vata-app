@@ -1,7 +1,37 @@
 import { Link, useParams } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
+import { places } from '../lib/places'
+import { Place, PlaceType } from '../lib/db/schema'
 
 function PlacesPage() {
   const { treeId } = useParams({ from: '/$treeId/places' })
+  const [placesList, setPlacesList] = useState<Place[]>([])
+  const [placeTypes, setPlaceTypes] = useState<PlaceType[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    loadData()
+  }, [treeId])
+
+  async function loadData() {
+    try {
+      setLoading(true)
+      const [placesData, typesData] = await Promise.all([
+        places.getAll(treeId),
+        places.getPlaceTypes(treeId)
+      ])
+      setPlacesList(placesData)
+      setPlaceTypes(typesData)
+    } catch (err) {
+      setError(`Error loading places: ${err}`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) return <div>Loading places...</div>
+  if (error) return <div>Error: {error}</div>
 
   return (
     <div style={{ padding: "20px" }}>
@@ -12,33 +42,41 @@ function PlacesPage() {
       </div>
       
       <h1>Places in {treeId}</h1>
-      <p>Here you'll manage all the geographic locations in your family history.</p>
-
-      <div style={{ marginTop: "30px", padding: "20px", backgroundColor: "#f0f0f0" }}>
-        <p><strong>Coming soon:</strong></p>
-        <ul>
-          <li>List of all places</li>
-          <li>Add new places</li>
-          <li>Edit existing places</li>
-          <li>Hierarchical relationships (Country → State → City)</li>
-        </ul>
+      
+      <div style={{ marginBottom: "20px" }}>
+        <p>Found {placesList.length} places</p>
+        <button onClick={loadData}>Refresh</button>
       </div>
 
-      <div style={{ marginTop: "20px" }}>
-        <p>For now, you can create a test place:</p>
-        <Link 
-          to="/$treeId/places/$placeId" 
-          params={{ treeId, placeId: "test-place" }}
-          style={{ 
-            display: "inline-block",
-            padding: "10px 20px", 
-            backgroundColor: "#4CAF50", 
-            color: "white", 
-            textDecoration: "none"
-          }}
-        >
-          View Test Place
-        </Link>
+      {placesList.length === 0 ? (
+        <p>No places found. Create your first place!</p>
+      ) : (
+        <div>
+          <h2>All Places</h2>
+          <ul>
+            {placesList.map(place => (
+              <li key={place.id} style={{ marginBottom: "10px" }}>
+                <Link 
+                  to="/$treeId/places/$placeId" 
+                  params={{ treeId, placeId: place.id.toString() }}
+                  style={{ textDecoration: "none" }}
+                >
+                  <strong>{place.name}</strong>
+                </Link>
+                {place.parentId && <span> (Parent ID: {place.parentId})</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div style={{ marginTop: "30px" }}>
+        <h3>Place Types Available</h3>
+        <ul>
+          {placeTypes.map(type => (
+            <li key={type.id}>{type.name} {type.isSystem ? '(System)' : '(Custom)'}</li>
+          ))}
+        </ul>
       </div>
     </div>
   );

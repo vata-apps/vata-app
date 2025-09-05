@@ -18,8 +18,37 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "capabilities": [
+        {
+          "identifier": "main-capability",
+          "description": "Capability for the main window",
+          "windows": ["main"],
+          "permissions": [
+            "core:default",
+            "sql:default",
+            "sql:allow-load",
+            "sql:allow-execute",
+            "sql:allow-select",
+            "sql:allow-close",
+            "fs:default",
+            "fs:allow-exists",
+            "fs:allow-mkdir",
+            "fs:allow-remove",
+            "fs:allow-read-dir",
+            "fs:allow-appdata-read",
+            "fs:allow-appdata-write",
+            "fs:allow-appdata-meta",
+            "fs:allow-appdata-read-recursive",
+            "fs:allow-appdata-write-recursive",
+            "fs:allow-appdata-meta-recursive"
+          ]
+        }
+      ]
     }
+  },
+  "plugins": {
+    "sql": {}
   },
   "bundle": {
     "active": true,

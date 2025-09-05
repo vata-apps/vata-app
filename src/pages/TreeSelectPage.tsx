@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from '@tanstack/react-router'
-import { tauriCommands, TreeInfo } from "../lib/tauri/commands";
+import { trees, TreeInfo } from "../lib/trees";
 
 function TreeSelectPage() {
-  const [trees, setTrees] = useState<TreeInfo[]>([]);
+  const [treesList, setTreesList] = useState<TreeInfo[]>([]);
   const [newTreeName, setNewTreeName] = useState("");
   const [message, setMessage] = useState("");
 
@@ -14,8 +14,8 @@ function TreeSelectPage() {
 
   async function loadTrees() {
     try {
-      const treeList = await tauriCommands.listTrees();
-      setTrees(treeList);
+      const treeList = await trees.list();
+      setTreesList(treeList);
       setMessage(`Found ${treeList.length} trees`);
     } catch (error) {
       setMessage(`Error loading trees: ${error}`);
@@ -29,8 +29,8 @@ function TreeSelectPage() {
     }
 
     try {
-      const newTree = await tauriCommands.createTree(newTreeName);
-      setTrees([...trees, newTree]);
+      const newTree = await trees.create(newTreeName);
+      setTreesList([...treesList, newTree]);
       setNewTreeName("");
       setMessage(`Created tree: ${newTree.name}`);
     } catch (error) {
@@ -44,8 +44,8 @@ function TreeSelectPage() {
     }
 
     try {
-      await tauriCommands.deleteTree(name);
-      setTrees(trees.filter(tree => tree.name !== name));
+      await trees.delete(name);
+      setTreesList(treesList.filter(tree => tree.name !== name));
       setMessage(`Deleted tree: ${name}`);
     } catch (error) {
       setMessage(`Error deleting tree: ${error}`);
@@ -78,12 +78,12 @@ function TreeSelectPage() {
       </div>
 
       <div>
-        <h2>Available Trees ({trees.length})</h2>
-        {trees.length === 0 ? (
+        <h2>Available Trees ({treesList.length})</h2>
+        {treesList.length === 0 ? (
           <p>No trees found. Create one above!</p>
         ) : (
           <div>
-            {trees.map((tree) => (
+            {treesList.map((tree) => (
               <div key={tree.name} style={{ 
                 padding: "15px", 
                 border: "1px solid #ccc", 

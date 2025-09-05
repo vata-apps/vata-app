@@ -1,7 +1,33 @@
 import { Link, useParams } from '@tanstack/react-router'
+import { useState, useEffect } from 'react'
+import { places } from '../lib/places'
+import { Place } from '../lib/db/schema'
 
 function PlacePage() {
   const { treeId, placeId } = useParams({ from: '/$treeId/places/$placeId' })
+  const [place, setPlace] = useState<Place | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    loadPlace()
+  }, [treeId, placeId])
+
+  async function loadPlace() {
+    try {
+      setLoading(true)
+      const placeData = await places.getById(treeId, parseInt(placeId))
+      setPlace(placeData)
+    } catch (err) {
+      setError(`Error loading place: ${err}`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (loading) return <div>Loading place...</div>
+  if (error) return <div>Error: {error}</div>
+  if (!place) return <div>Place not found</div>
 
   return (
     <div style={{ padding: "20px" }}>
@@ -11,26 +37,28 @@ function PlacePage() {
         </Link>
       </div>
       
-      <h1>Place: {placeId}</h1>
+      <h1>{place.name}</h1>
       <p>Tree: <strong>{treeId}</strong></p>
 
       <div style={{ marginTop: "30px", padding: "20px", backgroundColor: "#f0f0f0" }}>
-        <p><strong>This is where we'll display place details:</strong></p>
-        <ul>
-          <li>Place name and hierarchy</li>
-          <li>GPS coordinates</li>
-          <li>Related events</li>
-          <li>Related individuals and families</li>
-        </ul>
-      </div>
-
-      <div style={{ marginTop: "30px" }}>
-        <h3>URL Structure Working! 🎉</h3>
-        <p>We successfully have:</p>
-        <ul>
-          <li>Tree ID: <code>{treeId}</code></li>
-          <li>Place ID: <code>{placeId}</code></li>
-        </ul>
+        <h3>Place Details</h3>
+        <p><strong>ID:</strong> {place.id}</p>
+        <p><strong>Name:</strong> {place.name}</p>
+        <p><strong>Type ID:</strong> {place.typeId}</p>
+        <p><strong>Parent ID:</strong> {place.parentId || 'None'}</p>
+        <p><strong>Created:</strong> {new Date(place.createdAt).toLocaleDateString()}</p>
+        
+        {place.latitude && place.longitude && (
+          <div>
+            <p><strong>Coordinates:</strong></p>
+            <p>Latitude: {place.latitude}</p>
+            <p>Longitude: {place.longitude}</p>
+          </div>
+        )}
+        
+        {place.gedcomId && (
+          <p><strong>GEDCOM ID:</strong> {place.gedcomId}</p>
+        )}
       </div>
     </div>
   );
