@@ -100,7 +100,7 @@ src-tauri/        # Rust backend code (minimal)
 ### Database Best Practices
 
 - ALWAYS use Drizzle ORM (`getDb()`) for all database operations - NEVER use Tauri Database API directly
-- **Use UUIDs for all primary keys** - Import `{ v4 as uuidv4 } from "uuid"` and use `.$defaultFn(() => uuidv4())` 
+- **Use UUIDs for all primary keys** - Import `{ v4 as uuidv4 } from "uuid"` and use `.$defaultFn(() => uuidv4())`
 - All foreign key relationships MUST include appropriate ON DELETE actions (SET NULL, CASCADE, etc.)
 - Use Drizzle's type-safe queries instead of raw SQL to maintain type safety
 - Leverage Drizzle's inferred types for consistent typing across the application

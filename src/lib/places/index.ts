@@ -56,7 +56,7 @@ export const places = {
   ): Promise<PlaceType> {
     // Temporary: Use Tauri API directly for insert
     const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    const { v4: uuidv4 } = await import('uuid');
+    const { v4: uuidv4 } = await import("uuid");
     const id = uuidv4();
 
     try {
@@ -122,7 +122,7 @@ export const places = {
   async create(treeName: string, place: CreatePlaceInput): Promise<Place> {
     // Temporary: Use Tauri API directly for insert, Drizzle for select
     const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    const { v4: uuidv4 } = await import('uuid');
+    const { v4: uuidv4 } = await import("uuid");
     const id = uuidv4();
 
     try {
