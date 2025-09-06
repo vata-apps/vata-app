@@ -143,6 +143,57 @@ refactor: simplify database query functions
 chore: update dependencies to latest versions
 ```
 
+## Code Quality Lessons Learned
+
+### Clean Code Principles Applied (2025-01-15)
+
+**Problem Patterns to Avoid:**
+
+1. **Overly Complex Components**
+   - ❌ Components with 500+ lines (e.g., original `PlacesPage.tsx`)
+   - ❌ Mixing UI logic, data fetching, and business logic in one file
+   - ✅ Extract custom hooks for data management (`usePlaces.ts`)
+   - ✅ Create reusable form components (`PlaceForm.tsx`)
+   - ✅ Keep components focused on rendering and user interaction
+
+2. **Inconsistent Import Patterns**
+   - ❌ Mixing static imports with dynamic imports for same module
+   - ❌ `const Database = await import("@tauri-apps/plugin-sql")`
+   - ✅ Use consistent static imports: `import Database from "@tauri-apps/plugin-sql"`
+   - ✅ Avoid Vite bundle warnings by maintaining import consistency
+
+3. **Redundant Error Handling**
+   - ❌ Wrapping every database operation in try/catch with console.error
+   - ❌ Verbose error messages that don't add value
+   - ✅ Let errors bubble up to hook/component level for centralized handling
+   - ✅ Use meaningful error messages for user-facing operations
+
+4. **Unnecessary Comments and Code Noise**
+   - ❌ "Temporary:" comments that become permanent
+   - ❌ Obvious comments like "// Create async callback for Drizzle"
+   - ❌ Redundant variable assignments like `description: description || undefined`
+   - ✅ Self-documenting code through clear function and variable names
+   - ✅ Only comment complex business logic or non-obvious decisions
+
+5. **Function Naming Inconsistencies**
+   - ❌ Mixing `async function` declarations with arrow functions in same context
+   - ❌ Generic names like `createTree()` instead of `handleCreateTree()`
+   - ✅ Use consistent arrow function patterns for event handlers
+   - ✅ Prefix event handlers with "handle" for clarity
+
+**Refactoring Strategy:**
+- Extract data logic into custom hooks (separation of concerns)
+- Create reusable UI components for forms and repeated patterns
+- Simplify error handling by centralizing at appropriate levels
+- Remove code noise (unnecessary comments, verbose try/catches)
+- Maintain consistent import and naming patterns
+
+**Component Size Guidelines:**
+- Page components: aim for < 200 lines
+- Reusable components: aim for < 100 lines
+- Custom hooks: focus on single responsibility
+- If component grows beyond these limits, consider extraction
+
 ## Development Notes
 
 - Desktop-first application with offline functionality

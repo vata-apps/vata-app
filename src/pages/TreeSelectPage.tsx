@@ -48,22 +48,18 @@ function TreeSelectPage() {
     },
   });
 
-  async function createTree() {
-    if (!newTreeName.trim()) {
-      return;
-    }
-
+  const handleCreateTree = () => {
+    if (!newTreeName.trim()) return;
+    
     createTreeMutation.mutate({
       name: newTreeName,
       description: newTreeDescription.trim() || undefined,
     });
-  }
+  };
 
-  async function deleteTree(name: string) {
-    // TODO: Replace with proper Tauri dialog API
-    // For now, skip confirmation - direct deletion
+  const handleDeleteTree = (name: string) => {
     deleteTreeMutation.mutate(name);
-  }
+  };
 
   if (isLoading) {
     return (
@@ -143,7 +139,7 @@ function TreeSelectPage() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            createTree();
+            handleCreateTree();
           }}
         >
           <div style={{ marginBottom: "10px" }}>
@@ -229,7 +225,7 @@ function TreeSelectPage() {
                 </button>
 
                 <button
-                  onClick={() => deleteTree(tree.name)}
+                  onClick={() => handleDeleteTree(tree.name)}
                   disabled={deleteTreeMutation.isPending}
                   style={{
                     padding: "8px 16px",

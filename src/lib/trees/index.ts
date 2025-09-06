@@ -1,4 +1,5 @@
 import { BaseDirectory, exists, mkdir, remove } from "@tauri-apps/plugin-fs";
+import Database from "@tauri-apps/plugin-sql";
 import { initializeDatabase } from "../db/migrations";
 import { initializeTreesMetadataDatabase } from "../db/trees-metadata-migrations";
 
@@ -28,12 +29,9 @@ export const trees = {
       });
     }
 
-    // Initialize trees metadata DB if needed
     await this.initialize();
 
-    // Check if tree already exists in metadata
-    const Database = await import("@tauri-apps/plugin-sql");
-    const database = await Database.default.load("sqlite:trees-metadata.db");
+    const database = await Database.load("sqlite:trees-metadata.db");
 
     const existing = (await database.select(
       "SELECT name FROM trees_metadata WHERE name = ?",
@@ -46,7 +44,6 @@ export const trees = {
     // Initialize database (this will create the file)
     await initializeDatabase(name);
 
-    // Add to metadata database
     const now = new Date();
     await database.execute(
       "INSERT INTO trees_metadata (name, file_path, description, file_exists, created_at) VALUES (?, ?, ?, ?, ?)",
@@ -57,19 +54,16 @@ export const trees = {
       name,
       path: dbPath,
       created_at: now.toISOString(),
-      description: description || undefined,
+      description,
       fileExists: true,
     };
   },
 
   async list(): Promise<TreeInfo[]> {
     try {
-      // Initialize trees metadata DB if needed
       await this.initialize();
 
-      // Use raw SQL to avoid Drizzle mapping issues
-      const Database = await import("@tauri-apps/plugin-sql");
-      const database = await Database.default.load("sqlite:trees-metadata.db");
+      const database = await Database.load("sqlite:trees-metadata.db");
 
       const rawRecords = (await database.select(
         "SELECT name, file_path, created_at, description FROM trees_metadata",
@@ -94,7 +88,7 @@ export const trees = {
           name: record.name,
           path: record.file_path,
           created_at: createdAt,
-          description: record.description || undefined,
+          description: record.description,
           fileExists,
         });
       }
@@ -111,8 +105,7 @@ export const trees = {
   async delete(name: string): Promise<void> {
     await this.initialize();
 
-    const Database = await import("@tauri-apps/plugin-sql");
-    const database = await Database.default.load("sqlite:trees-metadata.db");
+    const database = await Database.load("sqlite:trees-metadata.db");
 
     const records = (await database.select(
       "SELECT file_path FROM trees_metadata WHERE name = ?",
@@ -137,8 +130,7 @@ export const trees = {
   async updateLastOpened(name: string): Promise<void> {
     await this.initialize();
 
-    const Database = await import("@tauri-apps/plugin-sql");
-    const database = await Database.default.load("sqlite:trees-metadata.db");
+    const database = await Database.load("sqlite:trees-metadata.db");
 
     await database.execute(
       "UPDATE trees_metadata SET last_opened = ? WHERE name = ?",

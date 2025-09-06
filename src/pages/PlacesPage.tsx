@@ -1,17 +1,13 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { places } from "../lib/places";
-import { Place, PlaceType } from "../lib/db/schema";
+import { useState } from "react";
+import { usePlaces } from "../hooks/usePlaces";
+import { PlaceForm } from "../components/PlaceForm";
 import { PlaceFormData } from "../lib/db/types";
 
 function PlacesPage() {
   const { treeId } = useParams({ from: "/$treeId/places" });
-  const [placesList, setPlacesList] = useState<Place[]>([]);
-  const [placeTypes, setPlaceTypes] = useState<PlaceType[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { placesList, placeTypes, loading, error, loadData, createPlace, updatePlace, deletePlace } = usePlaces(treeId);
 
-  // Helper function for empty form data
   const createEmptyFormData = (defaultTypeId = ""): PlaceFormData => ({
     name: "",
     typeId: defaultTypeId,
@@ -20,89 +16,30 @@ function PlacesPage() {
     longitude: null,
   });
 
-  // Form states
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingPlace, setEditingPlace] = useState<string | null>(null);
-  const [newPlace, setNewPlace] = useState<PlaceFormData>(
-    createEmptyFormData(),
-  );
-  const [editPlace, setEditPlace] = useState<PlaceFormData>(
-    createEmptyFormData(),
-  );
+  const [newPlace, setNewPlace] = useState<PlaceFormData>(createEmptyFormData());
+  const [editPlace, setEditPlace] = useState<PlaceFormData>(createEmptyFormData());
 
-  useEffect(() => {
-    loadData();
-  }, [treeId]);
-
-  async function loadData() {
+  const handleCreatePlace = async (formData: PlaceFormData) => {
     try {
-      setLoading(true);
-      const [placesData, typesData] = await Promise.all([
-        places.getAll(treeId),
-        places.getPlaceTypes(treeId),
-      ]);
-      setPlacesList(placesData);
-      setPlaceTypes(typesData);
-
-      // Set default type ID if available
-      if (typesData.length > 0 && !newPlace.typeId) {
-        setNewPlace((prev) => ({ ...prev, typeId: typesData[0].id }));
-      }
-    } catch (err) {
-      setError(`Error loading places: ${err}`);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function createPlace() {
-    if (!newPlace.name.trim()) {
-      alert("Please enter a place name");
-      return;
-    }
-
-    if (!newPlace.typeId) {
-      alert("Please select a place type");
-      return;
-    }
-
-    try {
-      const createdPlace = await places.create(treeId, {
-        name: newPlace.name,
-        typeId: newPlace.typeId,
-        parentId: newPlace.parentId,
-        latitude: newPlace.latitude,
-        longitude: newPlace.longitude,
-        gedcomId: null,
-      });
-
-      setPlacesList([...placesList, createdPlace]);
+      await createPlace(formData);
       setNewPlace(createEmptyFormData(placeTypes[0]?.id || ""));
       setShowCreateForm(false);
-    } catch (err) {
-      setError(`Error creating place: ${err}`);
+    } catch {
+      // Error handled by hook
     }
-  }
+  };
 
-  async function deletePlace(placeId: string) {
+  const handleDeletePlace = async (placeId: string) => {
     try {
-      // Check if place has children
-      const childrenCount = await places.getChildrenCount(treeId, placeId);
-
-      // TODO: Replace with proper Tauri dialog API
-      // For now, skip confirmation - direct deletion
-      if (childrenCount > 0) {
-        // Would show: "This place has X child place(s). Children will become top-level places."
-      }
-
-      await places.delete(treeId, placeId);
-      setPlacesList(placesList.filter((p) => p.id !== placeId));
-    } catch (err) {
-      setError(`Error deleting place: ${err}`);
+      await deletePlace(placeId);
+    } catch {
+      // Error handled by hook
     }
-  }
+  };
 
-  function startEditPlace(place: Place) {
+  const startEditPlace = (place: any) => {
     setEditingPlace(place.id);
     setEditPlace({
       name: place.name,
@@ -111,36 +48,21 @@ function PlacesPage() {
       latitude: place.latitude,
       longitude: place.longitude,
     });
-  }
+  };
 
-  function cancelEdit() {
+  const cancelEdit = () => {
     setEditingPlace(null);
     setEditPlace(createEmptyFormData());
-  }
+  };
 
-  async function saveEdit(placeId: string) {
-    if (!editPlace.name.trim()) {
-      alert("Please enter a place name");
-      return;
-    }
-
+  const saveEdit = async (placeId: string) => {
     try {
-      const updatedPlace = await places.update(treeId, placeId, {
-        name: editPlace.name,
-        typeId: editPlace.typeId,
-        parentId: editPlace.parentId,
-        latitude: editPlace.latitude,
-        longitude: editPlace.longitude,
-      });
-
-      setPlacesList(
-        placesList.map((p) => (p.id === placeId ? updatedPlace : p)),
-      );
+      await updatePlace(placeId, editPlace);
       setEditingPlace(null);
-    } catch (err) {
-      setError(`Error updating place: ${err}`);
+    } catch {
+      // Error handled by hook
     }
-  }
+  };
 
   if (loading) return <div>Loading places...</div>;
   if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
@@ -173,7 +95,6 @@ function PlacesPage() {
         </button>
       </div>
 
-      {/* Create Place Form */}
       {showCreateForm && (
         <div
           style={{
@@ -184,103 +105,19 @@ function PlacesPage() {
           }}
         >
           <h3>Create New Place</h3>
-          <div style={{ marginBottom: "10px" }}>
-            <label>Name: </label>
-            <input
-              type="text"
-              value={newPlace.name}
-              onChange={(e) =>
-                setNewPlace((prev) => ({ ...prev, name: e.target.value }))
+          <PlaceForm
+            formData={newPlace}
+            placeTypes={placeTypes}
+            places={placesList}
+            onSubmit={(data) => {
+              if (data !== newPlace) {
+                setNewPlace(data);
+              } else {
+                handleCreatePlace(data);
               }
-              placeholder="Enter place name..."
-              style={{ padding: "5px", width: "200px" }}
-            />
-          </div>
-
-          <div style={{ marginBottom: "10px" }}>
-            <label>Type: </label>
-            <select
-              value={newPlace.typeId}
-              onChange={(e) =>
-                setNewPlace((prev) => ({
-                  ...prev,
-                  typeId: e.target.value,
-                }))
-              }
-              style={{ padding: "5px" }}
-            >
-              {placeTypes.map((type) => (
-                <option key={type.id} value={type.id}>
-                  {type.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ marginBottom: "10px" }}>
-            <label>Parent Place: </label>
-            <select
-              value={newPlace.parentId || ""}
-              onChange={(e) =>
-                setNewPlace((prev) => ({
-                  ...prev,
-                  parentId: e.target.value || null,
-                }))
-              }
-              style={{ padding: "5px" }}
-            >
-              <option value="">None</option>
-              {placesList.map((place) => (
-                <option key={place.id} value={place.id}>
-                  {place.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ marginBottom: "10px" }}>
-            <label>Latitude: </label>
-            <input
-              type="number"
-              step="any"
-              value={newPlace.latitude || ""}
-              onChange={(e) =>
-                setNewPlace((prev) => ({
-                  ...prev,
-                  latitude: e.target.value ? parseFloat(e.target.value) : null,
-                }))
-              }
-              placeholder="Optional"
-              style={{ padding: "5px", width: "100px" }}
-            />
-            <label style={{ marginLeft: "20px" }}>Longitude: </label>
-            <input
-              type="number"
-              step="any"
-              value={newPlace.longitude || ""}
-              onChange={(e) =>
-                setNewPlace((prev) => ({
-                  ...prev,
-                  longitude: e.target.value ? parseFloat(e.target.value) : null,
-                }))
-              }
-              placeholder="Optional"
-              style={{ padding: "5px", width: "100px" }}
-            />
-          </div>
-
-          <button
-            onClick={createPlace}
-            style={{
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              padding: "10px 20px",
-              marginRight: "10px",
             }}
-          >
-            Create Place
-          </button>
+            submitLabel="Create Place"
+          />
         </div>
       )}
 
@@ -302,123 +139,23 @@ function PlacesPage() {
                 }}
               >
                 {editingPlace === place.id ? (
-                  // Edit Mode
                   <div>
                     <h4>Editing Place</h4>
-                    <div style={{ marginBottom: "10px" }}>
-                      <label>Name: </label>
-                      <input
-                        type="text"
-                        value={editPlace.name}
-                        onChange={(e) =>
-                          setEditPlace((prev) => ({
-                            ...prev,
-                            name: e.target.value,
-                          }))
+                    <PlaceForm
+                      formData={editPlace}
+                      placeTypes={placeTypes}
+                      places={placesList}
+                      onSubmit={(data) => {
+                        if (data !== editPlace) {
+                          setEditPlace(data);
+                        } else {
+                          saveEdit(place.id);
                         }
-                        style={{ padding: "5px", width: "200px" }}
-                      />
-                    </div>
-
-                    <div style={{ marginBottom: "10px" }}>
-                      <label>Type: </label>
-                      <select
-                        value={editPlace.typeId}
-                        onChange={(e) =>
-                          setEditPlace((prev) => ({
-                            ...prev,
-                            typeId: e.target.value,
-                          }))
-                        }
-                        style={{ padding: "5px" }}
-                      >
-                        {placeTypes.map((type) => (
-                          <option key={type.id} value={type.id}>
-                            {type.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div style={{ marginBottom: "10px" }}>
-                      <label>Parent Place: </label>
-                      <select
-                        value={editPlace.parentId || ""}
-                        onChange={(e) =>
-                          setEditPlace((prev) => ({
-                            ...prev,
-                            parentId: e.target.value || null,
-                          }))
-                        }
-                        style={{ padding: "5px" }}
-                      >
-                        <option value="">None</option>
-                        {placesList
-                          .filter((p) => p.id !== place.id)
-                          .map((p) => (
-                            <option key={p.id} value={p.id}>
-                              {p.name}
-                            </option>
-                          ))}
-                      </select>
-                    </div>
-
-                    <div style={{ marginBottom: "10px" }}>
-                      <label>Latitude: </label>
-                      <input
-                        type="number"
-                        step="any"
-                        value={editPlace.latitude || ""}
-                        onChange={(e) =>
-                          setEditPlace((prev) => ({
-                            ...prev,
-                            latitude: e.target.value
-                              ? parseFloat(e.target.value)
-                              : null,
-                          }))
-                        }
-                        style={{ padding: "5px", width: "100px" }}
-                      />
-                      <label style={{ marginLeft: "20px" }}>Longitude: </label>
-                      <input
-                        type="number"
-                        step="any"
-                        value={editPlace.longitude || ""}
-                        onChange={(e) =>
-                          setEditPlace((prev) => ({
-                            ...prev,
-                            longitude: e.target.value
-                              ? parseFloat(e.target.value)
-                              : null,
-                          }))
-                        }
-                        style={{ padding: "5px", width: "100px" }}
-                      />
-                    </div>
-
-                    <button
-                      onClick={() => saveEdit(place.id)}
-                      style={{
-                        backgroundColor: "#4CAF50",
-                        color: "white",
-                        border: "none",
-                        padding: "8px 16px",
-                        marginRight: "10px",
                       }}
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={cancelEdit}
-                      style={{
-                        backgroundColor: "#666",
-                        color: "white",
-                        border: "none",
-                        padding: "8px 16px",
-                      }}
-                    >
-                      Cancel
-                    </button>
+                      onCancel={cancelEdit}
+                      submitLabel="Save"
+                      excludePlaceId={place.id}
+                    />
                   </div>
                 ) : (
                   // View Mode
@@ -464,7 +201,7 @@ function PlacesPage() {
                         Edit
                       </button>
                       <button
-                        onClick={() => deletePlace(place.id)}
+                        onClick={() => handleDeletePlace(place.id)}
                         style={{
                           backgroundColor: "#f44336",
                           color: "white",
