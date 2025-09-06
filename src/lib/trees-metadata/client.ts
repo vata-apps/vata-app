@@ -1,7 +1,7 @@
 import Database from "@tauri-apps/plugin-sql";
 import { drizzle } from "drizzle-orm/sqlite-proxy";
 import type { AsyncRemoteCallback } from "drizzle-orm/sqlite-proxy";
-import * as schema from "./trees-metadata-schema";
+import * as schema from "./schema";
 
 type DrizzleDatabase = ReturnType<typeof drizzle<typeof schema>>;
 

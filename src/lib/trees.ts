@@ -1,9 +1,9 @@
 import { BaseDirectory, exists, mkdir, remove } from "@tauri-apps/plugin-fs";
 import { eq } from "drizzle-orm";
 import { initializeDatabase } from "../db/migrations";
-import { initializeTreesMetadataDatabase } from "../db/trees-metadata-migrations";
-import { getTreesMetadataDb } from "../db/trees-metadata-client";
-import { treesMetadata, NewTreeMetadata } from "../db/trees-metadata-schema";
+import { initializeTreesMetadataDatabase } from "./trees-metadata/migrations";
+import { getTreesMetadataDb } from "./trees-metadata/client";
+import { treesMetadata, NewTreeMetadata } from "./trees-metadata/schema";
 
 export interface TreeInfo {
   name: string;
