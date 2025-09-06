@@ -344,3 +344,75 @@ const date = place.created_at
 - **Trees metadata**: `~/Library/Application Support/com.stivaugoin.vata-app/trees-metadata.db`
 - Each tree has its own SQLite database file: `{tree-name}.db`
 - To reset all trees: `rm -rf "~/Library/Application Support/com.stivaugoin.vata-app"`
+
+## Testing Strategy (Planned - 2025-09-06)
+
+### Unit Testing Framework
+
+- **Framework**: Vitest (compatible with Vite, faster than Jest)
+- **Environment**: Node.js only (no UI testing initially)
+- **Focus**: Business logic and data layer testing only
+
+### Installation
+
+```bash
+pnpm add -D vitest @vitest/ui
+```
+
+### Configuration
+
+**package.json scripts:**
+
+```json
+{
+  "test": "vitest",
+  "test:watch": "vitest --watch",
+  "test:coverage": "vitest --coverage"
+}
+```
+
+**vitest.config.ts:**
+
+```typescript
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    environment: "node",
+    globals: true,
+  },
+});
+```
+
+### Testing Priorities
+
+**Priority 1 - Data Layer (Critical)**
+
+- `src/lib/places.ts` - All CRUD operations and business logic
+- `src/lib/trees.ts` - Tree management and file operations
+- `src/lib/db/migrations.ts` - Database initialization and schema
+
+**Priority 2 - Business Logic Hooks**
+
+- `src/hooks/usePlaces.ts` - State management and async operations
+- Other custom hooks with business logic
+
+**Priority 3 - Utilities**
+
+- `src/lib/db/types.ts` - Type validation and conversions
+- Utility functions and helpers
+
+### Mocking Strategy
+
+- **Tauri Database API**: Mock `@tauri-apps/plugin-sql` for isolated testing
+- **File System**: Mock `@tauri-apps/plugin-fs` operations
+- **UUID Generation**: Mock `uuid` for predictable test data
+- **Isolated Tests**: Each function tested independently without side effects
+
+### Testing Patterns
+
+- Test pure functions first (easiest wins)
+- Mock external dependencies (Database, FileSystem)
+- Focus on business logic validation
+- Test error handling and edge cases
+- Avoid testing implementation details
