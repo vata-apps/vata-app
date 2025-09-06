@@ -1,65 +1,69 @@
-import { Link, useParams } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
-import { places } from '../lib/places'
-import { Place, PlaceType } from '../lib/db/schema'
-import { PlaceFormData } from '../lib/db/types'
+import { Link, useParams } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
+import { places } from "../lib/places";
+import { Place, PlaceType } from "../lib/db/schema";
+import { PlaceFormData } from "../lib/db/types";
 
 function PlacesPage() {
-  const { treeId } = useParams({ from: '/$treeId/places' })
-  const [placesList, setPlacesList] = useState<Place[]>([])
-  const [placeTypes, setPlaceTypes] = useState<PlaceType[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  
+  const { treeId } = useParams({ from: "/$treeId/places" });
+  const [placesList, setPlacesList] = useState<Place[]>([]);
+  const [placeTypes, setPlaceTypes] = useState<PlaceType[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   // Helper function for empty form data
   const createEmptyFormData = (defaultTypeId = 0): PlaceFormData => ({
-    name: '',
+    name: "",
     typeId: defaultTypeId,
     parentId: null,
     latitude: null,
-    longitude: null
-  })
-  
+    longitude: null,
+  });
+
   // Form states
-  const [showCreateForm, setShowCreateForm] = useState(false)
-  const [editingPlace, setEditingPlace] = useState<number | null>(null)
-  const [newPlace, setNewPlace] = useState<PlaceFormData>(createEmptyFormData())
-  const [editPlace, setEditPlace] = useState<PlaceFormData>(createEmptyFormData())
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingPlace, setEditingPlace] = useState<number | null>(null);
+  const [newPlace, setNewPlace] = useState<PlaceFormData>(
+    createEmptyFormData(),
+  );
+  const [editPlace, setEditPlace] = useState<PlaceFormData>(
+    createEmptyFormData(),
+  );
 
   useEffect(() => {
-    loadData()
-  }, [treeId])
+    loadData();
+  }, [treeId]);
 
   async function loadData() {
     try {
-      setLoading(true)
+      setLoading(true);
       const [placesData, typesData] = await Promise.all([
         places.getAll(treeId),
-        places.getPlaceTypes(treeId)
-      ])
-      setPlacesList(placesData)
-      setPlaceTypes(typesData)
-      
+        places.getPlaceTypes(treeId),
+      ]);
+      setPlacesList(placesData);
+      setPlaceTypes(typesData);
+
       // Set default type ID if available
       if (typesData.length > 0 && newPlace.typeId === 0) {
-        setNewPlace(prev => ({ ...prev, typeId: typesData[0].id }))
+        setNewPlace((prev) => ({ ...prev, typeId: typesData[0].id }));
       }
     } catch (err) {
-      setError(`Error loading places: ${err}`)
+      setError(`Error loading places: ${err}`);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function createPlace() {
     if (!newPlace.name.trim()) {
-      alert('Please enter a place name')
-      return
+      alert("Please enter a place name");
+      return;
     }
 
     if (!newPlace.typeId || newPlace.typeId === 0) {
-      alert('Please select a place type')
-      return
+      alert("Please select a place type");
+      return;
     }
 
     try {
@@ -69,55 +73,55 @@ function PlacesPage() {
         parentId: newPlace.parentId,
         latitude: newPlace.latitude,
         longitude: newPlace.longitude,
-        gedcomId: null
-      })
-      
-      setPlacesList([...placesList, createdPlace])
-      setNewPlace(createEmptyFormData(placeTypes[0]?.id || 0))
-      setShowCreateForm(false)
+        gedcomId: null,
+      });
+
+      setPlacesList([...placesList, createdPlace]);
+      setNewPlace(createEmptyFormData(placeTypes[0]?.id || 0));
+      setShowCreateForm(false);
     } catch (err) {
-      setError(`Error creating place: ${err}`)
+      setError(`Error creating place: ${err}`);
     }
   }
 
   async function deletePlace(placeId: number) {
     try {
       // Check if place has children
-      const childrenCount = await places.getChildrenCount(treeId, placeId)
-      
+      const childrenCount = await places.getChildrenCount(treeId, placeId);
+
       // TODO: Replace with proper Tauri dialog API
       // For now, skip confirmation - direct deletion
       if (childrenCount > 0) {
         // Would show: "This place has X child place(s). Children will become top-level places."
       }
 
-      await places.delete(treeId, placeId)
-      setPlacesList(placesList.filter(p => p.id !== placeId))
+      await places.delete(treeId, placeId);
+      setPlacesList(placesList.filter((p) => p.id !== placeId));
     } catch (err) {
-      setError(`Error deleting place: ${err}`)
+      setError(`Error deleting place: ${err}`);
     }
   }
 
   function startEditPlace(place: Place) {
-    setEditingPlace(place.id)
+    setEditingPlace(place.id);
     setEditPlace({
       name: place.name,
       typeId: place.typeId,
       parentId: place.parentId,
       latitude: place.latitude,
-      longitude: place.longitude
-    })
+      longitude: place.longitude,
+    });
   }
 
   function cancelEdit() {
-    setEditingPlace(null)
-    setEditPlace(createEmptyFormData())
+    setEditingPlace(null);
+    setEditPlace(createEmptyFormData());
   }
 
   async function saveEdit(placeId: number) {
     if (!editPlace.name.trim()) {
-      alert('Please enter a place name')
-      return
+      alert("Please enter a place name");
+      return;
     }
 
     try {
@@ -126,18 +130,20 @@ function PlacesPage() {
         typeId: editPlace.typeId,
         parentId: editPlace.parentId,
         latitude: editPlace.latitude,
-        longitude: editPlace.longitude
-      })
-      
-      setPlacesList(placesList.map(p => p.id === placeId ? updatedPlace : p))
-      setEditingPlace(null)
+        longitude: editPlace.longitude,
+      });
+
+      setPlacesList(
+        placesList.map((p) => (p.id === placeId ? updatedPlace : p)),
+      );
+      setEditingPlace(null);
     } catch (err) {
-      setError(`Error updating place: ${err}`)
+      setError(`Error updating place: ${err}`);
     }
   }
 
-  if (loading) return <div>Loading places...</div>
-  if (error) return <div style={{ color: 'red' }}>Error: {error}</div>
+  if (loading) return <div>Loading places...</div>;
+  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -146,44 +152,67 @@ function PlacesPage() {
           ← Back to {treeId}
         </Link>
       </div>
-      
+
       <h1>Places in {treeId}</h1>
-      
+
       <div style={{ marginBottom: "20px" }}>
         <p>Found {placesList.length} places</p>
-        <button onClick={loadData} style={{ marginRight: "10px" }}>Refresh</button>
-        <button 
+        <button onClick={loadData} style={{ marginRight: "10px" }}>
+          Refresh
+        </button>
+        <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          style={{ backgroundColor: showCreateForm ? "#ccc" : "#4CAF50", color: "white", border: "none", padding: "8px 16px" }}
+          style={{
+            backgroundColor: showCreateForm ? "#ccc" : "#4CAF50",
+            color: "white",
+            border: "none",
+            padding: "8px 16px",
+          }}
         >
-          {showCreateForm ? 'Cancel' : 'Create Place'}
+          {showCreateForm ? "Cancel" : "Create Place"}
         </button>
       </div>
 
       {/* Create Place Form */}
       {showCreateForm && (
-        <div style={{ padding: "20px", backgroundColor: "#f9f9f9", marginBottom: "20px", border: "1px solid #ddd" }}>
+        <div
+          style={{
+            padding: "20px",
+            backgroundColor: "#f9f9f9",
+            marginBottom: "20px",
+            border: "1px solid #ddd",
+          }}
+        >
           <h3>Create New Place</h3>
           <div style={{ marginBottom: "10px" }}>
             <label>Name: </label>
             <input
               type="text"
               value={newPlace.name}
-              onChange={(e) => setNewPlace(prev => ({ ...prev, name: e.target.value }))}
+              onChange={(e) =>
+                setNewPlace((prev) => ({ ...prev, name: e.target.value }))
+              }
               placeholder="Enter place name..."
               style={{ padding: "5px", width: "200px" }}
             />
           </div>
-          
+
           <div style={{ marginBottom: "10px" }}>
             <label>Type: </label>
             <select
               value={newPlace.typeId}
-              onChange={(e) => setNewPlace(prev => ({ ...prev, typeId: parseInt(e.target.value) }))}
+              onChange={(e) =>
+                setNewPlace((prev) => ({
+                  ...prev,
+                  typeId: parseInt(e.target.value),
+                }))
+              }
               style={{ padding: "5px" }}
             >
-              {placeTypes.map(type => (
-                <option key={type.id} value={type.id}>{type.name}</option>
+              {placeTypes.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
               ))}
             </select>
           </div>
@@ -191,16 +220,20 @@ function PlacesPage() {
           <div style={{ marginBottom: "10px" }}>
             <label>Parent Place: </label>
             <select
-              value={newPlace.parentId || ''}
-              onChange={(e) => setNewPlace(prev => ({ 
-                ...prev, 
-                parentId: e.target.value ? parseInt(e.target.value) : null 
-              }))}
+              value={newPlace.parentId || ""}
+              onChange={(e) =>
+                setNewPlace((prev) => ({
+                  ...prev,
+                  parentId: e.target.value ? parseInt(e.target.value) : null,
+                }))
+              }
               style={{ padding: "5px" }}
             >
               <option value="">None</option>
-              {placesList.map(place => (
-                <option key={place.id} value={place.id}>{place.name}</option>
+              {placesList.map((place) => (
+                <option key={place.id} value={place.id}>
+                  {place.name}
+                </option>
               ))}
             </select>
           </div>
@@ -210,11 +243,13 @@ function PlacesPage() {
             <input
               type="number"
               step="any"
-              value={newPlace.latitude || ''}
-              onChange={(e) => setNewPlace(prev => ({ 
-                ...prev, 
-                latitude: e.target.value ? parseFloat(e.target.value) : null 
-              }))}
+              value={newPlace.latitude || ""}
+              onChange={(e) =>
+                setNewPlace((prev) => ({
+                  ...prev,
+                  latitude: e.target.value ? parseFloat(e.target.value) : null,
+                }))
+              }
               placeholder="Optional"
               style={{ padding: "5px", width: "100px" }}
             />
@@ -222,19 +257,27 @@ function PlacesPage() {
             <input
               type="number"
               step="any"
-              value={newPlace.longitude || ''}
-              onChange={(e) => setNewPlace(prev => ({ 
-                ...prev, 
-                longitude: e.target.value ? parseFloat(e.target.value) : null 
-              }))}
+              value={newPlace.longitude || ""}
+              onChange={(e) =>
+                setNewPlace((prev) => ({
+                  ...prev,
+                  longitude: e.target.value ? parseFloat(e.target.value) : null,
+                }))
+              }
               placeholder="Optional"
               style={{ padding: "5px", width: "100px" }}
             />
           </div>
 
-          <button 
+          <button
             onClick={createPlace}
-            style={{ backgroundColor: "#4CAF50", color: "white", border: "none", padding: "10px 20px", marginRight: "10px" }}
+            style={{
+              backgroundColor: "#4CAF50",
+              color: "white",
+              border: "none",
+              padding: "10px 20px",
+              marginRight: "10px",
+            }}
           >
             Create Place
           </button>
@@ -248,13 +291,16 @@ function PlacesPage() {
         <div>
           <h2>All Places</h2>
           <div>
-            {placesList.map(place => (
-              <div key={place.id} style={{ 
-                padding: "15px", 
-                border: "1px solid #ccc", 
-                marginBottom: "10px",
-                backgroundColor: "white"
-              }}>
+            {placesList.map((place) => (
+              <div
+                key={place.id}
+                style={{
+                  padding: "15px",
+                  border: "1px solid #ccc",
+                  marginBottom: "10px",
+                  backgroundColor: "white",
+                }}
+              >
                 {editingPlace === place.id ? (
                   // Edit Mode
                   <div>
@@ -264,20 +310,32 @@ function PlacesPage() {
                       <input
                         type="text"
                         value={editPlace.name}
-                        onChange={(e) => setEditPlace(prev => ({ ...prev, name: e.target.value }))}
+                        onChange={(e) =>
+                          setEditPlace((prev) => ({
+                            ...prev,
+                            name: e.target.value,
+                          }))
+                        }
                         style={{ padding: "5px", width: "200px" }}
                       />
                     </div>
-                    
+
                     <div style={{ marginBottom: "10px" }}>
                       <label>Type: </label>
                       <select
                         value={editPlace.typeId}
-                        onChange={(e) => setEditPlace(prev => ({ ...prev, typeId: parseInt(e.target.value) }))}
+                        onChange={(e) =>
+                          setEditPlace((prev) => ({
+                            ...prev,
+                            typeId: parseInt(e.target.value),
+                          }))
+                        }
                         style={{ padding: "5px" }}
                       >
-                        {placeTypes.map(type => (
-                          <option key={type.id} value={type.id}>{type.name}</option>
+                        {placeTypes.map((type) => (
+                          <option key={type.id} value={type.id}>
+                            {type.name}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -285,17 +343,25 @@ function PlacesPage() {
                     <div style={{ marginBottom: "10px" }}>
                       <label>Parent Place: </label>
                       <select
-                        value={editPlace.parentId || ''}
-                        onChange={(e) => setEditPlace(prev => ({ 
-                          ...prev, 
-                          parentId: e.target.value ? parseInt(e.target.value) : null 
-                        }))}
+                        value={editPlace.parentId || ""}
+                        onChange={(e) =>
+                          setEditPlace((prev) => ({
+                            ...prev,
+                            parentId: e.target.value
+                              ? parseInt(e.target.value)
+                              : null,
+                          }))
+                        }
                         style={{ padding: "5px" }}
                       >
                         <option value="">None</option>
-                        {placesList.filter(p => p.id !== place.id).map(p => (
-                          <option key={p.id} value={p.id}>{p.name}</option>
-                        ))}
+                        {placesList
+                          .filter((p) => p.id !== place.id)
+                          .map((p) => (
+                            <option key={p.id} value={p.id}>
+                              {p.name}
+                            </option>
+                          ))}
                       </select>
                     </div>
 
@@ -304,45 +370,53 @@ function PlacesPage() {
                       <input
                         type="number"
                         step="any"
-                        value={editPlace.latitude || ''}
-                        onChange={(e) => setEditPlace(prev => ({ 
-                          ...prev, 
-                          latitude: e.target.value ? parseFloat(e.target.value) : null 
-                        }))}
+                        value={editPlace.latitude || ""}
+                        onChange={(e) =>
+                          setEditPlace((prev) => ({
+                            ...prev,
+                            latitude: e.target.value
+                              ? parseFloat(e.target.value)
+                              : null,
+                          }))
+                        }
                         style={{ padding: "5px", width: "100px" }}
                       />
                       <label style={{ marginLeft: "20px" }}>Longitude: </label>
                       <input
                         type="number"
                         step="any"
-                        value={editPlace.longitude || ''}
-                        onChange={(e) => setEditPlace(prev => ({ 
-                          ...prev, 
-                          longitude: e.target.value ? parseFloat(e.target.value) : null 
-                        }))}
+                        value={editPlace.longitude || ""}
+                        onChange={(e) =>
+                          setEditPlace((prev) => ({
+                            ...prev,
+                            longitude: e.target.value
+                              ? parseFloat(e.target.value)
+                              : null,
+                          }))
+                        }
                         style={{ padding: "5px", width: "100px" }}
                       />
                     </div>
 
-                    <button 
+                    <button
                       onClick={() => saveEdit(place.id)}
-                      style={{ 
-                        backgroundColor: "#4CAF50", 
-                        color: "white", 
-                        border: "none", 
+                      style={{
+                        backgroundColor: "#4CAF50",
+                        color: "white",
+                        border: "none",
                         padding: "8px 16px",
-                        marginRight: "10px" 
+                        marginRight: "10px",
                       }}
                     >
                       Save
                     </button>
-                    <button 
+                    <button
                       onClick={cancelEdit}
-                      style={{ 
-                        backgroundColor: "#666", 
-                        color: "white", 
-                        border: "none", 
-                        padding: "8px 16px" 
+                      style={{
+                        backgroundColor: "#666",
+                        color: "white",
+                        border: "none",
+                        padding: "8px 16px",
                       }}
                     >
                       Cancel
@@ -350,43 +424,55 @@ function PlacesPage() {
                   </div>
                 ) : (
                   // View Mode
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
                     <div>
-                      <Link 
-                        to="/$treeId/places/$placeId" 
+                      <Link
+                        to="/$treeId/places/$placeId"
                         params={{ treeId, placeId: place.id.toString() }}
                         style={{ textDecoration: "none" }}
                       >
-                        <strong style={{ fontSize: "18px" }}>{place.name}</strong>
+                        <strong style={{ fontSize: "18px" }}>
+                          {place.name}
+                        </strong>
                       </Link>
                       <div style={{ color: "#666", fontSize: "14px" }}>
-                        Type: {placeTypes.find(t => t.id === place.typeId)?.name || `ID: ${place.typeId}`}
+                        Type:{" "}
+                        {placeTypes.find((t) => t.id === place.typeId)?.name ||
+                          `ID: ${place.typeId}`}
                         {place.parentId && ` • Parent ID: ${place.parentId}`}
-                        {place.latitude && place.longitude && ` • ${place.latitude}, ${place.longitude}`}
+                        {place.latitude &&
+                          place.longitude &&
+                          ` • ${place.latitude}, ${place.longitude}`}
                       </div>
                     </div>
                     <div>
-                      <button 
+                      <button
                         onClick={() => startEditPlace(place)}
-                        style={{ 
-                          backgroundColor: "#2196F3", 
-                          color: "white", 
+                        style={{
+                          backgroundColor: "#2196F3",
+                          color: "white",
                           border: "none",
                           padding: "5px 10px",
                           fontSize: "12px",
-                          marginRight: "5px"
+                          marginRight: "5px",
                         }}
                       >
                         Edit
                       </button>
-                      <button 
+                      <button
                         onClick={() => deletePlace(place.id)}
-                        style={{ 
-                          backgroundColor: "#f44336", 
-                          color: "white", 
+                        style={{
+                          backgroundColor: "#f44336",
+                          color: "white",
                           border: "none",
                           padding: "5px 10px",
-                          fontSize: "12px"
+                          fontSize: "12px",
                         }}
                       >
                         Delete
@@ -403,8 +489,11 @@ function PlacesPage() {
       <div style={{ marginTop: "30px" }}>
         <h3>Available Place Types</h3>
         <ul>
-          {placeTypes.map(type => (
-            <li key={type.id}>{type.name} (ID: {type.id}) {type.isSystem ? '(System)' : '(Custom)'}</li>
+          {placeTypes.map((type) => (
+            <li key={type.id}>
+              {type.name} (ID: {type.id}){" "}
+              {type.isSystem ? "(System)" : "(Custom)"}
+            </li>
           ))}
         </ul>
       </div>

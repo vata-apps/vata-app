@@ -13,12 +13,12 @@ const TREES_METADATA_SCHEMA_SQL = `
 `;
 
 export async function initializeTreesMetadataDatabase(): Promise<void> {
-  const dbPath = 'sqlite:trees-metadata.db';
+  const dbPath = "sqlite:trees-metadata.db";
   const database = await Database.load(dbPath);
 
   try {
     await database.execute(TREES_METADATA_SCHEMA_SQL);
-    console.log('Trees metadata database initialized');
+    console.log("Trees metadata database initialized");
   } catch (error) {
     console.error("Failed to initialize trees metadata database:", error);
     throw error;

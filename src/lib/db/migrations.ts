@@ -58,9 +58,9 @@ export async function initializeDatabase(treeName: string): Promise<void> {
 
     // Check if place types already exist
     const existingTypes = await database.select(
-      "SELECT COUNT(*) as count FROM place_types WHERE is_system = 1"
+      "SELECT COUNT(*) as count FROM place_types WHERE is_system = 1",
     );
-    
+
     // Tauri database.select() returns unknown[] - we need to cast before runtime validation
     const firstResult = (existingTypes as unknown[])[0];
     if (!isCountResult(firstResult)) {
@@ -73,7 +73,7 @@ export async function initializeDatabase(treeName: string): Promise<void> {
       for (const placeType of DEFAULT_PLACE_TYPES) {
         await database.execute(
           "INSERT INTO place_types (name, key, is_system) VALUES ($1, $2, $3)",
-          [placeType.name, placeType.key, placeType.is_system]
+          [placeType.name, placeType.key, placeType.is_system],
         );
       }
     }

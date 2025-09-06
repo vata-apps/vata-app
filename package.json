@@ -10,7 +10,9 @@
     "tauri": "tauri",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@mantine/core": "^8.2.8",
@@ -40,6 +42,7 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.6.0",
     "drizzle-kit": "^0.31.4",
+    "prettier": "^3.6.2",
     "typescript": "~5.8.3",
     "vite": "^7.0.4"
   }

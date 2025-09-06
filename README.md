@@ -41,13 +41,13 @@ This project demonstrates the capabilities of AI-assisted development:
 
 ### Prerequisites
 
-- Node.js (v18 or newer)  
+- Node.js (v18 or newer)
 - pnpm package manager
 - Rust (for Tauri development)
 
 ### Development Setup
 
-*Development setup instructions will be updated once the Tauri migration is complete.*
+_Development setup instructions will be updated once the Tauri migration is complete._
 
 For now, refer to the [Tauri documentation](https://tauri.app/v1/guides/getting-started/prerequisites) for setting up the development environment.
 

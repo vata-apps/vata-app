@@ -2,12 +2,20 @@
 // These types represent the raw data structure returned from SQLite
 
 // Utility types for cleaner API signatures
-export type CreatePlaceInput = Omit<import('./schema').NewPlace, 'id' | 'createdAt'>;
-export type CreatePlaceTypeInput = Omit<import('./schema').NewPlaceType, 'id' | 'createdAt'>;
-export type UpdatePlaceInput = Partial<Omit<import('./schema').Place, 'id' | 'createdAt'>>;
+export type CreatePlaceInput = Omit<
+  import("./schema").NewPlace,
+  "id" | "createdAt"
+>;
+export type CreatePlaceTypeInput = Omit<
+  import("./schema").NewPlaceType,
+  "id" | "createdAt"
+>;
+export type UpdatePlaceInput = Partial<
+  Omit<import("./schema").Place, "id" | "createdAt">
+>;
 
 // Form data types for UI components
-export type PlaceFormData = Omit<CreatePlaceInput, 'gedcomId'> & {
+export type PlaceFormData = Omit<CreatePlaceInput, "gedcomId"> & {
   gedcomId?: number | null;
 };
 
@@ -37,47 +45,47 @@ export interface CountResult {
 // Helper function to safely access properties on unknown objects
 function hasProperty<T extends PropertyKey>(
   obj: unknown,
-  key: T
+  key: T,
 ): obj is Record<T, unknown> {
-  return typeof obj === 'object' && obj !== null && key in obj;
+  return typeof obj === "object" && obj !== null && key in obj;
 }
 
 // Type guards for runtime validation
 export function isRawPlaceRow(obj: unknown): obj is RawPlaceRow {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    hasProperty(obj, 'id') &&
-    hasProperty(obj, 'name') &&
-    hasProperty(obj, 'type_id') &&
-    typeof obj.id === 'number' &&
-    typeof obj.name === 'string' &&
-    typeof obj.type_id === 'number'
+    hasProperty(obj, "id") &&
+    hasProperty(obj, "name") &&
+    hasProperty(obj, "type_id") &&
+    typeof obj.id === "number" &&
+    typeof obj.name === "string" &&
+    typeof obj.type_id === "number"
   );
 }
 
 export function isRawPlaceTypeRow(obj: unknown): obj is RawPlaceTypeRow {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    hasProperty(obj, 'id') &&
-    hasProperty(obj, 'name') &&
-    typeof obj.id === 'number' &&
-    typeof obj.name === 'string'
+    hasProperty(obj, "id") &&
+    hasProperty(obj, "name") &&
+    typeof obj.id === "number" &&
+    typeof obj.name === "string"
   );
 }
 
 export function isCountResult(obj: unknown): obj is CountResult {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    hasProperty(obj, 'count') &&
-    typeof obj.count === 'number'
+    hasProperty(obj, "count") &&
+    typeof obj.count === "number"
   );
 }
 
 // Utility functions to convert raw rows to typed objects
-export function rawPlaceToPlace(raw: RawPlaceRow): import('./schema').Place {
+export function rawPlaceToPlace(raw: RawPlaceRow): import("./schema").Place {
   return {
     id: raw.id,
     createdAt: new Date(raw.created_at * 1000), // Convert SQLite timestamp
@@ -86,16 +94,18 @@ export function rawPlaceToPlace(raw: RawPlaceRow): import('./schema').Place {
     parentId: raw.parent_id,
     latitude: raw.latitude,
     longitude: raw.longitude,
-    gedcomId: raw.gedcom_id
+    gedcomId: raw.gedcom_id,
   };
 }
 
-export function rawPlaceTypeToPlaceType(raw: RawPlaceTypeRow): import('./schema').PlaceType {
+export function rawPlaceTypeToPlaceType(
+  raw: RawPlaceTypeRow,
+): import("./schema").PlaceType {
   return {
     id: raw.id,
     createdAt: new Date(raw.created_at * 1000), // Convert SQLite timestamp
     name: raw.name,
     key: raw.key,
-    isSystem: Boolean(raw.is_system) // Convert SQLite boolean
+    isSystem: Boolean(raw.is_system), // Convert SQLite boolean
   };
 }

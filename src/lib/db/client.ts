@@ -1,7 +1,7 @@
-import Database from '@tauri-apps/plugin-sql';
-import { drizzle } from 'drizzle-orm/sqlite-proxy';
-import type { AsyncRemoteCallback } from 'drizzle-orm/sqlite-proxy';
-import * as schema from './schema';
+import Database from "@tauri-apps/plugin-sql";
+import { drizzle } from "drizzle-orm/sqlite-proxy";
+import type { AsyncRemoteCallback } from "drizzle-orm/sqlite-proxy";
+import * as schema from "./schema";
 
 // Type for the Drizzle database instance with schema
 type DrizzleDatabase = ReturnType<typeof drizzle<typeof schema>>;
@@ -11,7 +11,7 @@ let currentDbPath: string | null = null;
 
 export async function getDb(treeName: string): Promise<DrizzleDatabase> {
   const dbPath = `sqlite:trees/${treeName}.db`;
-  
+
   // Return existing connection if same tree
   if (dbInstance && currentDbPath === dbPath) {
     return dbInstance;
@@ -19,20 +19,20 @@ export async function getDb(treeName: string): Promise<DrizzleDatabase> {
 
   // Connect to SQLite database via Tauri
   const database = await Database.load(dbPath);
-  
+
   // Create async callback for Drizzle
   const asyncCallback: AsyncRemoteCallback = async (sql, params, method) => {
     try {
-      if (method === 'all' || method === 'values') {
+      if (method === "all" || method === "values") {
         // Note: Tauri database.select() returns unknown[] - type validation should be done by callers
-        const result = await database.select(sql, params) as unknown[];
+        const result = (await database.select(sql, params)) as unknown[];
         return { rows: result };
       } else {
         await database.execute(sql, params);
         return { rows: [] };
       }
     } catch (error) {
-      console.error('Database operation failed:', error);
+      console.error("Database operation failed:", error);
       throw error;
     }
   };

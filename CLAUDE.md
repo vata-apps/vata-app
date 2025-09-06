@@ -21,6 +21,7 @@ pnpm db:studio        # Launch Drizzle Studio for database management
 ## Project Architecture
 
 ### Core Technology Stack
+
 - **Desktop Framework**: Tauri v2 for cross-platform desktop apps
 - **Frontend**: React 19 with TypeScript and Vite
 - **Routing**: TanStack Router (v1.131+) with type-safe routing
@@ -30,7 +31,9 @@ pnpm db:studio        # Launch Drizzle Studio for database management
 - **Backend**: Rust via Tauri (minimal, mostly for SQLite access)
 
 ### Application Structure
+
 This is a genealogy application with these core modules:
+
 - **Individuals**: Core module for family members with detailed profiles
 - **Names**: Support for different name variations (birth, marriage, nickname)
 - **Families**: Module for creating relationships between individuals
@@ -39,6 +42,7 @@ This is a genealogy application with these core modules:
 - **Trees**: Family tree organization system
 
 ### Key Directories
+
 ```
 src/
 ├── lib/
@@ -53,6 +57,7 @@ src-tauri/        # Rust backend code (minimal)
 ```
 
 ### Database Architecture
+
 - Uses SQLite with Drizzle ORM for type-safe operations
 - GEDCOM ID system for genealogy standards compliance
 - Hierarchical relationships for places (country → state → city)
@@ -61,6 +66,7 @@ src-tauri/        # Rust backend code (minimal)
 ## Coding Standards
 
 ### TypeScript Rules
+
 - Never use `any` type
 - Avoid type casting with `as` when possible
 - Use Drizzle's inferred types from schema definitions
@@ -68,30 +74,35 @@ src-tauri/        # Rust backend code (minimal)
 - Prefix generic type parameters with `T` (e.g., `TKey`, `TValue`)
 
 ### Naming Conventions
+
 - Files: kebab-case (`my-component.tsx`)
 - Variables/Functions: camelCase (`myFunction`)
 - Classes/Types/Interfaces: PascalCase (`MyInterface`)
 - Constants/Enums: ALL_CAPS (`MAX_COUNT`)
 
 ### Code Style
+
 - Use `const` instead of `let` (immutable code)
 - Avoid ternary operators; use IIFE for conditionals
 - Use functional components with TypeScript
 - Implement proper error handling for database operations
 
 ### Database Changes
+
 - Use Drizzle migrations for all schema changes
 - Generate migrations with `pnpm db:generate` after schema updates
 - Apply migrations with `pnpm db:migrate`
 - Use Drizzle Studio (`pnpm db:studio`) for database inspection
 
 ### Database Best Practices
+
 - ALWAYS use Drizzle ORM (`getDb()`) for all database operations - NEVER use Tauri Database API directly
 - All foreign key relationships MUST include appropriate ON DELETE actions (SET NULL, CASCADE, etc.)
 - Use Drizzle's type-safe queries instead of raw SQL to maintain type safety
 - Leverage Drizzle's inferred types for consistent typing across the application
 
 ## Important Files
+
 - `src/lib/db/schema.ts` - Drizzle database schema definitions
 - `src/lib/db/client.ts` - SQLite database client setup
 - `src/lib/tauri/commands.ts` - Tauri command wrappers
@@ -102,14 +113,16 @@ src-tauri/        # Rust backend code (minimal)
 ## Commit Message Standards
 
 Messages must follow conventional commit format:
+
 - Use English only
 - Keep under 100 characters
 - Single line format
 - Always check `git status` and `git diff` before committing
 
 ### Conventional Commit Types
+
 - `feat:` - New features
-- `fix:` - Bug fixes  
+- `fix:` - Bug fixes
 - `docs:` - Documentation changes
 - `style:` - Code formatting (no logic changes)
 - `refactor:` - Code restructuring (no feature changes)
@@ -117,6 +130,7 @@ Messages must follow conventional commit format:
 - `chore:` - Maintenance tasks, dependency updates
 
 ### Examples
+
 ```bash
 feat: add user authentication system
 fix: resolve login page crash on mobile devices
@@ -126,6 +140,7 @@ chore: update dependencies to latest versions
 ```
 
 ## Development Notes
+
 - Desktop-first application with offline functionality
 - Uses TanStack Query for data fetching and caching
 - All database operations go through Tauri commands and Drizzle ORM
