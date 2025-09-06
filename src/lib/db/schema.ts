@@ -25,10 +25,10 @@ export const placeTypes = sqliteTable(
       .notNull()
       .default(false),
   },
-  (table) => ({
+  (table) => [
     // System types must have a key, user types must not
-    uniqueKey: uniqueIndex("place_types_key_unique").on(table.key),
-  }),
+    uniqueIndex("place_types_key_unique").on(table.key),
+  ],
 );
 
 // Places table - the main places with hierarchical structure
@@ -52,10 +52,10 @@ export const places = sqliteTable(
     longitude: real("longitude"),
     gedcomId: integer("gedcom_id"),
   },
-  (table) => ({
+  (table) => [
     // Unique GEDCOM ID
-    uniqueGedcomId: uniqueIndex("places_gedcom_id_unique").on(table.gedcomId),
-  }),
+    uniqueIndex("places_gedcom_id_unique").on(table.gedcomId),
+  ],
 );
 
 // Type definitions for TypeScript

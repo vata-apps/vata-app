@@ -1,6 +1,6 @@
 import { BaseDirectory, exists, mkdir, remove } from "@tauri-apps/plugin-fs";
 import { eq } from "drizzle-orm";
-import { initializeDatabase } from "../db/migrations";
+import { initializeDatabase } from "./db/migrations";
 import { initializeTreesMetadataDatabase } from "./trees-metadata/migrations";
 import { getTreesMetadataDb } from "./trees-metadata/client";
 import { treesMetadata, NewTreeMetadata } from "./trees-metadata/schema";

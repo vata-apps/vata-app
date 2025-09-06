@@ -13,7 +13,7 @@ export const treesMetadata = sqliteTable("trees_metadata", {
   fileExists: integer("file_exists", { mode: "boolean" })
     .notNull()
     .default(true),
-});
+}, () => []);
 
 export type TreeMetadata = typeof treesMetadata.$inferSelect;
 export type NewTreeMetadata = typeof treesMetadata.$inferInsert;

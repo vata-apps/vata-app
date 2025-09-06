@@ -1,13 +1,12 @@
 import { eq, asc, count } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
-import { PlaceType, Place, places as placesTable, placeTypes, NewPlace, NewPlaceType } from "../db/schema";
-import { getDb } from "../db/client";
-import { initializeDatabase } from "../db/migrations";
+import { PlaceType, Place, places as placesTable, placeTypes, NewPlace, NewPlaceType } from "./db/schema";
+import { getDb } from "./db/client";
+import { initializeDatabase } from "./db/migrations";
 import {
   CreatePlaceInput,
   CreatePlaceTypeInput,
   UpdatePlaceInput,
-} from "../db/types";
+} from "./db/types";
 
 export const places = {
   // Initialize database with schema and default place types

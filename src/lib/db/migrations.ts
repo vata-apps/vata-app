@@ -1,4 +1,3 @@
-import { migrate } from "drizzle-orm/sqlite-proxy/migrator";
 import { eq, count } from "drizzle-orm";
 import { getDb } from "./client";
 import { placeTypes, NewPlaceType } from "./schema";
@@ -20,11 +19,7 @@ export async function initializeDatabase(treeName: string): Promise<void> {
   try {
     const db = await getDb(treeName);
 
-    // Run Drizzle migrations
-    await migrate(db, { 
-      migrationsFolder: "./src/lib/db/migrations",
-      migrationsTable: "__drizzle_migrations__"
-    });
+    // Tables are automatically created by Drizzle schema when first accessed
 
     // Check if place types already exist
     const existingTypesResult = await db
