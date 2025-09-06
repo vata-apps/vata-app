@@ -13,9 +13,8 @@ pnpm tauri build      # Build desktop application for production
 pnpm preview          # Preview production build
 
 # Database
-pnpm db:generate      # Generate Drizzle migrations from schema changes
-pnpm db:migrate       # Apply migrations to SQLite database
-pnpm db:studio        # Launch Drizzle Studio for database management
+# Note: Database operations now use native Tauri Database API
+# No external database commands needed - schema managed in code
 ```
 
 ## Project Architecture
@@ -27,7 +26,7 @@ pnpm db:studio        # Launch Drizzle Studio for database management
 - **Routing**: TanStack Router (v1.131+) with type-safe routing
 - **State Management**: TanStack Query for data fetching and caching
 - **UI Framework**: Mantine UI v8 with Tabler icons
-- **Database**: SQLite with Drizzle ORM for type-safe queries
+- **Database**: SQLite with native Tauri Database API for direct SQL operations
 - **Backend**: Rust via Tauri (minimal, mostly for SQLite access)
 
 ### Application Structure
@@ -46,7 +45,7 @@ This is a genealogy application with these core modules:
 ```
 src/
 ├── lib/
-│   ├── db/        # Drizzle schema, client, and migrations
+│   ├── db/        # Database types and migrations
 │   └── tauri/     # Tauri commands and database operations
 ├── components/    # Shared React components
 ├── router/        # TanStack Router configuration
@@ -58,11 +57,12 @@ src-tauri/        # Rust backend code (minimal)
 
 ### Database Architecture
 
-- Uses SQLite with Drizzle ORM for type-safe operations
+- Uses SQLite with native Tauri Database API for direct SQL operations
 - **UUIDs for all primary keys** - Never use integer IDs, always use UUIDs for better scalability and security
 - GEDCOM ID system for genealogy standards compliance
 - Hierarchical relationships for places (country → state → city)
 - Event system with participants, subjects, and roles
+- Schema managed through SQL DDL in migration files
 
 ## Coding Standards
 
@@ -70,7 +70,7 @@ src-tauri/        # Rust backend code (minimal)
 
 - Never use `any` type
 - Avoid type casting with `as` when possible
-- Use Drizzle's inferred types from schema definitions
+- Use TypeScript interfaces that match SQLite column names (snake_case)
 - Always validate types after schema changes
 - Prefix generic type parameters with `T` (e.g., `TKey`, `TValue`)
 
@@ -90,29 +90,29 @@ src-tauri/        # Rust backend code (minimal)
 
 ### Database Changes
 
-- Use Drizzle migrations for all schema changes
-- Generate migrations with `pnpm db:generate` after schema updates
-- Apply migrations with `pnpm db:migrate`
-- Use Drizzle Studio (`pnpm db:studio`) for database inspection
-- **Development tip**: In development phase (pre-production), delete all migrations and regenerate clean ones instead of creating complex migration chains
-- **Migration naming**: Rename generated migration files from random names (e.g., `0000_loose_silhouette.sql`) to descriptive names (e.g., `0000_initial_schema.sql`) and update the corresponding `tag` in `meta/_journal.json`
+- Schema changes are made directly in `src/lib/db/migrations.ts`
+- Use standard SQL DDL (CREATE TABLE, ALTER TABLE, etc.)
+- Database initialization handled automatically when creating new trees
+- For schema updates, modify the `SCHEMA_SQL` constant and update `initializeDatabase()`
+- **Development tip**: Test schema changes by creating a new tree to verify initialization
 
 ### Database Best Practices
 
-- ALWAYS use Drizzle ORM (`getDb()`) for all database operations - NEVER use Tauri Database API directly
-- **Use UUIDs for all primary keys** - Import `{ v4 as uuidv4 } from "uuid"` and use `.$defaultFn(() => uuidv4())`
+- ALWAYS use Tauri Database API (`Database.load()`) for all database operations
+- **Use UUIDs for all primary keys** - Import `{ v4 as uuidv4 } from "uuid"` and generate manually
 - All foreign key relationships MUST include appropriate ON DELETE actions (SET NULL, CASCADE, etc.)
-- Use Drizzle's type-safe queries instead of raw SQL to maintain type safety
-- Leverage Drizzle's inferred types for consistent typing across the application
+- Use parameterized queries to prevent SQL injection
+- Define TypeScript interfaces that match SQLite column names (snake_case)
+- Handle SQLite data type conversions (INTEGER for booleans, proper date parsing)
 
 ## Important Files
 
-- `src/lib/db/schema.ts` - Drizzle database schema definitions
-- `src/lib/db/client.ts` - SQLite database client setup
+- `src/lib/db/types.ts` - TypeScript interface definitions matching SQLite schema
+- `src/lib/db/migrations.ts` - Database schema and initialization logic
+- `src/lib/places.ts` - Places module with direct SQLite operations
 - `src/lib/tauri/commands.ts` - Tauri command wrappers
 - `src/router/index.ts` - Main router configuration
 - `src-tauri/src/main.rs` - Tauri backend entry point (minimal Rust)
-- `drizzle.config.ts` - Drizzle configuration
 
 ## Commit Message Standards
 
@@ -194,125 +194,140 @@ chore: update dependencies to latest versions
 - Custom hooks: focus on single responsibility
 - If component grows beyond these limits, consider extraction
 
-### Database Operations - Mandatory Patterns (2025-01-15)
+### Database Operations - Mandatory Patterns (2025-09-06)
 
-**CRITICAL: ALL database operations MUST use Drizzle ORM exclusively.**
+**CRITICAL: ALL database operations use native Tauri Database API directly.**
 
 **Required Database Access Patterns:**
 
 ```typescript
 // ✅ CORRECT: Tree-specific database operations
-import { getDb } from "../db/client";
-import { places, placeTypes } from "../db/schema";
-import { eq, asc, count } from "drizzle-orm";
+import Database from "@tauri-apps/plugin-sql";
+import { v4 as uuidv4 } from "uuid";
+import { PlaceType, Place } from "../db/types";
 
-const db = await getDb(treeName);
-const result = await db.select().from(places).orderBy(asc(places.name));
+const dbPath = `sqlite:trees/${treeName}.db`;
+const database = await Database.load(dbPath);
+const result = await database.select("SELECT * FROM places ORDER BY name") as Place[];
 
 // ✅ CORRECT: Trees metadata operations
-import { getTreesMetadataDb } from "../db/trees-metadata-client";
-import { treesMetadata } from "../db/trees-metadata-schema";
-
-const db = await getTreesMetadataDb();
-const result = await db.select().from(treesMetadata).where(eq(treesMetadata.name, name));
-```
-
-**FORBIDDEN Patterns:**
-```typescript
-// ❌ NEVER use direct Tauri Database API
-import Database from "@tauri-apps/plugin-sql";
-const database = await Database.load("sqlite:...");
-const result = await database.select("SELECT * FROM...");
-
-// ❌ NEVER use raw SQL strings in business logic
-await database.execute("INSERT INTO places...", [...]);
-
-// ❌ NEVER use manual type casting
-const result = (await database.select(...)) as unknown[];
-const firstResult = result[0] as SomeType;
-```
-
-**Required Imports for Database Operations:**
-
-```typescript
-// For tree-specific operations
-import { eq, asc, desc, count, like, and, or } from "drizzle-orm";
-import { getDb } from "../db/client";
-import { places, placeTypes, NewPlace, NewPlaceType } from "../db/schema";
-
-// For trees metadata operations  
-import { getTreesMetadataDb } from "../db/trees-metadata-client";
-import { treesMetadata, NewTreeMetadata } from "../db/trees-metadata-schema";
-
-// For migrations (rare)
-import { migrate } from "drizzle-orm/sqlite-proxy/migrator";
+const database = await Database.load("sqlite:trees-metadata.db");
+const result = await database.select("SELECT * FROM trees_metadata WHERE name = ?", [name]);
 ```
 
 **Standard CRUD Patterns:**
 
 ```typescript
-// CREATE with auto-generated UUID
-const newItem: NewPlace = { name, typeId, parentId };
-const result = await db.insert(places).values(newItem).returning();
-return result[0];
+// CREATE with manual UUID generation
+const id = uuidv4();
+await database.execute(
+  "INSERT INTO places (id, name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+  [id, name, typeId, parentId, latitude, longitude, gedcomId]
+);
 
 // READ single item
-const result = await db.select().from(places).where(eq(places.id, id)).limit(1);
+const result = await database.select(
+  "SELECT * FROM places WHERE id = ?",
+  [id]
+) as Place[];
 return result[0] || null;
 
 // READ multiple with ordering
-const results = await db.select().from(places).orderBy(asc(places.name));
+const results = await database.select(
+  "SELECT * FROM places ORDER BY name"
+) as Place[];
 
-// UPDATE
-const result = await db.update(places).set({ name }).where(eq(places.id, id)).returning();
-return result[0];
+// UPDATE with dynamic query building
+const updates: string[] = [];
+const values: any[] = [];
+if (name !== undefined) {
+  updates.push("name = ?");
+  values.push(name);
+}
+values.push(id);
+await database.execute(
+  `UPDATE places SET ${updates.join(", ")} WHERE id = ?`,
+  values
+);
 
-// DELETE  
-await db.delete(places).where(eq(places.id, id));
+// DELETE
+await database.execute("DELETE FROM places WHERE id = ?", [id]);
 
 // COUNT
-const result = await db.select({ count: count() }).from(places).where(condition);
+const result = await database.select(
+  "SELECT COUNT(*) as count FROM places WHERE parent_id = ?",
+  [parentId]
+) as Array<{ count: number }>;
 return result[0]?.count ?? 0;
 ```
 
 **Database Initialization Pattern:**
 ```typescript
-// For tree databases - use Drizzle migrations
-import { migrate } from "drizzle-orm/sqlite-proxy/migrator";
+// Schema creation with SQL DDL
+const SCHEMA_SQL = `
+CREATE TABLE IF NOT EXISTS place_types (
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  name TEXT NOT NULL,
+  key TEXT,
+  is_system INTEGER DEFAULT 0 NOT NULL
+);
+`;
 
-await migrate(db, { 
-  migrationsFolder: "./src/lib/db/migrations",
-  migrationsTable: "__drizzle_migrations__"
-});
+await database.execute(SCHEMA_SQL);
 
-// Then seed with default data using Drizzle ORM
-const existingCount = await db.select({ count: count() }).from(placeTypes).where(eq(placeTypes.isSystem, true));
-if (existingCount[0]?.count === 0) {
-  await db.insert(placeTypes).values(DEFAULT_PLACE_TYPES);
+// Seed with default data using parameterized queries
+for (const placeType of DEFAULT_PLACE_TYPES) {
+  await database.execute(
+    "INSERT INTO place_types (id, name, key, is_system) VALUES (?, ?, ?, ?)",
+    [uuidv4(), placeType.name, placeType.key, placeType.isSystem ? 1 : 0]
+  );
 }
 ```
 
-**Exception: Schema Creation Only**
-Direct SQL is ONLY acceptable for initial schema creation in migration files:
+**Type Safety Guidelines:**
 ```typescript
-// ONLY in files like: src/lib/db/trees-metadata-migrations.ts
-const SCHEMA_SQL = `CREATE TABLE IF NOT EXISTS...`;
-await database.execute(SCHEMA_SQL);
+// ✅ Define interfaces matching SQLite column names
+interface Place {
+  id: string;
+  created_at: string;
+  name: string;
+  type_id: string;  // snake_case matches SQLite
+  parent_id: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  gedcom_id: number | null;
+}
+
+// ✅ Handle SQLite data type conversions
+const placeTypes = result.map(type => ({
+  ...type,
+  is_system: Boolean(type.is_system) // Convert INTEGER to boolean
+}));
+
+// ✅ Safe date handling
+const date = place.created_at 
+  ? new Date(typeof place.created_at === 'number' 
+      ? place.created_at * 1000 
+      : place.created_at
+    )
+  : null;
 ```
 
 **Code Review Checklist:**
-- [ ] No `Database.load()` calls outside of client proxy files
-- [ ] No raw SQL strings (`"SELECT * FROM..."`) in business logic
-- [ ] No manual type casting `(result as unknown[])[0]`
-- [ ] All queries use Drizzle ORM methods (`.select()`, `.insert()`, etc.)
-- [ ] Proper imports from schema files for types
-- [ ] Using `getDb(treeName)` or `getTreesMetadataDb()` appropriately
+- [ ] All database operations use `Database.load()` with proper connection strings
+- [ ] Parameterized queries used to prevent SQL injection
+- [ ] TypeScript interfaces match SQLite column names (snake_case)
+- [ ] UUIDs generated manually with `uuidv4()`
+- [ ] SQLite data types properly converted (INTEGER booleans, timestamps)
+- [ ] Proper error handling for database operations
+- [ ] No direct string concatenation in SQL queries
 
 ## Development Notes
 
 - Desktop-first application with offline functionality
 - Uses TanStack Query for data fetching and caching
-- All database operations go through Tauri commands and Drizzle ORM
+- All database operations use native Tauri Database API with direct SQL
 - Implements proper loading and error states throughout
 - Follows React 19 and Tauri best practices
 - Minimal Rust code - most logic stays in TypeScript

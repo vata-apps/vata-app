@@ -2,14 +2,13 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { usePlaces, usePlaceTypes, useCreatePlace, useUpdatePlace, useDeletePlace, useChildrenCount } from "../hooks/use-places-query";
 import { PlaceForm } from "../components/PlaceForm";
-import { PlaceFormData } from "../lib/db/types";
-import { Place, PlaceType } from "../lib/db/schema";
+import { PlaceType, Place, PlaceFormData } from "../lib/db/types";
 
 function PlacesPage() {
   const { treeId } = useParams({ from: "/$treeId/places" });
   
   const { data: placesList = [], isLoading: placesLoading, error: placesError, refetch: refetchPlaces } = usePlaces(treeId);
-  const { data: placeTypes = [], isLoading: typesLoading, error: typesError } = usePlaceTypes(treeId);
+  const { data: placeTypes = [], isLoading: typesLoading, error: typesError, refetch: refetchTypes } = usePlaceTypes(treeId);
   const createPlaceMutation = useCreatePlace(treeId);
   const updatePlaceMutation = useUpdatePlace(treeId);
   const deletePlaceMutation = useDeletePlace(treeId);
@@ -54,8 +53,8 @@ function PlacesPage() {
     setEditingPlace(place.id);
     setEditPlace({
       name: place.name,
-      typeId: place.typeId,
-      parentId: place.parentId,
+      typeId: place.type_id,
+      parentId: place.parent_id,
       latitude: place.latitude,
       longitude: place.longitude,
     });
@@ -191,9 +190,9 @@ function PlacesPage() {
                       </Link>
                       <div style={{ color: "#666", fontSize: "14px" }}>
                         Type:{" "}
-                        {placeTypes.find((t) => t.id === place.typeId)?.name ||
-                          `ID: ${place.typeId}`}
-                        {place.parentId && ` • Parent ID: ${place.parentId}`}
+                        {placeTypes.find((t) => t.id === place.type_id)?.name ||
+                          `ID: ${place.type_id}`}
+                        {place.parent_id && ` • Parent ID: ${place.parent_id}`}
                         {place.latitude &&
                           place.longitude &&
                           ` • ${place.latitude}, ${place.longitude}`}
@@ -236,11 +235,18 @@ function PlacesPage() {
 
       <div style={{ marginTop: "30px" }}>
         <h3>Available Place Types</h3>
+        <div style={{ marginBottom: "10px" }}>
+          <button onClick={() => refetchTypes()} style={{ marginRight: "10px" }}>
+            Refresh Types
+          </button>
+          <span>Found {placeTypes.length} place types</span>
+          {typesError && <span style={{ color: "red", marginLeft: "10px" }}>Error: {typesError.message}</span>}
+        </div>
         <ul>
           {placeTypes.map((type) => (
             <li key={type.id}>
               {type.name} (ID: {type.id}){" "}
-              {type.isSystem ? "(System)" : "(Custom)"}
+              {type.is_system ? "(System)" : "(Custom)"}
             </li>
           ))}
         </ul>

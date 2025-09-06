@@ -1,9 +1,7 @@
-import { eq, count } from "drizzle-orm";
 import Database from "@tauri-apps/plugin-sql";
-import { getDb } from "./client";
-import { placeTypes, NewPlaceType } from "./schema";
+import { v4 as uuidv4 } from "uuid";
 
-const DEFAULT_PLACE_TYPES: Omit<NewPlaceType, "id" | "createdAt">[] = [
+const DEFAULT_PLACE_TYPES = [
   { name: "Country", key: "country", isSystem: true },
   { name: "State", key: "state", isSystem: true },
   { name: "City", key: "city", isSystem: true },
@@ -16,29 +14,28 @@ const DEFAULT_PLACE_TYPES: Omit<NewPlaceType, "id" | "createdAt">[] = [
   { name: "Address", key: "address", isSystem: true },
 ];
 
-// SQL schema for initial table creation
 const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS place_types (
-  id text PRIMARY KEY NOT NULL,
-  created_at integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  name text NOT NULL,
-  key text,
-  is_system integer DEFAULT false NOT NULL
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  name TEXT NOT NULL,
+  key TEXT,
+  is_system INTEGER DEFAULT 0 NOT NULL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS place_types_key_unique ON place_types (key);
 
 CREATE TABLE IF NOT EXISTS places (
-  id text PRIMARY KEY NOT NULL,
-  created_at integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  name text NOT NULL,
-  type_id text NOT NULL,
-  parent_id text,
-  latitude real,
-  longitude real,
-  gedcom_id integer,
-  FOREIGN KEY (type_id) REFERENCES place_types(id) ON UPDATE no action ON DELETE restrict,
-  FOREIGN KEY (parent_id) REFERENCES places(id) ON UPDATE no action ON DELETE set null
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  name TEXT NOT NULL,
+  type_id TEXT NOT NULL,
+  parent_id TEXT,
+  latitude REAL,
+  longitude REAL,
+  gedcom_id INTEGER,
+  FOREIGN KEY (type_id) REFERENCES place_types(id) ON UPDATE NO ACTION ON DELETE RESTRICT,
+  FOREIGN KEY (parent_id) REFERENCES places(id) ON UPDATE NO ACTION ON DELETE SET NULL
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS places_gedcom_id_unique ON places (gedcom_id);
@@ -49,27 +46,25 @@ export async function initializeDatabase(treeName: string): Promise<void> {
     const dbPath = `sqlite:trees/${treeName}.db`;
     const database = await Database.load(dbPath);
 
-    // Create tables using SQL
+    // Create tables
     await database.execute(SCHEMA_SQL);
 
-    // Now get Drizzle client for data operations
-    const db = await getDb(treeName);
-
     // Check if place types already exist
-    const existingTypesResult = await db
-      .select({ count: count() })
-      .from(placeTypes)
-      .where(eq(placeTypes.isSystem, true));
+    const existingTypes = await database.select(
+      "SELECT COUNT(*) as count FROM place_types WHERE is_system = 1"
+    ) as Array<{ count: number }>;
 
-    const existingCount = existingTypesResult[0]?.count ?? 0;
+    const existingCount = existingTypes[0]?.count || 0;
 
     // Insert default place types if they don't exist
     if (existingCount === 0) {
-      const newPlaceTypes: NewPlaceType[] = DEFAULT_PLACE_TYPES.map(type => ({
-        ...type,
-      }));
-
-      await db.insert(placeTypes).values(newPlaceTypes);
+      for (const placeType of DEFAULT_PLACE_TYPES) {
+        await database.execute(
+          "INSERT INTO place_types (id, name, key, is_system) VALUES (?, ?, ?, ?)",
+          [uuidv4(), placeType.name, placeType.key, placeType.isSystem ? 1 : 0]
+        );
+      }
+      console.log(`Seeded ${DEFAULT_PLACE_TYPES.length} default place types`);
     }
 
     console.log(`Database initialized for tree: ${treeName}`);

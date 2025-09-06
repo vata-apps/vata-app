@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { places } from "../lib/places";
-import { Place, PlaceType } from "../lib/db/schema";
-import { CreatePlaceInput, UpdatePlaceInput, CreatePlaceTypeInput } from "../lib/db/types";
+import { Place, PlaceType, CreatePlaceInput, UpdatePlaceInput, CreatePlaceTypeInput } from "../lib/db/types";
 
 // Query keys
 const placesKeys = {
