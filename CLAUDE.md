@@ -194,6 +194,120 @@ chore: update dependencies to latest versions
 - Custom hooks: focus on single responsibility
 - If component grows beyond these limits, consider extraction
 
+### Database Operations - Mandatory Patterns (2025-01-15)
+
+**CRITICAL: ALL database operations MUST use Drizzle ORM exclusively.**
+
+**Required Database Access Patterns:**
+
+```typescript
+// ✅ CORRECT: Tree-specific database operations
+import { getDb } from "../db/client";
+import { places, placeTypes } from "../db/schema";
+import { eq, asc, count } from "drizzle-orm";
+
+const db = await getDb(treeName);
+const result = await db.select().from(places).orderBy(asc(places.name));
+
+// ✅ CORRECT: Trees metadata operations
+import { getTreesMetadataDb } from "../db/trees-metadata-client";
+import { treesMetadata } from "../db/trees-metadata-schema";
+
+const db = await getTreesMetadataDb();
+const result = await db.select().from(treesMetadata).where(eq(treesMetadata.name, name));
+```
+
+**FORBIDDEN Patterns:**
+```typescript
+// ❌ NEVER use direct Tauri Database API
+import Database from "@tauri-apps/plugin-sql";
+const database = await Database.load("sqlite:...");
+const result = await database.select("SELECT * FROM...");
+
+// ❌ NEVER use raw SQL strings in business logic
+await database.execute("INSERT INTO places...", [...]);
+
+// ❌ NEVER use manual type casting
+const result = (await database.select(...)) as unknown[];
+const firstResult = result[0] as SomeType;
+```
+
+**Required Imports for Database Operations:**
+
+```typescript
+// For tree-specific operations
+import { eq, asc, desc, count, like, and, or } from "drizzle-orm";
+import { getDb } from "../db/client";
+import { places, placeTypes, NewPlace, NewPlaceType } from "../db/schema";
+
+// For trees metadata operations  
+import { getTreesMetadataDb } from "../db/trees-metadata-client";
+import { treesMetadata, NewTreeMetadata } from "../db/trees-metadata-schema";
+
+// For migrations (rare)
+import { migrate } from "drizzle-orm/sqlite-proxy/migrator";
+```
+
+**Standard CRUD Patterns:**
+
+```typescript
+// CREATE with auto-generated UUID
+const newItem: NewPlace = { name, typeId, parentId };
+const result = await db.insert(places).values(newItem).returning();
+return result[0];
+
+// READ single item
+const result = await db.select().from(places).where(eq(places.id, id)).limit(1);
+return result[0] || null;
+
+// READ multiple with ordering
+const results = await db.select().from(places).orderBy(asc(places.name));
+
+// UPDATE
+const result = await db.update(places).set({ name }).where(eq(places.id, id)).returning();
+return result[0];
+
+// DELETE  
+await db.delete(places).where(eq(places.id, id));
+
+// COUNT
+const result = await db.select({ count: count() }).from(places).where(condition);
+return result[0]?.count ?? 0;
+```
+
+**Database Initialization Pattern:**
+```typescript
+// For tree databases - use Drizzle migrations
+import { migrate } from "drizzle-orm/sqlite-proxy/migrator";
+
+await migrate(db, { 
+  migrationsFolder: "./src/lib/db/migrations",
+  migrationsTable: "__drizzle_migrations__"
+});
+
+// Then seed with default data using Drizzle ORM
+const existingCount = await db.select({ count: count() }).from(placeTypes).where(eq(placeTypes.isSystem, true));
+if (existingCount[0]?.count === 0) {
+  await db.insert(placeTypes).values(DEFAULT_PLACE_TYPES);
+}
+```
+
+**Exception: Schema Creation Only**
+Direct SQL is ONLY acceptable for initial schema creation in migration files:
+```typescript
+// ONLY in files like: src/lib/db/trees-metadata-migrations.ts
+const SCHEMA_SQL = `CREATE TABLE IF NOT EXISTS...`;
+await database.execute(SCHEMA_SQL);
+```
+
+**Code Review Checklist:**
+- [ ] No `Database.load()` calls outside of client proxy files
+- [ ] No raw SQL strings (`"SELECT * FROM..."`) in business logic
+- [ ] No manual type casting `(result as unknown[])[0]`
+- [ ] All queries use Drizzle ORM methods (`.select()`, `.insert()`, etc.)
+- [ ] Proper imports from schema files for types
+- [ ] Using `getDb(treeName)` or `getTreesMetadataDb()` appropriately
+
 ## Development Notes
 
 - Desktop-first application with offline functionality

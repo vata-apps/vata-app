@@ -1,17 +1,12 @@
-import Database from "@tauri-apps/plugin-sql";
-import { eq } from "drizzle-orm";
+import { eq, asc, count } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
-import { PlaceType, Place, places as placesTable } from "../db/schema";
+import { PlaceType, Place, places as placesTable, placeTypes, NewPlace, NewPlaceType } from "../db/schema";
 import { getDb } from "../db/client";
 import { initializeDatabase } from "../db/migrations";
 import {
   CreatePlaceInput,
   CreatePlaceTypeInput,
   UpdatePlaceInput,
-  rawPlaceToPlace,
-  rawPlaceTypeToPlaceType,
-  isRawPlaceRow,
-  isRawPlaceTypeRow,
 } from "../db/types";
 
 export const places = {
@@ -22,105 +17,101 @@ export const places = {
 
   // Place Types CRUD
   async getPlaceTypes(treeName: string): Promise<PlaceType[]> {
-    const database = await Database.load(`sqlite:trees/${treeName}.db`);
+    const db = await getDb(treeName);
 
-    const result = await database.select(
-      "SELECT * FROM place_types ORDER BY name",
-    );
+    const result = await db
+      .select()
+      .from(placeTypes)
+      .orderBy(asc(placeTypes.name));
 
     // If empty, initialize the database
-    if (!result || (result as unknown[]).length === 0) {
+    if (!result || result.length === 0) {
       await this.initDatabase(treeName);
-      const retryResult = await database.select(
-        "SELECT * FROM place_types ORDER BY name",
-      );
-      return (retryResult as unknown[])
-        .filter((row): row is any => isRawPlaceTypeRow(row))
-        .map(rawPlaceTypeToPlaceType);
+      return await db
+        .select()
+        .from(placeTypes)
+        .orderBy(asc(placeTypes.name));
     }
 
-    return (result as unknown[])
-      .filter((row): row is any => isRawPlaceTypeRow(row))
-      .map(rawPlaceTypeToPlaceType);
+    return result;
   },
 
   async createPlaceType(
     treeName: string,
     placeType: CreatePlaceTypeInput,
   ): Promise<PlaceType> {
-    const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    const id = uuidv4();
+    const db = await getDb(treeName);
 
-    await database.execute(
-      "INSERT INTO place_types (id, name, key, is_system) VALUES (?, ?, ?, ?)",
-      [id, placeType.name, placeType.key, placeType.isSystem],
-    );
+    const newPlaceType: NewPlaceType = {
+      name: placeType.name,
+      key: placeType.key,
+      isSystem: placeType.isSystem ?? false,
+    };
 
-    return await this.getPlaceType(treeName, id);
+    const result = await db
+      .insert(placeTypes)
+      .values(newPlaceType)
+      .returning();
+
+    return result[0];
   },
 
   async getPlaceType(treeName: string, id: string): Promise<PlaceType> {
-    const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await database.select(
-      "SELECT * FROM place_types WHERE id = ?",
-      [id],
-    );
+    const db = await getDb(treeName);
+    
+    const result = await db
+      .select()
+      .from(placeTypes)
+      .where(eq(placeTypes.id, id))
+      .limit(1);
 
-    const firstResult = (result as unknown[])[0];
-    if (!isRawPlaceTypeRow(firstResult)) {
+    if (!result[0]) {
       throw new Error(`Place type with id ${id} not found`);
     }
 
-    return rawPlaceTypeToPlaceType(firstResult);
+    return result[0];
   },
 
   // Places CRUD
   async getAll(treeName: string): Promise<Place[]> {
-    const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await database.select("SELECT * FROM places ORDER BY name");
-
-    return (result as unknown[])
-      .filter((row): row is any => isRawPlaceRow(row))
-      .map(rawPlaceToPlace);
+    const db = await getDb(treeName);
+    
+    return await db
+      .select()
+      .from(placesTable)
+      .orderBy(asc(placesTable.name));
   },
 
   async getById(treeName: string, id: string): Promise<Place | null> {
-    const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await database.select("SELECT * FROM places WHERE id = ?", [
-      id,
-    ]);
+    const db = await getDb(treeName);
+    
+    const result = await db
+      .select()
+      .from(placesTable)
+      .where(eq(placesTable.id, id))
+      .limit(1);
 
-    const firstResult = (result as unknown[])[0];
-    if (!firstResult || !isRawPlaceRow(firstResult)) {
-      return null;
-    }
-
-    return rawPlaceToPlace(firstResult);
+    return result[0] || null;
   },
 
   async create(treeName: string, place: CreatePlaceInput): Promise<Place> {
-    const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    const id = uuidv4();
+    const db = await getDb(treeName);
 
-    await database.execute(
-      "INSERT INTO places (id, name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [
-        id,
-        place.name,
-        place.typeId,
-        place.parentId,
-        place.latitude,
-        place.longitude,
-        place.gedcomId,
-      ],
-    );
+    const newPlace: NewPlace = {
+      name: place.name,
+      typeId: place.typeId,
+      parentId: place.parentId,
+      latitude: place.latitude,
+      longitude: place.longitude,
+      gedcomId: place.gedcomId,
+    };
 
-    const createdPlace = await this.getById(treeName, id);
-    if (!createdPlace) {
-      throw new Error("Failed to retrieve created place");
-    }
+    const result = await db
+      .insert(placesTable)
+      .values(newPlace)
+      .returning();
 
-    return createdPlace;
+    return result[0];
   },
 
   async update(
@@ -158,27 +149,22 @@ export const places = {
   },
 
   async delete(treeName: string, id: string): Promise<void> {
-    const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    await database.execute("DELETE FROM places WHERE id = ?", [id]);
+    const db = await getDb(treeName);
+    
+    await db
+      .delete(placesTable)
+      .where(eq(placesTable.id, id));
   },
 
   async getChildrenCount(treeName: string, parentId: string): Promise<number> {
-    const database = await Database.load(`sqlite:trees/${treeName}.db`);
-    const result = await database.select(
-      "SELECT COUNT(*) as count FROM places WHERE parent_id = ?",
-      [parentId],
-    );
+    const db = await getDb(treeName);
+    
+    const result = await db
+      .select({ count: count() })
+      .from(placesTable)
+      .where(eq(placesTable.parentId, parentId));
 
-    const firstResult = (result as unknown[])[0];
-    if (
-      !firstResult ||
-      typeof firstResult !== "object" ||
-      !("count" in firstResult)
-    ) {
-      return 0;
-    }
-
-    return (firstResult as any).count as number;
+    return result[0]?.count ?? 0;
   },
 
   // Get places with hierarchy info
@@ -215,6 +201,6 @@ export const places = {
       .select()
       .from(placesTable)
       .where(eq(placesTable.parentId, parentId))
-      .orderBy(placesTable.name);
+      .orderBy(asc(placesTable.name));
   },
 };

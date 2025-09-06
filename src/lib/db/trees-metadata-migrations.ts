@@ -1,5 +1,7 @@
 import Database from "@tauri-apps/plugin-sql";
 
+// Note: This still uses direct SQL because trees metadata uses a simpler setup
+// and doesn't have Drizzle migrations configured. The SQL matches the schema exactly.
 const TREES_METADATA_SCHEMA_SQL = `
   CREATE TABLE IF NOT EXISTS trees_metadata (
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
