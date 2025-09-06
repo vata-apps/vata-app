@@ -56,25 +56,23 @@ export const places = {
   ): Promise<PlaceType> {
     // Temporary: Use Tauri API directly for insert
     const database = await Database.load(`sqlite:trees/${treeName}.db`);
+    const { v4: uuidv4 } = await import('uuid');
+    const id = uuidv4();
 
     try {
-      const result = await database.execute(
-        "INSERT INTO place_types (name, key, is_system) VALUES (?, ?, ?)",
-        [placeType.name, placeType.key, placeType.isSystem],
+      await database.execute(
+        "INSERT INTO place_types (id, name, key, is_system) VALUES (?, ?, ?, ?)",
+        [id, placeType.name, placeType.key, placeType.isSystem],
       );
 
-      if (typeof result.lastInsertId !== "number") {
-        throw new Error("Failed to get insert ID for place type");
-      }
-
-      return await this.getPlaceType(treeName, result.lastInsertId);
+      return await this.getPlaceType(treeName, id);
     } catch (error) {
       console.error("Place type creation failed:", error);
       throw error;
     }
   },
 
-  async getPlaceType(treeName: string, id: number): Promise<PlaceType> {
+  async getPlaceType(treeName: string, id: string): Promise<PlaceType> {
     // Temporary: Use Tauri API directly
     const database = await Database.load(`sqlite:trees/${treeName}.db`);
     const result = await database.select(
@@ -105,7 +103,7 @@ export const places = {
       .map(rawPlaceToPlace);
   },
 
-  async getById(treeName: string, id: number): Promise<Place | null> {
+  async getById(treeName: string, id: string): Promise<Place | null> {
     // Temporary: Use Tauri API directly
     const database = await Database.load(`sqlite:trees/${treeName}.db`);
     const result = await database.select("SELECT * FROM places WHERE id = ?", [
@@ -124,11 +122,14 @@ export const places = {
   async create(treeName: string, place: CreatePlaceInput): Promise<Place> {
     // Temporary: Use Tauri API directly for insert, Drizzle for select
     const database = await Database.load(`sqlite:trees/${treeName}.db`);
+    const { v4: uuidv4 } = await import('uuid');
+    const id = uuidv4();
 
     try {
-      const result = await database.execute(
-        "INSERT INTO places (name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?)",
+      await database.execute(
+        "INSERT INTO places (id, name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
         [
+          id,
           place.name,
           place.typeId,
           place.parentId,
@@ -138,12 +139,8 @@ export const places = {
         ],
       );
 
-      if (typeof result.lastInsertId !== "number") {
-        throw new Error("Failed to get insert ID for place");
-      }
-
       // Use Drizzle for the select
-      const createdPlace = await this.getById(treeName, result.lastInsertId);
+      const createdPlace = await this.getById(treeName, id);
       if (!createdPlace) {
         throw new Error(`Failed to retrieve created place`);
       }
@@ -157,7 +154,7 @@ export const places = {
 
   async update(
     treeName: string,
-    id: number,
+    id: string,
     place: UpdatePlaceInput,
   ): Promise<Place> {
     const db = await getDb(treeName);
@@ -189,7 +186,7 @@ export const places = {
     return updatedPlace;
   },
 
-  async delete(treeName: string, id: number): Promise<void> {
+  async delete(treeName: string, id: string): Promise<void> {
     // Temporary: Use Tauri API directly for delete too
     const database = await Database.load(`sqlite:trees/${treeName}.db`);
 
@@ -202,7 +199,7 @@ export const places = {
   },
 
   // Get count of children for a place (for UI confirmation)
-  async getChildrenCount(treeName: string, parentId: number): Promise<number> {
+  async getChildrenCount(treeName: string, parentId: string): Promise<number> {
     // Temporary: Use Tauri API directly
     const database = await Database.load(`sqlite:trees/${treeName}.db`);
     const result = await database.select(
@@ -233,7 +230,7 @@ export const places = {
     ]);
 
     // Create a map of place types by id for efficient lookup
-    const placeTypeMap = new Map<number, PlaceType>();
+    const placeTypeMap = new Map<string, PlaceType>();
     placeTypes.forEach((type) => placeTypeMap.set(type.id, type));
 
     // Join places with their types
@@ -250,7 +247,7 @@ export const places = {
       .sort((a, b) => a.name.localeCompare(b.name));
   },
 
-  async getChildren(treeName: string, parentId: number): Promise<Place[]> {
+  async getChildren(treeName: string, parentId: string): Promise<Place[]> {
     const db = await getDb(treeName);
     return await db
       .select()

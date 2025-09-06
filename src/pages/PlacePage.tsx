@@ -16,7 +16,7 @@ function PlacePage() {
   async function loadPlace() {
     try {
       setLoading(true);
-      const placeData = await places.getById(treeId, parseInt(placeId));
+      const placeData = await places.getById(treeId, placeId);
       setPlace(placeData);
     } catch (err) {
       setError(`Error loading place: ${err}`);

@@ -59,6 +59,7 @@ src-tauri/        # Rust backend code (minimal)
 ### Database Architecture
 
 - Uses SQLite with Drizzle ORM for type-safe operations
+- **UUIDs for all primary keys** - Never use integer IDs, always use UUIDs for better scalability and security
 - GEDCOM ID system for genealogy standards compliance
 - Hierarchical relationships for places (country → state → city)
 - Event system with participants, subjects, and roles
@@ -93,10 +94,13 @@ src-tauri/        # Rust backend code (minimal)
 - Generate migrations with `pnpm db:generate` after schema updates
 - Apply migrations with `pnpm db:migrate`
 - Use Drizzle Studio (`pnpm db:studio`) for database inspection
+- **Development tip**: In development phase (pre-production), delete all migrations and regenerate clean ones instead of creating complex migration chains
+- **Migration naming**: Rename generated migration files from random names (e.g., `0000_loose_silhouette.sql`) to descriptive names (e.g., `0000_initial_schema.sql`) and update the corresponding `tag` in `meta/_journal.json`
 
 ### Database Best Practices
 
 - ALWAYS use Drizzle ORM (`getDb()`) for all database operations - NEVER use Tauri Database API directly
+- **Use UUIDs for all primary keys** - Import `{ v4 as uuidv4 } from "uuid"` and use `.$defaultFn(() => uuidv4())` 
 - All foreign key relationships MUST include appropriate ON DELETE actions (SET NULL, CASCADE, etc.)
 - Use Drizzle's type-safe queries instead of raw SQL to maintain type safety
 - Leverage Drizzle's inferred types for consistent typing across the application

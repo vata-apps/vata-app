@@ -1,5 +1,5 @@
 CREATE TABLE `place_types` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	`name` text NOT NULL,
 	`key` text,
@@ -8,11 +8,11 @@ CREATE TABLE `place_types` (
 --> statement-breakpoint
 CREATE UNIQUE INDEX `place_types_key_unique` ON `place_types` (`key`);--> statement-breakpoint
 CREATE TABLE `places` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`id` text PRIMARY KEY NOT NULL,
 	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	`name` text NOT NULL,
-	`type_id` integer NOT NULL,
-	`parent_id` integer,
+	`type_id` text NOT NULL,
+	`parent_id` text,
 	`latitude` real,
 	`longitude` real,
 	`gedcom_id` integer,

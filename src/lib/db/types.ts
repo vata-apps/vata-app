@@ -20,18 +20,18 @@ export type PlaceFormData = Omit<CreatePlaceInput, "gedcomId"> & {
 };
 
 export interface RawPlaceRow {
-  readonly id: number;
+  readonly id: string;
   readonly created_at: number; // SQLite timestamp
   readonly name: string;
-  readonly type_id: number;
-  readonly parent_id: number | null;
+  readonly type_id: string;
+  readonly parent_id: string | null;
   readonly latitude: number | null;
   readonly longitude: number | null;
   readonly gedcom_id: number | null;
 }
 
 export interface RawPlaceTypeRow {
-  readonly id: number;
+  readonly id: string;
   readonly created_at: number; // SQLite timestamp
   readonly name: string;
   readonly key: string | null;
@@ -58,9 +58,9 @@ export function isRawPlaceRow(obj: unknown): obj is RawPlaceRow {
     hasProperty(obj, "id") &&
     hasProperty(obj, "name") &&
     hasProperty(obj, "type_id") &&
-    typeof obj.id === "number" &&
+    typeof obj.id === "string" &&
     typeof obj.name === "string" &&
-    typeof obj.type_id === "number"
+    typeof obj.type_id === "string"
   );
 }
 
@@ -70,7 +70,7 @@ export function isRawPlaceTypeRow(obj: unknown): obj is RawPlaceTypeRow {
     obj !== null &&
     hasProperty(obj, "id") &&
     hasProperty(obj, "name") &&
-    typeof obj.id === "number" &&
+    typeof obj.id === "string" &&
     typeof obj.name === "string"
   );
 }

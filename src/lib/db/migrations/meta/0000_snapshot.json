@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "85615cbb-b71e-41b2-94a8-acb656f3913f",
+  "id": "bc4f4c72-22d0-4e8d-902c-dce3f3888f20",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "place_types": {
@@ -9,10 +9,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "created_at": {
           "name": "created_at",
@@ -48,7 +48,9 @@
       "indexes": {
         "place_types_key_unique": {
           "name": "place_types_key_unique",
-          "columns": ["key"],
+          "columns": [
+            "key"
+          ],
           "isUnique": true
         }
       },
@@ -62,10 +64,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "created_at": {
           "name": "created_at",
@@ -84,14 +86,14 @@
         },
         "type_id": {
           "name": "type_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
         "parent_id": {
           "name": "parent_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -121,7 +123,9 @@
       "indexes": {
         "places_gedcom_id_unique": {
           "name": "places_gedcom_id_unique",
-          "columns": ["gedcom_id"],
+          "columns": [
+            "gedcom_id"
+          ],
           "isUnique": true
         }
       },
@@ -130,8 +134,12 @@
           "name": "places_type_id_place_types_id_fk",
           "tableFrom": "places",
           "tableTo": "place_types",
-          "columnsFrom": ["type_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "type_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
@@ -139,8 +147,12 @@
           "name": "places_parent_id_places_id_fk",
           "tableFrom": "places",
           "tableTo": "places",
-          "columnsFrom": ["parent_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "set null",
           "onUpdate": "no action"
         }

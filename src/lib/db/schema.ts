@@ -7,12 +7,15 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 import { sql } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
 
 // Place Types table - defines the different types of places
 export const placeTypes = sqliteTable(
   "place_types",
   {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => uuidv4()),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
@@ -32,15 +35,17 @@ export const placeTypes = sqliteTable(
 export const places = sqliteTable(
   "places",
   {
-    id: integer("id").primaryKey({ autoIncrement: true }),
+    id: text("id")
+      .primaryKey()
+      .$defaultFn(() => uuidv4()),
     createdAt: integer("created_at", { mode: "timestamp" })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
     name: text("name").notNull(),
-    typeId: integer("type_id")
+    typeId: text("type_id")
       .notNull()
       .references(() => placeTypes.id, { onDelete: "restrict" }),
-    parentId: integer("parent_id").references((): any => places.id, {
+    parentId: text("parent_id").references((): any => places.id, {
       onDelete: "set null",
     }),
     latitude: real("latitude"),

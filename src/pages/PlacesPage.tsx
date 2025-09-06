@@ -12,7 +12,7 @@ function PlacesPage() {
   const [error, setError] = useState<string | null>(null);
 
   // Helper function for empty form data
-  const createEmptyFormData = (defaultTypeId = 0): PlaceFormData => ({
+  const createEmptyFormData = (defaultTypeId = ""): PlaceFormData => ({
     name: "",
     typeId: defaultTypeId,
     parentId: null,
@@ -22,7 +22,7 @@ function PlacesPage() {
 
   // Form states
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingPlace, setEditingPlace] = useState<number | null>(null);
+  const [editingPlace, setEditingPlace] = useState<string | null>(null);
   const [newPlace, setNewPlace] = useState<PlaceFormData>(
     createEmptyFormData(),
   );
@@ -45,7 +45,7 @@ function PlacesPage() {
       setPlaceTypes(typesData);
 
       // Set default type ID if available
-      if (typesData.length > 0 && newPlace.typeId === 0) {
+      if (typesData.length > 0 && !newPlace.typeId) {
         setNewPlace((prev) => ({ ...prev, typeId: typesData[0].id }));
       }
     } catch (err) {
@@ -61,7 +61,7 @@ function PlacesPage() {
       return;
     }
 
-    if (!newPlace.typeId || newPlace.typeId === 0) {
+    if (!newPlace.typeId) {
       alert("Please select a place type");
       return;
     }
@@ -77,14 +77,14 @@ function PlacesPage() {
       });
 
       setPlacesList([...placesList, createdPlace]);
-      setNewPlace(createEmptyFormData(placeTypes[0]?.id || 0));
+      setNewPlace(createEmptyFormData(placeTypes[0]?.id || ""));
       setShowCreateForm(false);
     } catch (err) {
       setError(`Error creating place: ${err}`);
     }
   }
 
-  async function deletePlace(placeId: number) {
+  async function deletePlace(placeId: string) {
     try {
       // Check if place has children
       const childrenCount = await places.getChildrenCount(treeId, placeId);
@@ -118,7 +118,7 @@ function PlacesPage() {
     setEditPlace(createEmptyFormData());
   }
 
-  async function saveEdit(placeId: number) {
+  async function saveEdit(placeId: string) {
     if (!editPlace.name.trim()) {
       alert("Please enter a place name");
       return;
@@ -204,7 +204,7 @@ function PlacesPage() {
               onChange={(e) =>
                 setNewPlace((prev) => ({
                   ...prev,
-                  typeId: parseInt(e.target.value),
+                  typeId: e.target.value,
                 }))
               }
               style={{ padding: "5px" }}
@@ -224,7 +224,7 @@ function PlacesPage() {
               onChange={(e) =>
                 setNewPlace((prev) => ({
                   ...prev,
-                  parentId: e.target.value ? parseInt(e.target.value) : null,
+                  parentId: e.target.value || null,
                 }))
               }
               style={{ padding: "5px" }}
@@ -327,7 +327,7 @@ function PlacesPage() {
                         onChange={(e) =>
                           setEditPlace((prev) => ({
                             ...prev,
-                            typeId: parseInt(e.target.value),
+                            typeId: e.target.value,
                           }))
                         }
                         style={{ padding: "5px" }}
@@ -347,9 +347,7 @@ function PlacesPage() {
                         onChange={(e) =>
                           setEditPlace((prev) => ({
                             ...prev,
-                            parentId: e.target.value
-                              ? parseInt(e.target.value)
-                              : null,
+                            parentId: e.target.value || null,
                           }))
                         }
                         style={{ padding: "5px" }}
@@ -434,7 +432,7 @@ function PlacesPage() {
                     <div>
                       <Link
                         to="/$treeId/places/$placeId"
-                        params={{ treeId, placeId: place.id.toString() }}
+                        params={{ treeId, placeId: place.id }}
                         style={{ textDecoration: "none" }}
                       >
                         <strong style={{ fontSize: "18px" }}>

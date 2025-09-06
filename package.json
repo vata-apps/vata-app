@@ -32,7 +32,8 @@
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.44.5",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "uuid": "^12.0.0"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "^5.86.0",
@@ -40,6 +41,7 @@
     "@tauri-apps/cli": "^2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.6.0",
     "drizzle-kit": "^0.31.4",
     "prettier": "^3.6.2",
