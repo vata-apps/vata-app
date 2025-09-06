@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useTrees, useCreateTree, useDeleteTree, useUpdateLastOpened } from "../hooks/use-trees-query";
+import {
+  useTrees,
+  useCreateTree,
+  useDeleteTree,
+  useUpdateLastOpened,
+} from "../hooks/use-trees-query";
 
 function TreeSelectPage() {
   const [newTreeName, setNewTreeName] = useState("");
   const [newTreeDescription, setNewTreeDescription] = useState("");
   const navigate = useNavigate();
 
-  const {
-    data: treesList = [],
-    isLoading,
-    error,
-  } = useTrees();
+  const { data: treesList = [], isLoading, error } = useTrees();
 
   const createTreeMutation = useCreateTree();
   const deleteTreeMutation = useDeleteTree();
@@ -19,16 +20,19 @@ function TreeSelectPage() {
 
   const handleCreateTree = () => {
     if (!newTreeName.trim()) return;
-    
-    createTreeMutation.mutate({
-      name: newTreeName,
-      description: newTreeDescription.trim() || undefined,
-    }, {
-      onSuccess: () => {
-        setNewTreeName("");
-        setNewTreeDescription("");
+
+    createTreeMutation.mutate(
+      {
+        name: newTreeName,
+        description: newTreeDescription.trim() || undefined,
       },
-    });
+      {
+        onSuccess: () => {
+          setNewTreeName("");
+          setNewTreeDescription("");
+        },
+      },
+    );
   };
 
   const handleDeleteTree = (name: string) => {
@@ -179,11 +183,16 @@ function TreeSelectPage() {
                 )}
 
                 <button
-                  onClick={() => openTreeMutation.mutate(tree.name, {
-                    onSuccess: () => {
-                      navigate({ to: "/$treeId", params: { treeId: tree.name } });
-                    },
-                  })}
+                  onClick={() =>
+                    openTreeMutation.mutate(tree.name, {
+                      onSuccess: () => {
+                        navigate({
+                          to: "/$treeId",
+                          params: { treeId: tree.name },
+                        });
+                      },
+                    })
+                  }
                   disabled={!tree.fileExists || openTreeMutation.isPending}
                   style={{
                     padding: "8px 16px",

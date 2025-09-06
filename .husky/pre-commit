@@ -1,0 +1,13 @@
+# Check prettier formatting
+echo "🎨 Checking prettier formatting..."
+pnpm format:check
+
+# Check ESLint
+echo "🔍 Running ESLint..."
+pnpm lint
+
+# Check TypeScript types
+echo "📝 Checking TypeScript types..."
+pnpm exec tsc --noEmit
+
+echo "✅ All checks passed!"

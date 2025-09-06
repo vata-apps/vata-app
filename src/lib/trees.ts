@@ -1,7 +1,6 @@
 import { BaseDirectory, exists, mkdir, remove } from "@tauri-apps/plugin-fs";
 import Database from "@tauri-apps/plugin-sql";
 import { initializeDatabase } from "./db/migrations";
-import { initializeTreesMetadataDatabase } from "./trees-metadata/migrations";
 
 export interface TreeInfo {
   name: string;
@@ -9,6 +8,20 @@ export interface TreeInfo {
   created_at: string;
   description?: string;
   fileExists: boolean;
+}
+
+async function initializeTreesMetadataDatabase(): Promise<void> {
+  const database = await Database.load("sqlite:trees-metadata.db");
+
+  await database.execute(`
+    CREATE TABLE IF NOT EXISTS trees_metadata (
+      name TEXT PRIMARY KEY NOT NULL,
+      file_path TEXT NOT NULL,
+      created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+      description TEXT,
+      file_exists INTEGER DEFAULT 1 NOT NULL
+    );
+  `);
 }
 
 export const trees = {
@@ -35,11 +48,11 @@ export const trees = {
 
     // Check if tree already exists
     const existing = await database.select(
-      "SELECT name FROM trees_metadata WHERE name = ?", 
-      [name]
+      "SELECT name FROM trees_metadata WHERE name = ?",
+      [name],
     );
 
-    if (existing.length > 0) {
+    if ((existing as Array<Record<string, unknown>>).length > 0) {
       throw new Error(`Tree '${name}' already exists`);
     }
 
@@ -47,19 +60,19 @@ export const trees = {
     await initializeDatabase(name);
 
     // Insert new tree metadata
-    const result = await database.select(
+    const result = (await database.select(
       `INSERT INTO trees_metadata (name, file_path, description, file_exists) 
        VALUES (?, ?, ?, ?) RETURNING *`,
-      [name, dbPath, description || null, 1]
-    );
+      [name, dbPath, description || null, 1],
+    )) as Array<Record<string, unknown>>;
 
-    const created = result[0] as any;
+    const created = result[0];
 
     return {
-      name: created.name,
-      path: created.file_path,
+      name: created.name as string,
+      path: created.file_path as string,
       created_at: new Date().toISOString(),
-      description: created.description || undefined,
+      description: (created.description as string) || undefined,
       fileExists: !!created.file_exists,
     };
   },
@@ -70,9 +83,9 @@ export const trees = {
 
       const database = await Database.load("sqlite:trees-metadata.db");
 
-      const records = await database.select(
-        "SELECT name, file_path, created_at, description, file_exists FROM trees_metadata ORDER BY name"
-      ) as Array<{
+      const records = (await database.select(
+        "SELECT name, file_path, created_at, description, file_exists FROM trees_metadata ORDER BY name",
+      )) as Array<{
         name: string;
         file_path: string;
         created_at: string;
@@ -114,10 +127,10 @@ export const trees = {
 
     const database = await Database.load("sqlite:trees-metadata.db");
 
-    const records = await database.select(
-      "SELECT file_path FROM trees_metadata WHERE name = ?", 
-      [name]
-    ) as Array<{ file_path: string }>;
+    const records = (await database.select(
+      "SELECT file_path FROM trees_metadata WHERE name = ?",
+      [name],
+    )) as Array<{ file_path: string }>;
 
     if (records.length === 0) {
       throw new Error(`Tree '${name}' does not exist`);
@@ -140,8 +153,8 @@ export const trees = {
     const database = await Database.load("sqlite:trees-metadata.db");
 
     await database.execute(
-      "UPDATE trees_metadata SET last_opened = CURRENT_TIMESTAMP WHERE name = ?", 
-      [name]
+      "UPDATE trees_metadata SET last_opened = CURRENT_TIMESTAMP WHERE name = ?",
+      [name],
     );
   },
 };

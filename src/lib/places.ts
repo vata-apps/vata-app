@@ -1,7 +1,13 @@
 import Database from "@tauri-apps/plugin-sql";
 import { initializeDatabase } from "./db/migrations";
 import { v4 as uuidv4 } from "uuid";
-import { PlaceType, Place, CreatePlaceInput, CreatePlaceTypeInput, UpdatePlaceInput } from "./db/types";
+import {
+  PlaceType,
+  Place,
+  CreatePlaceInput,
+  CreatePlaceTypeInput,
+  UpdatePlaceInput,
+} from "./db/types";
 
 export const places = {
   // Initialize database with schema and default place types
@@ -14,22 +20,19 @@ export const places = {
     const dbPath = `sqlite:trees/${treeName}.db`;
     const database = await Database.load(dbPath);
 
-    const result = await database.select(
-      "SELECT * FROM place_types ORDER BY name"
-    ) as PlaceType[];
+    const result = (await database.select(
+      "SELECT * FROM place_types ORDER BY name",
+    )) as PlaceType[];
 
     // If empty, initialize the database
     if (!result || result.length === 0) {
       await this.initDatabase(treeName);
-      return await database.select(
-        "SELECT * FROM place_types ORDER BY name"
-      ) as PlaceType[];
+      return (await database.select(
+        "SELECT * FROM place_types ORDER BY name",
+      )) as PlaceType[];
     }
 
-    return result.map(type => ({
-      ...type,
-      is_system: Boolean(type.is_system)
-    }));
+    return result;
   },
 
   async createPlaceType(
@@ -41,58 +44,51 @@ export const places = {
 
     const id = uuidv4();
     await database.execute(
-      "INSERT INTO place_types (id, name, key, is_system) VALUES (?, ?, ?, ?)",
-      [id, placeType.name, placeType.key || null, placeType.isSystem ? 1 : 0]
+      "INSERT INTO place_types (id, name, key) VALUES (?, ?, ?)",
+      [id, placeType.name, placeType.key || null],
     );
 
-    const result = await database.select(
+    const result = (await database.select(
       "SELECT * FROM place_types WHERE id = ?",
-      [id]
-    ) as PlaceType[];
+      [id],
+    )) as PlaceType[];
 
-    return {
-      ...result[0],
-      is_system: Boolean(result[0].is_system)
-    };
+    return result[0];
   },
 
   async getPlaceType(treeName: string, id: string): Promise<PlaceType> {
     const dbPath = `sqlite:trees/${treeName}.db`;
     const database = await Database.load(dbPath);
-    
-    const result = await database.select(
+
+    const result = (await database.select(
       "SELECT * FROM place_types WHERE id = ?",
-      [id]
-    ) as PlaceType[];
+      [id],
+    )) as PlaceType[];
 
     if (!result[0]) {
       throw new Error(`Place type with id ${id} not found`);
     }
 
-    return {
-      ...result[0],
-      is_system: Boolean(result[0].is_system)
-    };
+    return result[0];
   },
 
   // Places CRUD
   async getAll(treeName: string): Promise<Place[]> {
     const dbPath = `sqlite:trees/${treeName}.db`;
     const database = await Database.load(dbPath);
-    
-    return await database.select(
-      "SELECT * FROM places ORDER BY name"
-    ) as Place[];
+
+    return (await database.select(
+      "SELECT * FROM places ORDER BY name",
+    )) as Place[];
   },
 
   async getById(treeName: string, id: string): Promise<Place | null> {
     const dbPath = `sqlite:trees/${treeName}.db`;
     const database = await Database.load(dbPath);
-    
-    const result = await database.select(
-      "SELECT * FROM places WHERE id = ?",
-      [id]
-    ) as Place[];
+
+    const result = (await database.select("SELECT * FROM places WHERE id = ?", [
+      id,
+    ])) as Place[];
 
     return result[0] || null;
   },
@@ -104,13 +100,20 @@ export const places = {
     const id = uuidv4();
     await database.execute(
       "INSERT INTO places (id, name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [id, place.name, place.typeId, place.parentId, place.latitude, place.longitude, place.gedcomId]
+      [
+        id,
+        place.name,
+        place.typeId,
+        place.parentId,
+        place.latitude,
+        place.longitude,
+        place.gedcomId,
+      ],
     );
 
-    const result = await database.select(
-      "SELECT * FROM places WHERE id = ?",
-      [id]
-    ) as Place[];
+    const result = (await database.select("SELECT * FROM places WHERE id = ?", [
+      id,
+    ])) as Place[];
 
     return result[0];
   },
@@ -125,8 +128,8 @@ export const places = {
 
     // Build dynamic update query
     const updates: string[] = [];
-    const values: any[] = [];
-    
+    const values: (string | number | null)[] = [];
+
     if (place.name !== undefined) {
       updates.push("name = ?");
       values.push(place.name);
@@ -159,13 +162,12 @@ export const places = {
     values.push(id);
     await database.execute(
       `UPDATE places SET ${updates.join(", ")} WHERE id = ?`,
-      values
+      values,
     );
 
-    const result = await database.select(
-      "SELECT * FROM places WHERE id = ?",
-      [id]
-    ) as Place[];
+    const result = (await database.select("SELECT * FROM places WHERE id = ?", [
+      id,
+    ])) as Place[];
 
     if (!result[0]) {
       throw new Error(`Place with id ${id} not found`);
@@ -177,18 +179,18 @@ export const places = {
   async delete(treeName: string, id: string): Promise<void> {
     const dbPath = `sqlite:trees/${treeName}.db`;
     const database = await Database.load(dbPath);
-    
+
     await database.execute("DELETE FROM places WHERE id = ?", [id]);
   },
 
   async getChildrenCount(treeName: string, parentId: string): Promise<number> {
     const dbPath = `sqlite:trees/${treeName}.db`;
     const database = await Database.load(dbPath);
-    
-    const result = await database.select(
+
+    const result = (await database.select(
       "SELECT COUNT(*) as count FROM places WHERE parent_id = ?",
-      [parentId]
-    ) as Array<{ count: number }>;
+      [parentId],
+    )) as Array<{ count: number }>;
 
     return result[0]?.count ?? 0;
   },
@@ -224,10 +226,10 @@ export const places = {
   async getChildren(treeName: string, parentId: string): Promise<Place[]> {
     const dbPath = `sqlite:trees/${treeName}.db`;
     const database = await Database.load(dbPath);
-    
-    return await database.select(
+
+    return (await database.select(
       "SELECT * FROM places WHERE parent_id = ? ORDER BY name",
-      [parentId]
-    ) as Place[];
+      [parentId],
+    )) as Place[];
   },
 };

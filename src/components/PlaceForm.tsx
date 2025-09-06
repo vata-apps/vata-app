@@ -1,5 +1,4 @@
-import { Place, PlaceType } from "../lib/db/schema";
-import { PlaceFormData } from "../lib/db/types";
+import { Place, PlaceType, PlaceFormData } from "../lib/db/types";
 
 interface PlaceFormProps {
   formData: PlaceFormData;
@@ -44,9 +43,7 @@ export function PlaceForm({
         <input
           type="text"
           value={formData.name}
-          onChange={(e) =>
-            onSubmit({ ...formData, name: e.target.value })
-          }
+          onChange={(e) => onSubmit({ ...formData, name: e.target.value })}
           placeholder="Enter place name..."
           style={{ padding: "5px", width: "200px" }}
         />
@@ -56,9 +53,7 @@ export function PlaceForm({
         <label>Type: </label>
         <select
           value={formData.typeId}
-          onChange={(e) =>
-            onSubmit({ ...formData, typeId: e.target.value })
-          }
+          onChange={(e) => onSubmit({ ...formData, typeId: e.target.value })}
           style={{ padding: "5px" }}
         >
           {placeTypes.map((type) => (

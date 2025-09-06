@@ -5,7 +5,6 @@ export interface PlaceType {
   created_at: string;
   name: string;
   key: string | null;
-  is_system: boolean;
 }
 
 export interface Place {
@@ -31,7 +30,6 @@ export interface CreatePlaceInput {
 export interface CreatePlaceTypeInput {
   name: string;
   key?: string;
-  isSystem?: boolean;
 }
 
 export interface UpdatePlaceInput {

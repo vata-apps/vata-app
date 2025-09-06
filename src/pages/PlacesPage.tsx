@@ -1,18 +1,34 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { usePlaces, usePlaceTypes, useCreatePlace, useUpdatePlace, useDeletePlace, useChildrenCount } from "../hooks/use-places-query";
+import {
+  usePlaces,
+  usePlaceTypes,
+  useCreatePlace,
+  useUpdatePlace,
+  useDeletePlace,
+} from "../hooks/use-places-query";
 import { PlaceForm } from "../components/PlaceForm";
-import { PlaceType, Place, PlaceFormData } from "../lib/db/types";
+import { Place, PlaceFormData } from "../lib/db/types";
 
 function PlacesPage() {
   const { treeId } = useParams({ from: "/$treeId/places" });
-  
-  const { data: placesList = [], isLoading: placesLoading, error: placesError, refetch: refetchPlaces } = usePlaces(treeId);
-  const { data: placeTypes = [], isLoading: typesLoading, error: typesError, refetch: refetchTypes } = usePlaceTypes(treeId);
+
+  const {
+    data: placesList = [],
+    isLoading: placesLoading,
+    error: placesError,
+    refetch: refetchPlaces,
+  } = usePlaces(treeId);
+  const {
+    data: placeTypes = [],
+    isLoading: typesLoading,
+    error: typesError,
+    refetch: refetchTypes,
+  } = usePlaceTypes(treeId);
   const createPlaceMutation = useCreatePlace(treeId);
   const updatePlaceMutation = useUpdatePlace(treeId);
   const deletePlaceMutation = useDeletePlace(treeId);
-  
+
   const loading = placesLoading || typesLoading;
   const error = placesError || typesError;
 
@@ -26,23 +42,30 @@ function PlacesPage() {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingPlace, setEditingPlace] = useState<string | null>(null);
-  const [newPlace, setNewPlace] = useState<PlaceFormData>(createEmptyFormData());
-  const [editPlace, setEditPlace] = useState<PlaceFormData>(createEmptyFormData());
+  const [newPlace, setNewPlace] = useState<PlaceFormData>(
+    createEmptyFormData(),
+  );
+  const [editPlace, setEditPlace] = useState<PlaceFormData>(
+    createEmptyFormData(),
+  );
 
   const handleCreatePlace = async (formData: PlaceFormData) => {
-    createPlaceMutation.mutate({
-      name: formData.name,
-      typeId: formData.typeId,
-      parentId: formData.parentId,
-      latitude: formData.latitude,
-      longitude: formData.longitude,
-      gedcomId: null,
-    }, {
-      onSuccess: () => {
-        setNewPlace(createEmptyFormData(placeTypes[0]?.id || ""));
-        setShowCreateForm(false);
+    createPlaceMutation.mutate(
+      {
+        name: formData.name,
+        typeId: formData.typeId,
+        parentId: formData.parentId,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        gedcomId: null,
       },
-    });
+      {
+        onSuccess: () => {
+          setNewPlace(createEmptyFormData(placeTypes[0]?.id || ""));
+          setShowCreateForm(false);
+        },
+      },
+    );
   };
 
   const handleDeletePlace = async (placeId: string) => {
@@ -66,18 +89,26 @@ function PlacesPage() {
   };
 
   const saveEdit = async (placeId: string) => {
-    updatePlaceMutation.mutate({
-      placeId,
-      updates: editPlace,
-    }, {
-      onSuccess: () => {
-        setEditingPlace(null);
+    updatePlaceMutation.mutate(
+      {
+        placeId,
+        updates: editPlace,
       },
-    });
+      {
+        onSuccess: () => {
+          setEditingPlace(null);
+        },
+      },
+    );
   };
 
   if (loading) return <div>Loading places...</div>;
-  if (error) return <div style={{ color: "red" }}>Error: {error instanceof Error ? error.message : String(error)}</div>;
+  if (error)
+    return (
+      <div style={{ color: "red" }}>
+        Error: {error instanceof Error ? error.message : String(error)}
+      </div>
+    );
 
   return (
     <div style={{ padding: "20px" }}>
@@ -236,17 +267,23 @@ function PlacesPage() {
       <div style={{ marginTop: "30px" }}>
         <h3>Available Place Types</h3>
         <div style={{ marginBottom: "10px" }}>
-          <button onClick={() => refetchTypes()} style={{ marginRight: "10px" }}>
+          <button
+            onClick={() => refetchTypes()}
+            style={{ marginRight: "10px" }}
+          >
             Refresh Types
           </button>
           <span>Found {placeTypes.length} place types</span>
-          {typesError && <span style={{ color: "red", marginLeft: "10px" }}>Error: {typesError.message}</span>}
+          {typesError && (
+            <span style={{ color: "red", marginLeft: "10px" }}>
+              Error: {String(typesError)}
+            </span>
+          )}
         </div>
         <ul>
           {placeTypes.map((type) => (
             <li key={type.id}>
-              {type.name} (ID: {type.id}){" "}
-              {type.is_system ? "(System)" : "(Custom)"}
+              {type.name} (ID: {type.id})
             </li>
           ))}
         </ul>

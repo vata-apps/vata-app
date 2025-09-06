@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { trees, TreeInfo } from "../lib/trees";
+import { trees } from "../lib/trees";
 
 // Query keys
 const treesKeys = {
-  all: ['trees'] as const,
-  list: () => [...treesKeys.all, 'list'] as const,
+  all: ["trees"] as const,
+  list: () => [...treesKeys.all, "list"] as const,
 };
 
 // Trees Queries
@@ -20,10 +20,15 @@ export function useTrees() {
 // Trees Mutations
 export function useCreateTree() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ name, description }: { name: string; description?: string }) => 
-      trees.create(name, description),
+    mutationFn: ({
+      name,
+      description,
+    }: {
+      name: string;
+      description?: string;
+    }) => trees.create(name, description),
     onSuccess: () => {
       // Invalidate and refetch trees list
       queryClient.invalidateQueries({ queryKey: treesKeys.list() });
@@ -33,7 +38,7 @@ export function useCreateTree() {
 
 export function useDeleteTree() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (name: string) => trees.delete(name),
     onSuccess: () => {
@@ -45,7 +50,7 @@ export function useDeleteTree() {
 
 export function useUpdateLastOpened() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (name: string) => trees.updateLastOpened(name),
     onSuccess: () => {
@@ -58,7 +63,7 @@ export function useUpdateLastOpened() {
 // Initialize trees metadata database
 export function useInitializeTrees() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: () => trees.initialize(),
     onSuccess: () => {

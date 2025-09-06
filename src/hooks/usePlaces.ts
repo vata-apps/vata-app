@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { places } from "../lib/places";
-import { Place, PlaceType } from "../lib/db/schema";
-import { PlaceFormData } from "../lib/db/types";
+import { Place, PlaceType, PlaceFormData } from "../lib/db/types";
 
 export function usePlaces(treeId: string) {
   const [placesList, setPlacesList] = useState<Place[]>([]);
@@ -54,7 +53,7 @@ export function usePlaces(treeId: string) {
         longitude: formData.longitude,
       });
       setPlacesList(
-        placesList.map((p) => (p.id === placeId ? updatedPlace : p))
+        placesList.map((p) => (p.id === placeId ? updatedPlace : p)),
       );
       return updatedPlace;
     } catch (err) {

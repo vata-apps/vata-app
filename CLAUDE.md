@@ -182,6 +182,7 @@ chore: update dependencies to latest versions
    - ✅ Prefix event handlers with "handle" for clarity
 
 **Refactoring Strategy:**
+
 - Extract data logic into custom hooks (separation of concerns)
 - Create reusable UI components for forms and repeated patterns
 - Simplify error handling by centralizing at appropriate levels
@@ -189,6 +190,7 @@ chore: update dependencies to latest versions
 - Maintain consistent import and naming patterns
 
 **Component Size Guidelines:**
+
 - Page components: aim for < 200 lines
 - Reusable components: aim for < 100 lines
 - Custom hooks: focus on single responsibility
@@ -208,11 +210,16 @@ import { PlaceType, Place } from "../db/types";
 
 const dbPath = `sqlite:trees/${treeName}.db`;
 const database = await Database.load(dbPath);
-const result = await database.select("SELECT * FROM places ORDER BY name") as Place[];
+const result = (await database.select(
+  "SELECT * FROM places ORDER BY name",
+)) as Place[];
 
 // ✅ CORRECT: Trees metadata operations
 const database = await Database.load("sqlite:trees-metadata.db");
-const result = await database.select("SELECT * FROM trees_metadata WHERE name = ?", [name]);
+const result = await database.select(
+  "SELECT * FROM trees_metadata WHERE name = ?",
+  [name],
+);
 ```
 
 **Standard CRUD Patterns:**
@@ -222,20 +229,19 @@ const result = await database.select("SELECT * FROM trees_metadata WHERE name = 
 const id = uuidv4();
 await database.execute(
   "INSERT INTO places (id, name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-  [id, name, typeId, parentId, latitude, longitude, gedcomId]
+  [id, name, typeId, parentId, latitude, longitude, gedcomId],
 );
 
 // READ single item
-const result = await database.select(
-  "SELECT * FROM places WHERE id = ?",
-  [id]
-) as Place[];
+const result = (await database.select("SELECT * FROM places WHERE id = ?", [
+  id,
+])) as Place[];
 return result[0] || null;
 
 // READ multiple with ordering
-const results = await database.select(
-  "SELECT * FROM places ORDER BY name"
-) as Place[];
+const results = (await database.select(
+  "SELECT * FROM places ORDER BY name",
+)) as Place[];
 
 // UPDATE with dynamic query building
 const updates: string[] = [];
@@ -247,21 +253,22 @@ if (name !== undefined) {
 values.push(id);
 await database.execute(
   `UPDATE places SET ${updates.join(", ")} WHERE id = ?`,
-  values
+  values,
 );
 
 // DELETE
 await database.execute("DELETE FROM places WHERE id = ?", [id]);
 
 // COUNT
-const result = await database.select(
+const result = (await database.select(
   "SELECT COUNT(*) as count FROM places WHERE parent_id = ?",
-  [parentId]
-) as Array<{ count: number }>;
+  [parentId],
+)) as Array<{ count: number }>;
 return result[0]?.count ?? 0;
 ```
 
 **Database Initialization Pattern:**
+
 ```typescript
 // Schema creation with SQL DDL
 const SCHEMA_SQL = `
@@ -269,8 +276,7 @@ CREATE TABLE IF NOT EXISTS place_types (
   id TEXT PRIMARY KEY NOT NULL,
   created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
   name TEXT NOT NULL,
-  key TEXT,
-  is_system INTEGER DEFAULT 0 NOT NULL
+  key TEXT
 );
 `;
 
@@ -279,20 +285,21 @@ await database.execute(SCHEMA_SQL);
 // Seed with default data using parameterized queries
 for (const placeType of DEFAULT_PLACE_TYPES) {
   await database.execute(
-    "INSERT INTO place_types (id, name, key, is_system) VALUES (?, ?, ?, ?)",
-    [uuidv4(), placeType.name, placeType.key, placeType.isSystem ? 1 : 0]
+    "INSERT INTO place_types (id, name, key) VALUES (?, ?, ?)",
+    [uuidv4(), placeType.name, placeType.key],
   );
 }
 ```
 
 **Type Safety Guidelines:**
+
 ```typescript
 // ✅ Define interfaces matching SQLite column names
 interface Place {
   id: string;
   created_at: string;
   name: string;
-  type_id: string;  // snake_case matches SQLite
+  type_id: string; // snake_case matches SQLite
   parent_id: string | null;
   latitude: number | null;
   longitude: number | null;
@@ -300,21 +307,20 @@ interface Place {
 }
 
 // ✅ Handle SQLite data type conversions
-const placeTypes = result.map(type => ({
-  ...type,
-  is_system: Boolean(type.is_system) // Convert INTEGER to boolean
-}));
+const placeTypes = result; // Direct usage when no type conversion needed
 
 // ✅ Safe date handling
-const date = place.created_at 
-  ? new Date(typeof place.created_at === 'number' 
-      ? place.created_at * 1000 
-      : place.created_at
+const date = place.created_at
+  ? new Date(
+      typeof place.created_at === "number"
+        ? place.created_at * 1000
+        : place.created_at,
     )
   : null;
 ```
 
 **Code Review Checklist:**
+
 - [ ] All database operations use `Database.load()` with proper connection strings
 - [ ] Parameterized queries used to prevent SQL injection
 - [ ] TypeScript interfaces match SQLite column names (snake_case)
