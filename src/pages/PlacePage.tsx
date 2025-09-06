@@ -1,32 +1,13 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { useState, useEffect, useCallback } from "react";
-import { places } from "../lib/places";
+import { usePlace } from "../hooks/use-places-query";
 import { Place } from "../lib/db/schema";
 
 function PlacePage() {
   const { treeId, placeId } = useParams({ from: "/$treeId/places/$placeId" });
-  const [place, setPlace] = useState<Place | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadPlace = useCallback(async () => {
-    try {
-      setLoading(true);
-      const placeData = await places.getById(treeId, placeId);
-      setPlace(placeData);
-    } catch (err) {
-      setError(`Error loading place: ${err}`);
-    } finally {
-      setLoading(false);
-    }
-  }, [treeId, placeId]);
-
-  useEffect(() => {
-    loadPlace();
-  }, [loadPlace]);
+  const { data: place, isLoading: loading, error } = usePlace(treeId, placeId);
 
   if (loading) return <div>Loading place...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div>Error: {error instanceof Error ? error.message : String(error)}</div>;
   if (!place) return <div>Place not found</div>;
 
   return (

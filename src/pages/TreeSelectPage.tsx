@@ -1,52 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { trees } from "../lib/trees";
+import { useTrees, useCreateTree, useDeleteTree, useUpdateLastOpened } from "../hooks/use-trees-query";
 
 function TreeSelectPage() {
   const [newTreeName, setNewTreeName] = useState("");
   const [newTreeDescription, setNewTreeDescription] = useState("");
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const {
     data: treesList = [],
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ["trees"],
-    queryFn: () => trees.list(),
-  });
+  } = useTrees();
 
-  const createTreeMutation = useMutation({
-    mutationFn: ({
-      name,
-      description,
-    }: {
-      name: string;
-      description?: string;
-    }) => trees.create(name, description),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["trees"] });
-      setNewTreeName("");
-      setNewTreeDescription("");
-    },
-  });
-
-  const deleteTreeMutation = useMutation({
-    mutationFn: (name: string) => trees.delete(name),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["trees"] });
-    },
-  });
-
-  const openTreeMutation = useMutation({
-    mutationFn: (name: string) => trees.updateLastOpened(name),
-    onSuccess: (_, treeName) => {
-      queryClient.invalidateQueries({ queryKey: ["trees"] });
-      navigate({ to: "/$treeId", params: { treeId: treeName } });
-    },
-  });
+  const createTreeMutation = useCreateTree();
+  const deleteTreeMutation = useDeleteTree();
+  const openTreeMutation = useUpdateLastOpened();
 
   const handleCreateTree = () => {
     if (!newTreeName.trim()) return;
@@ -54,6 +23,11 @@ function TreeSelectPage() {
     createTreeMutation.mutate({
       name: newTreeName,
       description: newTreeDescription.trim() || undefined,
+    }, {
+      onSuccess: () => {
+        setNewTreeName("");
+        setNewTreeDescription("");
+      },
     });
   };
 
@@ -205,7 +179,11 @@ function TreeSelectPage() {
                 )}
 
                 <button
-                  onClick={() => openTreeMutation.mutate(tree.name)}
+                  onClick={() => openTreeMutation.mutate(tree.name, {
+                    onSuccess: () => {
+                      navigate({ to: "/$treeId", params: { treeId: tree.name } });
+                    },
+                  })}
                   disabled={!tree.fileExists || openTreeMutation.isPending}
                   style={{
                     padding: "8px 16px",

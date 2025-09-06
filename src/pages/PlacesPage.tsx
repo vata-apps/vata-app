@@ -1,12 +1,21 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
-import { usePlaces } from "../hooks/usePlaces";
+import { usePlaces, usePlaceTypes, useCreatePlace, useUpdatePlace, useDeletePlace, useChildrenCount } from "../hooks/use-places-query";
 import { PlaceForm } from "../components/PlaceForm";
 import { PlaceFormData } from "../lib/db/types";
+import { Place, PlaceType } from "../lib/db/schema";
 
 function PlacesPage() {
   const { treeId } = useParams({ from: "/$treeId/places" });
-  const { placesList, placeTypes, loading, error, loadData, createPlace, updatePlace, deletePlace } = usePlaces(treeId);
+  
+  const { data: placesList = [], isLoading: placesLoading, error: placesError, refetch: refetchPlaces } = usePlaces(treeId);
+  const { data: placeTypes = [], isLoading: typesLoading, error: typesError } = usePlaceTypes(treeId);
+  const createPlaceMutation = useCreatePlace(treeId);
+  const updatePlaceMutation = useUpdatePlace(treeId);
+  const deletePlaceMutation = useDeletePlace(treeId);
+  
+  const loading = placesLoading || typesLoading;
+  const error = placesError || typesError;
 
   const createEmptyFormData = (defaultTypeId = ""): PlaceFormData => ({
     name: "",
@@ -22,24 +31,26 @@ function PlacesPage() {
   const [editPlace, setEditPlace] = useState<PlaceFormData>(createEmptyFormData());
 
   const handleCreatePlace = async (formData: PlaceFormData) => {
-    try {
-      await createPlace(formData);
-      setNewPlace(createEmptyFormData(placeTypes[0]?.id || ""));
-      setShowCreateForm(false);
-    } catch {
-      // Error handled by hook
-    }
+    createPlaceMutation.mutate({
+      name: formData.name,
+      typeId: formData.typeId,
+      parentId: formData.parentId,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      gedcomId: null,
+    }, {
+      onSuccess: () => {
+        setNewPlace(createEmptyFormData(placeTypes[0]?.id || ""));
+        setShowCreateForm(false);
+      },
+    });
   };
 
   const handleDeletePlace = async (placeId: string) => {
-    try {
-      await deletePlace(placeId);
-    } catch {
-      // Error handled by hook
-    }
+    deletePlaceMutation.mutate(placeId);
   };
 
-  const startEditPlace = (place: PlaceWithType) => {
+  const startEditPlace = (place: Place) => {
     setEditingPlace(place.id);
     setEditPlace({
       name: place.name,
@@ -56,16 +67,18 @@ function PlacesPage() {
   };
 
   const saveEdit = async (placeId: string) => {
-    try {
-      await updatePlace(placeId, editPlace);
-      setEditingPlace(null);
-    } catch {
-      // Error handled by hook
-    }
+    updatePlaceMutation.mutate({
+      placeId,
+      updates: editPlace,
+    }, {
+      onSuccess: () => {
+        setEditingPlace(null);
+      },
+    });
   };
 
   if (loading) return <div>Loading places...</div>;
-  if (error) return <div style={{ color: "red" }}>Error: {error}</div>;
+  if (error) return <div style={{ color: "red" }}>Error: {error instanceof Error ? error.message : String(error)}</div>;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -79,7 +92,7 @@ function PlacesPage() {
 
       <div style={{ marginBottom: "20px" }}>
         <p>Found {placesList.length} places</p>
-        <button onClick={loadData} style={{ marginRight: "10px" }}>
+        <button onClick={() => refetchPlaces()} style={{ marginRight: "10px" }}>
           Refresh
         </button>
         <button
