@@ -1,4 +1,5 @@
 import { eq, count } from "drizzle-orm";
+import Database from "@tauri-apps/plugin-sql";
 import { getDb } from "./client";
 import { placeTypes, NewPlaceType } from "./schema";
 
@@ -15,11 +16,44 @@ const DEFAULT_PLACE_TYPES: Omit<NewPlaceType, "id" | "createdAt">[] = [
   { name: "Address", key: "address", isSystem: true },
 ];
 
+// SQL schema for initial table creation
+const SCHEMA_SQL = `
+CREATE TABLE IF NOT EXISTS place_types (
+  id text PRIMARY KEY NOT NULL,
+  created_at integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  name text NOT NULL,
+  key text,
+  is_system integer DEFAULT false NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS place_types_key_unique ON place_types (key);
+
+CREATE TABLE IF NOT EXISTS places (
+  id text PRIMARY KEY NOT NULL,
+  created_at integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  name text NOT NULL,
+  type_id text NOT NULL,
+  parent_id text,
+  latitude real,
+  longitude real,
+  gedcom_id integer,
+  FOREIGN KEY (type_id) REFERENCES place_types(id) ON UPDATE no action ON DELETE restrict,
+  FOREIGN KEY (parent_id) REFERENCES places(id) ON UPDATE no action ON DELETE set null
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS places_gedcom_id_unique ON places (gedcom_id);
+`;
+
 export async function initializeDatabase(treeName: string): Promise<void> {
   try {
-    const db = await getDb(treeName);
+    const dbPath = `sqlite:trees/${treeName}.db`;
+    const database = await Database.load(dbPath);
 
-    // Tables are automatically created by Drizzle schema when first accessed
+    // Create tables using SQL
+    await database.execute(SCHEMA_SQL);
+
+    // Now get Drizzle client for data operations
+    const db = await getDb(treeName);
 
     // Check if place types already exist
     const existingTypesResult = await db

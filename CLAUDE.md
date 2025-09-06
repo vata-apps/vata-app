@@ -316,3 +316,10 @@ await database.execute(SCHEMA_SQL);
 - Implements proper loading and error states throughout
 - Follows React 19 and Tauri best practices
 - Minimal Rust code - most logic stays in TypeScript
+
+### Application Data Location
+
+- **Trees storage**: `~/Library/Application Support/com.stivaugoin.vata-app/trees/`
+- **Trees metadata**: `~/Library/Application Support/com.stivaugoin.vata-app/trees-metadata.db`
+- Each tree has its own SQLite database file: `{tree-name}.db`
+- To reset all trees: `rm -rf "~/Library/Application Support/com.stivaugoin.vata-app"`

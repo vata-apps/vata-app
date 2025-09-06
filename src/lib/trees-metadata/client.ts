@@ -21,7 +21,8 @@ export async function getTreesMetadataDb(): Promise<DrizzleDatabase> {
   const asyncCallback: AsyncRemoteCallback = async (sql, params, method) => {
     try {
       if (method === "all" || method === "values") {
-        const result = (await database.select(sql, params)) as unknown[];
+        const result = (await database.select(sql, params)) as Record<string, any>[];
+        
         return { rows: result };
       } else {
         await database.execute(sql, params);

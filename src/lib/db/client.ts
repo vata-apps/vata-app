@@ -19,7 +19,9 @@ export async function getDb(treeName: string): Promise<DrizzleDatabase> {
 
   const asyncCallback: AsyncRemoteCallback = async (sql, params, method) => {
     if (method === "all" || method === "values") {
-      const result = (await database.select(sql, params)) as unknown[];
+      const result = (await database.select(sql, params)) as Record<string, any>[];
+      
+      // For sqlite-proxy, we keep column names as-is - Drizzle handles the mapping
       return { rows: result };
     } else {
       await database.execute(sql, params);
