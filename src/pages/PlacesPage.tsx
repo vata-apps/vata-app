@@ -39,7 +39,7 @@ function PlacesPage() {
     }
   };
 
-  const startEditPlace = (place: any) => {
+  const startEditPlace = (place: PlaceWithType) => {
     setEditingPlace(place.id);
     setEditPlace({
       name: place.name,

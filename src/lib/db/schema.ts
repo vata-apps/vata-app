@@ -45,7 +45,7 @@ export const places = sqliteTable(
     typeId: text("type_id")
       .notNull()
       .references(() => placeTypes.id, { onDelete: "restrict" }),
-    parentId: text("parent_id").references((): any => places.id, {
+    parentId: text("parent_id").references(() => places.id, {
       onDelete: "set null",
     }),
     latitude: real("latitude"),

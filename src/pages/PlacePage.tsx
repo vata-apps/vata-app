@@ -1,5 +1,5 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { places } from "../lib/places";
 import { Place } from "../lib/db/schema";
 
@@ -9,11 +9,7 @@ function PlacePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadPlace();
-  }, [treeId, placeId]);
-
-  async function loadPlace() {
+  const loadPlace = useCallback(async () => {
     try {
       setLoading(true);
       const placeData = await places.getById(treeId, placeId);
@@ -23,7 +19,11 @@ function PlacePage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [treeId, placeId]);
+
+  useEffect(() => {
+    loadPlace();
+  }, [loadPlace]);
 
   if (loading) return <div>Loading place...</div>;
   if (error) return <div>Error: {error}</div>;

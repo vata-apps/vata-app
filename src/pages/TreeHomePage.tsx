@@ -12,7 +12,7 @@ function TreeHomePage() {
       </div>
 
       <h1>Tree: {treeId}</h1>
-      <p>Welcome to your family tree. Choose what you'd like to work with:</p>
+      <p>Welcome to your family tree. Choose what you&apos;d like to work with:</p>
 
       <div
         style={{

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { places } from "../lib/places";
 import { Place, PlaceType } from "../lib/db/schema";
 import { PlaceFormData } from "../lib/db/types";
@@ -9,7 +9,7 @@ export function usePlaces(treeId: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -24,7 +24,7 @@ export function usePlaces(treeId: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [treeId]);
 
   const createPlace = async (formData: PlaceFormData) => {
     try {
@@ -80,7 +80,7 @@ export function usePlaces(treeId: string) {
 
   useEffect(() => {
     loadData();
-  }, [treeId]);
+  }, [loadData]);
 
   return {
     placesList,
