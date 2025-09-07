@@ -18,32 +18,21 @@ export interface Place {
   gedcom_id: number | null;
 }
 
-export interface CreatePlaceInput {
+export interface PlaceInput {
   name: string;
   typeId: string;
   parentId: string | null;
   latitude: number | null;
   longitude: number | null;
+}
+
+export interface CreatePlaceInput extends PlaceInput {
   gedcomId: number | null;
 }
+
+export type UpdatePlaceInput = Partial<PlaceInput>;
 
 export interface CreatePlaceTypeInput {
   name: string;
   key?: string;
-}
-
-export interface UpdatePlaceInput {
-  name?: string;
-  typeId?: string;
-  parentId?: string | null;
-  latitude?: number | null;
-  longitude?: number | null;
-}
-
-export interface PlaceFormData {
-  name: string;
-  typeId: string;
-  parentId: string | null;
-  latitude: number | null;
-  longitude: number | null;
 }

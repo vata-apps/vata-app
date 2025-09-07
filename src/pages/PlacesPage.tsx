@@ -8,7 +8,7 @@ import {
   useDeletePlace,
 } from "../hooks/use-places-query";
 import { PlaceForm } from "../components/PlaceForm";
-import { Place, PlaceFormData } from "../lib/db/types";
+import { Place, PlaceInput } from "../lib/db/types";
 
 function PlacesPage() {
   const { treeId } = useParams({ from: "/$treeId/places" });
@@ -32,7 +32,7 @@ function PlacesPage() {
   const loading = placesLoading || typesLoading;
   const error = placesError || typesError;
 
-  const createEmptyFormData = (defaultTypeId = ""): PlaceFormData => ({
+  const createEmptyFormData = (defaultTypeId = ""): PlaceInput => ({
     name: "",
     typeId: defaultTypeId,
     parentId: null,
@@ -42,21 +42,13 @@ function PlacesPage() {
 
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingPlace, setEditingPlace] = useState<string | null>(null);
-  const [newPlace, setNewPlace] = useState<PlaceFormData>(
-    createEmptyFormData(),
-  );
-  const [editPlace, setEditPlace] = useState<PlaceFormData>(
-    createEmptyFormData(),
-  );
+  const [newPlace, setNewPlace] = useState<PlaceInput>(createEmptyFormData());
+  const [editPlace, setEditPlace] = useState<PlaceInput>(createEmptyFormData());
 
-  const handleCreatePlace = async (formData: PlaceFormData) => {
+  const handleCreatePlace = async (formData: PlaceInput) => {
     createPlaceMutation.mutate(
       {
-        name: formData.name,
-        typeId: formData.typeId,
-        parentId: formData.parentId,
-        latitude: formData.latitude,
-        longitude: formData.longitude,
+        ...formData,
         gedcomId: null,
       },
       {

@@ -5,8 +5,8 @@ import {
   remove,
   readDir,
 } from "@tauri-apps/plugin-fs";
-import Database from "@tauri-apps/plugin-sql";
 import { initializeDatabase } from "./db/migrations";
+import { withMetadataDb } from "./db/connection";
 
 export interface TreeInfo {
   name: string;
@@ -19,17 +19,17 @@ export interface TreeInfo {
 }
 
 async function initializeTreesMetadataDatabase(): Promise<void> {
-  const database = await Database.load("sqlite:trees-metadata.db");
-
-  await database.execute(`
-    CREATE TABLE IF NOT EXISTS trees_metadata (
-      name TEXT PRIMARY KEY NOT NULL,
-      file_path TEXT NOT NULL,
-      created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
-      description TEXT,
-      file_exists INTEGER DEFAULT 1 NOT NULL
-    );
-  `);
+  return withMetadataDb(async (database) => {
+    await database.execute(`
+      CREATE TABLE IF NOT EXISTS trees_metadata (
+        name TEXT PRIMARY KEY NOT NULL,
+        file_path TEXT NOT NULL,
+        created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        description TEXT,
+        file_exists INTEGER DEFAULT 1 NOT NULL
+      );
+    `);
+  });
 }
 
 export const trees = {
@@ -52,39 +52,39 @@ export const trees = {
 
     await this.initialize();
 
-    const database = await Database.load("sqlite:trees-metadata.db");
+    return withMetadataDb(async (database) => {
+      // Check if tree already exists
+      const existing = await database.select(
+        "SELECT name FROM trees_metadata WHERE name = ?",
+        [name],
+      );
 
-    // Check if tree already exists
-    const existing = await database.select(
-      "SELECT name FROM trees_metadata WHERE name = ?",
-      [name],
-    );
+      if ((existing as Array<Record<string, unknown>>).length > 0) {
+        throw new Error(`Tree '${name}' already exists`);
+      }
 
-    if ((existing as Array<Record<string, unknown>>).length > 0) {
-      throw new Error(`Tree '${name}' already exists`);
-    }
+      // Initialize database (this will create the file)
+      await initializeDatabase(name);
 
-    // Initialize database (this will create the file)
-    await initializeDatabase(name);
+      // Insert new tree metadata
+      const result = (await database.select(
+        `INSERT INTO trees_metadata (name, file_path, description, file_exists) 
+         VALUES (?, ?, ?, ?) RETURNING *`,
+        [name, dbPath, description || null, 1],
+      )) as Array<Record<string, unknown>>;
 
-    // Insert new tree metadata
-    const result = (await database.select(
-      `INSERT INTO trees_metadata (name, file_path, description, file_exists) 
-       VALUES (?, ?, ?, ?) RETURNING *`,
-      [name, dbPath, description || null, 1],
-    )) as Array<Record<string, unknown>>;
+      const created = result[0];
 
-    const created = result[0];
-
-    return {
-      name: created.name as string,
-      path: created.file_path as string,
-      created_at: new Date().toISOString(),
-      description: (created.description as string) || undefined,
-      fileExists: !!created.file_exists,
-      dbEntryExists: true,
-      status: "healthy",
-    };
+      return {
+        name: created.name as string,
+        path: created.file_path as string,
+        created_at: new Date().toISOString(),
+        description: (created.description as string) || undefined,
+        fileExists: !!created.file_exists,
+        dbEntryExists: true,
+        status: "healthy",
+      };
+    });
   },
 
   async list(): Promise<TreeInfo[]> {
@@ -92,15 +92,16 @@ export const trees = {
       await this.initialize();
 
       // Get all entries from database
-      const database = await Database.load("sqlite:trees-metadata.db");
-      const dbRecords = (await database.select(
-        "SELECT name, file_path, created_at, description FROM trees_metadata ORDER BY name",
-      )) as Array<{
-        name: string;
-        file_path: string;
-        created_at: string | number;
-        description: string | null;
-      }>;
+      const dbRecords = await withMetadataDb(async (database) => {
+        return (await database.select(
+          "SELECT name, file_path, created_at, description FROM trees_metadata ORDER BY name",
+        )) as Array<{
+          name: string;
+          file_path: string;
+          created_at: string | number;
+          description: string | null;
+        }>;
+      });
 
       // Get all .db files from filesystem
       const treesDir = "trees";
@@ -178,12 +179,12 @@ export const trees = {
   async delete(name: string): Promise<void> {
     await this.initialize();
 
-    const database = await Database.load("sqlite:trees-metadata.db");
-
-    const records = (await database.select(
-      "SELECT file_path FROM trees_metadata WHERE name = ?",
-      [name],
-    )) as Array<{ file_path: string }>;
+    const records = await withMetadataDb(async (database) => {
+      return (await database.select(
+        "SELECT file_path FROM trees_metadata WHERE name = ?",
+        [name],
+      )) as Array<{ file_path: string }>;
+    });
 
     let filePath: string;
 
@@ -201,21 +202,23 @@ export const trees = {
 
     // Remove from metadata if entry exists
     if (records.length > 0) {
-      await database.execute("DELETE FROM trees_metadata WHERE name = ?", [
-        name,
-      ]);
+      await withMetadataDb(async (database) => {
+        await database.execute("DELETE FROM trees_metadata WHERE name = ?", [
+          name,
+        ]);
+      });
     }
   },
 
   async updateLastOpened(name: string): Promise<void> {
     await this.initialize();
 
-    const database = await Database.load("sqlite:trees-metadata.db");
-
-    await database.execute(
-      "UPDATE trees_metadata SET last_opened = CURRENT_TIMESTAMP WHERE name = ?",
-      [name],
-    );
+    await withMetadataDb(async (database) => {
+      await database.execute(
+        "UPDATE trees_metadata SET last_opened = CURRENT_TIMESTAMP WHERE name = ?",
+        [name],
+      );
+    });
   },
 
   async rebuildDbEntry(name: string): Promise<TreeInfo> {
@@ -230,35 +233,35 @@ export const trees = {
       throw new Error(`File not found: ${dbPath}`);
     }
 
-    const database = await Database.load("sqlite:trees-metadata.db");
+    return withMetadataDb(async (database) => {
+      // Check if entry already exists
+      const existing = await database.select(
+        "SELECT name FROM trees_metadata WHERE name = ?",
+        [name],
+      );
 
-    // Check if entry already exists
-    const existing = await database.select(
-      "SELECT name FROM trees_metadata WHERE name = ?",
-      [name],
-    );
+      if ((existing as Array<Record<string, unknown>>).length > 0) {
+        throw new Error(`Tree '${name}' already exists in database`);
+      }
 
-    if ((existing as Array<Record<string, unknown>>).length > 0) {
-      throw new Error(`Tree '${name}' already exists in database`);
-    }
+      // Create DB entry
+      const result = (await database.select(
+        `INSERT INTO trees_metadata (name, file_path, file_exists) 
+         VALUES (?, ?, ?) RETURNING *`,
+        [name, dbPath, 1],
+      )) as Array<Record<string, unknown>>;
 
-    // Create DB entry
-    const result = (await database.select(
-      `INSERT INTO trees_metadata (name, file_path, file_exists) 
-       VALUES (?, ?, ?) RETURNING *`,
-      [name, dbPath, 1],
-    )) as Array<Record<string, unknown>>;
+      const created = result[0];
 
-    const created = result[0];
-
-    return {
-      name: created.name as string,
-      path: created.file_path as string,
-      created_at: new Date().toISOString(),
-      description: undefined,
-      fileExists: true,
-      dbEntryExists: true,
-      status: "healthy",
-    };
+      return {
+        name: created.name as string,
+        path: created.file_path as string,
+        created_at: new Date().toISOString(),
+        description: undefined,
+        fileExists: true,
+        dbEntryExists: true,
+        status: "healthy",
+      };
+    });
   },
 };

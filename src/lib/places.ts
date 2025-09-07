@@ -1,6 +1,6 @@
-import Database from "@tauri-apps/plugin-sql";
-import { initializeDatabase } from "./db/migrations";
 import { v4 as uuidv4 } from "uuid";
+import { initializeDatabase } from "./db/migrations";
+import { withTreeDb } from "./db/connection";
 import {
   PlaceType,
   Place,
@@ -17,105 +17,101 @@ export const places = {
 
   // Place Types CRUD
   async getPlaceTypes(treeName: string): Promise<PlaceType[]> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
-
-    const result = (await database.select(
-      "SELECT * FROM place_types ORDER BY name",
-    )) as PlaceType[];
-
-    // If empty, initialize the database
-    if (!result || result.length === 0) {
-      await this.initDatabase(treeName);
-      return (await database.select(
+    return withTreeDb(treeName, async (database) => {
+      const result = (await database.select(
         "SELECT * FROM place_types ORDER BY name",
       )) as PlaceType[];
-    }
 
-    return result;
+      // If empty, initialize the database
+      if (!result || result.length === 0) {
+        await this.initDatabase(treeName);
+        return (await database.select(
+          "SELECT * FROM place_types ORDER BY name",
+        )) as PlaceType[];
+      }
+
+      return result;
+    });
   },
 
   async createPlaceType(
     treeName: string,
     placeType: CreatePlaceTypeInput,
   ): Promise<PlaceType> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
+    return withTreeDb(treeName, async (database) => {
+      const id = uuidv4();
+      await database.execute(
+        "INSERT INTO place_types (id, name, key) VALUES (?, ?, ?)",
+        [id, placeType.name, placeType.key || null],
+      );
 
-    const id = uuidv4();
-    await database.execute(
-      "INSERT INTO place_types (id, name, key) VALUES (?, ?, ?)",
-      [id, placeType.name, placeType.key || null],
-    );
+      const result = (await database.select(
+        "SELECT * FROM place_types WHERE id = ?",
+        [id],
+      )) as PlaceType[];
 
-    const result = (await database.select(
-      "SELECT * FROM place_types WHERE id = ?",
-      [id],
-    )) as PlaceType[];
-
-    return result[0];
+      return result[0];
+    });
   },
 
   async getPlaceType(treeName: string, id: string): Promise<PlaceType> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
+    return withTreeDb(treeName, async (database) => {
+      const result = (await database.select(
+        "SELECT * FROM place_types WHERE id = ?",
+        [id],
+      )) as PlaceType[];
 
-    const result = (await database.select(
-      "SELECT * FROM place_types WHERE id = ?",
-      [id],
-    )) as PlaceType[];
+      if (!result[0]) {
+        throw new Error(`Place type with id ${id} not found`);
+      }
 
-    if (!result[0]) {
-      throw new Error(`Place type with id ${id} not found`);
-    }
-
-    return result[0];
+      return result[0];
+    });
   },
 
   // Places CRUD
   async getAll(treeName: string): Promise<Place[]> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
-
-    return (await database.select(
-      "SELECT * FROM places ORDER BY name",
-    )) as Place[];
+    return withTreeDb(treeName, async (database) => {
+      return (await database.select(
+        "SELECT * FROM places ORDER BY name",
+      )) as Place[];
+    });
   },
 
   async getById(treeName: string, id: string): Promise<Place | null> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
+    return withTreeDb(treeName, async (database) => {
+      const result = (await database.select(
+        "SELECT * FROM places WHERE id = ?",
+        [id],
+      )) as Place[];
 
-    const result = (await database.select("SELECT * FROM places WHERE id = ?", [
-      id,
-    ])) as Place[];
-
-    return result[0] || null;
+      return result[0] || null;
+    });
   },
 
   async create(treeName: string, place: CreatePlaceInput): Promise<Place> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
+    return withTreeDb(treeName, async (database) => {
+      const id = uuidv4();
+      await database.execute(
+        "INSERT INTO places (id, name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        [
+          id,
+          place.name,
+          place.typeId,
+          place.parentId,
+          place.latitude,
+          place.longitude,
+          place.gedcomId,
+        ],
+      );
 
-    const id = uuidv4();
-    await database.execute(
-      "INSERT INTO places (id, name, type_id, parent_id, latitude, longitude, gedcom_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
-      [
-        id,
-        place.name,
-        place.typeId,
-        place.parentId,
-        place.latitude,
-        place.longitude,
-        place.gedcomId,
-      ],
-    );
+      const result = (await database.select(
+        "SELECT * FROM places WHERE id = ?",
+        [id],
+      )) as Place[];
 
-    const result = (await database.select("SELECT * FROM places WHERE id = ?", [
-      id,
-    ])) as Place[];
-
-    return result[0];
+      return result[0];
+    });
   },
 
   async update(
@@ -123,76 +119,74 @@ export const places = {
     id: string,
     place: UpdatePlaceInput,
   ): Promise<Place> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
+    return withTreeDb(treeName, async (database) => {
+      // Build dynamic update query
+      const updates: string[] = [];
+      const values: (string | number | null)[] = [];
 
-    // Build dynamic update query
-    const updates: string[] = [];
-    const values: (string | number | null)[] = [];
+      if (place.name !== undefined) {
+        updates.push("name = ?");
+        values.push(place.name);
+      }
+      if (place.typeId !== undefined) {
+        updates.push("type_id = ?");
+        values.push(place.typeId);
+      }
+      if (place.parentId !== undefined) {
+        updates.push("parent_id = ?");
+        values.push(place.parentId);
+      }
+      if (place.latitude !== undefined) {
+        updates.push("latitude = ?");
+        values.push(place.latitude);
+      }
+      if (place.longitude !== undefined) {
+        updates.push("longitude = ?");
+        values.push(place.longitude);
+      }
 
-    if (place.name !== undefined) {
-      updates.push("name = ?");
-      values.push(place.name);
-    }
-    if (place.typeId !== undefined) {
-      updates.push("type_id = ?");
-      values.push(place.typeId);
-    }
-    if (place.parentId !== undefined) {
-      updates.push("parent_id = ?");
-      values.push(place.parentId);
-    }
-    if (place.latitude !== undefined) {
-      updates.push("latitude = ?");
-      values.push(place.latitude);
-    }
-    if (place.longitude !== undefined) {
-      updates.push("longitude = ?");
-      values.push(place.longitude);
-    }
+      if (updates.length === 0) {
+        const existingPlace = await this.getById(treeName, id);
+        if (!existingPlace) {
+          throw new Error(`Place with id ${id} not found`);
+        }
+        return existingPlace;
+      }
 
-    if (updates.length === 0) {
-      const existingPlace = await this.getById(treeName, id);
-      if (!existingPlace) {
+      values.push(id);
+      await database.execute(
+        `UPDATE places SET ${updates.join(", ")} WHERE id = ?`,
+        values,
+      );
+
+      const result = (await database.select(
+        "SELECT * FROM places WHERE id = ?",
+        [id],
+      )) as Place[];
+
+      if (!result[0]) {
         throw new Error(`Place with id ${id} not found`);
       }
-      return existingPlace;
-    }
 
-    values.push(id);
-    await database.execute(
-      `UPDATE places SET ${updates.join(", ")} WHERE id = ?`,
-      values,
-    );
-
-    const result = (await database.select("SELECT * FROM places WHERE id = ?", [
-      id,
-    ])) as Place[];
-
-    if (!result[0]) {
-      throw new Error(`Place with id ${id} not found`);
-    }
-
-    return result[0];
+      return result[0];
+    });
   },
 
   async delete(treeName: string, id: string): Promise<void> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
-
-    await database.execute("DELETE FROM places WHERE id = ?", [id]);
+    return withTreeDb(treeName, async (database) => {
+      await database.execute("DELETE FROM places WHERE id = ?", [id]);
+    });
   },
 
   async getChildrenCount(treeName: string, parentId: string): Promise<number> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
+    return withTreeDb(treeName, async (database) => {
+      const result = (await database.select(
+        "SELECT COUNT(*) as count FROM places WHERE parent_id = ?",
+        [parentId],
+      )) as Array<{ count: number }>;
 
-    const result = (await database.select(
-      "SELECT COUNT(*) as count FROM places WHERE parent_id = ?",
-      [parentId],
-    )) as Array<{ count: number }>;
-
-    return result[0]?.count ?? 0;
+      return result[0]?.count ?? 0;
+    });
   },
 
   // Get places with hierarchy info
@@ -224,12 +218,11 @@ export const places = {
   },
 
   async getChildren(treeName: string, parentId: string): Promise<Place[]> {
-    const dbPath = `sqlite:trees/${treeName}.db`;
-    const database = await Database.load(dbPath);
-
-    return (await database.select(
-      "SELECT * FROM places WHERE parent_id = ? ORDER BY name",
-      [parentId],
-    )) as Place[];
+    return withTreeDb(treeName, async (database) => {
+      return (await database.select(
+        "SELECT * FROM places WHERE parent_id = ? ORDER BY name",
+        [parentId],
+      )) as Place[];
+    });
   },
 };

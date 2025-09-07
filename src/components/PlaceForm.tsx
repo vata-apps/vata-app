@@ -1,13 +1,13 @@
-import { Place, PlaceType, PlaceFormData } from "../lib/db/types";
+import { Place, PlaceType, PlaceInput } from "../lib/db/types";
 
 interface PlaceFormProps {
-  formData: PlaceFormData;
+  formData: PlaceInput;
   placeTypes: PlaceType[];
   places: Place[];
-  onSubmit: (data: PlaceFormData) => void;
+  onSubmit: (data: PlaceInput) => void;
   onCancel?: () => void;
   submitLabel?: string;
-  excludePlaceId?: string; // For edit mode to exclude self from parent options
+  excludePlaceId?: string;
 }
 
 export function PlaceForm({
