@@ -1,4 +1,10 @@
-import { BaseDirectory, exists, mkdir, remove } from "@tauri-apps/plugin-fs";
+import {
+  BaseDirectory,
+  exists,
+  mkdir,
+  remove,
+  readDir,
+} from "@tauri-apps/plugin-fs";
 import Database from "@tauri-apps/plugin-sql";
 import { initializeDatabase } from "./db/migrations";
 
@@ -8,6 +14,8 @@ export interface TreeInfo {
   created_at: string;
   description?: string;
   fileExists: boolean;
+  dbEntryExists: boolean;
+  status: "healthy" | "file_missing" | "db_missing";
 }
 
 async function initializeTreesMetadataDatabase(): Promise<void> {
@@ -74,6 +82,8 @@ export const trees = {
       created_at: new Date().toISOString(),
       description: (created.description as string) || undefined,
       fileExists: !!created.file_exists,
+      dbEntryExists: true,
+      status: "healthy",
     };
   },
 
@@ -81,39 +91,82 @@ export const trees = {
     try {
       await this.initialize();
 
+      // Get all entries from database
       const database = await Database.load("sqlite:trees-metadata.db");
-
-      const records = (await database.select(
-        "SELECT name, file_path, created_at, description, file_exists FROM trees_metadata ORDER BY name",
+      const dbRecords = (await database.select(
+        "SELECT name, file_path, created_at, description FROM trees_metadata ORDER BY name",
       )) as Array<{
         name: string;
         file_path: string;
-        created_at: string;
+        created_at: string | number;
         description: string | null;
-        file_exists: number;
       }>;
 
-      const results: TreeInfo[] = [];
+      // Get all .db files from filesystem
+      const treesDir = "trees";
+      const fileNames: string[] = [];
 
-      for (const record of records) {
-        if (!record.name || !record.file_path) {
-          continue;
+      try {
+        if (await exists(treesDir, { baseDir: BaseDirectory.AppData })) {
+          const dirEntries = await readDir(treesDir, {
+            baseDir: BaseDirectory.AppData,
+          });
+          for (const entry of dirEntries) {
+            if (entry.name && entry.name.endsWith(".db")) {
+              fileNames.push(entry.name.replace(".db", ""));
+            }
+          }
         }
+      } catch (error) {
+        console.warn("Error reading trees directory:", error);
+      }
+
+      // Reconcile both sources
+      const treeMap = new Map<string, TreeInfo>();
+
+      // Add all trees from database
+      for (const record of dbRecords) {
+        if (!record.name) continue;
 
         const fileExists = await exists(record.file_path, {
           baseDir: BaseDirectory.AppData,
         });
 
-        results.push({
+        treeMap.set(record.name, {
           name: record.name,
           path: record.file_path,
-          created_at: new Date(record.created_at).toISOString(),
+          created_at: record.created_at
+            ? new Date(
+                typeof record.created_at === "number"
+                  ? record.created_at * 1000
+                  : record.created_at,
+              ).toISOString()
+            : new Date().toISOString(),
           description: record.description || undefined,
           fileExists,
+          dbEntryExists: true,
+          status: fileExists ? "healthy" : "file_missing",
         });
       }
 
-      return results;
+      // Add orphaned files (file exists but no DB entry)
+      for (const fileName of fileNames) {
+        if (!treeMap.has(fileName)) {
+          treeMap.set(fileName, {
+            name: fileName,
+            path: `trees/${fileName}.db`,
+            created_at: new Date().toISOString(), // Unknown creation date
+            description: undefined,
+            fileExists: true,
+            dbEntryExists: false,
+            status: "db_missing",
+          });
+        }
+      }
+
+      return Array.from(treeMap.values()).sort((a, b) =>
+        a.name.localeCompare(b.name),
+      );
     } catch (error) {
       console.error("Error in trees.list():", error);
       throw new Error(
@@ -132,19 +185,26 @@ export const trees = {
       [name],
     )) as Array<{ file_path: string }>;
 
-    if (records.length === 0) {
-      throw new Error(`Tree '${name}' does not exist`);
-    }
+    let filePath: string;
 
-    const filePath = records[0].file_path;
+    if (records.length === 0) {
+      // Handle orphaned files (db_missing case)
+      filePath = `trees/${name}.db`;
+    } else {
+      filePath = records[0].file_path;
+    }
 
     // Remove the actual database file if it exists
     if (await exists(filePath, { baseDir: BaseDirectory.AppData })) {
       await remove(filePath, { baseDir: BaseDirectory.AppData });
     }
 
-    // Remove from metadata
-    await database.execute("DELETE FROM trees_metadata WHERE name = ?", [name]);
+    // Remove from metadata if entry exists
+    if (records.length > 0) {
+      await database.execute("DELETE FROM trees_metadata WHERE name = ?", [
+        name,
+      ]);
+    }
   },
 
   async updateLastOpened(name: string): Promise<void> {
@@ -156,5 +216,49 @@ export const trees = {
       "UPDATE trees_metadata SET last_opened = CURRENT_TIMESTAMP WHERE name = ?",
       [name],
     );
+  },
+
+  async rebuildDbEntry(name: string): Promise<TreeInfo> {
+    await this.initialize();
+
+    const treesDir = "trees";
+    const dbFileName = `${name}.db`;
+    const dbPath = `${treesDir}/${dbFileName}`;
+
+    // Verify file exists
+    if (!(await exists(dbPath, { baseDir: BaseDirectory.AppData }))) {
+      throw new Error(`File not found: ${dbPath}`);
+    }
+
+    const database = await Database.load("sqlite:trees-metadata.db");
+
+    // Check if entry already exists
+    const existing = await database.select(
+      "SELECT name FROM trees_metadata WHERE name = ?",
+      [name],
+    );
+
+    if ((existing as Array<Record<string, unknown>>).length > 0) {
+      throw new Error(`Tree '${name}' already exists in database`);
+    }
+
+    // Create DB entry
+    const result = (await database.select(
+      `INSERT INTO trees_metadata (name, file_path, file_exists) 
+       VALUES (?, ?, ?) RETURNING *`,
+      [name, dbPath, 1],
+    )) as Array<Record<string, unknown>>;
+
+    const created = result[0];
+
+    return {
+      name: created.name as string,
+      path: created.file_path as string,
+      created_at: new Date().toISOString(),
+      description: undefined,
+      fileExists: true,
+      dbEntryExists: true,
+      status: "healthy",
+    };
   },
 };

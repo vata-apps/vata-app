@@ -5,6 +5,7 @@ import {
   useCreateTree,
   useDeleteTree,
   useUpdateLastOpened,
+  useRebuildDbEntry,
 } from "../hooks/use-trees-query";
 
 function TreeSelectPage() {
@@ -17,6 +18,7 @@ function TreeSelectPage() {
   const createTreeMutation = useCreateTree();
   const deleteTreeMutation = useDeleteTree();
   const openTreeMutation = useUpdateLastOpened();
+  const rebuildDbMutation = useRebuildDbEntry();
 
   const handleCreateTree = () => {
     if (!newTreeName.trim()) return;
@@ -37,6 +39,10 @@ function TreeSelectPage() {
 
   const handleDeleteTree = (name: string) => {
     deleteTreeMutation.mutate(name);
+  };
+
+  const handleRebuildTree = (name: string) => {
+    rebuildDbMutation.mutate(name);
   };
 
   if (isLoading) {
@@ -112,6 +118,19 @@ function TreeSelectPage() {
         </div>
       )}
 
+      {rebuildDbMutation.error && (
+        <div
+          style={{
+            padding: "10px",
+            backgroundColor: "#ffe6e6",
+            color: "#d00",
+            marginBottom: "20px",
+          }}
+        >
+          Error rebuilding tree: {rebuildDbMutation.error.message}
+        </div>
+      )}
+
       <div style={{ marginBottom: "30px" }}>
         <h2>Create New Tree</h2>
         <form
@@ -155,77 +174,198 @@ function TreeSelectPage() {
           <p>No trees found. Create one above!</p>
         ) : (
           <div>
-            {treesList.map((tree) => (
-              <div
-                key={tree.name}
-                style={{
-                  padding: "15px",
-                  border: tree.fileExists
-                    ? "1px solid #ccc"
-                    : "1px solid #f44336",
-                  marginBottom: "10px",
-                  backgroundColor: tree.fileExists ? "white" : "#ffe6e6",
-                }}
-              >
-                <h3>{tree.name}</h3>
-                {tree.description && (
-                  <p>
-                    <strong>Description:</strong> {tree.description}
-                  </p>
-                )}
-                <p>Path: {tree.path}</p>
-                <p>Created: {new Date(tree.created_at).toLocaleDateString()}</p>
+            {treesList.map((tree) => {
+              const getStatusColor = () => {
+                switch (tree.status) {
+                  case "healthy":
+                    return "#4CAF50";
+                  case "file_missing":
+                    return "#ff9800";
+                  case "db_missing":
+                    return "#f44336";
+                  default:
+                    return "#ccc";
+                }
+              };
 
-                {!tree.fileExists && (
-                  <p style={{ color: "#d00", fontWeight: "bold" }}>
-                    ⚠️ Database file not found!
-                  </p>
-                )}
+              const getStatusMessage = () => {
+                switch (tree.status) {
+                  case "healthy":
+                    return "✅ Arbre en bonne santé";
+                  case "file_missing":
+                    return "⚠️ Fichier de base de données manquant";
+                  case "db_missing":
+                    return "🔧 Entrée de base de données manquante";
+                  default:
+                    return "";
+                }
+              };
 
-                <button
-                  onClick={() =>
-                    openTreeMutation.mutate(tree.name, {
-                      onSuccess: () => {
-                        navigate({
-                          to: "/$treeId",
-                          params: { treeId: tree.name },
-                        });
-                      },
-                    })
-                  }
-                  disabled={!tree.fileExists || openTreeMutation.isPending}
+              return (
+                <div
+                  key={tree.name}
                   style={{
-                    padding: "8px 16px",
-                    backgroundColor: tree.fileExists ? "#4CAF50" : "#ccc",
-                    color: "white",
-                    border: "none",
-                    marginRight: "10px",
-                    cursor: tree.fileExists ? "pointer" : "not-allowed",
-                    opacity: openTreeMutation.isPending ? 0.5 : 1,
+                    padding: "15px",
+                    border: `2px solid ${getStatusColor()}`,
+                    marginBottom: "10px",
+                    backgroundColor:
+                      tree.status === "healthy" ? "white" : "#fff3e0",
                   }}
                 >
-                  {openTreeMutation.isPending
-                    ? "Opening..."
-                    : tree.fileExists
-                      ? "Open Tree"
-                      : "Unavailable"}
-                </button>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <div>
+                      <h3>{tree.name}</h3>
+                      {tree.description && (
+                        <p>
+                          <strong>Description:</strong> {tree.description}
+                        </p>
+                      )}
+                      <p>Path: {tree.path}</p>
+                      <p>
+                        Created:{" "}
+                        {new Date(tree.created_at).toLocaleDateString()}
+                      </p>
 
-                <button
-                  onClick={() => handleDeleteTree(tree.name)}
-                  disabled={deleteTreeMutation.isPending}
-                  style={{
-                    padding: "8px 16px",
-                    backgroundColor: "#f44336",
-                    color: "white",
-                    border: "none",
-                    opacity: deleteTreeMutation.isPending ? 0.5 : 1,
-                  }}
-                >
-                  {deleteTreeMutation.isPending ? "Deleting..." : "Delete"}
-                </button>
-              </div>
-            ))}
+                      <div
+                        style={{
+                          color: getStatusColor(),
+                          fontWeight: "bold",
+                          marginTop: "10px",
+                        }}
+                      >
+                        {getStatusMessage()}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: "15px" }}>
+                    {tree.status === "healthy" && (
+                      <>
+                        <button
+                          onClick={() =>
+                            openTreeMutation.mutate(tree.name, {
+                              onSuccess: () => {
+                                navigate({
+                                  to: "/$treeId",
+                                  params: { treeId: tree.name },
+                                });
+                              },
+                            })
+                          }
+                          disabled={openTreeMutation.isPending}
+                          style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#4CAF50",
+                            color: "white",
+                            border: "none",
+                            marginRight: "10px",
+                            cursor: "pointer",
+                            opacity: openTreeMutation.isPending ? 0.5 : 1,
+                          }}
+                        >
+                          {openTreeMutation.isPending
+                            ? "Opening..."
+                            : "Open Tree"}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTree(tree.name)}
+                          disabled={deleteTreeMutation.isPending}
+                          style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#f44336",
+                            color: "white",
+                            border: "none",
+                            marginRight: "10px",
+                            opacity: deleteTreeMutation.isPending ? 0.5 : 1,
+                          }}
+                        >
+                          {deleteTreeMutation.isPending
+                            ? "Deleting..."
+                            : "Delete"}
+                        </button>
+                      </>
+                    )}
+
+                    {tree.status === "file_missing" && (
+                      <>
+                        <button
+                          disabled
+                          style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#ccc",
+                            color: "#666",
+                            border: "none",
+                            marginRight: "10px",
+                            cursor: "not-allowed",
+                          }}
+                        >
+                          Import File (Disabled)
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTree(tree.name)}
+                          disabled={deleteTreeMutation.isPending}
+                          style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#f44336",
+                            color: "white",
+                            border: "none",
+                            marginRight: "10px",
+                            opacity: deleteTreeMutation.isPending ? 0.5 : 1,
+                          }}
+                        >
+                          {deleteTreeMutation.isPending
+                            ? "Deleting..."
+                            : "Delete Entry"}
+                        </button>
+                      </>
+                    )}
+
+                    {tree.status === "db_missing" && (
+                      <>
+                        <button
+                          onClick={() => handleRebuildTree(tree.name)}
+                          disabled={rebuildDbMutation.isPending}
+                          style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#2196F3",
+                            color: "white",
+                            border: "none",
+                            marginRight: "10px",
+                            opacity: rebuildDbMutation.isPending ? 0.5 : 1,
+                          }}
+                        >
+                          {rebuildDbMutation.isPending
+                            ? "Rebuilding..."
+                            : "Rebuild Tree"}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteTree(tree.name)}
+                          disabled={deleteTreeMutation.isPending}
+                          style={{
+                            padding: "8px 16px",
+                            backgroundColor: "#f44336",
+                            color: "white",
+                            border: "none",
+                            marginRight: "10px",
+                            opacity: deleteTreeMutation.isPending ? 0.5 : 1,
+                          }}
+                        >
+                          {deleteTreeMutation.isPending
+                            ? "Deleting..."
+                            : "Delete File"}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

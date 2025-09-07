@@ -72,3 +72,15 @@ export function useInitializeTrees() {
     },
   });
 }
+
+export function useRebuildDbEntry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (name: string) => trees.rebuildDbEntry(name),
+    onSuccess: () => {
+      // Invalidate and refetch trees list
+      queryClient.invalidateQueries({ queryKey: treesKeys.list() });
+    },
+  });
+}
