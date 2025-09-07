@@ -41,19 +41,19 @@ function TreeHomePage() {
         </Link>
 
         <Link
-          to="/$treeId/place-types"
+          to="/$treeId/settings"
           params={{ treeId }}
           style={{
             display: "block",
             padding: "20px",
-            border: "2px solid #2196F3",
+            border: "2px solid #FF9800",
             textDecoration: "none",
             color: "#333",
             backgroundColor: "#f9f9f9",
           }}
         >
-          <h2>🏷️ Place Types</h2>
-          <p>Manage categories for places (city, state, country, etc.)</p>
+          <h2>⚙️ Settings</h2>
+          <p>Manage reference data, types, and configuration</p>
         </Link>
 
         <div

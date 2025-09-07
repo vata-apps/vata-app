@@ -1,21 +1,21 @@
-import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
+import { useParams } from "@tanstack/react-router";
 import {
   usePlaceTypes,
   useCreatePlaceType,
   useUpdatePlaceType,
   useDeletePlaceType,
   usePlaceTypeUsage,
-} from "../hooks/use-place-types-query";
-import { PlaceTypeForm } from "../components/PlaceTypeForm";
-import { PlaceType } from "../lib/db/types";
+} from "../../hooks/use-place-types-query";
+import { PlaceTypeForm } from "../../components/PlaceTypeForm";
+import { PlaceType } from "../../lib/db/types";
 
 interface PlaceTypeFormData {
   name: string;
 }
 
 function PlaceTypesPage() {
-  const { treeId } = useParams({ from: "/$treeId/place-types" });
+  const { treeId } = useParams({ from: "/$treeId/settings/place-types" });
 
   const {
     data: placeTypesList = [],
@@ -98,14 +98,11 @@ function PlaceTypesPage() {
     );
 
   return (
-    <div style={{ padding: "20px" }}>
-      <div style={{ marginBottom: "20px" }}>
-        <Link to="/$treeId" params={{ treeId }} style={{ color: "#666" }}>
-          ← Back to {treeId}
-        </Link>
-      </div>
-
-      <h1>Place Types in {treeId}</h1>
+    <div>
+      <h2>Place Types Management</h2>
+      <p style={{ color: "#666", marginBottom: "20px" }}>
+        Manage the different types of places used in your genealogy tree.
+      </p>
 
       <div style={{ marginBottom: "20px" }}>
         <p>Found {placeTypesList.length} place types</p>
@@ -154,7 +151,7 @@ function PlaceTypesPage() {
         <p>No place types found. Create your first place type!</p>
       ) : (
         <div>
-          <h2>All Place Types</h2>
+          <h3>All Place Types</h3>
           <div>
             {placeTypesList.map((placeType) => (
               <PlaceTypeListItem

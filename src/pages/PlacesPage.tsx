@@ -129,7 +129,7 @@ function PlacesPage() {
           {showCreateForm ? "Cancel" : "Create Place"}
         </button>
         <Link
-          to="/$treeId/place-types"
+          to="/$treeId/settings/place-types"
           params={{ treeId }}
           style={{
             backgroundColor: "#2196F3",
