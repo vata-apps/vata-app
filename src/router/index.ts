@@ -8,6 +8,7 @@ import TreeSelectPage from "../pages/TreeSelectPage";
 import TreeHomePage from "../pages/TreeHomePage";
 import PlacesPage from "../pages/PlacesPage";
 import PlacePage from "../pages/PlacePage";
+import PlaceTypesPage from "../pages/PlaceTypesPage";
 
 // Root route
 const rootRoute = createRootRoute({
@@ -42,12 +43,20 @@ const placeRoute = createRoute({
   component: PlacePage,
 });
 
+// Place types route (/:treeId/place-types)
+const placeTypesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/$treeId/place-types",
+  component: PlaceTypesPage,
+});
+
 // Route tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
   treeHomeRoute,
   placesRoute,
   placeRoute,
+  placeTypesRoute,
 ]);
 
 // Create and export router

@@ -2,11 +2,11 @@ import { Link, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   usePlaces,
-  usePlaceTypes,
   useCreatePlace,
   useUpdatePlace,
   useDeletePlace,
 } from "../hooks/use-places-query";
+import { usePlaceTypes } from "../hooks/use-place-types-query";
 import { PlaceForm } from "../components/PlaceForm";
 import { Place, PlaceInput } from "../lib/db/types";
 
@@ -23,7 +23,6 @@ function PlacesPage() {
     data: placeTypes = [],
     isLoading: typesLoading,
     error: typesError,
-    refetch: refetchTypes,
   } = usePlaceTypes(treeId);
   const createPlaceMutation = useCreatePlace(treeId);
   const updatePlaceMutation = useUpdatePlace(treeId);
@@ -124,10 +123,26 @@ function PlacesPage() {
             color: "white",
             border: "none",
             padding: "8px 16px",
+            marginRight: "10px",
           }}
         >
           {showCreateForm ? "Cancel" : "Create Place"}
         </button>
+        <Link
+          to="/$treeId/place-types"
+          params={{ treeId }}
+          style={{
+            backgroundColor: "#2196F3",
+            color: "white",
+            border: "none",
+            padding: "8px 16px",
+            textDecoration: "none",
+            borderRadius: "4px",
+            display: "inline-block",
+          }}
+        >
+          Manage Place Types
+        </Link>
       </div>
 
       {showCreateForm && (
@@ -255,31 +270,6 @@ function PlacesPage() {
           </div>
         </div>
       )}
-
-      <div style={{ marginTop: "30px" }}>
-        <h3>Available Place Types</h3>
-        <div style={{ marginBottom: "10px" }}>
-          <button
-            onClick={() => refetchTypes()}
-            style={{ marginRight: "10px" }}
-          >
-            Refresh Types
-          </button>
-          <span>Found {placeTypes.length} place types</span>
-          {typesError && (
-            <span style={{ color: "red", marginLeft: "10px" }}>
-              Error: {String(typesError)}
-            </span>
-          )}
-        </div>
-        <ul>
-          {placeTypes.map((type) => (
-            <li key={type.id}>
-              {type.name} (ID: {type.id})
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 }

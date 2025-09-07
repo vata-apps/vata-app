@@ -36,3 +36,8 @@ export interface CreatePlaceTypeInput {
   name: string;
   key?: string;
 }
+
+export interface UpdatePlaceTypeInput {
+  name?: string;
+  key?: string | null;
+}

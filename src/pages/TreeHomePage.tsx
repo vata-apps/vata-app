@@ -40,6 +40,22 @@ function TreeHomePage() {
           <p>Manage geographic locations in your family history</p>
         </Link>
 
+        <Link
+          to="/$treeId/place-types"
+          params={{ treeId }}
+          style={{
+            display: "block",
+            padding: "20px",
+            border: "2px solid #2196F3",
+            textDecoration: "none",
+            color: "#333",
+            backgroundColor: "#f9f9f9",
+          }}
+        >
+          <h2>🏷️ Place Types</h2>
+          <p>Manage categories for places (city, state, country, etc.)</p>
+        </Link>
+
         <div
           style={{
             padding: "20px",
