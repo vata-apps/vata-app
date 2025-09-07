@@ -45,7 +45,7 @@ describe("places", () => {
         `sqlite:trees/${testTreeName}.db`,
       );
       expect(mockDatabaseInstance.select).toHaveBeenCalledWith(
-        "SELECT * FROM place_types ORDER BY name",
+        "SELECT id, created_at, name, key FROM place_types ORDER BY name",
       );
       expect(result).toEqual(mockPlaceTypes);
     });
@@ -90,7 +90,7 @@ describe("places", () => {
         ["mock-uuid-1234", "Region", "region"],
       );
       expect(mockDatabaseInstance.select).toHaveBeenCalledWith(
-        "SELECT * FROM place_types WHERE id = ?",
+        "SELECT id, created_at, name, key FROM place_types WHERE id = ?",
         ["mock-uuid-1234"],
       );
       expect(result).toEqual(mockPlaceType);
@@ -123,7 +123,7 @@ describe("places", () => {
       const result = await places.getPlaceType(testTreeName, "test-id");
 
       expect(mockDatabaseInstance.select).toHaveBeenCalledWith(
-        "SELECT * FROM place_types WHERE id = ?",
+        "SELECT id, created_at, name, key FROM place_types WHERE id = ?",
         ["test-id"],
       );
       expect(result).toEqual(mockPlaceType);
@@ -150,7 +150,7 @@ describe("places", () => {
       const result = await places.getAll(testTreeName);
 
       expect(mockDatabaseInstance.select).toHaveBeenCalledWith(
-        "SELECT * FROM places ORDER BY name",
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places ORDER BY name",
       );
       expect(result).toEqual(mockPlaces);
     });
@@ -166,7 +166,7 @@ describe("places", () => {
       const result = await places.getById(testTreeName, "test-id");
 
       expect(mockDatabaseInstance.select).toHaveBeenCalledWith(
-        "SELECT * FROM places WHERE id = ?",
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places WHERE id = ?",
         ["test-id"],
       );
       expect(result).toEqual(mockPlace);
@@ -238,7 +238,7 @@ describe("places", () => {
         ["Updated Name", 50.0, "test-id"],
       );
       expect(mockDatabaseInstance.select).toHaveBeenCalledWith(
-        "SELECT * FROM places WHERE id = ?",
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places WHERE id = ?",
         ["test-id"],
       );
       expect(result.name).toBe("Updated Name");
@@ -369,7 +369,7 @@ describe("places", () => {
       const result = await places.getChildren(testTreeName, "parent-id");
 
       expect(mockDatabaseInstance.select).toHaveBeenCalledWith(
-        "SELECT * FROM places WHERE parent_id = ? ORDER BY name",
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places WHERE parent_id = ? ORDER BY name",
         ["parent-id"],
       );
       expect(result).toEqual(mockChildren);
