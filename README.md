@@ -1,5 +1,7 @@
 # Vata App - A Genealogy Desktop Application Built with AI
 
+[![CI](https://github.com/vata-apps/vata-app/actions/workflows/ci.yml/badge.svg)](https://github.com/vata-apps/vata-app/actions/workflows/ci.yml)
+
 Vata is a modern genealogy application designed to help you manage and visualize family trees. The name "Vata" (वट - vaṭa) is inspired by the Sanskrit word for the banyan tree, which symbolizes family connections with its extensive root system and branches. This application was created primarily with AI assistance, showcasing the power of AI-driven development in building functional and user-friendly desktop applications.
 
 ## 🚧 Migration in Progress
@@ -24,7 +26,7 @@ This desktop application is built using modern technologies:
 - **Frontend**: React 19 with TypeScript
 - **Routing**: TanStack Router for type-safe routing
 - **Data Management**: TanStack Query for efficient data fetching and caching
-- **Database**: SQLite with Drizzle ORM
+- **Database**: SQLite with native Tauri Database API
 - **UI Framework**: Mantine UI v8 with Tabler icons
 - **Build Tool**: Vite for fast development and optimized builds
 
@@ -47,9 +49,43 @@ This project demonstrates the capabilities of AI-assisted development:
 
 ### Development Setup
 
-_Development setup instructions will be updated once the Tauri migration is complete._
+1. **Clone the repository**:
 
-For now, refer to the [Tauri documentation](https://tauri.app/v1/guides/getting-started/prerequisites) for setting up the development environment.
+   ```bash
+   git clone https://github.com/vata-apps/vata-app.git
+   cd vata-app
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   pnpm install
+   ```
+
+3. **Start development server**:
+
+   ```bash
+   # Frontend only (web preview)
+   pnpm dev
+
+   # Desktop app with Tauri
+   pnpm tauri dev
+   ```
+
+4. **Build for production**:
+
+   ```bash
+   # Web build
+   pnpm build
+
+   # Desktop app build
+   pnpm tauri build
+   ```
+
+5. **Run tests**:
+   ```bash
+   pnpm test
+   ```
 
 ## 📝 License
 
@@ -62,4 +98,4 @@ For now, refer to the [Tauri documentation](https://tauri.app/v1/guides/getting-
 - UI components from Mantine
 - Tabler icons for all iconography
 - Tauri for cross-platform desktop framework
-- Drizzle ORM for type-safe database operations
+- SQLite with native Tauri Database API for direct database operations
