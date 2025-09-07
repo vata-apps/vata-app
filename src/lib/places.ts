@@ -18,16 +18,16 @@ export const places = {
   // Place Types CRUD
   async getPlaceTypes(treeName: string): Promise<PlaceType[]> {
     return withTreeDb(treeName, async (database) => {
-      const result = (await database.select(
-        "SELECT * FROM place_types ORDER BY name",
-      )) as PlaceType[];
+      const result = await database.select<PlaceType[]>(
+        "SELECT id, created_at, name, key FROM place_types ORDER BY name",
+      );
 
       // If empty, initialize the database
       if (!result || result.length === 0) {
         await this.initDatabase(treeName);
-        return (await database.select(
-          "SELECT * FROM place_types ORDER BY name",
-        )) as PlaceType[];
+        return await database.select<PlaceType[]>(
+          "SELECT id, created_at, name, key FROM place_types ORDER BY name",
+        );
       }
 
       return result;
@@ -45,10 +45,10 @@ export const places = {
         [id, placeType.name, placeType.key || null],
       );
 
-      const result = (await database.select(
-        "SELECT * FROM place_types WHERE id = ?",
+      const result = await database.select<PlaceType[]>(
+        "SELECT id, created_at, name, key FROM place_types WHERE id = ?",
         [id],
-      )) as PlaceType[];
+      );
 
       return result[0];
     });
@@ -56,10 +56,10 @@ export const places = {
 
   async getPlaceType(treeName: string, id: string): Promise<PlaceType> {
     return withTreeDb(treeName, async (database) => {
-      const result = (await database.select(
-        "SELECT * FROM place_types WHERE id = ?",
+      const result = await database.select<PlaceType[]>(
+        "SELECT id, created_at, name, key FROM place_types WHERE id = ?",
         [id],
-      )) as PlaceType[];
+      );
 
       if (!result[0]) {
         throw new Error(`Place type with id ${id} not found`);
@@ -72,18 +72,18 @@ export const places = {
   // Places CRUD
   async getAll(treeName: string): Promise<Place[]> {
     return withTreeDb(treeName, async (database) => {
-      return (await database.select(
-        "SELECT * FROM places ORDER BY name",
-      )) as Place[];
+      return await database.select<Place[]>(
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places ORDER BY name",
+      );
     });
   },
 
   async getById(treeName: string, id: string): Promise<Place | null> {
     return withTreeDb(treeName, async (database) => {
-      const result = (await database.select(
-        "SELECT * FROM places WHERE id = ?",
+      const result = await database.select<Place[]>(
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places WHERE id = ?",
         [id],
-      )) as Place[];
+      );
 
       return result[0] || null;
     });
@@ -105,10 +105,10 @@ export const places = {
         ],
       );
 
-      const result = (await database.select(
-        "SELECT * FROM places WHERE id = ?",
+      const result = await database.select<Place[]>(
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places WHERE id = ?",
         [id],
-      )) as Place[];
+      );
 
       return result[0];
     });
@@ -159,10 +159,10 @@ export const places = {
         values,
       );
 
-      const result = (await database.select(
-        "SELECT * FROM places WHERE id = ?",
+      const result = await database.select<Place[]>(
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places WHERE id = ?",
         [id],
-      )) as Place[];
+      );
 
       if (!result[0]) {
         throw new Error(`Place with id ${id} not found`);
@@ -180,10 +180,10 @@ export const places = {
 
   async getChildrenCount(treeName: string, parentId: string): Promise<number> {
     return withTreeDb(treeName, async (database) => {
-      const result = (await database.select(
+      const result = await database.select<Array<{ count: number }>>(
         "SELECT COUNT(*) as count FROM places WHERE parent_id = ?",
         [parentId],
-      )) as Array<{ count: number }>;
+      );
 
       return result[0]?.count ?? 0;
     });
@@ -219,10 +219,10 @@ export const places = {
 
   async getChildren(treeName: string, parentId: string): Promise<Place[]> {
     return withTreeDb(treeName, async (database) => {
-      return (await database.select(
-        "SELECT * FROM places WHERE parent_id = ? ORDER BY name",
+      return await database.select<Place[]>(
+        "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places WHERE parent_id = ? ORDER BY name",
         [parentId],
-      )) as Place[];
+      );
     });
   },
 };

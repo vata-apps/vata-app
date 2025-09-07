@@ -210,14 +210,21 @@ import { PlaceType, Place } from "../db/types";
 
 const dbPath = `sqlite:trees/${treeName}.db`;
 const database = await Database.load(dbPath);
-const result = (await database.select(
-  "SELECT * FROM places ORDER BY name",
-)) as Place[];
+const result = await database.select<Place[]>(
+  "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places ORDER BY name",
+);
 
 // ✅ CORRECT: Trees metadata operations
 const database = await Database.load("sqlite:trees-metadata.db");
-const result = await database.select(
-  "SELECT * FROM trees_metadata WHERE name = ?",
+const result = await database.select<
+  Array<{
+    name: string;
+    file_path: string;
+    created_at: number;
+    description?: string;
+  }>
+>(
+  "SELECT name, file_path, created_at, description FROM trees_metadata WHERE name = ?",
   [name],
 );
 ```
@@ -233,15 +240,16 @@ await database.execute(
 );
 
 // READ single item
-const result = (await database.select("SELECT * FROM places WHERE id = ?", [
-  id,
-])) as Place[];
+const result = await database.select<Place[]>(
+  "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places WHERE id = ?",
+  [id],
+);
 return result[0] || null;
 
 // READ multiple with ordering
-const results = (await database.select(
-  "SELECT * FROM places ORDER BY name",
-)) as Place[];
+const results = await database.select<Place[]>(
+  "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places ORDER BY name",
+);
 
 // UPDATE with dynamic query building
 const updates: string[] = [];
@@ -260,10 +268,10 @@ await database.execute(
 await database.execute("DELETE FROM places WHERE id = ?", [id]);
 
 // COUNT
-const result = (await database.select(
+const result = await database.select<Array<{ count: number }>>(
   "SELECT COUNT(*) as count FROM places WHERE parent_id = ?",
   [parentId],
-)) as Array<{ count: number }>;
+);
 return result[0]?.count ?? 0;
 ```
 
@@ -306,6 +314,25 @@ interface Place {
   gedcom_id: number | null;
 }
 
+// ✅ Use TypeScript generics instead of 'as' type casting
+const places = await database.select<Place[]>(
+  "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places ORDER BY name",
+);
+
+const countResult = await database.select<Array<{ count: number }>>(
+  "SELECT COUNT(*) as count FROM places",
+);
+
+// ❌ AVOID: Type casting with 'as'
+const places = (await database.select(
+  "SELECT id, created_at, name, type_id, parent_id, latitude, longitude, gedcom_id FROM places ORDER BY name",
+)) as Place[]; // Don't do this!
+
+// ❌ AVOID: SELECT * queries
+const places = await database.select<Place[]>(
+  "SELECT * FROM places ORDER BY name", // Don't use *, be explicit!
+);
+
 // ✅ Handle SQLite data type conversions
 const placeTypes = result; // Direct usage when no type conversion needed
 
@@ -324,6 +351,8 @@ const date = place.created_at
 - [ ] All database operations use `Database.load()` with proper connection strings
 - [ ] Parameterized queries used to prevent SQL injection
 - [ ] TypeScript interfaces match SQLite column names (snake_case)
+- [ ] TypeScript generics used instead of 'as' type casting (`database.select<T>()`)
+- [ ] Explicit column names in SELECT queries (no `SELECT *`)
 - [ ] UUIDs generated manually with `uuidv4()`
 - [ ] SQLite data types properly converted (INTEGER booleans, timestamps)
 - [ ] Proper error handling for database operations

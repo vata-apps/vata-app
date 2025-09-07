@@ -49,9 +49,9 @@ export async function initializeDatabase(treeName: string): Promise<void> {
     await database.execute(SCHEMA_SQL);
 
     // Check if place types already exist
-    const existingTypes = (await database.select(
+    const existingTypes = await database.select<Array<{ count: number }>>(
       "SELECT COUNT(*) as count FROM place_types",
-    )) as Array<{ count: number }>;
+    );
 
     const existingCount = existingTypes[0]?.count || 0;
 

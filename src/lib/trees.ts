@@ -54,12 +54,12 @@ export const trees = {
 
     return withMetadataDb(async (database) => {
       // Check if tree already exists
-      const existing = await database.select(
+      const existing = await database.select<Array<Record<string, unknown>>>(
         "SELECT name FROM trees_metadata WHERE name = ?",
         [name],
       );
 
-      if ((existing as Array<Record<string, unknown>>).length > 0) {
+      if (existing.length > 0) {
         throw new Error(`Tree '${name}' already exists`);
       }
 
@@ -67,11 +67,11 @@ export const trees = {
       await initializeDatabase(name);
 
       // Insert new tree metadata
-      const result = (await database.select(
+      const result = await database.select<Array<Record<string, unknown>>>(
         `INSERT INTO trees_metadata (name, file_path, description, file_exists) 
          VALUES (?, ?, ?, ?) RETURNING *`,
         [name, dbPath, description || null, 1],
-      )) as Array<Record<string, unknown>>;
+      );
 
       const created = result[0];
 
@@ -93,14 +93,16 @@ export const trees = {
 
       // Get all entries from database
       const dbRecords = await withMetadataDb(async (database) => {
-        return (await database.select(
+        return await database.select<
+          Array<{
+            name: string;
+            file_path: string;
+            created_at: string | number;
+            description: string | null;
+          }>
+        >(
           "SELECT name, file_path, created_at, description FROM trees_metadata ORDER BY name",
-        )) as Array<{
-          name: string;
-          file_path: string;
-          created_at: string | number;
-          description: string | null;
-        }>;
+        );
       });
 
       // Get all .db files from filesystem
@@ -180,10 +182,10 @@ export const trees = {
     await this.initialize();
 
     const records = await withMetadataDb(async (database) => {
-      return (await database.select(
+      return await database.select<Array<{ file_path: string }>>(
         "SELECT file_path FROM trees_metadata WHERE name = ?",
         [name],
-      )) as Array<{ file_path: string }>;
+      );
     });
 
     let filePath: string;
@@ -235,21 +237,21 @@ export const trees = {
 
     return withMetadataDb(async (database) => {
       // Check if entry already exists
-      const existing = await database.select(
+      const existing = await database.select<Array<Record<string, unknown>>>(
         "SELECT name FROM trees_metadata WHERE name = ?",
         [name],
       );
 
-      if ((existing as Array<Record<string, unknown>>).length > 0) {
+      if (existing.length > 0) {
         throw new Error(`Tree '${name}' already exists in database`);
       }
 
       // Create DB entry
-      const result = (await database.select(
+      const result = await database.select<Array<Record<string, unknown>>>(
         `INSERT INTO trees_metadata (name, file_path, file_exists) 
          VALUES (?, ?, ?) RETURNING *`,
         [name, dbPath, 1],
-      )) as Array<Record<string, unknown>>;
+      );
 
       const created = result[0];
 
