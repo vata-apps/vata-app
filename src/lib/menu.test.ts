@@ -144,7 +144,7 @@ describe("menu", () => {
       const { WebviewWindow } = await import("@tauri-apps/api/webviewWindow");
       WebviewWindow.getByLabel = vi.fn().mockResolvedValue(mockExistingWindow);
 
-      await openPreferencesWindow();
+      const window = await openPreferencesWindow();
 
       expect(mockExistingWindow.show).toHaveBeenCalled();
       expect(mockExistingWindow.setFocus).toHaveBeenCalled();
