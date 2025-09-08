@@ -39,6 +39,10 @@ function EventTypesPage() {
   const [editEventType, setEditEventType] = useState<EventTypeFormData>(
     createEmptyFormData(),
   );
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const handleCreateEventType = async (formData: EventTypeFormData) => {
     createEventTypeMutation.mutate(
@@ -54,10 +58,32 @@ function EventTypesPage() {
     );
   };
 
-  const handleDeleteEventType = async (eventTypeId: string) => {
-    if (window.confirm("Are you sure you want to delete this event type?")) {
-      deleteEventTypeMutation.mutate(eventTypeId);
+  const handleDeleteEventType = (
+    eventTypeId: string,
+    eventTypeName: string,
+  ) => {
+    setDeleteConfirm({ id: eventTypeId, name: eventTypeName });
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm) {
+      deleteEventTypeMutation.mutate(deleteConfirm.id, {
+        onSuccess: () => {
+          setDeleteConfirm(null);
+        },
+        onError: (error) => {
+          console.error("Error deleting event type:", error);
+          alert(
+            "Failed to delete event type: " +
+              (error instanceof Error ? error.message : String(error)),
+          );
+        },
+      });
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirm(null);
   };
 
   const startEditEventType = (eventType: EventType) => {
@@ -168,6 +194,77 @@ function EventTypesPage() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "8px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              maxWidth: "400px",
+              width: "90%",
+            }}
+          >
+            <h3>Delete Event Type</h3>
+            <p>
+              Are you sure you want to delete the event type &ldquo;
+              {deleteConfirm.name}&rdquo;?
+            </p>
+            <p style={{ color: "#666", fontSize: "14px" }}>
+              This action cannot be undone.
+            </p>
+            <div style={{ marginTop: "20px", textAlign: "right" }}>
+              <button
+                onClick={cancelDelete}
+                style={{
+                  backgroundColor: "#666",
+                  color: "white",
+                  border: "none",
+                  padding: "8px 16px",
+                  marginRight: "10px",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={deleteEventTypeMutation.isPending}
+                style={{
+                  backgroundColor: "#f44336",
+                  color: "white",
+                  border: "none",
+                  padding: "8px 16px",
+                  borderRadius: "4px",
+                  cursor: deleteEventTypeMutation.isPending
+                    ? "not-allowed"
+                    : "pointer",
+                  opacity: deleteEventTypeMutation.isPending ? 0.6 : 1,
+                }}
+              >
+                {deleteEventTypeMutation.isPending ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -179,7 +276,7 @@ interface EventTypeListItemProps {
   onEdit: (eventType: EventType) => void;
   onCancelEdit: () => void;
   onSaveEdit: (eventTypeId: string) => void;
-  onDelete: (eventTypeId: string) => void;
+  onDelete: (eventTypeId: string, eventTypeName: string) => void;
   onFormDataChange: (data: EventTypeFormData) => void;
 }
 
@@ -261,7 +358,7 @@ function EventTypeListItem({
               Edit
             </button>
             <button
-              onClick={() => onDelete(eventType.id)}
+              onClick={() => onDelete(eventType.id, eventType.name)}
               disabled={!!eventType.key}
               title={
                 eventType.key
