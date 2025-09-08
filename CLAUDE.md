@@ -111,6 +111,8 @@ src-tauri/        # Rust backend code (minimal)
 - `src/lib/db/migrations.ts` - Database schema and initialization logic
 - `src/lib/places.ts` - Places module with direct SQLite operations
 - `src/lib/tauri/commands.ts` - Tauri command wrappers
+- `src/lib/menu.ts` - Native macOS menu system with keyboard shortcuts
+- `src/lib/theme/` - Theme management system with Tauri Store persistence
 - `src/router/index.ts` - Main router configuration
 - `src-tauri/src/main.rs` - Tauri backend entry point (minimal Rust)
 
@@ -445,3 +447,189 @@ export default defineConfig({
 - Focus on business logic validation
 - Test error handling and edge cases
 - Avoid testing implementation details
+
+## Native Menu System (2025-09-08)
+
+### Menu Architecture
+
+The application uses Tauri's native menu system for cross-platform desktop menus with proper macOS integration.
+
+**Key Components:**
+
+- `src/lib/menu.ts` - Complete menu structure and window management
+- `src-tauri/src/lib.rs` - Rust-side menu event handling
+- `src/App.tsx` - Menu initialization and event routing
+
+### Menu Structure
+
+**macOS Standard Menus:**
+
+1. **App Menu (vata-app)** - About, Preferences (cmd+,), Services, Hide, Quit
+2. **File Menu** - New (cmd+N), Open (cmd+O), Save (cmd+S), Save As (cmd+shift+S)
+3. **Edit Menu** - Undo, Redo, Cut, Copy, Paste, Select All (system-handled)
+4. **Window Menu** - Minimize, Maximize, Close Window (system-handled)
+
+### Implementation Pattern
+
+**TypeScript Menu Creation:**
+
+```typescript
+// ✅ CORRECT: Following Tauri v2 best practices
+import {
+  Menu,
+  MenuItem,
+  Submenu,
+  PredefinedMenuItem,
+} from "@tauri-apps/api/menu";
+
+export async function createApplicationMenu() {
+  const appSubmenu = await Submenu.new({
+    text: "vata-app",
+    items: [
+      await MenuItem.new({
+        id: "preferences",
+        text: "Preferences...",
+        accelerator: "CmdOrCtrl+,",
+      }),
+      // ... other items
+    ],
+  });
+
+  const menu = await Menu.new({
+    items: [appSubmenu, fileSubmenu, editSubmenu, windowSubmenu],
+  });
+
+  return menu;
+}
+```
+
+**Rust Event Handling:**
+
+```rust
+// ✅ CORRECT: Minimal event forwarding to TypeScript
+use tauri::Emitter;
+
+.on_menu_event(|app, event| {
+    match event.id().0.as_str() {
+        "preferences" => {
+            let _ = app.emit_to("main", "menu", "preferences");
+        }
+        "new" | "open" | "save" | "save_as" | "about" => {
+            let _ = app.emit_to("main", "menu", event.id().0.as_str());
+        }
+        _ => {}
+    }
+})
+```
+
+**Menu Initialization in App:**
+
+```typescript
+// ✅ CORRECT: Initialize menu and listen for events
+useEffect(() => {
+  const setupApp = async () => {
+    const menu = await createApplicationMenu();
+    await menu.setAsAppMenu();
+
+    const unlisten = await listen<string>("menu", (event) => {
+      const menuId = event.payload;
+      switch (menuId) {
+        case "preferences":
+          openPreferencesWindow();
+          break;
+        // Handle other menu items
+      }
+    });
+
+    return () => {
+      unlisten();
+    };
+  };
+
+  setupApp();
+}, []);
+```
+
+### Window Management
+
+**Preferences Window Pattern:**
+
+```typescript
+export async function openPreferencesWindow() {
+  try {
+    // Try to get existing window first
+    const existingWindow = await WebviewWindow.getByLabel("preferences");
+    if (existingWindow) {
+      await existingWindow.show();
+      await existingWindow.setFocus();
+      return existingWindow;
+    }
+  } catch {
+    // Window doesn't exist, create new one
+  }
+
+  // Create new window with proper configuration
+  const preferencesWindow = new WebviewWindow("preferences", {
+    url: "/preferences",
+    title: "Preferences",
+    width: 700,
+    height: 550,
+    center: true,
+    maximizable: false,
+    // ... other options
+  });
+
+  await preferencesWindow.show();
+  await preferencesWindow.setFocus();
+  return preferencesWindow;
+}
+```
+
+### Menu Development Guidelines
+
+**Best Practices:**
+
+- Use `PredefinedMenuItem` for standard system items (Cut, Copy, Paste, etc.)
+- Use `MenuItem` with custom IDs for application-specific actions
+- Always include proper keyboard accelerators (`CmdOrCtrl+Key`)
+- Handle menu events in Rust by forwarding to TypeScript via events
+- Separate window creation logic into dedicated functions
+- Check for existing windows before creating new ones
+
+**Required Tauri Permissions:**
+
+```json
+{
+  "permissions": [
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-set-focus",
+    "core:window:allow-center",
+    "core:webview:allow-create-webview-window"
+  ]
+}
+```
+
+**Menu Event Flow:**
+
+1. User clicks menu item or uses keyboard shortcut
+2. Rust `on_menu_event` handler receives event
+3. Event forwarded to TypeScript via `app.emit_to("main", "menu", menuId)`
+4. TypeScript `listen("menu")` handler processes the event
+5. Appropriate action taken (open window, execute command, etc.)
+
+### Troubleshooting
+
+**Common Issues:**
+
+- **Menu not updating after code changes**: Restart Tauri dev server completely
+- **Preferences window not opening**: Check window permissions in tauri.conf.json
+- **Menu items missing**: Ensure proper submenu structure (macOS requires all items in submenus)
+- **Keyboard shortcuts not working**: Use `CmdOrCtrl+Key` format for cross-platform compatibility
+
+**Development Tips:**
+
+- Test menu functionality after full restart, not just hot-reload
+- macOS caches menu structures - kill processes if needed: `pkill -f "vata-app"`
+- Use proper TypeScript types from `@tauri-apps/api/menu`
+- Follow official Tauri v2 documentation for menu patterns

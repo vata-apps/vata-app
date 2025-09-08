@@ -11,6 +11,8 @@ import PlacePage from "../pages/PlacePage";
 import SettingsPage from "../pages/SettingsPage";
 import ReferenceDataPage from "../pages/settings/ReferenceDataPage";
 import PlaceTypesPage from "../pages/settings/PlaceTypesPage";
+import ThemeSettingsPage from "../pages/settings/ThemeSettingsPage";
+import PreferencesApp from "../PreferencesApp";
 
 // Root route
 const rootRoute = createRootRoute({
@@ -66,13 +68,32 @@ const placeTypesRoute = createRoute({
   component: PlaceTypesPage,
 });
 
+// Theme settings route (/:treeId/settings/theme)
+const themeSettingsRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: "/theme",
+  component: ThemeSettingsPage,
+});
+
+// Preferences route (/preferences)
+const preferencesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/preferences",
+  component: PreferencesApp,
+});
+
 // Route tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
   treeHomeRoute,
   placesRoute,
   placeRoute,
-  settingsRoute.addChildren([settingsIndexRoute, placeTypesRoute]),
+  settingsRoute.addChildren([
+    settingsIndexRoute,
+    placeTypesRoute,
+    themeSettingsRoute,
+  ]),
+  preferencesRoute,
 ]);
 
 // Create and export router

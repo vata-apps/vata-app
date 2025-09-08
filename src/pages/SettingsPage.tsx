@@ -7,6 +7,7 @@ function SettingsPage() {
   const isReferenceDataActive =
     location.pathname === `/${treeId}/settings` ||
     location.pathname === `/${treeId}/settings/`;
+  const isThemeActive = location.pathname === `/${treeId}/settings/theme`;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -46,6 +47,21 @@ function SettingsPage() {
               aria-current={isReferenceDataActive ? "page" : undefined}
             >
               📋 Reference Data
+            </Link>
+            <Link
+              to="/$treeId/settings/theme"
+              params={{ treeId }}
+              style={{
+                padding: "10px",
+                textDecoration: "none",
+                border: `1px solid ${isThemeActive ? "#2196F3" : "#ddd"}`,
+                borderRadius: "4px",
+                backgroundColor: isThemeActive ? "#e3f2fd" : "#f8f9fa",
+                color: isThemeActive ? "#1976d2" : "#333",
+              }}
+              aria-current={isThemeActive ? "page" : undefined}
+            >
+              🎨 Theme
             </Link>
           </div>
         </nav>
