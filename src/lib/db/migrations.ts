@@ -14,6 +14,20 @@ const DEFAULT_PLACE_TYPES = [
   { name: "Address", key: "address" },
 ];
 
+const DEFAULT_EVENT_TYPES = [
+  { name: "Birth", key: "birth" },
+  { name: "Death", key: "death" },
+  { name: "Marriage", key: "marriage" },
+  { name: "Baptism", key: "baptism" },
+  { name: "Burial", key: "burial" },
+  { name: "Immigration", key: "immigration" },
+  { name: "Census", key: "census" },
+  { name: "Engagement", key: "engagement" },
+  { name: "Separation", key: "separation" },
+  { name: "Retirement", key: "retirement" },
+  { name: "Other", key: "other" },
+];
+
 const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS place_types (
   id TEXT PRIMARY KEY NOT NULL,
@@ -38,6 +52,15 @@ CREATE TABLE IF NOT EXISTS places (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS places_gedcom_id_unique ON places (gedcom_id);
+
+CREATE TABLE IF NOT EXISTS event_types (
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  name TEXT NOT NULL,
+  key TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS event_types_key_unique ON event_types (key);
 `;
 
 export async function initializeDatabase(treeName: string): Promise<void> {
@@ -64,6 +87,24 @@ export async function initializeDatabase(treeName: string): Promise<void> {
         );
       }
       console.log(`Seeded ${DEFAULT_PLACE_TYPES.length} default place types`);
+    }
+
+    // Check if event types already exist
+    const existingEventTypes = await database.select<Array<{ count: number }>>(
+      "SELECT COUNT(*) as count FROM event_types",
+    );
+
+    const existingEventTypesCount = existingEventTypes[0]?.count || 0;
+
+    // Insert default event types if they don't exist
+    if (existingEventTypesCount === 0) {
+      for (const eventType of DEFAULT_EVENT_TYPES) {
+        await database.execute(
+          "INSERT INTO event_types (id, name, key) VALUES (?, ?, ?)",
+          [uuidv4(), eventType.name, eventType.key],
+        );
+      }
+      console.log(`Seeded ${DEFAULT_EVENT_TYPES.length} default event types`);
     }
 
     console.log(`Database initialized for tree: ${treeName}`);

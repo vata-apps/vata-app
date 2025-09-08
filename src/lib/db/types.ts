@@ -41,3 +41,20 @@ export interface UpdatePlaceTypeInput {
   name?: string;
   key?: string | null;
 }
+
+export interface EventType {
+  id: string;
+  created_at: string;
+  name: string;
+  key: string | null;
+}
+
+export interface CreateEventTypeInput {
+  name: string;
+  key?: string;
+}
+
+export interface UpdateEventTypeInput {
+  name?: string;
+  key?: string | null;
+}

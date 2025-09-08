@@ -35,8 +35,8 @@ describe("migrations", () => {
         "SELECT COUNT(*) as count FROM place_types",
       );
 
-      // Should seed default place types (10 place types)
-      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(11); // 1 schema + 10 inserts
+      // Should seed default place types (10) and event types (11)
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(22); // 1 schema + 10 place types + 11 event types
 
       // Verify place type insertions
       expect(mockDatabaseInstance.execute).toHaveBeenCalledWith(
@@ -52,7 +52,22 @@ describe("migrations", () => {
         [expect.any(String), "City", "city"],
       );
 
+      // Verify some event type insertions
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledWith(
+        "INSERT INTO event_types (id, name, key) VALUES (?, ?, ?)",
+        [expect.any(String), "Birth", "birth"],
+      );
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledWith(
+        "INSERT INTO event_types (id, name, key) VALUES (?, ?, ?)",
+        [expect.any(String), "Death", "death"],
+      );
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledWith(
+        "INSERT INTO event_types (id, name, key) VALUES (?, ?, ?)",
+        [expect.any(String), "Marriage", "marriage"],
+      );
+
       expect(consoleSpy).toHaveBeenCalledWith("Seeded 10 default place types");
+      expect(consoleSpy).toHaveBeenCalledWith("Seeded 11 default event types");
       expect(consoleSpy).toHaveBeenCalledWith(
         `Database initialized for tree: ${testTreeName}`,
       );
@@ -99,8 +114,8 @@ describe("migrations", () => {
 
       await initializeDatabase(testTreeName);
 
-      // Should treat empty result as 0 count and seed place types
-      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(11); // 1 schema + 10 inserts
+      // Should treat empty result as 0 count and seed place types and event types
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(22); // 1 schema + 10 place types + 11 event types
 
       consoleSpy.mockRestore();
     });
