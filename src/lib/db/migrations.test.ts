@@ -231,5 +231,77 @@ describe("migrations", () => {
         "sqlite:trees/my-family-tree.db",
       );
     });
+
+    it("should handle special characters in tree names", async () => {
+      const specialTreeName = "my-family's_tree-2024";
+      const mockDatabaseInstance = {
+        execute: vi.fn().mockResolvedValue(undefined),
+        select: vi.fn().mockResolvedValue([{ count: 0 }]),
+      };
+      mockDatabase.load.mockResolvedValue(mockDatabaseInstance);
+
+      await initializeDatabase(specialTreeName);
+
+      expect(mockDatabase.load).toHaveBeenCalledWith(
+        "sqlite:trees/my-family's_tree-2024.db",
+      );
+    });
+
+    it("should be idempotent - multiple calls should not duplicate data", async () => {
+      const mockDatabaseInstance = {
+        execute: vi.fn().mockResolvedValue(undefined),
+        select: vi
+          .fn()
+          .mockResolvedValueOnce([{ count: 0 }]) // place types check - empty
+          .mockResolvedValueOnce([{ count: 0 }]) // event types check - empty
+          .mockResolvedValueOnce([{ count: 10 }]) // place types check - has data
+          .mockResolvedValueOnce([{ count: 11 }]), // event types check - has data
+      };
+      mockDatabase.load.mockResolvedValue(mockDatabaseInstance);
+
+      // First initialization
+      await initializeDatabase(testTreeName);
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(22); // Schema + 10 + 11 inserts
+
+      // Reset mock call count
+      mockDatabaseInstance.execute.mockClear();
+
+      // Second initialization - should not insert duplicates
+      await initializeDatabase(testTreeName);
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(1); // Only schema
+    });
+
+    it("should validate schema contains all required tables", async () => {
+      const mockDatabaseInstance = {
+        execute: vi.fn().mockResolvedValue(undefined),
+        select: vi.fn().mockResolvedValue([{ count: 0 }]),
+      };
+      mockDatabase.load.mockResolvedValue(mockDatabaseInstance);
+
+      await initializeDatabase(testTreeName);
+
+      const schemaSQL = mockDatabaseInstance.execute.mock.calls[0][0];
+
+      // Verify current tables are created (based on actual schema)
+      expect(schemaSQL).toContain("CREATE TABLE IF NOT EXISTS place_types");
+      expect(schemaSQL).toContain("CREATE TABLE IF NOT EXISTS places");
+      expect(schemaSQL).toContain("CREATE TABLE IF NOT EXISTS event_types");
+
+      // Verify foreign key constraints
+      expect(schemaSQL).toContain(
+        "FOREIGN KEY (type_id) REFERENCES place_types(id)",
+      );
+      expect(schemaSQL).toContain(
+        "FOREIGN KEY (parent_id) REFERENCES places(id)",
+      );
+
+      // Verify unique indexes
+      expect(schemaSQL).toContain(
+        "CREATE UNIQUE INDEX IF NOT EXISTS place_types_key_unique",
+      );
+      expect(schemaSQL).toContain(
+        "CREATE UNIQUE INDEX IF NOT EXISTS event_types_key_unique",
+      );
+    });
   });
 });

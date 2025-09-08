@@ -265,3 +265,122 @@ const unlisten = await listen<string>("menu", (event) => {
 - Menu updates require full Tauri dev server restart
 - Test after restart, not just hot-reload
 - macOS may cache menu structures - kill processes if needed
+
+# Testing Guidelines
+
+## Writing Meaningful Tests
+
+**CRITICAL RULE: Only write tests that can catch bugs in OUR application code.**
+
+### ✅ Tests We Want (Focus on Business Logic)
+
+**Database Operations & Business Logic:**
+
+```typescript
+// ✅ GOOD: Tests critical business rules
+it("should prevent deleting place types that are in use", async () => {
+  // Tests our validation logic, not the framework
+});
+
+// ✅ GOOD: Tests data integrity
+it("should handle null coordinates properly", async () => {
+  // Tests our data validation, edge cases
+});
+
+// ✅ GOOD: Tests critical workflows
+it("should be idempotent - multiple calls should not duplicate data", async () => {
+  // Tests our initialization logic
+});
+```
+
+**Error Handling & Edge Cases:**
+
+- Database connection failures
+- Invalid data validation
+- Business rule enforcement
+- Data corruption prevention
+- Performance with large datasets
+
+**Integration Points:**
+
+- Database schema validation
+- File system operations (trees management)
+- Cross-module data consistency
+
+### ❌ Tests We DON'T Want (Framework Testing)
+
+**React Query/TanStack Query Tests:**
+
+```typescript
+// ❌ BAD: Tests TanStack Query, not our code
+it("should invalidate cache when mutation succeeds", () => {
+  // This tests the framework, not our business logic
+});
+
+// ❌ BAD: Tests React hooks behavior
+it("should return loading state initially", () => {
+  // React Query is already tested by its maintainers
+});
+```
+
+**Tauri API Tests:**
+
+```typescript
+// ❌ BAD: Tests Tauri APIs
+it("should create menu with correct configuration", () => {
+  // Tauri menu creation is tested by Tauri team
+});
+
+// ❌ BAD: Tests external APIs
+it("should call WebviewWindow.getByLabel", () => {
+  // We don't control this API, it's not our bug to catch
+});
+```
+
+**Mock-Heavy Tests:**
+
+```typescript
+// ❌ BAD: Mocks everything, tests nothing
+it("should call all methods in correct order", () => {
+  // If everything is mocked, we're not testing real behavior
+});
+```
+
+### Testing Checklist
+
+Before writing a test, ask:
+
+1. **Does this test OUR business logic?**
+   - ✅ Yes: Write it
+   - ❌ No: Skip it
+
+2. **Can this test catch a real bug in our code?**
+   - ✅ Yes: Write it
+   - ❌ No: Skip it
+
+3. **Am I testing the framework instead of our code?**
+   - ✅ Testing our code: Write it
+   - ❌ Testing framework: Skip it
+
+4. **Does this test duplicate what the framework already tests?**
+   - ✅ Tests our unique logic: Write it
+   - ❌ Duplicates framework tests: Skip it
+
+### Test Organization
+
+**Keep tests focused and minimal:**
+
+- Test files should be co-located with business logic (`*.test.ts`)
+- Avoid testing React Query hooks separately
+- Focus on CRUD operations, validation, and business rules
+- Test database operations with real scenarios
+- Test error conditions and edge cases
+
+**Quality over Quantity:**
+
+- 80 focused tests > 300 redundant tests
+- Each test should serve a specific purpose
+- Delete tests that don't add value
+- Code coverage is NOT the goal - catching bugs IS the goal
+
+Remember: **We want tests that fail when we introduce bugs, not when we upgrade dependencies.**
