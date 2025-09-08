@@ -78,6 +78,37 @@ function ReferenceDataPage() {
           </Link>
         </div>
 
+        {/* Event Roles Card */}
+        <div
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            padding: "20px",
+            backgroundColor: "white",
+          }}
+        >
+          <h3>Event Roles</h3>
+          <p style={{ color: "#666", marginBottom: "15px" }}>
+            Manage participant roles in events (Subject, Witness, Officiant,
+            etc.)
+          </p>
+          <Link
+            to="/$treeId/settings/event-roles"
+            params={{ treeId }}
+            style={{
+              display: "inline-block",
+              padding: "8px 16px",
+              backgroundColor: "#FF9800",
+              color: "white",
+              textDecoration: "none",
+              borderRadius: "4px",
+              fontSize: "14px",
+            }}
+          >
+            Manage Event Roles
+          </Link>
+        </div>
+
         <div
           style={{
             border: "1px dashed #ccc",

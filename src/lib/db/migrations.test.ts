@@ -35,8 +35,8 @@ describe("migrations", () => {
         "SELECT COUNT(*) as count FROM place_types",
       );
 
-      // Should seed default place types (10) and event types (11)
-      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(22); // 1 schema + 10 place types + 11 event types
+      // Should seed default place types (10), event types (11), and event roles (14)
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(36); // 1 schema + 10 place types + 11 event types + 14 event roles
 
       // Verify place type insertions
       expect(mockDatabaseInstance.execute).toHaveBeenCalledWith(
@@ -114,8 +114,8 @@ describe("migrations", () => {
 
       await initializeDatabase(testTreeName);
 
-      // Should treat empty result as 0 count and seed place types and event types
-      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(22); // 1 schema + 10 place types + 11 event types
+      // Should treat empty result as 0 count and seed place types, event types, and event roles
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(36); // 1 schema + 10 place types + 11 event types + 14 event roles
 
       consoleSpy.mockRestore();
     });
@@ -254,14 +254,16 @@ describe("migrations", () => {
           .fn()
           .mockResolvedValueOnce([{ count: 0 }]) // place types check - empty
           .mockResolvedValueOnce([{ count: 0 }]) // event types check - empty
+          .mockResolvedValueOnce([{ count: 0 }]) // event roles check - empty
           .mockResolvedValueOnce([{ count: 10 }]) // place types check - has data
-          .mockResolvedValueOnce([{ count: 11 }]), // event types check - has data
+          .mockResolvedValueOnce([{ count: 11 }]) // event types check - has data
+          .mockResolvedValueOnce([{ count: 14 }]), // event roles check - has data
       };
       mockDatabase.load.mockResolvedValue(mockDatabaseInstance);
 
       // First initialization
       await initializeDatabase(testTreeName);
-      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(22); // Schema + 10 + 11 inserts
+      expect(mockDatabaseInstance.execute).toHaveBeenCalledTimes(36); // Schema + 10 + 11 + 14 inserts
 
       // Reset mock call count
       mockDatabaseInstance.execute.mockClear();

@@ -58,3 +58,20 @@ export interface UpdateEventTypeInput {
   name?: string;
   key?: string | null;
 }
+
+export interface EventRole {
+  id: string;
+  created_at: string;
+  name: string;
+  key: string | null;
+}
+
+export interface CreateEventRoleInput {
+  name: string;
+  key?: string;
+}
+
+export interface UpdateEventRoleInput {
+  name?: string;
+  key?: string | null;
+}

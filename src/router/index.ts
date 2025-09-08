@@ -12,6 +12,7 @@ import SettingsPage from "../pages/SettingsPage";
 import ReferenceDataPage from "../pages/settings/ReferenceDataPage";
 import PlaceTypesPage from "../pages/settings/PlaceTypesPage";
 import EventTypesPage from "../pages/settings/EventTypesPage";
+import EventRolesPage from "../pages/settings/EventRolesPage";
 import ThemeSettingsPage from "../pages/settings/ThemeSettingsPage";
 import PreferencesApp from "../PreferencesApp";
 
@@ -76,6 +77,13 @@ const eventTypesRoute = createRoute({
   component: EventTypesPage,
 });
 
+// Event roles route (/:treeId/settings/event-roles)
+const eventRolesRoute = createRoute({
+  getParentRoute: () => settingsRoute,
+  path: "/event-roles",
+  component: EventRolesPage,
+});
+
 // Theme settings route (/preferences/theme)
 const themeSettingsRoute = createRoute({
   getParentRoute: () => preferencesRoute,
@@ -100,6 +108,7 @@ const routeTree = rootRoute.addChildren([
     settingsIndexRoute,
     placeTypesRoute,
     eventTypesRoute,
+    eventRolesRoute,
   ]),
   preferencesRoute.addChildren([themeSettingsRoute]),
 ]);

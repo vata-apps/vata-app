@@ -28,6 +28,23 @@ const DEFAULT_EVENT_TYPES = [
   { name: "Other", key: "other" },
 ];
 
+const DEFAULT_EVENT_ROLES = [
+  { name: "Subject", key: "subject" },
+  { name: "Husband", key: "husband" },
+  { name: "Wife", key: "wife" },
+  { name: "Mother", key: "mother" },
+  { name: "Father", key: "father" },
+  { name: "Witness", key: "witness" },
+  { name: "Godfather", key: "godfather" },
+  { name: "Godmother", key: "godmother" },
+  { name: "Officiant", key: "officiant" },
+  { name: "Father of Husband", key: "father_of_husband" },
+  { name: "Mother of Husband", key: "mother_of_husband" },
+  { name: "Father of Wife", key: "father_of_wife" },
+  { name: "Mother of Wife", key: "mother_of_wife" },
+  { name: "Other", key: "other" },
+];
+
 const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS place_types (
   id TEXT PRIMARY KEY NOT NULL,
@@ -61,6 +78,15 @@ CREATE TABLE IF NOT EXISTS event_types (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS event_types_key_unique ON event_types (key);
+
+CREATE TABLE IF NOT EXISTS event_roles (
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  name TEXT NOT NULL,
+  key TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS event_roles_key_unique ON event_roles (key);
 `;
 
 export async function initializeDatabase(treeName: string): Promise<void> {
@@ -105,6 +131,24 @@ export async function initializeDatabase(treeName: string): Promise<void> {
         );
       }
       console.log(`Seeded ${DEFAULT_EVENT_TYPES.length} default event types`);
+    }
+
+    // Check if event roles already exist
+    const existingEventRoles = await database.select<Array<{ count: number }>>(
+      "SELECT COUNT(*) as count FROM event_roles",
+    );
+
+    const existingEventRolesCount = existingEventRoles[0]?.count || 0;
+
+    // Insert default event roles if they don't exist
+    if (existingEventRolesCount === 0) {
+      for (const eventRole of DEFAULT_EVENT_ROLES) {
+        await database.execute(
+          "INSERT INTO event_roles (id, name, key) VALUES (?, ?, ?)",
+          [uuidv4(), eventRole.name, eventRole.key],
+        );
+      }
+      console.log(`Seeded ${DEFAULT_EVENT_ROLES.length} default event roles`);
     }
 
     console.log(`Database initialized for tree: ${treeName}`);
