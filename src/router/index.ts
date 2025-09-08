@@ -68,9 +68,9 @@ const placeTypesRoute = createRoute({
   component: PlaceTypesPage,
 });
 
-// Theme settings route (/:treeId/settings/theme)
+// Theme settings route (/preferences/theme)
 const themeSettingsRoute = createRoute({
-  getParentRoute: () => settingsRoute,
+  getParentRoute: () => preferencesRoute,
   path: "/theme",
   component: ThemeSettingsPage,
 });
@@ -88,12 +88,8 @@ const routeTree = rootRoute.addChildren([
   treeHomeRoute,
   placesRoute,
   placeRoute,
-  settingsRoute.addChildren([
-    settingsIndexRoute,
-    placeTypesRoute,
-    themeSettingsRoute,
-  ]),
-  preferencesRoute,
+  settingsRoute.addChildren([settingsIndexRoute, placeTypesRoute]),
+  preferencesRoute.addChildren([themeSettingsRoute]),
 ]);
 
 // Create and export router
