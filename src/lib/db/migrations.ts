@@ -87,6 +87,29 @@ CREATE TABLE IF NOT EXISTS event_roles (
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS event_roles_key_unique ON event_roles (key);
+
+CREATE TABLE IF NOT EXISTS individuals (
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  gender TEXT NOT NULL CHECK (gender IN ('male', 'female', 'unknown')),
+  gedcom_id INTEGER
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS individuals_gedcom_id_unique ON individuals (gedcom_id);
+
+CREATE TABLE IF NOT EXISTS names (
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  individual_id TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('birth', 'marriage', 'nickname', 'unknown')),
+  first_name TEXT,
+  last_name TEXT,
+  is_primary INTEGER DEFAULT 0 NOT NULL CHECK (is_primary IN (0, 1)),
+  FOREIGN KEY (individual_id) REFERENCES individuals(id) ON UPDATE NO ACTION ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS names_individual_id_index ON names (individual_id);
+CREATE INDEX IF NOT EXISTS names_is_primary_index ON names (is_primary);
 `;
 
 export async function initializeDatabase(treeName: string): Promise<void> {

@@ -288,6 +288,8 @@ describe("migrations", () => {
       expect(schemaSQL).toContain("CREATE TABLE IF NOT EXISTS place_types");
       expect(schemaSQL).toContain("CREATE TABLE IF NOT EXISTS places");
       expect(schemaSQL).toContain("CREATE TABLE IF NOT EXISTS event_types");
+      expect(schemaSQL).toContain("CREATE TABLE IF NOT EXISTS individuals");
+      expect(schemaSQL).toContain("CREATE TABLE IF NOT EXISTS names");
 
       // Verify foreign key constraints
       expect(schemaSQL).toContain(
@@ -295,6 +297,9 @@ describe("migrations", () => {
       );
       expect(schemaSQL).toContain(
         "FOREIGN KEY (parent_id) REFERENCES places(id)",
+      );
+      expect(schemaSQL).toContain(
+        "FOREIGN KEY (individual_id) REFERENCES individuals(id)",
       );
 
       // Verify unique indexes

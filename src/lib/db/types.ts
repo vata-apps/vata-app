@@ -75,3 +75,47 @@ export interface UpdateEventRoleInput {
   name?: string;
   key?: string | null;
 }
+
+export type GenderType = "male" | "female" | "unknown";
+
+export type NameType = "birth" | "marriage" | "nickname" | "unknown";
+
+export interface Individual {
+  id: string;
+  created_at: string;
+  gender: GenderType;
+  gedcom_id: number | null;
+}
+
+export interface Name {
+  id: string;
+  created_at: string;
+  individual_id: string;
+  type: NameType;
+  first_name: string | null;
+  last_name: string | null;
+  is_primary: boolean;
+}
+
+export interface CreateIndividualInput {
+  gender: GenderType;
+}
+
+export interface UpdateIndividualInput {
+  gender?: GenderType;
+}
+
+export interface CreateNameInput {
+  individualId: string;
+  type: NameType;
+  firstName?: string | null;
+  lastName?: string | null;
+  isPrimary?: boolean;
+}
+
+export interface UpdateNameInput {
+  type?: NameType;
+  firstName?: string | null;
+  lastName?: string | null;
+  isPrimary?: boolean;
+}

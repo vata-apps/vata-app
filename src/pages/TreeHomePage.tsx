@@ -56,17 +56,21 @@ function TreeHomePage() {
           <p>Manage reference data, types, and configuration</p>
         </Link>
 
-        <div
+        <Link
+          to="/$treeId/individuals"
+          params={{ treeId }}
           style={{
+            display: "block",
             padding: "20px",
-            border: "2px solid #ccc",
-            color: "#666",
-            backgroundColor: "#f5f5f5",
+            border: "2px solid #9C27B0",
+            textDecoration: "none",
+            color: "#333",
+            backgroundColor: "#f9f9f9",
           }}
         >
           <h2>👥 Individuals</h2>
-          <p>Coming soon...</p>
-        </div>
+          <p>Manage people and their names in your family tree</p>
+        </Link>
 
         <div
           style={{
