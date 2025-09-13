@@ -18,6 +18,7 @@ export interface CreateTreeInput {
 export interface UpdateTreeInput {
   name?: string;
   description?: string;
+  file_path?: string;
 }
 
 export interface AppSetting {

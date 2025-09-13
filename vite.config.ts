@@ -13,6 +13,7 @@ export default defineConfig(async () => ({
     alias: {
       $: path.resolve(__dirname, "./src"),
       $lib: path.resolve(__dirname, "./src/lib"),
+      $managers: path.resolve(__dirname, "./src/managers"),
       $db: path.resolve(__dirname, "./src/db"),
       "$db-system": path.resolve(__dirname, "./src/db/system"),
       "$db-tree": path.resolve(__dirname, "./src/db/trees"),

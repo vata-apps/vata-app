@@ -158,6 +158,10 @@ export async function updateTree(
       updates.push("description = ?");
       values.push(tree.description);
     }
+    if (tree.file_path !== undefined) {
+      updates.push("file_path = ?");
+      values.push(tree.file_path);
+    }
 
     if (updates.length === 0) {
       // No updates, return current tree

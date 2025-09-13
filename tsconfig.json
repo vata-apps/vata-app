@@ -19,6 +19,8 @@
     "paths": {
       "$/*": ["src/*"],
       "$lib/*": ["src/lib/*"],
+      "$managers": ["src/managers"],
+      "$managers/*": ["src/managers/*"],
       "$db": ["src/db"],
       "$db/*": ["src/db/*"],
       "$db-system": ["src/db/system"],
