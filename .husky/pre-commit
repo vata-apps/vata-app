@@ -1,15 +1,12 @@
-# Auto-fix prettier formatting
-echo "🎨 Auto-fixing prettier formatting..."
-pnpm format
+# Check prettier formatting (no auto-fix)
+echo "🎨 Checking prettier formatting..."
+pnpm format:check
 
-# Auto-fix ESLint issues
-echo "🔍 Auto-fixing ESLint issues..."
-pnpm lint:fix
+# Check ESLint issues (no auto-fix)
+echo "🔍 Checking ESLint..."
+pnpm lint
 
-# Stage auto-fixed files
-git add .
-
-# Check TypeScript types (cannot be auto-fixed)
+# Check TypeScript types
 echo "📝 Checking TypeScript types..."
 pnpm exec tsc --noEmit
 
