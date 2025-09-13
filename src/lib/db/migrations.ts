@@ -110,6 +110,38 @@ CREATE TABLE IF NOT EXISTS names (
 
 CREATE INDEX IF NOT EXISTS names_individual_id_index ON names (individual_id);
 CREATE INDEX IF NOT EXISTS names_is_primary_index ON names (is_primary);
+
+CREATE TABLE IF NOT EXISTS events (
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  type_id TEXT NOT NULL,
+  date TEXT,
+  description TEXT,
+  place_id TEXT,
+  gedcom_id INTEGER,
+  FOREIGN KEY (type_id) REFERENCES event_types(id) ON UPDATE NO ACTION ON DELETE RESTRICT,
+  FOREIGN KEY (place_id) REFERENCES places(id) ON UPDATE NO ACTION ON DELETE SET NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS events_gedcom_id_unique ON events (gedcom_id);
+CREATE INDEX IF NOT EXISTS events_type_id_index ON events (type_id);
+CREATE INDEX IF NOT EXISTS events_place_id_index ON events (place_id);
+
+CREATE TABLE IF NOT EXISTS event_participants (
+  id TEXT PRIMARY KEY NOT NULL,
+  created_at INTEGER DEFAULT CURRENT_TIMESTAMP NOT NULL,
+  event_id TEXT NOT NULL,
+  individual_id TEXT NOT NULL,
+  role_id TEXT NOT NULL,
+  FOREIGN KEY (event_id) REFERENCES events(id) ON UPDATE NO ACTION ON DELETE CASCADE,
+  FOREIGN KEY (individual_id) REFERENCES individuals(id) ON UPDATE NO ACTION ON DELETE CASCADE,
+  FOREIGN KEY (role_id) REFERENCES event_roles(id) ON UPDATE NO ACTION ON DELETE RESTRICT
+);
+
+CREATE INDEX IF NOT EXISTS event_participants_event_id_index ON event_participants (event_id);
+CREATE INDEX IF NOT EXISTS event_participants_individual_id_index ON event_participants (individual_id);
+CREATE INDEX IF NOT EXISTS event_participants_role_id_index ON event_participants (role_id);
+CREATE UNIQUE INDEX IF NOT EXISTS event_participants_unique ON event_participants (event_id, individual_id, role_id);
 `;
 
 export async function initializeDatabase(treeName: string): Promise<void> {

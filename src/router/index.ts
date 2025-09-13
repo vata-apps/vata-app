@@ -8,6 +8,8 @@ import TreeSelectPage from "../pages/TreeSelectPage";
 import TreeHomePage from "../pages/TreeHomePage";
 import PlacesPage from "../pages/PlacesPage";
 import PlacePage from "../pages/PlacePage";
+import EventsPage from "../pages/EventsPage";
+import EventPage from "../pages/EventPage";
 import IndividualsPage from "../pages/IndividualsPage";
 import IndividualPage from "../pages/IndividualPage";
 import SettingsPage from "../pages/SettingsPage";
@@ -49,6 +51,20 @@ const placeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/$treeId/places/$placeId",
   component: PlacePage,
+});
+
+// Events list route (/:treeId/events)
+const eventsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/$treeId/events",
+  component: EventsPage,
+});
+
+// Individual event route (/:treeId/events/:eventId)
+const eventRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/$treeId/events/$eventId",
+  component: EventPage,
 });
 
 // Individuals list route (/:treeId/individuals)
@@ -120,6 +136,8 @@ const routeTree = rootRoute.addChildren([
   treeHomeRoute,
   placesRoute,
   placeRoute,
+  eventsRoute,
+  eventRoute,
   individualsRoute,
   individualRoute,
   settingsRoute.addChildren([

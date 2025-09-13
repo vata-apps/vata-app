@@ -119,3 +119,48 @@ export interface UpdateNameInput {
   lastName?: string | null;
   isPrimary?: boolean;
 }
+
+export interface Event {
+  id: string;
+  created_at: string;
+  type_id: string;
+  date: string | null;
+  description: string | null;
+  place_id: string | null;
+  gedcom_id: number | null;
+}
+
+export interface EventParticipant {
+  id: string;
+  created_at: string;
+  event_id: string;
+  individual_id: string;
+  role_id: string;
+}
+
+export interface CreateEventInput {
+  typeId: string;
+  date?: string | null;
+  description?: string | null;
+  placeId?: string | null;
+  gedcomId?: number | null;
+}
+
+export interface UpdateEventInput {
+  typeId?: string;
+  date?: string | null;
+  description?: string | null;
+  placeId?: string | null;
+  gedcomId?: number | null;
+}
+
+export interface CreateEventParticipantInput {
+  eventId: string;
+  individualId: string;
+  roleId: string;
+}
+
+export interface UpdateEventParticipantInput {
+  individualId?: string;
+  roleId?: string;
+}

@@ -84,17 +84,21 @@ function TreeHomePage() {
           <p>Coming soon...</p>
         </div>
 
-        <div
+        <Link
+          to="/$treeId/events"
+          params={{ treeId }}
           style={{
+            display: "block",
             padding: "20px",
-            border: "2px solid #ccc",
-            color: "#666",
-            backgroundColor: "#f5f5f5",
+            border: "2px solid #2196F3",
+            textDecoration: "none",
+            color: "#333",
+            backgroundColor: "#f9f9f9",
           }}
         >
           <h2>📅 Events</h2>
-          <p>Coming soon...</p>
-        </div>
+          <p>Record births, deaths, marriages and other life events</p>
+        </Link>
       </div>
     </div>
   );
