@@ -1,6 +1,14 @@
 import { system, trees } from "$db";
 import type { CreateTreeInput, UpdateTreeInput, Tree } from "$db";
-import { exists, rename, remove, BaseDirectory } from "@tauri-apps/plugin-fs";
+import { generateTreeFilePath, DB_CONSTANTS } from "$db/constants";
+import {
+  exists,
+  rename,
+  remove,
+  copyFile,
+  mkdir,
+  BaseDirectory,
+} from "@tauri-apps/plugin-fs";
 
 /**
  * Get a tree by ID and ensure it exists
@@ -17,46 +25,61 @@ async function getTreeByIdOrThrow(treeId: string): Promise<Tree> {
 }
 
 /**
- * Generate a file path for a tree based on its name
- * @param name - Tree name
- * @returns Sanitized file path
+ * Ensure the trees directory exists in app data
  */
-function generateTreeFilePath(name: string): string {
-  return `trees/${name.toLowerCase().replace(/[^a-z0-9]/g, "_")}.db`;
+async function ensureTreesDirectoryExists(): Promise<void> {
+  const treesDirExists = await exists(DB_CONSTANTS.TREES_DIRECTORY, {
+    baseDir: BaseDirectory.AppData,
+  });
+
+  if (!treesDirExists) {
+    await mkdir(DB_CONSTANTS.TREES_DIRECTORY, {
+      baseDir: BaseDirectory.AppData,
+      recursive: true,
+    });
+  }
 }
 
 /**
- * Rename a tree database file
- * @param oldPath - Current file path
- * @param newPath - New file path
+ * Format error for consistent error messages
+ */
+function formatError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+/**
+ * Rename a tree database file safely
  */
 async function renameTreeDatabaseFile(
   oldPath: string,
   newPath: string,
 ): Promise<void> {
+  const newPathExists = await exists(newPath, {
+    baseDir: BaseDirectory.AppData,
+  });
+  if (newPathExists) {
+    throw new Error(`Database file already exists at ${newPath}`);
+  }
+
+  const oldPathExists = await exists(oldPath, {
+    baseDir: BaseDirectory.AppData,
+  });
+  if (!oldPathExists) {
+    throw new Error(`Source database file not found at ${oldPath}`);
+  }
+
   try {
-    // Check if new path already exists
-    const newPathExists = await exists(newPath, {
-      baseDir: BaseDirectory.AppData,
+    await rename(oldPath, newPath, {
+      oldPathBaseDir: BaseDirectory.AppData,
+      newPathBaseDir: BaseDirectory.AppData,
     });
-    if (newPathExists) {
-      throw new Error(`Database file already exists at ${newPath}`);
-    }
-
-    // Check if old path exists
-    const oldPathExists = await exists(oldPath, {
-      baseDir: BaseDirectory.AppData,
+  } catch {
+    await copyFile(oldPath, newPath, {
+      fromPathBaseDir: BaseDirectory.AppData,
+      toPathBaseDir: BaseDirectory.AppData,
     });
-    if (!oldPathExists) {
-      throw new Error(`Source database file not found at ${oldPath}`);
-    }
 
-    // Rename the file
-    await rename(oldPath, newPath);
-  } catch (error) {
-    throw new Error(
-      `Failed to rename database file: ${error instanceof Error ? error.message : "Unknown error"}`,
-    );
+    await remove(oldPath, { baseDir: BaseDirectory.AppData });
   }
 }
 
@@ -69,20 +92,15 @@ async function renameTreeDatabaseFile(
  * @returns Promise with the created tree
  */
 export async function createNewTree(input: CreateTreeInput): Promise<Tree> {
-  // 1. Create tree record in system database (pure CRUD)
   const tree = await system.trees.createTree(input);
 
   try {
-    // 2. Initialize the physical tree database (side effect)
+    await ensureTreesDirectoryExists();
     await trees.initializeTreeDatabase(tree.id);
-
     return tree;
   } catch (error) {
-    // 3. Rollback: delete the tree record if database initialization fails
     await system.trees.deleteTree(tree.id);
-    throw new Error(
-      `Failed to create tree database: ${error instanceof Error ? error.message : "Unknown error"}`,
-    );
+    throw new Error(`Failed to create tree database: ${formatError(error)}`);
   }
 }
 
@@ -108,15 +126,23 @@ export async function updateTree(
     return await system.trees.updateTree(treeId, input);
   }
 
+  const updatedInput = { ...input, file_path: newFilePath };
+  const updatedTree = await system.trees.updateTree(treeId, updatedInput);
+
   try {
     await renameTreeDatabaseFile(currentTree.file_path, newFilePath);
-
-    const updatedInput = { ...input, file_path: newFilePath };
-    return await system.trees.updateTree(treeId, updatedInput);
+    return updatedTree;
   } catch (error) {
-    throw new Error(
-      `Failed to rename tree database: ${error instanceof Error ? error.message : "Unknown error"}`,
-    );
+    // Rollback database changes if file rename fails
+    try {
+      await system.trees.updateTree(treeId, {
+        file_path: currentTree.file_path,
+      });
+    } catch {
+      // Rollback failed - log this in production
+    }
+
+    throw new Error(`Failed to rename tree database: ${formatError(error)}`);
   }
 }
 
@@ -130,18 +156,12 @@ export async function updateTree(
 export async function deleteCompleteTree(treeId: string): Promise<void> {
   const tree = await getTreeByIdOrThrow(treeId);
 
-  try {
-    const fileExists = await exists(tree.file_path, {
-      baseDir: BaseDirectory.AppData,
-    });
-    if (fileExists) {
-      await remove(tree.file_path, { baseDir: BaseDirectory.AppData });
-    }
-
-    await system.trees.deleteTree(treeId);
-  } catch (error) {
-    throw new Error(
-      `Failed to delete tree: ${error instanceof Error ? error.message : "Unknown error"}`,
-    );
+  const fileExists = await exists(tree.file_path, {
+    baseDir: BaseDirectory.AppData,
+  });
+  if (fileExists) {
+    await remove(tree.file_path, { baseDir: BaseDirectory.AppData });
   }
+
+  await system.trees.deleteTree(treeId);
 }

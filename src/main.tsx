@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MantineProvider, createTheme } from "@mantine/core";
 import { ThemeProvider } from "$lib/theme/ThemeProvider";
+import { TreeManagerTest } from "./TreeManagerTest";
 
 import "@mantine/core/styles.css";
 
@@ -23,7 +24,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             defaultColorScheme="auto"
             forceColorScheme={mantineColorScheme}
           >
-            APP
+            <TreeManagerTest />
           </MantineProvider>
         )}
       </ThemeProvider>

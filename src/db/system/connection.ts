@@ -13,8 +13,23 @@ export async function connectToSystemDb(): Promise<Database> {
  * @param operation - Function to execute with the database connection
  * @returns Promise with the operation result
  */
-export function withSystemDb<T>(
+export async function withSystemDb<T>(
   operation: (database: Database) => Promise<T>,
 ): Promise<T> {
-  return connectToSystemDb().then(operation);
+  let database: Database | null = null;
+
+  try {
+    database = await connectToSystemDb();
+    const result = await operation(database);
+    return result;
+  } finally {
+    // Ensure connection is closed
+    if (database) {
+      try {
+        await database.close();
+      } catch (closeError) {
+        console.warn(`Failed to close system database connection:`, closeError);
+      }
+    }
+  }
 }

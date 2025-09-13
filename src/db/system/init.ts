@@ -11,10 +11,9 @@ export async function initializeSystemDatabase(): Promise<void> {
     await withSystemDb(async (database) => {
       await database.execute(SYSTEM_SCHEMA_SQL);
     });
-
-    console.log("System database initialized successfully");
   } catch (error) {
-    console.error("Failed to initialize system database:", error);
-    throw error;
+    throw new Error(
+      `Failed to initialize system database: ${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 }

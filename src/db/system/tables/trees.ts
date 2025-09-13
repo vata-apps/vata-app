@@ -1,5 +1,6 @@
 import { withSystemDb } from "../connection";
 import { Tree, CreateTreeInput, UpdateTreeInput } from "../../types";
+import { generateTreeFilePath } from "../../constants";
 
 /**
  * Create a new family tree record in the system database
@@ -8,7 +9,17 @@ import { Tree, CreateTreeInput, UpdateTreeInput } from "../../types";
  */
 export async function createTree(tree: CreateTreeInput): Promise<Tree> {
   return withSystemDb(async (database) => {
-    const filePath = `trees/${tree.name.toLowerCase().replace(/[^a-z0-9]/g, "_")}.db`;
+    // Check if tree name already exists
+    const existingTree = await database.select<Array<{ name: string }>>(
+      "SELECT name FROM trees WHERE name = ?",
+      [tree.name],
+    );
+
+    if (existingTree.length > 0) {
+      throw new Error(`Tree with name "${tree.name}" already exists`);
+    }
+
+    const filePath = generateTreeFilePath(tree.name);
 
     const result = await database.execute(
       "INSERT INTO trees (name, file_path, description) VALUES (?, ?, ?) RETURNING id, name, file_path, created_at, description",
@@ -151,6 +162,16 @@ export async function updateTree(
     const values: (string | null)[] = [];
 
     if (tree.name !== undefined) {
+      // Check if new name already exists (excluding current tree)
+      const existingTree = await database.select<Array<{ name: string }>>(
+        "SELECT name FROM trees WHERE name = ? AND id != ?",
+        [tree.name, treeId],
+      );
+
+      if (existingTree.length > 0) {
+        throw new Error(`Tree with name "${tree.name}" already exists`);
+      }
+
       updates.push("name = ?");
       values.push(tree.name);
     }
@@ -164,7 +185,6 @@ export async function updateTree(
     }
 
     if (updates.length === 0) {
-      // No updates, return current tree
       const current = await getTreeById(id);
       if (!current) {
         throw new Error(`Tree with ID ${id} not found`);
@@ -174,7 +194,7 @@ export async function updateTree(
 
     values.push(treeId.toString());
     await database.execute(
-      `UPDATE trees SET ${updates.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`,
+      `UPDATE trees SET ${updates.join(", ")} WHERE id = ?`,
       values,
     );
 

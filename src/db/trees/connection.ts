@@ -40,9 +40,24 @@ export async function connectToTreeDbById(treeId: string): Promise<Database> {
  * @param operation - Function to execute with the database connection
  * @returns Promise with the operation result
  */
-export function withTreeDbById<T>(
+export async function withTreeDbById<T>(
   treeId: string,
   operation: (database: Database) => Promise<T>,
 ): Promise<T> {
-  return connectToTreeDbById(treeId).then(operation);
+  let database: Database | null = null;
+
+  try {
+    database = await connectToTreeDbById(treeId);
+    const result = await operation(database);
+    return result;
+  } finally {
+    // Ensure connection is closed
+    if (database) {
+      try {
+        await database.close();
+      } catch (closeError) {
+        console.warn(`Failed to close tree database connection:`, closeError);
+      }
+    }
+  }
 }

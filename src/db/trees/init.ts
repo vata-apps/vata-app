@@ -33,9 +33,6 @@ export async function initializeTreeDatabase(treeId: string): Promise<void> {
             [placeType.name, placeType.key],
           );
         }
-        console.log(
-          `Seeded ${DEFAULT_PLACE_TYPES.length} default place types for tree ${treeId}`,
-        );
       }
 
       // Check if event types already exist
@@ -53,9 +50,6 @@ export async function initializeTreeDatabase(treeId: string): Promise<void> {
             [eventType.name, eventType.key],
           );
         }
-        console.log(
-          `Seeded ${DEFAULT_EVENT_TYPES.length} default event types for tree ${treeId}`,
-        );
       }
 
       // Check if event roles already exist
@@ -73,18 +67,11 @@ export async function initializeTreeDatabase(treeId: string): Promise<void> {
             [eventRole.name, eventRole.key],
           );
         }
-        console.log(
-          `Seeded ${DEFAULT_EVENT_ROLES.length} default event roles for tree ${treeId}`,
-        );
       }
     });
-
-    console.log(`Tree database initialized successfully for tree: ${treeId}`);
   } catch (error) {
-    console.error(
-      `Failed to initialize tree database for tree ${treeId}:`,
-      error,
+    throw new Error(
+      `Failed to initialize tree database: ${error instanceof Error ? error.message : String(error)}`,
     );
-    throw error;
   }
 }
