@@ -55,7 +55,7 @@ function IndividualsPage() {
 
   const createEmptyFormWithName = (): IndividualFormData => ({
     individual: createEmptyFormData(),
-    names: [createEmptyName(true)], // Premier nom est primary par défaut
+    names: [createEmptyName(true)], // First name entry is primary by default
   });
 
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -109,19 +109,19 @@ function IndividualsPage() {
   const addName = () => {
     setNewIndividual({
       ...newIndividual,
-      names: [...newIndividual.names, createEmptyName()], // Les noms ajoutés ne sont pas primary par défaut
+      names: [...newIndividual.names, createEmptyName()], // Added names are not primary by default
     });
   };
 
   const removeName = (index: number) => {
     const updatedNames = newIndividual.names.filter((_, i) => i !== index);
-    // S'il ne reste plus de noms, créer un nouveau nom primary
-    // Sinon, si on a supprimé le nom primary, faire du premier nom restant le primary
+    // If no names remain, create a new primary name
+    // Otherwise, if the primary name was removed, make the first remaining name primary
     let finalNames = updatedNames;
     if (finalNames.length === 0) {
       finalNames = [createEmptyName(true)];
     } else if (newIndividual.names[index].isPrimary) {
-      // Si on a supprimé le nom primary, faire du premier nom restant le primary
+      // If the primary name was removed, make the first remaining name primary
       finalNames = finalNames.map((name, i) => ({
         ...name,
         isPrimary: i === 0,
