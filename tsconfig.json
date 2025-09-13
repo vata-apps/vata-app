@@ -14,6 +14,19 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path mapping */
+    "baseUrl": ".",
+    "paths": {
+      "$/*": ["src/*"],
+      "$lib/*": ["src/lib/*"],
+      "$db": ["src/db"],
+      "$db/*": ["src/db/*"],
+      "$db-system": ["src/db/system"],
+      "$db-system/*": ["src/db/system/*"],
+      "$db-tree": ["src/db/trees"],
+      "$db-tree/*": ["src/db/trees/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
