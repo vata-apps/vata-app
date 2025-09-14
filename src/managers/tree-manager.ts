@@ -1,14 +1,16 @@
+import type { CreateTreeInput, Tree, UpdateTreeInput } from "$db";
 import { system, trees } from "$db";
-import type { CreateTreeInput, UpdateTreeInput, Tree } from "$db";
-import { generateTreeFilePath, DB_CONSTANTS } from "$db/constants";
+import { DB_CONSTANTS, generateTreeFilePath } from "$db/constants";
+import type { TreeWithStatus } from "$/types/tree-status";
+import { getStatusInfo } from "$/utils/tree-status";
 import {
-  exists,
-  rename,
-  remove,
+  BaseDirectory,
   copyFile,
+  exists,
   mkdir,
   readDir,
-  BaseDirectory,
+  remove,
+  rename,
 } from "@tauri-apps/plugin-fs";
 
 /**
@@ -279,4 +281,92 @@ export async function registerUnregisteredFile(
   });
 
   return updatedTree;
+}
+
+/**
+ * Get all trees with detailed status information
+ * Includes registered trees, orphaned trees, and unregistered files
+ *
+ * Status definitions:
+ * - "healthy": Tree is registered in database and physical file exists
+ * - "orphaned": Tree is registered in database but physical file is missing
+ * - "unregistered": Physical file exists but is not registered in database
+ *
+ * @returns Promise with all trees and count
+ */
+export async function getAllTreesWithStatus(): Promise<{
+  trees: TreeWithStatus[];
+  count: number;
+}> {
+  try {
+    // Ensure system database is initialized
+    await system.initializeSystemDatabase();
+
+    // Get all registered trees from database
+    const registeredTrees = await system.trees.getAllTrees();
+
+    // Get all unregistered files
+    const unregisteredFilePaths = await getUnregisteredFiles();
+
+    // Process registered trees to get detailed status
+    const registeredTreesWithStatus = await Promise.all(
+      registeredTrees.map(async (tree): Promise<TreeWithStatus> => {
+        let fileExists = true;
+
+        try {
+          // Check if physical file exists
+          fileExists = await checkTreeFileExists(tree.file_path);
+        } catch (error) {
+          console.error(`Error checking tree ${tree.id}:`, error);
+          fileExists = false;
+        }
+
+        return {
+          id: tree.id,
+          label: tree.name,
+          path: tree.file_path,
+          created_at: tree.created_at.toISOString(),
+          description: tree.description,
+          status: getStatusInfo(tree.file_path, fileExists),
+        };
+      }),
+    );
+
+    // Create tree entries for unregistered files
+    const unregisteredTrees: TreeWithStatus[] = unregisteredFilePaths.map(
+      (filePath, index) => {
+        // Extract name from file path (remove directory and extension)
+        const fileName = filePath.split("/").pop() || "";
+        const nameWithoutExt = fileName.replace(
+          DB_CONSTANTS.DB_FILE_EXTENSION,
+          "",
+        );
+
+        return {
+          id: `unregistered-${index}`, // Temporary ID for unregistered files
+          label: nameWithoutExt || "Unknown",
+          path: filePath,
+          created_at: undefined,
+          description: undefined,
+          status: {
+            type: "unregistered" as const,
+            message: "Database file not imported",
+            details:
+              "This database file was found but has not been imported into the application yet.",
+          },
+        };
+      },
+    );
+
+    // Combine all trees
+    const allTrees = [...registeredTreesWithStatus, ...unregisteredTrees];
+
+    return {
+      trees: allTrees,
+      count: allTrees.length,
+    };
+  } catch (error) {
+    console.error("Error getting trees with status:", error);
+    throw new Error(`Failed to get trees with status: ${formatError(error)}`);
+  }
 }
