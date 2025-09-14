@@ -7,6 +7,7 @@ import {
   remove,
   copyFile,
   mkdir,
+  readDir,
   BaseDirectory,
 } from "@tauri-apps/plugin-fs";
 
@@ -164,4 +165,118 @@ export async function deleteCompleteTree(treeId: string): Promise<void> {
   }
 
   await system.trees.deleteTree(treeId);
+}
+
+/**
+ * Simple function to check if a tree file exists
+ * @param filePath - Path to check
+ * @returns Promise with boolean indicating if file exists
+ */
+export async function checkTreeFileExists(filePath: string): Promise<boolean> {
+  try {
+    return await exists(filePath, {
+      baseDir: BaseDirectory.AppData,
+    });
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Simple function to get all unregistered database files
+ * @returns Promise with array of unregistered file paths
+ */
+export async function getUnregisteredFiles(): Promise<string[]> {
+  try {
+    await ensureTreesDirectoryExists();
+
+    const treesDirExists = await exists(DB_CONSTANTS.TREES_DIRECTORY, {
+      baseDir: BaseDirectory.AppData,
+    });
+
+    if (!treesDirExists) {
+      return [];
+    }
+
+    const allTrees = await system.trees.getAllTrees();
+    const registeredPaths = new Set(allTrees.map((tree) => tree.file_path));
+
+    const dirEntries = await readDir(DB_CONSTANTS.TREES_DIRECTORY, {
+      baseDir: BaseDirectory.AppData,
+    });
+
+    const unregisteredFiles: string[] = [];
+
+    for (const entry of dirEntries) {
+      if (entry.isFile && entry.name.endsWith(DB_CONSTANTS.DB_FILE_EXTENSION)) {
+        const filePath = `${DB_CONSTANTS.TREES_DIRECTORY}/${entry.name}`;
+        if (!registeredPaths.has(filePath)) {
+          unregisteredFiles.push(filePath);
+        }
+      }
+    }
+
+    return unregisteredFiles;
+  } catch (error) {
+    console.error("Error getting unregistered files:", error);
+    return [];
+  }
+}
+
+/**
+ * Simple function to remove an orphaned tree from database
+ * @param treeId - Tree ID to remove
+ * @returns Promise that resolves when removal is complete
+ */
+export async function removeOrphanedTree(treeId: string): Promise<void> {
+  const tree = await getTreeByIdOrThrow(treeId);
+
+  // Check that the file doesn't exist
+  const fileExists = await checkTreeFileExists(tree.file_path);
+
+  if (fileExists) {
+    throw new Error(
+      `Tree file exists at ${tree.file_path}. This is not an orphaned tree.`,
+    );
+  }
+
+  await system.trees.deleteTree(treeId);
+}
+
+/**
+ * Simple function to register an unregistered file
+ * @param filePath - Path to the file
+ * @param treeName - Name for the tree
+ * @param description - Optional description
+ * @returns Promise with the created tree
+ */
+export async function registerUnregisteredFile(
+  filePath: string,
+  treeName: string,
+  description?: string,
+): Promise<Tree> {
+  // Verify the file exists
+  const fileExists = await checkTreeFileExists(filePath);
+  if (!fileExists) {
+    throw new Error(`File does not exist at ${filePath}`);
+  }
+
+  // Check if name already exists
+  const existingTree = await system.trees.getTreeByName(treeName);
+  if (existingTree) {
+    throw new Error(`Tree with name "${treeName}" already exists`);
+  }
+
+  // Create tree with the existing file path
+  const tree = await system.trees.createTree({
+    name: treeName,
+    description,
+  });
+
+  // Update with the correct file path
+  const updatedTree = await system.trees.updateTree(tree.id, {
+    file_path: filePath,
+  });
+
+  return updatedTree;
 }

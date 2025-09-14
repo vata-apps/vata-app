@@ -1,13 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { treeManager } from "$managers";
 import { system } from "$db";
 import type { Tree, CreateTreeInput, UpdateTreeInput } from "$db";
 import { exists, BaseDirectory } from "@tauri-apps/plugin-fs";
 
+type TreeWithStatus = Tree & {
+  fileExists: boolean;
+  isOrphaned?: boolean;
+};
+
 export function TreeManagerTest() {
-  const [trees, setTrees] = useState<(Tree & { fileExists: boolean })[]>([]);
+  const [trees, setTrees] = useState<TreeWithStatus[]>([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Simple state for unregistered files
+  const [unregisteredFiles, setUnregisteredFiles] = useState<string[]>([]);
+  const [showRepairSection, setShowRepairSection] = useState(false);
+
+  // Modal state for registering files
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [registerForm, setRegisterForm] = useState<{
+    filePath: string;
+    treeName: string;
+    description: string;
+  }>({
+    filePath: "",
+    treeName: "",
+    description: "",
+  });
 
   // Create tree form state
   const [createForm, setCreateForm] = useState<CreateTreeInput>({
@@ -27,28 +48,47 @@ export function TreeManagerTest() {
   /**
    * Load all trees from system database and check if files exist
    */
-  const loadTrees = async () => {
+  const loadTrees = useCallback(async () => {
     try {
       setLoading(true);
+      setMessage("Loading trees...");
+
       await system.initializeSystemDatabase();
       const allTrees = await system.trees.getAllTrees();
 
-      // Check if each tree's physical file exists
+      // Check if each tree's physical file exists and mark orphaned trees
       const treesWithFileStatus = await Promise.all(
         allTrees.map(async (tree) => {
           try {
             const fileExists = await exists(tree.file_path, {
               baseDir: BaseDirectory.AppData,
             });
-            return { ...tree, fileExists };
+            return { ...tree, fileExists, isOrphaned: !fileExists };
           } catch {
-            return { ...tree, fileExists: false };
+            return { ...tree, fileExists: false, isOrphaned: true };
           }
         }),
       );
 
+      // Get unregistered files separately
+      const unregistered = await treeManager.getUnregisteredFiles();
+
       setTrees(treesWithFileStatus);
-      setMessage(`Loaded ${allTrees.length} trees`);
+      setUnregisteredFiles(unregistered);
+
+      const orphanedCount = treesWithFileStatus.filter(
+        (t) => t.isOrphaned,
+      ).length;
+
+      if (orphanedCount > 0 || unregistered.length > 0) {
+        setMessage(
+          `Loaded ${allTrees.length} trees. Found ${orphanedCount} orphaned trees and ${unregistered.length} unregistered files.`,
+        );
+        setShowRepairSection(true);
+      } else {
+        setMessage(`Loaded ${allTrees.length} trees. No issues found.`);
+        setShowRepairSection(false);
+      }
     } catch (error) {
       setMessage(
         `Error loading trees: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -56,7 +96,7 @@ export function TreeManagerTest() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   /**
    * Create a new tree
@@ -145,9 +185,85 @@ export function TreeManagerTest() {
     }
   };
 
+  /**
+   * Remove an orphaned tree from database
+   */
+  const handleRemoveOrphanedTree = async (treeId: string) => {
+    try {
+      setLoading(true);
+      await treeManager.removeOrphanedTree(treeId);
+      setMessage(`Successfully removed orphaned tree ID: ${treeId}`);
+      await loadTrees();
+    } catch (error) {
+      setMessage(
+        `Error removing orphaned tree: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Open register modal for a file
+   */
+  const handleRegisterFile = (filePath: string) => {
+    setRegisterForm({
+      filePath,
+      treeName: "",
+      description: "",
+    });
+    setShowRegisterModal(true);
+  };
+
+  /**
+   * Register an unregistered file from modal
+   */
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!registerForm.treeName.trim()) {
+      setMessage("Tree name is required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setShowRegisterModal(false);
+
+      const newTree = await treeManager.registerUnregisteredFile(
+        registerForm.filePath,
+        registerForm.treeName.trim(),
+        registerForm.description.trim() || undefined,
+      );
+
+      setMessage(
+        `Successfully registered file as tree: ${newTree.name} (ID: ${newTree.id})`,
+      );
+      await loadTrees();
+    } catch (error) {
+      setMessage(
+        `Error registering file: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
+   * Cancel register modal
+   */
+  const handleRegisterCancel = () => {
+    setShowRegisterModal(false);
+    setRegisterForm({
+      filePath: "",
+      treeName: "",
+      description: "",
+    });
+  };
+
   useEffect(() => {
     loadTrees();
-  }, []);
+  }, [loadTrees]);
 
   return (
     <div>
@@ -255,7 +371,7 @@ export function TreeManagerTest() {
               <th>Name</th>
               <th>Description</th>
               <th>File Path</th>
-              <th>File Exists</th>
+              <th>Status</th>
               <th>Created At</th>
               <th>Actions</th>
             </tr>
@@ -269,26 +385,66 @@ export function TreeManagerTest() {
                 <td>{tree.file_path}</td>
                 <td
                   style={{
-                    color: tree.fileExists ? "green" : "red",
+                    color: tree.isOrphaned ? "red" : "green",
                     fontWeight: "bold",
                   }}
                 >
-                  {tree.fileExists ? "✓ Yes" : "✗ No"}
+                  {tree.isOrphaned ? "⚠️ Orphaned" : "✓ OK"}
                 </td>
                 <td>{tree.created_at.toLocaleString()}</td>
                 <td>
-                  <button
-                    onClick={() => handleDeleteTree(tree.id)}
-                    disabled={loading}
-                    style={{ color: "red" }}
-                  >
-                    Delete
-                  </button>
+                  {tree.isOrphaned ? (
+                    <button
+                      onClick={() => handleRemoveOrphanedTree(tree.id)}
+                      disabled={loading}
+                      style={{ color: "red" }}
+                    >
+                      Remove from DB
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleDeleteTree(tree.id)}
+                      disabled={loading}
+                      style={{ color: "red" }}
+                    >
+                      Delete
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+      )}
+
+      {showRepairSection && (
+        <>
+          <hr />
+          <h2>Database Repair</h2>
+
+          {unregisteredFiles.length > 0 && (
+            <div>
+              <h3>Unregistered Files ({unregisteredFiles.length})</h3>
+              <p>
+                These database files exist but are not registered in the system:
+              </p>
+              <ul>
+                {unregisteredFiles.map((filePath, index) => (
+                  <li key={index}>
+                    {filePath}
+                    <button
+                      onClick={() => handleRegisterFile(filePath)}
+                      disabled={loading}
+                      style={{ marginLeft: "10px", color: "blue" }}
+                    >
+                      Register
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </>
       )}
 
       <hr />
@@ -297,6 +453,111 @@ export function TreeManagerTest() {
       <button onClick={loadTrees} disabled={loading}>
         Refresh Trees List
       </button>
+
+      {/* Register File Modal */}
+      {showRegisterModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "white",
+              padding: "20px",
+              borderRadius: "8px",
+              minWidth: "400px",
+              maxWidth: "600px",
+            }}
+          >
+            <h3>Register Unregistered File</h3>
+            <p>
+              <strong>File:</strong> {registerForm.filePath}
+            </p>
+
+            <form onSubmit={handleRegisterSubmit}>
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ display: "block", marginBottom: "5px" }}>
+                  Tree Name: *
+                </label>
+                <input
+                  type="text"
+                  value={registerForm.treeName}
+                  onChange={(e) =>
+                    setRegisterForm({
+                      ...registerForm,
+                      treeName: e.target.value,
+                    })
+                  }
+                  placeholder="Enter tree name"
+                  required
+                  style={{ width: "100%", padding: "8px", fontSize: "14px" }}
+                />
+              </div>
+
+              <div style={{ marginBottom: "20px" }}>
+                <label style={{ display: "block", marginBottom: "5px" }}>
+                  Description (optional):
+                </label>
+                <input
+                  type="text"
+                  value={registerForm.description}
+                  onChange={(e) =>
+                    setRegisterForm({
+                      ...registerForm,
+                      description: e.target.value,
+                    })
+                  }
+                  placeholder="Enter description"
+                  style={{ width: "100%", padding: "8px", fontSize: "14px" }}
+                />
+              </div>
+
+              <div style={{ textAlign: "right" }}>
+                <button
+                  type="button"
+                  onClick={handleRegisterCancel}
+                  disabled={loading}
+                  style={{
+                    marginRight: "10px",
+                    padding: "8px 16px",
+                    backgroundColor: "#6c757d",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    padding: "8px 16px",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  {loading ? "Registering..." : "Register"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
