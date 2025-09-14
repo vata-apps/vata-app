@@ -1,0 +1,129 @@
+# Cursor Rules for Vata App - Genealogy Desktop Application
+
+## Build and Development Commands
+
+```bash
+# Desktop app development (primary workflow)
+pnpm tauri dev          # Run desktop app in development mode
+
+# Web preview (for quick frontend testing)
+pnpm dev                # Vite dev server at localhost:5173
+
+# Production builds
+pnpm tauri build        # Build desktop app for distribution
+pnpm build              # Build web version
+
+# Code quality
+pnpm lint               # Run ESLint
+pnpm lint:fix           # Fix ESLint issues
+pnpm format             # Format with Prettier
+pnpm format:check       # Check Prettier formatting
+
+# Testing
+pnpm test               # Run tests (currently runs CI workflow)
+```
+
+## Architecture Overview
+
+This is a genealogy desktop application using Tauri with a React frontend and SQLite databases. The application uses a dual-database architecture:
+
+1. **System Database** (`system.db`): Stores application-wide metadata like tree listings
+2. **Tree Databases** (`{tree-name}.db`): Individual SQLite database per family tree
+
+### Key Architectural Layers
+
+1. **Database Layer** (`src/db/`): Direct database operations with string ID interface
+   - All public APIs use string IDs, converted to integers internally for SQLite
+   - Separate modules for system (`db/system/`) and tree operations (`db/trees/`)
+
+2. **Manager Layer** (`src/managers/`): Business logic and orchestration
+   - `TreeManager`: Handles tree lifecycle (create, update, delete)
+   - Coordinates between system and tree databases
+
+3. **UI Layer**: React components with Mantine UI
+   - Currently showing `TreeManagerTest.tsx` as main interface
+   - Full UI migration in progress from web version
+
+### Database Schema
+
+Trees contain these core entities:
+- **Individuals**: Family members with gender
+- **Names**: Multiple names per individual (birth, marriage, nickname)
+- **Events**: Life events with dates and places
+- **Event Participants**: Links individuals to events with roles
+- **Places**: Hierarchical geographic locations
+- **Event Types & Roles**: Configurable event categories and participant roles
+
+## TypeScript Path Aliases
+
+The project uses these path aliases (configured in tsconfig.json and vite.config.ts):
+- `$/*` → `src/*`
+- `$lib/*` → `src/lib/*`
+- `$managers` → `src/managers`
+- `$db` → `src/db`
+- `$db-system/*` → `src/db/system/*`
+- `$db-tree/*` → `src/db/trees/*`
+
+## Important Implementation Details
+
+1. **ID Strategy**: All database IDs are strings in the public API but stored as integers in SQLite. The database layer handles conversion.
+
+2. **File Storage**: Tree databases are stored in the application data directory:
+   - macOS: `~/Library/Application Support/vata-app/trees/`
+   - Windows: `%APPDATA%/vata-app/trees/`
+   - Linux: `~/.config/vata-app/trees/`
+
+3. **Tauri Plugins Used**:
+   - `tauri-plugin-sql`: SQLite database operations
+   - `tauri-plugin-fs`: File system operations
+   - `tauri-plugin-store`: Application settings storage
+
+4. **Error Handling**: Database operations use proper error boundaries and rollback mechanisms
+
+5. **Current State**: The application is migrating from a Supabase web version. The backend database layer is complete, frontend UI is being rebuilt.
+
+## Testing Approach
+
+When testing database operations:
+1. Use `TreeManagerTest.tsx` interface for manual testing
+2. Database operations can be tested through the manager layer
+3. Check console logs for detailed operation feedback
+
+## Common Development Tasks
+
+### Adding a new database entity
+1. Define TypeScript interface in `src/db/types.ts`
+2. Add schema in `src/db/trees/schema.ts`
+3. Implement CRUD operations in appropriate `src/db/trees/` module
+4. Add manager methods if needed in `src/managers/`
+
+### Working with Tauri
+- Backend configuration: `src-tauri/tauri.conf.json`
+- Menu handling: `src-tauri/src/lib.rs`
+- Frontend-backend communication uses Tauri commands
+
+### Database Migrations
+Currently no migration system - trees are versioned and recreated if schema changes.
+
+## Development Rules
+
+- Always use the defined TypeScript path aliases
+- Respect the layered architecture (DB → Manager → UI)
+- Use string IDs in all public APIs
+- Implement proper error handling with rollback mechanisms
+- Test operations via TreeManagerTest.tsx interface
+- Follow existing project naming conventions
+- **Always use English in the codebase**: All code, comments, variable names, function names, and documentation must be in English
+- **All functions must have valid JSDoc documentation**: Every function must include JSDoc comments with description, parameters, and return value (without TypeScript types)
+
+## Commit Message Rules
+
+- **Always use Conventional Commits standard**: Use format `type(scope): description`
+- **Keep commit messages short and in English**: Brief, clear descriptions
+- **Add description only when necessary**: Keep it simple, avoid verbose explanations
+- **Commit message must summarize ALL changes applied**: Include all modifications made in the commit, not just the last change
+- **Common types**: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- **Examples**: 
+  - `feat(db): add person creation functionality`
+  - `fix(ui): resolve tree loading issue`
+  - `refactor(managers): simplify tree manager logic`
