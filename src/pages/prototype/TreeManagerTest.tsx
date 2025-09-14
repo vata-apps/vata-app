@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "@tanstack/react-router";
 import { treeManager } from "$managers";
 import { system } from "$db";
 import type { Tree, CreateTreeInput, UpdateTreeInput } from "$db";
@@ -380,7 +381,19 @@ export function TreeManagerTest() {
             {trees.map((tree) => (
               <tr key={tree.id}>
                 <td>{tree.id}</td>
-                <td>{tree.name}</td>
+                <td>
+                  {tree.isOrphaned ? (
+                    tree.name
+                  ) : (
+                    <Link
+                      to="/tree/$treeId"
+                      params={{ treeId: tree.id }}
+                      style={{ textDecoration: "underline", color: "blue" }}
+                    >
+                      {tree.name}
+                    </Link>
+                  )}
+                </td>
                 <td>{tree.description || "-"}</td>
                 <td>{tree.file_path}</td>
                 <td
@@ -402,13 +415,23 @@ export function TreeManagerTest() {
                       Remove from DB
                     </button>
                   ) : (
-                    <button
-                      onClick={() => handleDeleteTree(tree.id)}
-                      disabled={loading}
-                      style={{ color: "red" }}
-                    >
-                      Delete
-                    </button>
+                    <>
+                      <Link to="/tree/$treeId" params={{ treeId: tree.id }}>
+                        <button
+                          disabled={loading}
+                          style={{ marginRight: "5px" }}
+                        >
+                          Open
+                        </button>
+                      </Link>
+                      <button
+                        onClick={() => handleDeleteTree(tree.id)}
+                        disabled={loading}
+                        style={{ color: "red" }}
+                      >
+                        Delete
+                      </button>
+                    </>
                   )}
                 </td>
               </tr>
