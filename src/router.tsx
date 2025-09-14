@@ -5,9 +5,9 @@ import {
   Outlet,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { TreeManagementPage } from "./pages/prototype/TreeManagement";
-import { TreeDashboard } from "./pages/prototype/TreeDashboard";
+import { Home } from "./pages/Home";
 import { NotFoundPage } from "./pages/prototype/NotFound";
+import { TreeDashboard } from "./pages/prototype/TreeDashboard";
 
 /**
  * Root route that wraps all other routes
@@ -27,7 +27,7 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: TreeManagementPage,
+  component: Home,
 });
 
 /**
