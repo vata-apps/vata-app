@@ -1,8 +1,8 @@
+import type { TreeWithStatus } from "$/types/tree-status";
+import { getStatusInfo } from "$/utils/tree-status";
 import type { CreateTreeInput, Tree, UpdateTreeInput } from "$db";
 import { system, trees } from "$db";
 import { DB_CONSTANTS, generateTreeFilePath } from "$db/constants";
-import type { TreeWithStatus } from "$/types/tree-status";
-import { getStatusInfo } from "$/utils/tree-status";
 import {
   BaseDirectory,
   copyFile,
@@ -350,7 +350,7 @@ export async function getAllTreesWithStatus(): Promise<{
           description: undefined,
           status: {
             type: "unregistered" as const,
-            message: "Database file not imported",
+            message: "Error",
             details:
               "This database file was found but has not been imported into the application yet.",
           },

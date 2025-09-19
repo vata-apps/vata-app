@@ -4,14 +4,15 @@ export function getStatusInfo(path: string, exists: boolean): TreeStatusInfo {
   if (!exists) {
     return {
       type: "orphaned",
-      message: "Tree directory does not exist",
+      message: "warning",
       details: `The directory ${path} was not found on the filesystem.`,
     };
   }
 
   return {
     type: "healthy",
-    message: "Tree is properly configured",
+    message: "Healthy",
+    details: "Tree is properly configured",
   };
 }
 

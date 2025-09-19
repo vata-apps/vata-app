@@ -1,3 +1,5 @@
+import type { TreeWithStatus } from "$/types/tree-status";
+import { getStatusColor } from "$/utils/tree-status";
 import {
   ActionIcon,
   Badge,
@@ -11,8 +13,6 @@ import {
 } from "@mantine/core";
 import { IconDots, IconPencil, IconTrash } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
-import type { TreeWithStatus } from "$/types/tree-status";
-import { getStatusColor } from "$/utils/tree-status";
 
 interface CardTreeProps {
   tree: TreeWithStatus;
@@ -35,7 +35,7 @@ export function CardTree({ tree }: CardTreeProps) {
               <Badge
                 color={getStatusColor(status.type)}
                 size="sm"
-                variant={status.type === "healthy" ? "light" : "filled"}
+                variant="dot"
               >
                 {status.message}
               </Badge>
