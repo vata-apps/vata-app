@@ -1,0 +1,50 @@
+---
+description: All content in English; user-facing strings must use i18n
+alwaysApply: true
+---
+
+# English Only
+
+Everything in this project must be written in English.
+
+## Scope
+
+- **Code**: Variable names, function names, class names, comments, JSDoc
+- **Documentation**: README, docs, architecture notes, API descriptions
+- **Strings**: User-facing messages, error messages, logs, UI labels — **must use i18n**, never hardcode
+- **Tests**: Test descriptions, assertion messages, test file names
+- **Git**: Commit messages, PR titles, branch names
+
+## Examples
+
+```typescript
+// ❌ BAD
+// Récupère les données utilisateur
+const utilisateur = await getUtilisateur();
+
+// ✅ GOOD
+// Fetches user data
+const user = await getUser();
+```
+
+```typescript
+// ❌ BAD
+throw new Error("Échec de la connexion");
+
+// ✅ GOOD
+throw new Error("Connection failed");
+```
+
+## i18n for User-Facing Strings
+
+All user-facing strings (UI labels, messages, errors shown to users) must go through the i18n system. Do not hardcode them.
+
+```typescript
+// ❌ BAD
+<button>Save</button>
+toast.error("Connection failed");
+
+// ✅ GOOD
+<button>{t('common.save')}</button>
+toast.error(t('errors.connectionFailed'));
+```

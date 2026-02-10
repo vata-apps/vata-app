@@ -1,0 +1,51 @@
+# MVP1: Foundation
+
+## Job to be Done
+
+**Create, modify, open, close, and delete a tree.**
+
+## Scope
+
+MVP1 establishes the technical infrastructure base: Tauri project setup, configuration, database architecture, and initial UI. **No Mantine in MVP1** — HTML-only UI with minimal CSS. Mantine and the design system are added in MVP4.
+
+## Prerequisites
+
+- Node.js and pnpm installed
+- Rust toolchain installed
+- Basic understanding of React, TypeScript, and Tauri
+
+## Contents
+
+- Tauri project initialization
+- TypeScript, Vite, ESLint, Prettier configuration
+- Dependency installation (TanStack Query, TanStack Router, Zustand, Tauri plugins)
+- Database layer setup (system.db for tree metadata)
+- Tree CRUD operations
+- Minimal HTML layout and Home page
+
+## Development Phases
+
+1. **[Phase 1: Setup](phase-1-setup.md)** — Tauri project initialization, configuration, dependencies, folder structure
+2. **[Phase 2: Database](phase-2-database.md)** — Database connection management, system database schema, tree CRUD operations
+3. **[Phase 3: Home UI](phase-3-home-ui.md)** — Minimal HTML layout, Home page with tree list
+
+## Deliverables Checklist
+
+- [ ] Application starts (`pnpm tauri dev`)
+- [ ] No console errors
+- [ ] TypeScript configuration with path aliases
+- [ ] ESLint and Prettier configured
+- [ ] system.db database created automatically
+- [ ] Tree CRUD operations functional
+- [ ] Home page displays tree list
+- [ ] Create/Open/Delete tree actions work
+- [ ] Lint and format pass
+- [ ] Folder structure in place
+
+## Estimated Duration
+
+This MVP establishes the foundation for the entire project. It is the most critical phase and should be completed carefully.
+
+## Next Steps
+
+After completing MVP1, proceed to [MVP2: GEDCOM](../mvp-2-gedcom/README.md) for import/export functionality.
