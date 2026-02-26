@@ -24,10 +24,10 @@ const user = await getUser();
 
 ```typescript
 // ❌ BAD
-throw new Error("Échec de la connexion");
+throw new Error('Échec de la connexion');
 
 // ✅ GOOD
-throw new Error("Connection failed");
+throw new Error('Connection failed');
 ```
 
 ## i18n for User-Facing Strings
@@ -48,7 +48,7 @@ toast.error(t('errors.connectionFailed'));
 
 ---
 
-# No SELECT *
+# No SELECT \*
 
 Never use `SELECT *` in SQL. Always list the columns you need explicitly.
 
@@ -89,3 +89,19 @@ const rows = await db
 ```
 
 When using a query builder, select only the columns required by the caller, not every column from the table.
+
+---
+
+# Available Skills
+
+The following specialized skills are loaded automatically when relevant, or on demand via the skill tool.
+
+| Skill                  | Trigger                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs         |
+| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code               |
+| `docs-consistency`     | After any change to `docs/*.md`                                               |
+| `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes) |
+| `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
+| `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
+| `mvp-tracker`          | When implementing new features or verifying MVP3 scope                        |

@@ -1,0 +1,54 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-context.sh",
+            "timeout": 10,
+            "statusMessage": "Loading session context..."
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/lint-check.sh",
+            "timeout": 30,
+            "statusMessage": "Checking lint..."
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/tsc-check.sh",
+            "timeout": 60,
+            "statusMessage": "Checking TypeScript..."
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/sql-guard.sh",
+            "timeout": 10,
+            "statusMessage": "Checking SQL..."
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/english-guard.sh",
+            "timeout": 10,
+            "statusMessage": "Checking language..."
+          },
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/cargo-check.sh",
+            "timeout": 120,
+            "statusMessage": "Checking Rust..."
+          }
+        ]
+      }
+    ]
+  }
+}
