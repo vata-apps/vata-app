@@ -91,8 +91,8 @@ async function initializeSystemDb(db: Database): Promise<void> {
       name TEXT NOT NULL,
       filename TEXT NOT NULL UNIQUE,
       description TEXT,
-      individual_count INTEGER DEFAULT 0,
-      family_count INTEGER DEFAULT 0,
+      individual_count INTEGER NOT NULL DEFAULT 0,
+      family_count INTEGER NOT NULL DEFAULT 0,
       last_opened_at TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -115,9 +115,9 @@ async function initializeSystemDb(db: Database): Promise<void> {
 
 ### Validation Criteria
 
-- [ ] Connection to system.db works
-- [ ] Schema created automatically
-- [ ] Multi-tree management works
+- [x] Connection to system.db works
+- [x] Schema created automatically
+- [x] Multi-tree management works
 
 ---
 
@@ -140,6 +140,9 @@ interface RawTree {
   created_at: string;
   updated_at: string;
 }
+
+const TREE_COLUMNS =
+  'id, name, filename, description, individual_count, family_count, last_opened_at, created_at, updated_at';
 
 /**
  * Convert raw database row to Tree type
@@ -164,7 +167,7 @@ function mapToTree(raw: RawTree): Tree {
 export async function getAllTrees(): Promise<Tree[]> {
   const db = await getSystemDb();
   const rows = await db.select<RawTree[]>(
-    "SELECT * FROM trees ORDER BY last_opened_at DESC NULLS LAST, created_at DESC",
+    `SELECT ${TREE_COLUMNS} FROM trees ORDER BY last_opened_at DESC NULLS LAST, created_at DESC`,
   );
   return rows.map(mapToTree);
 }
@@ -174,9 +177,10 @@ export async function getAllTrees(): Promise<Tree[]> {
  */
 export async function getTreeById(id: string): Promise<Tree | null> {
   const db = await getSystemDb();
-  const rows = await db.select<RawTree[]>("SELECT * FROM trees WHERE id = $1", [
-    parseInt(id),
-  ]);
+  const rows = await db.select<RawTree[]>(
+    `SELECT ${TREE_COLUMNS} FROM trees WHERE id = $1`,
+    [parseInt(id)],
+  );
   return rows[0] ? mapToTree(rows[0]) : null;
 }
 
@@ -280,9 +284,9 @@ export async function markTreeOpened(id: string): Promise<void> {
 
 ### Validation Criteria
 
-- [ ] CRUD trees works
-- [ ] ID string/int conversion OK
-- [ ] Stats update works
+- [x] CRUD trees works
+- [x] ID string/int conversion OK
+- [x] Stats update works
 
 ---
 
@@ -299,8 +303,8 @@ src/db/
 
 ### Final Checklist
 
-- [ ] Database connection management works
-- [ ] system.db schema created automatically
-- [ ] Tree CRUD operations functional
-- [ ] ID conversion (string ↔ integer) works correctly
-- [ ] Tree stats update works
+- [x] Database connection management works
+- [x] system.db schema created automatically
+- [x] Tree CRUD operations functional
+- [x] ID conversion (string ↔ integer) works correctly
+- [x] Tree stats update works

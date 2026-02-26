@@ -12,56 +12,23 @@ Create a minimal HTML layout and Home page with tree list functionality. **No Ma
 
 ### src/components/layouts/MainLayout.tsx
 
-```typescript
-import { Link, useLocation } from '@tanstack/react-router';
-import { useAppStore } from '$/store/app-store';
+Minimal wrapper — navigation is handled per-page (e.g. `TreeView.tsx` has its own sidebar).
 
+```typescript
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export function MainLayout({ children }: MainLayoutProps) {
-  const sidebarOpen = useAppStore((s) => s.sidebarOpen);
-  const toggleSidebar = useAppStore((s) => s.toggleSidebar);
-  const currentTreeId = useAppStore((s) => s.currentTreeId);
-  const location = useLocation();
-
-  return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <nav style={{ 
-        width: sidebarOpen ? '240px' : '60px',
-        borderRight: '1px solid #e0e0e0',
-        padding: '1rem'
-      }}>
-        <div style={{ marginBottom: '1rem' }}>
-          {sidebarOpen && <h2>Vata</h2>}
-          <button onClick={toggleSidebar}>☰</button>
-        </div>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {currentTreeId ? (
-            <>
-              <li><Link to={`/tree/${currentTreeId}`}>Home</Link></li>
-              <li><Link to={`/tree/${currentTreeId}/individuals`}>Individuals</Link></li>
-              <li><Link to={`/tree/${currentTreeId}/families`}>Families</Link></li>
-            </>
-          ) : (
-            <li><Link to="/">Home</Link></li>
-          )}
-        </ul>
-      </nav>
-      <main style={{ flex: 1, padding: '1rem' }}>
-        {children}
-      </main>
-    </div>
-  );
+  return <div style={{ minHeight: '100vh' }}>{children}</div>;
 }
 ```
 
 ### Validation Criteria
 
-- [ ] Layout displays correctly
-- [ ] Sidebar toggle works
-- [ ] Navigation works
+- [x] Layout displays correctly
+- [x] Sidebar toggle works
+- [x] Navigation works
 
 ---
 
@@ -139,9 +106,28 @@ export function HomePage() {
 
 ### Validation Criteria
 
-- [ ] Home page displays
-- [ ] Tree list loaded
-- [ ] UI responsive (basic)
+- [x] Home page displays
+- [x] Tree list loaded
+- [x] UI responsive (basic)
+
+---
+
+## Step 3.2b: Rename Tree (inline form on card)
+
+Adds rename functionality to each tree card. When the user clicks "Rename", an inline form replaces the tree name with an input field pre-filled with the current name. On submit, calls `updateTree()` and refreshes the list.
+
+**Behavior:**
+- "Rename" button on each card opens an inline edit form (replaces the card's name heading)
+- Input pre-filled with the current name, required, trimmed
+- "Save" button submits; "Cancel" reverts to display mode
+- On success: invalidate the `trees` query, close the form
+
+### Validation Criteria
+
+- [x] Rename button visible on each tree card
+- [x] Input pre-filled with current name
+- [x] Cancel reverts to display mode without saving
+- [x] Save updates the name in `system.db` and reflects on the card
 
 ---
 
@@ -217,15 +203,20 @@ src/
 ├── routes/
 │   ├── __root.tsx
 │   └── index.tsx
-├── App.tsx
 └── main.tsx
 ```
 
+> Note: `src/App.tsx` is not created. `main.tsx` handles the router setup directly.
+
 ### Final Checklist
 
-- [ ] Layout displays correctly
-- [ ] Home page displays
-- [ ] Tree list loads from database
-- [ ] Navigation works
-- [ ] Router configured
-- [ ] Basic styling applied (HTML/CSS only)
+- [x] Layout displays correctly
+- [x] Home page displays
+- [x] Tree list loads from database
+- [x] Create tree works
+- [x] Open tree works
+- [x] Rename tree works
+- [x] Delete tree works
+- [x] Navigation works
+- [x] Router configured
+- [x] Basic styling applied (HTML/CSS only)

@@ -57,13 +57,13 @@ MVP1 establishes the technical foundation for Vata: a working application shell 
 
 ## Success Criteria
 
-- [ ] Application starts (`pnpm tauri dev`) with no console errors
-- [ ] system.db created automatically on first launch
-- [ ] Tree CRUD operations functional
-- [ ] Home page displays and manages the tree list
-- [ ] TypeScript with path aliases configured
-- [ ] ESLint and Prettier configured and passing
-- [ ] Folder structure in place
+- [x] Application starts (`pnpm tauri dev`) with no console errors
+- [x] system.db created automatically on first launch
+- [x] Tree CRUD operations functional
+- [x] Home page displays and manages the tree list
+- [x] TypeScript with path aliases configured
+- [x] ESLint and Prettier configured and passing
+- [x] Folder structure in place
 
 ## Implementation Reference
 

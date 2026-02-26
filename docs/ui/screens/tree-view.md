@@ -165,7 +165,7 @@ While data is loading, each section displays a skeleton loader matching the shap
 
 - **Trigger:** Select "Rename" from the tree menu dropdown
 - **Behavior:** Opens a Rename form window with the current tree name pre-filled
-- **Validation:** Name is required and must be unique among existing trees
+- **Validation:** Name is required
 
 ### Tree Menu: Export GEDCOM
 

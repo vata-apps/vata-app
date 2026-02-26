@@ -31,16 +31,16 @@ MVP1 establishes the technical infrastructure base: Tauri project setup, configu
 
 ## Deliverables Checklist
 
-- [ ] Application starts (`pnpm tauri dev`)
-- [ ] No console errors
-- [ ] TypeScript configuration with path aliases
-- [ ] ESLint and Prettier configured
-- [ ] system.db database created automatically
-- [ ] Tree CRUD operations functional
-- [ ] Home page displays tree list
-- [ ] Create/Open/Delete tree actions work
-- [ ] Lint and format pass
-- [ ] Folder structure in place
+- [x] Application starts (`pnpm tauri dev`)
+- [x] No console errors
+- [x] TypeScript configuration with path aliases
+- [x] ESLint and Prettier configured
+- [x] system.db database created automatically
+- [x] Tree CRUD operations functional
+- [x] Home page displays tree list
+- [x] Create/Open/Rename/Delete tree actions work
+- [x] Lint and format pass
+- [x] Folder structure in place
 
 ## Estimated Duration
 

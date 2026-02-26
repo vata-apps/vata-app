@@ -16,9 +16,9 @@ The application uses two types of SQLite databases:
 ~/Library/Application Support/vata-app/
 ├── system.db                    # System database (unique)
 └── trees/
-    ├── my-family.db             # Tree "My Family"
-    ├── dupont-family.db         # Tree "Dupont Family"
-    └── ...                      # One file per tree
+    ├── 550e8400-e29b-41d4-a716-446655440000.db    # Tree database (UUID)
+    ├── 6ba7b810-9dad-11d1-80b4-00c04fd430c8.db    # Another tree database (UUID)
+    └── ...                                         # One file per tree
 ```
 
 ## Connection PRAGMAs
@@ -50,8 +50,8 @@ CREATE TABLE trees (
     name TEXT NOT NULL,
     filename TEXT NOT NULL UNIQUE,
     description TEXT,
-    individual_count INTEGER DEFAULT 0,
-    family_count INTEGER DEFAULT 0,
+    individual_count INTEGER NOT NULL DEFAULT 0,
+    family_count INTEGER NOT NULL DEFAULT 0,
     last_opened_at TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))

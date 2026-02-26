@@ -32,6 +32,8 @@ throw new Error("Connection failed");
 
 ## i18n for User-Facing Strings
 
+**Deferred to MVP4.** Until then, hardcoded English strings are acceptable. Do not set up an i18n library before MVP4.
+
 All user-facing strings (UI labels, messages, errors shown to users) must go through the i18n system. Do not hardcode them.
 
 ```typescript

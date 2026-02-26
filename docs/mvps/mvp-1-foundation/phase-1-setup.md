@@ -40,9 +40,9 @@ Initialize the Tauri project, configure development tools, install dependencies,
 
 ### Validation Criteria
 
-- [ ] Application starts without errors
-- [ ] Window displays with React content
-- [ ] Hot reload works
+- [x] Application starts without errors
+- [x] Window displays with React content
+- [x] Hot reload works
 
 ---
 
@@ -92,9 +92,9 @@ Initialize the Tauri project, configure development tools, install dependencies,
 
 ### Validation Criteria
 
-- [ ] `pnpm lint` passes without errors
-- [ ] `pnpm format:check` passes
-- [ ] Imports with aliases work
+- [x] `pnpm lint` passes without errors
+- [x] `pnpm format:check` passes
+- [x] Imports with aliases work
 
 ---
 
@@ -137,9 +137,9 @@ cargo add tauri-plugin-store
 
 ### Validation Criteria
 
-- [ ] All dependencies installed
-- [ ] No version conflicts
-- [ ] Build works
+- [x] All dependencies installed
+- [x] No version conflicts
+- [x] Build works
 
 ---
 
@@ -198,9 +198,9 @@ pub fn run() {
 
 ### Validation Criteria
 
-- [ ] Application starts with plugins
-- [ ] No permission errors
-- [ ] Window title is correct
+- [x] Application starts with plugins
+- [x] No permission errors
+- [x] Window title is correct
 
 ---
 
@@ -212,40 +212,24 @@ pub fn run() {
 src/
 ├── components/
 │   ├── common/
-│   │   └── index.ts
 │   ├── individual/
-│   │   └── index.ts
 │   ├── family/
-│   │   └── index.ts
-│   ├── layouts/
-│   │   └── index.ts
-│   └── index.ts
+│   └── layouts/
 ├── pages/
-│   ├── Home.tsx
-│   └── index.ts
+│   └── Home.tsx
 ├── hooks/
-│   └── index.ts
 ├── managers/
-│   └── index.ts
 ├── db/
 │   ├── system/
-│   │   └── index.ts
+│   │   └── trees.ts
 │   ├── trees/
-│   │   └── index.ts
-│   ├── connection.ts
-│   └── index.ts
+│   └── connection.ts
 ├── lib/
-│   ├── query-client.ts
-│   └── index.ts
+│   └── query-client.ts
 ├── store/
-│   ├── app-store.ts
-│   └── index.ts
+│   └── app-store.ts
 ├── types/
-│   ├── database.ts
-│   ├── ui.ts
-│   └── index.ts
-├── theme.ts
-├── App.tsx
+│   └── database.ts
 └── main.tsx
 ```
 
@@ -298,20 +282,14 @@ import { persist } from "zustand/middleware";
 
 interface AppState {
   currentTreeId: string | null;
-  theme: "light" | "dark" | "system";
-
   setCurrentTree: (id: string | null) => void;
-  setTheme: (theme: "light" | "dark" | "system") => void;
 }
 
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
       currentTreeId: null,
-      theme: "system",
-
       setCurrentTree: (id) => set({ currentTreeId: id }),
-      setTheme: (theme) => set({ theme }),
     }),
     {
       name: "vata-app-storage",
@@ -322,9 +300,9 @@ export const useAppStore = create<AppState>()(
 
 ### Validation Criteria
 
-- [ ] Structure created
-- [ ] Imports work
-- [ ] No TypeScript errors
+- [x] Structure created
+- [x] Imports work
+- [x] No TypeScript errors
 
 ---
 
@@ -337,7 +315,6 @@ src/
 ├── components/
 │   └── (folders created)
 ├── pages/
-│   └── (folders created)
 ├── hooks/
 ├── managers/
 ├── db/
@@ -347,7 +324,6 @@ src/
 │   └── app-store.ts
 ├── types/
 │   └── database.ts
-├── App.tsx
 └── main.tsx
 
 src-tauri/
@@ -366,8 +342,8 @@ Configuration files:
 
 ### Final Checklist
 
-- [ ] Application starts (`pnpm tauri dev`)
-- [ ] No console errors
-- [ ] Folder structure in place
-- [ ] Lint and format pass
-- [ ] Imports with aliases work
+- [x] Application starts (`pnpm tauri dev`)
+- [x] No console errors
+- [x] Folder structure in place
+- [x] Lint and format pass
+- [x] Imports with aliases work

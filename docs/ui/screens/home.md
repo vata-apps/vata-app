@@ -51,7 +51,7 @@ Shown when there are no trees at all:
 
 Opens in a separate native window (no MainLayout).
 
-- **Name** field -- required, must be unique across all trees
+- **Name** field -- required
 - **Description** field -- optional, free text
 - **Cancel** button -- closes the window without action
 - **Create** button -- disabled until form is valid
@@ -62,7 +62,7 @@ Opens in a separate native window (no MainLayout).
 
 - **File picker** -- supports drag-and-drop and browse
 - **Validation step** -- after file is selected, displays stats: X individuals, X families, X events, X places
-- **Name** field -- pre-filled from the filename (editable, required, must be unique)
+- **Name** field -- pre-filled from the filename (editable, required)
 - **Cancel** button -- closes the window without action
 - **Import** button -- disabled until file is valid and name is provided
 
@@ -80,7 +80,7 @@ Accessible via right-click on a card or the three-dot icon. Options:
 
 Opens in a separate native window (no MainLayout).
 
-- **Name** field -- pre-filled with the current tree name, required, must be unique
+- **Name** field -- pre-filled with the current tree name, required
 - **Cancel** button
 - **Save** button -- disabled until form is valid
 
@@ -101,7 +101,7 @@ Displayed as an in-window confirmation dialog (not a separate native window).
 | Tree name very long                  | Truncate with ellipsis on card                    |
 | Tree description very long           | Truncate to 2 lines with ellipsis                 |
 | Tree with 0 individuals / 0 families | Show "0" counts                                   |
-| Duplicate tree name on create        | Validation error inline                           |
+| Duplicate tree name on create        | Allowed -- filename is a UUID independent of the name |
 | GEDCOM file too large                | Show progress indicator, disable import button    |
 | GEDCOM file invalid                  | Show error message with detail in the Import GEDCOM window |
 | GEDCOM import partially fails        | Show summary of what was imported and what failed |
@@ -118,9 +118,8 @@ Displayed as an in-window confirmation dialog (not a separate native window).
 1. User clicks "New Tree" button (page header or empty state)
 2. New Tree form window opens
 3. User enters a name (required) and optional description
-4. System validates the name is not empty and is unique across all trees
-5. On validation failure: inline error message under the name field
-6. On submit: create an entry in `system.db`, create the corresponding `.db` file with the schema
+4. System validates the name is not empty
+5. On submit: create an entry in `system.db`, create the corresponding `.db` file with the schema
 7. Navigate to `/tree/{newTreeId}`
 
 ### Import GEDCOM
@@ -132,7 +131,7 @@ Displayed as an in-window confirmation dialog (not a separate native window).
 5. If the file is invalid: show an error message with detail (e.g., "Not a valid GEDCOM 5.5.1 file")
 6. If valid: display a preview with stats (X individuals, X families, X events, X places)
 7. Name field is pre-filled from the filename; user may edit it
-8. System validates the name is not empty and is unique
+8. System validates the name is not empty
 9. On submit: create tree in `system.db`, create `.db` file, import all data
 10. If import partially fails: show summary of what was imported and what failed
 11. Navigate to `/tree/{newTreeId}`
@@ -149,9 +148,8 @@ Displayed as an in-window confirmation dialog (not a separate native window).
 1. User selects "Rename" from the context menu
 2. Rename form window opens with the current name pre-filled
 3. User edits the name
-4. System validates the name is not empty and is unique (excluding the current tree)
-5. On validation failure: inline error message
-6. On submit: update the tree name in `system.db`
+4. System validates the name is not empty
+5. On submit: update the tree name in `system.db`
 7. Card updates in place
 
 ### Duplicate Tree
