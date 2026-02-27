@@ -105,3 +105,64 @@ The following specialized skills are loaded automatically when relevant, or on d
 | `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
 | `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
 | `mvp-tracker`          | When implementing new features or verifying MVP3 scope                        |
+
+---
+
+# Granular Commits
+
+Commit early and often. Each commit should represent a single, complete unit of work that can be reverted independently.
+
+## Why
+
+- **Easy reverts**: If something breaks, you can revert just the problematic change without losing unrelated work.
+- **Clear history**: Small commits make it easier to understand what changed and why.
+- **Safer refactoring**: Breaking changes into small steps reduces risk.
+
+## When to Commit
+
+Commit immediately after completing any of these:
+
+- A new function or component that works
+- A bug fix (even a one-liner)
+- A refactor that doesn't change behavior
+- Adding or updating tests
+- Schema or migration changes
+- Documentation updates
+- Dependency changes (`package.json`, `Cargo.toml`)
+
+## Commit Message Format
+
+Use conventional commits:
+
+```
+<type>: <short description>
+
+# Examples
+feat: add birth date picker to individual form
+fix: prevent duplicate family relationships
+refactor: extract date formatting to utility
+test: add coverage for GEDCOM date parsing
+docs: update database schema documentation
+chore: upgrade drizzle-orm to 0.30.0
+```
+
+## Anti-patterns
+
+```
+# ❌ BAD: Too large, mixed concerns
+git commit -m "feat: implement entire family tree view with tests and docs"
+
+# ❌ BAD: Vague
+git commit -m "fix stuff"
+git commit -m "wip"
+
+# ✅ GOOD: Small, focused
+git commit -m "feat: add FamilyTreeNode component"
+git commit -m "feat: implement tree layout algorithm"
+git commit -m "test: add FamilyTreeNode unit tests"
+git commit -m "docs: add family tree architecture notes"
+```
+
+## Rule
+
+After completing each distinct piece of work, commit it before moving to the next task. Do not accumulate multiple unrelated changes in a single commit.
