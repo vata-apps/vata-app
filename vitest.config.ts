@@ -1,19 +1,12 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [
-    TanStackRouterVite({
-      routesDirectory: 'src/routes',
-      generatedRouteTree: 'src/routeTree.gen.ts',
-    }),
-    react(),
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       $: path.resolve(__dirname, './src'),
@@ -25,19 +18,13 @@ export default defineConfig({
       $types: path.resolve(__dirname, './src/types'),
     },
   },
-
-  clearScreen: false,
-  server: {
-    port: 1420,
-    strictPort: true,
-    watch: {
-      ignored: ['**/src-tauri/**'],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      exclude: ['src/routeTree.gen.ts', 'src/main.tsx'],
     },
-  },
-  envPrefix: ['VITE_', 'TAURI_'],
-  build: {
-    target: ['es2021', 'chrome100', 'safari13'],
-    minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
-    sourcemap: !!process.env.TAURI_DEBUG,
   },
 });

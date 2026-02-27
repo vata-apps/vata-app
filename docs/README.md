@@ -18,7 +18,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-001: Desktop Framework](./decisions/adr-001-desktop-framework.md) — Tauri over Electron
 - [ADR-002: Frontend Stack](./decisions/adr-002-frontend-stack.md) — React, TypeScript, Vite, TanStack, Zustand
 - [ADR-003: Database Architecture](./decisions/adr-003-database-architecture.md) — Dual DB, string IDs, layer separation
-- [ADR-004: GEDCOM Libraries (in-app)](./decisions/adr-004-gedcom-libraries.md) — gedcom-parser and gedcom-date as in-app modules (@vata-apps/*)
+- [ADR-004: GEDCOM Libraries (in-app)](./decisions/adr-004-gedcom-libraries.md) — gedcom-parser and gedcom-date as in-app modules (@vata-apps/\*)
 - [ADR-005: UI Strategy](./decisions/adr-005-ui-strategy.md) — HTML in MVP1–3, Mantine in MVP4
 - [ADR-006: Import/Export](./decisions/adr-006-import-export.md) — Two-phase import, round-trip export
 
@@ -28,6 +28,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [Database Schema](./architecture/database-schema.md) — Complete data model (system.db + tree.db)
 - [Data Flow](./architecture/data-flow.md) — Communication between layers (UI → Hooks → Managers → DB)
 - [Tech Stack](./architecture/tech-stack.md) — Technologies, versions, configurations, justifications
+- [Testing Strategy](./architecture/testing-strategy.md) — Philosophy, tooling, layers (TS integration, Rust, E2E)
 
 ## MVPs
 

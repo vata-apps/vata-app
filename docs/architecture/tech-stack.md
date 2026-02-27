@@ -2,28 +2,29 @@
 
 ## Overview
 
-| Category          | Technology      | Version       | Role                              | MVP  |
-| ----------------- | --------------- | ------------- | --------------------------------- | ---- |
-| Desktop Framework | Tauri           | 2.0           | Native multi-platform shell       | 1    |
-| Backend           | Rust            | Latest stable | Tauri plugins                     | 1    |
-| Frontend          | React           | 18.x          | Declarative UI                    | 1    |
-| Language          | TypeScript      | 5.x           | Static typing                     | 1    |
-| Bundler           | Vite            | 5.x           | Fast build, HMR                   | 1    |
-| State (Server)    | TanStack Query  | 5.x           | Cache and synchronization         | 1    |
-| State (Client)    | Zustand         | 4.x           | Lightweight global state          | 1    |
-| Routing           | TanStack Router | 1.x           | Type-safe routing                 | 1    |
-| Database          | SQLite          | 3.x           | Local storage                     | 1    |
-| GEDCOM            | In-app module   | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`) | 2    |
-| Dates             | In-app module   | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`)     | 3    |
-| UI Library        | Mantine         | 7.x           | Components and design system      | 4    |
-| Icons             | Tabler Icons    | Latest        | Consistent iconography            | 4    |
-| i18n              | react-i18next   | 15.x          | Internationalization              | 4    |
+| Category          | Technology      | Version       | Role                                                         | MVP |
+| ----------------- | --------------- | ------------- | ------------------------------------------------------------ | --- |
+| Desktop Framework | Tauri           | 2.0           | Native multi-platform shell                                  | 1   |
+| Backend           | Rust            | Latest stable | Tauri plugins                                                | 1   |
+| Frontend          | React           | 18.x          | Declarative UI                                               | 1   |
+| Language          | TypeScript      | 5.x           | Static typing                                                | 1   |
+| Bundler           | Vite            | 5.x           | Fast build, HMR                                              | 1   |
+| State (Server)    | TanStack Query  | 5.x           | Cache and synchronization                                    | 1   |
+| State (Client)    | Zustand         | 4.x           | Lightweight global state                                     | 1   |
+| Routing           | TanStack Router | 1.x           | Type-safe routing                                            | 1   |
+| Database          | SQLite          | 3.x           | Local storage                                                | 1   |
+| GEDCOM            | In-app module   | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)      | 2   |
+| Dates             | In-app module   | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`) | 3   |
+| Testing           | Vitest + RTL    | 2.x / 16.x    | Unit and integration tests                                   | 3   |
+| UI Library        | Mantine         | 7.x           | Components and design system                                 | 4   |
+| Icons             | Tabler Icons    | Latest        | Consistent iconography                                       | 4   |
+| i18n              | react-i18next   | 15.x          | Internationalization                                         | 4   |
 
 ### Adoption by MVP
 
 - **MVP1**: Tauri, React, Vite, TypeScript, TanStack Query, Zustand, TanStack Router, SQLite. No UI library (minimal HTML/CSS).
 - **MVP2**: Integration of in-app module `@vata-apps/gedcom-parser` for import/export.
-- **MVP3**: In-app module `@vata-apps/gedcom-date` for event dates. HTML-only UI with minimal CSS.
+- **MVP3**: In-app module `@vata-apps/gedcom-date` for event dates. HTML-only UI with minimal CSS. Vitest + Testing Library introduced.
 - **MVP4**: Mantine, Tabler Icons, complete design system, i18n.
 
 ---
@@ -32,13 +33,13 @@
 
 ### Why Tauri Over Electron?
 
-| Criterion     | Tauri                       | Electron         |
-| ------------- | --------------------------- | ---------------- |
-| Bundle size   | ~3-10 MB                    | ~150+ MB         |
-| RAM usage     | ~30-50 MB                   | ~100-300 MB      |
-| Startup       | < 1s                        | 2-5s             |
-| Security      | Strict sandbox, permissions | More permissive  |
-| WebView       | Native (WebKit/WebView2)    | Chromium bundled |
+| Criterion   | Tauri                       | Electron         |
+| ----------- | --------------------------- | ---------------- |
+| Bundle size | ~3-10 MB                    | ~150+ MB         |
+| RAM usage   | ~30-50 MB                   | ~100-300 MB      |
+| Startup     | < 1s                        | 2-5s             |
+| Security    | Strict sandbox, permissions | More permissive  |
+| WebView     | Native (WebKit/WebView2)    | Chromium bundled |
 
 ### Tauri Plugins Used
 
@@ -202,15 +203,15 @@ src/pages/standalone/       # Form window pages (loaded in native windows, no Ma
 
 ### Path Aliases
 
-| Alias           | Path               | Usage             |
-| --------------- | ------------------ | ----------------- |
-| `$/*`           | `src/*`            | General imports   |
-| `$lib/*`        | `src/lib/*`        | Utilities         |
-| `$components/*` | `src/components/*` | UI components     |
-| `$hooks/*`      | `src/hooks/*`      | Custom hooks      |
-| `$managers`     | `src/managers`     | Business logic    |
-| `$db`           | `src/db`           | Database layer    |
-| `$types`        | `src/types`        | Shared types      |
+| Alias           | Path               | Usage           |
+| --------------- | ------------------ | --------------- |
+| `$/*`           | `src/*`            | General imports |
+| `$lib/*`        | `src/lib/*`        | Utilities       |
+| `$components/*` | `src/components/*` | UI components   |
+| `$hooks/*`      | `src/hooks/*`      | Custom hooks    |
+| `$managers`     | `src/managers`     | Business logic  |
+| `$db`           | `src/db`           | Database layer  |
+| `$types`        | `src/types`        | Shared types    |
 
 ---
 
@@ -228,21 +229,21 @@ src/pages/standalone/       # Form window pages (loaded in native windows, no Ma
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      $: path.resolve(__dirname, "./src"),
-      $lib: path.resolve(__dirname, "./src/lib"),
-      $components: path.resolve(__dirname, "./src/components"),
-      $hooks: path.resolve(__dirname, "./src/hooks"),
-      $managers: path.resolve(__dirname, "./src/managers"),
-      $db: path.resolve(__dirname, "./src/db"),
-      $types: path.resolve(__dirname, "./src/types"),
+      $: path.resolve(__dirname, './src'),
+      $lib: path.resolve(__dirname, './src/lib'),
+      $components: path.resolve(__dirname, './src/components'),
+      $hooks: path.resolve(__dirname, './src/hooks'),
+      $managers: path.resolve(__dirname, './src/managers'),
+      $db: path.resolve(__dirname, './src/db'),
+      $types: path.resolve(__dirname, './src/types'),
     },
   },
   clearScreen: false,
@@ -250,10 +251,10 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
   },
-  envPrefix: ["VITE_", "TAURI_"],
+  envPrefix: ['VITE_', 'TAURI_'],
   build: {
-    target: ["es2021", "chrome100", "safari13"],
-    minify: !process.env.TAURI_DEBUG ? "esbuild" : false,
+    target: ['es2021', 'chrome100', 'safari13'],
+    minify: !process.env.TAURI_DEBUG ? 'esbuild' : false,
     sourcemap: !!process.env.TAURI_DEBUG,
   },
 });
@@ -276,42 +277,42 @@ export default defineConfig({
 
 ```typescript
 // src/theme.ts
-import { createTheme, MantineColorsTuple } from "@mantine/core";
+import { createTheme, MantineColorsTuple } from '@mantine/core';
 
 const brand: MantineColorsTuple = [
-  "#f0f4ff",
-  "#dce4f5",
-  "#b4c6e7",
-  "#8aa5da",
-  "#6889cf",
-  "#5278c8",
-  "#466fc6",
-  "#375eaf",
-  "#2d539e",
-  "#1e478d",
+  '#f0f4ff',
+  '#dce4f5',
+  '#b4c6e7',
+  '#8aa5da',
+  '#6889cf',
+  '#5278c8',
+  '#466fc6',
+  '#375eaf',
+  '#2d539e',
+  '#1e478d',
 ];
 
 export const theme = createTheme({
-  primaryColor: "brand",
+  primaryColor: 'brand',
   colors: {
     brand,
   },
-  fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
+  fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
   headings: {
-    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-    fontWeight: "600",
+    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+    fontWeight: '600',
   },
-  defaultRadius: "md",
+  defaultRadius: 'md',
   components: {
     Button: {
       defaultProps: {
-        radius: "md",
+        radius: 'md',
       },
     },
     Card: {
       defaultProps: {
-        radius: "md",
-        shadow: "sm",
+        radius: 'md',
+        shadow: 'sm',
       },
     },
   },
@@ -320,18 +321,18 @@ export const theme = createTheme({
 
 ### Key Components Used
 
-| Component             | Usage                        |
-| --------------------- | ---------------------------- |
-| `AppShell`            | Main layout                   |
+| Component             | Usage                                                          |
+| --------------------- | -------------------------------------------------------------- |
+| `AppShell`            | Main layout                                                    |
 | **Form windows**      | Create/edit flows (native windows under `/standalone/` routes) |
-| **ConfirmDialog**     | In-window confirmations (unsaved changes, delete) |
-| `Table`               | Data lists                   |
-| `TextInput`, `Select` | Forms                        |
-| `Card`                | Person/event cards           |
-| `Tabs`                | Secondary navigation         |
-| `Notification`        | User feedback                |
-| `Menu`                | Context menus                |
-| `Breadcrumbs`         | Breadcrumb navigation        |
+| **ConfirmDialog**     | In-window confirmations (unsaved changes, delete)              |
+| `Table`               | Data lists                                                     |
+| `TextInput`, `Select` | Forms                                                          |
+| `Card`                | Person/event cards                                             |
+| `Tabs`                | Secondary navigation                                           |
+| `Notification`        | User feedback                                                  |
+| `Menu`                | Context menus                                                  |
+| `Breadcrumbs`         | Breadcrumb navigation                                          |
 
 ---
 
@@ -349,7 +350,7 @@ export const theme = createTheme({
 
 ```typescript
 // src/lib/query-client.ts
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -370,7 +371,7 @@ export const queryClient = new QueryClient({
 
 ```typescript
 // Keys centralized in queryKeys, never hardcoded (see overview.md and data-flow.md)
-import { queryKeys } from "$lib/query-keys";
+import { queryKeys } from '$lib/query-keys';
 
 // Read hook
 export function useIndividuals() {
@@ -413,18 +414,18 @@ queryClient.invalidateQueries({ queryKey: queryKeys.individuals });
 
 ```typescript
 // src/store/app-store.ts
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface AppState {
   // State
   currentTreeId: string | null;
-  theme: "light" | "dark" | "system";
+  theme: 'light' | 'dark' | 'system';
   recentTrees: string[];
 
   // Actions
   setCurrentTree: (id: string | null) => void;
-  setTheme: (theme: "light" | "dark" | "system") => void;
+  setTheme: (theme: 'light' | 'dark' | 'system') => void;
   addRecentTree: (id: string) => void;
 }
 
@@ -432,23 +433,20 @@ export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
       currentTreeId: null,
-      theme: "system",
+      theme: 'system',
       recentTrees: [],
 
       setCurrentTree: (id) => set({ currentTreeId: id }),
       setTheme: (theme) => set({ theme }),
       addRecentTree: (id) =>
         set((state) => ({
-          recentTrees: [id, ...state.recentTrees.filter((t) => t !== id)].slice(
-            0,
-            5,
-          ),
+          recentTrees: [id, ...state.recentTrees.filter((t) => t !== id)].slice(0, 5),
         })),
     }),
     {
-      name: "vata-app-storage",
-    },
-  ),
+      name: 'vata-app-storage',
+    }
+  )
 );
 ```
 
@@ -524,27 +522,25 @@ import enSource from './locales/en/source.json';
 import enPlace from './locales/en/place.json';
 import enSettings from './locales/en/settings.json';
 
-i18n
-  .use(initReactI18next)
-  .init({
-    resources: {
-      en: {
-        common: enCommon,
-        home: enHome,
-        individual: enIndividual,
-        family: enFamily,
-        event: enEvent,
-        source: enSource,
-        place: enPlace,
-        settings: enSettings,
-      },
+i18n.use(initReactI18next).init({
+  resources: {
+    en: {
+      common: enCommon,
+      home: enHome,
+      individual: enIndividual,
+      family: enFamily,
+      event: enEvent,
+      source: enSource,
+      place: enPlace,
+      settings: enSettings,
     },
-    defaultNS: 'common',
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false, // React already escapes
-    },
-  });
+  },
+  defaultNS: 'common',
+  fallbackLng: 'en',
+  interpolation: {
+    escapeValue: false, // React already escapes
+  },
+});
 
 export default i18n;
 ```
@@ -573,7 +569,7 @@ import { useTranslation } from 'react-i18next';
 
 function EventTypeSelect() {
   const { t } = useTranslation('event');
-  
+
   return (
     <Select
       label={t('selectEventType')}
@@ -654,23 +650,23 @@ Every connection must run standard PRAGMAs after opening for performance and dat
 
 ```typescript
 // src/db/connection.ts
-import Database from "@tauri-apps/plugin-sql";
+import Database from '@tauri-apps/plugin-sql';
 
 let systemDb: Database | null = null;
 let treeDb: Database | null = null;
 
 async function applyConnectionPragmas(db: Database): Promise<void> {
-  await db.execute("PRAGMA journal_mode = WAL");
-  await db.execute("PRAGMA synchronous = NORMAL");
-  await db.execute("PRAGMA foreign_keys = ON");
-  await db.execute("PRAGMA busy_timeout = 5000");
-  await db.execute("PRAGMA cache_size = -20000");
-  await db.execute("PRAGMA temp_store = MEMORY");
+  await db.execute('PRAGMA journal_mode = WAL');
+  await db.execute('PRAGMA synchronous = NORMAL');
+  await db.execute('PRAGMA foreign_keys = ON');
+  await db.execute('PRAGMA busy_timeout = 5000');
+  await db.execute('PRAGMA cache_size = -20000');
+  await db.execute('PRAGMA temp_store = MEMORY');
 }
 
 export async function getSystemDb(): Promise<Database> {
   if (!systemDb) {
-    systemDb = await Database.load("sqlite:system.db");
+    systemDb = await Database.load('sqlite:system.db');
     await applyConnectionPragmas(systemDb);
   }
   return systemDb;
@@ -687,7 +683,7 @@ export async function openTreeDb(filename: string): Promise<Database> {
 
 export async function getTreeDb(): Promise<Database> {
   if (!treeDb) {
-    throw new Error("No tree database open");
+    throw new Error('No tree database open');
   }
   return treeDb;
 }
@@ -706,34 +702,31 @@ export async function closeTreeDb(): Promise<void> {
 // SELECT (list columns explicitly; never use SELECT *)
 // id from app is formatted (e.g. I-0001); use parseEntityId for DB query
 const rows = await db.select<RawIndividual[]>(
-  "SELECT id, gender, is_living, notes, created_at, updated_at FROM individuals WHERE id = $1",
-  [parseEntityId(id)],
+  'SELECT id, gender, is_living, notes, created_at, updated_at FROM individuals WHERE id = $1',
+  [parseEntityId(id)]
 );
 const individual = rows[0] ? mapToIndividual(rows[0]) : null; // mapToIndividual uses formatEntityId('I', raw.id)
 
 // INSERT
-const result = await db.execute(
-  "INSERT INTO individuals (gender, is_living) VALUES ($1, $2)",
-  [gender, isLiving ? 1 : 0],
-);
-const insertedId = formatEntityId("I", result.lastInsertId);
+const result = await db.execute('INSERT INTO individuals (gender, is_living) VALUES ($1, $2)', [
+  gender,
+  isLiving ? 1 : 0,
+]);
+const insertedId = formatEntityId('I', result.lastInsertId);
 
 // UPDATE
-await db.execute("UPDATE individuals SET gender = $1 WHERE id = $2", [
-  gender,
-  parseEntityId(id),
-]);
+await db.execute('UPDATE individuals SET gender = $1 WHERE id = $2', [gender, parseEntityId(id)]);
 
 // DELETE
-await db.execute("DELETE FROM individuals WHERE id = $1", [parseEntityId(id)]);
+await db.execute('DELETE FROM individuals WHERE id = $1', [parseEntityId(id)]);
 
 // Transaction
-await db.execute("BEGIN TRANSACTION");
+await db.execute('BEGIN TRANSACTION');
 try {
   // ... operations
-  await db.execute("COMMIT");
+  await db.execute('COMMIT');
 } catch (e) {
-  await db.execute("ROLLBACK");
+  await db.execute('ROLLBACK');
   throw e;
 }
 ```
@@ -763,20 +756,20 @@ try {
 
 ```javascript
 // eslint.config.js
-import js from "@eslint/js";
-import typescript from "@typescript-eslint/eslint-plugin";
-import typescriptParser from "@typescript-eslint/parser";
-import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
+import js from '@eslint/js';
+import typescript from '@typescript-eslint/eslint-plugin';
+import typescriptParser from '@typescript-eslint/parser';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
 
 export default [
   js.configs.recommended,
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ['**/*.{ts,tsx}'],
     plugins: {
-      "@typescript-eslint": typescript,
+      '@typescript-eslint': typescript,
       react: react,
-      "react-hooks": reactHooks,
+      'react-hooks': reactHooks,
     },
     languageOptions: {
       parser: typescriptParser,
@@ -785,9 +778,9 @@ export default [
       },
     },
     rules: {
-      "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
-      "@typescript-eslint/no-unused-vars": "warn",
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
     },
   },
 ];
