@@ -23,6 +23,8 @@ export default defineConfig({
       $managers: path.resolve(__dirname, './src/managers'),
       $db: path.resolve(__dirname, './src/db'),
       $types: path.resolve(__dirname, './src/types'),
+      '@vata-apps/gedcom-parser': path.resolve(__dirname, './src/gedcom-parser'),
+      '@vata-apps/gedcom-date': path.resolve(__dirname, './src/gedcom-date'),
     },
   },
 
