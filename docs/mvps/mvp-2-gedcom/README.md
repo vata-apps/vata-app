@@ -30,16 +30,16 @@ MVP2 implements GEDCOM 5.5.1 import and export functionality, the standard excha
 
 ## Deliverables Checklist
 
-- [ ] GEDCOM parser functional
-- [ ] Individual import works
-- [ ] Name import works
-- [ ] Family import works
-- [ ] Event import works
-- [ ] Place import works
-- [ ] Complete GEDCOM export works
-- [ ] Error handling implemented
-- [ ] Import UI with preview
-- [ ] Export UI with options
+- [x] GEDCOM parser functional
+- [x] Individual import works
+- [x] Name import works
+- [x] Family import works
+- [x] Event import works
+- [x] Place import works
+- [x] Complete GEDCOM export works
+- [x] Error handling implemented
+- [x] Import UI with preview
+- [x] Export UI with options
 - [ ] Tests with real GEDCOM files
 
 ## Estimated Duration
