@@ -84,13 +84,13 @@ See section 7.
 
 ## 3. Project Setup
 
-**Vitest 2** (compatible with Vite 5) + `@testing-library/react`:
+Check `package.json` for current test dependencies. Install testing libraries:
 
 ```bash
-pnpm add -D vitest@^2 @vitest/coverage-v8@^2 @testing-library/react @testing-library/user-event @testing-library/jest-dom jsdom
+pnpm add -D vitest @vitest/coverage-v8 @testing-library/react @testing-library/user-event @testing-library/jest-dom jsdom
 ```
 
-Use a **separate `vitest.config.ts`** (not inside `vite.config.ts`) to avoid Vite/Vitest version conflicts:
+Use a **separate `vitest.config.ts`** (not inside `vite.config.ts`) to avoid Vite/Vitest version conflicts. Copy the path aliases from `tsconfig.json`:
 
 ```typescript
 // vitest.config.ts
@@ -105,13 +105,18 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      $: path.resolve(__dirname, './src'),
-      $lib: path.resolve(__dirname, './src/lib'),
-      $components: path.resolve(__dirname, './src/components'),
-      $hooks: path.resolve(__dirname, './src/hooks'),
-      $managers: path.resolve(__dirname, './src/managers'),
-      $db: path.resolve(__dirname, './src/db'),
-      $types: path.resolve(__dirname, './src/types'),
+      // Copy path aliases from tsconfig.json
+      ...Object.fromEntries(
+        Object.entries({
+          $: './src',
+          $lib: './src/lib',
+          $components: './src/components',
+          $hooks: './src/hooks',
+          $managers: './src/managers',
+          $db: './src/db',
+          $types: './src/types',
+        }).map(([k, v]) => [k, path.resolve(__dirname, v)])
+      ),
     },
   },
   test: {
@@ -141,25 +146,19 @@ Co-locate tests with source files:
 
 ```
 src/
-  db/
-    system/
-      trees.ts
-      trees.test.ts        ← integration test with in-memory SQLite
-  managers/
-    IndividualManager.ts
-    IndividualManager.test.ts
-  components/
-    TreeCard.tsx
-    TreeCard.test.tsx
+  {layer}/
+    {module}.ts
+    {module}.test.ts      ← test file next to implementation
   test/
     setup.ts               ← global test setup (@testing-library/jest-dom)
     utils.tsx              ← shared renderWithProviders
 src-tauri/
   src/
-    db/
-      trees.rs
-      trees_test.rs        ← Rust unit + integration tests
+    {module}.rs
+    {module}_test.rs      ← Rust tests inline or in _test.rs
 ```
+
+The exact structure follows the source directories (`src/db/`, `src/managers/`, `src/components/`, etc.).
 
 ---
 
@@ -239,15 +238,9 @@ export function renderWithProviders(ui: React.ReactElement, options?: RenderOpti
 
 ## 7. Rust / Tauri Tests
 
-### Current state
-
-The `src-tauri/` crate is currently a **plugin-composition shell** — no custom `#[tauri::command]` functions, no business logic in Rust. All DB access goes through `tauri-plugin-sql` invoked from the frontend. **There is nothing to test in Rust today.**
-
-Do not add placeholder or trivial Rust tests. Add them when there is real logic to validate.
-
 ### When to write Rust tests
 
-Write Rust tests as soon as any of the following appear in `src-tauri/src/`:
+Do not add placeholder or trivial Rust tests. Add them when there is real logic to validate in `src-tauri/src/`:
 
 - A `#[tauri::command]` function with non-trivial logic
 - A data mapping function (e.g., converting a DB row to a struct)
@@ -311,7 +304,7 @@ Add `rusqlite` to `Cargo.toml` under `[dev-dependencies]`:
 
 ```toml
 [dev-dependencies]
-rusqlite = { version = "0.31", features = ["bundled"] }
+rusqlite = { version = "0.31", features = ["bundled"] }  # check current version in Cargo.lock
 ```
 
 ### E2E tests (tauri-driver / WebDriver)

@@ -5,7 +5,13 @@ description: Ensures SQLite code and documentation follow high standards of perf
 
 # SQLite Performance and Data Integrity Standards
 
-Apply this skill when writing or reviewing any SQLite-related code or documentation in the project. The app uses SQLite via `tauri-plugin-sql` with a dual-database architecture (`system.db` + per-tree `.db` files).
+Apply this skill when writing or reviewing any SQLite-related code or documentation in the project.
+
+## Where to Find Current Architecture
+
+- **Connection logic**: `src/db/connection.ts` — contains connection initialization and PRAGMA setup
+- **Schema definition**: `docs/architecture/database-schema.md` — documents all tables, columns, indexes
+- **DB layer functions**: `src/db/**/*.ts` — TypeScript functions that execute SQL
 
 ## When to Apply
 
@@ -17,7 +23,7 @@ Apply this skill when writing or reviewing any SQLite-related code or documentat
 
 ## 1. Connection Initialization PRAGMAs
 
-Every database connection **must** execute these PRAGMAs immediately after opening (e.g. in `getSystemDb()` and `openTreeDb()` in `src/db/connection.ts`):
+Every database connection **must** execute these PRAGMAs immediately after opening (check `src/db/connection.ts` for the current implementation):
 
 ```sql
 PRAGMA journal_mode = WAL;        -- Write-Ahead Logging; better concurrency and write performance
@@ -70,7 +76,7 @@ Execute PRAGMAs **before** any transaction. They do not persist across connectio
 ## 5. Performance Patterns
 
 - **WAL**: Use for all databases (set via PRAGMA on connection).
-- **Counts**: Avoid `COUNT(*)` on large tables when an approximate or cached count suffices; maintain counter columns (e.g. `individual_count`, `family_count` in `trees`) and keep them updated in the same transaction as changes.
+- **Counts**: Avoid `COUNT(*)` on large tables when an approximate or cached count suffices; maintain counter columns (e.g. `individual_count`, `family_count`) and keep them updated in the same transaction as changes.
 - **Covering indexes**: When a query only needs indexed columns, put those columns in the index to avoid table lookups.
 - **Existence checks**: Use `EXISTS (SELECT 1 FROM ... WHERE ...)` instead of `COUNT(*) > 0`.
 - **Timestamps**: Prefer `datetime('now')` as column default for consistency with SQLite.

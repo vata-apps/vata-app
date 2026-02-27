@@ -7,40 +7,38 @@ description: Provides context on the current MVP phase and constraints. Use when
 
 Use this skill to load the context of the current MVP before implementing new features or reviewing scope.
 
-## Current Status
+## How to Find Current Status
 
-**Active MVP: MVP3 — Primary Entities**
+**Do not hardcode status in this skill.** The authoritative status lives in:
+
+- **Overall state**: `docs/mvps/*/README.md` — each MVP has a checklist
+- **Phase details**: `docs/mvps/mvp-X-*/phase-*.md` — each phase has its own doc
+- **Quick lookup**: `docs/README.md` — navigation index to all MVP docs
+
+When you need to know the current state:
+
+1. Read the relevant `docs/mvps/*/README.md` checklist
+2. Check which phases have all items checked `[x]`
+3. The first unchecked phase is the current work
 
 ---
 
 ## MVP Overview
 
-| MVP                    | Status          | Description                                      |
-| ---------------------- | --------------- | ------------------------------------------------ |
-| MVP1: Foundation       | Complete        | Tauri setup, system DB, tree management, home UI |
-| MVP2: GEDCOM           | Complete        | GEDCOM 5.5.1 import/export                       |
-| MVP3: Primary Entities | **In progress** | CRUD for all genealogical entities               |
-| MVP4: UI (Mantine)     | Planned         | Full UI with Mantine + i18n setup                |
-| MVP5: Sources          | Planned         | Source citations and repositories                |
-| MVP6: File Attachments | Planned         | Media and document attachments                   |
-
----
-
-## MVP3 Phases
-
-| Phase                     | Description                  | Key locations                                                                      |
-| ------------------------- | ---------------------------- | ---------------------------------------------------------------------------------- |
-| Phase 1: Tree Schema      | DB schema for tree.db        | `src/db/trees/` schema, migrations                                                 |
-| Phase 2: CRUD Database    | DB layer functions           | `src/db/trees/individuals.ts`, `families.ts`, `names.ts`, `places.ts`, `events.ts` |
-| Phase 3: Dates            | Date handling integration    | `@vata-apps/gedcom-date`, `src/lib/date.ts`                                        |
-| Phase 4: Managers & Hooks | Business logic + React Query | `src/managers/`, `src/hooks/`                                                      |
-| Phase 5: Minimal UI       | HTML-only routes & pages     | `src/routes/`, `src/pages/`                                                        |
-
-Full phase details: `docs/mvps/mvp-3-primary-entities/`
+| MVP                    | Focus                                   |
+| ---------------------- | --------------------------------------- |
+| MVP1: Foundation       | Tauri setup, system DB, tree management |
+| MVP2: GEDCOM           | GEDCOM 5.5.1 import/export              |
+| MVP3: Primary Entities | CRUD for genealogical entities          |
+| MVP4: UI (Mantine)     | Full UI with Mantine + i18n setup       |
+| MVP5: Sources          | Source citations and repositories       |
+| MVP6: File Attachments | Media and document attachments          |
 
 ---
 
 ## MVP3 Constraints
+
+When working on MVP3, these constraints apply:
 
 1. **UI is HTML-only**: No Mantine, no design system components. Minimal inline CSS only. Functional, not polished.
 2. **No i18n yet**: Hardcoded English strings are acceptable until MVP4.
@@ -70,24 +68,43 @@ If a feature belongs to a future MVP, do not implement it now. Document it in th
 
 ---
 
+## When to Update MVP Status
+
+Update the documentation when:
+
+- **Starting a new MVP**: Mark previous MVP as complete in its README, create new MVP folder with phase docs
+- **Starting a new phase**: Create or update the phase doc with implementation details
+- **Completing a phase**: Check all items in `docs/mvps/{mvp}/README.md` checklist
+- **Completing an MVP**: Mark it complete in the overview above
+
+## How to Update Status
+
+1. **Checklist in MVP README**: Toggle `[ ]` to `[x]` for completed items
+2. **Phase docs**: Update with file locations, implementation notes
+3. **New MVP folder**: Copy template from previous MVP, rename, update content
+
+Do not update this skill with status — it would always be stale.
+
+---
+
+## Key Architecture Files
+
+| File                      | Purpose                              |
+| ------------------------- | ------------------------------------ |
+| `src/db/connection.ts`    | DB connection lifecycle, PRAGMAs     |
+| `src/db/system/trees.ts`  | System-level tree CRUD               |
+| `src/lib/query-keys.ts`   | TanStack Query key factory           |
+| `src/lib/query-client.ts` | QueryClient config                   |
+| `src/types/database.ts`   | TypeScript types mirroring DB schema |
+| `src/store/app-store.ts`  | Zustand store (currentTreeId)        |
+
+---
+
 ## Checklist Before Starting a New Phase
 
-- [ ] Previous phase deliverables are complete (check `docs/mvps/mvp-3-primary-entities/README.md`)
+- [ ] Previous phase deliverables are complete (check `docs/mvps/*/README.md`)
 - [ ] Schema changes documented in `docs/architecture/database-schema.md`
 - [ ] New DB functions follow `sqlite-standards` skill (PRAGMAs, no SELECT \*, parameterized queries)
 - [ ] New GEDCOM-related code follows `gedcom-standards` skill
 - [ ] New TypeScript code follows `typescript-standards` skill
 - [ ] Documentation updated — run `docs-consistency` skill after any doc changes
-
----
-
-## Key Architecture Files for MVP3
-
-| File                      | Purpose                              |
-| ------------------------- | ------------------------------------ |
-| `src/db/connection.ts`    | DB connection lifecycle, PRAGMAs     |
-| `src/db/system/trees.ts`  | Tree CRUD (already implemented)      |
-| `src/lib/query-keys.ts`   | TanStack Query key factory           |
-| `src/lib/query-client.ts` | QueryClient config                   |
-| `src/types/database.ts`   | TypeScript types mirroring DB schema |
-| `src/store/app-store.ts`  | Zustand store (currentTreeId)        |

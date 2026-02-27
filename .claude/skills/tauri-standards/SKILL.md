@@ -5,7 +5,15 @@ description: Ensures Tauri v2 and Rust code follows project conventions. Use whe
 
 # Tauri v2 & Rust Standards
 
-Apply this skill when writing or reviewing any Tauri or Rust code. The app uses Tauri v2 with a thin Rust backend — most logic lives in the TypeScript layer.
+Apply this skill when writing or reviewing any Tauri or Rust code. The app uses Tauri with a thin Rust backend — most logic lives in the TypeScript layer.
+
+## Where to Find Current Plugins
+
+Check these files for the canonical source of truth:
+
+- **Registered plugins**: `src-tauri/src/lib.rs` — shows which plugins are loaded
+- **Plugin capabilities**: `src-tauri/capabilities/*.json` — shows which permissions are granted
+- **Plugin npm packages**: `package.json` — search for `@tauri-apps/plugin-*`
 
 ## When to Apply
 
@@ -45,16 +53,13 @@ Capabilities are defined in `src-tauri/capabilities/`. Each capability file gran
 
 ---
 
-## 3. Tauri Plugins Used
+## 3. Tauri Plugins
 
-| Plugin                | Purpose                    | TypeScript import           |
-| --------------------- | -------------------------- | --------------------------- |
-| `tauri-plugin-sql`    | SQLite database access     | `@tauri-apps/plugin-sql`    |
-| `tauri-plugin-fs`     | File system read/write     | `@tauri-apps/plugin-fs`     |
-| `tauri-plugin-dialog` | Native file/folder pickers | `@tauri-apps/plugin-dialog` |
-| `tauri-plugin-store`  | Persistent key-value store | `@tauri-apps/plugin-store`  |
+Plugins are registered in `src-tauri/src/lib.rs` and permissions defined in capabilities files.
 
-Always use the plugin APIs from the TypeScript side. Do not reimplement filesystem or SQL logic in Rust.
+- **Principle**: Use plugins from TypeScript rather than reimplementing native logic in Rust
+- **Adding a plugin**: Register in `lib.rs` + add capability permissions + add npm package to `package.json`
+- **TypeScript imports**: Use `@tauri-apps/plugin-{name}` packages (check `package.json` for current list)
 
 ---
 

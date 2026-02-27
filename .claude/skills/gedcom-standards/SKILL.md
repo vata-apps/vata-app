@@ -18,8 +18,8 @@ Apply this skill when writing or reviewing any GEDCOM-related code or documentat
 
 ## 1. External Libraries
 
-- **`gedcom-parser`**: All parsing (`parseDocument`), serialization (`serialize`), and validation (`validate`). Never write custom GEDCOM parsing logic.
-- **`gedcom-date`**: All date parsing (`parse`), formatting (`format`), sort-date generation (`toSortDate`). Never write custom GEDCOM date parsing.
+- **`gedcom-parser`**: All parsing, serialization, and validation. Check `package.json` for the current package. Never write custom GEDCOM parsing logic.
+- **`gedcom-date`**: All date parsing, formatting, and sort-date generation. Check `package.json` for the current package. Never write custom GEDCOM date parsing.
 
 ---
 
@@ -73,7 +73,7 @@ Never import families before all individuals are created.
 
 ### Privacy
 
-- Support an `includePrivate` option to optionally exclude living individuals (`is_living = 1`)
+- Support an `includePrivate` option to optionally exclude living individuals (check schema for the field that marks living status)
 
 ### File Extension
 
@@ -83,35 +83,14 @@ Never import families before all individuals are created.
 
 ## 4. Entity Mapping
 
-### Individual (INDI)
+See `docs/references/gedcom-551-mapping.md` for the complete mapping between GEDCOM tags and database schema.
 
-| GEDCOM | Table          | Field  | Notes                      |
-|--------|----------------|--------|----------------------------|
-| SEX    | individuals    | gender | Only `M`, `F`, or `U`     |
-| FAMC   | family_members | —      | role = `child`             |
-| FAMS   | family_members | —      | role = `husband` or `wife` |
+Key principles:
 
-### Name (NAME sub-tags)
-
-| GEDCOM | Vata Field  | Notes                                  |
-|--------|-------------|----------------------------------------|
-| GIVN   | given_names | From explicit tag or parsed NAME value |
-| SURN   | surname     | From explicit tag or parsed NAME value |
-| NPFX   | prefix      | e.g. "Dr.", "Mr."                      |
-| NSFX   | suffix      | e.g. "Jr.", "III"                      |
-| NICK   | nickname    |                                        |
-| TYPE   | type        | `birth`, `married`, `aka`, etc.        |
-| SPFX   | surname     | Merged into surname                    |
-
-Name format: `Given Names /Surname/ Suffix`. Parsing is handled by `gedcom-parser`.
-
-### Family (FAM)
-
-| GEDCOM | Table          | Field                      |
-|--------|----------------|----------------------------|
-| HUSB   | family_members | role = `husband`           |
-| WIFE   | family_members | role = `wife`              |
-| CHIL   | family_members | role = `child`, sort_order |
+- Gender values: `M`, `F`, or `U` only
+- Family member roles: `husband`, `wife`, `child` only
+- Name tags: GIVN, SURN, NPFX, NSFX, NICK, TYPE, SPFX map to the appropriate fields
+- Name format: `Given Names /Surname/ Suffix`. Parsing is handled by `gedcom-parser`.
 
 ---
 
@@ -120,7 +99,7 @@ Name format: `Given Names /Surname/ Suffix`. Parsing is handled by `gedcom-parse
 ### System Event Types
 
 - Have a non-null `event_types.tag` (GEDCOM code, e.g. `BIRT`, `DEAT`, `MARR`)
-- Display name resolved via **i18n**, never hardcoded
+- Display name resolved at runtime (hardcoded in MVP3, i18n in MVP4)
 - On export, use the tag directly (e.g. `1 BIRT`)
 
 ### Custom Event Types
@@ -160,15 +139,15 @@ Name format: `Given Names /Surname/ Suffix`. Parsing is handled by `gedcom-parse
 
 These tags are **silently ignored** on import:
 
-| Tag  | Reason                           |
-|------|----------------------------------|
-| OBJE | Media — future phase             |
-| BLOB | Obsolete binary                  |
-| ASSO | Complex associations             |
-| ALIA | Alias — use NAME instead         |
-| ANCI | Genealogical interest            |
-| DESI | Genealogical interest            |
-| SUBM | Submitter — not relevant locally |
+| Tag  | Reason                            |
+| ---- | --------------------------------- |
+| OBJE | Media — future phase              |
+| BLOB | Obsolete binary                   |
+| ASSO | Complex associations              |
+| ALIA | Alias — use NAME instead          |
+| ANCI | Genealogical interest             |
+| DESI | Genealogical interest             |
+| SUBM | Submitter — not relevant locally  |
 | SUBN | Submission — not relevant locally |
 
 Do not error on unsupported tags. Do not export them.

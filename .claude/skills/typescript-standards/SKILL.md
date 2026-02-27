@@ -5,13 +5,20 @@ description: Ensures React/TypeScript code follows project conventions. Use when
 
 # TypeScript & React Standards
 
-Apply this skill when writing or reviewing React/TypeScript code in the project. The app uses React 18, TypeScript 5 (strict mode), TanStack Query v5, TanStack Router v1, and Zustand v4.
+Apply this skill when writing or reviewing React/TypeScript code in the project.
 
 ## When to Apply
 
 - Writing or reviewing `src/components/**`, `src/pages/**`, `src/routes/**`
 - Writing or reviewing `src/managers/**`, `src/hooks/**`
 - Writing or reviewing `src/store/**`, `src/lib/**`, `src/types/**`
+
+## Where to Find Current Dependencies
+
+Check these files for the canonical source of truth:
+
+- **Dependency versions**: `package.json` — do not hardcode versions in documentation
+- **Path aliases**: `tsconfig.json` and `vite.config.ts` — always verify aliases from the config files
 
 ---
 
@@ -22,26 +29,14 @@ Apply this skill when writing or reviewing React/TypeScript code in the project.
 - **`strict: true`** is enabled: `noImplicitAny`, `strictNullChecks`, `noUnusedLocals`, `noUnusedParameters` are all enforced.
 - **Return types**: Always annotate return types on exported functions.
 - **Generics**: Use generics for reusable utilities; avoid `as` casts.
-- **Path aliases**: Use project aliases instead of relative paths:
-
-| Alias           | Resolves to        |
-| --------------- | ------------------ |
-| `$/*`           | `src/*`            |
-| `$lib/*`        | `src/lib/*`        |
-| `$components/*` | `src/components/*` |
-| `$hooks/*`      | `src/hooks/*`      |
-| `$managers`     | `src/managers`     |
-| `$db`           | `src/db`           |
-| `$db-system/*`  | `src/db/system/*`  |
-| `$db-tree/*`    | `src/db/trees/*`   |
-| `$types`        | `src/types`        |
+- **Path aliases**: Use project aliases instead of relative paths. Check `tsconfig.json` for the current list.
 
 ---
 
 ## 2. TanStack Query Patterns
 
-- **Query keys**: Always use the `queryKeys` factory from `src/lib/query-keys.ts`. Never hardcode query key arrays inline.
-- **`staleTime`**: Set globally in `src/lib/query-client.ts` (5 min). Do not override per-query unless there is a documented reason.
+- **Query keys**: Always use the `queryKeys` factory (typically in `src/lib/query-keys.ts`). Never hardcode query key arrays inline.
+- **`staleTime`**: Set globally in the QueryClient config (typically `src/lib/query-client.ts`). Do not override per-query unless there is a documented reason.
 - **Mutations**: Always call `queryClient.invalidateQueries` in `onSuccess` to keep the cache fresh.
 - **Error handling**: Handle `isError` states in UI — never silently swallow query errors.
 - **Route loaders**: Prefer `ensureQueryData` in TanStack Router loaders to pre-fetch on navigation.
@@ -73,7 +68,7 @@ const { data: trees } = useQuery({
 
 ## 4. Zustand Patterns
 
-- **Single store**: All global client state lives in `src/store/app-store.ts`.
+- **Single store**: All global client state lives in the store file (typically `src/store/app-store.ts`).
 - **Persistence**: Uses `persist` middleware (key: `vata-app-storage`, stored in `localStorage`).
 - **Actions**: Define actions as methods inside the store creator, not outside.
 - **No derived state in store**: Compute derived values in components or selectors.

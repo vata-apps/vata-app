@@ -14,6 +14,7 @@ After **every** documentation change (create, edit, or delete) in `docs/`, perfo
 ### Step 1: Identify the scope of the change
 
 Determine what was changed:
+
 - **Schema or data model** → check API docs, MVP phase docs, GEDCOM mapping, screen docs
 - **UI screen or layout** → check layouts doc, design system, related MVP phase docs
 - **Tech stack or architecture** → check overview, data flow, MVP phase docs, API docs
@@ -24,11 +25,14 @@ Determine what was changed:
 
 ### Step 2: Consult the dependency map
 
-Use the dependency map below to find which files are potentially impacted.
+Use the dependency map below as a reference. Verify files exist before updating — the map may be stale if files were added or removed.
+
+**For the authoritative file list**, always check `docs/README.md` (navigation index).
 
 ### Step 3: Scan impacted files
 
 For each potentially impacted file:
+
 1. Read the file (or relevant sections)
 2. Check if any content contradicts or is now outdated given the change
 3. Check if cross-references (links) are still valid

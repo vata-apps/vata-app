@@ -7,7 +7,6 @@ Use this checklist when reviewing GEDCOM-related code or documentation.
 - [ ] GEDCOM version is 5.5.1 only
 - [ ] Parsing done via `gedcom-parser` (no custom parsing)
 - [ ] Date parsing done via `gedcom-date` (no custom date logic)
-- [ ] All user-facing strings use i18n, never hardcoded
 
 ## Import
 
