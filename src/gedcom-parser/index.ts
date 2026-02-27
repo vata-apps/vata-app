@@ -42,6 +42,9 @@ export { parseDocument } from './parse';
 // Validator
 export { validate, isGedcom } from './validate';
 
+// Serializer
+export { serialize } from './serialize';
+
 // Lexer utilities (for advanced use)
 export {
   tokenize,
