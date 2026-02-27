@@ -7,6 +7,8 @@ import { openTreeDb } from '$/db/connection';
 import { useAppStore } from '$/store/app-store';
 import { queryKeys } from '$lib/query-keys';
 import { ConfirmDialog } from '$components/ConfirmDialog';
+import { ImportGedcomModal } from '$components/ImportGedcomModal';
+import { ExportGedcomModal } from '$components/ExportGedcomModal';
 
 function toFilename(): string {
   return `${crypto.randomUUID()}.db`;
@@ -25,6 +27,9 @@ export function HomePage() {
   const [renameValue, setRenameValue] = useState('');
 
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [exportTreeId, setExportTreeId] = useState<string | null>(null);
 
   const { data: trees, isLoading } = useQuery({
     queryKey: queryKeys.trees,
@@ -138,9 +143,8 @@ export function HomePage() {
           {showNewForm ? 'Cancel' : 'New Tree'}
         </button>
         <button
-          disabled
-          style={{ padding: '0.5rem 1rem', cursor: 'not-allowed', color: '#bbb' }}
-          title="Coming in MVP2"
+          onClick={() => setShowImportModal(true)}
+          style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
         >
           Import GEDCOM
         </button>
@@ -216,14 +220,22 @@ export function HomePage() {
                 }}
               >
                 {renamingId === tree.id ? (
-                  <form onSubmit={(e) => handleRenameSubmit(e, tree.id)} style={{ marginBottom: '0.75rem' }}>
+                  <form
+                    onSubmit={(e) => handleRenameSubmit(e, tree.id)}
+                    style={{ marginBottom: '0.75rem' }}
+                  >
                     <input
                       type="text"
                       value={renameValue}
                       onChange={(e) => setRenameValue(e.target.value)}
                       required
                       autoFocus
-                      style={{ width: '100%', padding: '0.4rem', boxSizing: 'border-box', marginBottom: '0.5rem' }}
+                      style={{
+                        width: '100%',
+                        padding: '0.4rem',
+                        boxSizing: 'border-box',
+                        marginBottom: '0.5rem',
+                      }}
                     />
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button
@@ -258,17 +270,21 @@ export function HomePage() {
                 </p>
                 <p style={{ fontSize: '0.8rem', color: '#aaa', margin: '0 0 1rem' }}>
                   Last opened:{' '}
-                  {tree.lastOpenedAt
-                    ? new Date(tree.lastOpenedAt).toLocaleDateString()
-                    : 'Never'}
+                  {tree.lastOpenedAt ? new Date(tree.lastOpenedAt).toLocaleDateString() : 'Never'}
                 </p>
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => openMutation.mutate({ id: tree.id, filename: tree.filename })}
                     disabled={openMutation.isPending}
                     style={{ flex: 1, padding: '0.5rem', cursor: 'pointer' }}
                   >
                     Open
+                  </button>
+                  <button
+                    onClick={() => setExportTreeId(tree.id)}
+                    style={{ padding: '0.5rem', cursor: 'pointer' }}
+                  >
+                    Export
                   </button>
                   <button
                     onClick={() => handleRenameStart(tree.id, tree.name)}
@@ -303,6 +319,24 @@ export function HomePage() {
         isPending={deleteMutation.isPending}
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
+      />
+
+      <ImportGedcomModal
+        isOpen={showImportModal}
+        onSuccess={(treeId) => {
+          setShowImportModal(false);
+          void queryClient.invalidateQueries({ queryKey: queryKeys.trees });
+          void navigate({ to: '/tree/$treeId', params: { treeId } });
+        }}
+        onCancel={() => setShowImportModal(false)}
+      />
+
+      <ExportGedcomModal
+        isOpen={exportTreeId !== null}
+        treeName={trees?.find((t) => t.id === exportTreeId)?.name ?? ''}
+        treeFilename={trees?.find((t) => t.id === exportTreeId)?.filename ?? ''}
+        onSuccess={() => setExportTreeId(null)}
+        onCancel={() => setExportTreeId(null)}
       />
     </div>
   );

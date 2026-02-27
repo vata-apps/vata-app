@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GedcomManager } from '$/managers/GedcomManager';
+import { openTreeDb } from '$/db/connection';
 
 interface ExportGedcomModalProps {
   isOpen: boolean;
   treeName: string;
+  treeFilename: string;
   onSuccess: () => void;
   onCancel: () => void;
 }
@@ -11,17 +13,32 @@ interface ExportGedcomModalProps {
 export function ExportGedcomModal({
   isOpen,
   treeName,
+  treeFilename,
   onSuccess,
   onCancel,
 }: ExportGedcomModalProps) {
   const [includePrivate, setIncludePrivate] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // Open tree database when modal opens
+  useEffect(() => {
+    if (isOpen && treeFilename) {
+      setReady(false);
+      openTreeDb(treeFilename)
+        .then(() => setReady(true))
+        .catch((e) =>
+          setError('Failed to open tree: ' + (e instanceof Error ? e.message : String(e)))
+        );
+    }
+  }, [isOpen, treeFilename]);
 
   const reset = () => {
     setIncludePrivate(false);
     setLoading(false);
     setError(null);
+    setReady(false);
   };
 
   const handleExport = async () => {
@@ -121,17 +138,17 @@ export function ExportGedcomModal({
           </button>
           <button
             onClick={handleExport}
-            disabled={loading}
+            disabled={loading || !ready}
             style={{
               padding: '0.5rem 1rem',
-              cursor: loading ? 'not-allowed' : 'pointer',
+              cursor: loading || !ready ? 'not-allowed' : 'pointer',
               color: '#fff',
-              background: loading ? '#ccc' : '#007bff',
+              background: loading || !ready ? '#ccc' : '#007bff',
               border: 'none',
               borderRadius: '4px',
             }}
           >
-            {loading ? 'Exporting...' : 'Export'}
+            {!ready ? 'Loading...' : loading ? 'Exporting...' : 'Export'}
           </button>
         </div>
       </div>
