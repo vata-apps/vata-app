@@ -125,10 +125,13 @@ async function importIndividual(individual: GedcomIndividual, ctx: ImportContext
   // Parse gender
   const gender: Gender = individual.gender === 'M' ? 'M' : individual.gender === 'F' ? 'F' : 'U';
 
+  // Determine if living: individual is deceased if they have a DEAT event
+  const isLiving = !individual.events.some((e) => e.tag === 'DEAT');
+
   // Create individual
   const result = await db.execute('INSERT INTO individuals (gender, is_living) VALUES ($1, $2)', [
     gender,
-    1,
+    isLiving ? 1 : 0,
   ]);
   if (result.lastInsertId === undefined) {
     throw new Error('Failed to insert individual');
