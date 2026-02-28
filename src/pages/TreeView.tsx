@@ -75,6 +75,23 @@ export function TreeViewPage({ treeId }: TreeViewPageProps) {
         <SidebarLinkDisabled label="Individuals" isCollapsed={isCollapsed} />
         <SidebarLinkDisabled label="Families" isCollapsed={isCollapsed} />
 
+        <Link
+          to="/tree/$treeId/data"
+          params={{ treeId }}
+          style={{
+            display: 'block',
+            padding: '0.5rem 0.75rem',
+            color: '#666',
+            textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+          title="Debug: View raw data"
+        >
+          {isCollapsed ? 'D' : 'Data Browser'}
+        </Link>
+
         <div style={{ flex: 1 }} />
 
         <div style={{ padding: '0 0.75rem' }}>
@@ -121,13 +138,7 @@ export function TreeViewPage({ treeId }: TreeViewPageProps) {
   );
 }
 
-function SidebarLinkDisabled({
-  label,
-  isCollapsed,
-}: {
-  label: string;
-  isCollapsed: boolean;
-}) {
+function SidebarLinkDisabled({ label, isCollapsed }: { label: string; isCollapsed: boolean }) {
   return (
     <span
       style={{

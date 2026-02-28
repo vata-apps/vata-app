@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { remove, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { getAllTrees, createTree, updateTree, deleteTree, markTreeOpened } from '$/db/system/trees';
+import { getSystemDebugData, listTreeDatabaseFiles } from '$/db/system/debug';
 import { openTreeDb } from '$/db/connection';
 import { useAppStore } from '$/store/app-store';
 import { queryKeys } from '$lib/query-keys';
@@ -30,10 +31,23 @@ export function HomePage() {
 
   const [showImportModal, setShowImportModal] = useState(false);
   const [exportTreeId, setExportTreeId] = useState<string | null>(null);
+  const [showDebug, setShowDebug] = useState(false);
 
   const { data: trees, isLoading } = useQuery({
     queryKey: queryKeys.trees,
     queryFn: getAllTrees,
+  });
+
+  const { data: systemDebugData } = useQuery({
+    queryKey: ['debug', 'system'],
+    queryFn: getSystemDebugData,
+    enabled: showDebug,
+  });
+
+  const { data: treeFiles } = useQuery({
+    queryKey: ['debug', 'treeFiles'],
+    queryFn: listTreeDatabaseFiles,
+    enabled: showDebug,
   });
 
   const createMutation = useMutation({
@@ -338,6 +352,58 @@ export function HomePage() {
         onSuccess={() => setExportTreeId(null)}
         onCancel={() => setExportTreeId(null)}
       />
+
+      {/* Debug Section */}
+      <div style={{ marginTop: '3rem', borderTop: '1px solid #e0e0e0', paddingTop: '1rem' }}>
+        <button
+          onClick={() => setShowDebug((v) => !v)}
+          style={{ padding: '0.5rem 1rem', cursor: 'pointer', marginBottom: '1rem' }}
+        >
+          {showDebug ? 'Hide Debug Info' : 'Show Debug Info'}
+        </button>
+
+        {showDebug && (
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+            {/* Tree Database Files */}
+            <div style={{ flex: '1', minWidth: '200px' }}>
+              <h3 style={{ marginTop: 0 }}>Tree Database Files</h3>
+              {treeFiles && treeFiles.length > 0 ? (
+                <ul style={{ margin: 0, padding: '0 0 0 1.5rem' }}>
+                  {treeFiles.map((filename) => (
+                    <li key={filename} style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                      {filename}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p style={{ color: '#666', fontSize: '0.9rem' }}>No tree database files found</p>
+              )}
+            </div>
+
+            {/* Raw system.db Content */}
+            <div style={{ flex: '2', minWidth: '400px' }}>
+              <h3 style={{ marginTop: 0 }}>Raw system.db Content</h3>
+              {systemDebugData ? (
+                <pre
+                  style={{
+                    background: '#f5f5f5',
+                    padding: '1rem',
+                    borderRadius: '4px',
+                    overflow: 'auto',
+                    maxHeight: '400px',
+                    fontSize: '0.8rem',
+                    margin: 0,
+                  }}
+                >
+                  {JSON.stringify(systemDebugData, null, 2)}
+                </pre>
+              ) : (
+                <p style={{ color: '#666', fontSize: '0.9rem' }}>Loading...</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
