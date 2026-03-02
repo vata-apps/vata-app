@@ -32,7 +32,7 @@ The in-app module `@vata-apps/gedcom-date` provides:
 A thin hook that bridges `@vata-apps/gedcom-date` functions with the app's locale setting.
 
 ```typescript
-import { useCallback } from "react";
+import { useCallback } from 'react';
 import {
   parse,
   format,
@@ -40,27 +40,22 @@ import {
   toSortDate,
   formatLifespan,
   calculateAge,
-} from "@vata-apps/gedcom-date";
-import type {
-  GeneDate,
-  DisplayFormat,
-  ValidationResult,
-  AgeResult,
-} from "@vata-apps/gedcom-date";
-import { fr } from "@vata-apps/gedcom-date/locales/fr";
-import { useAppStore } from "$/store/app-store";
+} from '@vata-apps/gedcom-date';
+import type { GeneDate, DisplayFormat, ValidationResult, AgeResult } from '@vata-apps/gedcom-date';
+import { fr } from '@vata-apps/gedcom-date/locales/fr';
+import { useAppStore } from '$/store/app-store';
 
 const locales = { fr };
 
 export function useDate() {
   const appLocale = useAppStore((s) => s.locale);
-  const locale = appLocale === "fr" ? locales.fr : undefined; // undefined = English default
+  const locale = appLocale === 'fr' ? locales.fr : undefined; // undefined = English default
 
   const formatDate = useCallback(
-    (date: GeneDate, fmt: DisplayFormat = "medium") => {
+    (date: GeneDate, fmt: DisplayFormat = 'medium') => {
       return format(date, fmt, locale);
     },
-    [locale],
+    [locale]
   );
 
   return {
@@ -83,8 +78,8 @@ export function useDate() {
 When creating or updating an event, the Manager uses `parse` + `toSortDate` to generate the `date_sort` column value.
 
 ```typescript
-import { parse, toSortDate } from "@vata-apps/gedcom-date";
-import { formatEntityId, parseEntityId } from "$/lib/entityId";
+import { parse, toSortDate } from '@vata-apps/gedcom-date';
+import { formatEntityId, parseEntityId } from '$/lib/entityId';
 
 class EventManager {
   static async create(input: CreateEventInput): Promise<string> {
@@ -105,10 +100,10 @@ class EventManager {
         dateSort,
         input.placeId ? parseEntityId(input.placeId) : null,
         input.description,
-      ],
+      ]
     );
 
-    return formatEntityId("E", result.lastInsertId);
+    return formatEntityId('E', result.lastInsertId);
   }
 }
 ```
@@ -116,12 +111,12 @@ class EventManager {
 ### IndividualManager - Age Calculation
 
 ```typescript
-import { parse, calculateAge } from "@vata-apps/gedcom-date";
+import { parse, calculateAge } from '@vata-apps/gedcom-date';
 
 class IndividualManager {
   static getAgeAtDeath(
     birthDateOriginal: string | null,
-    deathDateOriginal: string | null,
+    deathDateOriginal: string | null
   ): { years: number; approximate: boolean } | null {
     if (!birthDateOriginal || !deathDateOriginal) return null;
 
@@ -248,17 +243,24 @@ export function DateInput({
 ### Files Created
 
 ```
-src/hooks/
-└── useDate.ts
-src/components/common/
-└── DateInput.tsx
+src/gedcom-date/
+├── types.ts       (type definitions)
+├── parse.ts       (GEDCOM date parser)
+├── format.ts      (date formatting, en/fr locales)
+├── sort.ts        (sort date generation, comparison)
+└── index.ts       (module exports)
 ```
 
 ### Final Checklist
 
-- [ ] In-app module `@vata-apps/gedcom-date` implemented and path alias configured
-- [ ] `useDate` hook created with locale support
-- [ ] `DateInput` component with validation and preview
-- [ ] EventManager uses `parse` + `toSortDate` on create/update
-- [ ] Date parsing works correctly
-- [ ] Date formatting works correctly
+- [x] In-app module `@vata-apps/gedcom-date` implemented and path alias configured
+- [x] Date parsing works correctly (74 tests)
+- [x] Date formatting works correctly (en/fr locales)
+- [x] Sort date generation works
+- [x] Age calculation works
+- [x] Integrated in GEDCOM importer
+- [ ] `useDate` hook created with locale support (deferred to Phase 4/5)
+- [ ] `DateInput` component with validation and preview (deferred to Phase 5)
+- [ ] EventManager uses `parse` + `toSortDate` on create/update (deferred to Phase 4)
+
+**Status: COMPLETE** (core module done, UI integration deferred)

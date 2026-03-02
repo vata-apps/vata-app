@@ -9,7 +9,7 @@ Initialize the tree database schema with all tables for individuals, names, fami
 ### src/db/trees/schema.ts
 
 ```typescript
-import Database from "@tauri-apps/plugin-sql";
+import Database from '@tauri-apps/plugin-sql';
 
 /**
  * Initialize tree database schema
@@ -175,19 +175,19 @@ export async function initializeTreeSchema(db: Database): Promise<void> {
 
 async function createIndexes(db: Database): Promise<void> {
   const indexes = [
-    "CREATE INDEX IF NOT EXISTS idx_names_individual ON names(individual_id)",
-    "CREATE INDEX IF NOT EXISTS idx_names_surname ON names(surname)",
-    "CREATE INDEX IF NOT EXISTS idx_names_primary ON names(individual_id, is_primary)",
-    "CREATE INDEX IF NOT EXISTS idx_family_members_family ON family_members(family_id)",
-    "CREATE INDEX IF NOT EXISTS idx_family_members_individual ON family_members(individual_id)",
-    "CREATE INDEX IF NOT EXISTS idx_places_name ON places(name)",
-    "CREATE INDEX IF NOT EXISTS idx_places_place_type ON places(place_type_id)",
-    "CREATE INDEX IF NOT EXISTS idx_places_parent ON places(parent_id)",
-    "CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type_id)",
-    "CREATE INDEX IF NOT EXISTS idx_events_date ON events(date_sort)",
-    "CREATE INDEX IF NOT EXISTS idx_events_place ON events(place_id)",
-    "CREATE INDEX IF NOT EXISTS idx_event_participants_event ON event_participants(event_id)",
-    "CREATE INDEX IF NOT EXISTS idx_event_participants_individual ON event_participants(individual_id)",
+    'CREATE INDEX IF NOT EXISTS idx_names_individual ON names(individual_id)',
+    'CREATE INDEX IF NOT EXISTS idx_names_surname ON names(surname)',
+    'CREATE INDEX IF NOT EXISTS idx_names_primary ON names(individual_id, is_primary)',
+    'CREATE INDEX IF NOT EXISTS idx_family_members_family ON family_members(family_id)',
+    'CREATE INDEX IF NOT EXISTS idx_family_members_individual ON family_members(individual_id)',
+    'CREATE INDEX IF NOT EXISTS idx_places_name ON places(name)',
+    'CREATE INDEX IF NOT EXISTS idx_places_place_type ON places(place_type_id)',
+    'CREATE INDEX IF NOT EXISTS idx_places_parent ON places(parent_id)',
+    'CREATE INDEX IF NOT EXISTS idx_events_type ON events(event_type_id)',
+    'CREATE INDEX IF NOT EXISTS idx_events_date ON events(date_sort)',
+    'CREATE INDEX IF NOT EXISTS idx_events_place ON events(place_id)',
+    'CREATE INDEX IF NOT EXISTS idx_event_participants_event ON event_participants(event_id)',
+    'CREATE INDEX IF NOT EXISTS idx_event_participants_individual ON event_participants(individual_id)',
   ];
 
   for (const index of indexes) {
@@ -198,47 +198,47 @@ async function createIndexes(db: Database): Promise<void> {
 async function insertDefaultEventTypes(db: Database): Promise<void> {
   const eventTypes = [
     // Individual events (display names via i18n using tag)
-    { tag: "BIRT", category: "individual", sort: 1 },
-    { tag: "CHR", category: "individual", sort: 2 },
-    { tag: "DEAT", category: "individual", sort: 3 },
-    { tag: "BURI", category: "individual", sort: 4 },
-    { tag: "OCCU", category: "individual", sort: 10 },
-    { tag: "RESI", category: "individual", sort: 11 },
-    { tag: "EDUC", category: "individual", sort: 12 },
-    { tag: "RELI", category: "individual", sort: 13 },
-    { tag: "IMMI", category: "individual", sort: 14 },
-    { tag: "EMIG", category: "individual", sort: 15 },
-    { tag: "NATU", category: "individual", sort: 16 },
+    { tag: 'BIRT', category: 'individual', sort: 1 },
+    { tag: 'CHR', category: 'individual', sort: 2 },
+    { tag: 'DEAT', category: 'individual', sort: 3 },
+    { tag: 'BURI', category: 'individual', sort: 4 },
+    { tag: 'OCCU', category: 'individual', sort: 10 },
+    { tag: 'RESI', category: 'individual', sort: 11 },
+    { tag: 'EDUC', category: 'individual', sort: 12 },
+    { tag: 'RELI', category: 'individual', sort: 13 },
+    { tag: 'IMMI', category: 'individual', sort: 14 },
+    { tag: 'EMIG', category: 'individual', sort: 15 },
+    { tag: 'NATU', category: 'individual', sort: 16 },
     // Family events
-    { tag: "MARR", category: "family", sort: 1 },
-    { tag: "MARB", category: "family", sort: 2 },
-    { tag: "MARC", category: "family", sort: 3 },
-    { tag: "DIV", category: "family", sort: 4 },
-    { tag: "DIVF", category: "family", sort: 5 },
-    { tag: "ANUL", category: "family", sort: 6 },
+    { tag: 'MARR', category: 'family', sort: 1 },
+    { tag: 'MARB', category: 'family', sort: 2 },
+    { tag: 'MARC', category: 'family', sort: 3 },
+    { tag: 'DIV', category: 'family', sort: 4 },
+    { tag: 'DIVF', category: 'family', sort: 5 },
+    { tag: 'ANUL', category: 'family', sort: 6 },
   ];
 
   for (const et of eventTypes) {
     await db.execute(
       `INSERT OR IGNORE INTO event_types (tag, category, is_system, sort_order) 
        VALUES ($1, $2, 1, $3)`,
-      [et.tag, et.category, et.sort],
+      [et.tag, et.category, et.sort]
     );
   }
 }
 
 async function insertMetadata(db: Database): Promise<void> {
   const meta = [
-    { key: "schema_version", value: "1" },
-    { key: "software", value: "Vata App" },
-    { key: "software_version", value: "0.1.0" },
+    { key: 'schema_version', value: '1' },
+    { key: 'software', value: 'Vata App' },
+    { key: 'software_version', value: '0.1.0' },
   ];
 
   for (const m of meta) {
-    await db.execute(
-      "INSERT OR REPLACE INTO tree_meta (key, value) VALUES ($1, $2)",
-      [m.key, m.value],
-    );
+    await db.execute('INSERT OR REPLACE INTO tree_meta (key, value) VALUES ($1, $2)', [
+      m.key,
+      m.value,
+    ]);
   }
 }
 ```
@@ -248,11 +248,11 @@ async function insertMetadata(db: Database): Promise<void> {
 Add schema initialization when opening a tree database:
 
 ```typescript
-import { initializeTreeSchema } from "./trees/schema";
+import { initializeTreeSchema } from './trees/schema';
 
 export async function openTreeDb(filename: string): Promise<Database> {
   // ... existing code ...
-  
+
   if (!treeDb) {
     treeDb = await Database.load(`sqlite:trees/${filename}`);
     currentTreeFilename = filename;
@@ -265,11 +265,11 @@ export async function openTreeDb(filename: string): Promise<Database> {
 
 ### Validation Criteria
 
-- [ ] All tables created
-- [ ] Indexes created
-- [ ] Default event types inserted
-- [ ] Metadata inserted
-- [ ] Foreign key constraints work
+- [x] All tables created
+- [x] Indexes created
+- [x] Default event types inserted
+- [x] Metadata inserted
+- [x] Foreign key constraints work
 
 ---
 
@@ -277,14 +277,13 @@ export async function openTreeDb(filename: string): Promise<Database> {
 
 ### Files Created
 
-```
-src/db/trees/
-└── schema.ts
-```
+Schema is implemented directly in `src/db/connection.ts` (not a separate schema.ts file).
 
 ### Final Checklist
 
-- [ ] Complete tree.db schema initialized
-- [ ] All indexes created
-- [ ] Default event types inserted
-- [ ] Schema initialization called when opening tree
+- [x] Complete tree.db schema initialized
+- [x] All indexes created (18 indexes)
+- [x] Default event types inserted (29 system types)
+- [x] Schema initialization called when opening tree
+
+**Status: COMPLETE**

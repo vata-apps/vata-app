@@ -9,14 +9,14 @@ Implement complete CRUD operations at the database layer for all primary entitie
 ### src/db/trees/individuals.ts
 
 ```typescript
-import { getTreeDb } from "../connection";
+import { getTreeDb } from '../connection';
 import type {
   Individual,
   Gender,
   CreateIndividualInput,
   UpdateIndividualInput,
-} from "$/types/database";
-import { formatEntityId, parseEntityId } from "$/lib/entityId";
+} from '$/types/database';
+import { formatEntityId, parseEntityId } from '$/lib/entityId';
 
 interface RawIndividual {
   id: number;
@@ -29,7 +29,7 @@ interface RawIndividual {
 
 function mapToIndividual(raw: RawIndividual): Individual {
   return {
-    id: formatEntityId("I", raw.id),
+    id: formatEntityId('I', raw.id),
     gender: raw.gender,
     isLiving: raw.is_living === 1,
     notes: raw.notes,
@@ -44,7 +44,7 @@ function mapToIndividual(raw: RawIndividual): Individual {
 export async function getAllIndividuals(): Promise<Individual[]> {
   const db = await getTreeDb();
   const rows = await db.select<RawIndividual[]>(
-    "SELECT id, gender, is_living, notes, created_at, updated_at FROM individuals ORDER BY id",
+    'SELECT id, gender, is_living, notes, created_at, updated_at FROM individuals ORDER BY id'
   );
   return rows.map(mapToIndividual);
 }
@@ -52,13 +52,11 @@ export async function getAllIndividuals(): Promise<Individual[]> {
 /**
  * Get individual by ID
  */
-export async function getIndividualById(
-  id: string,
-): Promise<Individual | null> {
+export async function getIndividualById(id: string): Promise<Individual | null> {
   const db = await getTreeDb();
   const rows = await db.select<RawIndividual[]>(
-    "SELECT id, gender, is_living, notes, created_at, updated_at FROM individuals WHERE id = $1",
-    [parseEntityId(id)],
+    'SELECT id, gender, is_living, notes, created_at, updated_at FROM individuals WHERE id = $1',
+    [parseEntityId(id)]
   );
   return rows[0] ? mapToIndividual(rows[0]) : null;
 }
@@ -66,29 +64,20 @@ export async function getIndividualById(
 /**
  * Create an individual
  */
-export async function createIndividual(
-  input: CreateIndividualInput,
-): Promise<string> {
+export async function createIndividual(input: CreateIndividualInput): Promise<string> {
   const db = await getTreeDb();
   const result = await db.execute(
     `INSERT INTO individuals (gender, is_living, notes) 
      VALUES ($1, $2, $3)`,
-    [
-      input.gender || "U",
-      input.isLiving !== false ? 1 : 0,
-      input.notes || null,
-    ],
+    [input.gender || 'U', input.isLiving !== false ? 1 : 0, input.notes || null]
   );
-  return formatEntityId("I", result.lastInsertId);
+  return formatEntityId('I', result.lastInsertId);
 }
 
 /**
  * Update an individual
  */
-export async function updateIndividual(
-  id: string,
-  input: UpdateIndividualInput,
-): Promise<void> {
+export async function updateIndividual(id: string, input: UpdateIndividualInput): Promise<void> {
   const db = await getTreeDb();
   const sets: string[] = [];
   const params: (string | number | null)[] = [];
@@ -112,10 +101,7 @@ export async function updateIndividual(
   sets.push(`updated_at = datetime('now')`);
   params.push(parseEntityId(id));
 
-  await db.execute(
-    `UPDATE individuals SET ${sets.join(", ")} WHERE id = $${paramIndex}`,
-    params,
-  );
+  await db.execute(`UPDATE individuals SET ${sets.join(', ')} WHERE id = $${paramIndex}`, params);
 }
 
 /**
@@ -123,7 +109,7 @@ export async function updateIndividual(
  */
 export async function deleteIndividual(id: string): Promise<void> {
   const db = await getTreeDb();
-  await db.execute("DELETE FROM individuals WHERE id = $1", [parseEntityId(id)]);
+  await db.execute('DELETE FROM individuals WHERE id = $1', [parseEntityId(id)]);
 }
 
 /**
@@ -131,9 +117,7 @@ export async function deleteIndividual(id: string): Promise<void> {
  */
 export async function countIndividuals(): Promise<number> {
   const db = await getTreeDb();
-  const rows = await db.select<{ count: number }[]>(
-    "SELECT COUNT(*) as count FROM individuals",
-  );
+  const rows = await db.select<{ count: number }[]>('SELECT COUNT(*) as count FROM individuals');
   return rows[0]?.count || 0;
 }
 
@@ -147,7 +131,7 @@ export async function searchIndividuals(query: string): Promise<Individual[]> {
      JOIN names n ON n.individual_id = i.id
      WHERE n.given_names LIKE $1 OR n.surname LIKE $1
      ORDER BY i.id`,
-    [`%${query}%`],
+    [`%${query}%`]
   );
   return rows.map(mapToIndividual);
 }
@@ -155,9 +139,9 @@ export async function searchIndividuals(query: string): Promise<Individual[]> {
 
 ### Validation Criteria
 
-- [ ] CRUD works
-- [ ] Search works
-- [ ] Count works
+- [x] CRUD works
+- [x] Search works
+- [x] Count works
 
 ---
 
@@ -176,9 +160,9 @@ See [phase-2-entities.md](../../phases/phase-2-entities.md) Step 2.3 for complet
 
 ### Validation Criteria
 
-- [ ] Multiple names per individual
-- [ ] Primary name management
-- [ ] Correct formatting
+- [x] Multiple names per individual
+- [x] Primary name management
+- [x] Correct formatting
 
 ---
 
@@ -200,9 +184,9 @@ Implement the following functions following the same pattern as individuals:
 
 ### Validation Criteria
 
-- [ ] Family CRUD works
-- [ ] Member management works
-- [ ] Relationships maintained
+- [x] Family CRUD works
+- [x] Member management works
+- [x] Relationships maintained
 
 ---
 
@@ -223,9 +207,9 @@ Implement:
 
 ### Validation Criteria
 
-- [ ] Place CRUD works
-- [ ] Hierarchy management works
-- [ ] Search works
+- [x] Place CRUD works
+- [x] Hierarchy management works
+- [x] Search works
 
 ---
 
@@ -248,9 +232,9 @@ Implement:
 
 ### Validation Criteria
 
-- [ ] Event CRUD works
-- [ ] Participant management works
-- [ ] Event types retrieved correctly
+- [x] Event CRUD works
+- [x] Participant management works
+- [x] Event types retrieved correctly
 
 ---
 
@@ -260,19 +244,26 @@ Implement:
 
 ```
 src/db/trees/
-├── individuals.ts
-├── names.ts
-├── families.ts
-├── places.ts
-└── events.ts
+├── individuals.ts      (7 functions)
+├── individuals.test.ts (24 tests)
+├── names.ts            (12 functions)
+├── names.test.ts       (28 tests)
+├── families.ts         (20 functions)
+├── families.test.ts    (47 tests)
+├── places.ts           (19 functions)
+├── places.test.ts      (55 tests)
+├── events.ts           (26 functions)
+└── events.test.ts      (57 tests)
 ```
 
 ### Final Checklist
 
-- [ ] CRUD Individuals functional
-- [ ] CRUD Names functional
-- [ ] CRUD Families functional
-- [ ] CRUD Places functional
-- [ ] CRUD Events functional
-- [ ] All relationships maintained
-- [ ] Search functions work
+- [x] CRUD Individuals functional
+- [x] CRUD Names functional
+- [x] CRUD Families functional
+- [x] CRUD Places functional
+- [x] CRUD Events functional
+- [x] All relationships maintained
+- [x] Search functions work
+
+**Status: COMPLETE** (211 tests passing)

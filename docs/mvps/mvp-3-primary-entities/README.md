@@ -30,19 +30,45 @@ MVP3 implements complete CRUD operations for all primary genealogical entities: 
 
 ## Deliverables Checklist
 
-- [ ] Complete tree.db schema
-- [ ] CRUD Individuals functional
-- [ ] CRUD Names functional
-- [ ] CRUD Families functional
-- [ ] CRUD Places functional
-- [ ] CRUD Events functional
-- [ ] Date handling integrated
-- [ ] Managers implemented
-- [ ] React Query hooks implemented
+### Phase 1: Tree Schema
+
+- [x] Complete tree.db schema (tables, constraints, FKs)
+- [x] All indexes created
+- [x] Default event types seeded (29 system types)
+- [x] tree_meta table with schema version
+
+### Phase 2: CRUD Database
+
+- [x] CRUD Individuals functional (7 functions, 24 tests)
+- [x] CRUD Names functional (12 functions, 28 tests)
+- [x] CRUD Families functional (20 functions, 47 tests)
+- [x] CRUD Places functional (19 functions, 55 tests)
+- [x] CRUD Events functional (26 functions, 57 tests)
+
+### Phase 3: Dates
+
+- [x] @vata-apps/gedcom-date module implemented
+- [x] Date parsing works correctly
+- [x] Date formatting works correctly (en/fr locales)
+- [x] Sort date generation works
+- [x] Age calculation works
+
+### Phase 4: Managers & Hooks
+
+- [ ] TreeManager implemented
+- [ ] IndividualManager implemented
+- [ ] FamilyManager implemented
+- [ ] React Query hooks implemented (useIndividuals, useFamilies, usePlaces, useEvents)
+- [ ] query-keys updated for all entities
+
+### Phase 5: Minimal UI
+
 - [ ] Individual list UI
 - [ ] Individual record UI
 - [ ] Family list UI
 - [ ] Family record UI
+- [ ] Routes configured
+- [ ] Navigation between pages
 - [ ] Manual tests validated
 
 ## Estimated Duration

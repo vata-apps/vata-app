@@ -1,3 +1,131 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+---
+
+# Commands
+
+```bash
+# Development
+pnpm dev              # Vite dev server only (port 1420)
+pnpm tauri:dev        # Full Tauri desktop app in dev mode (preferred)
+
+# Build
+pnpm build            # TypeScript check + Vite production build
+pnpm tauri:build      # Build distributable desktop app
+
+# Lint & format
+pnpm lint             # ESLint check
+pnpm lint:fix         # ESLint auto-fix
+pnpm format           # Prettier write
+pnpm format:check     # Prettier check
+
+# Tests
+pnpm test             # Vitest watch mode
+pnpm test:coverage    # Coverage report (v8)
+```
+
+To run a single test file:
+```bash
+pnpm vitest run src/db/trees/individuals.test.ts
+```
+
+---
+
+# Architecture
+
+## Tech Stack
+
+Tauri 2 (Rust shell) + React 18 + TypeScript + Vite + SQLite (`@tauri-apps/plugin-sql`). State: Zustand 4 (localStorage). Data fetching: TanStack Query v5. Routing: TanStack Router v1 (file-based). Tests: Vitest + jsdom.
+
+## Two-Database Design
+
+The app maintains two SQLite databases simultaneously:
+
+| Database | File | Purpose |
+|----------|------|---------|
+| System DB | `system.db` | App-level metadata: tree list, app settings |
+| Tree DB | `<tree-name>.db` | All genealogical data for one family tree |
+
+Connection management lives in `src/db/connection.ts`. Key functions:
+- `getSystemDb()` — opens/initializes system DB on first call
+- `openTreeDb(filename)` — opens a tree-specific DB
+- `getTreeDb()` — returns the active tree DB (throws if none open)
+
+Every connection gets PRAGMAs applied: WAL mode, foreign keys ON, busy timeout 5000ms, etc.
+
+## Tree DB Schema (core tables)
+
+`individuals` → `names` (one person can have multiple names; `is_primary` flags the canonical one)
+`families` → `family_members` (roles: husband/wife/child; with pedigree type)
+`events` → `event_participants` (roles: principal/witness/officiant)
+`events` → `places` (optional location; places are hierarchical via `parent_id`)
+`place_types`, `event_types` — system-defined or custom lookup tables
+`tree_meta` — key/value schema version and software metadata
+
+## Entity ID Convention
+
+Database stores `INTEGER` primary keys. The UI and all TypeScript types use formatted string IDs:
+
+| Prefix | Entity | Example |
+|--------|--------|---------|
+| `I` | Individual | `I-0001` |
+| `F` | Family | `F-0002` |
+| `E` | Event | `E-0003` |
+| `P` | Place | `P-0004` |
+
+Conversion happens at DB layer boundaries via `src/lib/entityId.ts`:
+- `formatEntityId('I', 1)` → `'I-0001'`
+- `parseEntityId('I-0001')` → `1`
+
+## DB Layer Pattern
+
+Each file in `src/db/trees/` and `src/db/system/` follows this structure:
+1. `Raw*` type — snake_case fields matching DB columns
+2. Public domain type — camelCase fields used throughout the app
+3. `mapRaw*(raw)` — converts raw → public type
+4. Exported CRUD functions — receive/return public types, never raw rows
+5. Always select explicit columns (no `SELECT *`)
+
+## Path Aliases
+
+| Alias | Resolves to |
+|-------|-------------|
+| `$/*` | `src/*` |
+| `$lib/*` | `src/lib/*` |
+| `$components/*` | `src/components/*` |
+| `$hooks/*` | `src/hooks/*` |
+| `$managers` | `src/managers` |
+| `$db` | `src/db` |
+| `$db-system/*` | `src/db/system/*` |
+| `$db-tree/*` | `src/db/trees/*` |
+| `$types` | `src/types` |
+
+## Routing
+
+File-based routing via TanStack Router. `routeTree.gen.ts` is auto-generated — never edit it manually. Route files live in `src/routes/`.
+
+Active routes:
+- `/` → `src/routes/index.tsx` → `src/pages/Home.tsx`
+- `/tree/$treeId` → `src/routes/tree/$treeId.tsx` (loads tree metadata, opens DB)
+- `/tree/$treeId/` → `src/pages/TreeView.tsx`
+- `/tree/$treeId/data` → `src/pages/DataBrowser.tsx`
+
+The `$treeId.tsx` layout route is responsible for opening the tree DB before any child route renders.
+
+## Managers
+
+`src/managers/` contains orchestration classes that coordinate multiple layers. Currently only `GedcomManager` (static class) handles GEDCOM import/export workflows: file dialog → parse → DB write, and DB read → serialize → file dialog.
+
+## Testing
+
+Test files colocate with source (e.g., `src/db/trees/individuals.test.ts`). Infrastructure in `src/test/`:
+- `sqlite-memory.ts` — in-memory SQLite helpers for DB unit tests
+- `mocks/plugin-sql.ts` — mock for Tauri SQL plugin (used in non-Tauri test environments)
+
+---
+
 # English Only
 
 Everything in this project must be written in English.
@@ -10,41 +138,9 @@ Everything in this project must be written in English.
 - **Tests**: Test descriptions, assertion messages, test file names
 - **Git**: Commit messages, PR titles, branch names
 
-## Examples
-
-```typescript
-// ❌ BAD
-// Récupère les données utilisateur
-const utilisateur = await getUtilisateur();
-
-// ✅ GOOD
-// Fetches user data
-const user = await getUser();
-```
-
-```typescript
-// ❌ BAD
-throw new Error('Échec de la connexion');
-
-// ✅ GOOD
-throw new Error('Connection failed');
-```
-
 ## i18n for User-Facing Strings
 
 **Deferred to MVP4.** Until then, hardcoded English strings are acceptable. Do not set up an i18n library before MVP4.
-
-All user-facing strings (UI labels, messages, errors shown to users) must go through the i18n system. Do not hardcode them.
-
-```typescript
-// ❌ BAD
-<button>Save</button>
-toast.error("Connection failed");
-
-// ✅ GOOD
-<button>{t('common.save')}</button>
-toast.error(t('errors.connectionFailed'));
-```
 
 ---
 
@@ -52,27 +148,7 @@ toast.error(t('errors.connectionFailed'));
 
 Never use `SELECT *` in SQL. Always list the columns you need explicitly.
 
-## Why
-
-- **Stability**: New columns added later do not change the shape of the result or break callers.
-- **Performance**: Only fetch the data you use; less data over the wire and in memory.
-- **Clarity**: The query documents exactly which fields are used.
-
-## Scope
-
 Applies to any SQL: raw strings, query builders (e.g. Drizzle, Kysely), migrations, and documentation examples.
-
-## Examples
-
-```sql
--- ❌ BAD
-SELECT * FROM individuals;
-SELECT * FROM individuals WHERE id = ?;
-
--- ✅ GOOD
-SELECT id, given_name, surname, sex, birth_date FROM individuals;
-SELECT id, given_name, surname FROM individuals WHERE id = ?;
-```
 
 ```typescript
 // ❌ BAD (Drizzle-style)
@@ -88,7 +164,24 @@ const rows = await db
   .from(individuals);
 ```
 
-When using a query builder, select only the columns required by the caller, not every column from the table.
+---
+
+# Granular Commits
+
+Commit early and often. Each commit should represent a single, complete unit of work that can be reverted independently.
+
+## Commit Message Format
+
+Use conventional commits:
+
+```
+feat: add birth date picker to individual form
+fix: prevent duplicate family relationships
+refactor: extract date formatting to utility
+test: add coverage for GEDCOM date parsing
+docs: update database schema documentation
+chore: upgrade drizzle-orm to 0.30.0
+```
 
 ---
 
@@ -105,64 +198,3 @@ The following specialized skills are loaded automatically when relevant, or on d
 | `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
 | `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
 | `mvp-tracker`          | When implementing new features or verifying MVP3 scope                        |
-
----
-
-# Granular Commits
-
-Commit early and often. Each commit should represent a single, complete unit of work that can be reverted independently.
-
-## Why
-
-- **Easy reverts**: If something breaks, you can revert just the problematic change without losing unrelated work.
-- **Clear history**: Small commits make it easier to understand what changed and why.
-- **Safer refactoring**: Breaking changes into small steps reduces risk.
-
-## When to Commit
-
-Commit immediately after completing any of these:
-
-- A new function or component that works
-- A bug fix (even a one-liner)
-- A refactor that doesn't change behavior
-- Adding or updating tests
-- Schema or migration changes
-- Documentation updates
-- Dependency changes (`package.json`, `Cargo.toml`)
-
-## Commit Message Format
-
-Use conventional commits:
-
-```
-<type>: <short description>
-
-# Examples
-feat: add birth date picker to individual form
-fix: prevent duplicate family relationships
-refactor: extract date formatting to utility
-test: add coverage for GEDCOM date parsing
-docs: update database schema documentation
-chore: upgrade drizzle-orm to 0.30.0
-```
-
-## Anti-patterns
-
-```
-# ❌ BAD: Too large, mixed concerns
-git commit -m "feat: implement entire family tree view with tests and docs"
-
-# ❌ BAD: Vague
-git commit -m "fix stuff"
-git commit -m "wip"
-
-# ✅ GOOD: Small, focused
-git commit -m "feat: add FamilyTreeNode component"
-git commit -m "feat: implement tree layout algorithm"
-git commit -m "test: add FamilyTreeNode unit tests"
-git commit -m "docs: add family tree architecture notes"
-```
-
-## Rule
-
-After completing each distinct piece of work, commit it before moving to the next task. Do not accumulate multiple unrelated changes in a single commit.
