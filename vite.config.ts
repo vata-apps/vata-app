@@ -21,6 +21,8 @@ export default defineConfig({
       $components: path.resolve(__dirname, './src/components'),
       $hooks: path.resolve(__dirname, './src/hooks'),
       $managers: path.resolve(__dirname, './src/managers'),
+      '$db-system': path.resolve(__dirname, './src/db/system'),
+      '$db-tree': path.resolve(__dirname, './src/db/trees'),
       $db: path.resolve(__dirname, './src/db'),
       $types: path.resolve(__dirname, './src/types'),
       '@vata-apps/gedcom-parser': path.resolve(__dirname, './src/gedcom-parser'),

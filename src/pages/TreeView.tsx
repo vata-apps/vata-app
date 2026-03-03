@@ -72,8 +72,36 @@ export function TreeViewPage({ treeId }: TreeViewPageProps) {
           )}
         </div>
 
-        <SidebarLinkDisabled label="Individuals" isCollapsed={isCollapsed} />
-        <SidebarLinkDisabled label="Families" isCollapsed={isCollapsed} />
+        <Link
+          to="/tree/$treeId/individuals"
+          params={{ treeId }}
+          style={{
+            display: 'block',
+            padding: '0.5rem 0.75rem',
+            color: '#666',
+            textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {isCollapsed ? 'I' : 'Individuals'}
+        </Link>
+        <Link
+          to="/tree/$treeId/families"
+          params={{ treeId }}
+          style={{
+            display: 'block',
+            padding: '0.5rem 0.75rem',
+            color: '#666',
+            textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {isCollapsed ? 'F' : 'Families'}
+        </Link>
 
         <Link
           to="/tree/$treeId/data"
@@ -135,24 +163,5 @@ export function TreeViewPage({ treeId }: TreeViewPageProps) {
         )}
       </main>
     </div>
-  );
-}
-
-function SidebarLinkDisabled({ label, isCollapsed }: { label: string; isCollapsed: boolean }) {
-  return (
-    <span
-      style={{
-        display: 'block',
-        padding: '0.5rem 0.75rem',
-        color: '#bbb',
-        cursor: 'not-allowed',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-      }}
-      title="Coming soon"
-    >
-      {isCollapsed ? label[0] : label}
-    </span>
   );
 }
