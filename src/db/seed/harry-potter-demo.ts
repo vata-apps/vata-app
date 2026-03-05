@@ -1,3 +1,4 @@
+import type Database from '@tauri-apps/plugin-sql';
 import { openTreeDb, closeTreeDb } from '../connection';
 import { createTree, updateTreeStats } from '../system/trees';
 import { createIndividual } from '../trees/individuals';
@@ -8,9 +9,7 @@ import { createEvent, addEventParticipant, getEventTypeByTag } from '../trees/ev
 
 const DEMO_FILENAME = 'harry-potter-demo.db';
 
-export async function seedHarryPotterDemo(): Promise<void> {
-  const systemDb = await getSystemDb();
-
+export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   // Check if already seeded
   const rows = await systemDb.select<{ value: string }[]>(
     "SELECT value FROM app_settings WHERE key = 'demo_tree_seeded'",

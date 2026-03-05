@@ -281,7 +281,7 @@ export async function getSystemDb(): Promise<Database> {
     systemDb = await Database.load('sqlite:system.db');
     await applyConnectionPragmas(systemDb);
     await initializeSystemDb(systemDb);
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
   }
   return systemDb;
 }
