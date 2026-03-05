@@ -1,10 +1,10 @@
-import { getSystemDb, openTreeDb, closeTreeDb } from '$db/connection';
-import { createTree, updateTreeStats } from '$db/system/trees';
-import { createIndividual } from '$db/trees/individuals';
-import { createName } from '$db/trees/names';
-import { createFamily, addFamilyMember } from '$db/trees/families';
-import { createPlace } from '$db/trees/places';
-import { createEvent, addEventParticipant, getEventTypeByTag } from '$db/trees/events';
+import { openTreeDb, closeTreeDb } from '../connection';
+import { createTree, updateTreeStats } from '../system/trees';
+import { createIndividual } from '../trees/individuals';
+import { createName } from '../trees/names';
+import { createFamily, addFamilyMember } from '../trees/families';
+import { createPlace } from '../trees/places';
+import { createEvent, addEventParticipant, getEventTypeByTag } from '../trees/events';
 
 const DEMO_FILENAME = 'harry-potter-demo.db';
 
