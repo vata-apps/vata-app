@@ -17,27 +17,11 @@
       "allow": [
         { "path": "$APPDATA/**" },
         { "path": "$DOCUMENT/**" },
-        { "path": "$DOWNLOAD/**" },
-        { "path": "$HOME/**" }
+        { "path": "$DOWNLOAD/**" }
       ]
     },
     "dialog:default",
     "dialog:allow-open",
-    "dialog:allow-save",
-    "store:default",
-    "store:allow-get",
-    "store:allow-set",
-    "store:allow-delete",
-    "store:allow-clear",
-    "store:allow-has",
-    "store:allow-entries",
-    "store:allow-keys",
-    "store:allow-values",
-    "store:allow-length",
-    "store:allow-load",
-    "store:allow-save",
-    "store:allow-reload",
-    "store:allow-reset",
-    "store:allow-get-store"
+    "dialog:allow-save"
   ]
 }
