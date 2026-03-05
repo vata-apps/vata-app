@@ -1,18 +1,13 @@
 import { Link } from '@tanstack/react-router';
 import { useIndividual } from '$/hooks/useIndividuals';
 import { formatName } from '$/db/trees/names';
+import { GENDER_LABELS } from '$/lib/constants';
 import type { EventWithDetails } from '$/types/database';
 
 interface IndividualViewPageProps {
   treeId: string;
   individualId: string;
 }
-
-const GENDER_LABELS: Record<string, string> = {
-  M: 'Male',
-  F: 'Female',
-  U: 'Unknown',
-};
 
 function EventInfo({ label, event }: { label: string; event: EventWithDetails | null }): JSX.Element | null {
   if (!event) return null;

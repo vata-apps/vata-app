@@ -11,12 +11,14 @@
  * - R = Repository
  */
 
+export type EntityPrefix = 'I' | 'F' | 'E' | 'P' | 'S' | 'R';
+
 /**
  * Format a database integer ID to a display ID with prefix.
  * @example formatEntityId('I', 1) → 'I-0001'
  * @example formatEntityId('F', 42) → 'F-0042'
  */
-export function formatEntityId(prefix: string, dbId: number): string {
+export function formatEntityId(prefix: EntityPrefix, dbId: number): string {
   return `${prefix}-${String(dbId).padStart(4, '0')}`;
 }
 

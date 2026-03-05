@@ -222,7 +222,7 @@ function createDbWrapper(schema: string) {
       return stmt.all(...params) as T;
     },
 
-    async close(_path?: string): Promise<boolean> {
+    async close(): Promise<boolean> {
       sqlite.close();
       return true;
     },

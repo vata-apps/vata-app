@@ -1,16 +1,11 @@
 import { Link } from '@tanstack/react-router';
 import { useIndividuals } from '$/hooks/useIndividuals';
 import { formatName } from '$/db/trees/names';
+import { GENDER_LABELS } from '$/lib/constants';
 
 interface IndividualsPageProps {
   treeId: string;
 }
-
-const GENDER_LABELS: Record<string, string> = {
-  M: 'Male',
-  F: 'Female',
-  U: 'Unknown',
-};
 
 export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
   const { data: individuals, isLoading, isError } = useIndividuals();
