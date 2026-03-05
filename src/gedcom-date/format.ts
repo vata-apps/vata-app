@@ -259,7 +259,7 @@ export function formatLifespan(
 function getDisplayYear(date: GedcomDate): string {
   switch (date.type) {
     case 'simple': {
-      const prefix = date.modifier ? '~' : '';
+      const prefix = date.modifier ? MODIFIER_DISPLAY_SHORT[date.modifier] : '';
       return `${prefix}${date.date.year}`;
     }
     case 'range':
