@@ -2,6 +2,8 @@ export const queryKeys = {
   trees: ['trees'] as const,
   tree: (id: string) => ['trees', id] as const,
   treeDebugData: (treeId: string) => ['trees', treeId, 'debug'] as const,
+  systemDebugData: ['debug', 'system'] as const,
+  treeFiles: ['debug', 'treeFiles'] as const,
   individuals: ['individuals'] as const,
   individual: (id: string) => ['individuals', id] as const,
   families: ['families'] as const,
