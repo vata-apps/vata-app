@@ -13,7 +13,7 @@ import type {
 // Raw database row types (snake_case as in SQLite)
 // =============================================================================
 
-interface RawPlace {
+export interface RawPlace {
   id: number;
   name: string;
   full_name: string;
@@ -38,7 +38,7 @@ interface RawPlaceType {
 // Mapping functions
 // =============================================================================
 
-function mapToPlace(raw: RawPlace): Place {
+export function mapToPlace(raw: RawPlace): Place {
   return {
     id: formatEntityId('P', raw.id),
     name: raw.name,
@@ -293,11 +293,12 @@ export async function countPlaces(): Promise<number> {
  */
 export async function searchPlaces(query: string): Promise<Place[]> {
   const db = await getTreeDb();
-  const searchTerm = `%${query}%`;
+  const escaped = query.replace(/[%_\\]/g, '\\$&');
+  const searchTerm = `%${escaped}%`;
   const rows = await db.select<RawPlace[]>(
     `SELECT id, name, full_name, place_type_id, parent_id, latitude, longitude, notes, created_at, updated_at
      FROM places
-     WHERE name LIKE $1 OR full_name LIKE $2
+     WHERE name LIKE $1 ESCAPE '\\' OR full_name LIKE $2 ESCAPE '\\'
      ORDER BY full_name`,
     [searchTerm, searchTerm]
   );
