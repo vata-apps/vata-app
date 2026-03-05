@@ -126,8 +126,9 @@ describe('parseDocument - name parsing', () => {
     const name = doc.individuals[0].names[0];
 
     expect(name.value).toBe('John William /SMITH/ Jr.');
-    expect(name.givenNames).toBe('John William Jr.');
+    expect(name.givenNames).toBe('John William');
     expect(name.surname).toBe('SMITH');
+    expect(name.suffix).toBe('Jr.');
   });
 
   it('uses explicit sub-tags over parsed value', () => {

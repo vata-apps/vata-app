@@ -190,6 +190,15 @@ function parseIndividual(lines: GedcomLine[], startIndex: number, xref: string):
       case 'RESI':
       case 'EDUC':
       case 'RELI':
+      case 'CAST':
+      case 'DSCR':
+      case 'IDNO':
+      case 'NATI':
+      case 'NCHI':
+      case 'NMR':
+      case 'PROP':
+      case 'SSN':
+      case 'TITL':
         individual.events.push(parseEvent(lines, childIdx, child.tag, child.value));
         break;
     }
@@ -204,12 +213,14 @@ function parseIndividual(lines: GedcomLine[], startIndex: number, xref: string):
 function parseName(lines: GedcomLine[], startIndex: number, value?: string): GedcomName {
   const name: GedcomName = {};
 
-  // Parse name value (e.g., "Jean /DUPONT/")
+  // Parse name value (e.g., "Jean /DUPONT/ Jr.")
+  let parsedSuffix: string | undefined;
   if (value) {
     name.value = value;
     const parsed = parseNameValue(value);
     if (parsed.givenNames) name.givenNames = parsed.givenNames;
     if (parsed.surname) name.surname = parsed.surname;
+    parsedSuffix = parsed.suffix;
   }
 
   // Parse sub-tags
@@ -240,6 +251,11 @@ function parseName(lines: GedcomLine[], startIndex: number, value?: string): Ged
     }
   }
 
+  // Use suffix from name value as fallback when no explicit NSFX sub-tag
+  if (!name.suffix && parsedSuffix) {
+    name.suffix = parsedSuffix;
+  }
+
   // Merge surname prefix into surname
   if (name.surnamePrefix && name.surname) {
     name.surname = `${name.surnamePrefix} ${name.surname}`;
@@ -254,6 +270,7 @@ function parseName(lines: GedcomLine[], startIndex: number, value?: string): Ged
 function parseNameValue(value: string): {
   givenNames?: string;
   surname?: string;
+  suffix?: string;
 } {
   // Format: Given Names /Surname/ Suffix
   const match = value.match(/^([^/]*)?(?:\/([^/]*)\/)?(.*)$/);
@@ -261,15 +278,10 @@ function parseNameValue(value: string): {
 
   const [, givenPart, surname, suffixPart] = match;
 
-  let givenNames = givenPart?.trim();
-  // Include suffix in given names if present (it's actually part of the name)
-  if (suffixPart?.trim()) {
-    givenNames = givenNames ? `${givenNames} ${suffixPart.trim()}` : suffixPart.trim();
-  }
-
   return {
-    givenNames: givenNames || undefined,
+    givenNames: givenPart?.trim() || undefined,
     surname: surname?.trim() || undefined,
+    suffix: suffixPart?.trim() || undefined,
   };
 }
 
