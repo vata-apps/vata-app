@@ -196,6 +196,8 @@ function createDbWrapper(schema: string) {
   sqlite.exec(schema);
 
   return {
+    path: ':memory:',
+
     /**
      * Executes a write statement. Returns { lastInsertId, rowsAffected }.
      * Positional params use $1, $2, ... (plugin-sql style) — converted
@@ -218,6 +220,11 @@ function createDbWrapper(schema: string) {
       const normalized = normalizePlaceholders(sql);
       const stmt = sqlite.prepare(normalized);
       return stmt.all(...params) as T;
+    },
+
+    async close(_path?: string): Promise<boolean> {
+      sqlite.close();
+      return true;
     },
 
     /** Exposes the raw sqlite instance for direct use in test setup/teardown. */

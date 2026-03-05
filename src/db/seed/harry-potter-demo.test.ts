@@ -41,7 +41,7 @@ beforeEach(async () => {
 describe('seedHarryPotterDemo', () => {
   it('creates 35 individuals, 10 families, 4 places, and events', async () => {
     const { seedHarryPotterDemo } = await import('./harry-potter-demo');
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
 
     const individuals = treeDb._raw
       .prepare('SELECT COUNT(*) as count FROM individuals')
@@ -73,7 +73,7 @@ describe('seedHarryPotterDemo', () => {
 
   it('creates a tree entry in system DB', async () => {
     const { seedHarryPotterDemo } = await import('./harry-potter-demo');
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
 
     const tree = systemDb._raw
       .prepare('SELECT name, filename, description FROM trees LIMIT 1')
@@ -84,7 +84,7 @@ describe('seedHarryPotterDemo', () => {
 
   it('sets demo_tree_seeded flag in app_settings', async () => {
     const { seedHarryPotterDemo } = await import('./harry-potter-demo');
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
 
     const setting = systemDb._raw
       .prepare("SELECT value FROM app_settings WHERE key = 'demo_tree_seeded'")
@@ -96,7 +96,7 @@ describe('seedHarryPotterDemo', () => {
     const { seedHarryPotterDemo } = await import('./harry-potter-demo');
 
     // First seed
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
 
     // Clear tree data but keep the flag
     treeDb._raw.exec('DELETE FROM event_participants');
@@ -108,7 +108,7 @@ describe('seedHarryPotterDemo', () => {
     treeDb._raw.exec('DELETE FROM places');
 
     // Second call should be a no-op
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
 
     const individuals = treeDb._raw
       .prepare('SELECT COUNT(*) as count FROM individuals')
@@ -118,7 +118,7 @@ describe('seedHarryPotterDemo', () => {
 
   it('updates tree stats with correct counts', async () => {
     const { seedHarryPotterDemo } = await import('./harry-potter-demo');
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
 
     const tree = systemDb._raw
       .prepare('SELECT individual_count, family_count FROM trees LIMIT 1')
@@ -129,7 +129,7 @@ describe('seedHarryPotterDemo', () => {
 
   it('creates primary birth names for all individuals', async () => {
     const { seedHarryPotterDemo } = await import('./harry-potter-demo');
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
 
     const primaryNames = treeDb._raw
       .prepare("SELECT COUNT(*) as count FROM names WHERE is_primary = 1 AND type = 'birth'")
@@ -139,7 +139,7 @@ describe('seedHarryPotterDemo', () => {
 
   it('assigns birth events to individuals with known dates', async () => {
     const { seedHarryPotterDemo } = await import('./harry-potter-demo');
-    await seedHarryPotterDemo();
+    await seedHarryPotterDemo(systemDb);
 
     // Harry should have a birth event at Godric's Hollow
     const harryBirth = treeDb._raw
