@@ -1,5 +1,6 @@
 import Database from '@tauri-apps/plugin-sql';
 import { mkdir, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { seedHarryPotterDemo } from './seed/harry-potter-demo';
 
 let systemDb: Database | null = null;
 let treeDb: Database | null = null;
@@ -280,6 +281,7 @@ export async function getSystemDb(): Promise<Database> {
     systemDb = await Database.load('sqlite:system.db');
     await applyConnectionPragmas(systemDb);
     await initializeSystemDb(systemDb);
+    await seedHarryPotterDemo();
   }
   return systemDb;
 }

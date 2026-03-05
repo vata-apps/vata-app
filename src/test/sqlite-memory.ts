@@ -19,6 +19,11 @@ const SYSTEM_SCHEMA = `
 
   CREATE INDEX IF NOT EXISTS idx_trees_last_opened
     ON trees (last_opened_at DESC);
+
+  CREATE TABLE IF NOT EXISTS app_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
 `;
 
 // =============================================================================
@@ -128,6 +133,14 @@ const TREE_SCHEMA = `
       (is_system = 0 AND custom_name IS NOT NULL)
     )
   );
+
+  -- system event types
+  INSERT OR IGNORE INTO event_types (tag, category, is_system, sort_order) VALUES ('BIRT', 'individual', 1, 1);
+  INSERT OR IGNORE INTO event_types (tag, category, is_system, sort_order) VALUES ('CHR', 'individual', 1, 2);
+  INSERT OR IGNORE INTO event_types (tag, category, is_system, sort_order) VALUES ('DEAT', 'individual', 1, 3);
+  INSERT OR IGNORE INTO event_types (tag, category, is_system, sort_order) VALUES ('BURI', 'individual', 1, 4);
+  INSERT OR IGNORE INTO event_types (tag, category, is_system, sort_order) VALUES ('MARR', 'family', 1, 1);
+  INSERT OR IGNORE INTO event_types (tag, category, is_system, sort_order) VALUES ('DIV', 'family', 1, 7);
 
   -- events
   CREATE TABLE IF NOT EXISTS events (
