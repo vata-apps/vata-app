@@ -313,9 +313,10 @@ export async function getTreeDb(): Promise<Database> {
 
 export async function closeTreeDb(): Promise<void> {
   if (treeDb) {
-    await treeDb.close(treeDb.path);
+    const db = treeDb;
     treeDb = null;
     currentTreeFilename = null;
+    await db.close(db.path);
   }
 }
 
