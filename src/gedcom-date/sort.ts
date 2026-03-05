@@ -85,7 +85,10 @@ export function compareDates(a: GedcomDate, b: GedcomDate): number {
   if (sortA === null) return 1;
   if (sortB === null) return -1;
 
-  return sortA.localeCompare(sortB);
+  // Numeric comparison handles BC dates correctly (localeCompare does not)
+  if (sortA < sortB) return -1;
+  if (sortA > sortB) return 1;
+  return 0;
 }
 
 /**
