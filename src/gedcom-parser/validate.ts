@@ -174,7 +174,7 @@ export function validate(content: string): ValidationResult {
  * @returns true if content appears to be GEDCOM
  */
 export function isGedcom(content: string): boolean {
-  const trimmed = content.trim();
+  const trimmed = content.replace(/^\uFEFF/, '').trim();
 
   // Check for common GEDCOM indicators
   if (trimmed.startsWith('0 HEAD')) return true;
