@@ -119,9 +119,38 @@ export async function createName(input: CreateNameInput): Promise<string> {
   const db = await getTreeDb();
   const individualDbId = parseEntityId(input.individualId);
 
-  // If this name should be primary, unset other primary names first
   if (input.isPrimary) {
-    await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [individualDbId]);
+    await db.execute('BEGIN TRANSACTION');
+    try {
+      await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [
+        individualDbId,
+      ]);
+
+      const result = await db.execute(
+        `INSERT INTO names (individual_id, type, prefix, given_names, surname, suffix, nickname, is_primary)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [
+          individualDbId,
+          input.type ?? 'birth',
+          input.prefix ?? null,
+          input.givenNames ?? null,
+          input.surname ?? null,
+          input.suffix ?? null,
+          input.nickname ?? null,
+          1,
+        ]
+      );
+
+      if (result.lastInsertId === undefined) {
+        throw new Error('Failed to create name: no lastInsertId returned');
+      }
+
+      await db.execute('COMMIT');
+      return String(result.lastInsertId);
+    } catch (error) {
+      await db.execute('ROLLBACK');
+      throw error;
+    }
   }
 
   const result = await db.execute(
@@ -135,7 +164,7 @@ export async function createName(input: CreateNameInput): Promise<string> {
       input.surname ?? null,
       input.suffix ?? null,
       input.nickname ?? null,
-      input.isPrimary ? 1 : 0,
+      0,
     ]
   );
 
@@ -153,54 +182,70 @@ export async function updateName(id: string, input: UpdateNameInput): Promise<vo
   const db = await getTreeDb();
   const nameId = parseInt(id, 10);
 
-  // If setting as primary, need to get the individual ID first
-  if (input.isPrimary) {
-    const existingName = await getNameById(id);
-    if (existingName) {
-      const individualDbId = parseEntityId(existingName.individualId);
-      await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [
-        individualDbId,
-      ]);
+  const buildUpdate = () => {
+    const sets: string[] = [];
+    const params: (string | number | null)[] = [];
+    let paramIndex = 1;
+
+    if (input.type !== undefined) {
+      sets.push(`type = $${paramIndex++}`);
+      params.push(input.type);
     }
-  }
+    if (input.prefix !== undefined) {
+      sets.push(`prefix = $${paramIndex++}`);
+      params.push(input.prefix);
+    }
+    if (input.givenNames !== undefined) {
+      sets.push(`given_names = $${paramIndex++}`);
+      params.push(input.givenNames);
+    }
+    if (input.surname !== undefined) {
+      sets.push(`surname = $${paramIndex++}`);
+      params.push(input.surname);
+    }
+    if (input.suffix !== undefined) {
+      sets.push(`suffix = $${paramIndex++}`);
+      params.push(input.suffix);
+    }
+    if (input.nickname !== undefined) {
+      sets.push(`nickname = $${paramIndex++}`);
+      params.push(input.nickname);
+    }
+    if (input.isPrimary !== undefined) {
+      sets.push(`is_primary = $${paramIndex++}`);
+      params.push(input.isPrimary ? 1 : 0);
+    }
 
-  const sets: string[] = [];
-  const params: (string | number | null)[] = [];
-  let paramIndex = 1;
+    return { sets, params, paramIndex };
+  };
 
-  if (input.type !== undefined) {
-    sets.push(`type = $${paramIndex++}`);
-    params.push(input.type);
-  }
-  if (input.prefix !== undefined) {
-    sets.push(`prefix = $${paramIndex++}`);
-    params.push(input.prefix);
-  }
-  if (input.givenNames !== undefined) {
-    sets.push(`given_names = $${paramIndex++}`);
-    params.push(input.givenNames);
-  }
-  if (input.surname !== undefined) {
-    sets.push(`surname = $${paramIndex++}`);
-    params.push(input.surname);
-  }
-  if (input.suffix !== undefined) {
-    sets.push(`suffix = $${paramIndex++}`);
-    params.push(input.suffix);
-  }
-  if (input.nickname !== undefined) {
-    sets.push(`nickname = $${paramIndex++}`);
-    params.push(input.nickname);
-  }
-  if (input.isPrimary !== undefined) {
-    sets.push(`is_primary = $${paramIndex++}`);
-    params.push(input.isPrimary ? 1 : 0);
-  }
-
+  const { sets, params, paramIndex } = buildUpdate();
   if (sets.length === 0) return;
 
   sets.push(`updated_at = datetime('now')`);
   params.push(nameId);
+
+  if (input.isPrimary) {
+    const existingName = await getNameById(id);
+    if (existingName) {
+      const individualDbId = parseEntityId(existingName.individualId);
+      await db.execute('BEGIN TRANSACTION');
+      try {
+        await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [
+          individualDbId,
+        ]);
+        await db.execute(
+          `UPDATE names SET ${sets.join(', ')} WHERE id = $${paramIndex}`,
+          params
+        );
+        await db.execute('COMMIT');
+      } catch (error) {
+        await db.execute('ROLLBACK');
+        throw error;
+      }
+      return;
+    }
+  }
 
   await db.execute(`UPDATE names SET ${sets.join(', ')} WHERE id = $${paramIndex}`, params);
 }
