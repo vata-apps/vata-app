@@ -41,7 +41,7 @@ export async function getAllTrees(): Promise<Tree[]> {
 export async function getTreeById(id: string): Promise<Tree | null> {
   const db = await getSystemDb();
   const rows = await db.select<RawTree[]>(`SELECT ${TREE_COLUMNS} FROM trees WHERE id = $1`, [
-    parseInt(id),
+    parseInt(id, 10),
   ]);
   return rows[0] ? mapToTree(rows[0]) : null;
 }
@@ -78,14 +78,14 @@ export async function updateTree(
   }
 
   sets.push(`updated_at = datetime('now')`);
-  params.push(parseInt(id));
+  params.push(parseInt(id, 10));
 
   await db.execute(`UPDATE trees SET ${sets.join(', ')} WHERE id = $${paramIndex}`, params);
 }
 
 export async function deleteTree(id: string): Promise<void> {
   const db = await getSystemDb();
-  await db.execute('DELETE FROM trees WHERE id = $1', [parseInt(id)]);
+  await db.execute('DELETE FROM trees WHERE id = $1', [parseInt(id, 10)]);
 }
 
 export async function updateTreeStats(
@@ -107,7 +107,7 @@ export async function updateTreeStats(
   }
 
   sets.push(`updated_at = datetime('now')`);
-  params.push(parseInt(id));
+  params.push(parseInt(id, 10));
 
   await db.execute(`UPDATE trees SET ${sets.join(', ')} WHERE id = $${paramIndex}`, params);
 }
@@ -116,6 +116,6 @@ export async function markTreeOpened(id: string): Promise<void> {
   const db = await getSystemDb();
   await db.execute(
     `UPDATE trees SET last_opened_at = datetime('now'), updated_at = datetime('now') WHERE id = $1`,
-    [parseInt(id)]
+    [parseInt(id, 10)]
   );
 }

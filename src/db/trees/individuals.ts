@@ -138,12 +138,13 @@ export async function countIndividuals(): Promise<number> {
  */
 export async function searchIndividuals(query: string): Promise<Individual[]> {
   const db = await getTreeDb();
-  const searchPattern = `%${query}%`;
+  const escaped = query.replace(/[%_\\]/g, '\\$&');
+  const searchPattern = `%${escaped}%`;
   const rows = await db.select<RawIndividual[]>(
     `SELECT DISTINCT i.id, i.gender, i.is_living, i.notes, i.created_at, i.updated_at
      FROM individuals i
      JOIN names n ON n.individual_id = i.id
-     WHERE n.given_names LIKE $1 OR n.surname LIKE $2
+     WHERE n.given_names LIKE $1 ESCAPE '\\' OR n.surname LIKE $2 ESCAPE '\\'
      ORDER BY i.id`,
     [searchPattern, searchPattern]
   );
