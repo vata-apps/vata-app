@@ -185,6 +185,16 @@ chore: upgrade drizzle-orm to 0.30.0
 
 ---
 
+# Common Pitfalls
+
+- **Path Aliases**: `$db` is bare (no sub-paths). Within `src/db/`, use relative imports. From outside, use `$/db/connection`, `$db-system/*`, `$db-tree/*`. All aliases must exist in both `vite.config.ts` AND `vitest.config.ts`.
+- **React Lists**: When returning a Fragment from `.map()`, always use `<React.Fragment key={...}>`, never `<>`. Key must be on the outermost element.
+- **Modal Dialogs**: Every modal must have `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, and an Escape key handler.
+- **Debug UI**: Guard with `{import.meta.env.DEV && (...)}`. Never ship debug panels to production.
+- **No Unused Exports**: Do not pre-create hooks, functions, or components for future use.
+
+---
+
 # Available Skills
 
 The following specialized skills are loaded automatically when relevant, or on demand via the skill tool.

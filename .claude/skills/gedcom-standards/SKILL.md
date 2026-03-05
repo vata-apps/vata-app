@@ -164,4 +164,13 @@ Do not error on unsupported tags. Do not export them.
 
 For a concise review checklist, see [checklist.md](checklist.md).
 
+## 10. Common Mistakes to Avoid
+
+- **Strip BOM (`\uFEFF`) before any string checks on GEDCOM content**: Files from Windows editors often include a UTF-8 BOM. Strip it before checking `isGedcom()` or validating.
+- **Parse name suffix separately from given names**: The suffix after `/SURNAME/` (e.g., "Jr.") must be returned as a separate field, not appended to `givenNames`.
+- **Support ALL GEDCOM 5.5.1 individual event and attribute tags**: See §5 for the complete list. Missing tags cause silent data loss on import.
+- **Skip families with zero linked members in privacy export**: When `includePrivate` is false, families whose members are all excluded (living) must be skipped entirely.
+
+---
+
 For the full GEDCOM-to-Vata mapping, see [docs/references/gedcom-551-mapping.md](../../docs/references/gedcom-551-mapping.md).

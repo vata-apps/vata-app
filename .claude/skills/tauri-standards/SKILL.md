@@ -104,3 +104,11 @@ try {
 - Pin versions with `=` only when necessary for security; otherwise use `^` for patch flexibility.
 - Run `cargo check` before committing any Rust changes.
 - Run `cargo clippy` to catch common Rust anti-patterns.
+
+---
+
+## 7. Common Mistakes to Avoid
+
+- **Never grant `$HOME/**` filesystem scope**: This gives the app access to the entire home directory. Only scope to `$APPDATA`, `$DOCUMENT`, and `$DOWNLOAD` as needed.
+- **Only request permissions for plugins actively imported in source code**: If a plugin (e.g., `store`) is registered in `lib.rs` but never imported in TypeScript, remove its permissions from capabilities.
+- **Audit permissions when removing features**: If you remove code that used a plugin, also remove the corresponding capability permissions.

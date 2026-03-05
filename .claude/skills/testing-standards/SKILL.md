@@ -342,3 +342,11 @@ cargo test -- --nocapture           # show println! output
 | `src/hooks/**`       | All custom hooks                       | Vitest + RTL                            |
 | `src-tauri/src/**`   | High — all DB functions and commands   | Rust unit + integration tests           |
 | Auto-generated files | Excluded                               | —                                       |
+
+---
+
+## 10. Common Mistakes to Avoid
+
+- **Every in-memory test database must enable `PRAGMA foreign_keys = ON`**: SQLite disables foreign keys by default; in-memory databases do not inherit PRAGMAs. Always execute this immediately after creating the DB, before running the schema.
+- **Apply the same PRAGMAs in tests as production**: At minimum, `foreign_keys = ON`. This ensures tests catch constraint violations that would occur in production.
+- **Test DB wrappers must satisfy the `Database` type**: Include `path` and `close()` properties so the wrapper can be passed to functions expecting the Tauri SQL `Database` type.

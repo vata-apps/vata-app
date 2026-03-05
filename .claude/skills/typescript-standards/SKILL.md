@@ -106,3 +106,14 @@ const store = useAppStore();
 | Type / Interface | PascalCase             | `Tree`, `Individual`                |
 | Store file       | kebab-case             | `app-store.ts`                      |
 | Constant         | UPPER_SNAKE_CASE       | `TREE_COLUMNS`                      |
+
+---
+
+## 7. Common Mistakes to Avoid
+
+- **Use union types for entity ID prefixes**: Use `EntityPrefix` (`'I' | 'F' | 'E' | 'P' | 'S' | 'R'`) from `src/lib/entityId.ts`, not bare `string`.
+- **Wrap `navigator.clipboard` calls in try/catch**: The Clipboard API may not be available in all contexts (e.g., non-secure origins, Tauri webview restrictions).
+- **Async `useEffect` must use a mounted flag or `AbortController`**: Prevent state updates after unmount by checking a `mounted` flag before calling `setState`.
+- **No unused hooks/exports for future features**: Do not pre-create mutation hooks, utilities, or components that nothing imports yet. Add them when they're needed.
+- **React Fragment keys in `.map()`**: When returning a Fragment from `.map()`, always use `<React.Fragment key={...}>`, never bare `<>`. The key must be on the outermost element.
+- **Guard debug UI**: Wrap debug-only sections with `{import.meta.env.DEV && (...)}` so they are tree-shaken in production builds.

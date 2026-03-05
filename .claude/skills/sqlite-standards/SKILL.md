@@ -93,4 +93,13 @@ Execute PRAGMAs **before** any transaction. They do not persist across connectio
 
 ---
 
+## 7. Common Mistakes to Avoid
+
+- **Multi-step writes must use transactions**: Even convenience functions like `createEventWithParticipant` that call two DB functions must wrap both in `BEGIN`/`COMMIT`/`ROLLBACK`.
+- **Test databases must enable `PRAGMA foreign_keys = ON`**: In-memory test databases do not inherit PRAGMAs. Always execute `PRAGMA foreign_keys = ON` after creating the test DB, before running the schema.
+- **Escape LIKE wildcards in user input**: Characters `%`, `_`, and `\` must be escaped with `\` and the query must include `ESCAPE '\'`.
+- **Always pass radix to `parseInt`**: Use `parseInt(id, 10)`, never `parseInt(id)`.
+
+---
+
 For a concise review checklist, see [checklist.md](checklist.md).
