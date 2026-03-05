@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { mapToPlace, type RawPlace } from './places';
 import type {
   Event,
   EventType,
@@ -49,19 +50,6 @@ interface RawEventParticipant {
   created_at: string;
 }
 
-interface RawPlace {
-  id: number;
-  name: string;
-  full_name: string;
-  place_type_id: number | null;
-  parent_id: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  notes: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
 // =============================================================================
 // Mapping functions
 // =============================================================================
@@ -100,21 +88,6 @@ function mapToEventParticipant(raw: RawEventParticipant): EventParticipant {
     role: raw.role as ParticipantRole,
     notes: raw.notes,
     createdAt: raw.created_at,
-  };
-}
-
-function mapToPlace(raw: RawPlace): Place {
-  return {
-    id: formatEntityId('P', raw.id),
-    name: raw.name,
-    fullName: raw.full_name,
-    placeTypeId: raw.place_type_id !== null ? String(raw.place_type_id) : null,
-    parentId: raw.parent_id !== null ? formatEntityId('P', raw.parent_id) : null,
-    latitude: raw.latitude,
-    longitude: raw.longitude,
-    notes: raw.notes,
-    createdAt: raw.created_at,
-    updatedAt: raw.updated_at,
   };
 }
 
@@ -639,13 +612,22 @@ export async function createEventWithParticipant(
   eventInput: CreateEventInput,
   participantInput: Omit<CreateEventParticipantInput, 'eventId'>
 ): Promise<{ eventId: string; participantId: string }> {
-  const eventId = await createEvent(eventInput);
-  const participantId = await addEventParticipant({
-    ...participantInput,
-    eventId,
-  });
+  const db = await getTreeDb();
 
-  return { eventId, participantId };
+  await db.execute('BEGIN TRANSACTION');
+  try {
+    const eventId = await createEvent(eventInput);
+    const participantId = await addEventParticipant({
+      ...participantInput,
+      eventId,
+    });
+
+    await db.execute('COMMIT');
+    return { eventId, participantId };
+  } catch (error) {
+    await db.execute('ROLLBACK');
+    throw error;
+  }
 }
 
 /**
