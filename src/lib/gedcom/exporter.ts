@@ -288,6 +288,11 @@ async function exportFamilies(ctx: ExportContext): Promise<GedcomFamily[]> {
       }
     }
 
+    // Skip families with no linked members (privacy filtering removed them all)
+    if (!husbandRef && !wifeRef && childRefs.length === 0) {
+      continue;
+    }
+
     // Get family events
     const events = await exportFamilyEvents(row.id, ctx);
 
