@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type KeyboardEvent } from 'react';
 import { GedcomManager } from '$/managers/GedcomManager';
 import { openTreeDb } from '$/db/connection';
 
@@ -24,14 +24,23 @@ export function ExportGedcomModal({
 
   // Open tree database when modal opens
   useEffect(() => {
-    if (isOpen && treeFilename) {
-      setReady(false);
-      openTreeDb(treeFilename)
-        .then(() => setReady(true))
-        .catch((e) =>
-          setError('Failed to open tree: ' + (e instanceof Error ? e.message : String(e)))
-        );
-    }
+    if (!isOpen || !treeFilename) return;
+
+    let mounted = true;
+    setReady(false);
+    openTreeDb(treeFilename)
+      .then(() => {
+        if (mounted) setReady(true);
+      })
+      .catch((e) => {
+        if (mounted) {
+          setError('Failed to open tree: ' + (e instanceof Error ? e.message : String(e)));
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, [isOpen, treeFilename]);
 
   const reset = () => {
@@ -67,9 +76,18 @@ export function ExportGedcomModal({
 
   if (!isOpen) return null;
 
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Escape') handleCancel();
+  }
+
   return (
     <div
       onClick={handleCancel}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="export-gedcom-title"
+      tabIndex={-1}
       style={{
         position: 'fixed',
         inset: 0,
@@ -91,7 +109,7 @@ export function ExportGedcomModal({
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
         }}
       >
-        <h3 style={{ margin: '0 0 1rem' }}>Export GEDCOM</h3>
+        <h3 id="export-gedcom-title" style={{ margin: '0 0 1rem' }}>Export GEDCOM</h3>
 
         <p style={{ margin: '0 0 1rem', fontSize: '0.9rem', color: '#555' }}>
           Export "{treeName}" to GEDCOM 5.5.1 format.

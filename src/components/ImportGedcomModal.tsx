@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import { readTextFile } from '@tauri-apps/plugin-fs';
 import { open } from '@tauri-apps/plugin-dialog';
 import { GedcomManager } from '$/managers/GedcomManager';
@@ -55,7 +55,7 @@ export function ImportGedcomModal({ isOpen, onSuccess, onCancel }: ImportGedcomM
       } else {
         setError(validation.errors.join(', ') || 'Invalid GEDCOM file');
       }
-    } catch (e) {
+    } catch {
       setError('Failed to read file');
     }
   };
@@ -89,9 +89,18 @@ export function ImportGedcomModal({ isOpen, onSuccess, onCancel }: ImportGedcomM
 
   const fileName = filePath?.split('/').pop();
 
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Escape') handleCancel();
+  }
+
   return (
     <div
       onClick={handleCancel}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="import-gedcom-title"
+      tabIndex={-1}
       style={{
         position: 'fixed',
         inset: 0,
@@ -113,7 +122,7 @@ export function ImportGedcomModal({ isOpen, onSuccess, onCancel }: ImportGedcomM
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
         }}
       >
-        <h3 style={{ margin: '0 0 1rem' }}>Import GEDCOM</h3>
+        <h3 id="import-gedcom-title" style={{ margin: '0 0 1rem' }}>Import GEDCOM</h3>
 
         <div style={{ marginBottom: '1rem' }}>
           <button
