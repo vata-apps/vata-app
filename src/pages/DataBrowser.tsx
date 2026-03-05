@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { getTreeDebugData, type TreeDebugData } from '$/db/trees/debug';
@@ -220,8 +220,8 @@ function IndividualsTab({ data }: { data: TreeDebugData }) {
               : '(no name)';
 
             return (
-              <>
-                <tr key={ind.id}>
+              <React.Fragment key={ind.id}>
+                <tr>
                   <td
                     style={{
                       padding: '0.5rem',
@@ -275,7 +275,7 @@ function IndividualsTab({ data }: { data: TreeDebugData }) {
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             );
           })}
         </tbody>
@@ -317,8 +317,8 @@ function FamiliesTab({ data }: { data: TreeDebugData }) {
             const children = fam.members.filter((m) => m.role === 'child');
 
             return (
-              <>
-                <tr key={fam.id}>
+              <React.Fragment key={fam.id}>
+                <tr>
                   <td
                     style={{
                       padding: '0.5rem',
@@ -369,7 +369,7 @@ function FamiliesTab({ data }: { data: TreeDebugData }) {
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             );
           })}
         </tbody>
@@ -409,8 +409,8 @@ function EventsTab({ data }: { data: TreeDebugData }) {
         </thead>
         <tbody>
           {data.events.map((evt) => (
-            <>
-              <tr key={evt.id}>
+            <React.Fragment key={evt.id}>
+              <tr>
                 <td
                   style={{
                     padding: '0.5rem',
@@ -480,7 +480,7 @@ function EventsTab({ data }: { data: TreeDebugData }) {
                   </td>
                 </tr>
               )}
-            </>
+            </React.Fragment>
           ))}
         </tbody>
       </table>
@@ -549,9 +549,13 @@ function RawJsonTab({ data }: { data: TreeDebugData }) {
   const jsonString = JSON.stringify(data, null, 2);
 
   async function handleCopy() {
-    await navigator.clipboard.writeText(jsonString);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard.writeText(jsonString);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API may not be available in all contexts
+    }
   }
 
   return (
