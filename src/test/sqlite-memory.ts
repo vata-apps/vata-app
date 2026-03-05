@@ -192,6 +192,7 @@ const TREE_SCHEMA = `
 
 function createDbWrapper(schema: string) {
   const sqlite = new BetterSqlite3(':memory:');
+  sqlite.exec('PRAGMA foreign_keys = ON');
   sqlite.exec(schema);
 
   return {
