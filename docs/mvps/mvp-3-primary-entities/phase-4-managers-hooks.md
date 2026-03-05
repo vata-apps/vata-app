@@ -259,9 +259,9 @@ src/hooks/
 
 ### Final Checklist
 
-- [ ] TreeManager implemented
-- [ ] IndividualManager implemented
-- [ ] FamilyManager implemented
-- [ ] React Query hooks implemented
-- [ ] Cache invalidation works correctly
-- [ ] Transactions used for multi-table operations
+- [x] TreeManager implemented
+- [x] IndividualManager implemented
+- [x] FamilyManager implemented
+- [x] React Query hooks implemented
+- [x] Cache invalidation works correctly
+- [x] Transactions used for multi-table operations

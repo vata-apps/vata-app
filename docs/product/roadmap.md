@@ -17,9 +17,9 @@ graph LR
 
 | MVP | Name              | JTBD                                                                              | Status      | Dependencies     |
 | --- | ----------------- | --------------------------------------------------------------------------------- | ----------- | ---------------- |
-| 1   | Foundation        | Create, modify, open, close, and delete a tree.                                   | Not Started | —                |
-| 2   | GEDCOM            | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.             | Not Started | MVP1             |
-| 3   | Primary Entities  | Create, modify, and delete primary entities and navigate between modules.          | Not Started | MVP1, MVP2       |
+| 1   | Foundation        | Create, modify, open, close, and delete a tree.                                   | Complete    | —                |
+| 2   | GEDCOM            | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.             | Complete    | MVP1             |
+| 3   | Primary Entities  | Create, modify, and delete primary entities and navigate between modules.          | Complete    | MVP1, MVP2       |
 | 4   | UI                | Have a complete, polished UI for the application.                                 | Not Started | MVP3, Figma      |
 | 5   | Sources           | Create, modify, and delete a source and associate it with entities.               | Not Started | MVP4, Figma      |
 | 6   | Files             | Add and delete files and associate them with entities.                             | Not Started | MVP5, Figma      |

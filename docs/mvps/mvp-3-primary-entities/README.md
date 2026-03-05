@@ -55,21 +55,20 @@ MVP3 implements complete CRUD operations for all primary genealogical entities: 
 
 ### Phase 4: Managers & Hooks
 
-- [ ] TreeManager implemented
-- [ ] IndividualManager implemented
-- [ ] FamilyManager implemented
-- [ ] React Query hooks implemented (useIndividuals, useFamilies, usePlaces, useEvents)
-- [ ] query-keys updated for all entities
+- [x] TreeManager implemented
+- [x] IndividualManager implemented
+- [x] FamilyManager implemented
+- [x] React Query hooks implemented (useIndividuals, useFamilies, usePlaces, useEvents)
+- [x] query-keys updated for all entities
 
 ### Phase 5: Minimal UI
 
-- [ ] Individual list UI
-- [ ] Individual record UI
-- [ ] Family list UI
-- [ ] Family record UI
-- [ ] Routes configured
-- [ ] Navigation between pages
-- [ ] Manual tests validated
+- [x] Individual list UI
+- [x] Individual record UI
+- [x] Family list UI
+- [x] Family record UI
+- [x] Routes configured
+- [x] Navigation between pages
 
 ## Estimated Duration
 

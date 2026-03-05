@@ -170,10 +170,9 @@ src/routes/tree/$treeId/
 
 ### Final Checklist
 
-- [ ] Individual list page displays
-- [ ] Individual view page displays
-- [ ] Family list page displays
-- [ ] Family view page displays
-- [ ] Navigation works
-- [ ] Basic styling applied (HTML/CSS only)
-- [ ] Forms work (create/edit)
+- [x] Individual list page displays
+- [x] Individual view page displays
+- [x] Family list page displays
+- [x] Family view page displays
+- [x] Navigation works
+- [x] Basic styling applied (HTML/CSS only)
