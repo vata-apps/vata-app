@@ -47,12 +47,12 @@ UI is HTML-only with minimal CSS (shadcn/ui comes in MVP6).
 
 ### Phase 2: Basic Source & Repository UI
 
-- [ ] Route: `/tree/$treeId/sources`
-- [ ] Route: `/tree/$treeId/repositories`
-- [ ] Source list page with search/filter
-- [ ] Source creation form with file attachment
-- [ ] Repository management (list, create, edit, delete)
-- [ ] React Query hooks: sources, repositories, citations, files
+- [x] Route: `/tree/$treeId/sources`
+- [x] Route: `/tree/$treeId/repositories`
+- [x] Source list page with search/filter
+- [x] Source creation form (file attachment deferred to Phase 3 workspace)
+- [x] Repository management (list, create, edit, delete)
+- [x] React Query hooks: sources, repositories, citations, files
 - [x] Query key factory entries for new entities (done in Phase 1)
 
 ### Phase 3: Source Workspace
