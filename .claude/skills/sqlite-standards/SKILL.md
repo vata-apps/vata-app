@@ -1,6 +1,6 @@
 ---
 name: sqlite-standards
-description: Ensures SQLite code and documentation follow high standards of performance and data integrity. Use when writing or reviewing SQLite queries, schema, migrations, or DB layer code (src/db/**).
+description: Ensures SQLite code and documentation follow high standards of performance and data integrity. Use when writing or reviewing SQLite queries, schema, migrations, DB layer code (src/db/**), or database-related docs (database-schema.md, database-layer.md, tech-stack.md).
 ---
 
 # SQLite Performance and Data Integrity Standards
@@ -10,13 +10,13 @@ Apply this skill when writing or reviewing any SQLite-related code or documentat
 ## Where to Find Current Architecture
 
 - **Connection logic**: `src/db/connection.ts` — contains connection initialization and PRAGMA setup
-- **Schema definition**: "Database Schema" Discussion (Architecture category) — documents all tables, columns, indexes
+- **Schema definition**: `docs/architecture/database-schema.md` — documents all tables, columns, indexes
 - **DB layer functions**: `src/db/**/*.ts` — TypeScript functions that execute SQL
 
 ## When to Apply
 
 - Writing or reviewing SQLite code (queries, schema, migrations)
-- Editing database-related documentation: "Database Schema" or "Database Layer API" Discussions (Architecture category)
+- Editing database-related documentation: `docs/architecture/database-schema.md`, `docs/api/database-layer.md`
 - Creating or modifying DB layer functions in `src/db/**`
 
 ---

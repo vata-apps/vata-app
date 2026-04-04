@@ -201,9 +201,9 @@ The following specialized skills are loaded automatically when relevant, or on d
 
 | Skill                  | Trigger                                                                       |
 | ---------------------- | ----------------------------------------------------------------------------- |
-| `sqlite-standards`     | When writing `src/db/**`, SQL queries, or migrations                          |
-| `gedcom-standards`     | When writing `src/lib/gedcom/**` or XREF/tag code                             |
-| `docs-consistency`     | After code changes that affect documented architecture (schema, data flow)     |
+| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs         |
+| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code               |
+| `docs-consistency`     | After any change to `docs/*.md`                                               |
 | `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes) |
 | `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
 | `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |

@@ -5,7 +5,7 @@ Apply this when writing or reviewing any SQLite-related code or documentation in
 ## When to Apply
 
 - Writing or reviewing SQLite code (queries, schema, migrations)
-- Editing database-related Discussions: "Database Schema" or "Database Layer API" (Architecture category)
+- Editing database-related documentation: `docs/architecture/database-schema.md`, `docs/api/database-layer.md`
 - Creating or modifying DB layer functions in `src/db/**`
 
 ---

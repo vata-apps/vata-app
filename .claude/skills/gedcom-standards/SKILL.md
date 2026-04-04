@@ -1,6 +1,6 @@
 ---
 name: gedcom-standards
-description: Ensures GEDCOM 5.5.1 compliance in code and documentation. Use when writing or reviewing GEDCOM import/export code (src/lib/gedcom/**), GedcomManager, or any code that references GEDCOM tags, XREFs, or genealogical data exchange.
+description: Ensures GEDCOM 5.5.1 compliance in code and documentation. Use when writing or reviewing GEDCOM import/export code (src/lib/gedcom/**), GedcomManager, GEDCOM-related docs (gedcom-551-mapping.md, mvp-2-gedcom/), or any code that references GEDCOM tags, XREFs, or genealogical data exchange.
 ---
 
 # GEDCOM 5.5.1 Standards
@@ -11,7 +11,7 @@ Apply this skill when writing or reviewing any GEDCOM-related code or documentat
 
 - Writing or reviewing `src/lib/gedcom/**` (importer, exporter)
 - Writing or reviewing `src/managers/GedcomManager.ts`
-- Updating GEDCOM-related Discussions: "GEDCOM 5.5.1 Mapping" (Product category), "MVP2: GEDCOM" (Product category)
+- Editing GEDCOM-related docs: `docs/references/gedcom-551-mapping.md`, `docs/mvps/mvp-2-gedcom/`
 - Any code that handles GEDCOM tags, XREFs, or genealogical data exchange
 
 ---
@@ -83,7 +83,7 @@ Never import families before all individuals are created.
 
 ## 4. Entity Mapping
 
-See the "GEDCOM 5.5.1 Mapping" Discussion (Product category) for the complete mapping between GEDCOM tags and database schema.
+See `docs/references/gedcom-551-mapping.md` for the complete mapping between GEDCOM tags and database schema.
 
 Key principles:
 
@@ -173,4 +173,4 @@ For a concise review checklist, see [checklist.md](checklist.md).
 
 ---
 
-For the full GEDCOM-to-Vata mapping, see the "GEDCOM 5.5.1 Mapping" Discussion (Product category).
+For the full GEDCOM-to-Vata mapping, see [docs/references/gedcom-551-mapping.md](../../docs/references/gedcom-551-mapping.md).

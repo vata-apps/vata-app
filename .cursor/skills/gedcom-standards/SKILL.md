@@ -11,7 +11,7 @@ Apply this skill when writing or reviewing any GEDCOM-related code or documentat
 
 - Writing or reviewing `src/lib/gedcom/**` (importer, exporter)
 - Writing or reviewing `src/managers/GedcomManager.ts`
-- Updating GEDCOM-related Discussions: "GEDCOM 5.5.1 Mapping" (Product category), "MVP2: GEDCOM" (Product category)
+- Editing GEDCOM-related docs: [gedcom-551-mapping.md](docs/references/gedcom-551-mapping.md), [mvp-2-gedcom/](docs/mvps/mvp-2-gedcom/)
 - Any code that handles GEDCOM tags, XREFs, or genealogical data exchange
 
 ---
@@ -187,4 +187,4 @@ Do not error on unsupported tags. Do not export them.
 
 For a concise review checklist, see [checklist.md](checklist.md).
 
-For the full GEDCOM-to-Vata mapping, see the "GEDCOM 5.5.1 Mapping" Discussion (Product category).
+For the full GEDCOM-to-Vata mapping, see [gedcom-551-mapping.md](docs/references/gedcom-551-mapping.md).

@@ -10,7 +10,7 @@ Apply this skill when writing or reviewing any SQLite-related code or documentat
 ## When to Apply
 
 - Writing or reviewing SQLite code (queries, schema, migrations)
-- Editing database-related Discussions: "Database Schema" or "Database Layer API" (Architecture category)
+- Editing database-related documentation: [docs/architecture/database-schema.md](docs/architecture/database-schema.md), [docs/api/database-layer.md](docs/api/database-layer.md)
 - Creating or modifying DB layer functions in `src/db/**`
 
 ---
@@ -80,7 +80,7 @@ Execute PRAGMAs **before** any transaction. They do not persist across connectio
 
 ## 6. Documentation Standards
 
-- **PRAGMAs**: Document all connection PRAGMAs and their rationale (e.g. in the "Database Schema" Discussion or a dedicated "Connection setup" section).
+- **PRAGMAs**: Document all connection PRAGMAs and their rationale (e.g. in [docs/architecture/database-schema.md](docs/architecture/database-schema.md) or a dedicated "Connection setup" section).
 - **Indexes**: Each index in schema docs should have a short comment stating which query or access pattern it supports.
 - **Migrations**: Any schema change must be done via a migration script; do not document ad-hoc ALTER without a migration path.
 - **Schema version**: Track in `tree_meta` (e.g. `schema_version`) and bump on schema changes.
