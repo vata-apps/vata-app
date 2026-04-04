@@ -26,5 +26,8 @@ src/routeTree.gen.ts
 *.sln
 *.sw?
 
+# Worktrees
+.worktrees/
+
 # macOS
 .DS_Store
