@@ -31,18 +31,19 @@ UI is HTML-only with minimal CSS (shadcn/ui comes in MVP6).
 
 ### Phase 1: Data Layer & Schema
 
-- [ ] Tree storage: `trees.filename` → `trees.path` (user-chosen directory)
-- [ ] Tree creation: directory picker + `media/` subdirectory creation
-- [ ] New tables: `repositories`, `sources`, `source_citations`, `citation_links`, `files`, `source_files`
-- [ ] `citation_links.entity_type` includes `'place'`
-- [ ] CRUD: Repositories (following existing DB layer pattern)
-- [ ] CRUD: Sources
-- [ ] CRUD: Citations + CitationLinks
-- [ ] CRUD: Files + SourceFiles
-- [ ] File utilities: copy/move to tree `media/`, relative path, filename deduplication
-- [ ] Entity ID prefixes: S (Source), R (Repository) added to `entityId.ts`
-- [ ] App setting: file copy vs. move default
-- [ ] Unit tests for all new DB functions
+- [x] Tree storage: `trees.filename` → `trees.path` (user-chosen directory)
+- [x] Tree creation: `media/` subdirectory created automatically by `openTreeDb()`
+- [x] New tables: `repositories`, `sources`, `source_citations`, `citation_links`, `files`, `source_files`
+- [x] `citation_links.entity_type` includes `'place'`
+- [x] CRUD: Repositories (following existing DB layer pattern)
+- [x] CRUD: Sources
+- [x] CRUD: Citations + CitationLinks
+- [x] CRUD: Files + SourceFiles
+- [x] File utilities: copy/move to tree `media/`, relative path, filename deduplication
+- [x] Entity ID prefixes: S (Source), R (Repository) — already existed in `entityId.ts`
+- [ ] App setting: file copy vs. move default (deferred — hardcoded to copy for now)
+- [x] Unit tests for all new DB functions (65 new tests, 467 total passing)
+- [ ] Directory picker UI for tree creation (deferred to Phase 2 — currently uses app data dir)
 
 ### Phase 2: Basic Source & Repository UI
 
@@ -52,7 +53,7 @@ UI is HTML-only with minimal CSS (shadcn/ui comes in MVP6).
 - [ ] Source creation form with file attachment
 - [ ] Repository management (list, create, edit, delete)
 - [ ] React Query hooks: sources, repositories, citations, files
-- [ ] Query key factory entries for new entities
+- [x] Query key factory entries for new entities (done in Phase 1)
 
 ### Phase 3: Source Workspace
 
