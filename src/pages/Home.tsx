@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { remove, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { remove } from '@tauri-apps/plugin-fs';
 import { getAllTrees, createTree, updateTree, deleteTree, markTreeOpened } from '$/db/system/trees';
 import { getSystemDebugData, listTreeDatabaseFiles } from '$/db/system/debug';
 import { openTreeDb } from '$/db/connection';
@@ -10,10 +10,7 @@ import { queryKeys } from '$lib/query-keys';
 import { ConfirmDialog } from '$components/ConfirmDialog';
 import { ImportGedcomModal } from '$components/ImportGedcomModal';
 import { ExportGedcomModal } from '$components/ExportGedcomModal';
-
-function toFilename(): string {
-  return `${crypto.randomUUID()}.db`;
-}
+import { appDataDir } from '@tauri-apps/api/path';
 
 export function HomePage() {
   const queryClient = useQueryClient();
@@ -51,8 +48,12 @@ export function HomePage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: { name: string; filename: string; description?: string }) =>
-      createTree(data),
+    mutationFn: async (data: { name: string; description?: string }) => {
+      const baseDir = await appDataDir();
+      const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || crypto.randomUUID();
+      const treePath = `${baseDir}trees/${slug}`;
+      return createTree({ name: data.name, path: treePath, description: data.description });
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.trees });
       setShowNewForm(false);
@@ -71,12 +72,12 @@ export function HomePage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async ({ id, filename }: { id: string; filename: string }) => {
+    mutationFn: async ({ id, treePath }: { id: string; treePath: string }) => {
       await deleteTree(id);
       try {
-        await remove(`trees/${filename}`, { baseDir: BaseDirectory.AppData });
+        await remove(treePath, { recursive: true });
       } catch {
-        // File may not exist — ignore
+        // Folder may not exist — ignore
       }
     },
     onSuccess: () => {
@@ -85,8 +86,8 @@ export function HomePage() {
   });
 
   const openMutation = useMutation({
-    mutationFn: async (tree: { id: string; filename: string }) => {
-      await openTreeDb(tree.filename);
+    mutationFn: async (tree: { id: string; path: string }) => {
+      await openTreeDb(tree.path);
       await markTreeOpened(tree.id);
       setCurrentTree(tree.id);
       return tree.id;
@@ -105,7 +106,6 @@ export function HomePage() {
     if (!newName.trim()) return;
     createMutation.mutate({
       name: newName.trim(),
-      filename: toFilename(),
       description: newDescription.trim() || undefined,
     });
   }
@@ -134,7 +134,7 @@ export function HomePage() {
     if (!confirmDeleteId || !trees) return;
     const tree = trees.find((t) => t.id === confirmDeleteId);
     if (!tree) return;
-    deleteMutation.mutate({ id: tree.id, filename: tree.filename });
+    deleteMutation.mutate({ id: tree.id, treePath: tree.path });
     setConfirmDeleteId(null);
   }
 
@@ -288,7 +288,7 @@ export function HomePage() {
                 </p>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                   <button
-                    onClick={() => openMutation.mutate({ id: tree.id, filename: tree.filename })}
+                    onClick={() => openMutation.mutate({ id: tree.id, path: tree.path })}
                     disabled={openMutation.isPending}
                     style={{ flex: 1, padding: '0.5rem', cursor: 'pointer' }}
                   >
@@ -348,7 +348,7 @@ export function HomePage() {
       <ExportGedcomModal
         isOpen={exportTreeId !== null}
         treeName={trees?.find((t) => t.id === exportTreeId)?.name ?? ''}
-        treeFilename={trees?.find((t) => t.id === exportTreeId)?.filename ?? ''}
+        treePath={trees?.find((t) => t.id === exportTreeId)?.path ?? ''}
         onSuccess={() => setExportTreeId(null)}
         onCancel={() => setExportTreeId(null)}
       />

@@ -7,7 +7,9 @@ import { createFamily, addFamilyMember } from '../trees/families';
 import { createPlace } from '../trees/places';
 import { createEvent, addEventParticipant, getEventTypeByTag } from '../trees/events';
 
-const DEMO_FILENAME = 'harry-potter-demo.db';
+import { appDataDir } from '@tauri-apps/api/path';
+
+const DEMO_SLUG = 'harry-potter-family';
 
 export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   // Check if already seeded
@@ -18,14 +20,17 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   if (rows.length > 0 && rows[0].value === 'true') return;
 
   // Create tree entry in system DB
+  const baseDir = await appDataDir();
+  const treePath = `${baseDir}trees/${DEMO_SLUG}`;
+
   const treeId = await createTree({
     name: 'Harry Potter Family',
-    filename: DEMO_FILENAME,
+    path: treePath,
     description: 'A demo family tree featuring the extended Potter-Weasley family',
   });
 
   // Open tree DB
-  await openTreeDb(DEMO_FILENAME);
+  await openTreeDb(treePath);
 
   // --- Places ---
   const godricsHollow = await createPlace({

@@ -5,7 +5,7 @@ import { openTreeDb } from '$/db/connection';
 interface ExportGedcomModalProps {
   isOpen: boolean;
   treeName: string;
-  treeFilename: string;
+  treePath: string;
   onSuccess: () => void;
   onCancel: () => void;
 }
@@ -13,7 +13,7 @@ interface ExportGedcomModalProps {
 export function ExportGedcomModal({
   isOpen,
   treeName,
-  treeFilename,
+  treePath,
   onSuccess,
   onCancel,
 }: ExportGedcomModalProps) {
@@ -24,11 +24,11 @@ export function ExportGedcomModal({
 
   // Open tree database when modal opens
   useEffect(() => {
-    if (!isOpen || !treeFilename) return;
+    if (!isOpen || !treePath) return;
 
     let mounted = true;
     setReady(false);
-    openTreeDb(treeFilename)
+    openTreeDb(treePath)
       .then(() => {
         if (mounted) setReady(true);
       })
@@ -41,7 +41,7 @@ export function ExportGedcomModal({
     return () => {
       mounted = false;
     };
-  }, [isOpen, treeFilename]);
+  }, [isOpen, treePath]);
 
   const reset = () => {
     setIncludePrivate(false);

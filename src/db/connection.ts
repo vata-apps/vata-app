@@ -1,10 +1,10 @@
 import Database from '@tauri-apps/plugin-sql';
-import { mkdir, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { mkdir } from '@tauri-apps/plugin-fs';
 import { seedHarryPotterDemo } from './seed/harry-potter-demo';
 
 let systemDb: Database | null = null;
 let treeDb: Database | null = null;
-let currentTreeFilename: string | null = null;
+let currentTreePath: string | null = null;
 
 async function applyConnectionPragmas(db: Database): Promise<void> {
   await db.execute('PRAGMA journal_mode = WAL');
@@ -246,6 +246,118 @@ async function initializeTreeDb(db: Database): Promise<void> {
   await db.execute(
     `INSERT OR IGNORE INTO tree_meta (key, value) VALUES ('software_version', '0.1.0')`
   );
+
+  // repositories
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS repositories (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      address TEXT,
+      city TEXT,
+      country TEXT,
+      phone TEXT,
+      email TEXT,
+      website TEXT,
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+  await db.execute(`CREATE INDEX IF NOT EXISTS idx_repositories_name ON repositories(name)`);
+
+  // sources
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS sources (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      repository_id INTEGER,
+      title TEXT NOT NULL,
+      author TEXT,
+      publisher TEXT,
+      publication_date TEXT,
+      call_number TEXT,
+      url TEXT,
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (repository_id) REFERENCES repositories(id) ON DELETE SET NULL
+    )
+  `);
+  await db.execute(`CREATE INDEX IF NOT EXISTS idx_sources_title ON sources(title)`);
+  await db.execute(`CREATE INDEX IF NOT EXISTS idx_sources_repository ON sources(repository_id)`);
+
+  // source_citations
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS source_citations (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      source_id INTEGER NOT NULL,
+      page TEXT,
+      quality TEXT CHECK(quality IN ('primary', 'secondary', 'questionable', 'unreliable')),
+      date_accessed TEXT,
+      text TEXT,
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE
+    )
+  `);
+  await db.execute(
+    `CREATE INDEX IF NOT EXISTS idx_citations_source ON source_citations(source_id)`
+  );
+
+  // citation_links
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS citation_links (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      citation_id INTEGER NOT NULL,
+      entity_type TEXT NOT NULL CHECK(entity_type IN ('individual', 'name', 'event', 'family', 'place')),
+      entity_id INTEGER NOT NULL,
+      field_name TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (citation_id) REFERENCES source_citations(id) ON DELETE CASCADE
+    )
+  `);
+  await db.execute(
+    `CREATE INDEX IF NOT EXISTS idx_citation_links_citation ON citation_links(citation_id)`
+  );
+  await db.execute(
+    `CREATE INDEX IF NOT EXISTS idx_citation_links_entity ON citation_links(entity_type, entity_id)`
+  );
+
+  // files
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS files (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      original_filename TEXT NOT NULL,
+      relative_path TEXT NOT NULL UNIQUE,
+      mime_type TEXT NOT NULL,
+      file_size INTEGER NOT NULL,
+      width INTEGER,
+      height INTEGER,
+      thumbnail_path TEXT,
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `);
+  await db.execute(`CREATE INDEX IF NOT EXISTS idx_files_mime_type ON files(mime_type)`);
+
+  // source_files
+  await db.execute(`
+    CREATE TABLE IF NOT EXISTS source_files (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      source_id INTEGER NOT NULL,
+      file_id INTEGER NOT NULL,
+      sort_order INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE,
+      FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE,
+      UNIQUE(source_id, file_id)
+    )
+  `);
+  await db.execute(
+    `CREATE INDEX IF NOT EXISTS idx_source_files_source ON source_files(source_id)`
+  );
+  await db.execute(`CREATE INDEX IF NOT EXISTS idx_source_files_file ON source_files(file_id)`);
 }
 
 async function initializeSystemDb(db: Database): Promise<void> {
@@ -253,7 +365,7 @@ async function initializeSystemDb(db: Database): Promise<void> {
     CREATE TABLE IF NOT EXISTS trees (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
-      filename TEXT NOT NULL UNIQUE,
+      path TEXT NOT NULL UNIQUE,
       description TEXT,
       individual_count INTEGER NOT NULL DEFAULT 0,
       family_count INTEGER NOT NULL DEFAULT 0,
@@ -286,19 +398,21 @@ export async function getSystemDb(): Promise<Database> {
   return systemDb;
 }
 
-export async function openTreeDb(filename: string): Promise<Database> {
-  if (treeDb && currentTreeFilename !== filename) {
+export async function openTreeDb(treePath: string): Promise<Database> {
+  if (treeDb && currentTreePath !== treePath) {
     await treeDb.close(treeDb.path);
     treeDb = null;
-    currentTreeFilename = null;
+    currentTreePath = null;
   }
 
   if (!treeDb) {
-    await mkdir('trees', { baseDir: BaseDirectory.AppData, recursive: true });
-    treeDb = await Database.load(`sqlite:trees/${filename}`);
+    await mkdir(treePath, { recursive: true });
+    await mkdir(`${treePath}/media`, { recursive: true });
+    const dbName = treePath.split('/').pop() ?? 'tree';
+    treeDb = await Database.load(`sqlite:${treePath}/${dbName}.db`);
     await applyConnectionPragmas(treeDb);
     await initializeTreeDb(treeDb);
-    currentTreeFilename = filename;
+    currentTreePath = treePath;
   }
 
   return treeDb;
@@ -315,7 +429,7 @@ export async function closeTreeDb(): Promise<void> {
   if (treeDb) {
     const db = treeDb;
     treeDb = null;
-    currentTreeFilename = null;
+    currentTreePath = null;
     await db.close(db.path);
   }
 }
@@ -324,6 +438,6 @@ export function isTreeDbOpen(): boolean {
   return treeDb !== null;
 }
 
-export function getCurrentTreeFilename(): string | null {
-  return currentTreeFilename;
+export function getCurrentTreePath(): string | null {
+  return currentTreePath;
 }

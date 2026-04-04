@@ -3,27 +3,38 @@ import { createTree, getTreeById, updateTreeStats, markTreeOpened } from '$/db/s
 import { countIndividuals } from '$db-tree/individuals';
 import { countFamilies } from '$db-tree/families';
 import { useAppStore } from '$/store/app-store';
+import { appDataDir } from '@tauri-apps/api/path';
 
 interface CreateTreeData {
   name: string;
   description?: string;
 }
 
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export class TreeManager {
   /**
    * Create a new tree and open its database.
+   * Trees are stored in the app data directory under trees/<slug>/.
    * @returns The ID of the created tree
    */
   static async create(data: CreateTreeData): Promise<string> {
-    const dbFilename = `${crypto.randomUUID()}.db`;
+    const baseDir = await appDataDir();
+    const slug = slugify(data.name) || crypto.randomUUID();
+    const treePath = `${baseDir}trees/${slug}`;
 
     const treeId = await createTree({
       name: data.name,
-      filename: dbFilename,
+      path: treePath,
       description: data.description,
     });
 
-    await openTreeDb(dbFilename);
+    await openTreeDb(treePath);
 
     return treeId;
   }
@@ -39,7 +50,7 @@ export class TreeManager {
       throw new Error(`Tree not found: ${treeId}`);
     }
 
-    await openTreeDb(tree.filename);
+    await openTreeDb(tree.path);
     await markTreeOpened(treeId);
     useAppStore.getState().setCurrentTree(treeId);
   }

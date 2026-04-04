@@ -4,7 +4,7 @@ import type { Tree } from '$/types/database';
 interface RawTree {
   id: number;
   name: string;
-  filename: string;
+  path: string;
   description: string | null;
   individual_count: number;
   family_count: number;
@@ -14,13 +14,13 @@ interface RawTree {
 }
 
 const TREE_COLUMNS =
-  'id, name, filename, description, individual_count, family_count, last_opened_at, created_at, updated_at';
+  'id, name, path, description, individual_count, family_count, last_opened_at, created_at, updated_at';
 
 function mapToTree(raw: RawTree): Tree {
   return {
     id: String(raw.id),
     name: raw.name,
-    filename: raw.filename,
+    path: raw.path,
     description: raw.description,
     individualCount: raw.individual_count,
     familyCount: raw.family_count,
@@ -48,13 +48,13 @@ export async function getTreeById(id: string): Promise<Tree | null> {
 
 export async function createTree(data: {
   name: string;
-  filename: string;
+  path: string;
   description?: string;
 }): Promise<string> {
   const db = await getSystemDb();
   const result = await db.execute(
-    `INSERT INTO trees (name, filename, description) VALUES ($1, $2, $3)`,
-    [data.name, data.filename, data.description ?? null]
+    `INSERT INTO trees (name, path, description) VALUES ($1, $2, $3)`,
+    [data.name, data.path, data.description ?? null]
   );
   return String(result.lastInsertId);
 }

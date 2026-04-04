@@ -5,7 +5,7 @@ import { readDir, BaseDirectory } from '@tauri-apps/plugin-fs';
 interface RawTree {
   id: number;
   name: string;
-  filename: string;
+  path: string;
   description: string | null;
   individual_count: number;
   family_count: number;
@@ -29,7 +29,7 @@ export async function getSystemDebugData(): Promise<SystemDebugData> {
 
   const [rawTrees, rawSettings] = await Promise.all([
     db.select<RawTree[]>(
-      'SELECT id, name, filename, description, individual_count, family_count, last_opened_at, created_at, updated_at FROM trees ORDER BY id'
+      'SELECT id, name, path, description, individual_count, family_count, last_opened_at, created_at, updated_at FROM trees ORDER BY id'
     ),
     db.select<RawAppSetting[]>('SELECT key, value FROM app_settings ORDER BY key'),
   ]);

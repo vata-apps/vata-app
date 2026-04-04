@@ -12,6 +12,7 @@ import { createTree, updateTreeStats, markTreeOpened } from '$/db/system/trees';
 import { openTreeDb, getTreeDb } from '$/db/connection';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { open, save } from '@tauri-apps/plugin-dialog';
+import { appDataDir } from '@tauri-apps/api/path';
 
 export interface ImportResult {
   treeId: string;
@@ -55,18 +56,20 @@ export class GedcomManager {
     const filename = filePath.split('/').pop() ?? 'imported';
     const treeName = filename.replace(/\.[^.]+$/, '');
 
-    // Generate unique filename for database
-    const dbFilename = `${crypto.randomUUID()}.db`;
+    // Create tree folder in app data directory
+    const baseDir = await appDataDir();
+    const slug = treeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || crypto.randomUUID();
+    const treePath = `${baseDir}trees/${slug}`;
 
     // Create new tree in system database
     const treeId = await createTree({
       name: treeName,
-      filename: dbFilename,
+      path: treePath,
       description: `Imported from ${filename}`,
     });
 
     // Open the tree database
-    await openTreeDb(dbFilename);
+    await openTreeDb(treePath);
 
     // Import GEDCOM data
     const stats = await importGedcom(content);
@@ -93,15 +96,17 @@ export class GedcomManager {
    * @returns Import result with tree ID and stats
    */
   static async importFromContent(content: string, treeName: string): Promise<ImportResult> {
-    const dbFilename = `${crypto.randomUUID()}.db`;
+    const baseDir = await appDataDir();
+    const slug = treeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || crypto.randomUUID();
+    const treePath = `${baseDir}trees/${slug}`;
 
     const treeId = await createTree({
       name: treeName,
-      filename: dbFilename,
+      path: treePath,
       description: 'Imported from GEDCOM',
     });
 
-    await openTreeDb(dbFilename);
+    await openTreeDb(treePath);
 
     const stats = await importGedcom(content);
 

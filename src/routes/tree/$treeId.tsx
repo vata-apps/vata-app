@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { getTreeById } from '$/db/system/trees';
-import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreeFilename } from '$/db/connection';
+import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from '$/db/connection';
 import { useAppStore } from '$/store/app-store';
 import { queryKeys } from '$lib/query-keys';
 import { useEffect, useState } from 'react';
@@ -26,13 +26,13 @@ export const Route = createFileRoute('/tree/$treeId')({
       async function ensureDbOpen() {
         try {
           // Check if the correct tree DB is already open
-          if (isTreeDbOpen() && getCurrentTreeFilename() === tree!.filename) {
+          if (isTreeDbOpen() && getCurrentTreePath() === tree!.path) {
             setDbReady(true);
             return;
           }
 
           // Open the tree database
-          await openTreeDb(tree!.filename);
+          await openTreeDb(tree!.path);
           setDbReady(true);
         } catch (err) {
           setError(err instanceof Error ? err.message : 'Failed to open database');
