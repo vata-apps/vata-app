@@ -9,17 +9,13 @@ Use this skill to load the context of the current MVP before implementing new fe
 
 ## How to Find Current Status
 
-**Do not hardcode status in this skill.** The authoritative status lives in:
+**Do not hardcode status in this skill.** The authoritative status lives in GitHub Discussions (Product category):
 
-- **Overall state**: `docs/mvps/*/README.md` — each MVP has a checklist
-- **Phase details**: `docs/mvps/mvp-X-*/phase-*.md` — each phase has its own doc
-- **Quick lookup**: `docs/README.md` — navigation index to all MVP docs
+- **MVP overviews**: "MVP1: Foundation", "MVP2: GEDCOM", "MVP3: Primary Entities" Discussions
+- **Product specs**: "MVP1: Foundation — Product Spec", etc.
+- **Roadmap**: "Roadmap" Discussion (Product category)
 
-When you need to know the current state:
-
-1. Read the relevant `docs/mvps/*/README.md` checklist
-2. Check which phases have all items checked `[x]`
-3. The first unchecked phase is the current work
+When you need to know the current state, fetch the relevant Discussion via `gh api graphql`.
 
 ---
 
@@ -64,26 +60,7 @@ Before implementing a feature, check which MVP it belongs to:
 | Source citations and repositories                  | MVP5 |
 | Media files and document attachments               | MVP6 |
 
-If a feature belongs to a future MVP, do not implement it now. Document it in the relevant MVP phase doc instead.
-
----
-
-## When to Update MVP Status
-
-Update the documentation when:
-
-- **Starting a new MVP**: Mark previous MVP as complete in its README, create new MVP folder with phase docs
-- **Starting a new phase**: Create or update the phase doc with implementation details
-- **Completing a phase**: Check all items in `docs/mvps/{mvp}/README.md` checklist
-- **Completing an MVP**: Mark it complete in the overview above
-
-## How to Update Status
-
-1. **Checklist in MVP README**: Toggle `[ ]` to `[x]` for completed items
-2. **Phase docs**: Update with file locations, implementation notes
-3. **New MVP folder**: Copy template from previous MVP, rename, update content
-
-Do not update this skill with status — it would always be stale.
+If a feature belongs to a future MVP, do not implement it now.
 
 ---
 
@@ -102,9 +79,9 @@ Do not update this skill with status — it would always be stale.
 
 ## Checklist Before Starting a New Phase
 
-- [ ] Previous phase deliverables are complete (check `docs/mvps/*/README.md`)
-- [ ] Schema changes documented in `docs/architecture/database-schema.md`
+- [ ] Previous phase deliverables are complete
+- [ ] Schema changes documented in "Database Schema" Discussion (Architecture category)
 - [ ] New DB functions follow `sqlite-standards` skill (PRAGMAs, no SELECT \*, parameterized queries)
 - [ ] New GEDCOM-related code follows `gedcom-standards` skill
 - [ ] New TypeScript code follows `typescript-standards` skill
-- [ ] Documentation updated — run `docs-consistency` skill after any doc changes
+- [ ] Documentation updated — run `docs-consistency` skill after any changes that affect documented architecture
