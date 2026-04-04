@@ -60,7 +60,7 @@ Templates are plain TypeScript objects — no classes, no inheritance.
 interface TemplateSlot {
   key: string;              // unique within template, e.g. "husband"
   label: string;            // displayed to user, e.g. "Husband"
-  role: string;             // event participant role: "principal", "witness", etc.
+  participantRole?: ParticipantRole; // if set, added as event participant; if undefined, family-only
   gender?: 'M' | 'F';      // pre-filled when creating new individual
   required: boolean;        // visual hint only (not enforced)
   multiple: boolean;        // true for witnesses, census members
@@ -85,19 +85,19 @@ interface TemplateDefinition {
 ### Template Definitions
 
 **Marriage** (`MARR`):
-- Slots: Husband (principal, M, required), Wife (principal, F, required), Husband's Father (parent, M), Husband's Mother (parent, F), Wife's Father (parent, M), Wife's Mother (parent, F), Witnesses (witness, multiple)
+- Slots: Husband (principal, M, required), Wife (principal, F, required), Husband's Father (family-only, M), Husband's Mother (family-only, F), Wife's Father (family-only, M), Wife's Mother (family-only, F), Witnesses (witness, multiple)
 - Families: couple (husband + wife), parent-child (husband's parents + husband), parent-child (wife's parents + wife)
 
 **Baptism** (`BAPM`):
-- Slots: Child (principal, required), Father (parent, M), Mother (parent, F), Godfather (witness, M), Godmother (witness, F)
+- Slots: Child (principal, required), Father (family-only, M), Mother (family-only, F), Godfather (godparent, M), Godmother (godparent, F)
 - Families: parent-child (father + mother + child)
 
 **Birth** (`BIRT`):
-- Slots: Child (principal, required), Father (parent, M), Mother (parent, F)
+- Slots: Child (principal, required), Father (family-only, M), Mother (family-only, F)
 - Families: parent-child (father + mother + child)
 
 **Death** (`DEAT`):
-- Slots: Deceased (principal, required), Informant (witness)
+- Slots: Deceased (principal, required), Informant (informant)
 - Families: none
 
 **Burial** (`BURI`):
@@ -105,8 +105,10 @@ interface TemplateDefinition {
 - Families: none
 
 **Census** (`CENS`):
-- Slots: Head of Household (principal, required), Members (principal, multiple)
+- Slots: Head of Household (principal, required), Members (other, multiple)
 - Families: none (census relationships are complex; family linking deferred)
+
+Slots marked "family-only" have no `participantRole` — they are not added as event participants, only used in family creation (step 6).
 
 **Generic** (no tag):
 - Slots: none (free-form only)
@@ -158,7 +160,7 @@ interface CreateFromTemplateResult {
 2. **Resolve place** — use `existingPlaceId` or call `createPlace()`
 3. **Determine event type** — use `input.eventTypeTag` override (for Generic), else template's `eventTypeTag`. If empty/null, skip steps 4-5.
 4. **Create event** — `createEvent()` with date + place (skipped if no event type)
-5. **Add event participants** — `addEventParticipant()` for each filled slot (skipped if no event)
+5. **Add event participants** — `addEventParticipant()` for each filled slot that has a `participantRole` (skipped if no event; family-only slots are excluded)
 6. **Create families** — iterate `template.families`, skip if required members missing, create family + add members
 7. **Create citation** — `createCitation({ sourceId, page })`
 8. **Create citation links** — one for the event (if created), one for each individual, one for each family
