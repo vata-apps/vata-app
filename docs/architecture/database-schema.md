@@ -5,8 +5,8 @@
 - **MVP1** : `system.db` (trees, app_settings)
 - **MVP2** : GEDCOM import/export (utilise le schéma tree)
 - **MVP3** : `individuals`, `names`, `families`, `family_members`, `place_types`, `places`, `events`, `event_participants`, `event_types`, `tree_meta`
-- **MVP5** : `sources`, `source_citations`, `citation_links`, `repositories`
-- **MVP6** : tables pour les fichiers liés aux entités *(PRD à venir)*
+- **MVP4** : `sources`, `source_citations`, `citation_links`, `repositories`
+- **MVP5** : tables pour les fichiers liés aux entités *(PRD à venir)*
 
 ## Dual-Database Architecture
 

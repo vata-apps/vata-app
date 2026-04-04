@@ -140,7 +140,7 @@ Everything in this project must be written in English.
 
 ## i18n for User-Facing Strings
 
-**Deferred to MVP4.** Until then, hardcoded English strings are acceptable. Do not set up an i18n library before MVP4.
+**Deferred to MVP6.** Until then, hardcoded English strings are acceptable. Do not set up an i18n library before MVP6.
 
 ---
 

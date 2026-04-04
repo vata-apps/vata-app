@@ -6,7 +6,7 @@
 
 ## Scope
 
-MVP1 establishes the technical infrastructure base: Tauri project setup, configuration, database architecture, and initial UI. **No UI library in MVP1** — HTML-only UI with minimal CSS. shadcn/ui and the design system are added in MVP4.
+MVP1 establishes the technical infrastructure base: Tauri project setup, configuration, database architecture, and initial UI. **No UI library in MVP1** — HTML-only UI with minimal CSS. shadcn/ui and the design system are added in MVP6.
 
 ## Prerequisites
 

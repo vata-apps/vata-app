@@ -1,6 +1,6 @@
 # Tree View Screen (Main Tree View)
 
-**MVP**: MVP3 (tree dashboard, module navigation). MVP4 applies the full design system.
+**MVP**: MVP3 (tree dashboard, module navigation). MVP6 applies the full design system.
 
 ## Objective
 

@@ -1,18 +1,18 @@
-# ADR-005: UI Strategy — HTML in MVP1–3, shadcn/ui in MVP4
+# ADR-005: UI Strategy — HTML in MVP1–5, shadcn/ui in MVP6
 
 **Status**: Accepted (revised 2026-04-04)
 **Date**: 2025-02-22 (revised 2026-04-04)
 
 ## Context
 
-The application needs a complete UI, but the early MVPs focus on infrastructure and data. Building with a component library before the data model is stable risks rework. The original plan used Mantine v7 and required Figma designs before starting MVP4.
+The application needs a complete UI, but the early MVPs focus on infrastructure and data. Building with a component library before the data model is stable risks rework. The original plan used Mantine v7 and required Figma designs before starting the UI phase.
 
 **Revised decision (2026-04-04)**: Switch from Mantine to shadcn/ui, and remove the Figma dependency. Screens are designed iteratively with AI-assisted development and user feedback.
 
 ## Decision
 
-- **MVP1–3**: Use plain HTML with minimal CSS. No component library. Focus on infrastructure, data model, and functionality.
-- **MVP4**: Introduce **shadcn/ui** (Radix UI primitives + Tailwind CSS), **Lucide React** icons, a complete design system (theme via CSS variables, colors, typography), and **react-i18next** for internationalization.
+- **MVP1–5**: Use plain HTML with minimal CSS. No component library. Focus on infrastructure, data model, and functionality.
+- **MVP6**: Introduce **shadcn/ui** (Radix UI primitives + Tailwind CSS), **Lucide React** icons, a complete design system (theme via CSS variables, colors, typography), and **react-i18next** for internationalization.
 - **Screen design**: Screens are designed iteratively during implementation. No Figma dependency.
 
 ## Why shadcn/ui over Mantine
@@ -39,8 +39,8 @@ The application needs a complete UI, but the early MVPs focus on infrastructure 
 - i18n infrastructure added at the right time (when UI is being built)
 
 **Negative / Trade-offs**:
-- MVP1–3 have a basic, unattractive UI
-- Migration from HTML to shadcn/ui components requires touching every UI file
+- MVP1–5 have a basic, unattractive UI
+- Migration from HTML to shadcn/ui components in MVP6 requires touching every UI file
 - Tailwind CSS adds a build dependency and utility-class learning curve
 
 ## References

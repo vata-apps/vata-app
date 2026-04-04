@@ -1,6 +1,6 @@
 # Design System
 
-> **MVP4**: The full design system (shadcn/ui + Tailwind CSS, colors, typography, components) is applied from MVP4. MVP1–3 use a minimal HTML UI without a component library.
+> **MVP6**: The full design system (shadcn/ui + Tailwind CSS, colors, typography, components) is applied from MVP6. MVP1–5 use a minimal HTML UI without a component library.
 
 ## Design Principles
 

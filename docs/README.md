@@ -19,7 +19,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-002: Frontend Stack](./decisions/adr-002-frontend-stack.md) — React, TypeScript, Vite, TanStack, Zustand
 - [ADR-003: Database Architecture](./decisions/adr-003-database-architecture.md) — Dual DB, string IDs, layer separation
 - [ADR-004: GEDCOM Libraries (in-app)](./decisions/adr-004-gedcom-libraries.md) — gedcom-parser and gedcom-date as in-app modules (@vata-apps/\*)
-- [ADR-005: UI Strategy](./decisions/adr-005-ui-strategy.md) — HTML in MVP1–3, shadcn/ui in MVP4
+- [ADR-005: UI Strategy](./decisions/adr-005-ui-strategy.md) — HTML in MVP1–5, shadcn/ui in MVP6
 - [ADR-006: Import/Export](./decisions/adr-006-import-export.md) — Two-phase import, round-trip export
 
 ## Architecture
@@ -52,9 +52,9 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 ### MVP4–6
 
-- **MVP4: UI** — Complete UI with shadcn/ui + Tailwind CSS, design system, i18n
-- **MVP5: Sources** — Source and citation management
-- **MVP6: Files** — File attachments linked to entities
+- **MVP4: Sources** — Source and citation management
+- **MVP5: Files** — File attachments linked to entities
+- **MVP6: UI** — Complete UI with shadcn/ui + Tailwind CSS, design system, i18n
 
 ## API
 
@@ -62,7 +62,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 ## User Interface
 
-> UI documentation will be updated iteratively during MVP4+ implementation.
+> UI documentation will be updated iteratively during MVP6 implementation.
 
 - [Design System](./ui/design-system.md) — Colors, typography, components
 - [Layouts](./ui/layouts.md) — Layout structure

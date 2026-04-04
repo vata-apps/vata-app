@@ -16,17 +16,19 @@
 | GEDCOM            | In-app module   | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)      | 2   |
 | Dates             | In-app module   | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`) | 3   |
 | Testing           | Vitest + RTL    | 2.x / 16.x    | Unit and integration tests                                   | 3   |
-| UI Components     | shadcn/ui       | Latest        | Radix UI primitives with Tailwind CSS styling                | 4   |
-| CSS Framework     | Tailwind CSS    | 4.x           | Utility-first CSS framework                                  | 4   |
-| Icons             | Lucide React    | Latest        | Consistent iconography                                       | 4   |
-| i18n              | react-i18next   | 15.x          | Internationalization                                         | 4   |
+| UI Components     | shadcn/ui       | Latest        | Radix UI primitives with Tailwind CSS styling                | 6   |
+| CSS Framework     | Tailwind CSS    | 4.x           | Utility-first CSS framework                                  | 6   |
+| Icons             | Lucide React    | Latest        | Consistent iconography                                       | 6   |
+| i18n              | react-i18next   | 15.x          | Internationalization                                         | 6   |
 
 ### Adoption by MVP
 
 - **MVP1**: Tauri, React, Vite, TypeScript, TanStack Query, Zustand, TanStack Router, SQLite. No UI library (minimal HTML/CSS).
 - **MVP2**: Integration of in-app module `@vata-apps/gedcom-parser` for import/export.
 - **MVP3**: In-app module `@vata-apps/gedcom-date` for event dates. HTML-only UI with minimal CSS. Vitest + Testing Library introduced.
-- **MVP4**: shadcn/ui, Tailwind CSS, Lucide React, complete design system, i18n.
+- **MVP4**: Sources entity and citation management (HTML-only UI).
+- **MVP5**: File attachment management (HTML-only UI).
+- **MVP6**: shadcn/ui, Tailwind CSS, Lucide React, complete design system, i18n.
 
 ---
 

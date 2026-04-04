@@ -43,7 +43,7 @@ export async function exportGedcom(options: ExportOptions): Promise<string> {
   const familyXrefs = new Map<string, string>();
 
   // Build GedcomDocument structure
-  // Note: sources and repositories are empty arrays (MVP5)
+  // Note: sources and repositories are empty arrays (MVP4)
   const document: GedcomDocument = {
     header: {
       sourceApp: "Vata",

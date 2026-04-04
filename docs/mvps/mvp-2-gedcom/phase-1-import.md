@@ -90,7 +90,7 @@ export async function importGedcom(content: string): Promise<ImportStats> {
       }
     }
 
-    // Note: Source/repository import is deferred to MVP5
+    // Note: Source/repository import is deferred to MVP4
 
     await db.execute("COMMIT");
   } catch (e) {

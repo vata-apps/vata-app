@@ -1,6 +1,6 @@
 # Individual View Screen (Person Record)
 
-**MVP**: MVP3 (individual CRUD, minimal HTML). MVP4 design system. MVP5 citations/sources.
+**MVP**: MVP3 (individual CRUD, minimal HTML). MVP4 citations/sources. MVP6 design system.
 
 ## Objective
 

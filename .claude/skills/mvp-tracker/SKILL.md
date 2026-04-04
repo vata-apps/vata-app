@@ -30,20 +30,20 @@ When you need to know the current state:
 | MVP1: Foundation       | Tauri setup, system DB, tree management |
 | MVP2: GEDCOM           | GEDCOM 5.5.1 import/export              |
 | MVP3: Primary Entities | CRUD for genealogical entities          |
-| MVP4: UI (shadcn/ui)   | Full UI with shadcn/ui + Tailwind + i18n |
-| MVP5: Sources          | Source citations and repositories       |
-| MVP6: File Attachments | Media and document attachments          |
+| MVP4: Sources          | Source citations and repositories        |
+| MVP5: File Attachments | Media and document attachments           |
+| MVP6: UI (shadcn/ui)   | Full UI with shadcn/ui + Tailwind + i18n |
 
 ---
 
-## MVP3 Constraints
+## MVP3–5 Constraints
 
-When working on MVP3, these constraints apply:
+When working on MVP3, MVP4, or MVP5, these constraints apply:
 
-1. **UI is HTML-only**: No shadcn/ui, no design system components. Minimal inline CSS only. Functional, not polished.
-2. **No i18n yet**: Hardcoded English strings are acceptable until MVP4.
-3. **No file attachments**: Media files and documents are out of scope (MVP6).
-4. **No source citations**: Out of scope (MVP5).
+1. **UI is HTML-only**: No shadcn/ui, no design system components. Minimal inline CSS only. Functional, not polished. Design system comes in MVP6.
+2. **No i18n yet**: Hardcoded English strings are acceptable until MVP6.
+3. **No file attachments**: Media files and documents are out of scope until MVP5.
+4. **No source citations**: Out of scope until MVP4.
 5. **Date module**: Use `@vata-apps/gedcom-date` for all date operations. No custom date parsing.
 6. **SQL discipline**: All queries must follow the `sqlite-standards` skill.
 7. **GEDCOM compatibility**: Entity schema must remain GEDCOM 5.5.1 compatible — follow the `gedcom-standards` skill.
@@ -59,10 +59,10 @@ Before implementing a feature, check which MVP it belongs to:
 | CRUD: Individuals, Names, Families, Events, Places | MVP3 |
 | Date parsing and formatting                        | MVP3 |
 | Business logic managers and React Query hooks      | MVP3 |
-| UI design system (shadcn/ui components)             | MVP4 |
-| i18n / translations                                | MVP4 |
-| Source citations and repositories                  | MVP5 |
-| Media files and document attachments               | MVP6 |
+| Source citations and repositories                  | MVP4 |
+| Media files and document attachments               | MVP5 |
+| UI design system (shadcn/ui components)             | MVP6 |
+| i18n / translations                                | MVP6 |
 
 If a feature belongs to a future MVP, do not implement it now. Document it in the relevant MVP phase doc instead.
 

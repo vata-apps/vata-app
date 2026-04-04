@@ -33,7 +33,7 @@ MVP1 establishes the technical foundation for Vata: a working application shell 
 
 - Genealogical data (individuals, families, events, places)
 - GEDCOM import/export
-- UI component library (shadcn/ui is MVP4)
+- UI component library (shadcn/ui is MVP6)
 - Internationalization
 
 ## Key Decisions

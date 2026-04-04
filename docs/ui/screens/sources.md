@@ -1,6 +1,6 @@
 # Sources Screen
 
-**MVP5**: Source management, source ↔ entity associations.
+**MVP4**: Source management, source ↔ entity associations.
 
 ## Objective
 

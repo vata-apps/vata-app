@@ -2,13 +2,13 @@
 
 ## Objective
 
-Create a minimal HTML layout and Home page with tree list functionality. **No UI library in MVP1** — use HTML-only UI with minimal CSS. shadcn/ui and the design system are added in MVP4.
+Create a minimal HTML layout and Home page with tree list functionality. **No UI library in MVP1** — use HTML-only UI with minimal CSS. shadcn/ui and the design system are added in MVP6.
 
 ## Step 3.1: Base Layout
 
 **MVP1**: Minimal HTML layout (header, nav, main). No shadcn/ui components.
 
-**MVP4**: Will be replaced with MainLayout using shadcn/ui layout components (see MVP4 documentation).
+**MVP6**: Will be replaced with MainLayout using shadcn/ui layout components (see MVP6 documentation).
 
 ### src/components/layouts/MainLayout.tsx
 
@@ -36,7 +36,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
 **MVP1**: Simple HTML page (title, buttons, tree list in `<ul>` or `<div>`). No UI library components.
 
-**MVP4**: Will migrate to shadcn/ui components (Card, Button, Dialog, etc.).
+**MVP6**: Will migrate to shadcn/ui components (Card, Button, Dialog, etc.).
 
 ### src/pages/Home.tsx
 

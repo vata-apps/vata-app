@@ -1,6 +1,6 @@
 # Database Layer API
 
-See [Database Schema](../architecture/database-schema.md) for the MVP mapping of tables (MVP1: system, MVP3: entities, MVP5: sources, MVP6: files).
+See [Database Schema](../architecture/database-schema.md) for the MVP mapping of tables (MVP1: system, MVP3: entities, MVP4: sources, MVP5: files).
 
 ### Entity IDs
 

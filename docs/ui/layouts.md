@@ -4,7 +4,7 @@
 
 Définir les structures de layout réutilisables. L'app utilise une **barre de navigation en haut** combinée à un **layout trois panneaux** (sidebar / centre / aside) pour les modules d'entités, et un layout pleine largeur pour l'écran d'accueil.
 
-> **Adoption par MVP** : MVP3 implémente routes et layouts en **HTML uniquement** (pas de shadcn/ui). MVP4 applique le layout complet avec shadcn/ui + Tailwind CSS.
+> **Adoption par MVP** : MVP1–5 implémentent routes et layouts en **HTML uniquement** (pas de shadcn/ui). MVP6 applique le layout complet avec shadcn/ui + Tailwind CSS.
 
 ---
 

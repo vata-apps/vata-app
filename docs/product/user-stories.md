@@ -125,7 +125,7 @@ Acceptance criteria:
 
 ---
 
-## MVP4 — UI
+## MVP4 — Sources
 
 > _Stories to be detailed during MVP implementation._
 
@@ -139,7 +139,7 @@ As **Marie** (beginner), I want the application in my language, so that I can us
 
 ---
 
-## MVP5 — Sources
+## MVP5 — Files
 
 > _Stories to be detailed during MVP implementation._
 
@@ -153,7 +153,7 @@ As **Claire** (researcher), I want to browse all my sources in one place, so tha
 
 ---
 
-## MVP6 — Files
+## MVP6 — UI
 
 > _Stories to be detailed during MVP implementation._
 

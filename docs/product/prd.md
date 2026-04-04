@@ -35,7 +35,7 @@ In summary, Vata targets genealogists who want full ownership of their data — 
 | Type             | Desktop application (Windows, macOS, Linux)  |
 | Framework        | Tauri 2.0                                    |
 | Frontend         | React 18 + TypeScript 5                      |
-| UI Library       | shadcn/ui + Tailwind CSS (from MVP4)         |
+| UI Library       | shadcn/ui + Tailwind CSS (from MVP6)         |
 | Database         | SQLite (local)                               |
 | Exchange Format  | GEDCOM 5.5.1                                 |
 
@@ -79,9 +79,9 @@ For technical details, see [Architecture Overview](../architecture/overview.md) 
 | MVP1    | Foundation         | Create, modify, open, close, and delete a tree.                                                    |
 | MVP2    | GEDCOM             | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.                              |
 | MVP3    | Primary Entities   | Create, modify, and delete primary entities and navigate between different modules.                 |
-| MVP4    | UI                 | Have a complete, polished UI for the application (shadcn/ui, design system, i18n).                 |
-| MVP5    | Sources            | Create, modify, and delete a source and associate/dissociate a source from an entity.              |
-| MVP6    | Files              | Add and delete files and associate/dissociate a file from an entity.                               |
+| MVP4    | Sources            | Create, modify, and delete a source and associate/dissociate a source from an entity.              |
+| MVP5    | Files              | Add and delete files and associate/dissociate a file from an entity.                               |
+| MVP6    | UI                 | Have a complete, polished UI for the application (shadcn/ui, design system, i18n).                 |
 
 For timeline and status, see [Roadmap](./roadmap.md). For detailed specs per version, see the [MVP specs](../mvps/).
 
