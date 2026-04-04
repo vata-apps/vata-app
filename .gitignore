@@ -29,5 +29,8 @@ src/routeTree.gen.ts
 # Worktrees
 .worktrees/
 
+# Superpowers brainstorming
+.superpowers/
+
 # macOS
 .DS_Store
