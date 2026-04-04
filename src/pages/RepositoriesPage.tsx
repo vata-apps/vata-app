@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRepositories } from '$/hooks/useRepositories';
 import { createRepository } from '$db-tree/repositories';
@@ -31,7 +32,7 @@ const EMPTY_FORM: NewRepositoryFormState = {
   notes: '',
 };
 
-export function RepositoriesPage({ treeId: _treeId }: RepositoriesPageProps): JSX.Element {
+export function RepositoriesPage({ treeId }: RepositoriesPageProps): JSX.Element {
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState<NewRepositoryFormState>(EMPTY_FORM);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -176,13 +177,17 @@ export function RepositoriesPage({ treeId: _treeId }: RepositoriesPageProps): JS
           }}
         >
           {repositories.map((repo) => (
-            <div
+            <Link
               key={repo.id}
+              to="/tree/$treeId/repository/$repositoryId"
+              params={{ treeId, repositoryId: repo.id }}
               style={{
                 display: 'block',
                 padding: '1rem',
                 border: '1px solid #e0e0e0',
                 borderRadius: '6px',
+                textDecoration: 'none',
+                color: 'inherit',
               }}
             >
               <div style={{ fontSize: '0.75rem', color: '#888', marginBottom: '0.25rem' }}>
@@ -199,7 +204,7 @@ export function RepositoriesPage({ treeId: _treeId }: RepositoriesPageProps): JS
                   {repo.website}
                 </div>
               )}
-            </div>
+            </Link>
           ))}
         </div>
       )}

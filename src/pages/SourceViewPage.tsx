@@ -41,10 +41,11 @@ const labelStyle: React.CSSProperties = {
 };
 
 interface RepositorySectionProps {
+  treeId: string;
   repositoryId: string;
 }
 
-function RepositorySection({ repositoryId }: RepositorySectionProps): JSX.Element {
+function RepositorySection({ treeId, repositoryId }: RepositorySectionProps): JSX.Element {
   const { data: repository, isLoading } = useRepository(repositoryId);
 
   if (isLoading) {
@@ -58,19 +59,23 @@ function RepositorySection({ repositoryId }: RepositorySectionProps): JSX.Elemen
   const location = [repository.city, repository.country].filter(Boolean).join(', ');
 
   return (
-    <div
+    <Link
+      to="/tree/$treeId/repository/$repositoryId"
+      params={{ treeId, repositoryId: repository.id }}
       style={{
         display: 'block',
         padding: '0.75rem 1rem',
         border: '1px solid #e0e0e0',
         borderRadius: '6px',
+        textDecoration: 'none',
+        color: 'inherit',
       }}
     >
       <div style={{ fontWeight: 600 }}>{repository.name}</div>
       {location && (
         <div style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.25rem' }}>{location}</div>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -469,7 +474,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
       {source.repositoryId && (
         <section style={{ marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Repository</h2>
-          <RepositorySection repositoryId={source.repositoryId} />
+          <RepositorySection treeId={treeId} repositoryId={source.repositoryId} />
         </section>
       )}
 
