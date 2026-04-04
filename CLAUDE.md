@@ -195,6 +195,12 @@ chore: upgrade drizzle-orm to 0.30.0
 
 ---
 
+# Manual Testing with Tauri MCP Bridge
+
+The app includes `tauri-plugin-mcp-bridge` (debug builds only). You can launch the app with `pnpm tauri:dev` and interact with it directly using the MCP tools (`webview_screenshot`, `webview_interact`, `webview_find_element`, `ipc_execute_command`, etc.) to verify UI changes, test workflows, and inspect state — no manual user intervention needed.
+
+---
+
 # Available Skills
 
 The following specialized skills are loaded automatically when relevant, or on demand via the skill tool.
