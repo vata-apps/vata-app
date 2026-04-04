@@ -140,6 +140,36 @@ export const Route = createFileRoute('/tree/$treeId')({
           >
             {isCollapsed ? 'F' : 'Families'}
           </Link>
+          <Link
+            to="/tree/$treeId/sources"
+            params={{ treeId }}
+            style={{
+              display: 'block',
+              padding: '0.5rem 0.75rem',
+              color: '#666',
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {isCollapsed ? 'S' : 'Sources'}
+          </Link>
+          <Link
+            to="/tree/$treeId/repositories"
+            params={{ treeId }}
+            style={{
+              display: 'block',
+              padding: '0.5rem 0.75rem',
+              color: '#666',
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {isCollapsed ? 'R' : 'Repositories'}
+          </Link>
 
           <Link
             to="/tree/$treeId/data"
