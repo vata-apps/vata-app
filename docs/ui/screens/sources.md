@@ -1,92 +1,267 @@
-# Sources Screen
+# Sources & Media Screen
 
-**MVP4**: Source management, source ↔ entity associations.
+**MVP4**: Source-centric workflow with media attachments.
 
 ## Objective
 
-Manage documentary sources and citations: list and search sources, create/edit sources, view linked citations, and manage archive repositories. This module uses the three-panel module layout (sidebar / center / aside).
+Source-centric data entry: the source document (with its scanned image or photo) is the starting point for creating and linking genealogical entities. Instead of creating entities first and attaching sources later, the user works from the source outward — viewing the document and creating/linking individuals, events, places, and families from one workspace.
+
+This module has two main views: a **source list** for browsing and a **source workspace** for data entry.
 
 ---
 
-## What We Display
+## Source List View
 
-### Sidebar (entity list, left panel)
+Browse and manage all sources in the tree.
 
-- **"New" button** at the top to create a new source.
+### Layout
+
+- **"New Source" button** at the top.
 - **Search field** to filter sources by title or author.
-- **Scrollable list of all sources.** Each item shows:
+- **Scrollable list of sources.** Each item shows:
   - Title
   - Author (if present)
   - Citation count
-- The **selected source** is highlighted.
-- Clicking a source loads its detail in the center and aside panels.
+  - Thumbnail of the first attached media file (if any)
+- Clicking a source navigates to its **source workspace**.
 
 | Edge case              | Expected behavior                                                                |
 | ---------------------- | -------------------------------------------------------------------------------- |
-| Source list is empty   | Show empty state with "Add your first source" message and prominent "New" button |
+| Source list is empty    | Show empty state with "Add your first source" message and prominent "New" button |
 | Hundreds of sources    | Virtualized scrolling; use search to filter                                      |
-| Very long source title | Truncate with ellipsis in list; full title in detail                             |
+| Very long source title | Truncate with ellipsis in list; full title in workspace                           |
 | Search with no results | Show "No sources found" message                                                  |
 
-### Center Panel (source detail)
+---
 
-- **Header:** source title, "Edit" button, dropdown menu (chevron) for more actions.
-- **Key-value detail rows:**
-  - ID (with copy button)
+## Source Creation Flow
+
+### Step 1: New Source Form
+
+- **Trigger:** Click "New Source" button from source list.
+- **Fields:**
+  - Title (required)
   - Author
   - Publisher
   - Publication date
   - Call number
-  - URL (clickable, opens external link in browser)
-  - Repository (clickable, opens repository detail window)
+  - URL
+  - Repository (search/select existing or create new)
   - Notes
+  - **File attachment:** file picker to attach one or more images/documents
+- **Footer:** Cancel and Create buttons.
+- **On Create:** Source is created, files are copied/moved to the tree's `media/` directory, and the **source workspace** opens.
 
-| Edge case                      | Expected behavior                                     |
-| ------------------------------ | ----------------------------------------------------- |
-| Source with no repository      | Repository field shows "None"                         |
-| URL field contains a valid URL | Render as a clickable external link                   |
-| URL field is empty or invalid  | Show "None" or hide the row                           |
-| Very long source title         | Full title displayed in header (wraps if needed)      |
-| All optional fields are empty  | Only show title and ID; other rows hidden or show "—" |
+| Edge case                | Expected behavior                                        |
+| ------------------------ | -------------------------------------------------------- |
+| Title left empty         | Validation error; Create button disabled or inline error |
+| Duplicate title          | Allowed (sources may share a title)                      |
+| No file attached         | Allowed; workspace opens with empty image viewer         |
+| Multiple files selected  | All files attached; first file shown in viewer           |
 
-### Aside Panel (supplementary details, right)
+---
 
-#### Citations Section (collapsible, with count badge)
+## Source Workspace
 
-List of citation cards. Each card shows:
+The core UX innovation. A side-by-side layout for working from a source document.
 
-- Page reference (e.g., "p. 45", "Folio 23, recto")
-- Quality badge (see Quality Badge below)
-- Linked entities (entity type icon + name + field cited)
-- Date accessed
-- Chevron to expand or navigate
-- **"Add" button** at the bottom to create a new citation
-- **"Show all" link** when the list is truncated (e.g., showing 5 of 20 citations)
+### Layout
 
-| Edge case                            | Expected behavior                                |
-| ------------------------------------ | ------------------------------------------------ |
-| Source with no citations             | Show "No citations" message + "Add" button       |
-| Citation with no linked entities     | Show warning "Citation not linked to any record" |
-| Citation with no quality rating      | Show "Unrated" badge (gray)                      |
-| Citation linked to multiple entities | Show all linked entities in the citation card    |
-| Very long text excerpt in citation   | Truncate in card with expand option              |
-| Many citations (50+)                 | Show first N items + "Show all" link             |
+```
+┌─────────────────────────────┬──────────────────────────────┐
+│                             │  Source: "Acte de mariage"   │
+│                             │  Repository: BAnQ            │
+│                             │  [Edit] [Delete]             │
+│     Image Viewer            │──────────────────────────────│
+│     (zoomable, pannable)    │  Event type: [Marriage ▾]    │
+│                             │────��─────────────────────────│
+│                             │  ☑ Husband: Jean Tremblay    │
+│     ┌─────────────────��    │  ☑ Wife: Marie Bouchard      │
+│     │  scanned image   │    │  ☐ Father (husband): [____]  │
+│     │                  │    │  ☐ Mother (husband): [____]  │
+│     │                  │    │  ☐ Father (wife): [____]     │
+│     └─────────────────┘    │  ��� Mother (wife): [____]     │
+│                             │  + Add witness               │
+│                             │  + Add person                │
+│  [◀ prev] [1/3] [next ▶]  │─────��────────────────────────│
+│                             │  Suggest: Create marriage    │
+│                             │  event? [Date] [Place]       ��
+│                             │  [Create event] [Dismiss]    │
+└────���────────────────────────┴──────────────────────────────┘
+```
 
-#### Repository Section (collapsible)
+### Left Panel: Image Viewer
 
-- Repository name
-- City
-- Country
-- Chevron to open repository management form window
+- Displays the media file(s) attached to the source.
+- **Zoom**: scroll wheel or pinch.
+- **Pan**: click and drag.
+- **Multi-file navigation**: prev/next buttons and page indicator (e.g., "2/5") when multiple files are attached.
+- **Empty state**: "No media attached. [Attach file]" prompt.
+- **Add more files**: button to attach additional files to this source.
 
-| Edge case                                    | Expected behavior             |
-| -------------------------------------------- | ----------------------------- |
-| Source with no repository                    | Section shows "No repository" |
-| Repository with all fields empty except name | Only show name                |
+| Edge case            | Expected behavior                                       |
+| -------------------- | ------------------------------------------------------- |
+| No media attached    | Show empty state with "Attach file" button              |
+| Very large image     | Fit-to-width by default; user can zoom in               |
+| Non-image file (PDF) | Show PDF viewer or generic file icon with filename      |
+| Multiple files       | Show navigation controls (prev/next + page indicator)   |
 
-### Quality Badge
+### Right Panel: Linking Panel
 
-Visual indicator of citation quality:
+Top-to-bottom structure:
+
+#### 1. Source Metadata Summary
+
+- Source title, repository name, key details.
+- "Edit" button to modify source metadata.
+- "Delete" button with confirmation.
+
+#### 2. Event Type Selector
+
+- Dropdown to select the type of event this source documents (Marriage, Baptism, Census, Birth, Death, Burial, etc.)
+- Selecting an event type loads the corresponding **template** in the slots area below.
+- Can be left empty for sources that don't correspond to a single event.
+
+#### 3. Template Slots
+
+Named slots that appear based on the selected event type. Each slot is a field where the user can:
+- **Search** for an existing entity by typing a name.
+- **Create inline** if the entity doesn't exist yet.
+- **Clear** to remove a linked entity.
+
+**Templates by event type:**
+
+| Event Type      | Slots                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| Marriage (MARR) | Husband, Wife, Father of husband, Mother of husband, Father of wife, Mother of wife, + Witnesses, Officiant, Place |
+| Baptism (CHR)   | Child, Father, Mother, Godfather, Godmother, Officiant, Place                                      |
+| Birth (BIRT)    | Child, Father, Mother, Place                                                                       |
+| Death (DEAT)    | Deceased, Informant, Place                                                                         |
+| Burial (BURI)   | Deceased, Informant, Place                                                                         |
+| Census (CENS)   | Head of household, + Household members, Place                                                      |
+| Other/None      | No template — free-form only                                                                       |
+
+**Slot behavior:**
+
+- Slots prefixed with `+` are repeatable (e.g., "+ Witnesses" can add multiple witnesses).
+- **Filled slots** show a checkmark, the entity name, and a clear button.
+- **Empty slots** show an input field with search-as-you-type.
+- **Place slots** search the places table instead of individuals.
+
+#### 4. Free-Form Entity Addition
+
+- **"+ Add person"** button below the template to add arbitrary entities not covered by the template (e.g., a neighbor mentioned in a census, a curé who is also a family member).
+- Opens a search/create field with a role selector.
+
+#### 5. Event Suggestion
+
+When the user selects an event type and fills at least the principal slots:
+- The app suggests: **"Create a [Marriage] event?"** with optional date and place fields.
+- **[Create event]** — creates the event, links it to the source via citation, and links the principal individuals as event participants.
+- **[Dismiss]** — no event created; entities are still linked to the source via citations.
+
+This is a suggestion, not forced. The user may already have the event in their tree.
+
+| Edge case                                | Expected behavior                                              |
+| ---------------------------------------- | -------------------------------------------------------------- |
+| Event already exists for these people    | User dismisses suggestion and manually links existing event    |
+| User hasn't filled principal slots       | Suggestion doesn't appear until principals are filled          |
+| User changes event type after filling    | Clear slots and load new template; confirm if entities linked  |
+
+### Inline Entity Creation
+
+When a slot search returns no results, the user can create a new entity without leaving the workspace.
+
+**Adaptive detail based on role:**
+
+| Role type                              | Fields shown                                     |
+| -------------------------------------- | ------------------------------------------------ |
+| Principal (husband, wife, child, etc.) | Given names, Surname, Gender (inferred), Birth date (optional), Death date (optional) |
+| Peripheral (parents, witnesses, etc.)  | Given names, Surname, Gender (inferred from slot) |
+| Place                                  | Place name, Place type (optional)                |
+
+- Gender is **inferred from the slot** (e.g., "Husband" → M, "Wife" → F, "Witness" → U) and pre-filled but editable.
+- New entities are created immediately in the database when confirmed.
+- A citation link is automatically created between the source and the new entity.
+
+### Auto-Citation
+
+When the user links an entity in the workspace (by filling a slot or adding free-form):
+1. A `source_citation` is created for this source (one per source, reused for all links from this workspace session).
+2. A `citation_link` is created connecting the citation to the entity.
+
+This happens automatically — the user doesn't need to manually create citations.
+
+---
+
+## Source Edit
+
+- **Trigger:** Click "Edit" in the workspace source metadata summary.
+- **Behavior:** Opens the source form pre-filled with current values. Same fields as creation. On save, metadata updates; files can be added or removed.
+
+---
+
+## Source Delete
+
+- **Trigger:** Click "Delete" in the workspace or from the source list.
+- **Behavior:** Confirmation dialog warning that all citations linked to this source will be deleted (CASCADE). Media files in `media/` are also deleted from disk. On confirm, source is removed and user returns to the source list.
+
+---
+
+## Repository Management
+
+Accessible from the source creation/edit form (repository search/select field).
+
+- List of repositories, each showing: name, city, country, source count.
+- Create / edit / delete repository.
+- Repository detail fields: name, address, city, country, phone, email, website.
+
+| Edge case                                 | Expected behavior                                         |
+| ----------------------------------------- | --------------------------------------------------------- |
+| Repository with no sources                | Deletable; shows "0 sources"                              |
+| Delete repository with linked sources     | Confirmation warns sources will be unlinked (not deleted) |
+| Repository with all fields empty but name | Only show name                                            |
+
+---
+
+## Entity Timeline Integration
+
+When viewing an individual's profile, events appear in chronological order with source media:
+
+```
+Pierre Tremblay (I-0001)
+════════════════════════
+
+📅 Birth — 12 Mar 1870, Quebec
+   [thumbnail: baptism-register.jpg]  "Registre paroissial Notre-Dame"
+
+📅 Marriage — 8 Jun 1895, Montreal
+   [thumbnail: mariage-cert.jpg]  "Acte de mariage #234"
+
+📅 Census — 1901, Montreal
+   [thumbnail: census-1901-p3.jpg]  "Recensement 1901, district 5"
+
+📅 Death — 3 Nov 1942, Montreal
+   (no source — Add source)
+```
+
+- **Thumbnails** are generated from the first file attached to each source.
+- **Clicking a thumbnail** navigates to the source workspace.
+- **Unsourced events** show a subtle "Add source" link.
+- **Multiple sources per event**: show multiple thumbnails.
+
+| Edge case                           | Expected behavior                                   |
+| ----------------------------------- | --------------------------------------------------- |
+| Event with no source                | Show event without thumbnail; "Add source" link     |
+| Event with multiple sources         | Show thumbnail for each source                      |
+| Source with no media                | Show source title without thumbnail                 |
+| Individual with no events           | Show empty timeline with "No events recorded"       |
+
+---
+
+## Quality Badge
+
+Visual indicator of citation quality (used where citations are displayed):
 
 | Quality level  | Appearance       |
 | -------------- | ---------------- |
@@ -96,145 +271,23 @@ Visual indicator of citation quality:
 | Unreliable     | Red / 1 star     |
 | Unrated (null) | Gray / no stars  |
 
-### New Source Form Window
-
-- Title (required)
-- Author
-- Publisher
-- Publication date
-- Call number
-- URL
-- Repository (search/select existing or create new)
-- Notes
-- **Footer:** Cancel and Create buttons
-
-| Edge case        | Expected behavior                                        |
-| ---------------- | -------------------------------------------------------- |
-| Title left empty | Validation error; Create button disabled or inline error |
-| Duplicate title  | Allowed (sources may share a title)                      |
-
-### New Citation Form Window
-
-- Source (pre-selected if opened from a source's detail)
-- Page reference (free text: "p. 45", "Folio 23, recto")
-- Quality select (Primary / Secondary / Questionable / Unreliable)
-- Date accessed
-- Text excerpt (transcription)
-- Link to entity: entity type select + entity search + optional field name
-- Notes
-- **Footer:** Cancel and Create buttons
-
-| Edge case                | Expected behavior                                    |
-| ------------------------ | ---------------------------------------------------- |
-| No entity linked         | Allowed, but show advisory that citation is unlinked |
-| Multiple entities linked | All links saved and displayed                        |
-
-### Repository Management Form Window
-
-- List of repositories, each showing: name, city, country, source count
-- Create / edit / delete repository
-- Repository detail fields: name, address, city, country, phone, email, website
-
-| Edge case                                    | Expected behavior                                         |
-| -------------------------------------------- | --------------------------------------------------------- |
-| Repository with no sources                   | Deletable; shows "0 sources"                              |
-| Repository with all fields empty except name | Only show name                                            |
-| Delete repository that has linked sources    | Confirmation warns sources will be unlinked (not deleted) |
-
----
-
-## Actions
-
-### Create Source
-
-- **Trigger:** Click "New" button in sidebar.
-- **Preconditions:** None.
-- **Behavior:** Opens the New Source form window. User fills in fields (title is required). On "Create", the source is inserted into the database and appears in the sidebar list. The new source is auto-selected.
-- **Validation:** Title is required; all other fields are optional.
-
-### Edit Source
-
-- **Trigger:** Click "Edit" button in center header, or context menu > Edit.
-- **Preconditions:** A source is selected.
-- **Behavior:** Opens the Edit Source form window pre-filled with current values. On save, the source is updated in the database and the detail view refreshes.
-- **Validation:** Title remains required.
-
-### Delete Source
-
-- **Trigger:** Context menu > Delete.
-- **Preconditions:** A source is selected.
-- **Behavior:** Opens a delete confirmation (in-window dialog) warning that all citations linked to this source will also be deleted (CASCADE). On confirm, the source and its citations are removed. The sidebar deselects and center returns to empty state or selects the next source.
-
-### Create Citation
-
-- **Trigger:** Click "Add" in the Citations section of the aside panel.
-- **Preconditions:** A source is selected (source is pre-filled in the form window).
-- **Behavior:** Opens the New Citation form window. User fills in page reference, quality, linked entities, etc. On "Create", the citation is inserted and appears in the citations list.
-- **Validation:** At minimum the source must be set. All other fields optional but an advisory is shown if no entity is linked.
-
-### Edit Citation
-
-- **Trigger:** Click chevron on a citation card, then edit action.
-- **Preconditions:** Citation exists.
-- **Behavior:** Opens the Edit Citation form window pre-filled with current values. On save, the citation is updated and the aside refreshes.
-
-### Delete Citation
-
-- **Trigger:** Delete action on a citation card.
-- **Preconditions:** Citation exists.
-- **Behavior:** Opens a delete confirmation (in-window dialog). On confirm, the citation is removed. The source remains.
-
-| Edge case                            | Expected behavior                                 |
-| ------------------------------------ | ------------------------------------------------- |
-| Delete the last citation of a source | Allowed; source remains with "No citations" state |
-
-### Create Repository
-
-- **Trigger:** "Create new" option in repository search/select (New Source form window) or from the Repository management form window.
-- **Preconditions:** None.
-- **Behavior:** Opens a repository creation form. On save, the repository is created and can be linked to sources.
-- **Validation:** Name is required.
-
-### Edit Repository
-
-- **Trigger:** Edit action in Repository management form window.
-- **Preconditions:** Repository exists.
-- **Behavior:** Opens the repository edit form pre-filled. On save, updates the repository.
-
-### Delete Repository
-
-- **Trigger:** Delete action in Repository management form window.
-- **Preconditions:** Repository exists.
-- **Behavior:** If the repository has linked sources, a confirmation warns that sources will be unlinked (not deleted). On confirm, the repository is removed and any linked sources have their repository reference cleared.
-
-### Search / Filter Sources
-
-- **Trigger:** Type in the sidebar search field.
-- **Preconditions:** None.
-- **Behavior:** The source list filters in real-time by title and author. Matching results are shown; non-matching items are hidden.
-
-### Filter by Repository
-
-- **Trigger:** Optional filter control in sidebar (if implemented).
-- **Preconditions:** At least one repository exists.
-- **Behavior:** Narrows the source list to sources linked to the selected repository.
-
 ---
 
 ## Navigation Map
 
-| Clickable element                       | Destination                                                                       | Condition                     |
-| --------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------- |
-| Source in sidebar list                  | Selects source, updates center + aside                                            | --                            |
-| "New" in sidebar                        | Opens New Source form window                                                      | --                            |
-| "Edit" in center header                 | Opens Edit Source form window                                                     | --                            |
-| Dropdown (chevron) in center header     | Opens context menu                                                                | --                            |
-| URL link (center)                       | Opens external URL in browser                                                     | URL is valid                  |
-| Repository link (center)                | Opens Repository detail window                                                    | --                            |
-| Citation linked entity (aside)          | Navigates to appropriate module (Individuals / Families / Events), selects entity | Entity type determines module |
-| Citation chevron (aside)                | Opens citation detail or edit                                                     | --                            |
-| "Add" in Citations section (aside)      | Opens New Citation form window                                                    | --                            |
-| "Show all" in Citations section (aside) | Expands full citation list                                                        | More citations than shown     |
-| Repository chevron (aside)              | Opens Repository management form window                                           | --                            |
-| Context menu > Edit                     | Opens Edit Source form window                                                     | --                            |
-| Context menu > Delete                   | Opens delete confirmation (in-window dialog)                                      | --                            |
+| Clickable element                   | Destination                                              |
+| ----------------------------------- | -------------------------------------------------------- |
+| Source in source list               | Opens source workspace                                   |
+| "New Source" button                 | Opens new source form                                    |
+| "Edit" in workspace                 | Opens edit source form                                   |
+| "Delete" in workspace               | Opens delete confirmation                                |
+| Image thumbnail (viewer)            | Zoom/pan interaction                                     |
+| Prev/next in image viewer           | Navigate between attached files                          |
+| "Attach file" in empty viewer       | Opens file picker                                        |
+| Entity name in filled slot          | Navigates to entity detail (Individual, Place, etc.)     |
+| Clear button on filled slot         | Removes entity link from slot                            |
+| "+ Add witness" / "+ Add person"    | Opens new search/create slot                             |
+| "[Create event]" suggestion         | Creates event and links to source                        |
+| Thumbnail in entity timeline        | Navigates to source workspace                            |
+| "Add source" on unsourced event     | Opens source creation or selection                       |
+| Repository link                     | Opens repository management                              |

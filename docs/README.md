@@ -50,10 +50,14 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [Product Spec](./mvps/mvp-3-primary-entities/spec.md) — Personas, stories, decisions, risks, success criteria
 - Phases: [Tree Schema](./mvps/mvp-3-primary-entities/phase-1-tree-schema.md) · [CRUD DB](./mvps/mvp-3-primary-entities/phase-2-crud-db.md) · [Dates](./mvps/mvp-3-primary-entities/phase-3-dates.md) · [Managers & Hooks](./mvps/mvp-3-primary-entities/phase-4-managers-hooks.md) · [Minimal UI](./mvps/mvp-3-primary-entities/phase-5-minimal-ui.md)
 
-### MVP4–6
+### MVP4: Sources & Media
 
-- **MVP4: Sources** — Source and citation management
-- **MVP5: Files** — File attachments linked to entities
+- [README](./mvps/mvp-4-sources-media/README.md) — Scope, phases, deliverables checklist
+- Source-centric data entry with media attachments (the app's core differentiator)
+
+### MVP5–6
+
+- **MVP5: File Manager** — Browse and manage all media files in a tree
 - **MVP6: UI** — Complete UI with shadcn/ui + Tailwind CSS, design system, i18n
 
 ## API

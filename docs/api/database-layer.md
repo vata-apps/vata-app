@@ -1,6 +1,6 @@
 # Database Layer API
 
-See [Database Schema](../architecture/database-schema.md) for the MVP mapping of tables (MVP1: system, MVP3: entities, MVP4: sources, MVP5: files).
+See [Database Schema](../architecture/database-schema.md) for the MVP mapping of tables (MVP1: system, MVP3: entities, MVP4: sources + media).
 
 ### Entity IDs
 
@@ -78,7 +78,7 @@ async function getTreeById(id: string): Promise<Tree | null>;
 // Create a new tree
 async function createTree(data: {
   name: string;
-  filename: string;
+  path: string;
   description?: string;
 }): Promise<string>;
 
@@ -399,6 +399,49 @@ async function getCitationsForName(
 async function getCitationsForEvent(
   eventId: string,
 ): Promise<SourceCitationWithSource[]>;
+
+// Get all citations linked to a place
+async function getCitationsForPlace(
+  placeId: string,
+): Promise<SourceCitationWithSource[]>;
+```
+
+### Files
+
+```typescript
+// Get all files for a source
+async function getFilesBySourceId(
+  sourceId: string,
+): Promise<TreeFile[]>;
+
+// Get file by ID
+async function getFileById(id: string): Promise<TreeFile | null>;
+
+// Create file record (after copying/moving the physical file)
+async function createFile(input: CreateFileInput): Promise<string>;
+
+// Update file metadata
+async function updateFile(
+  id: string,
+  input: UpdateFileInput,
+): Promise<void>;
+
+// Delete file record (caller handles physical file deletion)
+async function deleteFile(id: string): Promise<void>;
+
+// Link file to source
+async function addFileToSource(input: CreateSourceFileInput): Promise<string>;
+
+// Unlink file from source
+async function removeFileFromSource(
+  sourceId: string,
+  fileId: string,
+): Promise<void>;
+
+// Get all sources that reference a file
+async function getSourcesByFileId(
+  fileId: string,
+): Promise<Source[]>;
 ```
 
 ### Repositories
@@ -627,7 +670,7 @@ interface UpdatePlaceInput {
 
 ```typescript
 type CitationQuality = "primary" | "secondary" | "questionable" | "unreliable";
-type CitableEntityType = "individual" | "name" | "event" | "family";
+type CitableEntityType = "individual" | "name" | "event" | "family" | "place";
 
 interface Source {
   id: string;
@@ -641,6 +684,12 @@ interface Source {
   notes: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+interface SourceWithDetails extends Source {
+  repository: Repository | null;
+  files: TreeFile[];
+  citationCount: number;
 }
 
 interface CreateSourceInput {
@@ -747,5 +796,53 @@ interface UpdateRepositoryInput {
   email?: string;
   website?: string;
   notes?: string;
+}
+```
+
+### File Types
+
+```typescript
+interface TreeFile {
+  id: string;
+  originalFilename: string;
+  relativePath: string;
+  mimeType: string;
+  fileSize: number;
+  width: number | null;
+  height: number | null;
+  thumbnailPath: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface CreateFileInput {
+  originalFilename: string;
+  relativePath: string;
+  mimeType: string;
+  fileSize: number;
+  width?: number;
+  height?: number;
+  thumbnailPath?: string;
+  notes?: string;
+}
+
+interface UpdateFileInput {
+  notes?: string;
+  thumbnailPath?: string;
+}
+
+interface SourceFile {
+  id: string;
+  sourceId: string;
+  fileId: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+interface CreateSourceFileInput {
+  sourceId: string;
+  fileId: string;
+  sortOrder?: number;
 }
 ```

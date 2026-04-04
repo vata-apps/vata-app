@@ -79,8 +79,8 @@ For technical details, see [Architecture Overview](../architecture/overview.md) 
 | MVP1    | Foundation         | Create, modify, open, close, and delete a tree.                                                    |
 | MVP2    | GEDCOM             | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.                              |
 | MVP3    | Primary Entities   | Create, modify, and delete primary entities and navigate between different modules.                 |
-| MVP4    | Sources            | Create, modify, and delete a source and associate/dissociate a source from an entity.              |
-| MVP5    | Files              | Add and delete files and associate/dissociate a file from an entity.                               |
+| MVP4    | Sources & Media    | Create sources with media, link entities via source-centric workspace.                             |
+| MVP5    | File Manager       | Browse and manage all media files in a tree.                                                       |
 | MVP6    | UI                 | Have a complete, polished UI for the application (shadcn/ui, design system, i18n).                 |
 
 For timeline and status, see [Roadmap](./roadmap.md). For detailed specs per version, see the [MVP specs](../mvps/).

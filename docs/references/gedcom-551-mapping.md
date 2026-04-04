@@ -278,7 +278,7 @@ The following tags are ignored on import (may be added later):
 
 | Tag  | Reason                            |
 | ---- | --------------------------------- |
-| OBJE | Media - Future phase              |
+| OBJE | Media — files managed outside GEDCOM import/export |
 | BLOB | Obsolete binary                   |
 | ASSO | Complex associations              |
 | ALIA | Alias - use NAME instead          |

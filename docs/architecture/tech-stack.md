@@ -664,11 +664,11 @@ export async function getSystemDb(): Promise<Database> {
   return systemDb;
 }
 
-export async function openTreeDb(filename: string): Promise<Database> {
+export async function openTreeDb(dbPath: string): Promise<Database> {
   if (treeDb) {
     await treeDb.close();
   }
-  treeDb = await Database.load(`sqlite:trees/${filename}`);
+  treeDb = await Database.load(`sqlite:${dbPath}`);
   await applyConnectionPragmas(treeDb);
   return treeDb;
 }

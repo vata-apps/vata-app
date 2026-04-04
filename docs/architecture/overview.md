@@ -4,7 +4,7 @@
 
 Vata is a desktop application built with Tauri 2.0, combining a web frontend (React/TypeScript) and a native backend (Rust). The architecture follows a layered pattern for clear separation of responsibilities.
 
-Development is structured by MVP (see [Roadmap](../roadmap.md)): MVP1 Foundation, MVP2 GEDCOM, MVP3 Primary Entities, MVP4 Sources, MVP5 Files, MVP6 UI. shadcn/ui (Radix + Tailwind) and the complete design system are introduced in MVP6; MVP1–5 use a minimalist HTML UI.
+Development is structured by MVP (see [Roadmap](../roadmap.md)): MVP1 Foundation, MVP2 GEDCOM, MVP3 Primary Entities, MVP4 Sources & Media, MVP5 File Manager, MVP6 UI. shadcn/ui (Radix + Tailwind) and the complete design system are introduced in MVP6; MVP1–5 use a minimalist HTML UI.
 
 ```mermaid
 graph TD

@@ -2,14 +2,14 @@
 
 ## Overview
 
-Development is organized into 6 MVPs, each delivering a coherent set of capabilities. MVPs 1–3 focus on core functionality with a minimal UI. MVPs 4–5 add secondary entity management. MVP6 introduces the complete design system.
+Development is organized into 6 MVPs, each delivering a coherent set of capabilities. MVPs 1–3 focus on core functionality with a minimal UI. MVP4 delivers source-centric data entry with media attachments (the app's core differentiator). MVP5 adds a file manager. MVP6 introduces the complete design system.
 
 ```mermaid
 graph LR
     MVP1[MVP1 Foundation] --> MVP2[MVP2 GEDCOM]
     MVP2 --> MVP3[MVP3 Primary Entities]
-    MVP3 --> MVP4[MVP4 Sources]
-    MVP4 --> MVP5[MVP5 Files]
+    MVP3 --> MVP4[MVP4 Sources & Media]
+    MVP4 --> MVP5[MVP5 File Manager]
     MVP5 --> MVP6[MVP6 UI]
 ```
 
@@ -20,8 +20,8 @@ graph LR
 | 1   | Foundation        | Create, modify, open, close, and delete a tree.                                   | Complete    | —                |
 | 2   | GEDCOM            | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.             | Complete    | MVP1             |
 | 3   | Primary Entities  | Create, modify, and delete primary entities and navigate between modules.          | Complete    | MVP1, MVP2       |
-| 4   | Sources           | Create, modify, and delete a source and associate it with entities.               | Not Started | MVP3             |
-| 5   | Files             | Add and delete files and associate them with entities.                             | Not Started | MVP4             |
+| 4   | Sources & Media   | Create sources with media, link entities via source workspace.                    | Not Started | MVP3             |
+| 5   | File Manager      | Browse and manage all media files in a tree.                                      | Not Started | MVP4             |
 | 6   | UI                | Have a complete, polished UI for the application.                                 | Not Started | MVP5             |
 
 ## Key Milestones
@@ -53,16 +53,22 @@ Spec: [MVP2 Product Spec](../mvps/mvp-2-gedcom/spec.md) · Implementation: [MVP2
 
 Spec: [MVP3 Product Spec](../mvps/mvp-3-primary-entities/spec.md) · Implementation: [MVP3 Phases](../mvps/mvp-3-primary-entities/README.md)
 
-### MVP4 — Sources
+### MVP4 — Sources & Media
 
-- Source and repository entity management
-- Citation links between sources and other entities
-- Source browsing and search UI (HTML-only, minimal CSS)
+- Source-centric data entry: source workspace with side-by-side image viewer and entity linking panel
+- Event-type templates (marriage, baptism, census, etc.) with inline entity creation
+- Repository, source, citation, and file management (data layer + basic UI)
+- Tree storage in user-chosen directories with `media/` subfolder
+- Entity timeline integration: media thumbnails inline with events on individual profiles
+- HTML-only UI, minimal CSS
 
-### MVP5 — Files
+Implementation: [MVP4 Phases](../mvps/mvp-4-sources-media/README.md)
 
-- File attachment linked to entities
-- File browsing and preview (HTML-only, minimal CSS)
+### MVP5 — File Manager
+
+- Standalone file browser for all media files in a tree
+- File metadata, orphan detection, preview
+- HTML-only UI, minimal CSS
 
 ### MVP6 — UI
 

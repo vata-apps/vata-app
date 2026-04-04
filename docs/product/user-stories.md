@@ -125,31 +125,62 @@ Acceptance criteria:
 
 ---
 
-## MVP4 — Sources
+## MVP4 — Sources & Media
 
-> _Stories to be detailed during MVP implementation._
+### US-4.1: Source-centric data entry
 
-### US-4.1: Complete UI
+As **Claire** (researcher), I want to start from a source document and create/link all related entities (individuals, events, places) from one workspace, so that I can enter data efficiently without switching between screens.
 
-As **Marie** (beginner), I want a clean, modern interface, so that the application is pleasant and easy to use.
+Acceptance criteria:
+- [ ] Source workspace shows scanned image alongside a linking panel
+- [ ] Event-type templates suggest relevant slots (husband, wife, parents, witnesses, place, etc.)
+- [ ] Entities can be searched or created inline without leaving the workspace
+- [ ] Citations are created automatically when entities are linked
 
-### US-4.2: Internationalization
+### US-4.2: Attach media to sources
 
-As **Marie** (beginner), I want the application in my language, so that I can use it without language barriers.
+As **Claire** (researcher), I want to attach scanned documents and photos to sources, so that I can reference the original document while working.
+
+Acceptance criteria:
+- [ ] Files are copied/moved into the tree's `media/` folder
+- [ ] Image viewer supports zoom and pan
+- [ ] Multiple files can be attached to a single source
+
+### US-4.3: Browse sources
+
+As **Claire** (researcher), I want to browse all my sources in one place, so that I can manage my research references.
+
+Acceptance criteria:
+- [ ] Source list with search/filter by title or author
+- [ ] Source thumbnails from attached media
+
+### US-4.4: Entity timeline with media
+
+As **Claire** (researcher), I want to see source media (scans, photos) inline with events on an individual's profile, so that I can visualize the evidence behind each fact.
+
+Acceptance criteria:
+- [ ] Individual profile shows events chronologically with media thumbnails
+- [ ] Clicking a thumbnail navigates to the source workspace
+- [ ] Unsourced events show an "Add source" prompt
+
+### US-4.5: Choose tree storage location
+
+As **Claire** (researcher), I want to choose where each tree is saved on my computer, so that I can find my files easily and back them up.
+
+Acceptance criteria:
+- [ ] Directory picker when creating a new tree
+- [ ] Tree folder is human-readable (DB + media/ subfolder)
+- [ ] Different trees can be stored in different locations
 
 ---
 
-## MVP5 — Files
+## MVP5 — File Manager
 
 > _Stories to be detailed during MVP implementation._
 
-### US-5.1: Add a source
+### US-5.1: Browse tree files
 
-As **Claire** (researcher), I want to create sources and attach citations to events and individuals, so that every fact in my tree is documented.
-
-### US-5.2: Browse sources
-
-As **Claire** (researcher), I want to browse all my sources in one place, so that I can manage my research references.
+As **Claire** (researcher), I want to browse all media files in my tree, so that I can manage and organize my scanned documents and photos.
 
 ---
 
@@ -157,6 +188,10 @@ As **Claire** (researcher), I want to browse all my sources in one place, so tha
 
 > _Stories to be detailed during MVP implementation._
 
-### US-6.1: Attach a file
+### US-6.1: Complete UI
 
-As **Claire** (researcher), I want to link scanned documents and photos to individuals and events, so that I can keep evidence alongside my data.
+As **Marie** (beginner), I want a clean, modern interface, so that the application is pleasant and easy to use.
+
+### US-6.2: Internationalization
+
+As **Marie** (beginner), I want the application in my language, so that I can use it without language barriers.

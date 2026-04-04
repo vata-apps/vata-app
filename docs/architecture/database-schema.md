@@ -5,8 +5,7 @@
 - **MVP1** : `system.db` (trees, app_settings)
 - **MVP2** : GEDCOM import/export (utilise le schéma tree)
 - **MVP3** : `individuals`, `names`, `families`, `family_members`, `place_types`, `places`, `events`, `event_participants`, `event_types`, `tree_meta`
-- **MVP4** : `sources`, `source_citations`, `citation_links`, `repositories`
-- **MVP5** : tables pour les fichiers liés aux entités *(PRD à venir)*
+- **MVP4** : `sources`, `source_citations`, `citation_links`, `repositories`, `files`, `source_files` (sources + media merged)
 
 ## Dual-Database Architecture
 
@@ -14,12 +13,17 @@ The application uses two types of SQLite databases:
 
 ```
 ~/Library/Application Support/vata-app/
-├── system.db                    # System database (unique)
-└── trees/
-    ├── 550e8400-e29b-41d4-a716-446655440000.db    # Tree database (UUID)
-    ├── 6ba7b810-9dad-11d1-80b4-00c04fd430c8.db    # Another tree database (UUID)
-    └── ...                                         # One file per tree
+└── system.db                    # System database (unique)
+
+# Trees are stored in user-chosen directories:
+~/Documents/tremblay-bouchard/   # User picks location at tree creation
+├── tremblay-bouchard.db         # Tree database
+└── media/                       # Media files (images, scans, documents)
+    ├── mariage-jean-marie-1895.jpg
+    └── recensement-1901-p3.pdf
 ```
+
+Each tree is a self-contained folder. The system database stores the absolute path to each tree folder. Different trees can be stored in different locations (e.g., Documents, external drive, cloud-synced folder).
 
 ## Connection PRAGMAs
 
@@ -48,7 +52,7 @@ List of trees registered in the application.
 CREATE TABLE trees (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    filename TEXT NOT NULL UNIQUE,
+    path TEXT NOT NULL UNIQUE,
     description TEXT,
     individual_count INTEGER NOT NULL DEFAULT 0,
     family_count INTEGER NOT NULL DEFAULT 0,
@@ -60,13 +64,15 @@ CREATE TABLE trees (
 CREATE INDEX idx_trees_last_opened ON trees(last_opened_at DESC);
 ```
 
+The `path` column stores the absolute path to the tree folder (e.g., `/Users/jean/Documents/tremblay-bouchard`). The tree database file is `{path}/{tree-name}.db` and media files are stored in `{path}/media/`.
+
 **TypeScript Interface**:
 
 ```typescript
 interface Tree {
   id: string;
   name: string;
-  filename: string;
+  path: string;
   description: string | null;
   individualCount: number;
   familyCount: number;
@@ -77,6 +83,7 @@ interface Tree {
 
 interface CreateTreeInput {
   name: string;
+  path: string;
   description?: string;
 }
 
@@ -522,7 +529,7 @@ interface EventWithDetails extends Event {
   eventType: EventType;
   place: Place | null;
   participants: EventParticipant[];
-  citations: SourceCitation[];
+  citations: SourceCitationWithSource[];
 }
 
 interface CreateEventInput {
@@ -700,6 +707,7 @@ interface Source {
 
 interface SourceWithDetails extends Source {
   repository: Repository | null;
+  files: TreeFile[];
   citationCount: number;
 }
 
@@ -795,7 +803,7 @@ Polymorphic links between citations and entities.
 CREATE TABLE citation_links (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     citation_id INTEGER NOT NULL,
-    entity_type TEXT NOT NULL CHECK(entity_type IN ('individual', 'name', 'event', 'family')),
+    entity_type TEXT NOT NULL CHECK(entity_type IN ('individual', 'name', 'event', 'family', 'place')),
     entity_id INTEGER NOT NULL,
     field_name TEXT,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -809,7 +817,7 @@ CREATE INDEX idx_citation_links_entity ON citation_links(entity_type, entity_id)
 **TypeScript Interface**:
 
 ```typescript
-type CitableEntityType = "individual" | "name" | "event" | "family";
+type CitableEntityType = "individual" | "name" | "event" | "family" | "place";
 
 interface CitationLink {
   id: string;
@@ -825,6 +833,102 @@ interface CreateCitationLinkInput {
   entityType: CitableEntityType;
   entityId: string;
   fieldName?: string;
+}
+```
+
+### Table: files
+
+Media files (images, scanned documents, PDFs) attached to sources. Files are stored on disk in the tree's `media/` directory; this table stores metadata and the relative path.
+
+```sql
+CREATE TABLE files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    original_filename TEXT NOT NULL,
+    relative_path TEXT NOT NULL UNIQUE,
+    mime_type TEXT NOT NULL,
+    file_size INTEGER NOT NULL,
+    width INTEGER,
+    height INTEGER,
+    thumbnail_path TEXT,
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX idx_files_mime_type ON files(mime_type);
+```
+
+The `relative_path` is relative to the tree folder root (e.g., `media/mariage-jean-marie-1895.jpg`). This ensures portability if the tree folder is moved.
+
+**TypeScript Interface**:
+
+```typescript
+interface TreeFile {
+  id: string;
+  originalFilename: string;
+  relativePath: string;
+  mimeType: string;
+  fileSize: number;
+  width: number | null;
+  height: number | null;
+  thumbnailPath: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface CreateFileInput {
+  originalFilename: string;
+  relativePath: string;
+  mimeType: string;
+  fileSize: number;
+  width?: number;
+  height?: number;
+  thumbnailPath?: string;
+  notes?: string;
+}
+
+interface UpdateFileInput {
+  notes?: string;
+  thumbnailPath?: string;
+}
+```
+
+### Table: source_files
+
+Junction table linking sources to their media files. A source can have multiple files (e.g., a multi-page document scan), and a file can be referenced by multiple sources.
+
+```sql
+CREATE TABLE source_files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_id INTEGER NOT NULL,
+    file_id INTEGER NOT NULL,
+    sort_order INTEGER DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE,
+    FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE,
+    UNIQUE(source_id, file_id)
+);
+
+CREATE INDEX idx_source_files_source ON source_files(source_id);
+CREATE INDEX idx_source_files_file ON source_files(file_id);
+```
+
+**TypeScript Interface**:
+
+```typescript
+interface SourceFile {
+  id: string;
+  sourceId: string;
+  fileId: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+interface CreateSourceFileInput {
+  sourceId: string;
+  fileId: string;
+  sortOrder?: number;
 }
 ```
 
@@ -864,11 +968,14 @@ erDiagram
     event_participants }o--o| families : "references"
     repositories ||--o{ sources : "holds"
     sources ||--o{ source_citations : "cited in"
+    sources ||--o{ source_files : "has"
+    source_files }o--o| files : "references"
     source_citations ||--o{ citation_links : "links to"
     citation_links }o--o| individuals : "cites"
     citation_links }o--o| names : "cites"
     citation_links }o--o| events : "cites"
     citation_links }o--o| families : "cites"
+    citation_links }o--o| places : "cites"
 
     individuals {
         INTEGER id PK
@@ -1008,6 +1115,28 @@ erDiagram
         TEXT entity_type
         INTEGER entity_id
         TEXT field_name
+        TEXT created_at
+    }
+
+    files {
+        INTEGER id PK
+        TEXT original_filename
+        TEXT relative_path
+        TEXT mime_type
+        INTEGER file_size
+        INTEGER width
+        INTEGER height
+        TEXT thumbnail_path
+        TEXT notes
+        TEXT created_at
+        TEXT updated_at
+    }
+
+    source_files {
+        INTEGER id PK
+        INTEGER source_id FK
+        INTEGER file_id FK
+        INTEGER sort_order
         TEXT created_at
     }
 
