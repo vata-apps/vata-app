@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchSources } from '$/hooks/useSources';
 import { useRepositories } from '$/hooks/useRepositories';
@@ -30,8 +31,7 @@ const EMPTY_FORM: NewSourceFormState = {
   notes: '',
 };
 
-// treeId will be used for card links once the source detail route is added (Task 6)
-export function SourcesPage({ treeId: _treeId }: SourcesPageProps): JSX.Element {
+export function SourcesPage({ treeId }: SourcesPageProps): JSX.Element {
   const [query, setQuery] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [form, setForm] = useState<NewSourceFormState>(EMPTY_FORM);
@@ -189,15 +189,17 @@ export function SourcesPage({ treeId: _treeId }: SourcesPageProps): JSX.Element 
           }}
         >
           {sources.map((source) => (
-            // TODO(Task 6): replace div with Link to /tree/$treeId/source/$sourceId once that route exists
-            <div
+            <Link
               key={source.id}
+              to="/tree/$treeId/source/$sourceId"
+              params={{ treeId, sourceId: source.id }}
               style={{
                 display: 'block',
                 padding: '1rem',
                 border: '1px solid #e0e0e0',
                 borderRadius: '6px',
                 color: 'inherit',
+                textDecoration: 'none',
               }}
             >
               <div style={{ fontSize: '0.75rem', color: '#888', marginBottom: '0.25rem' }}>
@@ -212,7 +214,7 @@ export function SourcesPage({ treeId: _treeId }: SourcesPageProps): JSX.Element 
                   Repository: {source.repositoryId}
                 </div>
               )}
-            </div>
+            </Link>
           ))}
         </div>
       )}
