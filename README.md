@@ -123,7 +123,3 @@ All project documentation lives in [`docs/`](docs/):
 - [Tech Stack](docs/architecture/tech-stack.md)
 - [Architecture Decision Records](docs/decisions/)
 - [MVP Specs](docs/mvps/)
-
-## License
-
-TBD
