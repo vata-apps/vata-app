@@ -122,7 +122,9 @@ export function ImportGedcomModal({ isOpen, onSuccess, onCancel }: ImportGedcomM
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
         }}
       >
-        <h3 id="import-gedcom-title" style={{ margin: '0 0 1rem' }}>Import GEDCOM</h3>
+        <h3 id="import-gedcom-title" style={{ margin: '0 0 1rem' }}>
+          Import GEDCOM
+        </h3>
 
         <div style={{ marginBottom: '1rem' }}>
           <button

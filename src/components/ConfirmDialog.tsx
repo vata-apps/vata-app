@@ -56,7 +56,9 @@ export function ConfirmDialog({
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
         }}
       >
-        <h3 id="confirm-dialog-title" style={{ margin: '0 0 0.5rem' }}>{title}</h3>
+        <h3 id="confirm-dialog-title" style={{ margin: '0 0 0.5rem' }}>
+          {title}
+        </h3>
         <p style={{ margin: '0 0 1.25rem', color: '#555', fontSize: '0.95rem' }}>{message}</p>
         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
           <button onClick={onCancel} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>

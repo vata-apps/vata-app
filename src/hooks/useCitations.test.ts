@@ -25,9 +25,7 @@ describe('useCitationsBySource', () => {
   });
 
   it('returns citations for a source', async () => {
-    const mockCitations = [
-      { id: '1', sourceId: 'S-0001', page: 'p. 42', quality: 'primary' },
-    ];
+    const mockCitations = [{ id: '1', sourceId: 'S-0001', page: 'p. 42', quality: 'primary' }];
     vi.mocked(getCitationsBySourceId).mockResolvedValue(mockCitations as any);
 
     const { result } = renderHook(() => useCitationsBySource('S-0001'), {

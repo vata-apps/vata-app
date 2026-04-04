@@ -56,9 +56,7 @@ const COLUMNS =
  */
 export async function getAllSources(): Promise<Source[]> {
   const db = await getTreeDb();
-  const rows = await db.select<RawSource[]>(
-    `SELECT ${COLUMNS} FROM sources ORDER BY title`
-  );
+  const rows = await db.select<RawSource[]>(`SELECT ${COLUMNS} FROM sources ORDER BY title`);
   return rows.map(mapToSource);
 }
 
@@ -68,10 +66,7 @@ export async function getAllSources(): Promise<Source[]> {
 export async function getSourceById(id: string): Promise<Source | null> {
   const db = await getTreeDb();
   const dbId = parseEntityId(id);
-  const rows = await db.select<RawSource[]>(
-    `SELECT ${COLUMNS} FROM sources WHERE id = $1`,
-    [dbId]
-  );
+  const rows = await db.select<RawSource[]>(`SELECT ${COLUMNS} FROM sources WHERE id = $1`, [dbId]);
   return rows[0] ? mapToSource(rows[0]) : null;
 }
 

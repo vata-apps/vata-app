@@ -354,9 +354,7 @@ async function initializeTreeDb(db: Database): Promise<void> {
       UNIQUE(source_id, file_id)
     )
   `);
-  await db.execute(
-    `CREATE INDEX IF NOT EXISTS idx_source_files_source ON source_files(source_id)`
-  );
+  await db.execute(`CREATE INDEX IF NOT EXISTS idx_source_files_source ON source_files(source_id)`);
   await db.execute(`CREATE INDEX IF NOT EXISTS idx_source_files_file ON source_files(file_id)`);
 }
 

@@ -47,9 +47,9 @@ describe('seedHarryPotterDemo', () => {
     const { seedHarryPotterDemo } = await import('./harry-potter-demo');
     await seedHarryPotterDemo(systemDb);
 
-    const individuals = treeDb._raw
-      .prepare('SELECT COUNT(*) as count FROM individuals')
-      .get() as { count: number };
+    const individuals = treeDb._raw.prepare('SELECT COUNT(*) as count FROM individuals').get() as {
+      count: number;
+    };
     expect(individuals.count).toBe(35);
 
     const families = treeDb._raw.prepare('SELECT COUNT(*) as count FROM families').get() as {
@@ -114,9 +114,9 @@ describe('seedHarryPotterDemo', () => {
     // Second call should be a no-op
     await seedHarryPotterDemo(systemDb);
 
-    const individuals = treeDb._raw
-      .prepare('SELECT COUNT(*) as count FROM individuals')
-      .get() as { count: number };
+    const individuals = treeDb._raw.prepare('SELECT COUNT(*) as count FROM individuals').get() as {
+      count: number;
+    };
     expect(individuals.count).toBe(0);
   });
 

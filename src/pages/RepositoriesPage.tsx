@@ -90,9 +90,7 @@ export function RepositoriesPage({ treeId }: RepositoriesPageProps): JSX.Element
     }
   }
 
-  function handleFieldChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
+  function handleFieldChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }

@@ -234,10 +234,7 @@ export async function updateName(id: string, input: UpdateNameInput): Promise<vo
         await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [
           individualDbId,
         ]);
-        await db.execute(
-          `UPDATE names SET ${sets.join(', ')} WHERE id = $${paramIndex}`,
-          params
-        );
+        await db.execute(`UPDATE names SET ${sets.join(', ')} WHERE id = $${paramIndex}`, params);
         await db.execute('COMMIT');
       } catch (error) {
         await db.execute('ROLLBACK');

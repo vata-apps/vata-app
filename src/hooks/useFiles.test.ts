@@ -25,9 +25,7 @@ describe('useFilesBySource', () => {
   });
 
   it('returns files for a source', async () => {
-    const mockFiles = [
-      { id: '1', originalFilename: 'scan.jpg', mimeType: 'image/jpeg' },
-    ];
+    const mockFiles = [{ id: '1', originalFilename: 'scan.jpg', mimeType: 'image/jpeg' }];
     vi.mocked(getFilesBySourceId).mockResolvedValue(mockFiles as any);
 
     const { result } = renderHook(() => useFilesBySource('S-0001'), {

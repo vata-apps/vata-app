@@ -1,10 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
-import type {
-  Repository,
-  CreateRepositoryInput,
-  UpdateRepositoryInput,
-} from '$/types/database';
+import type { Repository, CreateRepositoryInput, UpdateRepositoryInput } from '$/types/database';
 
 // =============================================================================
 // Raw database row type (snake_case as in SQLite)

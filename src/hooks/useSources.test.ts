@@ -27,9 +27,7 @@ describe('useSources', () => {
   });
 
   it('returns sources from getAllSources', async () => {
-    const mockSources = [
-      { id: 'S-0001', title: 'Census 1901', author: null, repositoryId: null },
-    ];
+    const mockSources = [{ id: 'S-0001', title: 'Census 1901', author: null, repositoryId: null }];
     vi.mocked(getAllSources).mockResolvedValue(mockSources as any);
 
     const { result } = renderHook(() => useSources(), { wrapper: createWrapper() });

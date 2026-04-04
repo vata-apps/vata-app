@@ -101,9 +101,7 @@ export function RepositoryViewPage({ treeId, repositoryId }: RepositoryViewPageP
     setEditError(null);
   }
 
-  function handleFieldChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
+  function handleFieldChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     setEditForm((prev) => (prev ? { ...prev, [name]: value } : prev));
   }
@@ -150,7 +148,14 @@ export function RepositoryViewPage({ treeId, repositoryId }: RepositoryViewPageP
       <div>
         <button
           onClick={cancelEdit}
-          style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: 0, fontSize: '0.9rem' }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#666',
+            cursor: 'pointer',
+            padding: 0,
+            fontSize: '0.9rem',
+          }}
         >
           &larr; Cancel Edit
         </button>
@@ -345,7 +350,9 @@ export function RepositoryViewPage({ treeId, repositoryId }: RepositoryViewPageP
       >
         <div>
           <h1 style={{ margin: 0 }}>{repository.name}</h1>
-          <div style={{ color: '#666', marginTop: '0.25rem', fontSize: '0.9rem' }}>{repository.id}</div>
+          <div style={{ color: '#666', marginTop: '0.25rem', fontSize: '0.9rem' }}>
+            {repository.id}
+          </div>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button
@@ -434,7 +441,9 @@ export function RepositoryViewPage({ treeId, repositoryId }: RepositoryViewPageP
           {repository.notes && (
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
               <dt style={{ fontWeight: 600, minWidth: '100px', fontSize: '0.85rem' }}>Notes</dt>
-              <dd style={{ margin: 0, color: '#555', whiteSpace: 'pre-wrap' }}>{repository.notes}</dd>
+              <dd style={{ margin: 0, color: '#555', whiteSpace: 'pre-wrap' }}>
+                {repository.notes}
+              </dd>
             </div>
           )}
           {!hasDetails && (

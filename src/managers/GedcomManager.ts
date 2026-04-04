@@ -58,7 +58,11 @@ export class GedcomManager {
 
     // Create tree folder in app data directory
     const baseDir = await appDataDir();
-    const slug = treeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || crypto.randomUUID();
+    const slug =
+      treeName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || crypto.randomUUID();
     const treePath = `${baseDir}trees/${slug}`;
 
     // Create new tree in system database
@@ -97,7 +101,11 @@ export class GedcomManager {
    */
   static async importFromContent(content: string, treeName: string): Promise<ImportResult> {
     const baseDir = await appDataDir();
-    const slug = treeName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || crypto.randomUUID();
+    const slug =
+      treeName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || crypto.randomUUID();
     const treePath = `${baseDir}trees/${slug}`;
 
     const treeId = await createTree({

@@ -109,7 +109,9 @@ export function ExportGedcomModal({
           boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
         }}
       >
-        <h3 id="export-gedcom-title" style={{ margin: '0 0 1rem' }}>Export GEDCOM</h3>
+        <h3 id="export-gedcom-title" style={{ margin: '0 0 1rem' }}>
+          Export GEDCOM
+        </h3>
 
         <p style={{ margin: '0 0 1rem', fontSize: '0.9rem', color: '#555' }}>
           Export "{treeName}" to GEDCOM 5.5.1 format.

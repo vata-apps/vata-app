@@ -58,8 +58,7 @@ interface RawCitationLink {
 const CITATION_COLUMNS =
   'id, source_id, page, quality, date_accessed, text, notes, created_at, updated_at';
 
-const CITATION_LINK_COLUMNS =
-  'id, citation_id, entity_type, entity_id, field_name, created_at';
+const CITATION_LINK_COLUMNS = 'id, citation_id, entity_type, entity_id, field_name, created_at';
 
 // =============================================================================
 // Mapping functions

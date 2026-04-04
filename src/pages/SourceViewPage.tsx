@@ -184,7 +184,14 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
       <div>
         <button
           onClick={cancelEdit}
-          style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', padding: 0, fontSize: '0.9rem' }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#666',
+            cursor: 'pointer',
+            padding: 0,
+            fontSize: '0.9rem',
+          }}
         >
           &larr; Cancel Edit
         </button>
@@ -443,12 +450,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
               <dt style={{ fontWeight: 600, minWidth: '120px', fontSize: '0.85rem' }}>URL</dt>
               <dd style={{ margin: 0 }}>
-                <a
-                  href={source.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ color: '#06c' }}
-                >
+                <a href={source.url} target="_blank" rel="noreferrer" style={{ color: '#06c' }}>
                   {source.url}
                 </a>
               </dd>

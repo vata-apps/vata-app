@@ -12,10 +12,7 @@ export function getMediaDir(treeFolderPath: string): string {
  * Generate a unique filename in a directory.
  * If "photo.jpg" already exists, tries "photo-1.jpg", "photo-2.jpg", etc.
  */
-export async function deduplicateFilename(
-  filename: string,
-  directory: string
-): Promise<string> {
+export async function deduplicateFilename(filename: string, directory: string): Promise<string> {
   const filePath = await join(directory, filename);
   if (!(await exists(filePath))) return filename;
 

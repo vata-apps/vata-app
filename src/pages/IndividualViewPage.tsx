@@ -9,13 +9,18 @@ interface IndividualViewPageProps {
   individualId: string;
 }
 
-function EventInfo({ label, event }: { label: string; event: EventWithDetails | null }): JSX.Element | null {
+function EventInfo({
+  label,
+  event,
+}: {
+  label: string;
+  event: EventWithDetails | null;
+}): JSX.Element | null {
   if (!event) return null;
 
   return (
     <li>
-      <strong>{label}:</strong>{' '}
-      {event.dateOriginal ?? '(no date)'}
+      <strong>{label}:</strong> {event.dateOriginal ?? '(no date)'}
       {event.place && <> — {event.place.fullName}</>}
     </li>
   );
