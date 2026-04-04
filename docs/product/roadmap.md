@@ -20,9 +20,9 @@ graph LR
 | 1   | Foundation        | Create, modify, open, close, and delete a tree.                                   | Complete    | —                |
 | 2   | GEDCOM            | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.             | Complete    | MVP1             |
 | 3   | Primary Entities  | Create, modify, and delete primary entities and navigate between modules.          | Complete    | MVP1, MVP2       |
-| 4   | UI                | Have a complete, polished UI for the application.                                 | Not Started | MVP3, Figma      |
-| 5   | Sources           | Create, modify, and delete a source and associate it with entities.               | Not Started | MVP4, Figma      |
-| 6   | Files             | Add and delete files and associate them with entities.                             | Not Started | MVP5, Figma      |
+| 4   | UI                | Have a complete, polished UI for the application.                                 | Not Started | MVP3             |
+| 5   | Sources           | Create, modify, and delete a source and associate it with entities.               | Not Started | MVP4             |
+| 6   | Files             | Add and delete files and associate them with entities.                             | Not Started | MVP5             |
 
 ## Key Milestones
 
@@ -53,20 +53,20 @@ Spec: [MVP2 Product Spec](../mvps/mvp-2-gedcom/spec.md) · Implementation: [MVP2
 
 Spec: [MVP3 Product Spec](../mvps/mvp-3-primary-entities/spec.md) · Implementation: [MVP3 Phases](../mvps/mvp-3-primary-entities/README.md)
 
-### MVP4 — UI _(design-dependent)_
+### MVP4 — UI
 
-- Mantine component library integrated
-- Complete design system (theme, colors, typography)
+- shadcn/ui components integrated (Radix UI + Tailwind CSS)
+- Complete design system (theme via CSS variables, colors, typography)
 - All screens redesigned with polished components
 - Internationalization infrastructure (react-i18next)
 
-### MVP5 — Sources _(design-dependent)_
+### MVP5 — Sources
 
 - Source and repository entity management
 - Citation links between sources and other entities
 - Source browsing and search UI
 
-### MVP6 — Files _(design-dependent)_
+### MVP6 — Files
 
 - File attachment linked to entities
 - File browsing and preview
@@ -76,4 +76,3 @@ Spec: [MVP3 Product Spec](../mvps/mvp-3-primary-entities/spec.md) · Implementat
 | Dependency     | Required by | Description                                                                 |
 | -------------- | ----------- | --------------------------------------------------------------------------- |
 | In-app modules | MVP2, MVP3  | `@vata-apps/gedcom-parser` (MVP2), `@vata-apps/gedcom-date` (MVP3) — see [ADR-004](../decisions/adr-004-gedcom-libraries.md) |
-| Figma designs  | MVP4+       | UI design work required before MVP4, 5, 6                                   |

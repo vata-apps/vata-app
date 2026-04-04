@@ -30,7 +30,7 @@ When you need to know the current state:
 | MVP1: Foundation       | Tauri setup, system DB, tree management |
 | MVP2: GEDCOM           | GEDCOM 5.5.1 import/export              |
 | MVP3: Primary Entities | CRUD for genealogical entities          |
-| MVP4: UI (Mantine)     | Full UI with Mantine + i18n setup       |
+| MVP4: UI (shadcn/ui)   | Full UI with shadcn/ui + Tailwind + i18n |
 | MVP5: Sources          | Source citations and repositories       |
 | MVP6: File Attachments | Media and document attachments          |
 
@@ -40,7 +40,7 @@ When you need to know the current state:
 
 When working on MVP3, these constraints apply:
 
-1. **UI is HTML-only**: No Mantine, no design system components. Minimal inline CSS only. Functional, not polished.
+1. **UI is HTML-only**: No shadcn/ui, no design system components. Minimal inline CSS only. Functional, not polished.
 2. **No i18n yet**: Hardcoded English strings are acceptable until MVP4.
 3. **No file attachments**: Media files and documents are out of scope (MVP6).
 4. **No source citations**: Out of scope (MVP5).
@@ -59,7 +59,7 @@ Before implementing a feature, check which MVP it belongs to:
 | CRUD: Individuals, Names, Families, Events, Places | MVP3 |
 | Date parsing and formatting                        | MVP3 |
 | Business logic managers and React Query hooks      | MVP3 |
-| UI design system (Mantine components)              | MVP4 |
+| UI design system (shadcn/ui components)             | MVP4 |
 | i18n / translations                                | MVP4 |
 | Source citations and repositories                  | MVP5 |
 | Media files and document attachments               | MVP6 |

@@ -16,8 +16,9 @@
 | GEDCOM            | In-app module   | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)      | 2   |
 | Dates             | In-app module   | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`) | 3   |
 | Testing           | Vitest + RTL    | 2.x / 16.x    | Unit and integration tests                                   | 3   |
-| UI Library        | Mantine         | 7.x           | Components and design system                                 | 4   |
-| Icons             | Tabler Icons    | Latest        | Consistent iconography                                       | 4   |
+| UI Components     | shadcn/ui       | Latest        | Radix UI primitives with Tailwind CSS styling                | 4   |
+| CSS Framework     | Tailwind CSS    | 4.x           | Utility-first CSS framework                                  | 4   |
+| Icons             | Lucide React    | Latest        | Consistent iconography                                       | 4   |
 | i18n              | react-i18next   | 15.x          | Internationalization                                         | 4   |
 
 ### Adoption by MVP
@@ -25,7 +26,7 @@
 - **MVP1**: Tauri, React, Vite, TypeScript, TanStack Query, Zustand, TanStack Router, SQLite. No UI library (minimal HTML/CSS).
 - **MVP2**: Integration of in-app module `@vata-apps/gedcom-parser` for import/export.
 - **MVP3**: In-app module `@vata-apps/gedcom-date` for event dates. HTML-only UI with minimal CSS. Vitest + Testing Library introduced.
-- **MVP4**: Mantine, Tabler Icons, complete design system, i18n.
+- **MVP4**: shadcn/ui, Tailwind CSS, Lucide React, complete design system, i18n.
 
 ---
 
@@ -262,77 +263,66 @@ export default defineConfig({
 
 ---
 
-## Mantine 7
+## shadcn/ui
 
-### Why Mantine?
+### Why shadcn/ui?
 
-- Modern and clean design
-- 100+ ready-to-use components
+- Components copied into the project (`src/components/ui/`) — full ownership
+- Built on accessible Radix UI primitives
+- Styled with Tailwind CSS utility classes
+- Only install components you need — no monolithic dependency
 - Excellent TypeScript support
-- Flexible theming system
-- Accessible (ARIA)
-- Utility hooks included
+- Widely adopted in the React ecosystem
 
-### Theme Configuration
+### How It Works
 
-```typescript
-// src/theme.ts
-import { createTheme, MantineColorsTuple } from '@mantine/core';
+shadcn/ui is **not an npm package**. It is a CLI tool that copies component source code into your project:
 
-const brand: MantineColorsTuple = [
-  '#f0f4ff',
-  '#dce4f5',
-  '#b4c6e7',
-  '#8aa5da',
-  '#6889cf',
-  '#5278c8',
-  '#466fc6',
-  '#375eaf',
-  '#2d539e',
-  '#1e478d',
-];
+```bash
+# Initialize shadcn/ui (one-time setup)
+npx shadcn@latest init
 
-export const theme = createTheme({
-  primaryColor: 'brand',
-  colors: {
-    brand,
-  },
-  fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-  headings: {
-    fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
-    fontWeight: '600',
-  },
-  defaultRadius: 'md',
-  components: {
-    Button: {
-      defaultProps: {
-        radius: 'md',
-      },
-    },
-    Card: {
-      defaultProps: {
-        radius: 'md',
-        shadow: 'sm',
-      },
-    },
-  },
-});
+# Add individual components as needed
+npx shadcn@latest add button card dialog table
+```
+
+Components are placed in `src/components/ui/` and can be freely modified.
+
+### Theming
+
+Theme is defined via CSS variables in `src/index.css` and mapped in `tailwind.config.ts`:
+
+```css
+/* src/index.css */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    /* ... */
+  }
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    /* ... */
+  }
+}
 ```
 
 ### Key Components Used
 
 | Component             | Usage                                                          |
 | --------------------- | -------------------------------------------------------------- |
-| `AppShell`            | Main layout                                                    |
-| **Form windows**      | Create/edit flows (native windows under `/standalone/` routes) |
-| **ConfirmDialog**     | In-window confirmations (unsaved changes, delete)              |
+| Layout (custom)       | Main layout with sidebar navigation                            |
+| `Dialog`              | Confirmations, forms (unsaved changes, delete)                 |
 | `Table`               | Data lists                                                     |
-| `TextInput`, `Select` | Forms                                                          |
+| `Input`, `Select`     | Forms                                                          |
 | `Card`                | Person/event cards                                             |
 | `Tabs`                | Secondary navigation                                           |
-| `Notification`        | User feedback                                                  |
-| `Menu`                | Context menus                                                  |
-| `Breadcrumbs`         | Breadcrumb navigation                                          |
+| `Sonner` (toast)      | User feedback                                                  |
+| `DropdownMenu`        | Context menus                                                  |
+| `Breadcrumb`          | Breadcrumb navigation                                          |
 
 ---
 
@@ -807,11 +797,7 @@ export default [
 // package.json
 {
   "dependencies": {
-    "@mantine/core": "^7.0.0",
-    "@mantine/hooks": "^7.0.0",
-    "@mantine/form": "^7.0.0",
-    "@mantine/notifications": "^7.0.0",
-    "@tabler/icons-react": "^3.0.0",
+    "@radix-ui/react-*": "Latest",
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-router": "^1.0.0",
     "@tauri-apps/api": "^2.0.0",
@@ -824,7 +810,10 @@ export default [
     "react-dom": "^18.2.0",
     "react-i18next": "^15.0.0",
     "zustand": "^4.0.0",
-    "clsx": "^2.0.0"
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.0.0",
+    "class-variance-authority": "^0.7.0",
+    "lucide-react": "Latest"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",

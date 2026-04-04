@@ -48,7 +48,7 @@ Source: [Architecture Overview — Performance](../architecture/overview.md#perf
 
 ### MVP4–6
 
-Definition of Done to be established after Figma design work.
+Definition of Done to be established during MVP4+ implementation.
 
 ## Code Quality
 

@@ -1,6 +1,6 @@
 # Design System
 
-> **MVP4**: The full design system (Mantine, colors, typography, components) is applied from MVP4. MVP1–3 use a minimal HTML UI without a component library.
+> **MVP4**: The full design system (shadcn/ui + Tailwind CSS, colors, typography, components) is applied from MVP4. MVP1–3 use a minimal HTML UI without a component library.
 
 ## Design Principles
 
@@ -125,29 +125,37 @@ font-family:
 | small | 12px | 1.5         | 400    | Labels, metadata |
 | xs    | 11px | 1.4         | 400    | Tags, badges     |
 
-### Mantine Configuration
+### Tailwind CSS Configuration
+
+```css
+/* src/index.css — CSS variables for theming */
+@layer base {
+  :root {
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+}
+```
 
 ```typescript
-const theme = createTheme({
-  fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-  fontSizes: {
-    xs: "11px",
-    sm: "12px",
-    md: "14px",
-    lg: "16px",
-    xl: "20px",
-  },
-  headings: {
-    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, sans-serif",
-    fontWeight: "600",
-    sizes: {
-      h1: { fontSize: "32px", lineHeight: "1.2" },
-      h2: { fontSize: "24px", lineHeight: "1.3" },
-      h3: { fontSize: "20px", lineHeight: "1.4" },
-      h4: { fontSize: "16px", lineHeight: "1.4" },
+// tailwind.config.ts
+export default {
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)"],
+      },
+      fontSize: {
+        xs: ["11px", { lineHeight: "1.4" }],
+        sm: ["12px", { lineHeight: "1.5" }],
+        base: ["14px", { lineHeight: "1.5" }],
+        lg: ["16px", { lineHeight: "1.4" }],
+        xl: ["20px", { lineHeight: "1.4" }],
+        "2xl": ["24px", { lineHeight: "1.3" }],
+        "3xl": ["32px", { lineHeight: "1.2" }],
+      },
     },
   },
-});
+};
 ```
 
 ---
@@ -322,49 +330,49 @@ Children (5) · Events (12)
 
 ## Iconography
 
-### Library: Tabler Icons
+### Library: Lucide React
 
-Stroke-style icons, consistent, 24x24 by default.
+Stroke-style icons, consistent, 24x24 by default. Import from `lucide-react`.
 
 ### Main Icons
 
 ```
 Navigation
-├── IconHome         Home
-├── IconTree         Tree
-├── IconUsers        Individuals
-├── IconUsersGroup   Families
-├── IconCalendarEvent Events
-├── IconMapPin       Places
-└── IconSettings     Settings
+├── Home             Home
+├── TreePine         Tree
+├── Users            Individuals
+├── UsersRound       Families
+├── CalendarDays     Events
+├── MapPin           Places
+└── Settings         Settings
 
 Actions
-├── IconPlus         Add
-├── IconEdit         Edit
-├── IconTrash        Delete
-├── IconSearch       Search
-├── IconDownload     Export
-├── IconUpload       Import
-└── IconDotsVertical Menu
+├── Plus             Add
+├── Pencil           Edit
+├── Trash2           Delete
+├── Search           Search
+├── Download         Export
+├── Upload           Import
+└── MoreVertical     Menu
 
 Gender
-├── IconGenderMale   Male (blue)
-├── IconGenderFemale Female (pink)
-└── IconGenderBigender Unknown (gray)
+├── Circle (blue)    Male
+├── Circle (pink)    Female
+└── Circle (gray)    Unknown
 
 Events
-├── IconBabyCarriage Birth
-├── IconCross        Death
-├── IconHeart        Marriage
-├── IconHeartBroken  Divorce
-├── IconChurch       Christening
-└── IconBriefcase    Occupation
+├── Baby             Birth
+├── Cross            Death
+├── Heart            Marriage
+├── HeartCrack       Divorce
+├── Church           Christening
+└── Briefcase        Occupation
 
 Feedback
-├── IconCheck        Success
-├── IconX            Error
-├── IconAlertTriangle Warning
-└── IconInfoCircle   Info
+├── Check            Success
+├── X                Error
+├── AlertTriangle    Warning
+└── Info             Info
 ```
 
 ---

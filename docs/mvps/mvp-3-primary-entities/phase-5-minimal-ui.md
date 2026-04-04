@@ -2,7 +2,7 @@
 
 ## Objective
 
-Create HTML-only UI pages for listing and viewing individuals and families. **No Mantine in MVP3** — use HTML with minimal CSS.
+Create HTML-only UI pages for listing and viewing individuals and families. **No shadcn/ui in MVP3** — use HTML with minimal CSS.
 
 ## Step 5.1: Individual List Page
 

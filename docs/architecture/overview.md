@@ -4,7 +4,7 @@
 
 Vata is a desktop application built with Tauri 2.0, combining a web frontend (React/TypeScript) and a native backend (Rust). The architecture follows a layered pattern for clear separation of responsibilities.
 
-Development is structured by MVP (see [Roadmap](../roadmap.md)): MVP1 Foundation, MVP2 GEDCOM, MVP3 Primary Entities, MVP4 UI, MVP5 Sources, MVP6 Files. Mantine and the complete design system are introduced in MVP4; MVP1–3 use a minimalist HTML UI.
+Development is structured by MVP (see [Roadmap](../roadmap.md)): MVP1 Foundation, MVP2 GEDCOM, MVP3 Primary Entities, MVP4 UI, MVP5 Sources, MVP6 Files. shadcn/ui (Radix + Tailwind) and the complete design system are introduced in MVP4; MVP1–3 use a minimalist HTML UI.
 
 ```mermaid
 graph TD
@@ -40,7 +40,7 @@ graph TD
 - **Layouts**: Layout structures (MainLayout, etc.)
 - **Form windows**: Standalone native windows for create/edit flows (e.g. Create Person, Edit Person, Import GEDCOM). They load routes under `/standalone/` and render without MainLayout. Small in-window dialogs are used for unsaved-change and delete confirmations.
 
-**Technologies**: React 18, TanStack Router. Mantine and react-i18next are added in MVP4.
+**Technologies**: React 18, TanStack Router. shadcn/ui, Tailwind CSS, and react-i18next are added in MVP4.
 
 ### 2. Hooks Layer (Data Access)
 

@@ -362,7 +362,7 @@ function PersonCount() {
 // Theme affects the layout
 function ThemeWrapper() {
   const theme = useAppStore((s) => s.theme);
-  return <MantineProvider theme={theme}>{children}</MantineProvider>;
+  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 }
 
 function ThemeToggle() {

@@ -35,7 +35,7 @@ MVP3 implements the core genealogical data model and operations: individuals, na
 
 - Sources and citations (MVP5)
 - File attachments (MVP6)
-- Mantine components or polished UI (MVP4)
+- shadcn/ui components or polished UI (MVP4)
 - Search or filtering (future enhancement)
 
 ## Key Decisions

@@ -100,7 +100,7 @@ Initialize the Tauri project, configure development tools, install dependencies,
 
 ## Step 1.3: Dependency Installation
 
-> **MVP1 scope**: No Mantine or icons in MVP1. Install only State & Data, Tauri plugins, and utilities. Mantine and @tabler/icons-react are added in MVP4.
+> **MVP1 scope**: No UI library or icons in MVP1. Install only State & Data, Tauri plugins, and utilities. shadcn/ui, Tailwind CSS, and Lucide React are added in MVP4.
 
 ### Main Dependencies
 

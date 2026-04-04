@@ -76,4 +76,4 @@ This MVP is the most complex as it implements all core genealogical data managem
 
 ## Next Steps
 
-After completing MVP3, proceed to MVP4 (UI with Mantine) which depends on Figma design work.
+After completing MVP3, proceed to MVP4 (UI with shadcn/ui + Tailwind CSS).

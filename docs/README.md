@@ -19,7 +19,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-002: Frontend Stack](./decisions/adr-002-frontend-stack.md) — React, TypeScript, Vite, TanStack, Zustand
 - [ADR-003: Database Architecture](./decisions/adr-003-database-architecture.md) — Dual DB, string IDs, layer separation
 - [ADR-004: GEDCOM Libraries (in-app)](./decisions/adr-004-gedcom-libraries.md) — gedcom-parser and gedcom-date as in-app modules (@vata-apps/\*)
-- [ADR-005: UI Strategy](./decisions/adr-005-ui-strategy.md) — HTML in MVP1–3, Mantine in MVP4
+- [ADR-005: UI Strategy](./decisions/adr-005-ui-strategy.md) — HTML in MVP1–3, shadcn/ui in MVP4
 - [ADR-006: Import/Export](./decisions/adr-006-import-export.md) — Two-phase import, round-trip export
 
 ## Architecture
@@ -50,9 +50,9 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [Product Spec](./mvps/mvp-3-primary-entities/spec.md) — Personas, stories, decisions, risks, success criteria
 - Phases: [Tree Schema](./mvps/mvp-3-primary-entities/phase-1-tree-schema.md) · [CRUD DB](./mvps/mvp-3-primary-entities/phase-2-crud-db.md) · [Dates](./mvps/mvp-3-primary-entities/phase-3-dates.md) · [Managers & Hooks](./mvps/mvp-3-primary-entities/phase-4-managers-hooks.md) · [Minimal UI](./mvps/mvp-3-primary-entities/phase-5-minimal-ui.md)
 
-### MVP4–6 _(design-dependent)_
+### MVP4–6
 
-- **MVP4: UI** — Complete UI with Mantine, design system, i18n
+- **MVP4: UI** — Complete UI with shadcn/ui + Tailwind CSS, design system, i18n
 - **MVP5: Sources** — Source and citation management
 - **MVP6: Files** — File attachments linked to entities
 
@@ -62,7 +62,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 ## User Interface
 
-> UI documentation is design-dependent and will be finalized after Figma design work for MVP4+.
+> UI documentation will be updated iteratively during MVP4+ implementation.
 
 - [Design System](./ui/design-system.md) — Colors, typography, components
 - [Layouts](./ui/layouts.md) — Layout structure

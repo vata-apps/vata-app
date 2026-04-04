@@ -127,7 +127,7 @@ Acceptance criteria:
 
 ## MVP4 — UI
 
-> _Stories to be detailed after Figma design work._
+> _Stories to be detailed during MVP implementation._
 
 ### US-4.1: Complete UI
 
@@ -141,7 +141,7 @@ As **Marie** (beginner), I want the application in my language, so that I can us
 
 ## MVP5 — Sources
 
-> _Stories to be detailed after Figma design work._
+> _Stories to be detailed during MVP implementation._
 
 ### US-5.1: Add a source
 
@@ -155,7 +155,7 @@ As **Claire** (researcher), I want to browse all my sources in one place, so tha
 
 ## MVP6 — Files
 
-> _Stories to be detailed after Figma design work._
+> _Stories to be detailed during MVP implementation._
 
 ### US-6.1: Attach a file
 
