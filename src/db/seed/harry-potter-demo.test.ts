@@ -11,6 +11,10 @@ vi.mock('../connection', () => ({
   closeTreeDb: vi.fn(),
 }));
 
+vi.mock('@tauri-apps/api/path', () => ({
+  appDataDir: vi.fn().mockResolvedValue('/mock/app-data/'),
+}));
+
 // Lazily resolve the mock after the module is loaded
 import('../connection').then((mod) => {
   (mod.getSystemDb as ReturnType<typeof vi.fn>).mockResolvedValue(systemDb);
@@ -76,10 +80,10 @@ describe('seedHarryPotterDemo', () => {
     await seedHarryPotterDemo(systemDb);
 
     const tree = systemDb._raw
-      .prepare('SELECT name, filename, description FROM trees LIMIT 1')
-      .get() as { name: string; filename: string; description: string };
+      .prepare('SELECT name, path, description FROM trees LIMIT 1')
+      .get() as { name: string; path: string; description: string };
     expect(tree.name).toBe('Harry Potter Family');
-    expect(tree.filename).toBe('harry-potter-demo.db');
+    expect(tree.path).toContain('harry-potter-family');
   });
 
   it('sets demo_tree_seeded flag in app_settings', async () => {

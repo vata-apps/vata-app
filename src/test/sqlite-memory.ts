@@ -8,7 +8,7 @@ const SYSTEM_SCHEMA = `
   CREATE TABLE IF NOT EXISTS trees (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    filename TEXT NOT NULL UNIQUE,
+    path TEXT NOT NULL UNIQUE,
     description TEXT,
     individual_count INTEGER NOT NULL DEFAULT 0,
     family_count INTEGER NOT NULL DEFAULT 0,
@@ -184,6 +184,98 @@ const TREE_SCHEMA = `
     key TEXT PRIMARY KEY,
     value TEXT NOT NULL
   );
+
+  -- repositories
+  CREATE TABLE IF NOT EXISTS repositories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    address TEXT,
+    city TEXT,
+    country TEXT,
+    phone TEXT,
+    email TEXT,
+    website TEXT,
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_repositories_name ON repositories(name);
+
+  -- sources
+  CREATE TABLE IF NOT EXISTS sources (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    repository_id INTEGER,
+    title TEXT NOT NULL,
+    author TEXT,
+    publisher TEXT,
+    publication_date TEXT,
+    call_number TEXT,
+    url TEXT,
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (repository_id) REFERENCES repositories(id) ON DELETE SET NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_sources_title ON sources(title);
+  CREATE INDEX IF NOT EXISTS idx_sources_repository ON sources(repository_id);
+
+  -- source_citations
+  CREATE TABLE IF NOT EXISTS source_citations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_id INTEGER NOT NULL,
+    page TEXT,
+    quality TEXT CHECK(quality IN ('primary', 'secondary', 'questionable', 'unreliable')),
+    date_accessed TEXT,
+    text TEXT,
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE
+  );
+  CREATE INDEX IF NOT EXISTS idx_citations_source ON source_citations(source_id);
+
+  -- citation_links
+  CREATE TABLE IF NOT EXISTS citation_links (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    citation_id INTEGER NOT NULL,
+    entity_type TEXT NOT NULL CHECK(entity_type IN ('individual', 'name', 'event', 'family', 'place')),
+    entity_id INTEGER NOT NULL,
+    field_name TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (citation_id) REFERENCES source_citations(id) ON DELETE CASCADE
+  );
+  CREATE INDEX IF NOT EXISTS idx_citation_links_citation ON citation_links(citation_id);
+  CREATE INDEX IF NOT EXISTS idx_citation_links_entity ON citation_links(entity_type, entity_id);
+
+  -- files
+  CREATE TABLE IF NOT EXISTS files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    original_filename TEXT NOT NULL,
+    relative_path TEXT NOT NULL UNIQUE,
+    mime_type TEXT NOT NULL,
+    file_size INTEGER NOT NULL,
+    width INTEGER,
+    height INTEGER,
+    thumbnail_path TEXT,
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_files_mime_type ON files(mime_type);
+
+  -- source_files
+  CREATE TABLE IF NOT EXISTS source_files (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source_id INTEGER NOT NULL,
+    file_id INTEGER NOT NULL,
+    sort_order INTEGER DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE,
+    FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE,
+    UNIQUE(source_id, file_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_source_files_source ON source_files(source_id);
+  CREATE INDEX IF NOT EXISTS idx_source_files_file ON source_files(file_id);
 `;
 
 // =============================================================================
