@@ -14,4 +14,10 @@ export const queryKeys = {
   places: ['places'] as const,
   place: (id: string) => ['places', id] as const,
   placeTypes: ['placeTypes'] as const,
+  sources: ['sources'] as const,
+  source: (id: string) => ['sources', id] as const,
+  repositories: ['repositories'] as const,
+  repository: (id: string) => ['repositories', id] as const,
+  citations: (sourceId: string) => ['citations', sourceId] as const,
+  files: (sourceId: string) => ['files', sourceId] as const,
 };
