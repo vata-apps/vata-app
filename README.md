@@ -1,5 +1,7 @@
 # Vata
 
+> **Vata** (वट, *vaṭa*) is the Sanskrit word for the banyan tree (*Ficus benghalensis*) — a tree whose aerial roots descend from its branches to form new trunks, expanding endlessly. A fitting name for a genealogy app.
+
 A modern, local-first desktop application for managing genealogical family trees.
 
 Your data stays on your machine. No account, no cloud, no subscription.
