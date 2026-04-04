@@ -15,6 +15,7 @@ interface NewSourceFormState {
   title: string;
   author: string;
   publisher: string;
+  publicationDate: string;
   repositoryId: string;
   callNumber: string;
   url: string;
@@ -25,6 +26,7 @@ const EMPTY_FORM: NewSourceFormState = {
   title: '',
   author: '',
   publisher: '',
+  publicationDate: '',
   repositoryId: '',
   callNumber: '',
   url: '',
@@ -106,6 +108,7 @@ export function SourcesPage({ treeId }: SourcesPageProps): JSX.Element {
       title: form.title.trim(),
       author: form.author.trim() || undefined,
       publisher: form.publisher.trim() || undefined,
+      publicationDate: form.publicationDate.trim() || undefined,
       repositoryId: form.repositoryId || undefined,
       callNumber: form.callNumber.trim() || undefined,
       url: form.url.trim() || undefined,
@@ -292,6 +295,20 @@ export function SourcesPage({ treeId }: SourcesPageProps): JSX.Element {
                   name="publisher"
                   type="text"
                   value={form.publisher}
+                  onChange={handleFieldChange}
+                  style={inputStyle}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <label htmlFor="source-publication-date" style={labelStyle}>
+                  Publication Date
+                </label>
+                <input
+                  id="source-publication-date"
+                  name="publicationDate"
+                  type="text"
+                  value={form.publicationDate}
                   onChange={handleFieldChange}
                   style={inputStyle}
                 />
