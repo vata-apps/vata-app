@@ -107,4 +107,5 @@ Do not update this skill with status — it would always be stale.
 - [ ] New DB functions follow `sqlite-standards` skill (PRAGMAs, no SELECT \*, parameterized queries)
 - [ ] New GEDCOM-related code follows `gedcom-standards` skill
 - [ ] New TypeScript code follows `typescript-standards` skill
-- [ ] Documentation updated — run `docs-consistency` skill after any doc changes
+- [ ] Documentation updated — dispatch the `docs-consistency` agent after any doc changes
+- [ ] Scope validated — dispatch the `scope-validator` agent if adding new features
