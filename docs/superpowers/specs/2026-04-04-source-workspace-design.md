@@ -112,6 +112,7 @@ interface TemplateDefinition {
 - Slots: none (free-form only)
 - Families: none
 - `eventTypeTag`: empty string — user picks event type from a secondary dropdown, or skips event creation entirely
+- When no event type is selected, the manager skips event creation (steps 3-5) and creates citations linked only to the individuals/families
 
 ## SourceWorkspaceManager
 
@@ -131,6 +132,7 @@ interface CreateFromTemplateInput {
   sourceId: string;
   templateId: string;
   slots: SlotValue[];
+  eventTypeTag?: string;      // override for Generic template (user-chosen event type)
   date?: string;
   place?: string;             // new place name
   existingPlaceId?: string;   // existing place ID
@@ -142,7 +144,7 @@ interface CreateFromTemplateInput {
 
 ```typescript
 interface CreateFromTemplateResult {
-  eventId: string;
+  eventId?: string;           // undefined when Generic with no event type
   createdIndividuals: { slotKey: string; id: string }[];
   createdFamilies: string[];
   citationId: string;
@@ -154,15 +156,15 @@ interface CreateFromTemplateResult {
 
 1. **Resolve individuals** — for each slot: use `existingId` or call `createIndividual()` + `createName()`
 2. **Resolve place** — use `existingPlaceId` or call `createPlace()`
-3. **Look up event type** by template's `eventTypeTag`
-4. **Create event** — `createEvent()` with date + place
-5. **Add event participants** — `addEventParticipant()` for each filled slot
+3. **Determine event type** — use `input.eventTypeTag` override (for Generic), else template's `eventTypeTag`. If empty/null, skip steps 4-5.
+4. **Create event** — `createEvent()` with date + place (skipped if no event type)
+5. **Add event participants** — `addEventParticipant()` for each filled slot (skipped if no event)
 6. **Create families** — iterate `template.families`, skip if required members missing, create family + add members
 7. **Create citation** — `createCitation({ sourceId, page })`
-8. **Create citation links** — one for the event, one for each individual, one for each family
+8. **Create citation links** — one for the event (if created), one for each individual, one for each family
 9. **Return result**
 
-No transaction wrapper for MVP — SQLite via Tauri plugin doesn't expose transactions easily. Partial data on failure is acceptable; proper rollback is a future concern.
+No transaction wrapper for MVP — SQLite via Tauri plugin doesn't expose transactions easily. Partial failure produces orphaned records (e.g., individuals with no event link); this is accepted for MVP and the user can clean up manually. Proper rollback is a future concern.
 
 ## Left Panel
 
