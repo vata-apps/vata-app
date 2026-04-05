@@ -2,6 +2,7 @@ import { useSource } from '$/hooks/useSources';
 import { WorkspaceHeader } from '$/components/workspace/WorkspaceHeader';
 import { WorkspaceLayout } from '$/components/workspace/WorkspaceLayout';
 import { LeftPanel } from '$/components/workspace/LeftPanel';
+import { RightPanel } from '$/components/workspace/RightPanel';
 
 interface SourceWorkspacePageProps {
   treeId: string;
@@ -24,7 +25,7 @@ export function SourceWorkspacePage({ treeId, sourceId }: SourceWorkspacePagePro
       <WorkspaceHeader treeId={treeId} sourceId={sourceId} source={source} />
       <WorkspaceLayout
         left={<LeftPanel treeId={treeId} sourceId={sourceId} />}
-        right={<div style={{ padding: '1rem', color: '#888' }}>Right panel (templates)</div>}
+        right={<RightPanel sourceId={sourceId} />}
       />
     </div>
   );
