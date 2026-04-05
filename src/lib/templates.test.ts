@@ -36,7 +36,7 @@ describe('templates', () => {
   it('family-only slots have no participantRole', () => {
     const marriage = getTemplateById('marriage');
     const familyOnly = marriage!.slots.filter((s) =>
-      ['husband_father', 'husband_mother', 'wife_father', 'wife_mother'].includes(s.key),
+      ['husband_father', 'husband_mother', 'wife_father', 'wife_mother'].includes(s.key)
     );
     for (const slot of familyOnly) {
       expect(slot.participantRole).toBeUndefined();

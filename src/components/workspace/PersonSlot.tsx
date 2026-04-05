@@ -122,9 +122,7 @@ export function PersonSlot({
           {label}
           {required && <span style={{ color: '#c00' }}> *</span>}
         </div>
-        <div
-          style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-        >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{value.displayName}</div>
             <div style={{ fontSize: '0.7rem', color: '#666' }}>

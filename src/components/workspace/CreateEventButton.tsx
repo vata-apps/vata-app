@@ -42,7 +42,10 @@ function countCreations(
       return rule.members.every((m) => filledSlotKeys.includes(m.slot));
     }
     return (
-      childSlot && filledSlotKeys.includes(childSlot) && parentSlot && filledSlotKeys.includes(parentSlot)
+      childSlot &&
+      filledSlotKeys.includes(childSlot) &&
+      parentSlot &&
+      filledSlotKeys.includes(parentSlot)
     );
   }).length;
 
@@ -105,9 +108,7 @@ export function CreateEventButton({
       >
         {isPending ? 'Creating...' : label}
       </button>
-      <div
-        style={{ fontSize: '0.7rem', color: '#888', textAlign: 'center', marginTop: '0.4rem' }}
-      >
+      <div style={{ fontSize: '0.7rem', color: '#888', textAlign: 'center', marginTop: '0.4rem' }}>
         Will create: {summaryParts.join(', ')}
       </div>
     </div>

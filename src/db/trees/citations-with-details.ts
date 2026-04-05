@@ -106,7 +106,12 @@ export async function getCitationDetailsForSource(sourceId: string): Promise<Cit
     );
 
     const rawParticipants = await db.select<
-      { event_id: number; individual_id: number; given_names: string | null; surname: string | null }[]
+      {
+        event_id: number;
+        individual_id: number;
+        given_names: string | null;
+        surname: string | null;
+      }[]
     >(
       `SELECT
          ep.event_id                            AS event_id,

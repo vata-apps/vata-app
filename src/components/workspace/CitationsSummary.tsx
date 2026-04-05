@@ -11,9 +11,7 @@ export function CitationsSummary({ treeId, sourceId }: CitationsSummaryProps): J
 
   if (isLoading) {
     return (
-      <p style={{ padding: '0.75rem', color: '#888', fontSize: '0.85rem' }}>
-        Loading citations...
-      </p>
+      <p style={{ padding: '0.75rem', color: '#888', fontSize: '0.85rem' }}>Loading citations...</p>
     );
   }
 

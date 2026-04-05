@@ -72,7 +72,7 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
       isDragging.current = true;
       dragStart.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
     },
-    [pan],
+    [pan]
   );
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -135,9 +135,7 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
 
   const currentFile = files[currentIndex];
   const imageSrc =
-    currentFile && treePath
-      ? convertFileSrc(`${treePath}/${currentFile.relativePath}`)
-      : '';
+    currentFile && treePath ? convertFileSrc(`${treePath}/${currentFile.relativePath}`) : '';
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#1a1a1a' }}>

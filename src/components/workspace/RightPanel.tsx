@@ -85,7 +85,10 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
     const hasFilled = Object.values(slotValues).some(
       (v) => v !== null && (!Array.isArray(v) || v.length > 0)
     );
-    if (hasFilled && !window.confirm('Changing the template will clear all filled slots. Continue?')) {
+    if (
+      hasFilled &&
+      !window.confirm('Changing the template will clear all filled slots. Continue?')
+    ) {
       return;
     }
     setTemplateId(newId);
@@ -128,12 +131,7 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
             onChange={handleSlotChange}
             onAddMultiple={handleAddMultiple}
           />
-          <EventDetails
-            date={date}
-            place={place}
-            onDateChange={setDate}
-            onPlaceChange={setPlace}
-          />
+          <EventDetails date={date} place={place} onDateChange={setDate} onPlaceChange={setPlace} />
           <FreeFormAdd values={freeFormValues} onChange={setFreeFormValues} />
           <CreateEventButton
             template={template}
