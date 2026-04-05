@@ -1,8 +1,9 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFilesBySource } from '$hooks/useFiles';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
+import { stat } from '@tauri-apps/plugin-fs';
 import { copyFileToTree } from '$lib/file-utils';
 import { createFile, addFileToSource } from '$db-tree/files';
 import { queryKeys } from '$lib/query-keys';
@@ -20,8 +21,15 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const isDragging = useRef(false);
+  const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
 
   const { mutate: attachFiles, isPending: isAttaching } = useMutation({
     mutationFn: async () => {
@@ -48,11 +56,12 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
       for (const filePath of paths) {
         const { relativePath, filename } = await copyFileToTree(filePath, treePath);
         const ext = filename.split('.').pop()?.toLowerCase() ?? '';
+        const fileInfo = await stat(`${treePath}/${relativePath}`);
         const fileId = await createFile({
           originalFilename: filename,
           relativePath,
           mimeType: mimeMap[ext] ?? 'application/octet-stream',
-          fileSize: 0,
+          fileSize: fileInfo.size,
         });
         await addFileToSource({ sourceId, fileId });
       }
@@ -69,19 +78,28 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      isDragging.current = true;
+      setIsDragging(true);
       dragStart.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
     },
     [pan]
   );
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging.current) return;
-    setPan({ x: e.clientX - dragStart.current.x, y: e.clientY - dragStart.current.y });
-  }, []);
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!isDragging) return;
+      if (rafRef.current !== null) return;
+      const clientX = e.clientX;
+      const clientY = e.clientY;
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
+        setPan({ x: clientX - dragStart.current.x, y: clientY - dragStart.current.y });
+      });
+    },
+    [isDragging]
+  );
 
   const handleMouseUp = useCallback(() => {
-    isDragging.current = false;
+    setIsDragging(false);
   }, []);
 
   if (isLoading) {
@@ -139,7 +157,6 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#1a1a1a' }}>
-      {/* Toolbar */}
       <div
         style={{
           padding: '0.5rem',
@@ -149,7 +166,6 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
           alignItems: 'center',
         }}
       >
-        {/* Zoom controls */}
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <button
             onClick={() => setZoom((z) => Math.max(0.1, z - 0.25))}
@@ -199,7 +215,6 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
           </button>
         </div>
 
-        {/* Navigation controls */}
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <button
             onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
@@ -232,7 +247,6 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
           </button>
         </div>
 
-        {/* Add file */}
         <button
           onClick={() => attachFiles()}
           disabled={isAttaching}
@@ -250,9 +264,8 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
         </button>
       </div>
 
-      {/* Image viewport */}
       <div
-        style={{ flex: 1, overflow: 'hidden', cursor: isDragging.current ? 'grabbing' : 'grab' }}
+        style={{ flex: 1, overflow: 'hidden', cursor: isDragging ? 'grabbing' : 'grab' }}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}

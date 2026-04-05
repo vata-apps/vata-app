@@ -47,12 +47,13 @@ export function PersonSlot({
     setIsSearching(true);
     try {
       const individuals = await searchIndividuals(q);
-      const searchResults: SearchResult[] = [];
-      for (const ind of individuals.slice(0, 8)) {
-        const name = await getPrimaryName(ind.id);
-        const formatted = formatName(name);
-        searchResults.push({ id: ind.id, name: formatted.full, gender: ind.gender });
-      }
+      const top = individuals.slice(0, 8);
+      const names = await Promise.all(top.map((ind) => getPrimaryName(ind.id)));
+      const searchResults = top.map((ind, i) => ({
+        id: ind.id,
+        name: formatName(names[i]).full,
+        gender: ind.gender,
+      }));
       setResults(searchResults);
       setShowDropdown(true);
     } finally {
@@ -88,7 +89,6 @@ export function PersonSlot({
     onChange(null);
   }
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -99,7 +99,12 @@ export function PersonSlot({
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // Filled state
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
   if (value) {
     return (
       <div
@@ -140,7 +145,6 @@ export function PersonSlot({
     );
   }
 
-  // Empty state
   return (
     <div
       ref={containerRef}

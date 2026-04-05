@@ -33,7 +33,6 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
     mutationFn: async () => {
       if (!template) throw new Error('No template selected');
 
-      // Build slot values for manager
       const slots: SlotValue[] = [];
 
       for (const slot of template.slots) {
@@ -47,7 +46,6 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
         }
       }
 
-      // Free-form
       for (let i = 0; i < freeFormValues.length; i++) {
         slots.push(personSlotToSlotValue(`freeform_${i}`, freeFormValues[i]));
       }
@@ -62,7 +60,6 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
       });
     },
     onSuccess: (result) => {
-      // Clear form
       setSlotValues({});
       setDate('');
       setPlace(null);
@@ -72,7 +69,6 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
       );
       setTimeout(() => setSuccessMessage(null), 4000);
 
-      // Invalidate queries
       void queryClient.invalidateQueries({ queryKey: queryKeys.citationsWithDetails(sourceId) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.citations(sourceId) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.individuals });
@@ -115,22 +111,13 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
     [template]
   );
 
-  const handleAddMultiple = useCallback(() => {
-    // No-op — adding is handled by handleSlotChange with index
-  }, []);
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <EventTypeSelector value={templateId} onChange={handleTemplateChange} />
 
       {template && (
         <>
-          <TemplateSlots
-            template={template}
-            values={slotValues}
-            onChange={handleSlotChange}
-            onAddMultiple={handleAddMultiple}
-          />
+          <TemplateSlots template={template} values={slotValues} onChange={handleSlotChange} />
           <EventDetails date={date} place={place} onDateChange={setDate} onPlaceChange={setPlace} />
           <FreeFormAdd values={freeFormValues} onChange={setFreeFormValues} />
           <CreateEventButton

@@ -239,35 +239,28 @@ export class SourceWorkspaceManager {
       throw new Error(`Template not found: ${input.templateId}`);
     }
 
-    // 1. Resolve place
     let placeId = input.existingPlaceId;
     if (!placeId && input.place?.trim()) {
       placeId = await createPlace({ name: input.place.trim() });
     }
 
-    // 2. Resolve individuals
     const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(input.slots, template);
 
-    // 3. Create event
     const eventId = await SourceWorkspaceManager.createEventFromTemplate(template, resolvedSlots, {
       eventTypeTag: input.eventTypeTag,
       date: input.date,
       placeId,
     });
 
-    // 4. Create families
     const createdFamilies = await SourceWorkspaceManager.createFamilies(template, resolvedSlots);
 
-    // 5. Create citation
     const citationId = await createCitation({
       sourceId: input.sourceId,
       page: input.citationPage,
     });
 
-    // 6. Create citation links
     const citationLinkIds: string[] = [];
 
-    // Link to event
     if (eventId) {
       const linkId = await createCitationLink({
         citationId,
@@ -277,7 +270,6 @@ export class SourceWorkspaceManager {
       citationLinkIds.push(linkId);
     }
 
-    // Link to each individual
     for (const resolved of resolvedSlots) {
       const linkId = await createCitationLink({
         citationId,
@@ -287,7 +279,6 @@ export class SourceWorkspaceManager {
       citationLinkIds.push(linkId);
     }
 
-    // Link to each family
     for (const familyId of createdFamilies) {
       const linkId = await createCitationLink({
         citationId,

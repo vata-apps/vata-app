@@ -46,6 +46,12 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
+
   if (value) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
