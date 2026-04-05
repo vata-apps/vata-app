@@ -381,50 +381,55 @@ async function migrateSystemDbFilenameToPath(db: Database): Promise<void> {
   for (const tree of trees) {
     if (tree.path.startsWith(treesDir + '/')) continue;
 
-    // Determine the slug from the old value
-    let slug: string;
-    if (tree.path.endsWith('.db')) {
-      // Bare filename: "harry-potter-demo.db" → "harry-potter-demo"
-      slug = tree.path.replace(/\.db$/, '');
-    } else {
-      // Bad path from previous migration: extract last segment
-      slug = tree.path.split('/').pop() ?? tree.path;
-    }
-
-    const newPath = await getTreePathForSlug(slug);
-    const oldFilename = `${slug}.db`;
-    const newFile = `${newPath}/${oldFilename}`;
-
-    // The real .db file may live in one of two places depending on the bug:
-    //  - ${treesDir}/${slug}.db         : bare-filename case (very old schema)
-    //  - ${tree.path}/${slug}.db        : macOS bad-separator case, where
-    //                                     tree.path is a malformed directory
-    //                                     like "...vatatrees/${slug}"
-    const candidateSources = [
-      `${treesDir}/${oldFilename}`,
-      tree.path.endsWith('.db') ? null : `${tree.path}/${oldFilename}`,
-    ].filter((p): p is string => p !== null && p !== newFile);
-
-    // Create the subdirectory. If this fails (permissions, disk full), skip
-    // this tree — don't update the DB path to point to a nonexistent dir.
-    await mkdir(newPath, { recursive: true });
-
-    // Move the .db file from whichever old location still contains it.
-    for (const sourceFile of candidateSources) {
-      if (await exists(sourceFile)) {
-        await rename(sourceFile, newFile);
-        // WAL/SHM sidecar files may not exist — only move when present.
-        if (await exists(`${sourceFile}-wal`)) {
-          await rename(`${sourceFile}-wal`, `${newFile}-wal`);
-        }
-        if (await exists(`${sourceFile}-shm`)) {
-          await rename(`${sourceFile}-shm`, `${newFile}-shm`);
-        }
-        break;
+    try {
+      // Determine the slug from the old value
+      let slug: string;
+      if (tree.path.endsWith('.db')) {
+        // Bare filename: "harry-potter-demo.db" → "harry-potter-demo"
+        slug = tree.path.replace(/\.db$/, '');
+      } else {
+        // Bad path from previous migration: extract last segment
+        slug = tree.path.split('/').pop() ?? tree.path;
       }
-    }
 
-    await db.execute('UPDATE trees SET path = $1 WHERE id = $2', [newPath, tree.id]);
+      const newPath = await getTreePathForSlug(slug);
+      const oldFilename = `${slug}.db`;
+      const newFile = `${newPath}/${oldFilename}`;
+
+      // The real .db file may live in one of two places depending on the bug:
+      //  - ${treesDir}/${slug}.db         : bare-filename case (very old schema)
+      //  - ${tree.path}/${slug}.db        : macOS bad-separator case, where
+      //                                     tree.path is a malformed directory
+      //                                     like "...vatatrees/${slug}"
+      const candidateSources = [
+        `${treesDir}/${oldFilename}`,
+        tree.path.endsWith('.db') ? null : `${tree.path}/${oldFilename}`,
+      ].filter((p): p is string => p !== null && p !== newFile);
+
+      // Create the subdirectory. If this fails (permissions, disk full), skip
+      // this tree — don't update the DB path to point to a nonexistent dir.
+      await mkdir(newPath, { recursive: true });
+
+      // Move the .db file from whichever old location still contains it.
+      for (const sourceFile of candidateSources) {
+        if (await exists(sourceFile)) {
+          await rename(sourceFile, newFile);
+          // WAL/SHM sidecar files may not exist — only move when present.
+          if (await exists(`${sourceFile}-wal`)) {
+            await rename(`${sourceFile}-wal`, `${newFile}-wal`);
+          }
+          if (await exists(`${sourceFile}-shm`)) {
+            await rename(`${sourceFile}-shm`, `${newFile}-shm`);
+          }
+          break;
+        }
+      }
+
+      await db.execute('UPDATE trees SET path = $1 WHERE id = $2', [newPath, tree.id]);
+    } catch (err) {
+      console.error(`Failed to migrate tree id=${tree.id} path="${tree.path}":`, err);
+      continue;
+    }
   }
 }
 
