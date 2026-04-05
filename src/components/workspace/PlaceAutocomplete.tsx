@@ -24,6 +24,7 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
     const requestId = ++requestSeqRef.current;
     if (q.trim().length < 2) {
       setResults([]);
+      setShowDropdown(false);
       return;
     }
     try {
