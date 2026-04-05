@@ -186,6 +186,7 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
       >
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <button
+            aria-label="Zoom out"
             onClick={() => setZoom((z) => Math.max(0.1, z - 0.25))}
             style={{
               color: '#fff',
@@ -201,6 +202,7 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
           </button>
           <span style={{ color: '#aaa', fontSize: '0.75rem' }}>{Math.round(zoom * 100)}%</span>
           <button
+            aria-label="Zoom in"
             onClick={() => setZoom((z) => Math.min(5, z + 0.25))}
             style={{
               color: '#fff',
@@ -235,6 +237,7 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
 
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <button
+            aria-label="Previous file"
             onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
             disabled={currentIndex === 0}
             style={{
@@ -251,6 +254,7 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
             {currentIndex + 1} / {files.length}
           </span>
           <button
+            aria-label="Next file"
             onClick={() => setCurrentIndex((i) => Math.min(files.length - 1, i + 1))}
             disabled={currentIndex === files.length - 1}
             style={{

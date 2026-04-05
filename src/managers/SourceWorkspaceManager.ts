@@ -145,9 +145,6 @@ export class SourceWorkspaceManager {
       placeId: options.placeId,
     });
 
-    // Build a set of slot keys that are defined in the template
-    const templateSlotKeys = new Set(template.slots.map((s) => s.key));
-
     for (const resolved of resolvedSlots) {
       const templateSlot = template.slots.find((s) => s.key === resolved.slotKey);
 
@@ -160,7 +157,7 @@ export class SourceWorkspaceManager {
             role: templateSlot.participantRole,
           });
         }
-      } else if (!templateSlotKeys.has(resolved.slotKey)) {
+      } else {
         // Free-form slot (not defined in template) — add with role 'other'
         await addEventParticipant({
           eventId,

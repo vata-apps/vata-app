@@ -138,12 +138,11 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
                 padding: '0.4rem 0.6rem',
                 cursor: 'pointer',
                 fontSize: '0.8rem',
-                borderBottom: '1px solid #f0f0f0',
                 background: 'none',
-                border: 'none',
                 borderTop: 'none',
                 borderLeft: 'none',
                 borderRight: 'none',
+                borderBottom: '1px solid #f0f0f0',
               }}
             >
               {r.name}

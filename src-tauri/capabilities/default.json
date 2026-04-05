@@ -18,8 +18,7 @@
       "allow": [
         { "path": "$APPDATA/**" },
         { "path": "$DOCUMENT/**" },
-        { "path": "$DOWNLOAD/**" },
-        { "path": "$HOME/**" }
+        { "path": "$DOWNLOAD/**" }
       ]
     },
     "dialog:default",
