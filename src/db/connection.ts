@@ -5,6 +5,7 @@ import { getTreePathForSlug } from '$lib/tree-paths';
 import { seedHarryPotterDemo } from './seed/harry-potter-demo';
 
 let systemDb: Database | null = null;
+let systemDbInitPromise: Promise<Database> | null = null;
 let treeDb: Database | null = null;
 let currentTreePath: string | null = null;
 
@@ -392,22 +393,34 @@ async function migrateSystemDbFilenameToPath(db: Database): Promise<void> {
 
     const newPath = await getTreePathForSlug(slug);
     const oldFilename = `${slug}.db`;
-    const flatFile = `${treesDir}/${oldFilename}`;
     const newFile = `${newPath}/${oldFilename}`;
+
+    // The real .db file may live in one of two places depending on the bug:
+    //  - ${treesDir}/${slug}.db         : bare-filename case (very old schema)
+    //  - ${tree.path}/${slug}.db        : macOS bad-separator case, where
+    //                                     tree.path is a malformed directory
+    //                                     like "...vatatrees/${slug}"
+    const candidateSources = [
+      `${treesDir}/${oldFilename}`,
+      tree.path.endsWith('.db') ? null : `${tree.path}/${oldFilename}`,
+    ].filter((p): p is string => p !== null && p !== newFile);
 
     // Create the subdirectory. If this fails (permissions, disk full), skip
     // this tree — don't update the DB path to point to a nonexistent dir.
     await mkdir(newPath, { recursive: true });
 
-    // Move the flat .db file into the subdirectory if it still exists.
-    if (await exists(flatFile)) {
-      await rename(flatFile, newFile);
-      // WAL/SHM sidecar files may not exist — only move when present.
-      if (await exists(`${flatFile}-wal`)) {
-        await rename(`${flatFile}-wal`, `${newFile}-wal`);
-      }
-      if (await exists(`${flatFile}-shm`)) {
-        await rename(`${flatFile}-shm`, `${newFile}-shm`);
+    // Move the .db file from whichever old location still contains it.
+    for (const sourceFile of candidateSources) {
+      if (await exists(sourceFile)) {
+        await rename(sourceFile, newFile);
+        // WAL/SHM sidecar files may not exist — only move when present.
+        if (await exists(`${sourceFile}-wal`)) {
+          await rename(`${sourceFile}-wal`, `${newFile}-wal`);
+        }
+        if (await exists(`${sourceFile}-shm`)) {
+          await rename(`${sourceFile}-shm`, `${newFile}-shm`);
+        }
+        break;
       }
     }
 
@@ -444,14 +457,25 @@ async function initializeSystemDb(db: Database): Promise<void> {
 }
 
 export async function getSystemDb(): Promise<Database> {
-  if (!systemDb) {
-    systemDb = await Database.load('sqlite:system.db');
-    await applyConnectionPragmas(systemDb);
-    await initializeSystemDb(systemDb);
-    await migrateSystemDbFilenameToPath(systemDb);
-    await seedHarryPotterDemo(systemDb);
+  if (systemDb) return systemDb;
+
+  // Memoize the in-flight init promise so concurrent first-time callers all
+  // await the same load/migrate/seed sequence instead of racing it.
+  if (!systemDbInitPromise) {
+    systemDbInitPromise = (async () => {
+      const db = await Database.load('sqlite:system.db');
+      await applyConnectionPragmas(db);
+      await initializeSystemDb(db);
+      await migrateSystemDbFilenameToPath(db);
+      await seedHarryPotterDemo(db);
+      systemDb = db;
+      return db;
+    })().finally(() => {
+      systemDbInitPromise = null;
+    });
   }
-  return systemDb;
+
+  return systemDbInitPromise;
 }
 
 export async function openTreeDb(treePath: string): Promise<Database> {
