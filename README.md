@@ -37,7 +37,7 @@ Your data stays on your machine. No account, no cloud, no subscription.
 
 ```bash
 # Clone the repository
-git clone https://github.com/stivaugoin/vata-app.git
+git clone https://github.com/vata-apps/vata-app.git
 cd vata-app
 
 # Install dependencies
@@ -125,3 +125,9 @@ All project documentation lives in [`docs/`](docs/):
 - [Tech Stack](docs/architecture/tech-stack.md)
 - [Architecture Decision Records](docs/decisions/)
 - [MVP Specs](docs/mvps/)
+
+## License
+
+Copyright © 2026 Steve Bourgoin.
+
+This project is licensed under the GNU General Public License v3.0 or later — see the [LICENSE](LICENSE) file for details.

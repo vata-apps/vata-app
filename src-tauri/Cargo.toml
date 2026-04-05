@@ -2,7 +2,10 @@
 name = "vata-app"
 version = "0.1.0"
 description = "Vata — Genealogical tree management"
-authors = []
+authors = ["Steve Bourgoin"]
+license = "GPL-3.0-or-later"
+repository = "https://github.com/vata-apps/vata-app"
+homepage = "https://github.com/vata-apps/vata-app"
 edition = "2021"
 
 [lib]
