@@ -36,17 +36,14 @@ function countCreations(
 
   const events = template.eventTypeTag ? 1 : 0;
   const families = template.families.filter((rule) => {
-    const childSlot = rule.members.find((m) => m.role === 'child')?.slot;
-    const parentSlot = rule.members.find((m) => m.role !== 'child')?.slot;
     if (rule.type === 'couple') {
       return rule.members.every((m) => filledSlotKeys.includes(m.slot));
     }
-    return (
-      childSlot &&
-      filledSlotKeys.includes(childSlot) &&
-      parentSlot &&
-      filledSlotKeys.includes(parentSlot)
+    const childSlot = rule.members.find((m) => m.role === 'child')?.slot;
+    const hasParent = rule.members.some(
+      (m) => m.role !== 'child' && filledSlotKeys.includes(m.slot)
     );
+    return Boolean(childSlot) && filledSlotKeys.includes(childSlot!) && hasParent;
   }).length;
 
   return { individuals, families, events, citations: 1 };
