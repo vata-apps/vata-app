@@ -19,5 +19,6 @@ export const queryKeys = {
   repositories: ['repositories'] as const,
   repository: (id: string) => ['repositories', id] as const,
   citations: (sourceId: string) => ['citations', sourceId] as const,
+  citationsWithDetails: (sourceId: string) => ['citationsWithDetails', sourceId] as const,
   files: (sourceId: string) => ['files', sourceId] as const,
 };
