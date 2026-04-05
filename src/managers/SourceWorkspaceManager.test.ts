@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createTreeInMemoryDb } from '$/test/sqlite-memory';
 import { getIndividualById } from '$db-tree/individuals';
 import { getPrimaryName } from '$db-tree/names';
+import { getEventById, getEventParticipants, getEventTypeByTag } from '$db-tree/events';
 import { SourceWorkspaceManager, parseName, type SlotValue } from './SourceWorkspaceManager';
 import type { TemplateDefinition } from '$lib/templates';
 
@@ -20,6 +21,8 @@ import('$/db/connection').then(({ getTreeDb }) => {
 beforeEach(async () => {
   const { getTreeDb } = await import('$/db/connection');
   (getTreeDb as ReturnType<typeof vi.fn>).mockResolvedValue(db);
+  db._raw.exec('DELETE FROM event_participants');
+  db._raw.exec('DELETE FROM events');
   db._raw.exec('DELETE FROM names');
   db._raw.exec('DELETE FROM individuals');
 });
@@ -111,6 +114,16 @@ const marriageTemplate: TemplateDefinition = {
       ],
     },
   ],
+  hasDate: true,
+  hasPlace: true,
+};
+
+const genericTemplate: TemplateDefinition = {
+  id: 'generic',
+  label: 'Generic',
+  eventTypeTag: '',
+  slots: [],
+  families: [],
   hasDate: true,
   hasPlace: true,
 };
@@ -242,5 +255,99 @@ describe('SourceWorkspaceManager.resolveIndividuals', () => {
     expect(resolved).toHaveLength(1);
     const individual = await getIndividualById(resolved[0].individualId);
     expect(individual!.gender).toBe('F');
+  });
+});
+
+// =============================================================================
+// Task 3: createEventFromTemplate
+// =============================================================================
+
+describe('SourceWorkspaceManager.createEventFromTemplate', () => {
+  it('creates event with participants for marriage template', async () => {
+    const slots: SlotValue[] = [
+      { slotKey: 'husband', newName: 'Jean Dupont' },
+      { slotKey: 'wife', newName: 'Marie Martin' },
+    ];
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(slots, marriageTemplate);
+
+    const eventId = await SourceWorkspaceManager.createEventFromTemplate(
+      marriageTemplate,
+      resolvedSlots,
+      { date: '15 JAN 1850' }
+    );
+
+    expect(eventId).toBeDefined();
+
+    // Verify event was created
+    const event = await getEventById(eventId!);
+    expect(event).not.toBeNull();
+    expect(event!.dateOriginal).toBe('15 JAN 1850');
+
+    // Verify event type is MARR
+    const marrType = await getEventTypeByTag('MARR');
+    expect(event!.eventTypeId).toBe(marrType!.id);
+
+    // Verify participants
+    const participants = await getEventParticipants(eventId!);
+    expect(participants).toHaveLength(2);
+    expect(participants.every((p) => p.role === 'principal')).toBe(true);
+  });
+
+  it('skips event creation when template has no event type tag (generic)', async () => {
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals([], genericTemplate);
+
+    const eventId = await SourceWorkspaceManager.createEventFromTemplate(
+      genericTemplate,
+      resolvedSlots,
+      {}
+    );
+
+    expect(eventId).toBeUndefined();
+  });
+
+  it('uses eventTypeTag override for generic template', async () => {
+    const slots: SlotValue[] = [{ slotKey: 'person', newName: 'Jean Dupont' }];
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(slots, genericTemplate);
+
+    const eventId = await SourceWorkspaceManager.createEventFromTemplate(
+      genericTemplate,
+      resolvedSlots,
+      { eventTypeTag: 'BIRT' }
+    );
+
+    expect(eventId).toBeDefined();
+
+    const event = await getEventById(eventId!);
+    const birtType = await getEventTypeByTag('BIRT');
+    expect(event!.eventTypeId).toBe(birtType!.id);
+
+    // Free-form slot (not in template.slots) should be added as 'other'
+    const participants = await getEventParticipants(eventId!);
+    expect(participants).toHaveLength(1);
+    expect(participants[0].role).toBe('other');
+  });
+
+  it('only adds slots with participantRole as event participants', async () => {
+    const slots: SlotValue[] = [
+      { slotKey: 'husband', newName: 'Jean Dupont' },
+      { slotKey: 'wife', newName: 'Marie Martin' },
+      { slotKey: 'husband_father', newName: 'Pierre Dupont' },
+      { slotKey: 'witness', newName: 'Paul Thibault' },
+    ];
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(slots, marriageTemplate);
+
+    const eventId = await SourceWorkspaceManager.createEventFromTemplate(
+      marriageTemplate,
+      resolvedSlots,
+      {}
+    );
+
+    // husband (principal), wife (principal), witness (witness) = 3 participants
+    // husband_father has no participantRole so should NOT be added
+    const participants = await getEventParticipants(eventId!);
+    expect(participants).toHaveLength(3);
+
+    const roles = participants.map((p) => p.role).sort();
+    expect(roles).toEqual(['principal', 'principal', 'witness']);
   });
 });

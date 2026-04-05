@@ -1,5 +1,6 @@
 import { createIndividual } from '$db-tree/individuals';
 import { createName } from '$db-tree/names';
+import { getEventTypeByTag, createEvent, addEventParticipant } from '$db-tree/events';
 import type { TemplateDefinition } from '$lib/templates';
 import type { Gender } from '$/types/database';
 
@@ -94,5 +95,59 @@ export class SourceWorkspaceManager {
     }
 
     return resolved;
+  }
+
+  /**
+   * Create an event from template configuration and add participants.
+   * Returns the event ID, or undefined if the template has no event type tag
+   * and no override is provided.
+   */
+  static async createEventFromTemplate(
+    template: TemplateDefinition,
+    resolvedSlots: ResolvedSlot[],
+    options: {
+      eventTypeTag?: string;
+      date?: string;
+      placeId?: string;
+    }
+  ): Promise<string | undefined> {
+    const tag = options.eventTypeTag || template.eventTypeTag;
+    if (!tag) return undefined;
+
+    const eventType = await getEventTypeByTag(tag);
+    if (!eventType) return undefined;
+
+    const eventId = await createEvent({
+      eventTypeId: eventType.id,
+      dateOriginal: options.date,
+      placeId: options.placeId,
+    });
+
+    // Build a set of slot keys that are defined in the template
+    const templateSlotKeys = new Set(template.slots.map((s) => s.key));
+
+    for (const resolved of resolvedSlots) {
+      const templateSlot = template.slots.find((s) => s.key === resolved.slotKey);
+
+      if (templateSlot) {
+        // Only add as participant if the template slot has a participantRole
+        if (templateSlot.participantRole) {
+          await addEventParticipant({
+            eventId,
+            individualId: resolved.individualId,
+            role: templateSlot.participantRole,
+          });
+        }
+      } else if (!templateSlotKeys.has(resolved.slotKey)) {
+        // Free-form slot (not defined in template) — add with role 'other'
+        await addEventParticipant({
+          eventId,
+          individualId: resolved.individualId,
+          role: 'other',
+        });
+      }
+    }
+
+    return eventId;
   }
 }
