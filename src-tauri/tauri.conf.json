@@ -31,5 +31,9 @@
     "sql": {
       "preload": ["sqlite:system.db"]
     }
+  },
+  "bundle": {
+    "licenseFile": "../LICENSE",
+    "copyright": "Copyright © 2026 Steve Bourgoin"
   }
 }

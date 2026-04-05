@@ -2,6 +2,26 @@
   "name": "vata-app",
   "private": true,
   "version": "0.1.0",
+  "description": "Local-first desktop genealogy application built with Tauri, React, and SQLite",
+  "license": "GPL-3.0-or-later",
+  "author": "Steve Bourgoin",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vata-apps/vata-app.git"
+  },
+  "homepage": "https://github.com/vata-apps/vata-app#readme",
+  "bugs": {
+    "url": "https://github.com/vata-apps/vata-app/issues"
+  },
+  "keywords": [
+    "genealogy",
+    "family-tree",
+    "gedcom",
+    "tauri",
+    "react",
+    "sqlite",
+    "desktop"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
