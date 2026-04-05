@@ -7,11 +7,19 @@ interface CitationsSummaryProps {
 }
 
 export function CitationsSummary({ treeId, sourceId }: CitationsSummaryProps): JSX.Element {
-  const { data: citations, isLoading } = useCitationsWithDetails(sourceId);
+  const { data: citations, isLoading, isError } = useCitationsWithDetails(sourceId);
 
   if (isLoading) {
     return (
       <p style={{ padding: '0.75rem', color: '#888', fontSize: '0.85rem' }}>Loading citations...</p>
+    );
+  }
+
+  if (isError) {
+    return (
+      <p style={{ padding: '0.75rem', color: '#c00', fontSize: '0.85rem' }}>
+        Failed to load citations.
+      </p>
     );
   }
 

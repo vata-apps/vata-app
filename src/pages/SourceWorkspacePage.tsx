@@ -16,7 +16,11 @@ export function SourceWorkspacePage({ treeId, sourceId }: SourceWorkspacePagePro
     return <p style={{ padding: '1rem', color: '#666' }}>Loading...</p>;
   }
 
-  if (isError || !source) {
+  if (isError) {
+    return <p style={{ padding: '1rem', color: '#c00' }}>Failed to load source.</p>;
+  }
+
+  if (!source) {
     return <p style={{ padding: '1rem', color: '#c00' }}>Source not found.</p>;
   }
 
