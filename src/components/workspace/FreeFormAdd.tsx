@@ -35,18 +35,22 @@ export function FreeFormAdd({ values, onChange }: FreeFormAddProps): JSX.Element
       {showNew ? (
         <PersonSlot label="New Person" onChange={handleAdd} />
       ) : (
-        <div
+        <button
+          type="button"
           onClick={() => setShowNew(true)}
           style={{
+            width: '100%',
             textAlign: 'center',
             fontSize: '0.8rem',
             color: '#4a90d9',
             cursor: 'pointer',
             padding: '0.5rem',
+            background: 'none',
+            border: 'none',
           }}
         >
           + Add person
-        </div>
+        </button>
       )}
     </div>
   );
