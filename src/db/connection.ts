@@ -472,8 +472,15 @@ export async function getSystemDb(): Promise<Database> {
       await applyConnectionPragmas(db);
       await initializeSystemDb(db);
       await migrateSystemDbFilenameToPath(db);
-      await seedHarryPotterDemo(db);
+      // Publish early so seedHarryPotterDemo → createTree → getSystemDb()
+      // returns the DB directly instead of re-entering systemDbInitPromise.
       systemDb = db;
+      try {
+        await seedHarryPotterDemo(db);
+      } catch (err) {
+        systemDb = null;
+        throw err;
+      }
       return db;
     })().finally(() => {
       systemDbInitPromise = null;
