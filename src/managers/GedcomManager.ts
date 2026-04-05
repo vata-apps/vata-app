@@ -63,7 +63,7 @@ export class GedcomManager {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '') || crypto.randomUUID();
-    const treePath = `${baseDir}trees/${slug}`;
+    const treePath = `${baseDir}/trees/${slug}`;
 
     // Create new tree in system database
     const treeId = await createTree({
@@ -106,7 +106,7 @@ export class GedcomManager {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '') || crypto.randomUUID();
-    const treePath = `${baseDir}trees/${slug}`;
+    const treePath = `${baseDir}/trees/${slug}`;
 
     const treeId = await createTree({
       name: treeName,

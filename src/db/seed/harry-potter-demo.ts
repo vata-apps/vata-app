@@ -21,7 +21,7 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
 
   // Create tree entry in system DB
   const baseDir = await appDataDir();
-  const treePath = `${baseDir}trees/${DEMO_SLUG}`;
+  const treePath = `${baseDir}/trees/${DEMO_SLUG}`;
 
   const treeId = await createTree({
     name: 'Harry Potter Family',

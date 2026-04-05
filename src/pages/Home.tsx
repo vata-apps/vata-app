@@ -55,7 +55,7 @@ export function HomePage() {
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/^-+|-+$/g, '') || crypto.randomUUID();
-      const treePath = `${baseDir}trees/${slug}`;
+      const treePath = `${baseDir}/trees/${slug}`;
       return createTree({ name: data.name, path: treePath, description: data.description });
     },
     onSuccess: () => {

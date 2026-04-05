@@ -26,7 +26,7 @@ export class TreeManager {
   static async create(data: CreateTreeData): Promise<string> {
     const baseDir = await appDataDir();
     const slug = slugify(data.name) || crypto.randomUUID();
-    const treePath = `${baseDir}trees/${slug}`;
+    const treePath = `${baseDir}/trees/${slug}`;
 
     const treeId = await createTree({
       name: data.name,

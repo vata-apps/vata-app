@@ -1,5 +1,6 @@
 import Database from '@tauri-apps/plugin-sql';
-import { mkdir } from '@tauri-apps/plugin-fs';
+import { mkdir, rename, exists } from '@tauri-apps/plugin-fs';
+import { appDataDir } from '@tauri-apps/api/path';
 import { seedHarryPotterDemo } from './seed/harry-potter-demo';
 
 let systemDb: Database | null = null;
@@ -358,6 +359,64 @@ async function initializeTreeDb(db: Database): Promise<void> {
   await db.execute(`CREATE INDEX IF NOT EXISTS idx_source_files_file ON source_files(file_id)`);
 }
 
+async function migrateSystemDbFilenameToPath(db: Database): Promise<void> {
+  // Step 1: Rename column if still named 'filename'
+  const cols = await db.select<{ name: string }[]>(
+    "SELECT name FROM pragma_table_info('trees') WHERE name = 'filename'"
+  );
+  if (cols.length > 0) {
+    await db.execute('ALTER TABLE trees RENAME COLUMN filename TO path');
+  }
+
+  // Step 2: Migrate any paths that are bare filenames (e.g. "tree.db") or
+  // contain the wrong separator (e.g. "...genealogytrees/...")
+  const baseDir = await appDataDir();
+  const treesDir = `${baseDir}/trees`;
+  const trees = await db.select<{ id: number; path: string }[]>(
+    'SELECT id, path FROM trees'
+  );
+
+  for (const tree of trees) {
+    if (tree.path.startsWith(treesDir + '/')) continue;
+
+    // Determine the slug from the old value
+    let slug: string;
+    if (tree.path.endsWith('.db')) {
+      // Bare filename: "harry-potter-demo.db" → "harry-potter-demo"
+      slug = tree.path.replace(/\.db$/, '');
+    } else {
+      // Bad path from previous migration: extract last segment
+      slug = tree.path.split('/').pop() ?? tree.path;
+    }
+
+    const newPath = `${treesDir}/${slug}`;
+    const oldFilename = `${slug}.db`;
+    const flatFile = `${treesDir}/${oldFilename}`;
+    const newFile = `${newPath}/${oldFilename}`;
+
+    try {
+      await mkdir(newPath, { recursive: true });
+      if (await exists(flatFile)) {
+        await rename(flatFile, newFile);
+        try {
+          await rename(`${flatFile}-wal`, `${newFile}-wal`);
+        } catch {
+          /* may not exist */
+        }
+        try {
+          await rename(`${flatFile}-shm`, `${newFile}-shm`);
+        } catch {
+          /* may not exist */
+        }
+      }
+    } catch {
+      /* directory/file already migrated */
+    }
+
+    await db.execute('UPDATE trees SET path = $1 WHERE id = $2', [newPath, tree.id]);
+  }
+}
+
 async function initializeSystemDb(db: Database): Promise<void> {
   await db.execute(`
     CREATE TABLE IF NOT EXISTS trees (
@@ -391,6 +450,7 @@ export async function getSystemDb(): Promise<Database> {
     systemDb = await Database.load('sqlite:system.db');
     await applyConnectionPragmas(systemDb);
     await initializeSystemDb(systemDb);
+    await migrateSystemDbFilenameToPath(systemDb);
     await seedHarryPotterDemo(systemDb);
   }
   return systemDb;
