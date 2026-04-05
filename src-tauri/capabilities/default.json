@@ -12,6 +12,7 @@
     "fs:default",
     "fs:allow-remove",
     "fs:allow-write-text-file",
+    "fs:allow-stat",
     {
       "identifier": "fs:scope",
       "allow": [

@@ -502,6 +502,19 @@ export interface UpdateFileInput {
 }
 
 // =============================================================================
+// Citation Detail (joined query result)
+// =============================================================================
+
+export interface CitationDetail {
+  citationId: string;
+  page: string | null;
+  eventId: string | null;
+  eventTypeName: string | null;
+  eventDate: string | null;
+  linkedIndividuals: { id: string; name: string }[];
+}
+
+// =============================================================================
 // Source File (junction)
 // =============================================================================
 

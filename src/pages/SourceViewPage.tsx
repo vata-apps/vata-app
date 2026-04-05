@@ -384,6 +384,22 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
           <div style={{ color: '#666', marginTop: '0.25rem', fontSize: '0.9rem' }}>{source.id}</div>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <Link
+            to="/tree/$treeId/source/$sourceId/edit"
+            params={{ treeId, sourceId }}
+            style={{
+              padding: '0.5rem 1rem',
+              cursor: 'pointer',
+              background: '#333',
+              border: 'none',
+              borderRadius: '4px',
+              color: '#fff',
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+            }}
+          >
+            Edit
+          </Link>
           <button
             onClick={openEdit}
             style={{
@@ -396,7 +412,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
               fontSize: '0.9rem',
             }}
           >
-            Edit
+            Edit Details
           </button>
           <button
             onClick={() => setConfirmDeleteOpen(true)}

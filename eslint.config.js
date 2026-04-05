@@ -40,6 +40,6 @@ export default [
     },
   },
   {
-    ignores: ['src/routeTree.gen.ts', 'dist/', 'src-tauri/'],
+    ignores: ['src/routeTree.gen.ts', 'dist/', 'src-tauri/', '.worktrees/'],
   },
 ];

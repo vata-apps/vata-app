@@ -57,17 +57,17 @@ UI is HTML-only with minimal CSS (shadcn/ui comes in MVP6).
 
 ### Phase 3: Source Workspace
 
-- [ ] Route: `/tree/$treeId/sources/$sourceId`
-- [ ] Workspace layout: side-by-side (image left, linking panel right)
-- [ ] Image viewer: zoom, pan, multi-file navigation
-- [ ] Event type selector with template loading
-- [ ] Template slots: Marriage, Baptism, Birth, Death, Burial, Census
-- [ ] Slot interaction: search existing entities
-- [ ] Slot interaction: create inline (adaptive detail by role)
-- [ ] Free-form entity addition ("+ Add person")
-- [ ] Event suggestion: "Create [event type] event?"
-- [ ] Auto-citation: automatic citation + citation_link creation
-- [ ] SourceWorkspaceManager: orchestrate multi-entity operations
+- [x] Route: `/tree/$treeId/source/$sourceId/edit`
+- [x] Workspace layout: side-by-side (citations/image left, linking panel right)
+- [x] Image viewer: zoom, pan, multi-file navigation
+- [x] File attachment via Tauri file dialog (from workspace)
+- [x] Event type selector with template loading (7 templates: Marriage, Baptism, Birth, Death, Burial, Census, Generic)
+- [x] Slot interaction: search existing entities (autocomplete with 300ms debounce)
+- [x] Slot interaction: create inline (name + gender; "More..." modal deferred post-Phase 3)
+- [x] Free-form entity addition ("+ Add person")
+- [x] Auto-citation: automatic citation + citation_link creation
+- [x] SourceWorkspaceManager: orchestrate multi-entity operations
+- [x] Citations summary on workspace left panel (joined query with event + individuals)
 
 ### Phase 4: Entity Timeline Integration
 
