@@ -3,9 +3,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFilesBySource } from '$hooks/useFiles';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
-import { stat } from '@tauri-apps/plugin-fs';
+import { stat, remove } from '@tauri-apps/plugin-fs';
 import { copyFileToTree } from '$lib/file-utils';
-import { createFile, addFileToSource } from '$db-tree/files';
+import { createFile, addFileToSource, deleteFile } from '$db-tree/files';
 import { queryKeys } from '$lib/query-keys';
 import { getCurrentTreePath } from '$/db/connection';
 
@@ -39,7 +39,7 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
         filters: [
           {
             name: 'Images',
-            extensions: ['jpg', 'jpeg', 'png', 'tiff', 'tif', 'pdf'],
+            extensions: ['jpg', 'jpeg', 'png', 'tiff', 'tif'],
           },
         ],
       });
@@ -51,19 +51,37 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
         png: 'image/png',
         tiff: 'image/tiff',
         tif: 'image/tiff',
-        pdf: 'application/pdf',
       };
       for (const filePath of paths) {
         const { relativePath, filename } = await copyFileToTree(filePath, treePath);
-        const ext = filename.split('.').pop()?.toLowerCase() ?? '';
-        const fileInfo = await stat(`${treePath}/${relativePath}`);
-        const fileId = await createFile({
-          originalFilename: filename,
-          relativePath,
-          mimeType: mimeMap[ext] ?? 'application/octet-stream',
-          fileSize: fileInfo.size,
-        });
-        await addFileToSource({ sourceId, fileId });
+        const copiedPath = `${treePath}/${relativePath}`;
+        let fileId: string | null = null;
+        try {
+          const ext = filename.split('.').pop()?.toLowerCase() ?? '';
+          const fileInfo = await stat(copiedPath);
+          fileId = await createFile({
+            originalFilename: filename,
+            relativePath,
+            mimeType: mimeMap[ext] ?? 'application/octet-stream',
+            fileSize: fileInfo.size,
+          });
+          await addFileToSource({ sourceId, fileId });
+        } catch (err) {
+          // Roll back side effects for this file: DB row and copied asset.
+          if (fileId) {
+            try {
+              await deleteFile(fileId);
+            } catch {
+              // Swallow cleanup errors; surface the original failure.
+            }
+          }
+          try {
+            await remove(copiedPath);
+          } catch {
+            // Swallow cleanup errors; surface the original failure.
+          }
+          throw err;
+        }
       }
     },
     onSuccess: () => {
