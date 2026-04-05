@@ -27,6 +27,7 @@ pnpm test:coverage    # Coverage report (v8)
 ```
 
 To run a single test file:
+
 ```bash
 pnpm vitest run src/db/trees/individuals.test.ts
 ```
@@ -43,12 +44,13 @@ Tauri 2 (Rust shell) + React 18 + TypeScript + Vite + SQLite (`@tauri-apps/plugi
 
 The app maintains two SQLite databases simultaneously:
 
-| Database | File | Purpose |
-|----------|------|---------|
-| System DB | `system.db` | App-level metadata: tree list, app settings |
-| Tree DB | `<tree-name>.db` | All genealogical data for one family tree |
+| Database  | File             | Purpose                                     |
+| --------- | ---------------- | ------------------------------------------- |
+| System DB | `system.db`      | App-level metadata: tree list, app settings |
+| Tree DB   | `<tree-name>.db` | All genealogical data for one family tree   |
 
 Connection management lives in `src/db/connection.ts`. Key functions:
+
 - `getSystemDb()` — opens/initializes system DB on first call
 - `openTreeDb(filename)` — opens a tree-specific DB
 - `getTreeDb()` — returns the active tree DB (throws if none open)
@@ -68,20 +70,22 @@ Every connection gets PRAGMAs applied: WAL mode, foreign keys ON, busy timeout 5
 
 Database stores `INTEGER` primary keys. The UI and all TypeScript types use formatted string IDs:
 
-| Prefix | Entity | Example |
-|--------|--------|---------|
-| `I` | Individual | `I-0001` |
-| `F` | Family | `F-0002` |
-| `E` | Event | `E-0003` |
-| `P` | Place | `P-0004` |
+| Prefix | Entity     | Example  |
+| ------ | ---------- | -------- |
+| `I`    | Individual | `I-0001` |
+| `F`    | Family     | `F-0002` |
+| `E`    | Event      | `E-0003` |
+| `P`    | Place      | `P-0004` |
 
 Conversion happens at DB layer boundaries via `src/lib/entityId.ts`:
+
 - `formatEntityId('I', 1)` → `'I-0001'`
 - `parseEntityId('I-0001')` → `1`
 
 ## DB Layer Pattern
 
 Each file in `src/db/trees/` and `src/db/system/` follows this structure:
+
 1. `Raw*` type — snake_case fields matching DB columns
 2. Public domain type — camelCase fields used throughout the app
 3. `mapRaw*(raw)` — converts raw → public type
@@ -90,23 +94,24 @@ Each file in `src/db/trees/` and `src/db/system/` follows this structure:
 
 ## Path Aliases
 
-| Alias | Resolves to |
-|-------|-------------|
-| `$/*` | `src/*` |
-| `$lib/*` | `src/lib/*` |
+| Alias           | Resolves to        |
+| --------------- | ------------------ |
+| `$/*`           | `src/*`            |
+| `$lib/*`        | `src/lib/*`        |
 | `$components/*` | `src/components/*` |
-| `$hooks/*` | `src/hooks/*` |
-| `$managers` | `src/managers` |
-| `$db` | `src/db` |
-| `$db-system/*` | `src/db/system/*` |
-| `$db-tree/*` | `src/db/trees/*` |
-| `$types` | `src/types` |
+| `$hooks/*`      | `src/hooks/*`      |
+| `$managers`     | `src/managers`     |
+| `$db`           | `src/db`           |
+| `$db-system/*`  | `src/db/system/*`  |
+| `$db-tree/*`    | `src/db/trees/*`   |
+| `$types`        | `src/types`        |
 
 ## Routing
 
 File-based routing via TanStack Router. `routeTree.gen.ts` is auto-generated — never edit it manually. Route files live in `src/routes/`.
 
 Active routes:
+
 - `/` → `src/routes/index.tsx` → `src/pages/Home.tsx`
 - `/tree/$treeId` → `src/routes/tree/$treeId.tsx` (loads tree metadata, opens DB)
 - `/tree/$treeId/` → `src/pages/TreeView.tsx`
@@ -121,6 +126,7 @@ The `$treeId.tsx` layout route is responsible for opening the tree DB before any
 ## Testing
 
 Test files colocate with source (e.g., `src/db/trees/individuals.test.ts`). Infrastructure in `src/test/`:
+
 - `sqlite-memory.ts` — in-memory SQLite helpers for DB unit tests
 - `mocks/plugin-sql.ts` — mock for Tauri SQL plugin (used in non-Tauri test environments)
 
@@ -214,6 +220,8 @@ The following specialized skills are loaded automatically when relevant, or on d
 | `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
 | `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
 | `mvp-tracker`          | When implementing new features or verifying MVP scope                         |
+| `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                 |
+| `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                  |
 
 ---
 
@@ -221,8 +229,8 @@ The following specialized skills are loaded automatically when relevant, or on d
 
 The following agents can be dispatched as sub-agents for autonomous tasks.
 
-| Agent              | When to Dispatch                                                              |
-| ------------------ | ----------------------------------------------------------------------------- |
-| `docs-consistency` | After any change to `docs/*.md` — validates cross-references and consistency  |
-| `code-reviewer`    | After implementing a feature — reviews code against project standards         |
-| `scope-validator`  | Before starting a new feature — validates it's in scope for the current MVP   |
+| Agent              | When to Dispatch                                                             |
+| ------------------ | ---------------------------------------------------------------------------- |
+| `docs-consistency` | After any change to `docs/*.md` — validates cross-references and consistency |
+| `code-reviewer`    | After implementing a feature — reviews code against project standards        |
+| `scope-validator`  | Before starting a new feature — validates it's in scope for the current MVP  |
