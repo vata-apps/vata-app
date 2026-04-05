@@ -1,6 +1,7 @@
 import Database from '@tauri-apps/plugin-sql';
 import { mkdir, rename, exists } from '@tauri-apps/plugin-fs';
 import { appDataDir } from '@tauri-apps/api/path';
+import { getTreePathForSlug } from '$lib/tree-paths';
 import { seedHarryPotterDemo } from './seed/harry-potter-demo';
 
 let systemDb: Database | null = null;
@@ -389,28 +390,25 @@ async function migrateSystemDbFilenameToPath(db: Database): Promise<void> {
       slug = tree.path.split('/').pop() ?? tree.path;
     }
 
-    const newPath = `${treesDir}/${slug}`;
+    const newPath = await getTreePathForSlug(slug);
     const oldFilename = `${slug}.db`;
     const flatFile = `${treesDir}/${oldFilename}`;
     const newFile = `${newPath}/${oldFilename}`;
 
-    try {
-      await mkdir(newPath, { recursive: true });
-      if (await exists(flatFile)) {
-        await rename(flatFile, newFile);
-        try {
-          await rename(`${flatFile}-wal`, `${newFile}-wal`);
-        } catch {
-          /* may not exist */
-        }
-        try {
-          await rename(`${flatFile}-shm`, `${newFile}-shm`);
-        } catch {
-          /* may not exist */
-        }
+    // Create the subdirectory. If this fails (permissions, disk full), skip
+    // this tree — don't update the DB path to point to a nonexistent dir.
+    await mkdir(newPath, { recursive: true });
+
+    // Move the flat .db file into the subdirectory if it still exists.
+    if (await exists(flatFile)) {
+      await rename(flatFile, newFile);
+      // WAL/SHM sidecar files may not exist — only move when present.
+      if (await exists(`${flatFile}-wal`)) {
+        await rename(`${flatFile}-wal`, `${newFile}-wal`);
       }
-    } catch {
-      /* directory/file already migrated */
+      if (await exists(`${flatFile}-shm`)) {
+        await rename(`${flatFile}-shm`, `${newFile}-shm`);
+      }
     }
 
     await db.execute('UPDATE trees SET path = $1 WHERE id = $2', [newPath, tree.id]);

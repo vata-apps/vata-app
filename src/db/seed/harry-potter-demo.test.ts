@@ -12,7 +12,8 @@ vi.mock('../connection', () => ({
 }));
 
 vi.mock('@tauri-apps/api/path', () => ({
-  appDataDir: vi.fn().mockResolvedValue('/mock/app-data/'),
+  // appDataDir returns no trailing slash on macOS
+  appDataDir: vi.fn().mockResolvedValue('/mock/app-data'),
 }));
 
 // Lazily resolve the mock after the module is loaded
