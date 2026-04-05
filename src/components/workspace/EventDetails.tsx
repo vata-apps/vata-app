@@ -34,8 +34,19 @@ export function EventDetails({
         Event Details
       </div>
       <div style={{ marginBottom: '0.4rem' }}>
-        <div style={{ fontSize: '0.7rem', color: '#666', marginBottom: '0.15rem' }}>Date</div>
+        <label
+          htmlFor="event-date-input"
+          style={{
+            display: 'block',
+            fontSize: '0.7rem',
+            color: '#666',
+            marginBottom: '0.15rem',
+          }}
+        >
+          Date
+        </label>
         <input
+          id="event-date-input"
           type="text"
           value={date}
           onChange={(e) => onDateChange(e.target.value)}

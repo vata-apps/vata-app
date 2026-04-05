@@ -14,8 +14,10 @@ export function EventTypeSelector({ value, onChange }: EventTypeSelectorProps): 
         background: '#fff',
       }}
     >
-      <div
+      <label
+        htmlFor="event-template-select"
         style={{
+          display: 'block',
           fontSize: '0.75rem',
           color: '#888',
           textTransform: 'uppercase',
@@ -24,8 +26,9 @@ export function EventTypeSelector({ value, onChange }: EventTypeSelectorProps): 
         }}
       >
         Document Type
-      </div>
+      </label>
       <select
+        id="event-template-select"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         style={{
