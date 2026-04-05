@@ -38,8 +38,10 @@ export function PersonSlot({
   const [isSearching, setIsSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const requestSeqRef = useRef(0);
 
   const doSearch = useCallback(async (q: string) => {
+    const requestId = ++requestSeqRef.current;
     if (q.trim().length < 2) {
       setResults([]);
       return;
@@ -54,10 +56,18 @@ export function PersonSlot({
         name: formatName(names[i]).full,
         gender: ind.gender,
       }));
-      setResults(searchResults);
-      setShowDropdown(true);
+      if (requestId === requestSeqRef.current) {
+        setResults(searchResults);
+        setShowDropdown(true);
+      }
+    } catch {
+      if (requestId === requestSeqRef.current) {
+        setResults([]);
+      }
     } finally {
-      setIsSearching(false);
+      if (requestId === requestSeqRef.current) {
+        setIsSearching(false);
+      }
     }
   }, []);
 
@@ -65,7 +75,9 @@ export function PersonSlot({
     const val = e.target.value;
     setQuery(val);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => doSearch(val), 300);
+    debounceRef.current = setTimeout(() => {
+      void doSearch(val);
+    }, 300);
   }
 
   function handleSelectExisting(result: SearchResult) {
