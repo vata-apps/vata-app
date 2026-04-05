@@ -18,22 +18,34 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
   const [showDropdown, setShowDropdown] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const requestSeqRef = useRef(0);
 
   const doSearch = useCallback(async (q: string) => {
+    const requestId = ++requestSeqRef.current;
     if (q.trim().length < 2) {
       setResults([]);
       return;
     }
-    const places = await searchPlaces(q);
-    setResults(places.slice(0, 8).map((p) => ({ id: p.id, name: p.name })));
-    setShowDropdown(true);
+    try {
+      const places = await searchPlaces(q);
+      if (requestId === requestSeqRef.current) {
+        setResults(places.slice(0, 8).map((p) => ({ id: p.id, name: p.name })));
+        setShowDropdown(true);
+      }
+    } catch {
+      if (requestId === requestSeqRef.current) {
+        setResults([]);
+      }
+    }
   }, []);
 
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
     setQuery(val);
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => doSearch(val), 300);
+    debounceRef.current = setTimeout(() => {
+      void doSearch(val);
+    }, 300);
   }
 
   useEffect(() => {
@@ -56,12 +68,21 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <span style={{ fontSize: '0.8rem' }}>{value.name}</span>
-        <span
+        <button
+          type="button"
+          aria-label="Clear place"
           onClick={() => onChange(null)}
-          style={{ fontSize: '0.7rem', color: '#c00', cursor: 'pointer' }}
+          style={{
+            fontSize: '0.7rem',
+            color: '#c00',
+            cursor: 'pointer',
+            background: 'none',
+            border: 'none',
+            padding: 0,
+          }}
         >
           {'\u2715'}
-        </span>
+        </button>
       </div>
     );
   }
@@ -102,7 +123,8 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
           }}
         >
           {results.map((r) => (
-            <div
+            <button
+              type="button"
               key={r.id}
               onClick={() => {
                 onChange({ type: 'existing', id: r.id, name: r.name });
@@ -110,32 +132,46 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
                 setShowDropdown(false);
               }}
               style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
                 padding: '0.4rem 0.6rem',
                 cursor: 'pointer',
                 fontSize: '0.8rem',
                 borderBottom: '1px solid #f0f0f0',
+                background: 'none',
+                border: 'none',
+                borderTop: 'none',
+                borderLeft: 'none',
+                borderRight: 'none',
               }}
             >
               {r.name}
-            </div>
+            </button>
           ))}
           {query.trim() && (
-            <div
+            <button
+              type="button"
               onClick={() => {
                 onChange({ type: 'new', name: query.trim() });
                 setQuery('');
                 setShowDropdown(false);
               }}
               style={{
+                display: 'block',
+                width: '100%',
+                textAlign: 'left',
                 padding: '0.4rem 0.6rem',
                 cursor: 'pointer',
                 fontSize: '0.8rem',
                 color: '#4a90d9',
                 fontWeight: 500,
+                background: 'none',
+                border: 'none',
               }}
             >
               Create &quot;{query.trim()}&quot;
-            </div>
+            </button>
           )}
         </div>
       )}
