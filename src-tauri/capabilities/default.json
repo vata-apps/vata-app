@@ -11,6 +11,8 @@
     "sql:allow-close",
     "fs:default",
     "fs:allow-remove",
+    "fs:allow-rename",
+    "fs:allow-exists",
     "fs:allow-write-text-file",
     "fs:allow-stat",
     {

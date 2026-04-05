@@ -3,18 +3,11 @@ import { createTree, getTreeById, updateTreeStats, markTreeOpened } from '$/db/s
 import { countIndividuals } from '$db-tree/individuals';
 import { countFamilies } from '$db-tree/families';
 import { useAppStore } from '$/store/app-store';
-import { appDataDir } from '@tauri-apps/api/path';
+import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
 
 interface CreateTreeData {
   name: string;
   description?: string;
-}
-
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 export class TreeManager {
@@ -24,9 +17,8 @@ export class TreeManager {
    * @returns The ID of the created tree
    */
   static async create(data: CreateTreeData): Promise<string> {
-    const baseDir = await appDataDir();
-    const slug = slugify(data.name) || crypto.randomUUID();
-    const treePath = `${baseDir}trees/${slug}`;
+    const slug = slugifyTreeName(data.name) || crypto.randomUUID();
+    const treePath = await getTreePathForSlug(slug);
 
     const treeId = await createTree({
       name: data.name,

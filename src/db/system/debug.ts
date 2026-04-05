@@ -49,7 +49,7 @@ export async function listTreeDatabaseFiles(): Promise<string[]> {
   try {
     const entries = await readDir('trees', { baseDir: BaseDirectory.AppData });
     return entries
-      .filter((entry) => entry.isFile && entry.name.endsWith('.db'))
+      .filter((entry) => entry.isDirectory || (entry.isFile && entry.name.endsWith('.db')))
       .map((entry) => entry.name);
   } catch {
     // Directory may not exist yet

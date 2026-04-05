@@ -7,7 +7,7 @@ import { createFamily, addFamilyMember } from '../trees/families';
 import { createPlace } from '../trees/places';
 import { createEvent, addEventParticipant, getEventTypeByTag } from '../trees/events';
 
-import { appDataDir } from '@tauri-apps/api/path';
+import { getTreePathForSlug } from '$lib/tree-paths';
 
 const DEMO_SLUG = 'harry-potter-family';
 
@@ -20,14 +20,16 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   if (rows.length > 0 && rows[0].value === 'true') return;
 
   // Create tree entry in system DB
-  const baseDir = await appDataDir();
-  const treePath = `${baseDir}trees/${DEMO_SLUG}`;
+  const treePath = await getTreePathForSlug(DEMO_SLUG);
 
-  const treeId = await createTree({
-    name: 'Harry Potter Family',
-    path: treePath,
-    description: 'A demo family tree featuring the extended Potter-Weasley family',
-  });
+  const treeId = await createTree(
+    {
+      name: 'Harry Potter Family',
+      path: treePath,
+      description: 'A demo family tree featuring the extended Potter-Weasley family',
+    },
+    systemDb
+  );
 
   // Open tree DB
   await openTreeDb(treePath);
@@ -408,7 +410,7 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   // Update tree stats & close
   // =========================================================================
 
-  await updateTreeStats(treeId, { individualCount: 35, familyCount: 10 });
+  await updateTreeStats(treeId, { individualCount: 35, familyCount: 10 }, systemDb);
   await closeTreeDb();
 
   // Mark as seeded

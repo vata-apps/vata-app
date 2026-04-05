@@ -1,3 +1,4 @@
+import type Database from '@tauri-apps/plugin-sql';
 import { getSystemDb } from '../connection';
 import type { Tree } from '$/types/database';
 
@@ -46,12 +47,11 @@ export async function getTreeById(id: string): Promise<Tree | null> {
   return rows[0] ? mapToTree(rows[0]) : null;
 }
 
-export async function createTree(data: {
-  name: string;
-  path: string;
-  description?: string;
-}): Promise<string> {
-  const db = await getSystemDb();
+export async function createTree(
+  data: { name: string; path: string; description?: string },
+  dbOverride?: Database
+): Promise<string> {
+  const db = dbOverride ?? (await getSystemDb());
   const result = await db.execute(
     `INSERT INTO trees (name, path, description) VALUES ($1, $2, $3)`,
     [data.name, data.path, data.description ?? null]
@@ -90,9 +90,10 @@ export async function deleteTree(id: string): Promise<void> {
 
 export async function updateTreeStats(
   id: string,
-  stats: { individualCount?: number; familyCount?: number }
+  stats: { individualCount?: number; familyCount?: number },
+  dbOverride?: Database
 ): Promise<void> {
-  const db = await getSystemDb();
+  const db = dbOverride ?? (await getSystemDb());
   const sets: string[] = [];
   const params: number[] = [];
   let paramIndex = 1;

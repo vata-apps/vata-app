@@ -10,7 +10,7 @@ import { queryKeys } from '$lib/query-keys';
 import { ConfirmDialog } from '$components/ConfirmDialog';
 import { ImportGedcomModal } from '$components/ImportGedcomModal';
 import { ExportGedcomModal } from '$components/ExportGedcomModal';
-import { appDataDir } from '@tauri-apps/api/path';
+import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
 
 export function HomePage() {
   const queryClient = useQueryClient();
@@ -49,13 +49,8 @@ export function HomePage() {
 
   const createMutation = useMutation({
     mutationFn: async (data: { name: string; description?: string }) => {
-      const baseDir = await appDataDir();
-      const slug =
-        data.name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, '-')
-          .replace(/^-+|-+$/g, '') || crypto.randomUUID();
-      const treePath = `${baseDir}trees/${slug}`;
+      const slug = slugifyTreeName(data.name) || crypto.randomUUID();
+      const treePath = await getTreePathForSlug(slug);
       return createTree({ name: data.name, path: treePath, description: data.description });
     },
     onSuccess: () => {

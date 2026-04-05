@@ -12,7 +12,7 @@ import { createTree, updateTreeStats, markTreeOpened } from '$/db/system/trees';
 import { openTreeDb, getTreeDb } from '$/db/connection';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { open, save } from '@tauri-apps/plugin-dialog';
-import { appDataDir } from '@tauri-apps/api/path';
+import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
 
 export interface ImportResult {
   treeId: string;
@@ -57,13 +57,8 @@ export class GedcomManager {
     const treeName = filename.replace(/\.[^.]+$/, '');
 
     // Create tree folder in app data directory
-    const baseDir = await appDataDir();
-    const slug =
-      treeName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '') || crypto.randomUUID();
-    const treePath = `${baseDir}trees/${slug}`;
+    const slug = slugifyTreeName(treeName) || crypto.randomUUID();
+    const treePath = await getTreePathForSlug(slug);
 
     // Create new tree in system database
     const treeId = await createTree({
@@ -100,13 +95,8 @@ export class GedcomManager {
    * @returns Import result with tree ID and stats
    */
   static async importFromContent(content: string, treeName: string): Promise<ImportResult> {
-    const baseDir = await appDataDir();
-    const slug =
-      treeName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '') || crypto.randomUUID();
-    const treePath = `${baseDir}trees/${slug}`;
+    const slug = slugifyTreeName(treeName) || crypto.randomUUID();
+    const treePath = await getTreePathForSlug(slug);
 
     const treeId = await createTree({
       name: treeName,
