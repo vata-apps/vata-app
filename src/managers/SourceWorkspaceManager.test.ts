@@ -3,6 +3,7 @@ import { createTreeInMemoryDb } from '$/test/sqlite-memory';
 import { getIndividualById } from '$db-tree/individuals';
 import { getPrimaryName } from '$db-tree/names';
 import { getEventById, getEventParticipants, getEventTypeByTag } from '$db-tree/events';
+import { getFamilyMembers } from '$db-tree/families';
 import { SourceWorkspaceManager, parseName, type SlotValue } from './SourceWorkspaceManager';
 import type { TemplateDefinition } from '$lib/templates';
 
@@ -23,6 +24,8 @@ beforeEach(async () => {
   (getTreeDb as ReturnType<typeof vi.fn>).mockResolvedValue(db);
   db._raw.exec('DELETE FROM event_participants');
   db._raw.exec('DELETE FROM events');
+  db._raw.exec('DELETE FROM family_members');
+  db._raw.exec('DELETE FROM families');
   db._raw.exec('DELETE FROM names');
   db._raw.exec('DELETE FROM individuals');
 });
@@ -349,5 +352,91 @@ describe('SourceWorkspaceManager.createEventFromTemplate', () => {
 
     const roles = participants.map((p) => p.role).sort();
     expect(roles).toEqual(['principal', 'principal', 'witness']);
+  });
+});
+
+// =============================================================================
+// Task 4: createFamilies
+// =============================================================================
+
+describe('SourceWorkspaceManager.createFamilies', () => {
+  it('creates couple family from marriage template', async () => {
+    const slots: SlotValue[] = [
+      { slotKey: 'husband', newName: 'Jean Dupont' },
+      { slotKey: 'wife', newName: 'Marie Martin' },
+    ];
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(slots, marriageTemplate);
+
+    const familyIds = await SourceWorkspaceManager.createFamilies(marriageTemplate, resolvedSlots);
+
+    // Only the couple family should be created (parent-child families need child + parent)
+    expect(familyIds).toHaveLength(1);
+
+    const members = await getFamilyMembers(familyIds[0]);
+    expect(members).toHaveLength(2);
+    expect(members.find((m) => m.role === 'husband')).toBeDefined();
+    expect(members.find((m) => m.role === 'wife')).toBeDefined();
+  });
+
+  it('creates parent-child family when parents are filled', async () => {
+    const slots: SlotValue[] = [
+      { slotKey: 'husband', newName: 'Jean Dupont' },
+      { slotKey: 'wife', newName: 'Marie Martin' },
+      { slotKey: 'husband_father', newName: 'Pierre Dupont' },
+      { slotKey: 'husband_mother', newName: 'Anne Leclerc' },
+    ];
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(slots, marriageTemplate);
+
+    const familyIds = await SourceWorkspaceManager.createFamilies(marriageTemplate, resolvedSlots);
+
+    // couple family + husband's parent-child family = 2
+    expect(familyIds).toHaveLength(2);
+
+    // Second family should be the parent-child family
+    const parentChildMembers = await getFamilyMembers(familyIds[1]);
+    expect(parentChildMembers).toHaveLength(3);
+    expect(parentChildMembers.find((m) => m.role === 'child')).toBeDefined();
+  });
+
+  it('skips parent-child family when child slot is missing', async () => {
+    // Only fill parents, skip the husband (child in parent-child rule)
+    const slots: SlotValue[] = [
+      { slotKey: 'husband_father', newName: 'Pierre Dupont' },
+      { slotKey: 'husband_mother', newName: 'Anne Leclerc' },
+    ];
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(slots, marriageTemplate);
+
+    const familyIds = await SourceWorkspaceManager.createFamilies(marriageTemplate, resolvedSlots);
+
+    // No families should be created (couple needs both, parent-child needs child)
+    expect(familyIds).toHaveLength(0);
+  });
+
+  it('skips couple family when both spouses are missing', async () => {
+    const slots: SlotValue[] = [{ slotKey: 'witness', newName: 'Paul Thibault' }];
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(slots, marriageTemplate);
+
+    const familyIds = await SourceWorkspaceManager.createFamilies(marriageTemplate, resolvedSlots);
+
+    expect(familyIds).toHaveLength(0);
+  });
+
+  it('creates parent-child family with only one parent', async () => {
+    const slots: SlotValue[] = [
+      { slotKey: 'husband', newName: 'Jean Dupont' },
+      { slotKey: 'wife', newName: 'Marie Martin' },
+      { slotKey: 'husband_father', newName: 'Pierre Dupont' },
+      // husband_mother not filled
+    ];
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(slots, marriageTemplate);
+
+    const familyIds = await SourceWorkspaceManager.createFamilies(marriageTemplate, resolvedSlots);
+
+    // couple + parent-child (with one parent) = 2
+    expect(familyIds).toHaveLength(2);
+
+    const parentChildMembers = await getFamilyMembers(familyIds[1]);
+    // Only father + child (mother missing)
+    expect(parentChildMembers).toHaveLength(2);
   });
 });

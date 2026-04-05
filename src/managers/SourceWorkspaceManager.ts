@@ -1,6 +1,7 @@
 import { createIndividual } from '$db-tree/individuals';
 import { createName } from '$db-tree/names';
 import { getEventTypeByTag, createEvent, addEventParticipant } from '$db-tree/events';
+import { createFamily, addFamilyMember } from '$db-tree/families';
 import type { TemplateDefinition } from '$lib/templates';
 import type { Gender } from '$/types/database';
 
@@ -149,5 +150,59 @@ export class SourceWorkspaceManager {
     }
 
     return eventId;
+  }
+
+  /**
+   * Create families based on template family rules and resolved slots.
+   * Returns an array of created family IDs.
+   */
+  static async createFamilies(
+    template: TemplateDefinition,
+    resolvedSlots: ResolvedSlot[]
+  ): Promise<string[]> {
+    const slotMap = new Map(resolvedSlots.map((r) => [r.slotKey, r.individualId]));
+    const familyIds: string[] = [];
+
+    for (const rule of template.families) {
+      if (rule.type === 'couple') {
+        // Need both members present
+        const allPresent = rule.members.every((m) => slotMap.has(m.slot));
+        if (!allPresent) continue;
+
+        const familyId = await createFamily({});
+        for (const member of rule.members) {
+          const individualId = slotMap.get(member.slot)!;
+          await addFamilyMember({
+            familyId,
+            individualId,
+            role: member.role,
+          });
+        }
+        familyIds.push(familyId);
+      } else if (rule.type === 'parent-child') {
+        // Need the child + at least one parent
+        const childMember = rule.members.find((m) => m.role === 'child');
+        if (!childMember || !slotMap.has(childMember.slot)) continue;
+
+        const parentMembers = rule.members.filter((m) => m.role !== 'child');
+        const hasAtLeastOneParent = parentMembers.some((m) => slotMap.has(m.slot));
+        if (!hasAtLeastOneParent) continue;
+
+        const familyId = await createFamily({});
+        for (const member of rule.members) {
+          const individualId = slotMap.get(member.slot);
+          if (individualId) {
+            await addFamilyMember({
+              familyId,
+              individualId,
+              role: member.role,
+            });
+          }
+        }
+        familyIds.push(familyId);
+      }
+    }
+
+    return familyIds;
   }
 }
