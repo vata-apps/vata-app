@@ -2,7 +2,9 @@ import { createIndividual } from '$db-tree/individuals';
 import { createName } from '$db-tree/names';
 import { getEventTypeByTag, createEvent, addEventParticipant } from '$db-tree/events';
 import { createFamily, addFamilyMember } from '$db-tree/families';
-import type { TemplateDefinition } from '$lib/templates';
+import { createCitation, createCitationLink } from '$db-tree/citations';
+import { createPlace } from '$db-tree/places';
+import { getTemplateById, type TemplateDefinition } from '$lib/templates';
 import type { Gender } from '$/types/database';
 
 // =============================================================================
@@ -14,6 +16,25 @@ export interface SlotValue {
   existingId?: string;
   newName?: string;
   newGender?: Gender;
+}
+
+export interface CreateFromTemplateInput {
+  sourceId: string;
+  templateId: string;
+  slots: SlotValue[];
+  eventTypeTag?: string;
+  date?: string;
+  place?: string;
+  existingPlaceId?: string;
+  citationPage?: string;
+}
+
+export interface CreateFromTemplateResult {
+  eventId?: string;
+  createdIndividuals: { slotKey: string; id: string }[];
+  createdFamilies: string[];
+  citationId: string;
+  citationLinkIds: string[];
 }
 
 interface ResolvedSlot {
@@ -204,5 +225,86 @@ export class SourceWorkspaceManager {
     }
 
     return familyIds;
+  }
+
+  /**
+   * Main orchestration method. Creates all entities from a template:
+   * individuals, event, families, citation, and citation links.
+   */
+  static async createFromTemplate(
+    input: CreateFromTemplateInput
+  ): Promise<CreateFromTemplateResult> {
+    const template = getTemplateById(input.templateId);
+    if (!template) {
+      throw new Error(`Template not found: ${input.templateId}`);
+    }
+
+    // 1. Resolve place
+    let placeId = input.existingPlaceId;
+    if (!placeId && input.place?.trim()) {
+      placeId = await createPlace({ name: input.place.trim() });
+    }
+
+    // 2. Resolve individuals
+    const resolvedSlots = await SourceWorkspaceManager.resolveIndividuals(input.slots, template);
+
+    // 3. Create event
+    const eventId = await SourceWorkspaceManager.createEventFromTemplate(template, resolvedSlots, {
+      eventTypeTag: input.eventTypeTag,
+      date: input.date,
+      placeId,
+    });
+
+    // 4. Create families
+    const createdFamilies = await SourceWorkspaceManager.createFamilies(template, resolvedSlots);
+
+    // 5. Create citation
+    const citationId = await createCitation({
+      sourceId: input.sourceId,
+      page: input.citationPage,
+    });
+
+    // 6. Create citation links
+    const citationLinkIds: string[] = [];
+
+    // Link to event
+    if (eventId) {
+      const linkId = await createCitationLink({
+        citationId,
+        entityType: 'event',
+        entityId: eventId,
+      });
+      citationLinkIds.push(linkId);
+    }
+
+    // Link to each individual
+    for (const resolved of resolvedSlots) {
+      const linkId = await createCitationLink({
+        citationId,
+        entityType: 'individual',
+        entityId: resolved.individualId,
+      });
+      citationLinkIds.push(linkId);
+    }
+
+    // Link to each family
+    for (const familyId of createdFamilies) {
+      const linkId = await createCitationLink({
+        citationId,
+        entityType: 'family',
+        entityId: familyId,
+      });
+      citationLinkIds.push(linkId);
+    }
+
+    return {
+      eventId,
+      createdIndividuals: resolvedSlots
+        .filter((r) => r.created)
+        .map((r) => ({ slotKey: r.slotKey, id: r.individualId })),
+      createdFamilies,
+      citationId,
+      citationLinkIds,
+    };
   }
 }

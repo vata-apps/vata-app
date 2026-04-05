@@ -4,6 +4,8 @@ import { getIndividualById } from '$db-tree/individuals';
 import { getPrimaryName } from '$db-tree/names';
 import { getEventById, getEventParticipants, getEventTypeByTag } from '$db-tree/events';
 import { getFamilyMembers } from '$db-tree/families';
+import { getCitationsBySourceId, getCitationLinksForCitation } from '$db-tree/citations';
+import { createSource } from '$db-tree/sources';
 import { SourceWorkspaceManager, parseName, type SlotValue } from './SourceWorkspaceManager';
 import type { TemplateDefinition } from '$lib/templates';
 
@@ -22,12 +24,16 @@ import('$/db/connection').then(({ getTreeDb }) => {
 beforeEach(async () => {
   const { getTreeDb } = await import('$/db/connection');
   (getTreeDb as ReturnType<typeof vi.fn>).mockResolvedValue(db);
+  db._raw.exec('DELETE FROM citation_links');
+  db._raw.exec('DELETE FROM source_citations');
   db._raw.exec('DELETE FROM event_participants');
   db._raw.exec('DELETE FROM events');
   db._raw.exec('DELETE FROM family_members');
   db._raw.exec('DELETE FROM families');
   db._raw.exec('DELETE FROM names');
   db._raw.exec('DELETE FROM individuals');
+  db._raw.exec('DELETE FROM sources');
+  db._raw.exec('DELETE FROM places');
 });
 
 // =============================================================================
@@ -130,6 +136,10 @@ const genericTemplate: TemplateDefinition = {
   hasDate: true,
   hasPlace: true,
 };
+
+async function seedSource(title = 'Parish Register'): Promise<string> {
+  return createSource({ title });
+}
 
 // =============================================================================
 // Task 2: parseName
@@ -438,5 +448,143 @@ describe('SourceWorkspaceManager.createFamilies', () => {
     const parentChildMembers = await getFamilyMembers(familyIds[1]);
     // Only father + child (mother missing)
     expect(parentChildMembers).toHaveLength(2);
+  });
+});
+
+// =============================================================================
+// Task 5: createFromTemplate (full orchestration)
+// =============================================================================
+
+describe('SourceWorkspaceManager.createFromTemplate', () => {
+  it('creates full marriage record (event + 2 individuals + 1 family + citation + 4 citation links)', async () => {
+    const sourceId = await seedSource();
+
+    const result = await SourceWorkspaceManager.createFromTemplate({
+      sourceId,
+      templateId: 'marriage',
+      slots: [
+        { slotKey: 'husband', newName: 'Jean Dupont' },
+        { slotKey: 'wife', newName: 'Marie Martin' },
+      ],
+      date: '15 JAN 1850',
+      citationPage: 'folio 12',
+    });
+
+    expect(result.eventId).toBeDefined();
+    expect(result.createdIndividuals).toHaveLength(2);
+    expect(result.createdFamilies).toHaveLength(1);
+    expect(result.citationId).toBeDefined();
+    // Links: 1 event + 2 individuals + 1 family = 4
+    expect(result.citationLinkIds).toHaveLength(4);
+
+    // Verify citation was created with correct page
+    const citations = await getCitationsBySourceId(sourceId);
+    expect(citations).toHaveLength(1);
+    expect(citations[0].page).toBe('folio 12');
+
+    // Verify citation links
+    const links = await getCitationLinksForCitation(result.citationId);
+    expect(links).toHaveLength(4);
+    const entityTypes = links.map((l) => l.entityType).sort();
+    expect(entityTypes).toEqual(['event', 'family', 'individual', 'individual']);
+  });
+
+  it('creates record with no event for generic template', async () => {
+    const sourceId = await seedSource();
+    const { createIndividual } = await import('$db-tree/individuals');
+    const existingId = await createIndividual({ gender: 'M' });
+
+    const result = await SourceWorkspaceManager.createFromTemplate({
+      sourceId,
+      templateId: 'generic',
+      slots: [{ slotKey: 'person', existingId }],
+    });
+
+    expect(result.eventId).toBeUndefined();
+    expect(result.createdIndividuals).toHaveLength(0); // existing, not created
+    expect(result.createdFamilies).toHaveLength(0);
+    expect(result.citationId).toBeDefined();
+    // Links: 1 individual (no event, no family)
+    expect(result.citationLinkIds).toHaveLength(1);
+  });
+
+  it('creates marriage with parents and witnesses (5 individuals + 2 families + 8 citation links)', async () => {
+    const sourceId = await seedSource();
+
+    const result = await SourceWorkspaceManager.createFromTemplate({
+      sourceId,
+      templateId: 'marriage',
+      slots: [
+        { slotKey: 'husband', newName: 'Jean Dupont' },
+        { slotKey: 'wife', newName: 'Marie Martin' },
+        { slotKey: 'husband_father', newName: 'Pierre Dupont' },
+        { slotKey: 'husband_mother', newName: 'Anne Leclerc' },
+        { slotKey: 'witness', newName: 'Paul Thibault' },
+      ],
+      date: '15 JAN 1850',
+      place: 'Paris',
+    });
+
+    // 5 individuals created
+    expect(result.createdIndividuals).toHaveLength(5);
+
+    // 2 families: couple + husband's parent-child
+    expect(result.createdFamilies).toHaveLength(2);
+
+    // Event should exist
+    expect(result.eventId).toBeDefined();
+
+    // Citation links: 1 event + 5 individuals + 2 families = 8
+    expect(result.citationLinkIds).toHaveLength(8);
+  });
+
+  it('resolves an existing place when existingPlaceId is provided', async () => {
+    const sourceId = await seedSource();
+    const { createPlace } = await import('$db-tree/places');
+    const placeId = await createPlace({ name: 'Paris' });
+
+    const result = await SourceWorkspaceManager.createFromTemplate({
+      sourceId,
+      templateId: 'marriage',
+      slots: [
+        { slotKey: 'husband', newName: 'Jean Dupont' },
+        { slotKey: 'wife', newName: 'Marie Martin' },
+      ],
+      existingPlaceId: placeId,
+    });
+
+    // Verify the event uses the existing place
+    const event = await getEventById(result.eventId!);
+    expect(event!.placeId).toBe(placeId);
+  });
+
+  it('creates a new place when place string is provided', async () => {
+    const sourceId = await seedSource();
+
+    const result = await SourceWorkspaceManager.createFromTemplate({
+      sourceId,
+      templateId: 'marriage',
+      slots: [
+        { slotKey: 'husband', newName: 'Jean Dupont' },
+        { slotKey: 'wife', newName: 'Marie Martin' },
+      ],
+      place: 'Lyon',
+    });
+
+    const event = await getEventById(result.eventId!);
+    expect(event!.placeId).toBeDefined();
+    expect(event!.placeId).not.toBeNull();
+  });
+
+  it('throws when template ID is invalid', async () => {
+    const sourceId = await seedSource();
+
+    await expect(
+      SourceWorkspaceManager.createFromTemplate({
+        sourceId,
+        templateId: 'nonexistent',
+        slots: [],
+      })
+    ).rejects.toThrow('Template not found: nonexistent');
   });
 });
