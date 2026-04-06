@@ -531,3 +531,20 @@ export interface CreateSourceFileInput {
   fileId: string;
   sortOrder?: number;
 }
+
+// =============================================================================
+// Event Timeline (enriched for individual profile)
+// =============================================================================
+
+export interface EventTimelineThumbnail {
+  fileId: string;
+  thumbnailPath: string;
+  originalFilename: string;
+  sourceId: string;
+  sourceTitle: string;
+}
+
+export interface EventTimelineEntry extends EventWithDetails {
+  thumbnails: EventTimelineThumbnail[];
+  hasCitations: boolean;
+}
