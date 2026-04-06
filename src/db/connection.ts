@@ -374,9 +374,7 @@ async function migrateSystemDbFilenameToPath(db: Database): Promise<void> {
   // contain the wrong separator (e.g. "...genealogytrees/...")
   const baseDir = await appDataDir();
   const treesDir = `${baseDir}/trees`;
-  const trees = await db.select<{ id: number; path: string }[]>(
-    'SELECT id, path FROM trees'
-  );
+  const trees = await db.select<{ id: number; path: string }[]>('SELECT id, path FROM trees');
 
   for (const tree of trees) {
     if (tree.path.startsWith(treesDir + '/')) continue;
