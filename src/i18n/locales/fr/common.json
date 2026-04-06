@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "home": "Vata",
+    "individuals": "Individus",
+    "families": "Familles",
+    "sources": "Sources",
+    "repositories": "Dépôts",
+    "places": "Lieux",
+    "events": "Événements",
+    "dataBrowser": "Explorateur de données",
+    "closeTree": "Fermer l'arbre",
+    "settings": "Paramètres"
+  },
+  "actions": {
+    "create": "Créer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "open": "Ouvrir",
+    "close": "Fermer",
+    "back": "Retour",
+    "search": "Rechercher...",
+    "export": "Exporter",
+    "import": "Importer",
+    "rename": "Renommer"
+  },
+  "status": {
+    "loading": "Chargement...",
+    "saving": "Enregistrement...",
+    "deleting": "Suppression...",
+    "creating": "Création...",
+    "noResults": "Aucun résultat trouvé."
+  },
+  "errors": {
+    "generic": "Une erreur est survenue.",
+    "notFound": "Introuvable.",
+    "loadFailed": "Échec du chargement des données."
+  },
+  "theme": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système",
+    "toggle": "Changer de thème"
+  },
+  "language": {
+    "en": "English",
+    "fr": "Français",
+    "select": "Langue"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "showing": "Affichage {{from}}-{{to}} sur {{total}}",
+    "page": "Page {{page}} sur {{pages}}"
+  }
+}

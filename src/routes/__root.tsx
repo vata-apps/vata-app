@@ -1,35 +1,26 @@
 import { createRootRoute, Outlet, type ErrorComponentProps } from '@tanstack/react-router';
-import { MainLayout } from '$components/layouts/MainLayout';
+import { AppShell } from '$components/app-shell';
+import { Button } from '$components/ui/button';
 
 function RootErrorComponent({ error }: ErrorComponentProps) {
   return (
-    <MainLayout>
-      <div style={{ padding: '2rem', color: '#c00' }}>
-        <h1>Something went wrong</h1>
-        <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{error.message}</pre>
-        <button
-          onClick={() => window.location.reload()}
-          style={{
-            marginTop: '1rem',
-            padding: '0.5rem 1rem',
-            cursor: 'pointer',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            background: '#fff',
-          }}
-        >
+    <AppShell>
+      <div className="p-8 text-destructive">
+        <h1 className="text-lg font-semibold">Something went wrong</h1>
+        <pre className="mt-2 whitespace-pre-wrap break-words text-sm">{error.message}</pre>
+        <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
           Reload
-        </button>
+        </Button>
       </div>
-    </MainLayout>
+    </AppShell>
   );
 }
 
 export const Route = createRootRoute({
   component: () => (
-    <MainLayout>
+    <AppShell>
       <Outlet />
-    </MainLayout>
+    </AppShell>
   ),
   errorComponent: RootErrorComponent,
 });

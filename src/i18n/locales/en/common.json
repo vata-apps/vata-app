@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "home": "Vata",
+    "individuals": "Individuals",
+    "families": "Families",
+    "sources": "Sources",
+    "repositories": "Repositories",
+    "places": "Places",
+    "events": "Events",
+    "dataBrowser": "Data Browser",
+    "closeTree": "Close Tree",
+    "settings": "Settings"
+  },
+  "actions": {
+    "create": "Create",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "open": "Open",
+    "close": "Close",
+    "back": "Back",
+    "search": "Search...",
+    "export": "Export",
+    "import": "Import",
+    "rename": "Rename"
+  },
+  "status": {
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "deleting": "Deleting...",
+    "creating": "Creating...",
+    "noResults": "No results found."
+  },
+  "errors": {
+    "generic": "Something went wrong.",
+    "notFound": "Not found.",
+    "loadFailed": "Failed to load data."
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "en": "English",
+    "fr": "Français",
+    "select": "Language"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "showing": "Showing {{from}}-{{to}} of {{total}}",
+    "page": "Page {{page}} of {{pages}}"
+  }
+}
