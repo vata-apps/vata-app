@@ -44,7 +44,27 @@ If no → the test is testing implementation, not behavior.
 
 ---
 
-## 2. Test Layers
+## 2. TDD — Tests First
+
+Tests are written **before** implementation code. This is enforced by the `test-writer` agent.
+
+### The flow
+
+1. **Describe** the feature (what the function/component must do)
+2. **Write tests** (red) — the `test-writer` agent handles this
+3. **Implement** the code to make the tests pass (green)
+4. **Refactor** if needed — tests must still pass
+5. **Commit** tests + implementation together
+
+### Why tests first
+
+- Forces you to think about the API before the implementation
+- Tests written after code tend to mirror the implementation instead of testing behavior
+- Red → green confirms the test is actually verifying something
+
+---
+
+## 3. Test Layers
 
 Use two complementary layers:
 
@@ -82,7 +102,7 @@ See section 7.
 
 ---
 
-## 3. Project Setup
+## 4. Project Setup
 
 Check `package.json` for current test dependencies. Install testing libraries:
 
@@ -140,7 +160,7 @@ Scripts in `package.json`:
 
 ---
 
-## 4. File Structure
+## 5. File Structure
 
 Co-locate tests with source files:
 
@@ -162,7 +182,7 @@ The exact structure follows the source directories (`src/db/`, `src/managers/`, 
 
 ---
 
-## 5. Naming Conventions
+## 6. Naming Conventions
 
 ```typescript
 describe('TreeList', () => {
@@ -185,7 +205,7 @@ Rules:
 
 ---
 
-## 6. React Component Tests
+## 7. React Component Tests
 
 Use `@testing-library/react`. Test what the user sees and does, not internal state:
 
@@ -236,7 +256,7 @@ export function renderWithProviders(ui: React.ReactElement, options?: RenderOpti
 
 ---
 
-## 7. Rust / Tauri Tests
+## 8. Rust / Tauri Tests
 
 ### When to write Rust tests
 
@@ -323,7 +343,7 @@ cargo test -- --nocapture           # show println! output
 
 ---
 
-## 8. What Not to Test
+## 9. What Not to Test
 
 - Auto-generated files (`routeTree.gen.ts`)
 - Trivial wrappers with no logic (e.g., `MainLayout.tsx` is just `<div>{children}</div>`)
@@ -332,20 +352,22 @@ cargo test -- --nocapture           # show println! output
 
 ---
 
-## 9. Coverage Goals
+## 10. What to Test Per Layer
 
-| Layer                | Target                                 | Approach                                |
-| -------------------- | -------------------------------------- | --------------------------------------- |
-| `src/db/**`          | High — all public functions            | Integration tests with in-memory SQLite |
-| `src/managers/**`    | High — all business logic              | Integration tests                       |
-| `src/components/**`  | Critical interactions and error states | RTL behavior tests                      |
-| `src/hooks/**`       | All custom hooks                       | Vitest + RTL                            |
-| `src-tauri/src/**`   | High — all DB functions and commands   | Rust unit + integration tests           |
-| Auto-generated files | Excluded                               | —                                       |
+No coverage thresholds. A test's value is measured by its ability to prevent regressions — not by a percentage. 20 useful tests that catch real bugs are better than 100 tests that give a green coverage badge but break on every refactor.
+
+| Layer              | What to test                                              | Approach                                |
+| ------------------ | --------------------------------------------------------- | --------------------------------------- |
+| `src/db/**`        | All public CRUD functions — input/output behavior         | Integration tests with in-memory SQLite |
+| `src/managers/**`  | Orchestration logic and end-to-end workflows              | Integration tests with in-memory SQLite |
+| `src/components/**`| User interactions, error states, conditional rendering    | RTL behavior tests                      |
+| `src/hooks/**`     | Data flow and state transitions                           | Vitest + RTL                            |
+| `src/lib/**`       | Pure logic, edge cases, round-trip behavior               | Unit tests, no mocks                    |
+| Auto-generated     | Nothing — excluded                                        | —                                       |
 
 ---
 
-## 10. Common Mistakes to Avoid
+## 11. Common Mistakes to Avoid
 
 - **Every in-memory test database must enable `PRAGMA foreign_keys = ON`**: SQLite disables foreign keys by default; in-memory databases do not inherit PRAGMAs. Always execute this immediately after creating the DB, before running the schema.
 - **Apply the same PRAGMAs in tests as production**: At minimum, `foreign_keys = ON`. This ensures tests catch constraint violations that would occur in production.
