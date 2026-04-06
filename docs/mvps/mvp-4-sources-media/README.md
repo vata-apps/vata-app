@@ -71,12 +71,12 @@ UI is HTML-only with minimal CSS (shadcn/ui comes in MVP6).
 
 ### Phase 4: Entity Timeline Integration
 
-- [ ] EventTimeline component: chronological event list
-- [ ] Source media thumbnails inline with events
-- [ ] Thumbnail generation for image files
-- [ ] Click-through: thumbnail → source workspace
-- [ ] Empty state: "Add source" link on unsourced events
-- [ ] Update individual profile view to use EventTimeline
+- [x] EventTimeline component: chronological event list
+- [x] Source media thumbnails inline with events
+- [x] Thumbnail generation for image files
+- [x] Click-through: thumbnail → source workspace
+- [x] Empty state: "Add source" link on unsourced events
+- [x] Update individual profile view to use EventTimeline
 
 ## Key Design Decisions
 
