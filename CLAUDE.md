@@ -244,3 +244,4 @@ The following agents can be dispatched as sub-agents for autonomous tasks.
 | `docs-consistency` | After any change to `docs/*.md` — validates cross-references and consistency |
 | `code-reviewer`    | After implementing a feature — reviews code against project standards        |
 | `scope-validator`  | Before starting a new feature — validates it's in scope for the current MVP  |
+| `test-writer`      | Before implementing a feature — writes behavioral tests (TDD red phase)      |
