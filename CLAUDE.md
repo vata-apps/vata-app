@@ -172,7 +172,17 @@ const rows = await db
 
 ---
 
-# Granular Commits
+# Git Workflow
+
+## Worktree + PR
+
+All new development must be done in a **git worktree** on a dedicated feature branch, then submitted as a **pull request**. Never commit new work directly to `main`.
+
+1. Create a worktree with a feature branch
+2. Do all work in the isolated worktree
+3. Commit, push, and open a PR to `main`
+
+## Granular Commits
 
 Commit early and often. Each commit should represent a single, complete unit of work that can be reverted independently.
 
