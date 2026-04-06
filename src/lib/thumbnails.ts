@@ -20,8 +20,7 @@ export async function generateThumbnail(
 
   const sourcePath = `${treePath}/${relativePath}`;
   const filename = relativePath.split('/').pop() ?? '';
-  const nameWithoutExt = filename.replace(/\.[^.]+$/, '');
-  const thumbFilename = `thumb_${nameWithoutExt}.jpg`;
+  const thumbFilename = `thumb_${filename.replace(/\./g, '_')}.jpg`;
   const thumbRelativePath = `${THUMBNAILS_DIR}/${thumbFilename}`;
   const thumbAbsolutePath = `${treePath}/${thumbRelativePath}`;
   const thumbDir = `${treePath}/${THUMBNAILS_DIR}`;
