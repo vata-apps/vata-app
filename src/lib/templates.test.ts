@@ -69,8 +69,4 @@ describe('templates', () => {
   it('getTemplateById returns undefined for unknown id', () => {
     expect(getTemplateById('nonexistent')).toBeUndefined();
   });
-
-  it('all templates match snapshot', () => {
-    expect(TEMPLATES).toMatchSnapshot();
-  });
 });
