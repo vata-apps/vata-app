@@ -72,7 +72,7 @@ Use two complementary layers:
 
 Test complete flows through multiple layers (DB function → manager → returned data), using a real in-memory SQLite database instead of mocking `db.execute`/`db.select`.
 
-**When to use:** `src/db/**`, `src/managers/**`, `src/hooks/**`
+**When to use:** `src/db/**`, `src/managers/**`
 
 **Setup:** Use `better-sqlite3` or `sql.js` for an in-memory SQLite that runs the real schema and migrations. This tests the full DB layer without Tauri runtime.
 
