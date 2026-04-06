@@ -1,0 +1,27 @@
+{
+  "title": "Sources",
+  "empty": "Aucune source trouvée.",
+  "emptySearch": "Aucune source ne correspond à votre recherche.",
+  "search": "Rechercher par titre ou auteur...",
+  "newSource": "Nouvelle source",
+  "columns": {
+    "id": "ID",
+    "title": "Titre",
+    "author": "Auteur",
+    "repository": "Dépôt",
+    "citations": "Citations"
+  },
+  "form": {
+    "title": "Titre",
+    "author": "Auteur",
+    "publisher": "Éditeur",
+    "publicationDate": "Date de publication",
+    "repository": "Dépôt",
+    "repositoryNone": "— Aucun —",
+    "callNumber": "Cote",
+    "url": "URL",
+    "notes": "Notes",
+    "createTitle": "Nouvelle source",
+    "submit": "Créer la source"
+  }
+}

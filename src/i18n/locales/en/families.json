@@ -1,0 +1,14 @@
+{
+  "title": "Families",
+  "empty": "No families found.",
+  "search": "Search families...",
+  "newFamily": "New Family",
+  "columns": {
+    "id": "ID",
+    "husband": "Husband",
+    "wife": "Wife",
+    "children": "Children",
+    "marriage": "Marriage",
+    "sources": "Sources"
+  }
+}

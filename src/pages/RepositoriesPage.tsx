@@ -1,27 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link } from '@tanstack/react-router';
+import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import type { ColumnDef } from '@tanstack/react-table';
+import { Plus } from 'lucide-react';
 import { useRepositories } from '$/hooks/useRepositories';
 import { createRepository } from '$db-tree/repositories';
 import { queryKeys } from '$/lib/query-keys';
-import type { CreateRepositoryInput } from '$/types/database';
+import type { CreateRepositoryInput, Repository } from '$/types/database';
+import { DataTable } from '$components/data-table';
+import { Button } from '$components/ui/button';
+import { Input } from '$components/ui/input';
+import { Label } from '$components/ui/label';
+import { Textarea } from '$components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '$components/ui/dialog';
 
 interface RepositoriesPageProps {
   treeId: string;
 }
 
-interface NewRepositoryFormState {
-  name: string;
-  address: string;
-  city: string;
-  country: string;
-  phone: string;
-  email: string;
-  website: string;
-  notes: string;
-}
-
-const EMPTY_FORM: NewRepositoryFormState = {
+const EMPTY_FORM = {
   name: '',
   address: '',
   city: '',
@@ -33,13 +37,15 @@ const EMPTY_FORM: NewRepositoryFormState = {
 };
 
 export function RepositoriesPage({ treeId }: RepositoriesPageProps): JSX.Element {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [form, setForm] = useState<NewRepositoryFormState>(EMPTY_FORM);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const nameInputRef = useRef<HTMLInputElement>(null);
-
+  const { t } = useTranslation('repositories');
+  const { t: tc } = useTranslation('common');
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const { data: repositories, isLoading, isError } = useRepositories();
 
   const { mutate: submitCreate, isPending } = useMutation({
@@ -51,49 +57,9 @@ export function RepositoriesPage({ treeId }: RepositoriesPageProps): JSX.Element
       setSubmitError(null);
     },
     onError: (err: unknown) => {
-      const message = err instanceof Error ? err.message : 'An unexpected error occurred.';
-      setSubmitError(message);
+      setSubmitError(err instanceof Error ? err.message : 'An unexpected error occurred.');
     },
   });
-
-  function openModal() {
-    setForm(EMPTY_FORM);
-    setSubmitError(null);
-    setModalOpen(true);
-  }
-
-  function closeModal() {
-    setModalOpen(false);
-    setForm(EMPTY_FORM);
-    setSubmitError(null);
-  }
-
-  useEffect(() => {
-    if (modalOpen) {
-      nameInputRef.current?.focus();
-    }
-  }, [modalOpen]);
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape' && modalOpen) {
-        closeModal();
-      }
-    }
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [modalOpen]);
-
-  function handleOverlayClick(e: React.MouseEvent<HTMLDivElement>) {
-    if (dialogRef.current && !dialogRef.current.contains(e.target as Node)) {
-      closeModal();
-    }
-  }
-
-  function handleFieldChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -113,293 +79,190 @@ export function RepositoriesPage({ treeId }: RepositoriesPageProps): JSX.Element
     submitCreate(input);
   }
 
+  function handleFieldChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  }
+
+  const columns: ColumnDef<Repository, string>[] = [
+    {
+      accessorKey: 'id',
+      header: t('columns.id'),
+      cell: ({ row }) => <span className="text-muted-foreground">{row.original.id}</span>,
+    },
+    {
+      accessorKey: 'name',
+      header: t('columns.name'),
+      cell: ({ getValue }) => <span className="font-medium">{getValue()}</span>,
+    },
+    {
+      accessorKey: 'city',
+      header: t('columns.city'),
+      cell: ({ getValue }) => getValue() ?? '',
+    },
+    {
+      accessorKey: 'country',
+      header: t('columns.country'),
+      cell: ({ getValue }) => getValue() ?? '',
+    },
+  ];
+
   if (isLoading) {
-    return <p style={{ color: '#666' }}>Loading repositories...</p>;
+    return <p className="p-6 text-sm text-muted-foreground">{tc('status.loading')}</p>;
   }
 
   if (isError) {
-    return <p style={{ color: '#c00' }}>Failed to load repositories.</p>;
+    return <p className="p-6 text-sm text-destructive">{tc('errors.loadFailed')}</p>;
   }
 
-  const inputStyle: React.CSSProperties = {
-    padding: '0.5rem',
-    border: '1px solid #e0e0e0',
-    borderRadius: '4px',
-    fontSize: '0.9rem',
-    boxSizing: 'border-box',
-    width: '100%',
-  };
-
-  const labelStyle: React.CSSProperties = {
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    display: 'block',
-    marginBottom: '0.25rem',
-  };
-
   return (
-    <div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1.5rem',
-        }}
-      >
-        <h1 style={{ margin: 0 }}>Repositories</h1>
-        <button
-          onClick={openModal}
-          style={{
-            padding: '0.5rem 1rem',
-            cursor: 'pointer',
-            background: '#333',
-            border: 'none',
-            borderRadius: '4px',
-            color: '#fff',
-            fontSize: '0.9rem',
+    <div className="p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-lg font-semibold">{t('title')}</h1>
+        <Button
+          size="sm"
+          onClick={() => {
+            setForm(EMPTY_FORM);
+            setSubmitError(null);
+            setModalOpen(true);
           }}
         >
-          New Repository
-        </button>
+          <Plus className="mr-1.5 h-3.5 w-3.5" />
+          {t('newRepository')}
+        </Button>
       </div>
 
       {!repositories || repositories.length === 0 ? (
-        <p style={{ color: '#666' }}>No repositories found.</p>
+        <p className="text-sm text-muted-foreground">{t('empty')}</p>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '1rem',
-          }}
-        >
-          {repositories.map((repo) => (
-            <Link
-              key={repo.id}
-              to="/tree/$treeId/repository/$repositoryId"
-              params={{ treeId, repositoryId: repo.id }}
-              style={{
-                display: 'block',
-                padding: '1rem',
-                border: '1px solid #e0e0e0',
-                borderRadius: '6px',
-                textDecoration: 'none',
-                color: 'inherit',
-              }}
-            >
-              <div style={{ fontSize: '0.75rem', color: '#888', marginBottom: '0.25rem' }}>
-                {repo.id}
-              </div>
-              <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>{repo.name}</div>
-              {(repo.city || repo.country) && (
-                <div style={{ fontSize: '0.85rem', color: '#666' }}>
-                  {[repo.city, repo.country].filter(Boolean).join(', ')}
-                </div>
-              )}
-              {repo.website && (
-                <div style={{ fontSize: '0.8rem', color: '#888', marginTop: '0.25rem' }}>
-                  {repo.website}
-                </div>
-              )}
-            </Link>
-          ))}
-        </div>
+        <DataTable
+          columns={columns}
+          data={repositories}
+          searchPlaceholder={t('search')}
+          onRowClick={(row) =>
+            navigate({
+              to: '/tree/$treeId/repository/$repositoryId',
+              params: { treeId, repositoryId: row.id },
+            })
+          }
+        />
       )}
 
-      {modalOpen && (
-        <div
-          onClick={handleOverlayClick}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.4)',
-            zIndex: 1000,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <div
-            ref={dialogRef}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="new-repository-dialog-title"
-            style={{
-              background: '#fff',
-              borderRadius: '8px',
-              padding: '1.5rem',
-              maxWidth: '500px',
-              width: '100%',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
-              maxHeight: '90vh',
-              overflowY: 'auto',
-            }}
-          >
-            <h2 id="new-repository-dialog-title" style={{ margin: '0 0 1.25rem' }}>
-              New Repository
-            </h2>
-
-            <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="repository-name" style={labelStyle}>
-                  Name <span style={{ color: '#c00' }}>*</span>
-                </label>
-                <input
-                  ref={nameInputRef}
-                  id="repository-name"
-                  name="name"
-                  type="text"
-                  required
-                  value={form.name}
+      <Dialog
+        open={modalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setModalOpen(false);
+            setForm(EMPTY_FORM);
+            setSubmitError(null);
+          }
+        }}
+      >
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{t('form.createTitle')}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="repo-name">{t('form.name')} *</Label>
+              <Input
+                id="repo-name"
+                name="name"
+                value={form.name}
+                onChange={handleFieldChange}
+                required
+                autoFocus
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="repo-address">{t('form.address')}</Label>
+              <Input
+                id="repo-address"
+                name="address"
+                value={form.address}
+                onChange={handleFieldChange}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="repo-city">{t('form.city')}</Label>
+                <Input id="repo-city" name="city" value={form.city} onChange={handleFieldChange} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="repo-country">{t('form.country')}</Label>
+                <Input
+                  id="repo-country"
+                  name="country"
+                  value={form.country}
                   onChange={handleFieldChange}
-                  style={inputStyle}
                 />
               </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="repository-address" style={labelStyle}>
-                  Address
-                </label>
-                <input
-                  id="repository-address"
-                  name="address"
-                  type="text"
-                  value={form.address}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="repo-phone">{t('form.phone')}</Label>
+                <Input
+                  id="repo-phone"
+                  name="phone"
+                  type="tel"
+                  value={form.phone}
                   onChange={handleFieldChange}
-                  style={inputStyle}
                 />
               </div>
-
-              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
-                <div style={{ flex: 1 }}>
-                  <label htmlFor="repository-city" style={labelStyle}>
-                    City
-                  </label>
-                  <input
-                    id="repository-city"
-                    name="city"
-                    type="text"
-                    value={form.city}
-                    onChange={handleFieldChange}
-                    style={inputStyle}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label htmlFor="repository-country" style={labelStyle}>
-                    Country
-                  </label>
-                  <input
-                    id="repository-country"
-                    name="country"
-                    type="text"
-                    value={form.country}
-                    onChange={handleFieldChange}
-                    style={inputStyle}
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1rem' }}>
-                <div style={{ flex: 1 }}>
-                  <label htmlFor="repository-phone" style={labelStyle}>
-                    Phone
-                  </label>
-                  <input
-                    id="repository-phone"
-                    name="phone"
-                    type="tel"
-                    value={form.phone}
-                    onChange={handleFieldChange}
-                    style={inputStyle}
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label htmlFor="repository-email" style={labelStyle}>
-                    Email
-                  </label>
-                  <input
-                    id="repository-email"
-                    name="email"
-                    type="email"
-                    value={form.email}
-                    onChange={handleFieldChange}
-                    style={inputStyle}
-                  />
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <label htmlFor="repository-website" style={labelStyle}>
-                  Website
-                </label>
-                <input
-                  id="repository-website"
-                  name="website"
-                  type="url"
-                  value={form.website}
+              <div className="space-y-2">
+                <Label htmlFor="repo-email">{t('form.email')}</Label>
+                <Input
+                  id="repo-email"
+                  name="email"
+                  type="email"
+                  value={form.email}
                   onChange={handleFieldChange}
-                  style={inputStyle}
                 />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="repo-website">{t('form.website')}</Label>
+              <Input
+                id="repo-website"
+                name="website"
+                type="url"
+                value={form.website}
+                onChange={handleFieldChange}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="repo-notes">{t('form.notes')}</Label>
+              <Textarea
+                id="repo-notes"
+                name="notes"
+                rows={3}
+                value={form.notes}
+                onChange={handleFieldChange}
+              />
+            </div>
 
-              <div style={{ marginBottom: '1.25rem' }}>
-                <label htmlFor="repository-notes" style={labelStyle}>
-                  Notes
-                </label>
-                <textarea
-                  id="repository-notes"
-                  name="notes"
-                  rows={3}
-                  value={form.notes}
-                  onChange={handleFieldChange}
-                  style={{ ...inputStyle, resize: 'vertical' }}
-                />
-              </div>
+            {submitError && <p className="text-sm text-destructive">{submitError}</p>}
 
-              {submitError && (
-                <p style={{ color: '#c00', fontSize: '0.85rem', marginBottom: '1rem' }}>
-                  {submitError}
-                </p>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  disabled={isPending}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    cursor: isPending ? 'not-allowed' : 'pointer',
-                    background: 'none',
-                    border: '1px solid #e0e0e0',
-                    borderRadius: '4px',
-                    fontSize: '0.9rem',
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isPending || !form.name.trim()}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    cursor: isPending || !form.name.trim() ? 'not-allowed' : 'pointer',
-                    background: '#333',
-                    border: 'none',
-                    borderRadius: '4px',
-                    color: '#fff',
-                    fontSize: '0.9rem',
-                    opacity: isPending || !form.name.trim() ? 0.6 : 1,
-                  }}
-                >
-                  {isPending ? 'Saving...' : 'Create Repository'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => {
+                  setModalOpen(false);
+                  setForm(EMPTY_FORM);
+                  setSubmitError(null);
+                }}
+                disabled={isPending}
+              >
+                {tc('actions.cancel')}
+              </Button>
+              <Button type="submit" disabled={isPending || !form.name.trim()}>
+                {isPending ? tc('status.saving') : t('form.submit')}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
