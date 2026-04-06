@@ -1,0 +1,53 @@
+{
+  "title": "Vata",
+  "subtitle": "Genealogical tree management",
+  "newTree": "New Tree",
+  "importGedcom": "Import GEDCOM",
+  "yourTrees": "Your Trees",
+  "emptyState": "No trees yet. Create your first genealogical tree to get started.",
+  "treeCard": {
+    "individuals": "{{count}} individuals",
+    "families": "{{count}} families",
+    "created": "Created: {{date}}",
+    "lastOpened": "Last opened: {{date}}",
+    "neverOpened": "Never"
+  },
+  "createForm": {
+    "title": "Create New Tree",
+    "name": "Name",
+    "namePlaceholder": "My Family Tree",
+    "description": "Description",
+    "descriptionPlaceholder": "Optional description",
+    "submit": "Create Tree"
+  },
+  "import": {
+    "title": "Import GEDCOM",
+    "selectFile": "Select File",
+    "changeFile": "Change File",
+    "preview": "Preview:",
+    "previewStats": "{{individuals}} individuals, {{families}} families",
+    "importing": "Importing...",
+    "import": "Import",
+    "failedRead": "Failed to read file",
+    "importFailed": "Import failed: {{error}}"
+  },
+  "export": {
+    "title": "Export GEDCOM",
+    "description": "Export \"{{name}}\" to GEDCOM 5.5.1 format.",
+    "includeLiving": "Include living individuals",
+    "includeLivingHint": "When unchecked, living individuals are excluded for privacy.",
+    "exporting": "Exporting...",
+    "exportFailed": "Export failed: {{error}}"
+  },
+  "deleteConfirm": {
+    "title": "Delete tree",
+    "message": "Delete \"{{name}}\"? This cannot be undone."
+  },
+  "debug": {
+    "show": "Show Debug Info",
+    "hide": "Hide Debug Info",
+    "treeFiles": "Tree Database Files",
+    "noTreeFiles": "No tree database files found",
+    "rawContent": "Raw system.db Content"
+  }
+}

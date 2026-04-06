@@ -2,17 +2,39 @@ import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { remove } from '@tauri-apps/plugin-fs';
+import { useTranslation } from 'react-i18next';
+import { Plus, FileUp, Pencil, Trash2, FolderOpen, Download } from 'lucide-react';
 import { getAllTrees, createTree, updateTree, deleteTree, markTreeOpened } from '$/db/system/trees';
 import { getSystemDebugData, listTreeDatabaseFiles } from '$/db/system/debug';
 import { openTreeDb } from '$/db/connection';
 import { useAppStore } from '$/store/app-store';
 import { queryKeys } from '$lib/query-keys';
+import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
 import { ConfirmDialog } from '$components/ConfirmDialog';
 import { ImportGedcomModal } from '$components/ImportGedcomModal';
 import { ExportGedcomModal } from '$components/ExportGedcomModal';
-import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
+import { Button } from '$components/ui/button';
+import { Input } from '$components/ui/input';
+import { Label } from '$components/ui/label';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '$components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '$components/ui/dialog';
 
 export function HomePage() {
+  const { t } = useTranslation('home');
+  const { t: tc } = useTranslation('common');
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const setCurrentTree = useAppStore((s) => s.setCurrentTree);
@@ -76,7 +98,7 @@ export function HomePage() {
       try {
         await remove(treePath, { recursive: true });
       } catch {
-        // Folder may not exist — ignore
+        // Folder may not exist
       }
     },
     onSuccess: () => {
@@ -95,9 +117,6 @@ export function HomePage() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.trees });
       void navigate({ to: '/tree/$treeId', params: { treeId } });
     },
-    onError: (error) => {
-      console.error('Failed to open tree:', error);
-    },
   });
 
   function handleCreate(e: React.FormEvent) {
@@ -109,24 +128,10 @@ export function HomePage() {
     });
   }
 
-  function handleRenameStart(id: string, currentName: string) {
-    setRenamingId(id);
-    setRenameValue(currentName);
-  }
-
   function handleRenameSubmit(e: React.FormEvent, id: string) {
     e.preventDefault();
     if (!renameValue.trim()) return;
     renameMutation.mutate({ id, name: renameValue.trim() });
-  }
-
-  function handleRenameCancel() {
-    setRenamingId(null);
-    setRenameValue('');
-  }
-
-  function handleDelete(id: string) {
-    setConfirmDeleteId(id);
   }
 
   function handleDeleteConfirm() {
@@ -137,201 +142,185 @@ export function HomePage() {
     setConfirmDeleteId(null);
   }
 
-  function handleDeleteCancel() {
-    setConfirmDeleteId(null);
-  }
-
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
-      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <h1 style={{ marginBottom: '0.5rem' }}>Vata</h1>
-        <p style={{ color: '#666' }}>Genealogical tree management</p>
+    <div className="mx-auto max-w-5xl p-6">
+      <div className="mb-6 text-center">
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
+        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
       </div>
 
-      <div style={{ marginBottom: '2rem', display: 'flex', gap: '0.5rem' }}>
-        <button
-          onClick={() => setShowNewForm((v) => !v)}
-          style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
-        >
-          {showNewForm ? 'Cancel' : 'New Tree'}
-        </button>
-        <button
-          onClick={() => setShowImportModal(true)}
-          style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
-        >
-          Import GEDCOM
-        </button>
+      <div className="mb-6 flex gap-2">
+        <Button size="sm" onClick={() => setShowNewForm(true)}>
+          <Plus className="mr-1.5 h-3.5 w-3.5" />
+          {t('newTree')}
+        </Button>
+        <Button size="sm" variant="outline" onClick={() => setShowImportModal(true)}>
+          <FileUp className="mr-1.5 h-3.5 w-3.5" />
+          {t('importGedcom')}
+        </Button>
       </div>
-
-      {showNewForm && (
-        <form
-          onSubmit={handleCreate}
-          style={{
-            border: '1px solid #e0e0e0',
-            borderRadius: '4px',
-            padding: '1rem',
-            marginBottom: '2rem',
-            maxWidth: '400px',
-          }}
-        >
-          <h3 style={{ marginTop: 0 }}>Create New Tree</h3>
-          <div style={{ marginBottom: '0.75rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.25rem' }}>Name *</label>
-            <input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="My Family Tree"
-              required
-              style={{ width: '100%', padding: '0.4rem', boxSizing: 'border-box' }}
-            />
-          </div>
-          <div style={{ marginBottom: '0.75rem' }}>
-            <label style={{ display: 'block', marginBottom: '0.25rem' }}>Description</label>
-            <input
-              type="text"
-              value={newDescription}
-              onChange={(e) => setNewDescription(e.target.value)}
-              placeholder="Optional description"
-              style={{ width: '100%', padding: '0.4rem', boxSizing: 'border-box' }}
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={createMutation.isPending || !newName.trim()}
-            style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
-          >
-            {createMutation.isPending ? 'Creating...' : 'Create Tree'}
-          </button>
-          {createMutation.isError && (
-            <p style={{ color: 'red', marginTop: '0.5rem' }}>
-              Error: {String(createMutation.error)}
-            </p>
-          )}
-        </form>
-      )}
 
       {isLoading ? (
-        <p style={{ textAlign: 'center', color: '#666' }}>Loading...</p>
+        <p className="text-center text-sm text-muted-foreground">{tc('status.loading')}</p>
       ) : trees && trees.length > 0 ? (
         <>
-          <h2>Your Trees</h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              gap: '1rem',
-            }}
-          >
+          <h2 className="mb-3 text-lg font-semibold">{t('yourTrees')}</h2>
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4">
             {trees.map((tree) => (
-              <div
-                key={tree.id}
-                style={{
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '4px',
-                  padding: '1rem',
-                }}
-              >
-                {renamingId === tree.id ? (
-                  <form
-                    onSubmit={(e) => handleRenameSubmit(e, tree.id)}
-                    style={{ marginBottom: '0.75rem' }}
-                  >
-                    <input
-                      type="text"
-                      value={renameValue}
-                      onChange={(e) => setRenameValue(e.target.value)}
-                      required
-                      autoFocus
-                      style={{
-                        width: '100%',
-                        padding: '0.4rem',
-                        boxSizing: 'border-box',
-                        marginBottom: '0.5rem',
-                      }}
-                    />
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button
-                        type="submit"
-                        disabled={renameMutation.isPending || !renameValue.trim()}
-                        style={{ padding: '0.4rem 0.75rem', cursor: 'pointer' }}
-                      >
-                        Save
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleRenameCancel}
-                        style={{ padding: '0.4rem 0.75rem', cursor: 'pointer' }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <h3 style={{ margin: '0 0 0.5rem' }}>{tree.name}</h3>
-                )}
-                {tree.description && (
-                  <p style={{ fontSize: '0.9rem', color: '#555', margin: '0 0 0.5rem' }}>
-                    {tree.description}
+              <Card key={tree.id}>
+                <CardHeader className="pb-2">
+                  {renamingId === tree.id ? (
+                    <form onSubmit={(e) => handleRenameSubmit(e, tree.id)} className="space-y-2">
+                      <Input
+                        value={renameValue}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        autoFocus
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          type="submit"
+                          size="sm"
+                          disabled={renameMutation.isPending || !renameValue.trim()}
+                        >
+                          {tc('actions.save')}
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setRenamingId(null);
+                            setRenameValue('');
+                          }}
+                        >
+                          {tc('actions.cancel')}
+                        </Button>
+                      </div>
+                    </form>
+                  ) : (
+                    <CardTitle className="text-base">{tree.name}</CardTitle>
+                  )}
+                  {tree.description && <CardDescription>{tree.description}</CardDescription>}
+                </CardHeader>
+                <CardContent className="pb-2">
+                  <p className="text-xs text-muted-foreground">
+                    {t('treeCard.individuals', { count: tree.individualCount })} ·{' '}
+                    {t('treeCard.families', { count: tree.familyCount })}
                   </p>
-                )}
-                <p style={{ fontSize: '0.85rem', color: '#888', margin: '0 0 0.25rem' }}>
-                  {tree.individualCount} individuals · {tree.familyCount} families
-                </p>
-                <p style={{ fontSize: '0.8rem', color: '#aaa', margin: '0 0 0.25rem' }}>
-                  Created: {new Date(tree.createdAt).toLocaleDateString()}
-                </p>
-                <p style={{ fontSize: '0.8rem', color: '#aaa', margin: '0 0 1rem' }}>
-                  Last opened:{' '}
-                  {tree.lastOpenedAt ? new Date(tree.lastOpenedAt).toLocaleDateString() : 'Never'}
-                </p>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-                  <button
+                  <p className="text-xs text-muted-foreground">
+                    {t('treeCard.created', {
+                      date: new Date(tree.createdAt).toLocaleDateString(),
+                    })}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t('treeCard.lastOpened', {
+                      date: tree.lastOpenedAt
+                        ? new Date(tree.lastOpenedAt).toLocaleDateString()
+                        : t('treeCard.neverOpened'),
+                    })}
+                  </p>
+                </CardContent>
+                <CardFooter className="flex gap-1.5">
+                  <Button
+                    size="sm"
                     onClick={() => openMutation.mutate({ id: tree.id, path: tree.path })}
                     disabled={openMutation.isPending}
-                    style={{ flex: 1, padding: '0.5rem', cursor: 'pointer' }}
+                    className="flex-1"
                   >
-                    Open
-                  </button>
-                  <button
+                    <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
+                    {tc('actions.open')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => setExportTreeId(tree.id)}
-                    style={{ padding: '0.5rem', cursor: 'pointer' }}
+                    title={tc('actions.export')}
                   >
-                    Export
-                  </button>
-                  <button
-                    onClick={() => handleRenameStart(tree.id, tree.name)}
+                    <Download className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setRenamingId(tree.id);
+                      setRenameValue(tree.name);
+                    }}
                     disabled={renamingId !== null}
-                    style={{ padding: '0.5rem', cursor: 'pointer' }}
+                    title={tc('actions.rename')}
                   >
-                    Rename
-                  </button>
-                  <button
-                    onClick={() => handleDelete(tree.id)}
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setConfirmDeleteId(tree.id)}
                     disabled={deleteMutation.isPending}
-                    style={{ padding: '0.5rem', cursor: 'pointer', color: '#c00' }}
+                    title={tc('actions.delete')}
+                    className="text-destructive hover:text-destructive"
                   >
-                    Delete
-                  </button>
-                </div>
-              </div>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </CardFooter>
+              </Card>
             ))}
           </div>
         </>
       ) : (
-        <p style={{ textAlign: 'center', color: '#666' }}>
-          No trees yet. Create your first genealogical tree to get started.
-        </p>
+        <p className="text-center text-sm text-muted-foreground">{t('emptyState')}</p>
       )}
+
+      {/* Create Tree Dialog */}
+      <Dialog open={showNewForm} onOpenChange={setShowNewForm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('createForm.title')}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreate} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="tree-name">{t('createForm.name')}</Label>
+              <Input
+                id="tree-name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder={t('createForm.namePlaceholder')}
+                required
+                autoFocus
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="tree-description">{t('createForm.description')}</Label>
+              <Input
+                id="tree-description"
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+                placeholder={t('createForm.descriptionPlaceholder')}
+              />
+            </div>
+            {createMutation.isError && (
+              <p className="text-sm text-destructive">{String(createMutation.error)}</p>
+            )}
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowNewForm(false)}>
+                {tc('actions.cancel')}
+              </Button>
+              <Button type="submit" disabled={createMutation.isPending || !newName.trim()}>
+                {createMutation.isPending ? tc('status.creating') : t('createForm.submit')}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDialog
         isOpen={confirmDeleteId !== null}
-        title="Delete tree"
-        message={`Delete "${trees?.find((t) => t.id === confirmDeleteId)?.name ?? ''}"? This cannot be undone.`}
-        confirmLabel="Delete"
+        title={t('deleteConfirm.title')}
+        message={t('deleteConfirm.message', {
+          name: trees?.find((tr) => tr.id === confirmDeleteId)?.name ?? '',
+        })}
+        confirmLabel={tc('actions.delete')}
         isPending={deleteMutation.isPending}
         onConfirm={handleDeleteConfirm}
-        onCancel={handleDeleteCancel}
+        onCancel={() => setConfirmDeleteId(null)}
       />
 
       <ImportGedcomModal
@@ -346,56 +335,43 @@ export function HomePage() {
 
       <ExportGedcomModal
         isOpen={exportTreeId !== null}
-        treeName={trees?.find((t) => t.id === exportTreeId)?.name ?? ''}
-        treePath={trees?.find((t) => t.id === exportTreeId)?.path ?? ''}
+        treeName={trees?.find((tr) => tr.id === exportTreeId)?.name ?? ''}
+        treePath={trees?.find((tr) => tr.id === exportTreeId)?.path ?? ''}
         onSuccess={() => setExportTreeId(null)}
         onCancel={() => setExportTreeId(null)}
       />
 
       {import.meta.env.DEV && (
-        <div style={{ marginTop: '3rem', borderTop: '1px solid #e0e0e0', paddingTop: '1rem' }}>
-          <button
-            onClick={() => setShowDebug((v) => !v)}
-            style={{ padding: '0.5rem 1rem', cursor: 'pointer', marginBottom: '1rem' }}
-          >
-            {showDebug ? 'Hide Debug Info' : 'Show Debug Info'}
-          </button>
+        <div className="mt-8 border-t pt-4">
+          <Button variant="outline" size="sm" onClick={() => setShowDebug((v) => !v)}>
+            {showDebug ? t('debug.hide') : t('debug.show')}
+          </Button>
 
           {showDebug && (
-            <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-              <div style={{ flex: '1', minWidth: '200px' }}>
-                <h3 style={{ marginTop: 0 }}>Tree Database Files</h3>
+            <div className="mt-4 flex flex-wrap gap-8">
+              <div className="min-w-[200px] flex-1">
+                <h3 className="mb-2 text-sm font-semibold">{t('debug.treeFiles')}</h3>
                 {treeFiles && treeFiles.length > 0 ? (
-                  <ul style={{ margin: 0, padding: '0 0 0 1.5rem' }}>
+                  <ul className="list-inside list-disc">
                     {treeFiles.map((filename) => (
-                      <li key={filename} style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                      <li key={filename} className="font-mono text-xs">
                         {filename}
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p style={{ color: '#666', fontSize: '0.9rem' }}>No tree database files found</p>
+                  <p className="text-sm text-muted-foreground">{t('debug.noTreeFiles')}</p>
                 )}
               </div>
 
-              <div style={{ flex: '2', minWidth: '400px' }}>
-                <h3 style={{ marginTop: 0 }}>Raw system.db Content</h3>
+              <div className="min-w-[400px] flex-[2]">
+                <h3 className="mb-2 text-sm font-semibold">{t('debug.rawContent')}</h3>
                 {systemDebugData ? (
-                  <pre
-                    style={{
-                      background: '#f5f5f5',
-                      padding: '1rem',
-                      borderRadius: '4px',
-                      overflow: 'auto',
-                      maxHeight: '400px',
-                      fontSize: '0.8rem',
-                      margin: 0,
-                    }}
-                  >
+                  <pre className="max-h-[400px] overflow-auto rounded-md bg-muted p-4 font-mono text-xs">
                     {JSON.stringify(systemDebugData, null, 2)}
                   </pre>
                 ) : (
-                  <p style={{ color: '#666', fontSize: '0.9rem' }}>Loading...</p>
+                  <p className="text-sm text-muted-foreground">{tc('status.loading')}</p>
                 )}
               </div>
             </div>
