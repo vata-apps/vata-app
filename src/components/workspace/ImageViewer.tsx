@@ -5,7 +5,8 @@ import { convertFileSrc } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { stat, remove } from '@tauri-apps/plugin-fs';
 import { copyFileToTree } from '$lib/file-utils';
-import { createFile, addFileToSource, deleteFile } from '$db-tree/files';
+import { generateThumbnail } from '$lib/thumbnails';
+import { createFile, addFileToSource, updateFile, deleteFile } from '$db-tree/files';
 import { queryKeys } from '$lib/query-keys';
 import { getCurrentTreePath } from '$/db/connection';
 
@@ -59,12 +60,17 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
         try {
           const ext = filename.split('.').pop()?.toLowerCase() ?? '';
           const fileInfo = await stat(copiedPath);
+          const mimeType = mimeMap[ext] ?? 'application/octet-stream';
           fileId = await createFile({
             originalFilename: filename,
             relativePath,
-            mimeType: mimeMap[ext] ?? 'application/octet-stream',
+            mimeType,
             fileSize: fileInfo.size,
           });
+          const thumbnailPath = await generateThumbnail(treePath, relativePath, mimeType);
+          if (thumbnailPath) {
+            await updateFile(fileId, { thumbnailPath });
+          }
           await addFileToSource({ sourceId, fileId });
         } catch (err) {
           // Roll back side effects for this file: DB row and copied asset.
