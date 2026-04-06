@@ -98,7 +98,7 @@ Only mock at the boundary of your test scope — never mock internal implementat
 
 ### E2E tests (Rust / Tauri)
 
-See section 7.
+See section 8.
 
 ---
 
