@@ -1,29 +1,12 @@
 import { Link } from '@tanstack/react-router';
 import { useIndividual } from '$/hooks/useIndividuals';
+import { EventTimeline } from '$components/EventTimeline';
 import { formatName } from '$/db/trees/names';
 import { GENDER_LABELS } from '$/lib/constants';
-import type { EventWithDetails } from '$/types/database';
 
 interface IndividualViewPageProps {
   treeId: string;
   individualId: string;
-}
-
-function EventInfo({
-  label,
-  event,
-}: {
-  label: string;
-  event: EventWithDetails | null;
-}): JSX.Element | null {
-  if (!event) return null;
-
-  return (
-    <li>
-      <strong>{label}:</strong> {event.dateOriginal ?? '(no date)'}
-      {event.place && <> — {event.place.fullName}</>}
-    </li>
-  );
 }
 
 export function IndividualViewPage({ treeId, individualId }: IndividualViewPageProps): JSX.Element {
@@ -145,14 +128,7 @@ export function IndividualViewPage({ treeId, individualId }: IndividualViewPageP
 
       <section>
         <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Events</h2>
-        {!individual.birthEvent && !individual.deathEvent ? (
-          <p style={{ color: '#666' }}>No events recorded.</p>
-        ) : (
-          <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-            <EventInfo label="Birth" event={individual.birthEvent} />
-            <EventInfo label="Death" event={individual.deathEvent} />
-          </ul>
-        )}
+        <EventTimeline treeId={treeId} individualId={individualId} />
       </section>
     </div>
   );
