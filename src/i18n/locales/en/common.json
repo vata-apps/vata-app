@@ -53,5 +53,12 @@
     "next": "Next",
     "showing": "Showing {{from}}-{{to}} of {{total}}",
     "page": "Page {{page}} of {{pages}}"
+  },
+  "timeline": {
+    "loading": "Loading events...",
+    "error": "Failed to load events.",
+    "empty": "No events recorded.",
+    "noDate": "(no date)",
+    "addSource": "Add source"
   }
 }

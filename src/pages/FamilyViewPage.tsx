@@ -1,6 +1,9 @@
 import { Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { useFamily } from '$/hooks/useFamilies';
 import { formatName } from '$/db/trees/names';
+import { Button } from '$components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '$components/ui/card';
 import type { IndividualWithDetails } from '$/types/database';
 
 interface FamilyViewPageProps {
@@ -18,14 +21,14 @@ function IndividualLink({
   fallback: string;
 }): JSX.Element {
   if (!individual) {
-    return <span style={{ color: '#888' }}>{fallback}</span>;
+    return <span className="text-muted-foreground">{fallback}</span>;
   }
 
   return (
     <Link
       to="/tree/$treeId/individual/$individualId"
       params={{ treeId, individualId: individual.id }}
-      style={{ color: '#333', textDecoration: 'underline' }}
+      className="text-foreground underline"
     >
       {formatName(individual.primaryName).full}
     </Link>
@@ -33,10 +36,11 @@ function IndividualLink({
 }
 
 export function FamilyViewPage({ treeId, familyId }: FamilyViewPageProps): JSX.Element {
+  const { t } = useTranslation('common');
   const { data: family, isLoading, isError } = useFamily(familyId);
 
   if (isLoading) {
-    return <p style={{ color: '#666' }}>Loading family...</p>;
+    return <p className="text-muted-foreground">{t('status.loading')}</p>;
   }
 
   if (isError || !family) {
@@ -45,11 +49,11 @@ export function FamilyViewPage({ treeId, familyId }: FamilyViewPageProps): JSX.E
         <Link
           to="/tree/$treeId/families"
           params={{ treeId }}
-          style={{ color: '#666', textDecoration: 'none' }}
+          className="text-sm text-muted-foreground hover:text-foreground"
         >
           &larr; Back to Families
         </Link>
-        <p style={{ color: '#c00', marginTop: '1rem' }}>Family not found.</p>
+        <p className="mt-4 text-destructive">Family not found.</p>
       </div>
     );
   }
@@ -59,97 +63,83 @@ export function FamilyViewPage({ treeId, familyId }: FamilyViewPageProps): JSX.E
       <Link
         to="/tree/$treeId/families"
         params={{ treeId }}
-        style={{ color: '#666', textDecoration: 'none' }}
+        className="text-sm text-muted-foreground hover:text-foreground"
       >
         &larr; Back to Families
       </Link>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: '1rem',
-          marginBottom: '1.5rem',
-        }}
-      >
+      <div className="mt-4 mb-6 flex items-center justify-between">
         <div>
-          <h1 style={{ margin: 0 }}>Family {family.id}</h1>
+          <h1 className="text-xl font-bold">Family {family.id}</h1>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button
-            disabled
-            style={{
-              padding: '0.5rem 1rem',
-              cursor: 'not-allowed',
-              background: 'none',
-              border: '1px solid #bbb',
-              borderRadius: '4px',
-              color: '#bbb',
-            }}
-            title="Coming soon"
-          >
-            Edit
-          </button>
-          <button
-            disabled
-            style={{
-              padding: '0.5rem 1rem',
-              cursor: 'not-allowed',
-              background: 'none',
-              border: '1px solid #bbb',
-              borderRadius: '4px',
-              color: '#bbb',
-            }}
-            title="Coming soon"
-          >
-            Delete
-          </button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" disabled title="Coming soon">
+            {t('actions.edit')}
+          </Button>
+          <Button variant="outline" size="sm" disabled title="Coming soon">
+            {t('actions.delete')}
+          </Button>
         </div>
       </div>
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Husband</h2>
-        <IndividualLink treeId={treeId} individual={family.husband} fallback="(No husband)" />
-      </section>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">Husband</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <IndividualLink treeId={treeId} individual={family.husband} fallback="(No husband)" />
+        </CardContent>
+      </Card>
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Wife</h2>
-        <IndividualLink treeId={treeId} individual={family.wife} fallback="(No wife)" />
-      </section>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">Wife</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <IndividualLink treeId={treeId} individual={family.wife} fallback="(No wife)" />
+        </CardContent>
+      </Card>
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Children</h2>
-        {family.children.length === 0 ? (
-          <p style={{ color: '#666', margin: 0 }}>No children recorded.</p>
-        ) : (
-          <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-            {family.children.map((child) => (
-              <li key={child.id}>
-                <Link
-                  to="/tree/$treeId/individual/$individualId"
-                  params={{ treeId, individualId: child.id }}
-                  style={{ color: '#333', textDecoration: 'underline' }}
-                >
-                  {formatName(child.primaryName).full}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">Children</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {family.children.length === 0 ? (
+            <p className="m-0 text-muted-foreground">No children recorded.</p>
+          ) : (
+            <ul className="m-0 space-y-1 pl-5">
+              {family.children.map((child) => (
+                <li key={child.id}>
+                  <Link
+                    to="/tree/$treeId/individual/$individualId"
+                    params={{ treeId, individualId: child.id }}
+                    className="text-foreground underline"
+                  >
+                    {formatName(child.primaryName).full}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
 
-      <section>
-        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Marriage</h2>
-        {!family.marriageEvent ? (
-          <p style={{ color: '#666', margin: 0 }}>No marriage event recorded.</p>
-        ) : (
-          <p style={{ margin: 0 }}>
-            {family.marriageEvent.dateOriginal ?? '(no date)'}
-            {family.marriageEvent.place && <> — {family.marriageEvent.place.fullName}</>}
-          </p>
-        )}
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">Marriage</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!family.marriageEvent ? (
+            <p className="m-0 text-muted-foreground">No marriage event recorded.</p>
+          ) : (
+            <p className="m-0">
+              {family.marriageEvent.dateOriginal ?? '(no date)'}
+              {family.marriageEvent.place && <> — {family.marriageEvent.place.fullName}</>}
+            </p>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

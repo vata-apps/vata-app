@@ -53,5 +53,12 @@
     "next": "Suivant",
     "showing": "Affichage {{from}}-{{to}} sur {{total}}",
     "page": "Page {{page}} sur {{pages}}"
+  },
+  "timeline": {
+    "loading": "Chargement des événements...",
+    "error": "Échec du chargement des événements.",
+    "empty": "Aucun événement enregistré.",
+    "noDate": "(sans date)",
+    "addSource": "Ajouter une source"
   }
 }
