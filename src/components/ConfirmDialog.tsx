@@ -45,7 +45,10 @@ export function ConfirmDialog({
             {cancelLabel ?? t('actions.cancel')}
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(e) => {
+              e.preventDefault();
+              onConfirm();
+            }}
             disabled={isPending}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >

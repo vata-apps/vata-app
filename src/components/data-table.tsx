@@ -111,7 +111,18 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   className={cn(onRowClick && 'cursor-pointer hover:bg-muted')}
-                  onClick={() => onRowClick?.(row.original)}
+                  tabIndex={onRowClick ? 0 : undefined}
+                  onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+                  onKeyDown={
+                    onRowClick
+                      ? (e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            onRowClick(row.original);
+                          }
+                        }
+                      : undefined
+                  }
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="px-3 py-1.5 text-xs">

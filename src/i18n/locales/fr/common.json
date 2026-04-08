@@ -8,6 +8,8 @@
     "places": "Lieux",
     "events": "Événements",
     "dataBrowser": "Explorateur de données",
+    "dataBrowser_overview": "Aperçu",
+    "dataBrowser_raw": "JSON brut",
     "closeTree": "Fermer l'arbre",
     "settings": "Paramètres"
   },
@@ -53,6 +55,19 @@
     "next": "Suivant",
     "showing": "Affichage {{from}}-{{to}} sur {{total}}",
     "page": "Page {{page}} sur {{pages}}"
+  },
+  "dataBrowser": {
+    "description": "Vue de débogage des données GEDCOM importées",
+    "overview": "Aperçu de la base de données",
+    "recordCounts": "Nombre d'enregistrements",
+    "treeMetadata": "Métadonnées de l'arbre",
+    "eventTypes": "Types d'événements",
+    "yes": "Oui",
+    "no": "Non",
+    "hide": "Masquer",
+    "details": "Détails",
+    "copied": "Copié !",
+    "copyToClipboard": "Copier dans le presse-papiers"
   },
   "timeline": {
     "loading": "Chargement des événements...",

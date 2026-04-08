@@ -21,12 +21,12 @@ export function DataBrowserPage({ treeId }: DataBrowserPageProps) {
   });
 
   const tabs: { id: TabId; label: string }[] = [
-    { id: 'overview', label: 'Overview' },
-    { id: 'individuals', label: 'Individuals' },
-    { id: 'families', label: 'Families' },
-    { id: 'events', label: 'Events' },
-    { id: 'places', label: 'Places' },
-    { id: 'raw', label: 'Raw JSON' },
+    { id: 'overview', label: t('nav.dataBrowser_overview', 'Overview') },
+    { id: 'individuals', label: t('nav.individuals') },
+    { id: 'families', label: t('nav.families') },
+    { id: 'events', label: t('nav.events') },
+    { id: 'places', label: t('nav.places') },
+    { id: 'raw', label: t('nav.dataBrowser_raw', 'Raw JSON') },
   ];
 
   return (
@@ -37,14 +37,14 @@ export function DataBrowserPage({ treeId }: DataBrowserPageProps) {
           params={{ treeId }}
           className="text-sm text-muted-foreground hover:text-foreground"
         >
-          &larr; Back to Tree
+          &larr; {t('actions.back')}
         </Link>
-        <h1 className="mt-2 mb-2 text-xl font-bold">Data Browser</h1>
-        <p className="m-0 text-muted-foreground">Debug view of imported GEDCOM data</p>
+        <h1 className="mt-2 mb-2 text-xl font-bold">{t('nav.dataBrowser')}</h1>
+        <p className="m-0 text-muted-foreground">{t('dataBrowser.description')}</p>
       </div>
 
       {isLoading && <p className="text-muted-foreground">{t('status.loading')}</p>}
-      {error && <p className="text-destructive">Error: {String(error)}</p>}
+      {error && <p className="text-destructive">{t('errors.generic')}</p>}
 
       {data && (
         <>
@@ -81,12 +81,14 @@ const tdClass = 'p-2 border-b border-border';
 const tdMonoClass = 'p-2 border-b border-border font-mono';
 
 function OverviewTab({ data }: { data: TreeDebugData }) {
+  const { t } = useTranslation('common');
+
   return (
     <div>
-      <h2 className="mt-0">Database Overview</h2>
+      <h2 className="mt-0">{t('dataBrowser.overview')}</h2>
 
       <div className="mb-8">
-        <h3>Record Counts</h3>
+        <h3>{t('dataBrowser.recordCounts')}</h3>
         <table className="w-full max-w-[400px] border-collapse">
           <tbody>
             {Object.entries(data.counts).map(([key, value]) => (
@@ -102,7 +104,7 @@ function OverviewTab({ data }: { data: TreeDebugData }) {
       </div>
 
       <div className="mb-8">
-        <h3>Tree Metadata</h3>
+        <h3>{t('dataBrowser.treeMetadata')}</h3>
         <table className="w-full max-w-[600px] border-collapse">
           <tbody>
             {Object.entries(data.meta).map(([key, value]) => (
@@ -116,7 +118,7 @@ function OverviewTab({ data }: { data: TreeDebugData }) {
       </div>
 
       <div>
-        <h3>Event Types</h3>
+        <h3>{t('dataBrowser.eventTypes')}</h3>
         <table className="w-full max-w-[600px] border-collapse">
           <thead>
             <tr>
@@ -132,7 +134,9 @@ function OverviewTab({ data }: { data: TreeDebugData }) {
                 <td className={tdClass}>{et.id}</td>
                 <td className={tdMonoClass}>{et.tag ?? et.customName}</td>
                 <td className={tdClass}>{et.category}</td>
-                <td className={tdClass}>{et.isSystem ? 'Yes' : 'No'}</td>
+                <td className={tdClass}>
+                  {et.isSystem ? t('dataBrowser.yes') : t('dataBrowser.no')}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -143,11 +147,14 @@ function OverviewTab({ data }: { data: TreeDebugData }) {
 }
 
 function IndividualsTab({ data }: { data: TreeDebugData }) {
+  const { t } = useTranslation('common');
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
     <div>
-      <h2 className="mt-0">Individuals ({data.counts.individuals})</h2>
+      <h2 className="mt-0">
+        {t('nav.individuals')} ({data.counts.individuals})
+      </h2>
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -172,7 +179,9 @@ function IndividualsTab({ data }: { data: TreeDebugData }) {
                   <td className={tdMonoClass}>{ind.id}</td>
                   <td className={tdClass}>{displayName}</td>
                   <td className={tdClass}>{ind.gender}</td>
-                  <td className={tdClass}>{ind.isLiving ? 'Yes' : 'No'}</td>
+                  <td className={tdClass}>
+                    {ind.isLiving ? t('dataBrowser.yes') : t('dataBrowser.no')}
+                  </td>
                   <td className={tdClass}>{ind.names.length}</td>
                   <td className={tdClass}>
                     <button
@@ -183,7 +192,7 @@ function IndividualsTab({ data }: { data: TreeDebugData }) {
                           : 'border-border bg-background text-foreground'
                       }`}
                     >
-                      {expandedId === ind.id ? 'Hide' : 'Details'}
+                      {expandedId === ind.id ? t('dataBrowser.hide') : t('dataBrowser.details')}
                     </button>
                   </td>
                 </tr>
@@ -206,11 +215,14 @@ function IndividualsTab({ data }: { data: TreeDebugData }) {
 }
 
 function FamiliesTab({ data }: { data: TreeDebugData }) {
+  const { t } = useTranslation('common');
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
     <div>
-      <h2 className="mt-0">Families ({data.counts.families})</h2>
+      <h2 className="mt-0">
+        {t('nav.families')} ({data.counts.families})
+      </h2>
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -243,7 +255,7 @@ function FamiliesTab({ data }: { data: TreeDebugData }) {
                           : 'border-border bg-background text-foreground'
                       }`}
                     >
-                      {expandedId === fam.id ? 'Hide' : 'Details'}
+                      {expandedId === fam.id ? t('dataBrowser.hide') : t('dataBrowser.details')}
                     </button>
                   </td>
                 </tr>
@@ -266,11 +278,14 @@ function FamiliesTab({ data }: { data: TreeDebugData }) {
 }
 
 function EventsTab({ data }: { data: TreeDebugData }) {
+  const { t } = useTranslation('common');
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
     <div>
-      <h2 className="mt-0">Events ({data.counts.events})</h2>
+      <h2 className="mt-0">
+        {t('nav.events')} ({data.counts.events})
+      </h2>
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -305,7 +320,7 @@ function EventsTab({ data }: { data: TreeDebugData }) {
                         : 'border-border bg-background text-foreground'
                     }`}
                   >
-                    {expandedId === evt.id ? 'Hide' : 'Details'}
+                    {expandedId === evt.id ? t('dataBrowser.hide') : t('dataBrowser.details')}
                   </button>
                 </td>
               </tr>
@@ -327,9 +342,13 @@ function EventsTab({ data }: { data: TreeDebugData }) {
 }
 
 function PlacesTab({ data }: { data: TreeDebugData }) {
+  const { t } = useTranslation('common');
+
   return (
     <div>
-      <h2 className="mt-0">Places ({data.counts.places})</h2>
+      <h2 className="mt-0">
+        {t('nav.places')} ({data.counts.places})
+      </h2>
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -359,6 +378,7 @@ function PlacesTab({ data }: { data: TreeDebugData }) {
 }
 
 function RawJsonTab({ data }: { data: TreeDebugData }) {
+  const { t } = useTranslation('common');
   const [copied, setCopied] = useState(false);
   const jsonString = JSON.stringify(data, null, 2);
 
@@ -375,7 +395,7 @@ function RawJsonTab({ data }: { data: TreeDebugData }) {
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="m-0">Raw JSON</h2>
+        <h2 className="m-0">{t('nav.dataBrowser_raw', 'Raw JSON')}</h2>
         <button
           onClick={handleCopy}
           className={`cursor-pointer rounded border px-4 py-2 ${
@@ -384,7 +404,7 @@ function RawJsonTab({ data }: { data: TreeDebugData }) {
               : 'border-border bg-background text-foreground'
           }`}
         >
-          {copied ? 'Copied!' : 'Copy to Clipboard'}
+          {copied ? t('dataBrowser.copied') : t('dataBrowser.copyToClipboard')}
         </button>
       </div>
       <pre className="max-h-[70vh] overflow-auto rounded bg-[#1e1e1e] p-4 text-sm leading-relaxed text-[#d4d4d4]">

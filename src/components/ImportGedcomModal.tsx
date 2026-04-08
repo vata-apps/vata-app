@@ -63,7 +63,7 @@ export function ImportGedcomModal({ isOpen, onSuccess, onCancel }: ImportGedcomM
           families: validation.stats.families,
         });
       } else {
-        setError(validation.errors.join(', ') || 'Invalid GEDCOM file');
+        setError(validation.errors.join(', ') || t('import.invalidFile'));
       }
     } catch {
       setError(t('import.failedRead'));

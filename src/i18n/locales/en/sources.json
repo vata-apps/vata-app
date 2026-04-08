@@ -11,6 +11,14 @@
     "repository": "Repository",
     "citations": "Citations"
   },
+  "backToList": "Back to Sources",
+  "cancelEdit": "Cancel Edit",
+  "editTitle": "Edit Source",
+  "editDetails": "Edit Details",
+  "details": "Details",
+  "noDetails": "No additional details recorded.",
+  "deleteTitle": "Delete Source",
+  "deleteConfirm": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
   "form": {
     "title": "Title",
     "author": "Author",

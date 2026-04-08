@@ -28,6 +28,7 @@
     "previewStats": "{{individuals}} individus, {{families}} familles",
     "importing": "Importation...",
     "import": "Importer",
+    "invalidFile": "Fichier GEDCOM invalide",
     "failedRead": "Échec de la lecture du fichier",
     "importFailed": "Échec de l'importation : {{error}}"
   },

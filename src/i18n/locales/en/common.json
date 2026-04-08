@@ -8,6 +8,8 @@
     "places": "Places",
     "events": "Events",
     "dataBrowser": "Data Browser",
+    "dataBrowser_overview": "Overview",
+    "dataBrowser_raw": "Raw JSON",
     "closeTree": "Close Tree",
     "settings": "Settings"
   },
@@ -53,6 +55,19 @@
     "next": "Next",
     "showing": "Showing {{from}}-{{to}} of {{total}}",
     "page": "Page {{page}} of {{pages}}"
+  },
+  "dataBrowser": {
+    "description": "Debug view of imported GEDCOM data",
+    "overview": "Database Overview",
+    "recordCounts": "Record Counts",
+    "treeMetadata": "Tree Metadata",
+    "eventTypes": "Event Types",
+    "yes": "Yes",
+    "no": "No",
+    "hide": "Hide",
+    "details": "Details",
+    "copied": "Copied!",
+    "copyToClipboard": "Copy to Clipboard"
   },
   "timeline": {
     "loading": "Loading events...",

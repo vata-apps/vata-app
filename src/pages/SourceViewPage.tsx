@@ -44,7 +44,7 @@ function RepositorySection({ treeId, repositoryId }: RepositorySectionProps): JS
   }
 
   if (!repository) {
-    return <p className="text-sm text-muted-foreground">Repository not found.</p>;
+    return <p className="text-sm text-muted-foreground">{t('errors.notFound')}</p>;
   }
 
   const location = [repository.city, repository.country].filter(Boolean).join(', ');
@@ -92,7 +92,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
       setEditError(null);
     },
     onError: (err: unknown) => {
-      const message = err instanceof Error ? err.message : 'An unexpected error occurred.';
+      const message = err instanceof Error ? err.message : tc('errors.generic');
       setEditError(message);
     },
   });
@@ -156,9 +156,9 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
           params={{ treeId }}
           className="text-sm text-muted-foreground hover:text-foreground"
         >
-          &larr; Back to Sources
+          &larr; {ts('backToList')}
         </Link>
-        <p className="mt-4 text-destructive">Source not found.</p>
+        <p className="mt-4 text-destructive">{tc('errors.notFound')}</p>
       </div>
     );
   }
@@ -170,10 +170,10 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
           onClick={cancelEdit}
           className="border-none bg-transparent p-0 text-sm text-muted-foreground hover:text-foreground cursor-pointer"
         >
-          &larr; Cancel Edit
+          &larr; {ts('cancelEdit')}
         </button>
 
-        <h1 className="mt-4 mb-6 text-xl font-bold">Edit Source</h1>
+        <h1 className="mt-4 mb-6 text-xl font-bold">{ts('editTitle')}</h1>
 
         <form onSubmit={handleEditSubmit} className="max-w-[500px] space-y-4">
           <div className="space-y-2">
@@ -297,7 +297,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
         params={{ treeId }}
         className="text-sm text-muted-foreground hover:text-foreground"
       >
-        &larr; Back to Sources
+        &larr; {ts('backToList')}
       </Link>
 
       <div className="mt-4 mb-6 flex items-center justify-between">
@@ -312,7 +312,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
             </Link>
           </Button>
           <Button variant="outline" onClick={openEdit}>
-            Edit Details
+            {ts('editDetails')}
           </Button>
           <Button
             variant="outline"
@@ -326,7 +326,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-sm font-semibold">Details</CardTitle>
+          <CardTitle className="text-sm font-semibold">{ts('details')}</CardTitle>
         </CardHeader>
         <CardContent>
           <dl className="m-0">
@@ -380,9 +380,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
               !source.publicationDate &&
               !source.callNumber &&
               !source.url &&
-              !source.notes && (
-                <p className="m-0 text-muted-foreground">No additional details recorded.</p>
-              )}
+              !source.notes && <p className="m-0 text-muted-foreground">{ts('noDetails')}</p>}
           </dl>
         </CardContent>
       </Card>
@@ -400,8 +398,8 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
 
       <ConfirmDialog
         isOpen={confirmDeleteOpen}
-        title="Delete Source"
-        message={`Are you sure you want to delete "${source.title}"? This action cannot be undone.`}
+        title={ts('deleteTitle')}
+        message={ts('deleteConfirm', { title: source.title })}
         confirmLabel={tc('actions.delete')}
         isPending={isDeleting}
         onConfirm={() => runDelete()}
