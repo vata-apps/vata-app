@@ -30,7 +30,8 @@
     "import": "Import",
     "invalidFile": "Invalid GEDCOM file",
     "failedRead": "Failed to read file",
-    "importFailed": "Import failed: {{error}}"
+    "importFailed": "Import failed: {{error}}",
+    "defaultTreeName": "imported"
   },
   "export": {
     "title": "Export GEDCOM",

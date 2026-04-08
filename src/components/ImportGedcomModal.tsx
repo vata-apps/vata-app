@@ -77,7 +77,7 @@ export function ImportGedcomModal({ isOpen, onSuccess, onCancel }: ImportGedcomM
     setError(null);
 
     try {
-      const filename = filePath.split('/').pop() ?? 'imported';
+      const filename = filePath.split(/[\\/]/).pop() ?? t('import.defaultTreeName');
       const treeName = filename.replace(/\.[^.]+$/, '');
 
       const result = await GedcomManager.importFromContent(fileContent, treeName);
@@ -95,11 +95,14 @@ export function ImportGedcomModal({ isOpen, onSuccess, onCancel }: ImportGedcomM
     onCancel();
   };
 
-  const fileName = filePath?.split('/').pop();
+  const fileName = filePath?.split(/[\\/]/).pop();
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleCancel()}>
-      <DialogContent>
+    <Dialog open={isOpen} onOpenChange={(nextOpen) => !nextOpen && !loading && handleCancel()}>
+      <DialogContent
+        onEscapeKeyDown={(e) => loading && e.preventDefault()}
+        onPointerDownOutside={(e) => loading && e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>{t('import.title')}</DialogTitle>
         </DialogHeader>
