@@ -1,0 +1,19 @@
+{
+  "title": "Individus",
+  "empty": "Aucun individu trouvé.",
+  "search": "Rechercher des individus...",
+  "newIndividual": "Nouvel individu",
+  "columns": {
+    "id": "ID",
+    "name": "Nom",
+    "gender": "Genre",
+    "birth": "Naissance",
+    "death": "Décès",
+    "sources": "Sources"
+  },
+  "gender": {
+    "M": "Masculin",
+    "F": "Féminin",
+    "U": "Inconnu"
+  }
+}

@@ -100,7 +100,7 @@ Initialize the Tauri project, configure development tools, install dependencies,
 
 ## Step 1.3: Dependency Installation
 
-> **MVP1 scope**: No UI library or icons in MVP1. Install only State & Data, Tauri plugins, and utilities. shadcn/ui, Tailwind CSS, and Lucide React are added in MVP6.
+> **MVP1 scope**: No UI library or icons in MVP1. Install only State & Data, Tauri plugins, and utilities. shadcn/ui, Tailwind CSS, and Lucide React are added in MVP5.
 
 ### Main Dependencies
 
@@ -239,7 +239,7 @@ src/
 
 ```typescript
 // Base types - will be completed progressively
-export type Gender = "M" | "F" | "U";
+export type Gender = 'M' | 'F' | 'U';
 
 export interface Tree {
   id: string;
@@ -257,7 +257,7 @@ export interface Tree {
 **src/lib/query-client.ts**
 
 ```typescript
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient } from '@tanstack/react-query';
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -277,8 +277,8 @@ export const queryClient = new QueryClient({
 **src/store/app-store.ts**
 
 ```typescript
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface AppState {
   currentTreeId: string | null;
@@ -292,9 +292,9 @@ export const useAppStore = create<AppState>()(
       setCurrentTree: (id) => set({ currentTreeId: id }),
     }),
     {
-      name: "vata-app-storage",
-    },
-  ),
+      name: 'vata-app-storage',
+    }
+  )
 );
 ```
 

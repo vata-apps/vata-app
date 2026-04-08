@@ -1,6 +1,6 @@
 # Individual View Screen (Person Record)
 
-**MVP**: MVP3 (individual CRUD, minimal HTML). MVP4 citations/sources. MVP6 design system.
+**MVP**: MVP3 (individual CRUD, minimal HTML). MVP4 citations/sources. MVP5 design system.
 
 ## Objective
 
@@ -92,35 +92,35 @@ Opens in a separate native window (no MainLayout).
 
 ### Context Menu (Dropdown Chevron in Center Header)
 
-| Menu item     | Action                           |
-| ------------- | -------------------------------- |
-| Edit person   | Opens Edit Person form window          |
-| Add event     | Opens Add Event form window            |
-| Add to family | Opens family linking form window       |
-| Delete person | Opens Delete confirmation (in-window)  |
+| Menu item     | Action                                |
+| ------------- | ------------------------------------- |
+| Edit person   | Opens Edit Person form window         |
+| Add event     | Opens Add Event form window           |
+| Add to family | Opens family linking form window      |
+| Delete person | Opens Delete confirmation (in-window) |
 
 ### Edge Cases
 
-| Situation                                         | Expected behavior                                                             |
-| ------------------------------------------------- | ----------------------------------------------------------------------------- |
-| No name at all                                    | Show "Unknown" or "No name" placeholder                                       |
-| Multiple names, none marked primary               | Use first name as primary                                                     |
-| No events at all                                  | Overview shows "No events" + add event link; Events section shows empty state |
-| No birth event                                    | Birth line shows "Birth unknown"; lifespan shows "?"                          |
-| No death event, person not living                 | Death line shows "Death unknown"                                              |
-| No death event, person living                     | Death line shows "Living" or is not shown                                     |
-| Age calculation with approximate dates            | Show "~75 years" (prefixed with tilde)                                        |
-| No family at all (no parents, no spouse)          | Aside shows "Unknown parents" + "No family" with add buttons                  |
-| Person has parents but no spouse                  | Families section shows empty state + add button                               |
-| Person is child in one family, spouse in multiple | All displayed: one origin family + N formed families                          |
-| Family without marriage event                     | Family entry shows "Family with {Spouse name}" without date                   |
-| Family without spouse (single parent)             | Entry shows "Family -- Children alone"                                        |
-| Family without children                           | Shows couple info + "No children" + add child link                            |
-| Person is living                                  | Limit displayed information (configurable privacy)                            |
-| Gender unknown                                    | Neutral icon, gray color                                                      |
+| Situation                                         | Expected behavior                                                                 |
+| ------------------------------------------------- | --------------------------------------------------------------------------------- |
+| No name at all                                    | Show "Unknown" or "No name" placeholder                                           |
+| Multiple names, none marked primary               | Use first name as primary                                                         |
+| No events at all                                  | Overview shows "No events" + add event link; Events section shows empty state     |
+| No birth event                                    | Birth line shows "Birth unknown"; lifespan shows "?"                              |
+| No death event, person not living                 | Death line shows "Death unknown"                                                  |
+| No death event, person living                     | Death line shows "Living" or is not shown                                         |
+| Age calculation with approximate dates            | Show "~75 years" (prefixed with tilde)                                            |
+| No family at all (no parents, no spouse)          | Aside shows "Unknown parents" + "No family" with add buttons                      |
+| Person has parents but no spouse                  | Families section shows empty state + add button                                   |
+| Person is child in one family, spouse in multiple | All displayed: one origin family + N formed families                              |
+| Family without marriage event                     | Family entry shows "Family with {Spouse name}" without date                       |
+| Family without spouse (single parent)             | Entry shows "Family -- Children alone"                                            |
+| Family without children                           | Shows couple info + "No children" + add child link                                |
+| Person is living                                  | Limit displayed information (configurable privacy)                                |
+| Gender unknown                                    | Neutral icon, gray color                                                          |
 | Very long name                                    | Truncate in header and sidebar; full display in names section of Edit form window |
-| Person referenced in 50+ events                   | Events section paginated or virtualized                                       |
-| Delete person who is linked to families           | Confirmation warns about cascade effect on linked families                    |
+| Person referenced in 50+ events                   | Events section paginated or virtualized                                           |
+| Delete person who is linked to families           | Confirmation warns about cascade effect on linked families                        |
 
 ---
 
@@ -218,28 +218,28 @@ Opens in a separate native window (no MainLayout).
 
 ## Navigation Map
 
-| Clickable element                   | Destination                                                            | Condition             |
-| ----------------------------------- | ---------------------------------------------------------------------- | --------------------- |
-| Individual in sidebar list          | Selects individual, updates center + aside                             | --                    |
-| "New" in sidebar                    | Opens Create Person form window                                        | --                    |
-| "Edit" in center header             | Opens Edit Person form window                                          | --                    |
-| Dropdown chevron in center header   | Opens context menu                                                     | --                    |
-| Alternative names edit icon         | Opens Edit Person form window (names section)                          | --                    |
-| Birth place link (center)           | Navigates to Places module, selects that place                         | Place exists          |
-| Death place link (center)           | Navigates to Places module, selects that place                         | Place exists          |
-| Father link (center)                | Selects father in sidebar (stays in Individuals module)                | Father exists         |
-| Mother link (center)                | Selects mother in sidebar (stays in Individuals module)                | Mother exists         |
-| Sibling link (center)               | Selects sibling in sidebar                                             | Sibling exists        |
-| Half-sibling link (center)          | Selects half-sibling in sidebar                                        | Half-sibling exists   |
-| Parent card chevron (aside)         | Selects that parent in sidebar                                         | --                    |
+| Clickable element                   | Destination                                                                                                               | Condition             |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| Individual in sidebar list          | Selects individual, updates center + aside                                                                                | --                    |
+| "New" in sidebar                    | Opens Create Person form window                                                                                           | --                    |
+| "Edit" in center header             | Opens Edit Person form window                                                                                             | --                    |
+| Dropdown chevron in center header   | Opens context menu                                                                                                        | --                    |
+| Alternative names edit icon         | Opens Edit Person form window (names section)                                                                             | --                    |
+| Birth place link (center)           | Navigates to Places module, selects that place                                                                            | Place exists          |
+| Death place link (center)           | Navigates to Places module, selects that place                                                                            | Place exists          |
+| Father link (center)                | Selects father in sidebar (stays in Individuals module)                                                                   | Father exists         |
+| Mother link (center)                | Selects mother in sidebar (stays in Individuals module)                                                                   | Mother exists         |
+| Sibling link (center)               | Selects sibling in sidebar                                                                                                | Sibling exists        |
+| Half-sibling link (center)          | Selects half-sibling in sidebar                                                                                           | Half-sibling exists   |
+| Parent card chevron (aside)         | Selects that parent in sidebar                                                                                            | --                    |
 | "Add Brother" button (aside)        | Opens form window to select existing person or create new (pre-linked to same family as sibling; gender suggested Male)   | Parents exist         |
 | "Add Sister" button (aside)         | Opens form window to select existing person or create new (pre-linked to same family as sibling; gender suggested Female) | Parents exist         |
-| Family chevron (aside)              | Navigates to Families module, selects that family                      | --                    |
-| Spouse name in family entry (aside) | Selects spouse in sidebar (stays in Individuals module)                | Spouse exists         |
-| Event chevron (aside)               | Navigates to Events module, selects that event                         | --                    |
-| "Add" in Events section (aside)     | Opens Add Event form window                                            | --                    |
-| "Show all" in aside section         | Expands to full list or navigates to filtered view                     | More items than shown |
-| Context menu > Edit person          | Opens Edit Person form window                                          | --                    |
-| Context menu > Add event            | Opens Add Event form window                                            | --                    |
-| Context menu > Add to family        | Opens family linking form window                                       | --                    |
-| Context menu > Delete person        | Opens Delete confirmation (in-window)                                  | --                    |
+| Family chevron (aside)              | Navigates to Families module, selects that family                                                                         | --                    |
+| Spouse name in family entry (aside) | Selects spouse in sidebar (stays in Individuals module)                                                                   | Spouse exists         |
+| Event chevron (aside)               | Navigates to Events module, selects that event                                                                            | --                    |
+| "Add" in Events section (aside)     | Opens Add Event form window                                                                                               | --                    |
+| "Show all" in aside section         | Expands to full list or navigates to filtered view                                                                        | More items than shown |
+| Context menu > Edit person          | Opens Edit Person form window                                                                                             | --                    |
+| Context menu > Add event            | Opens Add Event form window                                                                                               | --                    |
+| Context menu > Add to family        | Opens family linking form window                                                                                          | --                    |
+| Context menu > Delete person        | Opens Delete confirmation (in-window)                                                                                     | --                    |

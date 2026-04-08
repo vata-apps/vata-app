@@ -1,0 +1,55 @@
+{
+  "title": "Vata",
+  "subtitle": "Gestion d'arbres généalogiques",
+  "newTree": "Nouvel arbre",
+  "importGedcom": "Importer GEDCOM",
+  "yourTrees": "Vos arbres",
+  "emptyState": "Aucun arbre. Créez votre premier arbre généalogique pour commencer.",
+  "treeCard": {
+    "individuals": "{{count}} individus",
+    "families": "{{count}} familles",
+    "created": "Créé le : {{date}}",
+    "lastOpened": "Dernier accès : {{date}}",
+    "neverOpened": "Jamais"
+  },
+  "createForm": {
+    "title": "Créer un nouvel arbre",
+    "name": "Nom",
+    "namePlaceholder": "Mon arbre familial",
+    "description": "Description",
+    "descriptionPlaceholder": "Description optionnelle",
+    "submit": "Créer l'arbre"
+  },
+  "import": {
+    "title": "Importer GEDCOM",
+    "selectFile": "Choisir un fichier",
+    "changeFile": "Changer de fichier",
+    "preview": "Aperçu :",
+    "previewStats": "{{individuals}} individus, {{families}} familles",
+    "importing": "Importation...",
+    "import": "Importer",
+    "invalidFile": "Fichier GEDCOM invalide",
+    "failedRead": "Échec de la lecture du fichier",
+    "importFailed": "Échec de l'importation : {{error}}",
+    "defaultTreeName": "importé"
+  },
+  "export": {
+    "title": "Exporter GEDCOM",
+    "description": "Exporter « {{name}} » au format GEDCOM 5.5.1.",
+    "includeLiving": "Inclure les individus vivants",
+    "includeLivingHint": "Si décoché, les individus vivants sont exclus pour la confidentialité.",
+    "exporting": "Exportation...",
+    "exportFailed": "Échec de l'exportation : {{error}}"
+  },
+  "deleteConfirm": {
+    "title": "Supprimer l'arbre",
+    "message": "Supprimer « {{name}} » ? Cette action est irréversible."
+  },
+  "debug": {
+    "show": "Afficher le débogage",
+    "hide": "Masquer le débogage",
+    "treeFiles": "Fichiers de bases de données",
+    "noTreeFiles": "Aucun fichier de base de données trouvé",
+    "rawContent": "Contenu brut de system.db"
+  }
+}

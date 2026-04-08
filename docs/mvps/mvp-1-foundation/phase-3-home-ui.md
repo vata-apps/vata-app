@@ -2,13 +2,13 @@
 
 ## Objective
 
-Create a minimal HTML layout and Home page with tree list functionality. **No UI library in MVP1** — use HTML-only UI with minimal CSS. shadcn/ui and the design system are added in MVP6.
+Create a minimal HTML layout and Home page with tree list functionality. **No UI library in MVP1** — use HTML-only UI with minimal CSS. shadcn/ui and the design system are added in MVP5.
 
 ## Step 3.1: Base Layout
 
 **MVP1**: Minimal HTML layout (header, nav, main). No shadcn/ui components.
 
-**MVP6**: Will be replaced with MainLayout using shadcn/ui layout components (see MVP6 documentation).
+**MVP5**: Will be replaced with MainLayout using shadcn/ui layout components (see MVP5 documentation).
 
 ### src/components/layouts/MainLayout.tsx
 
@@ -36,7 +36,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
 **MVP1**: Simple HTML page (title, buttons, tree list in `<ul>` or `<div>`). No UI library components.
 
-**MVP6**: Will migrate to shadcn/ui components (Card, Button, Dialog, etc.).
+**MVP5**: Will migrate to shadcn/ui components (Card, Button, Dialog, etc.).
 
 ### src/pages/Home.tsx
 
@@ -72,13 +72,13 @@ export function HomePage() {
       ) : trees && trees.length > 0 ? (
         <>
           <h2>Your Trees</h2>
-          <div style={{ 
-            display: 'grid', 
+          <div style={{
+            display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
             gap: '1rem'
           }}>
             {trees.map((tree) => (
-              <div key={tree.id} style={{ 
+              <div key={tree.id} style={{
                 border: '1px solid #e0e0e0',
                 borderRadius: '4px',
                 padding: '1rem'
@@ -117,6 +117,7 @@ export function HomePage() {
 Adds rename functionality to each tree card. When the user clicks "Rename", an inline form replaces the tree name with an input field pre-filled with the current name. On submit, calls `updateTree()` and refreshes the list.
 
 **Behavior:**
+
 - "Rename" button on each card opens an inline edit form (replaces the card's name heading)
 - Input pre-filled with the current name, required, trimmed
 - "Save" button submits; "Cancel" reverts to display mode
@@ -161,7 +162,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 );
 ```
 
-### src/routes/__root.tsx
+### src/routes/\_\_root.tsx
 
 ```typescript
 import { createRootRoute, Outlet } from '@tanstack/react-router';

@@ -1,11 +1,17 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { useSource } from '$/hooks/useSources';
 import { useRepository, useRepositories } from '$/hooks/useRepositories';
 import { deleteSource, updateSource } from '$db-tree/sources';
 import { queryKeys } from '$/lib/query-keys';
 import { ConfirmDialog } from '$/components/ConfirmDialog';
+import { Button } from '$components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '$components/ui/card';
+import { Input } from '$components/ui/input';
+import { Label } from '$components/ui/label';
+import { Textarea } from '$components/ui/textarea';
 import type { UpdateSourceInput } from '$/types/database';
 
 interface SourceViewPageProps {
@@ -24,36 +30,21 @@ interface EditFormState {
   notes: string;
 }
 
-const inputStyle: React.CSSProperties = {
-  padding: '0.5rem',
-  border: '1px solid #e0e0e0',
-  borderRadius: '4px',
-  fontSize: '0.9rem',
-  boxSizing: 'border-box',
-  width: '100%',
-};
-
-const labelStyle: React.CSSProperties = {
-  fontSize: '0.85rem',
-  fontWeight: 600,
-  display: 'block',
-  marginBottom: '0.25rem',
-};
-
 interface RepositorySectionProps {
   treeId: string;
   repositoryId: string;
 }
 
 function RepositorySection({ treeId, repositoryId }: RepositorySectionProps): JSX.Element {
+  const { t } = useTranslation('common');
   const { data: repository, isLoading } = useRepository(repositoryId);
 
   if (isLoading) {
-    return <p style={{ color: '#666', fontSize: '0.9rem' }}>Loading repository...</p>;
+    return <p className="text-sm text-muted-foreground">{t('status.loading')}</p>;
   }
 
   if (!repository) {
-    return <p style={{ color: '#888', fontSize: '0.9rem' }}>Repository not found.</p>;
+    return <p className="text-sm text-muted-foreground">{t('errors.notFound')}</p>;
   }
 
   const location = [repository.city, repository.country].filter(Boolean).join(', ');
@@ -62,24 +53,17 @@ function RepositorySection({ treeId, repositoryId }: RepositorySectionProps): JS
     <Link
       to="/tree/$treeId/repository/$repositoryId"
       params={{ treeId, repositoryId: repository.id }}
-      style={{
-        display: 'block',
-        padding: '0.75rem 1rem',
-        border: '1px solid #e0e0e0',
-        borderRadius: '6px',
-        textDecoration: 'none',
-        color: 'inherit',
-      }}
+      className="block rounded-md border border-border p-4 no-underline hover:bg-accent"
     >
-      <div style={{ fontWeight: 600 }}>{repository.name}</div>
-      {location && (
-        <div style={{ fontSize: '0.85rem', color: '#666', marginTop: '0.25rem' }}>{location}</div>
-      )}
+      <div className="font-semibold">{repository.name}</div>
+      {location && <div className="mt-1 text-sm text-muted-foreground">{location}</div>}
     </Link>
   );
 }
 
 export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.Element {
+  const { t: tc } = useTranslation('common');
+  const { t: ts } = useTranslation('sources');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -108,7 +92,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
       setEditError(null);
     },
     onError: (err: unknown) => {
-      const message = err instanceof Error ? err.message : 'An unexpected error occurred.';
+      const message = err instanceof Error ? err.message : tc('errors.generic');
       setEditError(message);
     },
   });
@@ -161,7 +145,7 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
   }
 
   if (isLoading) {
-    return <p style={{ color: '#666' }}>Loading source...</p>;
+    return <p className="text-muted-foreground">{tc('status.loading')}</p>;
   }
 
   if (isError || !source) {
@@ -170,11 +154,11 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
         <Link
           to="/tree/$treeId/sources"
           params={{ treeId }}
-          style={{ color: '#666', textDecoration: 'none' }}
+          className="text-sm text-muted-foreground hover:text-foreground"
         >
-          &larr; Back to Sources
+          &larr; {ts('backToList')}
         </Link>
-        <p style={{ color: '#c00', marginTop: '1rem' }}>Source not found.</p>
+        <p className="mt-4 text-destructive">{tc('errors.notFound')}</p>
       </div>
     );
   }
@@ -184,90 +168,71 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
       <div>
         <button
           onClick={cancelEdit}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#666',
-            cursor: 'pointer',
-            padding: 0,
-            fontSize: '0.9rem',
-          }}
+          className="border-none bg-transparent p-0 text-sm text-muted-foreground hover:text-foreground cursor-pointer"
         >
-          &larr; Cancel Edit
+          &larr; {ts('cancelEdit')}
         </button>
 
-        <h1 style={{ marginTop: '1rem', marginBottom: '1.5rem' }}>Edit Source</h1>
+        <h1 className="mt-4 mb-6 text-xl font-bold">{ts('editTitle')}</h1>
 
-        <form onSubmit={handleEditSubmit} style={{ maxWidth: '500px' }}>
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="edit-source-title" style={labelStyle}>
-              Title <span style={{ color: '#c00' }}>*</span>
-            </label>
-            <input
+        <form onSubmit={handleEditSubmit} className="max-w-[500px] space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="edit-source-title">
+              {ts('form.title')} <span className="text-destructive">*</span>
+            </Label>
+            <Input
               id="edit-source-title"
               name="title"
               type="text"
               required
               value={editForm.title}
               onChange={handleFieldChange}
-              style={inputStyle}
             />
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="edit-source-author" style={labelStyle}>
-              Author
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="edit-source-author">{ts('form.author')}</Label>
+            <Input
               id="edit-source-author"
               name="author"
               type="text"
               value={editForm.author}
               onChange={handleFieldChange}
-              style={inputStyle}
             />
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="edit-source-publisher" style={labelStyle}>
-              Publisher
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="edit-source-publisher">{ts('form.publisher')}</Label>
+            <Input
               id="edit-source-publisher"
               name="publisher"
               type="text"
               value={editForm.publisher}
               onChange={handleFieldChange}
-              style={inputStyle}
             />
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="edit-source-publication-date" style={labelStyle}>
-              Publication Date
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="edit-source-publication-date">{ts('form.publicationDate')}</Label>
+            <Input
               id="edit-source-publication-date"
               name="publicationDate"
               type="text"
               value={editForm.publicationDate}
               onChange={handleFieldChange}
-              style={inputStyle}
             />
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="edit-source-repository" style={labelStyle}>
-              Repository
-            </label>
+          <div className="space-y-2">
+            <Label htmlFor="edit-source-repository">{ts('form.repository')}</Label>
             <select
               id="edit-source-repository"
               name="repositoryId"
               value={editForm.repositoryId}
               onChange={handleFieldChange}
-              style={inputStyle}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
-              <option value="">— None —</option>
+              <option value="">{ts('form.repositoryNone')}</option>
               {repositories?.map((repo) => (
                 <option key={repo.id} value={repo.id}>
                   {repo.name}
@@ -276,84 +241,49 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
             </select>
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="edit-source-callnumber" style={labelStyle}>
-              Call Number
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="edit-source-callnumber">{ts('form.callNumber')}</Label>
+            <Input
               id="edit-source-callnumber"
               name="callNumber"
               type="text"
               value={editForm.callNumber}
               onChange={handleFieldChange}
-              style={inputStyle}
             />
           </div>
 
-          <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="edit-source-url" style={labelStyle}>
-              URL
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="edit-source-url">{ts('form.url')}</Label>
+            <Input
               id="edit-source-url"
               name="url"
               type="url"
               value={editForm.url}
               onChange={handleFieldChange}
-              style={inputStyle}
             />
           </div>
 
-          <div style={{ marginBottom: '1.25rem' }}>
-            <label htmlFor="edit-source-notes" style={labelStyle}>
-              Notes
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label htmlFor="edit-source-notes">{ts('form.notes')}</Label>
+            <Textarea
               id="edit-source-notes"
               name="notes"
               rows={3}
               value={editForm.notes}
               onChange={handleFieldChange}
-              style={{ ...inputStyle, resize: 'vertical' }}
+              className="resize-y"
             />
           </div>
 
-          {editError && (
-            <p style={{ color: '#c00', fontSize: '0.85rem', marginBottom: '1rem' }}>{editError}</p>
-          )}
+          {editError && <p className="text-sm text-destructive">{editError}</p>}
 
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button
-              type="button"
-              onClick={cancelEdit}
-              disabled={isUpdating}
-              style={{
-                padding: '0.5rem 1rem',
-                cursor: isUpdating ? 'not-allowed' : 'pointer',
-                background: 'none',
-                border: '1px solid #e0e0e0',
-                borderRadius: '4px',
-                fontSize: '0.9rem',
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isUpdating || !editForm.title.trim()}
-              style={{
-                padding: '0.5rem 1rem',
-                cursor: isUpdating || !editForm.title.trim() ? 'not-allowed' : 'pointer',
-                background: '#333',
-                border: 'none',
-                borderRadius: '4px',
-                color: '#fff',
-                fontSize: '0.9rem',
-                opacity: isUpdating || !editForm.title.trim() ? 0.6 : 1,
-              }}
-            >
-              {isUpdating ? 'Saving...' : 'Save Changes'}
-            </button>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" onClick={cancelEdit} disabled={isUpdating}>
+              {tc('actions.cancel')}
+            </Button>
+            <Button type="submit" disabled={isUpdating || !editForm.title.trim()}>
+              {isUpdating ? tc('status.saving') : tc('actions.save')}
+            </Button>
           </div>
         </form>
       </div>
@@ -365,142 +295,112 @@ export function SourceViewPage({ treeId, sourceId }: SourceViewPageProps): JSX.E
       <Link
         to="/tree/$treeId/sources"
         params={{ treeId }}
-        style={{ color: '#666', textDecoration: 'none' }}
+        className="text-sm text-muted-foreground hover:text-foreground"
       >
-        &larr; Back to Sources
+        &larr; {ts('backToList')}
       </Link>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: '1rem',
-          marginBottom: '1.5rem',
-        }}
-      >
+      <div className="mt-4 mb-6 flex items-center justify-between">
         <div>
-          <h1 style={{ margin: 0 }}>{source.title}</h1>
-          <div style={{ color: '#666', marginTop: '0.25rem', fontSize: '0.9rem' }}>{source.id}</div>
+          <h1 className="text-xl font-bold">{source.title}</h1>
+          <div className="mt-1 text-sm text-muted-foreground">{source.id}</div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Link
-            to="/tree/$treeId/source/$sourceId/edit"
-            params={{ treeId, sourceId }}
-            style={{
-              padding: '0.5rem 1rem',
-              cursor: 'pointer',
-              background: '#333',
-              border: 'none',
-              borderRadius: '4px',
-              color: '#fff',
-              fontSize: '0.9rem',
-              textDecoration: 'none',
-            }}
-          >
-            Edit
-          </Link>
-          <button
-            onClick={openEdit}
-            style={{
-              padding: '0.5rem 1rem',
-              cursor: 'pointer',
-              background: 'none',
-              border: '1px solid #333',
-              borderRadius: '4px',
-              color: '#333',
-              fontSize: '0.9rem',
-            }}
-          >
-            Edit Details
-          </button>
-          <button
+        <div className="flex gap-2">
+          <Button asChild>
+            <Link to="/tree/$treeId/source/$sourceId/edit" params={{ treeId, sourceId }}>
+              {tc('actions.edit')}
+            </Link>
+          </Button>
+          <Button variant="outline" onClick={openEdit}>
+            {ts('editDetails')}
+          </Button>
+          <Button
+            variant="outline"
+            className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground"
             onClick={() => setConfirmDeleteOpen(true)}
-            style={{
-              padding: '0.5rem 1rem',
-              cursor: 'pointer',
-              background: 'none',
-              border: '1px solid #c00',
-              borderRadius: '4px',
-              color: '#c00',
-              fontSize: '0.9rem',
-            }}
           >
-            Delete
-          </button>
+            {tc('actions.delete')}
+          </Button>
         </div>
       </div>
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Details</h2>
-        <dl style={{ margin: 0 }}>
-          {source.author && (
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
-              <dt style={{ fontWeight: 600, minWidth: '120px', fontSize: '0.85rem' }}>Author</dt>
-              <dd style={{ margin: 0, color: '#555' }}>{source.author}</dd>
-            </div>
-          )}
-          {source.publisher && (
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
-              <dt style={{ fontWeight: 600, minWidth: '120px', fontSize: '0.85rem' }}>Publisher</dt>
-              <dd style={{ margin: 0, color: '#555' }}>{source.publisher}</dd>
-            </div>
-          )}
-          {source.publicationDate && (
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
-              <dt style={{ fontWeight: 600, minWidth: '120px', fontSize: '0.85rem' }}>
-                Publication Date
-              </dt>
-              <dd style={{ margin: 0, color: '#555' }}>{source.publicationDate}</dd>
-            </div>
-          )}
-          {source.callNumber && (
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
-              <dt style={{ fontWeight: 600, minWidth: '120px', fontSize: '0.85rem' }}>
-                Call Number
-              </dt>
-              <dd style={{ margin: 0, color: '#555' }}>{source.callNumber}</dd>
-            </div>
-          )}
-          {source.url && (
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
-              <dt style={{ fontWeight: 600, minWidth: '120px', fontSize: '0.85rem' }}>URL</dt>
-              <dd style={{ margin: 0 }}>
-                <a href={source.url} target="_blank" rel="noreferrer" style={{ color: '#06c' }}>
-                  {source.url}
-                </a>
-              </dd>
-            </div>
-          )}
-          {source.notes && (
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
-              <dt style={{ fontWeight: 600, minWidth: '120px', fontSize: '0.85rem' }}>Notes</dt>
-              <dd style={{ margin: 0, color: '#555', whiteSpace: 'pre-wrap' }}>{source.notes}</dd>
-            </div>
-          )}
-          {!source.author &&
-            !source.publisher &&
-            !source.publicationDate &&
-            !source.callNumber &&
-            !source.url &&
-            !source.notes && (
-              <p style={{ color: '#888', margin: 0 }}>No additional details recorded.</p>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">{ts('details')}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <dl className="m-0">
+            {source.author && (
+              <div className="grid grid-cols-[120px_1fr] gap-y-2 text-sm">
+                <dt className="font-semibold">{ts('form.author')}</dt>
+                <dd className="m-0 text-muted-foreground">{source.author}</dd>
+              </div>
             )}
-        </dl>
-      </section>
+            {source.publisher && (
+              <div className="grid grid-cols-[120px_1fr] gap-y-2 text-sm">
+                <dt className="font-semibold">{ts('form.publisher')}</dt>
+                <dd className="m-0 text-muted-foreground">{source.publisher}</dd>
+              </div>
+            )}
+            {source.publicationDate && (
+              <div className="grid grid-cols-[120px_1fr] gap-y-2 text-sm">
+                <dt className="font-semibold">{ts('form.publicationDate')}</dt>
+                <dd className="m-0 text-muted-foreground">{source.publicationDate}</dd>
+              </div>
+            )}
+            {source.callNumber && (
+              <div className="grid grid-cols-[120px_1fr] gap-y-2 text-sm">
+                <dt className="font-semibold">{ts('form.callNumber')}</dt>
+                <dd className="m-0 text-muted-foreground">{source.callNumber}</dd>
+              </div>
+            )}
+            {source.url && (
+              <div className="grid grid-cols-[120px_1fr] gap-y-2 text-sm">
+                <dt className="font-semibold">{ts('form.url')}</dt>
+                <dd className="m-0">
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary underline"
+                  >
+                    {source.url}
+                  </a>
+                </dd>
+              </div>
+            )}
+            {source.notes && (
+              <div className="grid grid-cols-[120px_1fr] gap-y-2 text-sm">
+                <dt className="font-semibold">{ts('form.notes')}</dt>
+                <dd className="m-0 whitespace-pre-wrap text-muted-foreground">{source.notes}</dd>
+              </div>
+            )}
+            {!source.author &&
+              !source.publisher &&
+              !source.publicationDate &&
+              !source.callNumber &&
+              !source.url &&
+              !source.notes && <p className="m-0 text-muted-foreground">{ts('noDetails')}</p>}
+          </dl>
+        </CardContent>
+      </Card>
 
       {source.repositoryId && (
-        <section style={{ marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Repository</h2>
-          <RepositorySection treeId={treeId} repositoryId={source.repositoryId} />
-        </section>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-sm font-semibold">{ts('form.repository')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <RepositorySection treeId={treeId} repositoryId={source.repositoryId} />
+          </CardContent>
+        </Card>
       )}
 
       <ConfirmDialog
         isOpen={confirmDeleteOpen}
-        title="Delete Source"
-        message={`Are you sure you want to delete "${source.title}"? This action cannot be undone.`}
-        confirmLabel="Delete"
+        title={ts('deleteTitle')}
+        message={ts('deleteConfirm', { title: source.title })}
+        confirmLabel={tc('actions.delete')}
         isPending={isDeleting}
         onConfirm={() => runDelete()}
         onCancel={() => setConfirmDeleteOpen(false)}

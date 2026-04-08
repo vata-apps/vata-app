@@ -13,8 +13,8 @@ const defaultProps = {
 
 describe('ConfirmDialog', () => {
   it('is not visible when closed', () => {
-    const { container } = render(<ConfirmDialog {...defaultProps} isOpen={false} />);
-    expect(container).toBeEmptyDOMElement();
+    render(<ConfirmDialog {...defaultProps} isOpen={false} />);
+    expect(screen.queryByText('Delete tree')).not.toBeInTheDocument();
   });
 
   it('shows the title and message when open', () => {
@@ -26,7 +26,7 @@ describe('ConfirmDialog', () => {
   it('calls onConfirm when the user confirms', async () => {
     const onConfirm = vi.fn();
     render(<ConfirmDialog {...defaultProps} onConfirm={onConfirm} />);
-    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
     expect(onConfirm).toHaveBeenCalledOnce();
   });
 
@@ -37,10 +37,10 @@ describe('ConfirmDialog', () => {
     expect(onCancel).toHaveBeenCalledOnce();
   });
 
-  it('calls onCancel when the user clicks outside the dialog', async () => {
+  it('calls onCancel when Escape is pressed', async () => {
     const onCancel = vi.fn();
-    const { container } = render(<ConfirmDialog {...defaultProps} onCancel={onCancel} />);
-    await userEvent.click(container.firstChild as HTMLElement);
+    render(<ConfirmDialog {...defaultProps} onCancel={onCancel} />);
+    await userEvent.keyboard('{Escape}');
     expect(onCancel).toHaveBeenCalledOnce();
   });
 

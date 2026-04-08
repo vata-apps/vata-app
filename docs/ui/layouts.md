@@ -4,7 +4,7 @@
 
 Définir les structures de layout réutilisables. L'app utilise une **barre de navigation en haut** combinée à un **layout trois panneaux** (sidebar / centre / aside) pour les modules d'entités, et un layout pleine largeur pour l'écran d'accueil.
 
-> **Adoption par MVP** : MVP1–5 implémentent routes et layouts en **HTML uniquement** (pas de shadcn/ui). MVP6 applique le layout complet avec shadcn/ui + Tailwind CSS.
+> **Adoption par MVP** : MVP1–4 implémentent routes et layouts en **HTML uniquement** (pas de shadcn/ui). MVP5 applique le layout complet avec shadcn/ui + Tailwind CSS.
 
 ---
 
@@ -116,11 +116,11 @@ Used for all create/edit operations across all modules. Each form opens in a **s
 | Max width            | Constrained (e.g., 560px)                                                                  |
 | Close behavior       | Escape key or native window close button closes the window if there are no unsaved changes |
 
-| Edge case                              | Expected behavior                                                                           |
-| -------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Form window with very long content     | Form body scrolls, footer stays sticky                                                      |
-| Multiple form windows open at once     | Allowed (e.g., edit person in one window, edit family in another)                           |
-| Escape or close with unsaved changes   | An in-window confirmation dialog prompts the user to discard changes or cancel the close    |
+| Edge case                            | Expected behavior                                                                        |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Form window with very long content   | Form body scrolls, footer stays sticky                                                   |
+| Multiple form windows open at once   | Allowed (e.g., edit person in one window, edit family in another)                        |
+| Escape or close with unsaved changes | An in-window confirmation dialog prompts the user to discard changes or cancel the close |
 
 ### Panel Sizing and Behavior
 

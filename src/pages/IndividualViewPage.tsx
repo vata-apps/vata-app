@@ -1,8 +1,12 @@
 import { Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { useIndividual } from '$/hooks/useIndividuals';
 import { EventTimeline } from '$components/EventTimeline';
 import { formatName } from '$/db/trees/names';
 import { GENDER_LABELS } from '$/lib/constants';
+import { Badge } from '$components/ui/badge';
+import { Button } from '$components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '$components/ui/card';
 
 interface IndividualViewPageProps {
   treeId: string;
@@ -10,10 +14,11 @@ interface IndividualViewPageProps {
 }
 
 export function IndividualViewPage({ treeId, individualId }: IndividualViewPageProps): JSX.Element {
+  const { t } = useTranslation('common');
   const { data: individual, isLoading, isError } = useIndividual(individualId);
 
   if (isLoading) {
-    return <p style={{ color: '#666' }}>Loading individual...</p>;
+    return <p className="text-muted-foreground">{t('status.loading')}</p>;
   }
 
   if (isError || !individual) {
@@ -22,11 +27,11 @@ export function IndividualViewPage({ treeId, individualId }: IndividualViewPageP
         <Link
           to="/tree/$treeId/individuals"
           params={{ treeId }}
-          style={{ color: '#666', textDecoration: 'none' }}
+          className="text-sm text-muted-foreground hover:text-foreground"
         >
           &larr; Back to Individuals
         </Link>
-        <p style={{ color: '#c00', marginTop: '1rem' }}>Individual not found.</p>
+        <p className="mt-4 text-destructive">Individual not found.</p>
       </div>
     );
   }
@@ -38,23 +43,15 @@ export function IndividualViewPage({ treeId, individualId }: IndividualViewPageP
       <Link
         to="/tree/$treeId/individuals"
         params={{ treeId }}
-        style={{ color: '#666', textDecoration: 'none' }}
+        className="text-sm text-muted-foreground hover:text-foreground"
       >
         &larr; Back to Individuals
       </Link>
 
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: '1rem',
-          marginBottom: '1.5rem',
-        }}
-      >
+      <div className="mt-4 mb-6 flex items-center justify-between">
         <div>
-          <h1 style={{ margin: 0 }}>{name.full}</h1>
-          <div style={{ color: '#666', marginTop: '0.25rem' }}>
+          <h1 className="text-xl font-bold">{name.full}</h1>
+          <div className="mt-1 text-sm text-muted-foreground">
             {GENDER_LABELS[individual.gender] ?? 'Unknown'}
             {' · '}
             {individual.isLiving ? 'Living' : 'Deceased'}
@@ -62,74 +59,45 @@ export function IndividualViewPage({ treeId, individualId }: IndividualViewPageP
             {individual.id}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button
-            disabled
-            style={{
-              padding: '0.5rem 1rem',
-              cursor: 'not-allowed',
-              background: 'none',
-              border: '1px solid #bbb',
-              borderRadius: '4px',
-              color: '#bbb',
-            }}
-            title="Coming soon"
-          >
-            Edit
-          </button>
-          <button
-            disabled
-            style={{
-              padding: '0.5rem 1rem',
-              cursor: 'not-allowed',
-              background: 'none',
-              border: '1px solid #bbb',
-              borderRadius: '4px',
-              color: '#bbb',
-            }}
-            title="Coming soon"
-          >
-            Delete
-          </button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" disabled title="Coming soon">
+            {t('actions.edit')}
+          </Button>
+          <Button variant="outline" size="sm" disabled title="Coming soon">
+            {t('actions.delete')}
+          </Button>
         </div>
       </div>
 
-      <section style={{ marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Names</h2>
-        {individual.names.length === 0 ? (
-          <p style={{ color: '#666' }}>No names recorded.</p>
-        ) : (
-          <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-            {individual.names.map((n) => (
-              <li key={n.id}>
-                {formatName(n).full}
-                {n.isPrimary && (
-                  <span
-                    style={{
-                      marginLeft: '0.5rem',
-                      fontSize: '0.75rem',
-                      color: '#888',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    (Primary)
-                  </span>
-                )}
-                {n.type !== 'birth' && (
-                  <span style={{ marginLeft: '0.5rem', fontSize: '0.75rem', color: '#888' }}>
-                    [{n.type}]
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">Names</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {individual.names.length === 0 ? (
+            <p className="text-muted-foreground">No names recorded.</p>
+          ) : (
+            <ul className="m-0 space-y-1 pl-5">
+              {individual.names.map((n) => (
+                <li key={n.id} className="flex items-center gap-2">
+                  <span>{formatName(n).full}</span>
+                  {n.isPrimary && <Badge variant="secondary">Primary</Badge>}
+                  {n.type !== 'birth' && <Badge variant="outline">{n.type}</Badge>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
 
-      <section>
-        <h2 style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>Events</h2>
-        <EventTimeline treeId={treeId} individualId={individualId} />
-      </section>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm font-semibold">Events</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <EventTimeline treeId={treeId} individualId={individualId} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

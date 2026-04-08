@@ -1,6 +1,6 @@
 # Tree View Screen (Main Tree View)
 
-**MVP**: MVP3 (tree dashboard, module navigation). MVP6 applies the full design system.
+**MVP**: MVP3 (tree dashboard, module navigation). MVP5 applies the full design system.
 
 ## Objective
 
@@ -59,12 +59,12 @@ Clicking a stat card navigates to the corresponding module.
 
 Displays 4 action buttons for the most common creation tasks:
 
-| Button     | Action on click                  |
-| ---------- | -------------------------------- |
-| New person | Opens Create Person form window  |
-| New family | Opens Create Family form window  |
-| New event  | Opens Create Event form window   |
-| New place  | Opens Create Place form window   |
+| Button     | Action on click                 |
+| ---------- | ------------------------------- |
+| New person | Opens Create Person form window |
+| New family | Opens Create Family form window |
+| New event  | Opens Create Event form window  |
+| New place  | Opens Create Place form window  |
 
 ### Recent Activity Section
 
@@ -104,11 +104,11 @@ A horizontal scrollable list of person mini-cards representing individuals who h
 
 Accessed via the chevron next to the tree name in the page header. Contains the following options:
 
-| Menu item          | Action                                                  |
-| ------------------ | ------------------------------------------------------- |
-| Rename             | Opens Rename form window (pre-filled name, required field)    |
-| Export GEDCOM      | Opens OS save dialog, generates .ged file                     |
-| Statistics details | Navigates to a detailed statistics view                       |
+| Menu item          | Action                                                              |
+| ------------------ | ------------------------------------------------------------------- |
+| Rename             | Opens Rename form window (pre-filled name, required field)          |
+| Export GEDCOM      | Opens OS save dialog, generates .ged file                           |
+| Statistics details | Navigates to a detailed statistics view                             |
 | Delete tree        | Opens Delete confirmation (in-window dialog), then navigates to `/` |
 
 ### Empty Tree State

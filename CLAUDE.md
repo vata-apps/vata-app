@@ -146,7 +146,12 @@ Everything in this project must be written in English.
 
 ## i18n for User-Facing Strings
 
-**Deferred to MVP6.** Until then, hardcoded English strings are acceptable. Do not set up an i18n library before MVP6.
+Uses `react-i18next` + `i18next`. All user-facing strings must use `useTranslation()` — never hardcode.
+
+- Config: `src/i18n/config.ts`
+- Translations: `src/i18n/locales/{en,fr}/<namespace>.json`
+- Namespaces: `common` (shared), plus one per entity (e.g., `individuals`, `sources`)
+- Language detection: `navigator.language` → localStorage override
 
 ---
 

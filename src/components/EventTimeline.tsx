@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { convertFileSrc } from '@tauri-apps/api/core';
+import { useTranslation } from 'react-i18next';
 import { useEventTimeline } from '$hooks/useEventTimeline';
 import { getEventTypeLabel } from '$lib/event-type-labels';
 import { getCurrentTreePath } from '$/db/connection';
@@ -28,17 +29,12 @@ function ThumbnailImage({
       to="/tree/$treeId/source/$sourceId/edit"
       params={{ treeId, sourceId: thumb.sourceId }}
       title={thumb.sourceTitle}
-      style={{ display: 'inline-block', lineHeight: 0 }}
+      className="inline-block leading-none"
     >
       <img
         src={src}
         alt={thumb.originalFilename}
-        style={{
-          height: '48px',
-          borderRadius: '4px',
-          border: '1px solid #ddd',
-          objectFit: 'cover',
-        }}
+        className="h-12 rounded border border-border object-cover"
       />
     </Link>
   );
@@ -53,47 +49,38 @@ function TimelineRow({
   treeId: string;
   treePath: string | null;
 }): JSX.Element {
+  const { t } = useTranslation('common');
   const label = getEventTypeLabel(entry.eventType);
   const displayThumbnails = entry.thumbnails.slice(0, MAX_THUMBNAILS);
   const extraCount = entry.thumbnails.length - MAX_THUMBNAILS;
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        gap: '1rem',
-        padding: '0.5rem 0',
-        borderBottom: '1px solid #eee',
-      }}
-    >
-      <div style={{ flex: 1, minWidth: 0 }}>
+    <div className="flex items-start gap-4 border-b border-border py-2">
+      <div className="min-w-0 flex-1">
         <div>
-          <strong>{label}</strong>
+          <span className="font-semibold">{label}</span>
         </div>
-        <div style={{ color: '#666', fontSize: '0.9rem' }}>
-          {entry.dateOriginal ?? '(no date)'}
+        <div className="text-sm text-muted-foreground">
+          {entry.dateOriginal ?? t('timeline.noDate')}
           {entry.place && <> — {entry.place.fullName}</>}
         </div>
         {!entry.hasCitations && (
           <Link
             to="/tree/$treeId/sources"
             params={{ treeId }}
-            style={{ fontSize: '0.8rem', color: '#888', textDecoration: 'underline' }}
+            className="text-xs text-muted-foreground underline"
           >
-            Add source
+            {t('timeline.addSource')}
           </Link>
         )}
       </div>
 
       {treePath && displayThumbnails.length > 0 && (
-        <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
+        <div className="flex shrink-0 items-center gap-1">
           {displayThumbnails.map((thumb) => (
             <ThumbnailImage key={thumb.fileId} thumb={thumb} treeId={treeId} treePath={treePath} />
           ))}
-          {extraCount > 0 && (
-            <span style={{ fontSize: '0.75rem', color: '#888' }}>+{extraCount}</span>
-          )}
+          {extraCount > 0 && <span className="text-xs text-muted-foreground">+{extraCount}</span>}
         </div>
       )}
     </div>
@@ -101,19 +88,20 @@ function TimelineRow({
 }
 
 export function EventTimeline({ treeId, individualId }: EventTimelineProps): JSX.Element {
+  const { t } = useTranslation('common');
   const { data: entries, isLoading, isError } = useEventTimeline(individualId);
   const treePath = getCurrentTreePath();
 
   if (isLoading) {
-    return <p style={{ color: '#666' }}>Loading events...</p>;
+    return <p className="text-muted-foreground">{t('timeline.loading')}</p>;
   }
 
   if (isError) {
-    return <p style={{ color: '#c00' }}>Failed to load events.</p>;
+    return <p className="text-destructive">{t('timeline.error')}</p>;
   }
 
   if (!entries || entries.length === 0) {
-    return <p style={{ color: '#666' }}>No events recorded.</p>;
+    return <p className="text-muted-foreground">{t('timeline.empty')}</p>;
   }
 
   return (

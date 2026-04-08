@@ -1,0 +1,35 @@
+{
+  "title": "Sources",
+  "empty": "No sources found.",
+  "emptySearch": "No sources match your search.",
+  "search": "Search by title or author...",
+  "newSource": "New Source",
+  "columns": {
+    "id": "ID",
+    "title": "Title",
+    "author": "Author",
+    "repository": "Repository",
+    "citations": "Citations"
+  },
+  "backToList": "Back to Sources",
+  "cancelEdit": "Cancel Edit",
+  "editTitle": "Edit Source",
+  "editDetails": "Edit Details",
+  "details": "Details",
+  "noDetails": "No additional details recorded.",
+  "deleteTitle": "Delete Source",
+  "deleteConfirm": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone.",
+  "form": {
+    "title": "Title",
+    "author": "Author",
+    "publisher": "Publisher",
+    "publicationDate": "Publication Date",
+    "repository": "Repository",
+    "repositoryNone": "— None —",
+    "callNumber": "Call Number",
+    "url": "URL",
+    "notes": "Notes",
+    "createTitle": "New Source",
+    "submit": "Create Source"
+  }
+}

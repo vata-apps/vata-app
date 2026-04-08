@@ -1,92 +1,80 @@
-import { Link } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
+import type { ColumnDef } from '@tanstack/react-table';
 import { useFamilies } from '$/hooks/useFamilies';
 import { formatName } from '$/db/trees/names';
+import type { FamilyWithMembers } from '$/types/database';
+import { DataTable } from '$components/data-table';
 
 interface FamiliesPageProps {
   treeId: string;
 }
 
 export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
+  const { t } = useTranslation('families');
+  const { t: tc } = useTranslation('common');
+  const navigate = useNavigate();
   const { data: families, isLoading, isError } = useFamilies();
 
+  const columns: ColumnDef<FamilyWithMembers, string>[] = [
+    {
+      accessorKey: 'id',
+      header: t('columns.id'),
+      cell: ({ row }) => <span className="text-muted-foreground">{row.original.id}</span>,
+    },
+    {
+      id: 'husband',
+      header: t('columns.husband'),
+      accessorFn: (row) => formatName(row.husband?.primaryName ?? null).full,
+      cell: ({ getValue }) => <span className="font-medium">{getValue()}</span>,
+    },
+    {
+      id: 'wife',
+      header: t('columns.wife'),
+      accessorFn: (row) => formatName(row.wife?.primaryName ?? null).full,
+      cell: ({ getValue }) => <span className="font-medium">{getValue()}</span>,
+    },
+    {
+      id: 'children',
+      header: t('columns.children'),
+      accessorFn: (row) => String(row.children.length),
+      cell: ({ row }) => row.original.children.length,
+    },
+    {
+      id: 'marriage',
+      header: t('columns.marriage'),
+      accessorFn: (row) => row.marriageEvent?.dateOriginal ?? '',
+    },
+  ];
+
   if (isLoading) {
-    return <p style={{ color: '#666' }}>Loading families...</p>;
+    return <p className="p-6 text-sm text-muted-foreground">{tc('status.loading')}</p>;
   }
 
   if (isError) {
-    return <p style={{ color: '#c00' }}>Failed to load families.</p>;
+    return <p className="p-6 text-sm text-destructive">{tc('errors.loadFailed')}</p>;
   }
 
   return (
-    <div>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1.5rem',
-        }}
-      >
-        <h1 style={{ margin: 0 }}>Families</h1>
-        <button
-          disabled
-          style={{
-            padding: '0.5rem 1rem',
-            cursor: 'not-allowed',
-            background: 'none',
-            border: '1px solid #bbb',
-            borderRadius: '4px',
-            color: '#bbb',
-          }}
-          title="Coming soon"
-        >
-          New Family
-        </button>
+    <div className="p-6">
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-lg font-semibold">{t('title')}</h1>
       </div>
 
       {!families || families.length === 0 ? (
-        <p style={{ color: '#666' }}>No families found.</p>
+        <p className="text-sm text-muted-foreground">{t('empty')}</p>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '1rem',
-          }}
-        >
-          {families.map((family) => {
-            const husbandName = formatName(family.husband?.primaryName ?? null).full;
-            const wifeName = formatName(family.wife?.primaryName ?? null).full;
-            const marriageDate = family.marriageEvent?.dateOriginal ?? null;
-
-            return (
-              <Link
-                key={family.id}
-                to="/tree/$treeId/family/$familyId"
-                params={{ treeId, familyId: family.id }}
-                style={{
-                  display: 'block',
-                  padding: '1rem',
-                  border: '1px solid #e0e0e0',
-                  borderRadius: '6px',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                }}
-              >
-                <div style={{ fontSize: '0.75rem', color: '#888', marginBottom: '0.25rem' }}>
-                  {family.id}
-                </div>
-                <div style={{ fontWeight: 600, marginBottom: '0.25rem' }}>
-                  {husbandName} &amp; {wifeName}
-                </div>
-                <div style={{ fontSize: '0.85rem', color: '#666' }}>
-                  {family.children.length} {family.children.length === 1 ? 'child' : 'children'}
-                  {marriageDate && <> · m. {marriageDate}</>}
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        <DataTable
+          columns={columns}
+          data={families}
+          searchPlaceholder={t('search')}
+          onRowClick={(row) =>
+            navigate({
+              to: '/tree/$treeId/family/$familyId',
+              params: { treeId, familyId: row.id },
+            })
+          }
+        />
       )}
     </div>
   );

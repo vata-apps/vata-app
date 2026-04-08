@@ -1,6 +1,17 @@
-import { useState, useEffect, type KeyboardEvent } from 'react';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GedcomManager } from '$/managers/GedcomManager';
 import { openTreeDb } from '$/db/connection';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '$components/ui/dialog';
+import { Button } from '$components/ui/button';
+import { Checkbox } from '$components/ui/checkbox';
+import { Label } from '$components/ui/label';
 
 interface ExportGedcomModalProps {
   isOpen: boolean;
@@ -17,12 +28,12 @@ export function ExportGedcomModal({
   onSuccess,
   onCancel,
 }: ExportGedcomModalProps) {
+  const { t } = useTranslation('home');
   const [includePrivate, setIncludePrivate] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
 
-  // Open tree database when modal opens
   useEffect(() => {
     if (!isOpen || !treePath) return;
 
@@ -34,14 +45,14 @@ export function ExportGedcomModal({
       })
       .catch((e) => {
         if (mounted) {
-          setError('Failed to open tree: ' + (e instanceof Error ? e.message : String(e)));
+          setError(t('export.exportFailed', { error: e instanceof Error ? e.message : String(e) }));
         }
       });
 
     return () => {
       mounted = false;
     };
-  }, [isOpen, treePath]);
+  }, [isOpen, treePath, t]);
 
   const reset = () => {
     setIncludePrivate(false);
@@ -60,11 +71,10 @@ export function ExportGedcomModal({
         reset();
         onSuccess();
       } else {
-        // User cancelled the save dialog
         setLoading(false);
       }
     } catch (e) {
-      setError('Export failed: ' + (e instanceof Error ? e.message : String(e)));
+      setError(t('export.exportFailed', { error: e instanceof Error ? e.message : String(e) }));
       setLoading(false);
     }
   };
@@ -74,104 +84,50 @@ export function ExportGedcomModal({
     onCancel();
   };
 
-  if (!isOpen) return null;
-
-  function handleKeyDown(e: KeyboardEvent) {
-    if (e.key === 'Escape') handleCancel();
-  }
-
   return (
-    <div
-      onClick={handleCancel}
-      onKeyDown={handleKeyDown}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="export-gedcom-title"
-      tabIndex={-1}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0, 0, 0, 0.4)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-      }}
-    >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          background: '#fff',
-          borderRadius: '6px',
-          padding: '1.5rem',
-          maxWidth: '400px',
-          width: '90%',
-          boxShadow: '0 4px 24px rgba(0, 0, 0, 0.15)',
-        }}
-      >
-        <h3 id="export-gedcom-title" style={{ margin: '0 0 1rem' }}>
-          Export GEDCOM
-        </h3>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleCancel()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{t('export.title')}</DialogTitle>
+        </DialogHeader>
 
-        <p style={{ margin: '0 0 1rem', fontSize: '0.9rem', color: '#555' }}>
-          Export "{treeName}" to GEDCOM 5.5.1 format.
-        </p>
-
-        <div style={{ marginBottom: '1rem' }}>
-          <label
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
-          >
-            <input
-              type="checkbox"
-              checked={includePrivate}
-              onChange={(e) => setIncludePrivate(e.target.checked)}
-            />
-            <span>Include living individuals</span>
-          </label>
-          <p style={{ margin: '0.25rem 0 0 1.5rem', fontSize: '0.8rem', color: '#888' }}>
-            When unchecked, living individuals are excluded for privacy.
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            {t('export.description', { name: treeName })}
           </p>
-        </div>
 
-        {error && (
-          <div
-            style={{
-              marginBottom: '1rem',
-              padding: '1rem',
-              backgroundColor: '#fee',
-              color: '#c00',
-              borderRadius: '4px',
-              fontSize: '0.9rem',
-            }}
-          >
-            {error}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="include-living"
+                checked={includePrivate}
+                onCheckedChange={(checked) => setIncludePrivate(checked === true)}
+              />
+              <Label htmlFor="include-living" className="cursor-pointer">
+                {t('export.includeLiving')}
+              </Label>
+            </div>
+            <p className="ml-6 text-xs text-muted-foreground">{t('export.includeLivingHint')}</p>
           </div>
-        )}
 
-        <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-          <button
-            onClick={handleCancel}
-            disabled={loading}
-            style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleExport}
-            disabled={loading || !ready}
-            style={{
-              padding: '0.5rem 1rem',
-              cursor: loading || !ready ? 'not-allowed' : 'pointer',
-              color: '#fff',
-              background: loading || !ready ? '#ccc' : '#007bff',
-              border: 'none',
-              borderRadius: '4px',
-            }}
-          >
-            {!ready ? 'Loading...' : loading ? 'Exporting...' : 'Export'}
-          </button>
+          {error && (
+            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
+          )}
         </div>
-      </div>
-    </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={handleCancel} disabled={loading}>
+            {t('actions.cancel', { ns: 'common' })}
+          </Button>
+          <Button onClick={handleExport} disabled={loading || !ready}>
+            {!ready
+              ? t('status.loading', { ns: 'common' })
+              : loading
+                ? t('export.exporting')
+                : t('actions.export', { ns: 'common' })}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

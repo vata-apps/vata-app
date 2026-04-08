@@ -1,6 +1,6 @@
 # Design System
 
-> **MVP6**: The full design system (shadcn/ui + Tailwind CSS, colors, typography, components) is applied from MVP6. MVP1–5 use a minimal HTML UI without a component library.
+> **MVP5**: The full design system (shadcn/ui + Tailwind CSS, colors, typography, components) is applied from MVP5. MVP1–4 use a minimal HTML UI without a component library.
 
 ## Design Principles
 
@@ -106,10 +106,10 @@ Border         #373a40
 
 ```css
 font-family:
-  "Inter",
+  'Inter',
   -apple-system,
   BlinkMacSystemFont,
-  "Segoe UI",
+  'Segoe UI',
   sans-serif;
 ```
 
@@ -131,7 +131,7 @@ font-family:
 /* src/index.css — CSS variables for theming */
 @layer base {
   :root {
-    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 }
 ```
@@ -142,16 +142,16 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)"],
+        sans: ['var(--font-sans)'],
       },
       fontSize: {
-        xs: ["11px", { lineHeight: "1.4" }],
-        sm: ["12px", { lineHeight: "1.5" }],
-        base: ["14px", { lineHeight: "1.5" }],
-        lg: ["16px", { lineHeight: "1.4" }],
-        xl: ["20px", { lineHeight: "1.4" }],
-        "2xl": ["24px", { lineHeight: "1.3" }],
-        "3xl": ["32px", { lineHeight: "1.2" }],
+        xs: ['11px', { lineHeight: '1.4' }],
+        sm: ['12px', { lineHeight: '1.5' }],
+        base: ['14px', { lineHeight: '1.5' }],
+        lg: ['16px', { lineHeight: '1.4' }],
+        xl: ['20px', { lineHeight: '1.4' }],
+        '2xl': ['24px', { lineHeight: '1.3' }],
+        '3xl': ['32px', { lineHeight: '1.2' }],
       },
     },
   },

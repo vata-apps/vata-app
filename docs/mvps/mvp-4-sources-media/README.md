@@ -12,7 +12,7 @@ Includes: repositories, sources, citations, citation links, file attachments, so
 
 The file manager (browsing/managing all tree files independently) is deferred to a future MVP.
 
-UI is HTML-only with minimal CSS (shadcn/ui comes in MVP6).
+UI is HTML-only with minimal CSS (shadcn/ui comes in MVP5).
 
 ## Prerequisites
 

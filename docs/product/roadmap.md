@@ -2,27 +2,27 @@
 
 ## Overview
 
-Development is organized into 6 MVPs, each delivering a coherent set of capabilities. MVPs 1–3 focus on core functionality with a minimal UI. MVP4 delivers source-centric data entry with media attachments (the app's core differentiator). MVP5 adds a file manager. MVP6 introduces the complete design system.
+Development is organized into 6 MVPs, each delivering a coherent set of capabilities. MVPs 1–3 focus on core functionality with a minimal UI. MVP4 delivers source-centric data entry with media attachments (the app's core differentiator). MVP5 replaces all inline styles with a design system (shadcn/ui + Tailwind CSS) and adds internationalization. MVP6 adds the file manager.
 
 ```mermaid
 graph LR
     MVP1[MVP1 Foundation] --> MVP2[MVP2 GEDCOM]
     MVP2 --> MVP3[MVP3 Primary Entities]
     MVP3 --> MVP4[MVP4 Sources & Media]
-    MVP4 --> MVP5[MVP5 File Manager]
-    MVP5 --> MVP6[MVP6 UI]
+    MVP4 --> MVP5[MVP5 UI & i18n]
+    MVP5 --> MVP6[MVP6 File Manager]
 ```
 
 ## Status by MVP
 
-| MVP | Name              | JTBD                                                                              | Status      | Dependencies     |
-| --- | ----------------- | --------------------------------------------------------------------------------- | ----------- | ---------------- |
-| 1   | Foundation        | Create, modify, open, close, and delete a tree.                                   | Complete    | —                |
-| 2   | GEDCOM            | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.             | Complete    | MVP1             |
-| 3   | Primary Entities  | Create, modify, and delete primary entities and navigate between modules.          | Complete    | MVP1, MVP2       |
-| 4   | Sources & Media   | Create sources with media, link entities via source workspace.                    | Not Started | MVP3             |
-| 5   | File Manager      | Browse and manage all media files in a tree.                                      | Not Started | MVP4             |
-| 6   | UI                | Have a complete, polished UI for the application.                                 | Not Started | MVP5             |
+| MVP | Name             | JTBD                                                                      | Status      | Dependencies |
+| --- | ---------------- | ------------------------------------------------------------------------- | ----------- | ------------ |
+| 1   | Foundation       | Create, modify, open, close, and delete a tree.                           | Complete    | —            |
+| 2   | GEDCOM           | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.     | Complete    | MVP1         |
+| 3   | Primary Entities | Create, modify, and delete primary entities and navigate between modules. | Complete    | MVP1, MVP2   |
+| 4   | Sources & Media  | Create sources with media, link entities via source workspace.            | Complete    | MVP3         |
+| 5   | UI & i18n        | Have a polished UI with design system, dark mode, and i18n (EN/FR).       | In Progress | MVP4         |
+| 6   | File Manager     | Browse and manage all media files in a tree.                              | Not Started | MVP5         |
 
 ## Key Milestones
 
@@ -64,21 +64,24 @@ Spec: [MVP3 Product Spec](../mvps/mvp-3-primary-entities/spec.md) · Implementat
 
 Implementation: [MVP4 Phases](../mvps/mvp-4-sources-media/README.md)
 
-### MVP5 — File Manager
+### MVP5 — UI & i18n
+
+- shadcn/ui components integrated (Radix UI + Tailwind CSS v4)
+- Complete design system (dark/light mode, CSS variables, typography)
+- All screens migrated from inline styles to Tailwind classes
+- Data tables with sorting, search, and pagination
+- Internationalization (react-i18next, EN + FR)
+- React Hook Form + Zod for form validation
+
+Spec: [MVP5 Design Spec](../mvps/mvp-5-ui-i18n/spec.md) · Implementation: [MVP5 Phases](../mvps/mvp-5-ui-i18n/README.md)
+
+### MVP6 — File Manager
 
 - Standalone file browser for all media files in a tree
 - File metadata, orphan detection, preview
-- HTML-only UI, minimal CSS
-
-### MVP6 — UI
-
-- shadcn/ui components integrated (Radix UI + Tailwind CSS)
-- Complete design system (theme via CSS variables, colors, typography)
-- All screens redesigned with polished components
-- Internationalization infrastructure (react-i18next)
 
 ## External Dependencies
 
-| Dependency     | Required by | Description                                                                 |
-| -------------- | ----------- | --------------------------------------------------------------------------- |
+| Dependency     | Required by | Description                                                                                                                  |
+| -------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | In-app modules | MVP2, MVP3  | `@vata-apps/gedcom-parser` (MVP2), `@vata-apps/gedcom-date` (MVP3) — see [ADR-004](../decisions/adr-004-gedcom-libraries.md) |
