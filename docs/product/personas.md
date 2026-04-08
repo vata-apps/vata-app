@@ -24,7 +24,7 @@ Marie recently received a GEDCOM file from a cousin who has been researching the
 
 ### Relationship to Vata
 
-Marie benefits from MVP1 (tree management), MVP2 (GEDCOM import), MVP3 (adding people and events), and MVP6 (polished UI). She needs the experience to be intuitive from the start.
+Marie benefits from MVP1 (tree management), MVP2 (GEDCOM import), MVP3 (adding people and events), and MVP5 (polished UI). She needs the experience to be intuitive from the start.
 
 ---
 
@@ -82,4 +82,4 @@ Claire approaches genealogy as a research discipline. Every fact in her tree mus
 
 ### Relationship to Vata
 
-Claire is the target persona for MVP4 (sources and citations) and MVP5 (file management). Her needs validate that the data model must support sources, repositories, and file attachments as first-class entities from the schema design onward.
+Claire is the target persona for MVP4 (sources and citations) and MVP6 (file management). Her needs validate that the data model must support sources, repositories, and file attachments as first-class entities from the schema design onward.

@@ -30,14 +30,14 @@ In summary, Vata targets genealogists who want full ownership of their data — 
 
 ## Technical Summary
 
-| Aspect           | Choice                                       |
-| ---------------- | -------------------------------------------- |
-| Type             | Desktop application (Windows, macOS, Linux)  |
-| Framework        | Tauri 2.0                                    |
-| Frontend         | React 18 + TypeScript 5                      |
-| UI Library       | shadcn/ui + Tailwind CSS (from MVP6)         |
-| Database         | SQLite (local)                               |
-| Exchange Format  | GEDCOM 5.5.1                                 |
+| Aspect          | Choice                                      |
+| --------------- | ------------------------------------------- |
+| Type            | Desktop application (Windows, macOS, Linux) |
+| Framework       | Tauri 2.0                                   |
+| Frontend        | React 18 + TypeScript 5                     |
+| UI Library      | shadcn/ui + Tailwind CSS (from MVP5)        |
+| Database        | SQLite (local)                              |
+| Exchange Format | GEDCOM 5.5.1                                |
 
 For technical details, see [Architecture Overview](../architecture/overview.md) and [Tech Stack](../architecture/tech-stack.md).
 
@@ -74,14 +74,14 @@ For technical details, see [Architecture Overview](../architecture/overview.md) 
 
 ## Planned Versions
 
-| Version | Name               | Job to be Done                                                                                     |
-| ------- | ------------------ | -------------------------------------------------------------------------------------------------- |
-| MVP1    | Foundation         | Create, modify, open, close, and delete a tree.                                                    |
-| MVP2    | GEDCOM             | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.                              |
-| MVP3    | Primary Entities   | Create, modify, and delete primary entities and navigate between different modules.                 |
-| MVP4    | Sources & Media    | Create sources with media, link entities via source-centric workspace.                             |
-| MVP5    | File Manager       | Browse and manage all media files in a tree.                                                       |
-| MVP6    | UI                 | Have a complete, polished UI for the application (shadcn/ui, design system, i18n).                 |
+| Version | Name             | Job to be Done                                                                      |
+| ------- | ---------------- | ----------------------------------------------------------------------------------- |
+| MVP1    | Foundation       | Create, modify, open, close, and delete a tree.                                     |
+| MVP2    | GEDCOM           | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.               |
+| MVP3    | Primary Entities | Create, modify, and delete primary entities and navigate between different modules. |
+| MVP4    | Sources & Media  | Create sources with media, link entities via source-centric workspace.              |
+| MVP5    | UI & i18n        | Have a complete, polished UI for the application (shadcn/ui, design system, i18n).  |
+| MVP6    | File Manager     | Browse and manage all media files in a tree.                                        |
 
 For timeline and status, see [Roadmap](./roadmap.md). For detailed specs per version, see the [MVP specs](../mvps/).
 

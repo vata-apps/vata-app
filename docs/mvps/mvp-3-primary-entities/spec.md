@@ -34,8 +34,8 @@ MVP3 implements the core genealogical data model and operations: individuals, na
 ### Out
 
 - Sources and citations (MVP4)
-- File attachments (MVP5)
-- shadcn/ui components or polished UI (MVP6)
+- File attachments (MVP6)
+- shadcn/ui components or polished UI (MVP5)
 - Search or filtering (future enhancement)
 
 ## Key Decisions
@@ -52,12 +52,12 @@ MVP3 implements the core genealogical data model and operations: individuals, na
 
 ## Risks & Mitigation
 
-| Risk                                        | Mitigation                                                 |
-| ------------------------------------------- | ---------------------------------------------------------- |
-| Complex entity relationships (many-to-many) | Transactions for multi-table operations                    |
-| Referential integrity across entities        | Foreign key constraints, indexes on FK columns             |
-| Varied date formats                         | Validation before storage via `@vata-apps/gedcom-date`     |
-| Performance on large trees                  | Efficient queries with proper joins; pagination for lists  |
+| Risk                                        | Mitigation                                                |
+| ------------------------------------------- | --------------------------------------------------------- |
+| Complex entity relationships (many-to-many) | Transactions for multi-table operations                   |
+| Referential integrity across entities       | Foreign key constraints, indexes on FK columns            |
+| Varied date formats                         | Validation before storage via `@vata-apps/gedcom-date`    |
+| Performance on large trees                  | Efficient queries with proper joins; pagination for lists |
 
 ## Success Criteria
 
