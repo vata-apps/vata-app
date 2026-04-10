@@ -6,11 +6,18 @@ import {
   updateIndividual,
   deleteIndividual,
 } from '$db-tree/individuals';
-import { createName, getNamesByIndividualId } from '$db-tree/names';
-import { getEventsByIndividualIdWithDetails } from '$db-tree/events';
-import { getPrimaryName } from '$db-tree/names';
+import {
+  createName,
+  getAllNames,
+  getAllPrimaryNames,
+  getNamesByIndividualId,
+  getPrimaryName,
+} from '$db-tree/names';
+import { getAllBirthDeathEvents, getEventsByIndividualIdWithDetails } from '$db-tree/events';
 import type {
   CreateIndividualInput,
+  EventWithDetails,
+  Name,
   UpdateIndividualInput,
   IndividualWithDetails,
 } from '$/types/database';
@@ -76,20 +83,53 @@ export class IndividualManager {
 
   /**
    * Get all individuals with full details.
-   * Note: Calls getById per individual (N+1). Acceptable for local SQLite.
+   * Uses a constant number of SQL queries (individuals, primary names, all
+   * names, birth/death events) and assembles the result in JS, so loading
+   * is independent of the number of individuals.
    */
   static async getAll(): Promise<IndividualWithDetails[]> {
-    const individuals = await getAllIndividuals();
-    const results: IndividualWithDetails[] = [];
+    const [individuals, primaryNames, allNames, birthDeathEvents] = await Promise.all([
+      getAllIndividuals(),
+      getAllPrimaryNames(),
+      getAllNames(),
+      getAllBirthDeathEvents(),
+    ]);
 
-    for (const individual of individuals) {
-      const enriched = await IndividualManager.getById(individual.id);
-      if (enriched) {
-        results.push(enriched);
+    const primaryNameByIndividual = new Map<string, Name>();
+    for (const name of primaryNames) {
+      primaryNameByIndividual.set(name.individualId, name);
+    }
+
+    const namesByIndividual = new Map<string, Name[]>();
+    for (const name of allNames) {
+      const list = namesByIndividual.get(name.individualId) ?? [];
+      list.push(name);
+      namesByIndividual.set(name.individualId, list);
+    }
+
+    const birthEventByIndividual = new Map<string, EventWithDetails>();
+    const deathEventByIndividual = new Map<string, EventWithDetails>();
+    for (const event of birthDeathEvents) {
+      const tag = event.eventType.tag;
+      if (tag !== 'BIRT' && tag !== 'DEAT') continue;
+
+      for (const participant of event.participants) {
+        if (participant.role !== 'principal' || participant.individualId === null) continue;
+        const target = tag === 'BIRT' ? birthEventByIndividual : deathEventByIndividual;
+        // Keep the first event encountered per individual, matching getById semantics
+        if (!target.has(participant.individualId)) {
+          target.set(participant.individualId, event);
+        }
       }
     }
 
-    return results;
+    return individuals.map((individual) => ({
+      ...individual,
+      primaryName: primaryNameByIndividual.get(individual.id) ?? null,
+      names: namesByIndividual.get(individual.id) ?? [],
+      birthEvent: birthEventByIndividual.get(individual.id) ?? null,
+      deathEvent: deathEventByIndividual.get(individual.id) ?? null,
+    }));
   }
 
   /**

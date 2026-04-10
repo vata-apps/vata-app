@@ -12,6 +12,7 @@ import {
 import { ArrowUpDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { Button } from '$components/ui/button';
 import { Input } from '$components/ui/input';
 import {
@@ -43,7 +44,8 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation('common');
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const globalFilter = useDebouncedValue(inputValue, 250);
 
   const table = useReactTable({
     data,
@@ -76,8 +78,8 @@ export function DataTable<TData, TValue>({
     <div className="space-y-2">
       <Input
         placeholder={searchPlaceholder ?? t('actions.search')}
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
         className="h-8 max-w-sm text-sm"
       />
 

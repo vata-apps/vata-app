@@ -67,6 +67,37 @@ export async function getNamesByIndividualId(individualId: string): Promise<Name
 }
 
 /**
+ * Get the primary name for every individual in the tree.
+ * Single query — safe to use for batch loading list views.
+ * Only returns rows where `is_primary = 1`. Individuals without a primary
+ * name are simply absent from the result set.
+ */
+export async function getAllPrimaryNames(): Promise<Name[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<RawName[]>(
+    `SELECT id, individual_id, type, prefix, given_names, surname, suffix, nickname, is_primary, created_at, updated_at
+     FROM names
+     WHERE is_primary = 1
+     ORDER BY individual_id`
+  );
+  return rows.map(mapToName);
+}
+
+/**
+ * Get every name in the tree, ordered by individual and with primary names first.
+ * Single query — safe to use for batch loading list views.
+ */
+export async function getAllNames(): Promise<Name[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<RawName[]>(
+    `SELECT id, individual_id, type, prefix, given_names, surname, suffix, nickname, is_primary, created_at, updated_at
+     FROM names
+     ORDER BY individual_id, is_primary DESC, id`
+  );
+  return rows.map(mapToName);
+}
+
+/**
  * Get the primary name for an individual
  */
 export async function getPrimaryName(individualId: string): Promise<Name | null> {
