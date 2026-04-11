@@ -39,12 +39,12 @@ The right sidebar SHALL display a "Families" section showing families where the 
 
 - **WHEN** an individual is a husband or wife in one or more families
 - **THEN** each family SHALL be displayed showing the spouse's name and children
-- **THEN** spouse and children names SHALL be clickable links
+- **THEN** clicking a spouse or child name SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<personId>` (updating the `id` search param) rather than performing a full page navigation, preserving browser history for back/forward and deep-linking
 
 #### Scenario: No spouse families
 
 - **WHEN** an individual has no spouse families
-- **THEN** the Families section SHALL be collapsed or show an empty state
+- **THEN** the Families section SHALL display an empty state with the literal text "No families"
 
 ### Requirement: Events section
 
