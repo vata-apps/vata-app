@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import { mapToPlace, type RawPlace } from './places';
 import type {
   Event,
@@ -671,22 +672,6 @@ interface RawEventWithType extends RawEvent {
   et_sort_order: number;
 }
 
-/**
- * SQLite defaults to a maximum of 999 host parameters per query (the
- * SQLITE_MAX_VARIABLE_NUMBER compile-time limit). We stay below that so bulk
- * `IN (...)` fetches never fail on trees that exceed the default.
- */
-const SQLITE_IN_CLAUSE_LIMIT = 900;
-
-function chunkArray<T>(items: T[], size: number): T[][] {
-  if (items.length <= size) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += size) {
-    chunks.push(items.slice(i, i + size));
-  }
-  return chunks;
-}
-
 function mapToEventWithType(row: RawEventWithType): { event: Event; eventType: EventType } {
   const event = mapToEvent(row);
   const eventType = mapToEventType({
@@ -717,7 +702,7 @@ async function assembleEventsWithDetails(
   // SQLite host-parameter limit when the tree has many events.
   const participantsByEvent = new Map<number, EventParticipant[]>();
   for (const idsChunk of chunkArray(eventDbIds, SQLITE_IN_CLAUSE_LIMIT)) {
-    const placeholders = idsChunk.map((_, i) => `$${i + 1}`).join(', ');
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
     const participantRows = await db.select<RawEventParticipant[]>(
       `SELECT id, event_id, individual_id, family_id, role, notes, created_at
        FROM event_participants
@@ -740,7 +725,7 @@ async function assembleEventsWithDetails(
   const placeMap = new Map<number, Place>();
   if (uniquePlaceIds.length > 0) {
     for (const idsChunk of chunkArray(uniquePlaceIds, SQLITE_IN_CLAUSE_LIMIT)) {
-      const placeholders = idsChunk.map((_, i) => `$${i + 1}`).join(', ');
+      const placeholders = buildInClausePlaceholders(idsChunk.length);
       const placeRows = await db.select<RawPlace[]>(
         `SELECT id, name, full_name, place_type_id, parent_id, latitude, longitude, notes, created_at, updated_at
          FROM places
@@ -779,6 +764,47 @@ export async function getAllBirthDeathEvents(): Promise<EventWithDetails[]> {
      WHERE et.tag IN ('BIRT', 'DEAT')
      ORDER BY e.id`
   );
+  return assembleEventsWithDetails(rows);
+}
+
+/**
+ * Get BIRT/DEAT events where any of the given individuals appears as a
+ * `principal` participant. Intended for batch loading enriched individual
+ * lists for a known subset of individuals (e.g. the people referenced by
+ * `family_members` rows in `FamilyManager.getAll`). The returned events
+ * are deduplicated — an event is returned once even if multiple requested
+ * individuals participate in it.
+ */
+export async function getBirthDeathEventsForIndividuals(
+  individualIds: string[]
+): Promise<EventWithDetails[]> {
+  if (individualIds.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = individualIds.map(parseEntityId);
+
+  const seen = new Set<number>();
+  const rows: RawEventWithType[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawEventWithType[]>(
+      `SELECT DISTINCT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+              et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+       FROM events e
+       INNER JOIN event_types et ON et.id = e.event_type_id
+       INNER JOIN event_participants ep ON ep.event_id = e.id
+       WHERE et.tag IN ('BIRT', 'DEAT')
+         AND ep.role = 'principal'
+         AND ep.individual_id IN (${placeholders})
+       ORDER BY e.id`,
+      idsChunk
+    );
+    for (const row of chunkRows) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      rows.push(row);
+    }
+  }
+
   return assembleEventsWithDetails(rows);
 }
 

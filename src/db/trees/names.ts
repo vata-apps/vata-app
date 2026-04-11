@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import type {
   Name,
   NameType,
@@ -94,6 +95,57 @@ export async function getAllNames(): Promise<Name[]> {
      FROM names
      ORDER BY individual_id, is_primary DESC, id`
   );
+  return rows.map(mapToName);
+}
+
+/**
+ * Get the `is_primary = 1` rows for a specific set of individuals.
+ * Intended for batch loading a sparse set of enriched individuals
+ * (e.g. the members referenced by `FamilyManager.getAll`). Chunks the
+ * `IN (...)` clause so callers never hit SQLite's parameter limit.
+ */
+export async function getPrimaryNamesForIndividuals(individualIds: string[]): Promise<Name[]> {
+  if (individualIds.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = individualIds.map(parseEntityId);
+
+  const rows: RawName[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawName[]>(
+      `SELECT id, individual_id, type, prefix, given_names, surname, suffix, nickname, is_primary, created_at, updated_at
+       FROM names
+       WHERE is_primary = 1 AND individual_id IN (${placeholders})
+       ORDER BY individual_id`,
+      idsChunk
+    );
+    rows.push(...chunkRows);
+  }
+  return rows.map(mapToName);
+}
+
+/**
+ * Get every name row for a specific set of individuals, with primary
+ * names first within each individual. Complements
+ * `getPrimaryNamesForIndividuals` when alternative names are needed.
+ */
+export async function getNamesForIndividuals(individualIds: string[]): Promise<Name[]> {
+  if (individualIds.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = individualIds.map(parseEntityId);
+
+  const rows: RawName[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawName[]>(
+      `SELECT id, individual_id, type, prefix, given_names, surname, suffix, nickname, is_primary, created_at, updated_at
+       FROM names
+       WHERE individual_id IN (${placeholders})
+       ORDER BY individual_id, is_primary DESC, id`,
+      idsChunk
+    );
+    rows.push(...chunkRows);
+  }
   return rows.map(mapToName);
 }
 

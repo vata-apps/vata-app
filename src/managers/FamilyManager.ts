@@ -104,17 +104,20 @@ export class FamilyManager {
 
   /**
    * Get all families with full details.
-   * Uses a constant number of SQL queries (families, family members, all
-   * individuals via IndividualManager.getAll, marriage events) and assembles
-   * the result in JS, so loading is independent of the number of families.
+   * Runs three parallel batch queries — families, family_members, marriage
+   * events — then fetches only the individuals actually referenced by
+   * `family_members` through `IndividualManager.getByIds`, so sparse trees
+   * don't pay the cost of loading people unrelated to any family.
    */
   static async getAll(): Promise<FamilyWithMembers[]> {
-    const [families, members, individuals, marriageEvents] = await Promise.all([
+    const [families, members, marriageEvents] = await Promise.all([
       getAllFamilies(),
       getAllFamilyMembers(),
-      IndividualManager.getAll(),
       getAllMarriageEvents(),
     ]);
+
+    const referencedIndividualIds = Array.from(new Set(members.map((m) => m.individualId)));
+    const individuals = await IndividualManager.getByIds(referencedIndividualIds);
 
     const individualById = new Map<string, IndividualWithDetails>();
     for (const individual of individuals) {
