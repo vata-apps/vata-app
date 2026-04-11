@@ -14,7 +14,7 @@ The right sidebar SHALL display a "Parents" section showing the individual's fat
 #### Scenario: No parents recorded
 
 - **WHEN** an individual has no parent family
-- **THEN** the Parents section SHALL display an empty state
+- **THEN** the Parents section SHALL display an empty state with the literal text "No parents"
 
 ### Requirement: Siblings in parents section
 
@@ -61,4 +61,4 @@ The right sidebar SHALL display an "Events" section with the individual's event 
 #### Scenario: No events
 
 - **WHEN** an individual has no events
-- **THEN** the Events section SHALL display an empty state with the "Add" button still visible
+- **THEN** the Events section SHALL display an empty state with the literal text "No events" and the "Add" button still visible
