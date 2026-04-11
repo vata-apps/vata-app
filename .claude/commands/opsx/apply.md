@@ -41,7 +41,7 @@ Implement tasks from an OpenSpec change.
    - Dynamic instruction based on current state
 
    **Handle states:**
-   - If `state: "blocked"` (missing artifacts): show message, suggest using `/opsx:continue`
+   - If `state: "blocked"` (missing artifacts): show message listing what's missing, suggest using `/opsx:explore` (or create the missing artifacts manually)
    - If `state: "all_done"`: congratulate, suggest archive
    - Otherwise: proceed to implementation
 
@@ -85,7 +85,7 @@ Implement tasks from an OpenSpec change.
 
 **Output During Implementation**
 
-```
+```text
 ## Implementing: <change-name> (schema: <schema-name>)
 
 Working on task 3/7: <task description>
@@ -99,7 +99,7 @@ Working on task 4/7: <task description>
 
 **Output On Completion**
 
-```
+```text
 ## Implementation Complete
 
 **Change:** <change-name>
@@ -116,7 +116,7 @@ All tasks complete! You can archive this change with `/opsx:archive`.
 
 **Output On Pause (Issue Encountered)**
 
-```
+```text
 ## Implementation Paused
 
 **Change:** <change-name>
@@ -146,7 +146,7 @@ What would you like to do?
 
 **Fluid Workflow Integration**
 
-This skill supports the "actions on a change" model:
+This command supports the "actions on a change" model:
 
 - **Can be invoked anytime**: Before all artifacts are done (if tasks exist), after partial implementation, interleaved with other actions
 - **Allows artifact updates**: If implementation reveals design issues, suggest updating artifacts - not phase-locked, work fluidly

@@ -45,7 +45,7 @@ Implement tasks from an OpenSpec change.
    - Dynamic instruction based on current state
 
    **Handle states:**
-   - If `state: "blocked"` (missing artifacts): show message, suggest using openspec-continue-change
+   - If `state: "blocked"` (missing artifacts): show message listing what's missing, suggest using `/opsx:explore` (or create the missing artifacts manually)
    - If `state: "all_done"`: congratulate, suggest archive
    - Otherwise: proceed to implementation
 
