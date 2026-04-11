@@ -8,7 +8,8 @@ The right sidebar SHALL display a "Parents" section showing the individual's fat
 
 - **WHEN** an individual has parents recorded
 - **THEN** each parent SHALL be displayed as a card/row showing their name, ID, birth/death years, gender, and living status
-- **THEN** clicking a parent card SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<parentId>` (updating the `id` search param) rather than performing a full page navigation
+- **THEN** a missing birth or death year SHALL be rendered as the literal placeholder `—` (em dash)
+- **THEN** clicking a parent card SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<parentId>` (updating the `id` search param) rather than performing a full-page navigation
 
 #### Scenario: No parents recorded
 
@@ -23,7 +24,8 @@ The Parents section SHALL also list siblings below the parents, with "Add Brothe
 
 - **WHEN** the individual has siblings in the parent family
 - **THEN** each sibling SHALL be displayed as a card/row with name, ID, birth/death years, gender, and living status
-- **THEN** clicking a sibling card SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<siblingId>` (updating the `id` search param) rather than performing a full page navigation
+- **THEN** a missing birth or death year SHALL be rendered as the literal placeholder `—` (em dash)
+- **THEN** clicking a sibling card SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<siblingId>` (updating the `id` search param) rather than performing a full-page navigation
 
 #### Scenario: Add sibling buttons
 
@@ -39,7 +41,7 @@ The right sidebar SHALL display a "Families" section showing families where the 
 
 - **WHEN** an individual is a husband or wife in one or more families
 - **THEN** each family SHALL be displayed showing the spouse's name and children
-- **THEN** clicking a spouse or child name SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<personId>` (updating the `id` search param) rather than performing a full page navigation, preserving browser history for back/forward and deep-linking
+- **THEN** clicking a spouse or child name SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<personId>` (updating the `id` search param) rather than performing a full-page navigation, preserving browser history for back/forward and deep-linking
 
 #### Scenario: No spouse families
 
