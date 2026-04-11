@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   type ColumnDef,
   type SortingState,
@@ -47,14 +47,24 @@ export function DataTable<TData, TValue>({
   const [inputValue, setInputValue] = useState('');
   const globalFilter = useDebouncedValue(inputValue, 250);
 
+  const columnFilters = useMemo(
+    () => (searchColumnId ? [{ id: searchColumnId, value: globalFilter }] : []),
+    [searchColumnId, globalFilter]
+  );
+
+  const tableState = useMemo(
+    () => ({
+      sorting,
+      globalFilter: searchColumnId ? undefined : globalFilter,
+      columnFilters,
+    }),
+    [sorting, globalFilter, searchColumnId, columnFilters]
+  );
+
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting,
-      globalFilter: searchColumnId ? undefined : globalFilter,
-      columnFilters: searchColumnId ? [{ id: searchColumnId, value: globalFilter }] : [],
-    },
+    state: tableState,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
