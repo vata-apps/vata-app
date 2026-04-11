@@ -46,6 +46,13 @@ The selected individual SHALL be encoded in the URL so it can be bookmarked and 
 - **WHEN** the user selects different individuals and uses the browser back button
 - **THEN** the previously selected individual SHALL be restored
 
+#### Scenario: Invalid `id` search param
+
+- **WHEN** the user navigates to `/tree/$treeId/individuals?id=<value>` where `<value>` does not match any individual in the tree (e.g., a stale bookmark)
+- **THEN** no individual SHALL be selected
+- **THEN** the center and right panels SHALL display a "not found" empty state
+- **THEN** the left panel SHALL remain fully usable for selecting another individual
+
 ### Requirement: Independent panel scrolling
 
 Each of the three panels SHALL scroll independently.

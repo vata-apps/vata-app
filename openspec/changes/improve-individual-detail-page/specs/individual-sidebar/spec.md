@@ -8,7 +8,7 @@ The right sidebar SHALL display a "Parents" section showing the individual's fat
 
 - **WHEN** an individual has parents recorded
 - **THEN** each parent SHALL be displayed as a card/row showing their name, ID, birth/death years, gender, and living status
-- **THEN** each parent card SHALL be clickable to navigate to that parent's detail
+- **THEN** clicking a parent card SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<parentId>` (updating the `id` search param) rather than performing a full page navigation
 
 #### Scenario: No parents recorded
 
@@ -23,7 +23,7 @@ The Parents section SHALL also list siblings below the parents, with "Add Brothe
 
 - **WHEN** the individual has siblings in the parent family
 - **THEN** each sibling SHALL be displayed as a card/row with name, ID, birth/death years, gender, and living status
-- **THEN** each sibling card SHALL be clickable to navigate to that sibling's detail
+- **THEN** clicking a sibling card SHALL update the selection by navigating to `/tree/$treeId/individuals?id=<siblingId>` (updating the `id` search param) rather than performing a full page navigation
 
 #### Scenario: Add sibling buttons
 

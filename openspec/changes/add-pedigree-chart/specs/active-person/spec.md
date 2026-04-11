@@ -29,6 +29,11 @@ The system SHALL provide a hook that returns the effective active person, fallin
 - **WHEN** the tree has a `home_person_id` set and the hook is called
 - **THEN** the hook SHALL return the individual with that ID
 
+#### Scenario: Stale `home_person_id`
+
+- **WHEN** the tree has a `home_person_id` that does not match any individual in the tree and the hook is called
+- **THEN** the hook SHALL treat the stale value as if unset and fall through to the auto-fallback behavior (return the first individual in the tree, or `null` if the tree is empty)
+
 #### Scenario: Unset with individuals available
 
 - **WHEN** the tree has no `home_person_id` but has at least one individual

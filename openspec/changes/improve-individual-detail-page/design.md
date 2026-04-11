@@ -65,4 +65,4 @@ The Figma mockup shows a three-panel layout: individual list (left), structured 
 
 - **Performance with large trees**: The left panel loads all individuals via `useIndividuals()`. For trees with thousands of entries, this could be slow. → Mitigation: The existing pagination from IndividualsPage is already implemented; we can reuse the search/filter logic. Virtual scrolling can be added later if needed.
 - **Multiple concurrent queries**: Rendering the detail view triggers `useIndividual` + `useIndividualRelationships` + `useEventTimeline`. → Mitigation: TanStack Query handles deduplication and caching. These are lightweight SQLite queries.
-- **Route consolidation**: Merging two routes into one changes existing URLs. → Mitigation: The old `/individual/$individualId` route can redirect to `/individuals?id=$individualId` for any bookmarks.
+- **Route consolidation**: Merging two routes into one changes existing URLs. → Mitigation: The old `/tree/$treeId/individual/$individualId` route can redirect to `/tree/$treeId/individuals?id=$individualId` for any bookmarks, preserving the tree context.

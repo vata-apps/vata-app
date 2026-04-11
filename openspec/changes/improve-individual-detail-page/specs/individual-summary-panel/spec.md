@@ -33,7 +33,7 @@ The summary SHALL display all non-primary names as alternative names.
 #### Scenario: No alternative names
 
 - **WHEN** an individual has only a primary name
-- **THEN** the Alternative names row SHALL display "None" or be omitted
+- **THEN** the Alternative names row SHALL be displayed and SHALL show the literal text "None"
 
 ### Requirement: Place links
 

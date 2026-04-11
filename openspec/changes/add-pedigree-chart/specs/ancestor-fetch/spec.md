@@ -24,8 +24,8 @@ The system SHALL provide a DB function `getAncestors(rootId, generations)` that 
 
 #### Scenario: Generations parameter bounds
 
-- **WHEN** `getAncestors(rootId, N)` is called
-- **THEN** the function SHALL reject or clamp values where N is less than 1 or greater than 5
+- **WHEN** `getAncestors(rootId, N)` is called with N outside the inclusive range `1..5`
+- **THEN** the function SHALL clamp N to that range: values less than 1 SHALL be treated as 1, and values greater than 5 SHALL be treated as 5
 
 ### Requirement: Ancestor results structured as Ahnentafel numbering
 
@@ -44,8 +44,8 @@ The ancestor fetch result SHALL be indexed by Ahnentafel (Sosa–Stradonitz) num
 #### Scenario: Missing ancestor slots
 
 - **WHEN** an ancestor at slot `n` is unknown
-- **THEN** the result SHALL have no entry (or a null entry) at slot `n`
-- **THEN** descendants of that missing slot SHALL also be absent from the result
+- **THEN** the result SHALL have a `null` entry at slot `n`
+- **THEN** descendants of that missing slot SHALL also be `null` entries in the result
 
 ### Requirement: Each ancestor node exposes display fields
 

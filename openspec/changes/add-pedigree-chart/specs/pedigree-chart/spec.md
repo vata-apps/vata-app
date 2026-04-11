@@ -99,7 +99,9 @@ Clicking a filled ancestor node SHALL re-root the pedigree chart around that per
 
 #### Scenario: Keyboard activation
 
-- **WHEN** a person card is focused and the user presses Enter or Space
+- **WHEN** a filled person card is rendered
+- **THEN** the card SHALL be keyboard focusable and expose interactive semantics (e.g., `role="button"` or a semantic `<button>`)
+- **WHEN** a filled person card is focused and the user presses Enter or Space
 - **THEN** the chart SHALL re-root on that person as if it were clicked
 
 ### Requirement: Connector lines between generations

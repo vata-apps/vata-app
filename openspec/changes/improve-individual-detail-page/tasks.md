@@ -8,6 +8,9 @@
 - [ ] 2.1 Create `IndividualsMasterDetail` layout component with CSS Grid three-column layout (`280px 1fr 320px`) and independent scroll regions per panel
 - [ ] 2.2 Update the `/tree/$treeId/individuals` route to use the new master-detail layout with `id` search param for selected individual
 - [ ] 2.3 Add redirect from old `/tree/$treeId/individual/$individualId` route to `/tree/$treeId/individuals?id=$individualId`
+- [ ] 2.4 Add integration test: selecting an individual via `?id=` restores the selection after navigation / back / refresh
+- [ ] 2.5 Add integration test: the old `/tree/$treeId/individual/$individualId` route redirects to `/tree/$treeId/individuals?id=$individualId` while preserving browser history
+- [ ] 2.6 Add integration test: an invalid `?id=` value renders the "not found" empty state without selecting any individual
 
 ## 3. Left Panel — Individual List
 
