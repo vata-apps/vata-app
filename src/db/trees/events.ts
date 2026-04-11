@@ -671,16 +671,32 @@ interface RawEventWithType extends RawEvent {
   et_sort_order: number;
 }
 
+/**
+ * SQLite defaults to a maximum of 999 host parameters per query (the
+ * SQLITE_MAX_VARIABLE_NUMBER compile-time limit). We stay below that so bulk
+ * `IN (...)` fetches never fail on trees that exceed the default.
+ */
+const SQLITE_IN_CLAUSE_LIMIT = 900;
+
+function chunkArray<T>(items: T[], size: number): T[][] {
+  if (items.length <= size) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+  return chunks;
+}
+
 function mapToEventWithType(row: RawEventWithType): { event: Event; eventType: EventType } {
   const event = mapToEvent(row);
-  const eventType: EventType = {
-    id: String(row.et_id),
+  const eventType = mapToEventType({
+    id: row.et_id,
     tag: row.et_tag,
-    category: row.et_category as EventCategory,
-    isSystem: row.et_is_system === 1,
-    customName: row.et_custom_name,
-    sortOrder: row.et_sort_order,
-  };
+    category: row.et_category,
+    is_system: row.et_is_system,
+    custom_name: row.et_custom_name,
+    sort_order: row.et_sort_order,
+  });
   return { event, eventType };
 }
 
@@ -696,40 +712,44 @@ async function assembleEventsWithDetails(
 
   const db = await getTreeDb();
   const eventDbIds = eventRows.map((r) => r.id);
-  const placeholders = eventDbIds.map((_, i) => `$${i + 1}`).join(', ');
 
-  // Fetch all participants for these events in a single query
-  const participantRows = await db.select<RawEventParticipant[]>(
-    `SELECT id, event_id, individual_id, family_id, role, notes, created_at
-     FROM event_participants
-     WHERE event_id IN (${placeholders})
-     ORDER BY role, id`,
-    eventDbIds
-  );
-
+  // Fetch all participants for these events, chunking to stay under the
+  // SQLite host-parameter limit when the tree has many events.
   const participantsByEvent = new Map<number, EventParticipant[]>();
-  for (const row of participantRows) {
-    const list = participantsByEvent.get(row.event_id) ?? [];
-    list.push(mapToEventParticipant(row));
-    participantsByEvent.set(row.event_id, list);
+  for (const idsChunk of chunkArray(eventDbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = idsChunk.map((_, i) => `$${i + 1}`).join(', ');
+    const participantRows = await db.select<RawEventParticipant[]>(
+      `SELECT id, event_id, individual_id, family_id, role, notes, created_at
+       FROM event_participants
+       WHERE event_id IN (${placeholders})
+       ORDER BY role, id`,
+      idsChunk
+    );
+    for (const row of participantRows) {
+      const list = participantsByEvent.get(row.event_id) ?? [];
+      list.push(mapToEventParticipant(row));
+      participantsByEvent.set(row.event_id, list);
+    }
   }
 
-  // Fetch all places referenced by these events in a single query
+  // Fetch all places referenced by these events, chunked for the same reason.
   const uniquePlaceIds = Array.from(
     new Set(eventRows.map((r) => r.place_id).filter((id): id is number => id !== null))
   );
 
   const placeMap = new Map<number, Place>();
   if (uniquePlaceIds.length > 0) {
-    const placeParams = uniquePlaceIds.map((_, i) => `$${i + 1}`).join(', ');
-    const placeRows = await db.select<RawPlace[]>(
-      `SELECT id, name, full_name, place_type_id, parent_id, latitude, longitude, notes, created_at, updated_at
-       FROM places
-       WHERE id IN (${placeParams})`,
-      uniquePlaceIds
-    );
-    for (const row of placeRows) {
-      placeMap.set(row.id, mapToPlace(row));
+    for (const idsChunk of chunkArray(uniquePlaceIds, SQLITE_IN_CLAUSE_LIMIT)) {
+      const placeholders = idsChunk.map((_, i) => `$${i + 1}`).join(', ');
+      const placeRows = await db.select<RawPlace[]>(
+        `SELECT id, name, full_name, place_type_id, parent_id, latitude, longitude, notes, created_at, updated_at
+         FROM places
+         WHERE id IN (${placeholders})`,
+        idsChunk
+      );
+      for (const row of placeRows) {
+        placeMap.set(row.id, mapToPlace(row));
+      }
     }
   }
 

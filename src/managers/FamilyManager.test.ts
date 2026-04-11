@@ -12,10 +12,6 @@ vi.mock('$/db/connection', () => ({
   getTreeDb: vi.fn(),
 }));
 
-import('$/db/connection').then(({ getTreeDb }) => {
-  (getTreeDb as ReturnType<typeof vi.fn>).mockResolvedValue(db);
-});
-
 beforeEach(async () => {
   const { getTreeDb } = await import('$/db/connection');
   (getTreeDb as ReturnType<typeof vi.fn>).mockResolvedValue(db);

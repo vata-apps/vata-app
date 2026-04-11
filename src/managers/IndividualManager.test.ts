@@ -11,10 +11,6 @@ vi.mock('$/db/connection', () => ({
   getTreeDb: vi.fn(),
 }));
 
-import('$/db/connection').then(({ getTreeDb }) => {
-  (getTreeDb as ReturnType<typeof vi.fn>).mockResolvedValue(db);
-});
-
 beforeEach(async () => {
   const { getTreeDb } = await import('$/db/connection');
   (getTreeDb as ReturnType<typeof vi.fn>).mockResolvedValue(db);
@@ -174,6 +170,32 @@ describe('IndividualManager.getAll', () => {
 
     const principal = result.find((i) => i.id === principalId);
     const witness = result.find((i) => i.id === witnessId);
+    expect(principal?.birthEvent?.dateOriginal).toBe('1900-01-01');
+    expect(witness?.birthEvent).toBeNull();
+  });
+});
+
+describe('IndividualManager.getById', () => {
+  it('only attaches birth/death events where the individual is a principal participant', async () => {
+    // Shared rule with getAll: a witness at someone else's birth must not
+    // see that birth reported as their own.
+    const principalId = await createIndividual({ gender: 'M' });
+    const witnessId = await createIndividual({ gender: 'F' });
+    await createName({ individualId: principalId, givenNames: 'Principal', isPrimary: true });
+    await createName({ individualId: witnessId, givenNames: 'Witness', isPrimary: true });
+
+    const birtType = await getEventTypeByTag('BIRT');
+    if (!birtType) throw new Error('BIRT event type missing');
+    const eventId = await createEvent({
+      eventTypeId: birtType.id,
+      dateOriginal: '1900-01-01',
+    });
+    await addEventParticipant({ eventId, individualId: principalId, role: 'principal' });
+    await addEventParticipant({ eventId, individualId: witnessId, role: 'witness' });
+
+    const principal = await IndividualManager.getById(principalId);
+    const witness = await IndividualManager.getById(witnessId);
+
     expect(principal?.birthEvent?.dateOriginal).toBe('1900-01-01');
     expect(witness?.birthEvent).toBeNull();
   });

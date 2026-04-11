@@ -29,6 +29,27 @@ export interface CreateIndividualWithNameInput extends CreateIndividualInput {
   };
 }
 
+/**
+ * Select the first event whose type matches `tag` and where the given
+ * individual appears as a `principal` participant. Shared between `getAll`
+ * and `getById` so list and detail views stay consistent (see
+ * `bulk-entity-fetch` spec: Constant-query individual list fetch).
+ */
+function findPrincipalLifeEvent(
+  events: EventWithDetails[],
+  individualId: string,
+  tag: 'BIRT' | 'DEAT'
+): EventWithDetails | null {
+  for (const event of events) {
+    if (event.eventType.tag !== tag) continue;
+    const isPrincipal = event.participants.some(
+      (p) => p.role === 'principal' && p.individualId === individualId
+    );
+    if (isPrincipal) return event;
+  }
+  return null;
+}
+
 export class IndividualManager {
   /**
    * Create an individual with an optional primary name in a single transaction.
@@ -69,8 +90,8 @@ export class IndividualManager {
     const names = await getNamesByIndividualId(id);
     const events = await getEventsByIndividualIdWithDetails(id);
 
-    const birthEvent = events.find((e) => e.eventType.tag === 'BIRT') ?? null;
-    const deathEvent = events.find((e) => e.eventType.tag === 'DEAT') ?? null;
+    const birthEvent = findPrincipalLifeEvent(events, id, 'BIRT');
+    const deathEvent = findPrincipalLifeEvent(events, id, 'DEAT');
 
     return {
       ...individual,
