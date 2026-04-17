@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import { mapToPlace, type RawPlace } from './places';
 import type {
   Event,
@@ -656,6 +657,173 @@ export async function getIndividualEventByType(
 
   const event = mapToEvent(rows[0]);
   return getEventWithDetails(event.id);
+}
+
+// =============================================================================
+// Bulk Fetch Helpers (for list-view managers)
+// =============================================================================
+
+interface RawEventWithType extends RawEvent {
+  et_id: number;
+  et_tag: string | null;
+  et_category: string;
+  et_is_system: number;
+  et_custom_name: string | null;
+  et_sort_order: number;
+}
+
+function mapToEventWithType(row: RawEventWithType): { event: Event; eventType: EventType } {
+  const event = mapToEvent(row);
+  const eventType = mapToEventType({
+    id: row.et_id,
+    tag: row.et_tag,
+    category: row.et_category,
+    is_system: row.et_is_system,
+    custom_name: row.et_custom_name,
+    sort_order: row.et_sort_order,
+  });
+  return { event, eventType };
+}
+
+/**
+ * Assemble EventWithDetails[] from a set of event rows.
+ * Loads participants and places for the given events in a constant number
+ * of queries (independent of event count).
+ */
+async function assembleEventsWithDetails(
+  eventRows: RawEventWithType[]
+): Promise<EventWithDetails[]> {
+  if (eventRows.length === 0) return [];
+
+  const db = await getTreeDb();
+  const eventDbIds = eventRows.map((r) => r.id);
+
+  // Fetch all participants for these events, chunking to stay under the
+  // SQLite host-parameter limit when the tree has many events.
+  const participantsByEvent = new Map<number, EventParticipant[]>();
+  for (const idsChunk of chunkArray(eventDbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const participantRows = await db.select<RawEventParticipant[]>(
+      `SELECT id, event_id, individual_id, family_id, role, notes, created_at
+       FROM event_participants
+       WHERE event_id IN (${placeholders})
+       ORDER BY role, id`,
+      idsChunk
+    );
+    for (const row of participantRows) {
+      const list = participantsByEvent.get(row.event_id) ?? [];
+      list.push(mapToEventParticipant(row));
+      participantsByEvent.set(row.event_id, list);
+    }
+  }
+
+  // Fetch all places referenced by these events, chunked for the same reason.
+  const uniquePlaceIds = Array.from(
+    new Set(eventRows.map((r) => r.place_id).filter((id): id is number => id !== null))
+  );
+
+  const placeMap = new Map<number, Place>();
+  if (uniquePlaceIds.length > 0) {
+    for (const idsChunk of chunkArray(uniquePlaceIds, SQLITE_IN_CLAUSE_LIMIT)) {
+      const placeholders = buildInClausePlaceholders(idsChunk.length);
+      const placeRows = await db.select<RawPlace[]>(
+        `SELECT id, name, full_name, place_type_id, parent_id, latitude, longitude, notes, created_at, updated_at
+         FROM places
+         WHERE id IN (${placeholders})`,
+        idsChunk
+      );
+      for (const row of placeRows) {
+        placeMap.set(row.id, mapToPlace(row));
+      }
+    }
+  }
+
+  return eventRows.map((row) => {
+    const { event, eventType } = mapToEventWithType(row);
+    return {
+      ...event,
+      eventType,
+      place: row.place_id !== null ? (placeMap.get(row.place_id) ?? null) : null,
+      participants: participantsByEvent.get(row.id) ?? [],
+    };
+  });
+}
+
+/**
+ * Get every BIRT and DEAT event in the tree with full details.
+ * Uses a constant number of SQL queries regardless of event count.
+ * Intended for list-view batch loading (e.g. IndividualManager.getAll).
+ */
+export async function getAllBirthDeathEvents(): Promise<EventWithDetails[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<RawEventWithType[]>(
+    `SELECT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+            et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+     FROM events e
+     INNER JOIN event_types et ON et.id = e.event_type_id
+     WHERE et.tag IN ('BIRT', 'DEAT')
+     ORDER BY e.id`
+  );
+  return assembleEventsWithDetails(rows);
+}
+
+/**
+ * Get BIRT/DEAT events where any of the given individuals appears as a
+ * `principal` participant. Intended for batch loading enriched individual
+ * lists for a known subset of individuals (e.g. the people referenced by
+ * `family_members` rows in `FamilyManager.getAll`). The returned events
+ * are deduplicated — an event is returned once even if multiple requested
+ * individuals participate in it.
+ */
+export async function getBirthDeathEventsForIndividuals(
+  individualIds: string[]
+): Promise<EventWithDetails[]> {
+  if (individualIds.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = individualIds.map(parseEntityId);
+
+  const seen = new Set<number>();
+  const rows: RawEventWithType[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawEventWithType[]>(
+      `SELECT DISTINCT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+              et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+       FROM events e
+       INNER JOIN event_types et ON et.id = e.event_type_id
+       INNER JOIN event_participants ep ON ep.event_id = e.id
+       WHERE et.tag IN ('BIRT', 'DEAT')
+         AND ep.role = 'principal'
+         AND ep.individual_id IN (${placeholders})
+       ORDER BY e.id`,
+      idsChunk
+    );
+    for (const row of chunkRows) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      rows.push(row);
+    }
+  }
+
+  return assembleEventsWithDetails(rows);
+}
+
+/**
+ * Get every MARR event in the tree with full details.
+ * Uses a constant number of SQL queries regardless of event count.
+ * Intended for list-view batch loading (e.g. FamilyManager.getAll).
+ */
+export async function getAllMarriageEvents(): Promise<EventWithDetails[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<RawEventWithType[]>(
+    `SELECT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+            et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+     FROM events e
+     INNER JOIN event_types et ON et.id = e.event_type_id
+     WHERE et.tag = 'MARR'
+     ORDER BY e.id`
+  );
+  return assembleEventsWithDetails(rows);
 }
 
 /**

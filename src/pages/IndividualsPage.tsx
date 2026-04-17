@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -16,34 +17,37 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
   const navigate = useNavigate();
   const { data: individuals, isLoading, isError } = useIndividuals();
 
-  const columns: ColumnDef<IndividualWithDetails, string>[] = [
-    {
-      accessorKey: 'id',
-      header: t('columns.id'),
-      cell: ({ row }) => <span className="text-muted-foreground">{row.original.id}</span>,
-    },
-    {
-      id: 'name',
-      header: t('columns.name'),
-      accessorFn: (row) => formatName(row.primaryName).full,
-      cell: ({ getValue }) => <span className="font-medium">{getValue()}</span>,
-    },
-    {
-      accessorKey: 'gender',
-      header: t('columns.gender'),
-      cell: ({ row }) => t(`gender.${row.original.gender}`),
-    },
-    {
-      id: 'birth',
-      header: t('columns.birth'),
-      accessorFn: (row) => row.birthEvent?.dateOriginal ?? '',
-    },
-    {
-      id: 'death',
-      header: t('columns.death'),
-      accessorFn: (row) => row.deathEvent?.dateOriginal ?? '',
-    },
-  ];
+  const columns = useMemo<ColumnDef<IndividualWithDetails, string>[]>(
+    () => [
+      {
+        accessorKey: 'id',
+        header: t('columns.id'),
+        cell: ({ row }) => <span className="text-muted-foreground">{row.original.id}</span>,
+      },
+      {
+        id: 'name',
+        header: t('columns.name'),
+        accessorFn: (row) => formatName(row.primaryName).full,
+        cell: ({ getValue }) => <span className="font-medium">{getValue()}</span>,
+      },
+      {
+        accessorKey: 'gender',
+        header: t('columns.gender'),
+        cell: ({ row }) => t(`gender.${row.original.gender}`),
+      },
+      {
+        id: 'birth',
+        header: t('columns.birth'),
+        accessorFn: (row) => row.birthEvent?.dateOriginal ?? '',
+      },
+      {
+        id: 'death',
+        header: t('columns.death'),
+        accessorFn: (row) => row.deathEvent?.dateOriginal ?? '',
+      },
+    ],
+    [t]
+  );
 
   if (isLoading) {
     return <p className="p-6 text-sm text-muted-foreground">{tc('status.loading')}</p>;

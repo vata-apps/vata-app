@@ -1,6 +1,7 @@
 import { getTreeDb } from '$/db/connection';
 import {
   getAllFamilies,
+  getAllFamilyMembers,
   getFamilyById,
   createFamily,
   updateFamily,
@@ -9,10 +10,11 @@ import {
   addFamilyMember,
   removeFamilyMember,
 } from '$db-tree/families';
-import { getFamilyEventByType } from '$db-tree/events';
+import { getAllMarriageEvents, getFamilyEventByType } from '$db-tree/events';
 import { IndividualManager } from './IndividualManager';
 import type {
   CreateFamilyInput,
+  EventWithDetails,
   UpdateFamilyInput,
   FamilyWithMembers,
   IndividualWithDetails,
@@ -102,20 +104,82 @@ export class FamilyManager {
 
   /**
    * Get all families with full details.
-   * Note: Calls getById per family (N+1). Acceptable for local SQLite.
+   * Runs three parallel batch queries — families, family_members, marriage
+   * events — then fetches only the individuals actually referenced by
+   * `family_members` through `IndividualManager.getByIds`, so sparse trees
+   * don't pay the cost of loading people unrelated to any family.
    */
   static async getAll(): Promise<FamilyWithMembers[]> {
-    const families = await getAllFamilies();
-    const results: FamilyWithMembers[] = [];
+    const [families, members, marriageEvents] = await Promise.all([
+      getAllFamilies(),
+      getAllFamilyMembers(),
+      getAllMarriageEvents(),
+    ]);
 
-    for (const family of families) {
-      const enriched = await FamilyManager.getById(family.id);
-      if (enriched) {
-        results.push(enriched);
+    const referencedIndividualIds = Array.from(new Set(members.map((m) => m.individualId)));
+    const individuals = await IndividualManager.getByIds(referencedIndividualIds);
+
+    const individualById = new Map<string, IndividualWithDetails>();
+    for (const individual of individuals) {
+      individualById.set(individual.id, individual);
+    }
+
+    const marriageEventByFamily = new Map<string, EventWithDetails>();
+    for (const event of marriageEvents) {
+      if (event.eventType.tag !== 'MARR') continue;
+      for (const participant of event.participants) {
+        if (participant.role !== 'principal' || participant.familyId === null) continue;
+        if (!marriageEventByFamily.has(participant.familyId)) {
+          marriageEventByFamily.set(participant.familyId, event);
+        }
       }
     }
 
-    return results;
+    const membersByFamily = new Map<
+      string,
+      {
+        husband: IndividualWithDetails | null;
+        wife: IndividualWithDetails | null;
+        children: IndividualWithDetails[];
+      }
+    >();
+    for (const member of members) {
+      const entry = membersByFamily.get(member.familyId) ?? {
+        husband: null,
+        wife: null,
+        children: [] as IndividualWithDetails[],
+      };
+      const individual = individualById.get(member.individualId);
+      if (individual) {
+        switch (member.role) {
+          case 'husband':
+            entry.husband = individual;
+            break;
+          case 'wife':
+            entry.wife = individual;
+            break;
+          case 'child':
+            entry.children.push(individual);
+            break;
+        }
+      }
+      membersByFamily.set(member.familyId, entry);
+    }
+
+    return families.map((family) => {
+      const entry = membersByFamily.get(family.id) ?? {
+        husband: null,
+        wife: null,
+        children: [] as IndividualWithDetails[],
+      };
+      return {
+        ...family,
+        husband: entry.husband,
+        wife: entry.wife,
+        children: entry.children,
+        marriageEvent: marriageEventByFamily.get(family.id) ?? null,
+      };
+    });
   }
 
   /**
