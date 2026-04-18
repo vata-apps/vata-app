@@ -25,6 +25,7 @@ export interface ValidationResult {
   stats: {
     individuals: number;
     families: number;
+    sources: number;
   };
 }
 
@@ -177,6 +178,7 @@ export class GedcomManager {
       stats: {
         individuals: result.stats.individuals,
         families: result.stats.families,
+        sources: result.stats.sources,
       },
     };
   }
