@@ -1,0 +1,17 @@
+# Vata-app CodeRabbit configuration.
+#
+# No path_instructions: the source of truth for project rules is CLAUDE.md
+# and the Claude Code skills under .claude/skills/**. CodeRabbit ingests
+# those files directly via code_guidelines, so updating a skill
+# automatically updates what CodeRabbit reviews against — zero risk of drift.
+
+# Keep inheritance: true to merge this file with organization-level settings
+# instead of overriding them. Removing it would silently wipe all org-level defaults.
+inheritance: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CLAUDE.md"
+      - ".claude/skills/**/SKILL.md"

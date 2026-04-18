@@ -36,7 +36,9 @@
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
-    "prepare": "husky && git config core.hooksPath .husky"
+    "prepare": "husky && git config core.hooksPath .husky",
+    "review": "coderabbit review --plain --type uncommitted",
+    "review:all": "coderabbit review --plain --type all"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
