@@ -1,18 +1,33 @@
 import { getTreeDb } from '$/db/connection';
 import {
+  createIndividual,
+  deleteIndividual,
   getAllIndividuals,
   getIndividualById,
-  createIndividual,
+  getIndividualsByIds,
   updateIndividual,
-  deleteIndividual,
 } from '$db-tree/individuals';
-import { createName, getNamesByIndividualId } from '$db-tree/names';
-import { getEventsByIndividualIdWithDetails } from '$db-tree/events';
-import { getPrimaryName } from '$db-tree/names';
+import {
+  createName,
+  getAllNames,
+  getAllPrimaryNames,
+  getNamesByIndividualId,
+  getNamesForIndividuals,
+  getPrimaryName,
+  getPrimaryNamesForIndividuals,
+} from '$db-tree/names';
+import {
+  getAllBirthDeathEvents,
+  getBirthDeathEventsForIndividuals,
+  getEventsByIndividualIdWithDetails,
+} from '$db-tree/events';
 import type {
   CreateIndividualInput,
-  UpdateIndividualInput,
+  EventWithDetails,
+  Individual,
   IndividualWithDetails,
+  Name,
+  UpdateIndividualInput,
 } from '$/types/database';
 
 export interface CreateIndividualWithNameInput extends CreateIndividualInput {
@@ -20,6 +35,76 @@ export interface CreateIndividualWithNameInput extends CreateIndividualInput {
     givenNames?: string;
     surname?: string;
   };
+}
+
+/**
+ * Select the first event whose type matches `tag` and where the given
+ * individual appears as a `principal` participant. Shared between `getAll`
+ * and `getById` so list and detail views stay consistent (see
+ * `bulk-entity-fetch` spec: Constant-query individual list fetch).
+ */
+function findPrincipalLifeEvent(
+  events: EventWithDetails[],
+  individualId: string,
+  tag: 'BIRT' | 'DEAT'
+): EventWithDetails | null {
+  for (const event of events) {
+    if (event.eventType.tag !== tag) continue;
+    const isPrincipal = event.participants.some(
+      (p) => p.role === 'principal' && p.individualId === individualId
+    );
+    if (isPrincipal) return event;
+  }
+  return null;
+}
+
+/**
+ * Build `IndividualWithDetails[]` from batch-fetched name and birth/death
+ * event data. Shared between `getAll` and `getByIds` so both paths apply
+ * the same "first BIRT/DEAT with principal participant" selection rule.
+ */
+function assembleIndividualsWithDetails(
+  individuals: Individual[],
+  primaryNames: Name[],
+  allNames: Name[],
+  birthDeathEvents: EventWithDetails[]
+): IndividualWithDetails[] {
+  const primaryNameByIndividual = new Map<string, Name>();
+  for (const name of primaryNames) {
+    primaryNameByIndividual.set(name.individualId, name);
+  }
+
+  const namesByIndividual = new Map<string, Name[]>();
+  for (const name of allNames) {
+    const list = namesByIndividual.get(name.individualId) ?? [];
+    list.push(name);
+    namesByIndividual.set(name.individualId, list);
+  }
+
+  const birthEventByIndividual = new Map<string, EventWithDetails>();
+  const deathEventByIndividual = new Map<string, EventWithDetails>();
+  for (const event of birthDeathEvents) {
+    const tag = event.eventType.tag;
+    if (tag !== 'BIRT' && tag !== 'DEAT') continue;
+
+    for (const participant of event.participants) {
+      if (participant.role !== 'principal' || participant.individualId === null) continue;
+      const target = tag === 'BIRT' ? birthEventByIndividual : deathEventByIndividual;
+      // Keep the first event encountered per individual — matches the
+      // semantics of findPrincipalLifeEvent used by getById.
+      if (!target.has(participant.individualId)) {
+        target.set(participant.individualId, event);
+      }
+    }
+  }
+
+  return individuals.map((individual) => ({
+    ...individual,
+    primaryName: primaryNameByIndividual.get(individual.id) ?? null,
+    names: namesByIndividual.get(individual.id) ?? [],
+    birthEvent: birthEventByIndividual.get(individual.id) ?? null,
+    deathEvent: deathEventByIndividual.get(individual.id) ?? null,
+  }));
 }
 
 export class IndividualManager {
@@ -62,8 +147,8 @@ export class IndividualManager {
     const names = await getNamesByIndividualId(id);
     const events = await getEventsByIndividualIdWithDetails(id);
 
-    const birthEvent = events.find((e) => e.eventType.tag === 'BIRT') ?? null;
-    const deathEvent = events.find((e) => e.eventType.tag === 'DEAT') ?? null;
+    const birthEvent = findPrincipalLifeEvent(events, id, 'BIRT');
+    const deathEvent = findPrincipalLifeEvent(events, id, 'DEAT');
 
     return {
       ...individual,
@@ -76,20 +161,44 @@ export class IndividualManager {
 
   /**
    * Get all individuals with full details.
-   * Note: Calls getById per individual (N+1). Acceptable for local SQLite.
+   * Uses a constant number of SQL queries (individuals, primary names, all
+   * names, birth/death events) and assembles the result in JS, so loading
+   * is independent of the number of individuals.
    */
   static async getAll(): Promise<IndividualWithDetails[]> {
-    const individuals = await getAllIndividuals();
-    const results: IndividualWithDetails[] = [];
+    const [individuals, primaryNames, allNames, birthDeathEvents] = await Promise.all([
+      getAllIndividuals(),
+      getAllPrimaryNames(),
+      getAllNames(),
+      getAllBirthDeathEvents(),
+    ]);
 
-    for (const individual of individuals) {
-      const enriched = await IndividualManager.getById(individual.id);
-      if (enriched) {
-        results.push(enriched);
-      }
-    }
+    return assembleIndividualsWithDetails(individuals, primaryNames, allNames, birthDeathEvents);
+  }
 
-    return results;
+  /**
+   * Get enriched details for a specific subset of individuals.
+   * Uses the same four-query batch pattern as `getAll` but filters every
+   * query to the given id list, so callers that already know which
+   * individuals they need (e.g. `FamilyManager.getAll` after resolving
+   * `family_members`) don't pay for loading the entire people graph.
+   *
+   * Duplicate ids are tolerated and the result array preserves the row
+   * order returned by the database; ids with no matching row are silently
+   * omitted.
+   */
+  static async getByIds(ids: string[]): Promise<IndividualWithDetails[]> {
+    if (ids.length === 0) return [];
+    const uniqueIds = Array.from(new Set(ids));
+
+    const [individuals, primaryNames, allNames, birthDeathEvents] = await Promise.all([
+      getIndividualsByIds(uniqueIds),
+      getPrimaryNamesForIndividuals(uniqueIds),
+      getNamesForIndividuals(uniqueIds),
+      getBirthDeathEventsForIndividuals(uniqueIds),
+    ]);
+
+    return assembleIndividualsWithDetails(individuals, primaryNames, allNames, birthDeathEvents);
   }
 
   /**

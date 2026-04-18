@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Vata app icon source</title>
+    <style>
+      /* Vendored Fraunces italic 500, subsetted to "V" (~1KB).
+         Source: Google Fonts / github.com/undercasetype/Fraunces (SIL OFL 1.1).
+         License: ./fonts/OFL.txt */
+      @font-face {
+        font-family: "Fraunces";
+        font-style: italic;
+        font-weight: 500;
+        font-display: block;
+        src: url("./fonts/Fraunces-Italic-500-subset-V.woff2") format("woff2");
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 1024px;
+        height: 1024px;
+        background: #1f1b17;
+        overflow: hidden;
+      }
+      .canvas {
+        width: 1024px;
+        height: 1024px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* Render the mark at 80% of canvas by padding the viewBox. */
+      svg {
+        width: 1024px;
+        height: 1024px;
+        display: block;
+      }
+      text {
+        font-family: "Fraunces", serif;
+        font-style: italic;
+        font-weight: 500;
+        letter-spacing: -0.02em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="canvas">
+      <!-- viewBox adds ~14% padding on each side of the 0 0 48 48 mark -->
+      <svg viewBox="-7 -7 62 62" xmlns="http://www.w3.org/2000/svg">
+        <text
+          x="24"
+          y="36"
+          text-anchor="middle"
+          font-size="40"
+          fill="#f1ece2"
+        >
+          V
+        </text>
+        <path
+          d="M10 42 Q 24 40, 38 41"
+          fill="none"
+          stroke="#c56a3a"
+          stroke-width="1.8"
+          stroke-linecap="round"
+        />
+      </svg>
+    </div>
+  </body>
+</html>

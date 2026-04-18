@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   type ColumnDef,
   type SortingState,
@@ -12,6 +12,7 @@ import {
 import { ArrowUpDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { Button } from '$components/ui/button';
 import { Input } from '$components/ui/input';
 import {
@@ -43,16 +44,27 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   const { t } = useTranslation('common');
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const globalFilter = useDebouncedValue(inputValue, 250);
+
+  const columnFilters = useMemo(
+    () => (searchColumnId ? [{ id: searchColumnId, value: globalFilter }] : []),
+    [searchColumnId, globalFilter]
+  );
+
+  const tableState = useMemo(
+    () => ({
+      sorting,
+      globalFilter: searchColumnId ? undefined : globalFilter,
+      columnFilters,
+    }),
+    [sorting, globalFilter, searchColumnId, columnFilters]
+  );
 
   const table = useReactTable({
     data,
     columns,
-    state: {
-      sorting,
-      globalFilter: searchColumnId ? undefined : globalFilter,
-      columnFilters: searchColumnId ? [{ id: searchColumnId, value: globalFilter }] : [],
-    },
+    state: tableState,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -76,8 +88,8 @@ export function DataTable<TData, TValue>({
     <div className="space-y-2">
       <Input
         placeholder={searchPlaceholder ?? t('actions.search')}
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
         className="h-8 max-w-sm text-sm"
       />
 

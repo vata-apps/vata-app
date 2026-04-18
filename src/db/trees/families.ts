@@ -153,6 +153,29 @@ export async function countFamilies(): Promise<number> {
 // =============================================================================
 
 /**
+ * Get every family_member row in the tree.
+ * Single query — safe to use for batch loading list views.
+ * Results are ordered by family, then role (husband, wife, child), then sort_order.
+ */
+export async function getAllFamilyMembers(): Promise<FamilyMember[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<RawFamilyMember[]>(
+    `SELECT id, family_id, individual_id, role, pedigree, sort_order, created_at
+     FROM family_members
+     ORDER BY
+       family_id,
+       CASE role
+         WHEN 'husband' THEN 1
+         WHEN 'wife' THEN 2
+         WHEN 'child' THEN 3
+       END,
+       sort_order,
+       id`
+  );
+  return rows.map(mapToFamilyMember);
+}
+
+/**
  * Get all members of a family
  */
 export async function getFamilyMembers(familyId: string): Promise<FamilyMember[]> {

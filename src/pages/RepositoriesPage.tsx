@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -84,28 +84,31 @@ export function RepositoriesPage({ treeId }: RepositoriesPageProps): JSX.Element
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  const columns: ColumnDef<Repository, string>[] = [
-    {
-      accessorKey: 'id',
-      header: t('columns.id'),
-      cell: ({ row }) => <span className="text-muted-foreground">{row.original.id}</span>,
-    },
-    {
-      accessorKey: 'name',
-      header: t('columns.name'),
-      cell: ({ getValue }) => <span className="font-medium">{getValue()}</span>,
-    },
-    {
-      accessorKey: 'city',
-      header: t('columns.city'),
-      cell: ({ getValue }) => getValue() ?? '',
-    },
-    {
-      accessorKey: 'country',
-      header: t('columns.country'),
-      cell: ({ getValue }) => getValue() ?? '',
-    },
-  ];
+  const columns = useMemo<ColumnDef<Repository, string>[]>(
+    () => [
+      {
+        accessorKey: 'id',
+        header: t('columns.id'),
+        cell: ({ row }) => <span className="text-muted-foreground">{row.original.id}</span>,
+      },
+      {
+        accessorKey: 'name',
+        header: t('columns.name'),
+        cell: ({ getValue }) => <span className="font-medium">{getValue()}</span>,
+      },
+      {
+        accessorKey: 'city',
+        header: t('columns.city'),
+        cell: ({ getValue }) => getValue() ?? '',
+      },
+      {
+        accessorKey: 'country',
+        header: t('columns.country'),
+        cell: ({ getValue }) => getValue() ?? '',
+      },
+    ],
+    [t]
+  );
 
   if (isLoading) {
     return <p className="p-6 text-sm text-muted-foreground">{tc('status.loading')}</p>;

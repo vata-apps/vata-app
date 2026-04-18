@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import type {
   Individual,
   Gender,
@@ -47,6 +48,32 @@ export async function getAllIndividuals(): Promise<Individual[]> {
   const rows = await db.select<RawIndividual[]>(
     'SELECT id, gender, is_living, notes, created_at, updated_at FROM individuals ORDER BY id'
   );
+  return rows.map(mapToIndividual);
+}
+
+/**
+ * Get the individuals matching a set of IDs. Uses a chunked `IN (...)`
+ * clause so the number of SQL statements is constant regardless of the
+ * number of ids. The returned array is in `id` order and contains one
+ * entry per row found — missing ids are silently omitted.
+ */
+export async function getIndividualsByIds(ids: string[]): Promise<Individual[]> {
+  if (ids.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = ids.map(parseEntityId);
+
+  const rows: RawIndividual[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawIndividual[]>(
+      `SELECT id, gender, is_living, notes, created_at, updated_at
+       FROM individuals
+       WHERE id IN (${placeholders})
+       ORDER BY id`,
+      idsChunk
+    );
+    rows.push(...chunkRows);
+  }
   return rows.map(mapToIndividual);
 }
 
