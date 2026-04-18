@@ -1,10 +1,32 @@
 {
   "title": "Vata",
   "subtitle": "Genealogical tree management",
-  "newTree": "New Tree",
+  "newTree": "New tree",
   "importGedcom": "Import GEDCOM",
-  "yourTrees": "Your Trees",
+  "yourTrees": "Your trees",
   "emptyState": "No trees yet. Create your first genealogical tree to get started.",
+  "hero": {
+    "title": "Your <1>genealogical</1> trees",
+    "lede": "Explore and maintain your family trees. Open an existing tree or start a new one."
+  },
+  "sort": {
+    "recent": "Recent",
+    "name": "Name",
+    "size": "Size"
+  },
+  "statLabels": {
+    "individuals": "individuals",
+    "families": "families",
+    "generations": "generations"
+  },
+  "meta": {
+    "created": "Created",
+    "lastOpened": "Last opened"
+  },
+  "cta": {
+    "title": "Start a new tree",
+    "subtitle": "Or drop a .ged file"
+  },
   "treeCard": {
     "individuals": "{{count}} individuals",
     "families": "{{count}} families",
@@ -13,25 +35,81 @@
     "neverOpened": "Never"
   },
   "createForm": {
-    "title": "Create New Tree",
-    "name": "Name",
-    "namePlaceholder": "My Family Tree",
+    "title": "Start a new tree",
+    "subtitle": "Give it a name and a starting point. You can add individuals, families, and sources later.",
+    "name": "Tree name",
+    "namePlaceholder": "e.g. Dupont family",
     "description": "Description",
-    "descriptionPlaceholder": "Optional description",
-    "submit": "Create Tree"
+    "descriptionOptional": "— optional",
+    "descriptionPlaceholder": "A short note: lineage, region, research project…",
+    "startingPoint": "Starting point",
+    "templates": {
+      "blank": {
+        "title": "Blank",
+        "meta": "0 records"
+      },
+      "me": {
+        "title": "From me",
+        "meta": "1 root"
+      },
+      "soon": "Soon"
+    },
+    "submit": "Create tree",
+    "submitHint": "⌘↵ to create",
+    "close": "Close (Esc)"
   },
   "import": {
-    "title": "Import GEDCOM",
-    "selectFile": "Select File",
-    "changeFile": "Change File",
+    "title": "Import a GEDCOM file",
+    "subtitle": "Drop a {{ext}} file exported from Gramps, Ancestry, Geneanet, Heredis…",
+    "dropzone": {
+      "prompt": "Drag your file here, or",
+      "browse": "browse",
+      "meta": ".GED · .GEDCOM — UP TO 50 MB"
+    },
+    "file": {
+      "readOk": "● read successfully",
+      "readFailed": "● could not read",
+      "remove": "Remove"
+    },
+    "scan": {
+      "title": "File analysis",
+      "statusOk": "{{errors}} errors · {{warnings}} warnings",
+      "labels": {
+        "individuals": "Individuals",
+        "families": "Families",
+        "generations": "Generations",
+        "sources": "Sources"
+      }
+    },
+    "treeName": "Tree name",
+    "options": {
+      "label": "Import options",
+      "mergeDuplicates": {
+        "title": "Merge duplicates",
+        "hint": "Automatically detect individuals with similar names and dates.",
+        "soon": "Soon"
+      },
+      "importMedia": {
+        "title": "Import linked media",
+        "hint": "Photos and documents referenced (OBJE). If missing, links are kept."
+      },
+      "hideLiving": {
+        "title": "Hide living persons",
+        "hint": "Records without a death date are kept private by default."
+      }
+    },
+    "selectFile": "Browse…",
+    "changeFile": "Change file",
     "preview": "Preview:",
     "previewStats": "{{individuals}} individuals, {{families}} families",
-    "importing": "Importing...",
+    "importing": "Importing…",
     "import": "Import",
     "invalidFile": "Invalid GEDCOM file",
     "failedRead": "Failed to read file",
     "importFailed": "Import failed: {{error}}",
-    "defaultTreeName": "imported"
+    "defaultTreeName": "imported",
+    "submitHint": "The original file will not be modified",
+    "close": "Close (Esc)"
   },
   "export": {
     "title": "Export GEDCOM",

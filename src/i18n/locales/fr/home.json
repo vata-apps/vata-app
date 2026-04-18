@@ -5,6 +5,28 @@
   "importGedcom": "Importer GEDCOM",
   "yourTrees": "Vos arbres",
   "emptyState": "Aucun arbre. Créez votre premier arbre généalogique pour commencer.",
+  "hero": {
+    "title": "Vos arbres <1>généalogiques</1>",
+    "lede": "Explorez et maintenez vos arbres familiaux. Ouvrez un arbre existant ou démarrez-en un nouveau."
+  },
+  "sort": {
+    "recent": "Récent",
+    "name": "Nom",
+    "size": "Taille"
+  },
+  "statLabels": {
+    "individuals": "individus",
+    "families": "familles",
+    "generations": "générations"
+  },
+  "meta": {
+    "created": "Créé",
+    "lastOpened": "Dernier accès"
+  },
+  "cta": {
+    "title": "Démarrer un nouvel arbre",
+    "subtitle": "Ou glissez-déposez un fichier .ged"
+  },
   "treeCard": {
     "individuals": "{{count}} individus",
     "families": "{{count}} familles",
@@ -13,25 +35,81 @@
     "neverOpened": "Jamais"
   },
   "createForm": {
-    "title": "Créer un nouvel arbre",
-    "name": "Nom",
-    "namePlaceholder": "Mon arbre familial",
+    "title": "Démarrer un nouvel arbre",
+    "subtitle": "Donnez-lui un nom et un point de départ. Vous pourrez ajouter des individus, familles et sources par la suite.",
+    "name": "Nom de l'arbre",
+    "namePlaceholder": "Ex. Famille Bourgoin",
     "description": "Description",
-    "descriptionPlaceholder": "Description optionnelle",
-    "submit": "Créer l'arbre"
+    "descriptionOptional": "— facultatif",
+    "descriptionPlaceholder": "Une note courte : lignée, région, projet de recherche…",
+    "startingPoint": "Point de départ",
+    "templates": {
+      "blank": {
+        "title": "Vierge",
+        "meta": "0 fiche"
+      },
+      "me": {
+        "title": "Depuis moi",
+        "meta": "1 racine"
+      },
+      "soon": "Bientôt"
+    },
+    "submit": "Créer l'arbre",
+    "submitHint": "⌘↵ pour créer",
+    "close": "Fermer (Esc)"
   },
   "import": {
-    "title": "Importer GEDCOM",
-    "selectFile": "Choisir un fichier",
+    "title": "Importer un fichier GEDCOM",
+    "subtitle": "Déposez un fichier {{ext}} exporté depuis Gramps, Ancestry, Geneanet, Heredis…",
+    "dropzone": {
+      "prompt": "Glissez votre fichier ici, ou",
+      "browse": "parcourez",
+      "meta": ".GED · .GEDCOM — JUSQU'À 50 MO"
+    },
+    "file": {
+      "readOk": "● lu avec succès",
+      "readFailed": "● lecture impossible",
+      "remove": "Retirer"
+    },
+    "scan": {
+      "title": "Analyse du fichier",
+      "statusOk": "{{errors}} erreur · {{warnings}} avertissements",
+      "labels": {
+        "individuals": "Individus",
+        "families": "Familles",
+        "generations": "Générations",
+        "sources": "Sources"
+      }
+    },
+    "treeName": "Nom de l'arbre",
+    "options": {
+      "label": "Options d'import",
+      "mergeDuplicates": {
+        "title": "Fusionner les doublons",
+        "hint": "Détecte automatiquement les individus avec noms et dates similaires.",
+        "soon": "Bientôt"
+      },
+      "importMedia": {
+        "title": "Importer les médias liés",
+        "hint": "Photos et documents référencés (OBJE). Si absents, liens conservés."
+      },
+      "hideLiving": {
+        "title": "Masquer les personnes vivantes",
+        "hint": "Les fiches sans date de décès seront confidentielles par défaut."
+      }
+    },
+    "selectFile": "Parcourir…",
     "changeFile": "Changer de fichier",
     "preview": "Aperçu :",
     "previewStats": "{{individuals}} individus, {{families}} familles",
-    "importing": "Importation...",
+    "importing": "Importation…",
     "import": "Importer",
     "invalidFile": "Fichier GEDCOM invalide",
     "failedRead": "Échec de la lecture du fichier",
     "importFailed": "Échec de l'importation : {{error}}",
-    "defaultTreeName": "importé"
+    "defaultTreeName": "importé",
+    "submitHint": "Le fichier original ne sera pas modifié",
+    "close": "Fermer (Esc)"
   },
   "export": {
     "title": "Exporter GEDCOM",
