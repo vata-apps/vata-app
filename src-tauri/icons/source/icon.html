@@ -38,9 +38,17 @@
   </head>
   <body>
     <!--
-      Tile: 1024×1024 squircle (rx ≈ 22% of side ≈ 226) in sand-950.
-      Artwork: the V+brushstroke from mark.svg, scaled so the 48-unit
-      viewBox fills ~88% of the tile (inner 900 px centered).
+      Apple macOS icon template (HIG, used by Icon Composer):
+        Canvas 1024×1024, mostly transparent.
+        Tile 824×824 centred in canvas (100 px gutter on every side).
+        Corner radius 185 px on the 824 tile (≈22.5% of tile side).
+        Flat fill — gradient, sheen, shadow are applied by the OS
+        compositor (or by Icon Composer for Tahoe's .icon format).
+        The 100 px gutter is what macOS uses to draw the specular
+        highlight / drop shadow; baking our own effects fights it.
+      Artwork: V + brushstroke from mark.svg, 648×648 (~78% of tile)
+      centred inside the tile — matches the visual density of Apple's
+      reference icons (Notes, Reminders).
     -->
     <svg
       width="1024"
@@ -49,17 +57,19 @@
       xmlns="http://www.w3.org/2000/svg"
     >
       <rect
-        width="1024"
-        height="1024"
-        rx="226"
-        ry="226"
+        x="100"
+        y="100"
+        width="824"
+        height="824"
+        rx="185"
+        ry="185"
         fill="#1f1b17"
       />
       <svg
-        x="62"
-        y="62"
-        width="900"
-        height="900"
+        x="188"
+        y="188"
+        width="648"
+        height="648"
         viewBox="0 0 48 48"
       >
         <text
