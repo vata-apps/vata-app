@@ -10,6 +10,8 @@ interface AppState {
   setTheme: (theme: Theme) => void;
   language: string;
   setLanguage: (language: string) => void;
+  debugOpen: boolean;
+  toggleDebug: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -21,9 +23,16 @@ export const useAppStore = create<AppState>()(
       setTheme: (theme) => set({ theme }),
       language: 'en',
       setLanguage: (language) => set({ language }),
+      debugOpen: false,
+      toggleDebug: () => set((s) => ({ debugOpen: !s.debugOpen })),
     }),
     {
       name: 'vata-app-storage',
+      partialize: (state) => ({
+        theme: state.theme,
+        language: state.language,
+        currentTreeId: state.currentTreeId,
+      }),
     }
   )
 );
