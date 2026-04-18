@@ -36,81 +36,186 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
 }
 
+/* ============================================================
+   Vata brand palette — warm earth / sand / clay
+   ============================================================ */
 :root {
+  --vata-sand-50: oklch(0.985 0.012 85);
+  --vata-sand-100: oklch(0.965 0.018 82);
+  --vata-sand-200: oklch(0.93 0.024 80);
+  --vata-sand-300: oklch(0.87 0.032 75);
+  --vata-sand-400: oklch(0.78 0.042 70);
+  --vata-sand-500: oklch(0.68 0.055 65);
+  --vata-sand-600: oklch(0.57 0.06 58);
+  --vata-sand-700: oklch(0.46 0.055 52);
+  --vata-sand-800: oklch(0.33 0.04 48);
+  --vata-sand-900: oklch(0.22 0.028 45);
+  --vata-sand-950: oklch(0.155 0.02 42);
+
+  --vata-clay-50: oklch(0.97 0.02 45);
+  --vata-clay-100: oklch(0.93 0.035 42);
+  --vata-clay-200: oklch(0.87 0.055 40);
+  --vata-clay-300: oklch(0.79 0.08 38);
+  --vata-clay-400: oklch(0.7 0.105 36);
+  --vata-clay-500: oklch(0.62 0.125 34);
+  --vata-clay-600: oklch(0.54 0.13 32);
+  --vata-clay-700: oklch(0.45 0.115 30);
+  --vata-clay-800: oklch(0.36 0.09 28);
+  --vata-clay-900: oklch(0.265 0.065 26);
+
+  --vata-moss-500: oklch(0.56 0.075 135);
+  --vata-ink-500: oklch(0.425 0.055 250);
+
+  --font-sans: 'Geist', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Fraunces', ui-serif, Georgia, serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
   --radius: 0.5rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* ============================================================
+   Light theme (default) — sand background, clay accents
+   ============================================================ */
+:root {
+  --background: var(--vata-sand-50);
+  --foreground: oklch(0.22 0.028 45);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.028 45);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.028 45);
+
+  --primary: var(--vata-clay-600);
+  --primary-foreground: var(--vata-sand-50);
+
+  --secondary: var(--vata-sand-100);
+  --secondary-foreground: oklch(0.33 0.04 48);
+
+  --muted: var(--vata-sand-100);
+  --muted-foreground: oklch(0.46 0.055 52);
+
+  --accent: var(--vata-sand-200);
+  --accent-foreground: oklch(0.265 0.065 26);
+
+  --destructive: oklch(0.555 0.195 27);
+  --destructive-foreground: var(--vata-sand-50);
+
+  --success: oklch(0.52 0.13 145);
+  --warning: oklch(0.64 0.15 70);
+  --info: oklch(0.53 0.11 230);
+
+  --border: oklch(0.22 0.028 45 / 10%);
+  --input: oklch(0.22 0.028 45 / 14%);
+  --ring: var(--vata-clay-600);
+
+  --sidebar: var(--vata-sand-100);
+  --sidebar-foreground: oklch(0.33 0.04 48);
+  --sidebar-primary: var(--vata-clay-600);
+  --sidebar-primary-foreground: var(--vata-sand-50);
+  --sidebar-accent: var(--vata-sand-200);
+  --sidebar-accent-foreground: oklch(0.265 0.065 26);
+  --sidebar-border: oklch(0.22 0.028 45 / 8%);
+  --sidebar-ring: var(--vata-clay-600);
+
+  --surface: oklch(1 0 0);
+  --surface-foreground: oklch(0.46 0.055 52);
+
+  --chart-1: var(--vata-clay-600);
+  --chart-2: var(--vata-moss-500);
+  --chart-3: oklch(0.64 0.095 55);
+  --chart-4: var(--vata-ink-500);
+  --chart-5: oklch(0.58 0.09 320);
+}
+
+/* ============================================================
+   Dark theme — deep sand, brighter clay accents
+   ============================================================ */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --background: var(--vata-sand-950);
+  --foreground: var(--vata-sand-100);
+
+  --card: oklch(0.195 0.022 44);
+  --card-foreground: var(--vata-sand-100);
+  --popover: oklch(0.195 0.022 44);
+  --popover-foreground: var(--vata-sand-100);
+
+  --primary: var(--vata-clay-500);
+  --primary-foreground: var(--vata-sand-50);
+
+  --secondary: oklch(0.255 0.025 44);
+  --secondary-foreground: var(--vata-sand-100);
+
+  --muted: oklch(0.235 0.02 44);
+  --muted-foreground: var(--vata-sand-400);
+
+  --accent: oklch(0.295 0.035 42);
+  --accent-foreground: var(--vata-sand-50);
+
+  --destructive: oklch(0.635 0.18 27);
+  --destructive-foreground: var(--vata-sand-50);
+
+  --success: oklch(0.64 0.115 145);
+  --warning: oklch(0.75 0.15 70);
+  --info: oklch(0.65 0.09 230);
+
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: var(--vata-clay-500);
+
+  --sidebar: oklch(0.175 0.02 44);
+  --sidebar-foreground: var(--vata-sand-200);
+  --sidebar-primary: var(--vata-clay-500);
+  --sidebar-primary-foreground: var(--vata-sand-50);
+  --sidebar-accent: oklch(0.255 0.025 44);
+  --sidebar-accent-foreground: var(--vata-sand-100);
+  --sidebar-border: oklch(1 0 0 / 6%);
+  --sidebar-ring: var(--vata-clay-500);
+
+  --surface: oklch(0.185 0.02 44);
+  --surface-foreground: var(--vata-sand-300);
+
+  --chart-1: var(--vata-clay-500);
+  --chart-2: var(--vata-moss-500);
+  --chart-3: oklch(0.7 0.1 55);
+  --chart-4: var(--vata-ink-500);
+  --chart-5: oklch(0.62 0.09 320);
+}
+
+@theme {
+  --animate-drawer-up: drawer-up 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-drawer-down: drawer-down 220ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+@keyframes drawer-up {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes drawer-down {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 100%, 0);
+  }
 }
 
 @layer base {
@@ -118,7 +223,22 @@
     @apply border-border;
   }
 
+  html,
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01', 'ss03';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
   }
 }
