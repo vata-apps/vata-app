@@ -3,11 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <title>Vata app icon source</title>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,500&display=swap"
-    />
     <style>
+      /* Vendored Fraunces italic 500, subsetted to "V" (~1KB).
+         Source: Google Fonts / github.com/undercasetype/Fraunces (SIL OFL 1.1).
+         License: ./fonts/OFL.txt */
+      @font-face {
+        font-family: "Fraunces";
+        font-style: italic;
+        font-weight: 500;
+        font-display: block;
+        src: url("./fonts/Fraunces-Italic-500-subset-V.woff2") format("woff2");
+      }
       html,
       body {
         margin: 0;
