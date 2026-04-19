@@ -24,6 +24,10 @@ pnpm format:check     # Prettier check
 # Tests
 pnpm test             # Vitest watch mode
 pnpm test:coverage    # Coverage report (v8)
+
+# Review
+pnpm review           # CodeRabbit local review (uncommitted changes)
+pnpm review:all       # CodeRabbit full branch review (before PR)
 ```
 
 To run a single test file:
@@ -203,6 +207,21 @@ test: add coverage for GEDCOM date parsing
 docs: update database schema documentation
 chore: upgrade drizzle-orm to 0.30.0
 ```
+
+---
+
+# Pre-PR Review
+
+Before creating a pull request (via `gh pr create`, any slash command that opens a PR, or any other means), the agent MUST:
+
+1. Run `pnpm review:all` to get a CodeRabbit local review of the full branch diff.
+2. Read the output and address any **critical** or **high** severity findings in new commits on the branch.
+3. Re-run `pnpm review:all` if meaningful fixes were made.
+4. Only then proceed to create the PR.
+
+Low-severity / nitpick findings do not need to be addressed locally — let CodeRabbit raise them on the PR if it still sees them. The goal is to catch the issues that would otherwise trigger 5+ review rounds, not to reach a zero-finding local state.
+
+If `coderabbit` CLI is not installed (command not found), skip this step and note it in the PR description so Steve knows to install it. Do NOT block the PR on tooling that isn't set up.
 
 ---
 
