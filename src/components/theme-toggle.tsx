@@ -8,12 +8,10 @@ import {
   DropdownMenuTrigger,
 } from '$components/ui/dropdown-menu';
 import { useAppStore } from '$/store/app-store';
-import { useThemeSync } from '$hooks/useThemeSync';
 
 export function ThemeToggle() {
   const { t } = useTranslation();
   const setTheme = useAppStore((s) => s.setTheme);
-  useThemeSync();
 
   return (
     <DropdownMenu>

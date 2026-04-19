@@ -107,6 +107,8 @@ function ThemeOption({
   return (
     <button
       type="button"
+      role="menuitemradio"
+      aria-checked={active}
       onClick={() => set(value)}
       className={`flex flex-col items-center justify-center gap-1 rounded-[var(--radius-md)] border px-2 py-2 text-[11px] font-medium transition-colors ${
         active
@@ -135,6 +137,8 @@ function LanguageOption({
   return (
     <button
       type="button"
+      role="menuitemradio"
+      aria-checked={active}
       onClick={() => set(value)}
       className={`rounded-[var(--radius-md)] border px-2 py-[6px] text-[12px] font-medium transition-colors ${
         active

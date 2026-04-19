@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
 import { getSystemDebugData, listTreeDatabaseFiles } from '$/db/system/debug';
 import { queryKeys } from '$lib/query-keys';
+import { toErrorMessage } from '$lib/errors';
 
 interface DebugDrawerProps {
   open: boolean;
@@ -14,16 +15,24 @@ export function DebugDrawer({ open, onClose }: DebugDrawerProps) {
   const { t } = useTranslation('home');
   const { t: tc } = useTranslation('common');
 
-  const { data: systemDebugData } = useQuery({
+  const {
+    data: systemDebugData,
+    isError: isSystemDebugError,
+    error: systemDebugError,
+  } = useQuery({
     queryKey: queryKeys.systemDebugData,
     queryFn: getSystemDebugData,
-    enabled: open,
+    enabled: open && import.meta.env.DEV,
   });
 
-  const { data: treeFiles } = useQuery({
+  const {
+    data: treeFiles,
+    isError: isTreeFilesError,
+    error: treeFilesError,
+  } = useQuery({
     queryKey: queryKeys.treeFiles,
     queryFn: listTreeDatabaseFiles,
-    enabled: open,
+    enabled: open && import.meta.env.DEV,
   });
 
   useEffect(() => {
@@ -34,6 +43,8 @@ export function DebugDrawer({ open, onClose }: DebugDrawerProps) {
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
+
+  if (!import.meta.env.DEV) return null;
 
   return (
     <>
@@ -53,7 +64,9 @@ export function DebugDrawer({ open, onClose }: DebugDrawerProps) {
         <div className="debug-drawer-body">
           <section className="debug-drawer-section">
             <h3 className="debug-drawer-h3">{t('debug.treeFiles')}</h3>
-            {treeFiles === undefined ? (
+            {isTreeFilesError ? (
+              <p className="debug-drawer-muted">{toErrorMessage(treeFilesError)}</p>
+            ) : treeFiles === undefined ? (
               <p className="debug-drawer-muted">{tc('status.loading')}</p>
             ) : treeFiles.length > 0 ? (
               <ul className="debug-drawer-list">
@@ -67,7 +80,9 @@ export function DebugDrawer({ open, onClose }: DebugDrawerProps) {
           </section>
           <section className="debug-drawer-section debug-drawer-section-wide">
             <h3 className="debug-drawer-h3">{t('debug.rawContent')}</h3>
-            {systemDebugData ? (
+            {isSystemDebugError ? (
+              <p className="debug-drawer-muted">{toErrorMessage(systemDebugError)}</p>
+            ) : systemDebugData ? (
               <pre className="debug-drawer-pre">{JSON.stringify(systemDebugData, null, 2)}</pre>
             ) : (
               <p className="debug-drawer-muted">{tc('status.loading')}</p>

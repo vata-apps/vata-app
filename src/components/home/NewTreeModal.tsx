@@ -30,7 +30,7 @@ export function NewTreeModal({ open, onClose, onSubmit, isPending, error }: NewT
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!name.trim() || isPending) return;
     onSubmit({
       name: name.trim(),
       description: description.trim() || undefined,
@@ -53,6 +53,7 @@ export function NewTreeModal({ open, onClose, onSubmit, isPending, error }: NewT
             type="submit"
             form="new-tree-form"
             className="btn btn-primary"
+            disabled={!name.trim() || isPending}
             aria-disabled={!name.trim() || isPending}
           >
             <Plus strokeWidth={1.8} />

@@ -35,9 +35,6 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
   const { t: tc } = useTranslation('common');
   const [file, setFile] = useState<PickedFile | null>(null);
   const [treeName, setTreeName] = useState('');
-  const [mergeDuplicates] = useState(false);
-  const [importMedia, setImportMedia] = useState(true);
-  const [hideLiving, setHideLiving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
 
@@ -47,8 +44,6 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
       setTreeName('');
       setError(null);
       setIsImporting(false);
-      setHideLiving(false);
-      setImportMedia(true);
     }
   }, [open]);
 
@@ -236,39 +231,37 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
                   </div>
                 </div>
                 <span className="switch">
-                  <input type="checkbox" disabled checked={mergeDuplicates} readOnly />
+                  <input type="checkbox" disabled readOnly />
                   <span className="switch-track">
                     <span className="switch-thumb" />
                   </span>
                 </span>
               </label>
-              <label className="toggle-row">
+              <label className="toggle-row" aria-disabled="true">
                 <div className="toggle-row-body">
-                  <div className="toggle-row-title">{t('importModal.options.mediaTitle')}</div>
+                  <div className="toggle-row-title">
+                    {t('importModal.options.mediaTitle')}{' '}
+                    <span className="soon">{t('importModal.readySoon')}</span>
+                  </div>
                   <div className="toggle-row-desc">{t('importModal.options.mediaDesc')}</div>
                 </div>
                 <span className="switch">
-                  <input
-                    type="checkbox"
-                    checked={importMedia}
-                    onChange={(e) => setImportMedia(e.target.checked)}
-                  />
+                  <input type="checkbox" disabled readOnly />
                   <span className="switch-track">
                     <span className="switch-thumb" />
                   </span>
                 </span>
               </label>
-              <label className="toggle-row">
+              <label className="toggle-row" aria-disabled="true">
                 <div className="toggle-row-body">
-                  <div className="toggle-row-title">{t('importModal.options.livingTitle')}</div>
+                  <div className="toggle-row-title">
+                    {t('importModal.options.livingTitle')}{' '}
+                    <span className="soon">{t('importModal.readySoon')}</span>
+                  </div>
                   <div className="toggle-row-desc">{t('importModal.options.livingDesc')}</div>
                 </div>
                 <span className="switch">
-                  <input
-                    type="checkbox"
-                    checked={hideLiving}
-                    onChange={(e) => setHideLiving(e.target.checked)}
-                  />
+                  <input type="checkbox" disabled readOnly />
                   <span className="switch-track">
                     <span className="switch-thumb" />
                   </span>

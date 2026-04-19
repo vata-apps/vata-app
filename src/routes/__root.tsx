@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router';
 import { AppShell } from '$components/app-shell';
 import { Button } from '$components/ui/button';
+import { useThemeSync } from '$hooks/useThemeSync';
 
 function RootErrorComponent({ error }: ErrorComponentProps) {
   return (
@@ -22,6 +23,7 @@ function RootErrorComponent({ error }: ErrorComponentProps) {
 }
 
 function RootComponent() {
+  useThemeSync();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   if (pathname === '/') {
     return <Outlet />;

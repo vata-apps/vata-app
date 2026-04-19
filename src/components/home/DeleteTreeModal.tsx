@@ -38,7 +38,7 @@ export function DeleteTreeModal({
   }, [open, tree?.id]);
 
   const canDelete =
-    !!tree && confirmText.normalize('NFC') === tree.name.normalize('NFC') && !isPending;
+    !!tree && confirmText.trim().normalize('NFC') === tree.name.normalize('NFC') && !isPending;
 
   return (
     <Modal

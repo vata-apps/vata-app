@@ -118,6 +118,7 @@
       "zipDesc": "GEDCOM + all linked media (photos, records, documents) in one archive."
     },
     "versionLabel": "GEDCOM version",
+    "versionOption551": "5.5.1 — standard",
     "versionHint": "By default, Vata exports in 5.5.1 — the version most widely supported by genealogy software.",
     "optionsLabel": "Content options",
     "options": {

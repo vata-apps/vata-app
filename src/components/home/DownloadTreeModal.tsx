@@ -24,18 +24,14 @@ export function DownloadTreeModal({ open, onClose, tree, onSuccess }: DownloadTr
   const { t } = useTranslation('home');
   const { t: tc } = useTranslation('common');
   const [format, setFormat] = useState<DownloadFormat>('ged');
-  const [includeSources, setIncludeSources] = useState(true);
   const [hideLiving, setHideLiving] = useState(false);
-  const [includePrivateNotes, setIncludePrivateNotes] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     if (open) {
       setFormat('ged');
-      setIncludeSources(true);
       setHideLiving(false);
-      setIncludePrivateNotes(false);
       setError(null);
       setIsExporting(false);
     }
@@ -156,7 +152,7 @@ export function DownloadTreeModal({ open, onClose, tree, onSuccess }: DownloadTr
           <span className="soon">{t('importModal.readySoon')}</span>
         </label>
         <select id="dl-gedcom-version" className="ds-select" disabled>
-          <option>5.5.1 — standard</option>
+          <option>{t('downloadModal.versionOption551')}</option>
         </select>
         <div className="fhint">{t('downloadModal.versionHint')}</div>
       </div>
@@ -164,9 +160,12 @@ export function DownloadTreeModal({ open, onClose, tree, onSuccess }: DownloadTr
       <div className="field">
         <span className="flabel">{t('downloadModal.optionsLabel')}</span>
         <div className="ds-options-group">
-          <label className="toggle-row">
+          <label className="toggle-row" aria-disabled="true">
             <div className="toggle-row-body">
-              <div className="toggle-row-title">{t('downloadModal.options.sourcesTitle')}</div>
+              <div className="toggle-row-title">
+                {t('downloadModal.options.sourcesTitle')}{' '}
+                <span className="soon">{t('importModal.readySoon')}</span>
+              </div>
               <div className="toggle-row-desc">
                 <Trans
                   t={t}
@@ -176,11 +175,7 @@ export function DownloadTreeModal({ open, onClose, tree, onSuccess }: DownloadTr
               </div>
             </div>
             <span className="switch">
-              <input
-                type="checkbox"
-                checked={includeSources}
-                onChange={(e) => setIncludeSources(e.target.checked)}
-              />
+              <input type="checkbox" disabled checked readOnly />
               <span className="switch-track">
                 <span className="switch-thumb" />
               </span>
@@ -202,17 +197,16 @@ export function DownloadTreeModal({ open, onClose, tree, onSuccess }: DownloadTr
               </span>
             </span>
           </label>
-          <label className="toggle-row">
+          <label className="toggle-row" aria-disabled="true">
             <div className="toggle-row-body">
-              <div className="toggle-row-title">{t('downloadModal.options.privateNotesTitle')}</div>
+              <div className="toggle-row-title">
+                {t('downloadModal.options.privateNotesTitle')}{' '}
+                <span className="soon">{t('importModal.readySoon')}</span>
+              </div>
               <div className="toggle-row-desc">{t('downloadModal.options.privateNotesDesc')}</div>
             </div>
             <span className="switch">
-              <input
-                type="checkbox"
-                checked={includePrivateNotes}
-                onChange={(e) => setIncludePrivateNotes(e.target.checked)}
-              />
+              <input type="checkbox" disabled readOnly />
               <span className="switch-track">
                 <span className="switch-thumb" />
               </span>

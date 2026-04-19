@@ -1,4 +1,4 @@
-import { useEffect, useId, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 
@@ -13,6 +13,9 @@ interface ModalProps {
   closeOnBackdrop?: boolean;
 }
 
+const FOCUSABLE_SELECTOR =
+  'input:not([disabled]):not([type="hidden"]), textarea:not([disabled]), select:not([disabled]), [href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 export function Modal({
   open,
   onClose,
@@ -25,6 +28,7 @@ export function Modal({
 }: ModalProps) {
   const { t } = useTranslation('common');
   const titleId = useId();
+  const shellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -38,19 +42,34 @@ export function Modal({
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
+  useEffect(() => {
+    if (!open) return;
+    const shell = shellRef.current;
+    if (!shell) return;
+    const firstInput = shell.querySelector<HTMLElement>(
+      'input:not([disabled]):not([type="hidden"]), textarea:not([disabled]), select:not([disabled])'
+    );
+    const focusTarget = firstInput ?? shell.querySelector<HTMLElement>(FOCUSABLE_SELECTOR) ?? shell;
+    focusTarget.focus();
+  }, [open]);
+
+  if (!open) return null;
+
   return (
     <div
       className="modal-backdrop"
-      data-open={open}
+      data-open="true"
       onMouseDown={(e) => {
         if (closeOnBackdrop && e.target === e.currentTarget) onClose();
       }}
     >
       <div
+        ref={shellRef}
         className={`modal-shell${size === 'lg' ? ' modal-shell-lg' : ''}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
+        tabIndex={-1}
       >
         <div className="modal-head">
           <div className="min-w-0 flex-1">

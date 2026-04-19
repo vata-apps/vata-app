@@ -9,8 +9,8 @@ import type { Tree } from '$/types/database';
 import { formatIsoDate } from '$lib/format';
 import { openTreeDb } from '$/db/connection';
 import { useAppStore } from '$/store/app-store';
-import { useThemeSync } from '$hooks/useThemeSync';
 import { queryKeys } from '$lib/query-keys';
+import { toErrorMessage } from '$lib/errors';
 import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
 import { GedcomManager } from '$/managers/GedcomManager';
 import { NewTreeModal } from '$components/home/NewTreeModal';
@@ -37,7 +37,6 @@ function sortTrees(trees: Tree[], key: SortKey): Tree[] {
 
 export function HomePage() {
   const { t } = useTranslation('home');
-  useThemeSync();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const setCurrentTree = useAppStore((s) => s.setCurrentTree);
@@ -335,7 +334,7 @@ export function HomePage() {
           createMutation.mutate({ name: data.name, description: data.description })
         }
         isPending={createMutation.isPending}
-        error={createMutation.error ? String(createMutation.error) : null}
+        error={toErrorMessage(createMutation.error)}
       />
 
       <ImportTreeModal
@@ -361,7 +360,7 @@ export function HomePage() {
           })
         }
         isPending={updateMutation.isPending}
-        error={updateMutation.error ? String(updateMutation.error) : null}
+        error={toErrorMessage(updateMutation.error)}
       />
 
       <DownloadTreeModal
@@ -385,7 +384,7 @@ export function HomePage() {
           })
         }
         isPending={deleteMutation.isPending}
-        error={deleteMutation.error ? String(deleteMutation.error) : null}
+        error={toErrorMessage(deleteMutation.error)}
       />
 
       {import.meta.env.DEV && <DebugDrawer open={showDebug} onClose={() => setShowDebug(false)} />}
