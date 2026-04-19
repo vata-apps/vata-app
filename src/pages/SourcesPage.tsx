@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@tanstack/react-table';
-import { VataIcon } from '$components/ui/vata-icon';
+import { Plus } from 'lucide-react';
 import { useSources } from '$/hooks/useSources';
 import { useRepositories } from '$/hooks/useRepositories';
 import { createSource } from '$db-tree/sources';
@@ -134,7 +134,7 @@ export function SourcesPage({ treeId }: SourcesPageProps): JSX.Element {
             setModalOpen(true);
           }}
         >
-          <VataIcon name="plus" size={14} className="mr-1.5" />
+          <Plus className="mr-1.5 h-3.5 w-3.5" />
           {t('newSource')}
         </Button>
       </div>

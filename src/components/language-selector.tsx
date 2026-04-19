@@ -1,3 +1,4 @@
+import { Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '$components/ui/button';
 import {
@@ -6,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '$components/ui/dropdown-menu';
-import { VataIcon } from '$components/ui/vata-icon';
 import { useAppStore } from '$/store/app-store';
 
 export function LanguageSelector() {
@@ -22,7 +22,7 @@ export function LanguageSelector() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
-          <VataIcon name="languages" size={16} />
+          <Languages className="h-4 w-4" />
           <span className="sr-only">{t('language.select')}</span>
         </Button>
       </DropdownMenuTrigger>

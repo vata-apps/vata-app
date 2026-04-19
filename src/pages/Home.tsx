@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { remove } from '@tauri-apps/plugin-fs';
 import { useTranslation } from 'react-i18next';
-import { VataIcon } from '$components/ui/vata-icon';
+import { Plus, FileUp, Pencil, Trash2, FolderOpen, Download } from 'lucide-react';
 import { getAllTrees, createTree, updateTree, deleteTree, markTreeOpened } from '$/db/system/trees';
 import { getSystemDebugData, listTreeDatabaseFiles } from '$/db/system/debug';
 import { openTreeDb } from '$/db/connection';
@@ -151,11 +151,11 @@ export function HomePage() {
 
       <div className="mb-6 flex gap-2">
         <Button size="sm" onClick={() => setShowNewForm(true)}>
-          <VataIcon name="plus" size={14} className="mr-1.5" />
+          <Plus className="mr-1.5 h-3.5 w-3.5" />
           {t('newTree')}
         </Button>
         <Button size="sm" variant="outline" onClick={() => setShowImportModal(true)}>
-          <VataIcon name="file-up" size={14} className="mr-1.5" />
+          <FileUp className="mr-1.5 h-3.5 w-3.5" />
           {t('importGedcom')}
         </Button>
       </div>
@@ -227,7 +227,7 @@ export function HomePage() {
                     disabled={openMutation.isPending}
                     className="flex-1"
                   >
-                    <VataIcon name="folder-open" size={14} className="mr-1.5" />
+                    <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
                     {tc('actions.open')}
                   </Button>
                   <Button
@@ -236,7 +236,7 @@ export function HomePage() {
                     onClick={() => setExportTreeId(tree.id)}
                     title={tc('actions.export')}
                   >
-                    <VataIcon name="download" size={14} />
+                    <Download className="h-3.5 w-3.5" />
                   </Button>
                   <Button
                     size="sm"
@@ -248,7 +248,7 @@ export function HomePage() {
                     disabled={renamingId !== null}
                     title={tc('actions.rename')}
                   >
-                    <VataIcon name="pencil" size={14} />
+                    <Pencil className="h-3.5 w-3.5" />
                   </Button>
                   <Button
                     size="sm"
@@ -258,7 +258,7 @@ export function HomePage() {
                     title={tc('actions.delete')}
                     className="text-destructive hover:text-destructive"
                   >
-                    <VataIcon name="trash" size={14} />
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </CardFooter>
               </Card>
