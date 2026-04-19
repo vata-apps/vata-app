@@ -144,9 +144,9 @@ export function HomePage() {
 
   return (
     <div className="mx-auto max-w-5xl p-6">
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
+      <div className="mb-8 text-center">
+        <h1 className="font-serif text-5xl font-medium italic tracking-tight">{t('title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       <div className="mb-6 flex gap-2">

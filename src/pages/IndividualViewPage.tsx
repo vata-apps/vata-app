@@ -50,7 +50,7 @@ export function IndividualViewPage({ treeId, individualId }: IndividualViewPageP
 
       <div className="mt-4 mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">{name.full}</h1>
+          <h1 className="font-serif text-3xl font-medium italic tracking-tight">{name.full}</h1>
           <div className="mt-1 text-sm text-muted-foreground">
             {GENDER_LABELS[individual.gender] ?? 'Unknown'}
             {' · '}
