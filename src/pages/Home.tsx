@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { remove } from '@tauri-apps/plugin-fs';
 import { useTranslation } from 'react-i18next';
-import { Plus, FileUp, Pencil, Trash2, FolderOpen, Download } from 'lucide-react';
+import { VataIcon } from '$components/ui/vata-icon';
 import { getAllTrees, createTree, updateTree, deleteTree, markTreeOpened } from '$/db/system/trees';
 import { getSystemDebugData, listTreeDatabaseFiles } from '$/db/system/debug';
 import { openTreeDb } from '$/db/connection';
@@ -144,18 +144,18 @@ export function HomePage() {
 
   return (
     <div className="mx-auto max-w-5xl p-6">
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold">{t('title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
+      <div className="mb-8 text-center">
+        <h1 className="font-serif text-5xl font-medium italic tracking-tight">{t('title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       <div className="mb-6 flex gap-2">
         <Button size="sm" onClick={() => setShowNewForm(true)}>
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
+          <VataIcon name="plus" size={14} className="mr-1.5" />
           {t('newTree')}
         </Button>
         <Button size="sm" variant="outline" onClick={() => setShowImportModal(true)}>
-          <FileUp className="mr-1.5 h-3.5 w-3.5" />
+          <VataIcon name="file-up" size={14} className="mr-1.5" />
           {t('importGedcom')}
         </Button>
       </div>
@@ -227,7 +227,7 @@ export function HomePage() {
                     disabled={openMutation.isPending}
                     className="flex-1"
                   >
-                    <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
+                    <VataIcon name="folder-open" size={14} className="mr-1.5" />
                     {tc('actions.open')}
                   </Button>
                   <Button
@@ -236,7 +236,7 @@ export function HomePage() {
                     onClick={() => setExportTreeId(tree.id)}
                     title={tc('actions.export')}
                   >
-                    <Download className="h-3.5 w-3.5" />
+                    <VataIcon name="download" size={14} />
                   </Button>
                   <Button
                     size="sm"
@@ -248,7 +248,7 @@ export function HomePage() {
                     disabled={renamingId !== null}
                     title={tc('actions.rename')}
                   >
-                    <Pencil className="h-3.5 w-3.5" />
+                    <VataIcon name="pencil" size={14} />
                   </Button>
                   <Button
                     size="sm"
@@ -258,7 +258,7 @@ export function HomePage() {
                     title={tc('actions.delete')}
                     className="text-destructive hover:text-destructive"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <VataIcon name="trash" size={14} />
                   </Button>
                 </CardFooter>
               </Card>
