@@ -1,4 +1,9 @@
-import { createRootRoute, Outlet, type ErrorComponentProps } from '@tanstack/react-router';
+import {
+  createRootRoute,
+  Outlet,
+  useRouterState,
+  type ErrorComponentProps,
+} from '@tanstack/react-router';
 import { AppShell } from '$components/app-shell';
 import { Button } from '$components/ui/button';
 
@@ -16,11 +21,19 @@ function RootErrorComponent({ error }: ErrorComponentProps) {
   );
 }
 
-export const Route = createRootRoute({
-  component: () => (
+function RootComponent() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  if (pathname === '/') {
+    return <Outlet />;
+  }
+  return (
     <AppShell>
       <Outlet />
     </AppShell>
-  ),
+  );
+}
+
+export const Route = createRootRoute({
+  component: RootComponent,
   errorComponent: RootErrorComponent,
 });

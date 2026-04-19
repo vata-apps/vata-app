@@ -1,53 +1,161 @@
 {
-  "title": "Vata",
-  "subtitle": "Gestion d'arbres généalogiques",
-  "newTree": "Nouvel arbre",
-  "importGedcom": "Importer GEDCOM",
-  "yourTrees": "Vos arbres",
+  "hero": {
+    "titleLead": "Vos arbres",
+    "titleAccent": "généalogiques",
+    "titleTail": ""
+  },
+  "actions": {
+    "newTree": "Nouvel arbre",
+    "importGedcom": "Importer GEDCOM"
+  },
+  "sectionLabel": "Vos arbres",
+  "sort": {
+    "recent": "Récent",
+    "name": "Nom",
+    "size": "Taille"
+  },
   "emptyState": "Aucun arbre. Créez votre premier arbre généalogique pour commencer.",
   "treeCard": {
-    "individuals": "{{count}} individus",
-    "families": "{{count}} familles",
-    "created": "Créé le : {{date}}",
-    "lastOpened": "Dernier accès : {{date}}",
-    "neverOpened": "Jamais"
+    "individuals": "individus",
+    "families": "familles",
+    "generations": "générations",
+    "created": "Créé",
+    "lastOpened": "Dernier accès",
+    "neverOpened": "Jamais",
+    "cardActions": {
+      "open": "Ouvrir",
+      "export": "Exporter",
+      "rename": "Renommer",
+      "delete": "Supprimer"
+    }
   },
-  "createForm": {
-    "title": "Créer un nouvel arbre",
-    "name": "Nom",
-    "namePlaceholder": "Mon arbre familial",
-    "description": "Description",
-    "descriptionPlaceholder": "Description optionnelle",
-    "submit": "Créer l'arbre"
+  "cta": {
+    "title": "Démarrer un nouvel arbre",
+    "subtitle": "Ou glissez-déposez un fichier .ged"
   },
-  "import": {
-    "title": "Importer GEDCOM",
-    "selectFile": "Choisir un fichier",
-    "changeFile": "Changer de fichier",
-    "preview": "Aperçu :",
-    "previewStats": "{{individuals}} individus, {{families}} familles",
-    "importing": "Importation...",
-    "import": "Importer",
-    "invalidFile": "Fichier GEDCOM invalide",
-    "failedRead": "Échec de la lecture du fichier",
-    "importFailed": "Échec de l'importation : {{error}}",
-    "defaultTreeName": "importé"
+  "statusbar": {
+    "appName": "Vata",
+    "version": "v{{version}}",
+    "debug": "Débogage",
+    "preferences": "Préférences"
   },
-  "export": {
-    "title": "Exporter GEDCOM",
-    "description": "Exporter « {{name}} » au format GEDCOM 5.5.1.",
-    "includeLiving": "Inclure les individus vivants",
-    "includeLivingHint": "Si décoché, les individus vivants sont exclus pour la confidentialité.",
-    "exporting": "Exportation...",
-    "exportFailed": "Échec de l'exportation : {{error}}"
+  "newTreeModal": {
+    "title": "Démarrer un nouvel arbre",
+    "subtitle": "Donnez-lui un nom et un point de départ. Vous pourrez ajouter des individus, familles et sources par la suite.",
+    "nameLabel": "Nom de l'arbre",
+    "namePlaceholder": "Ex. Famille Bourgoin",
+    "descriptionLabel": "Description",
+    "descriptionOptional": "— facultatif",
+    "descriptionPlaceholder": "Une note courte : lignée, région, projet de recherche…",
+    "startLabel": "Point de départ",
+    "start": {
+      "blankTitle": "Vierge",
+      "blankDesc": "0 fiche — démarrez à partir de rien.",
+      "meTitle": "Depuis moi",
+      "meDesc": "1 racine — une fiche avec votre nom."
+    },
+    "submit": "Créer l'arbre",
+    "creating": "Création…"
   },
-  "deleteConfirm": {
-    "title": "Supprimer l'arbre",
-    "message": "Supprimer « {{name}} » ? Cette action est irréversible."
+  "importModal": {
+    "title": "Importer un fichier GEDCOM",
+    "subtitle": "Déposez un fichier <code>.ged</code> exporté depuis Gramps, Ancestry, Geneanet, Heredis…",
+    "dropzoneTitle": "Glissez votre fichier ici, ou cliquez pour parcourir",
+    "dropzoneHint": "<code>.ged</code> · <code>.gedcom</code> — jusqu'à 50 Mo",
+    "scanTitle": "Analyse du fichier",
+    "scanStatus_one": "{{errors}} erreur · {{warnings, plural, one {# avertissement} other {# avertissements}}}",
+    "scanStatus_other": "{{errors}} erreurs · {{warnings, plural, one {# avertissement} other {# avertissements}}}",
+    "scanLabels": {
+      "individuals": "Individus",
+      "families": "Familles",
+      "places": "Lieux",
+      "sources": "Sources"
+    },
+    "nameLabel": "Nom de l'arbre",
+    "optionsLabel": "Options d'import",
+    "options": {
+      "mergeDuplicatesTitle": "Fusionner les doublons",
+      "mergeDuplicatesDesc": "Détecte automatiquement les individus avec noms et dates similaires.",
+      "mediaTitle": "Importer les médias liés",
+      "mediaDesc": "Photos et documents référencés (OBJE). Si absents, liens conservés.",
+      "livingTitle": "Masquer les personnes vivantes",
+      "livingDesc": "Les fiches sans date de décès seront confidentielles par défaut."
+    },
+    "footNote": "Le fichier original ne sera pas modifié",
+    "submit": "Importer l'arbre",
+    "importing": "Importation…",
+    "readySoon": "Bientôt",
+    "statusReady": "Prêt",
+    "ready": "Prêt",
+    "fileMeta": "{{size}} · GEDCOM {{version}} · {{encoding}}",
+    "removeFile": "Retirer"
+  },
+  "editModal": {
+    "title": "Modifier l'arbre",
+    "subtitle": "Renommez l'arbre et ajustez sa description. Les fiches et sources restent inchangées.",
+    "nameLabel": "Nom de l'arbre",
+    "descriptionLabel": "Description",
+    "descriptionOptional": "— facultatif",
+    "descriptionPlaceholder": "Une note courte…",
+    "metaIndividuals": "Individus",
+    "metaCreated": "Créé",
+    "metaLastOpened": "Dernier accès",
+    "submit": "Enregistrer"
+  },
+  "downloadModal": {
+    "title": "Télécharger l'arbre",
+    "subtitle": "Exportez une copie complète de <b>{{name}}</b> sur votre machine.",
+    "formatLabel": "Format",
+    "formats": {
+      "gedTitle": "GEDCOM",
+      "gedExt": ".ged",
+      "gedDesc": "Standard universel — compatible Gramps, Ancestry, Geneanet, Heredis. Pas de médias.",
+      "jsonTitle": "Vata JSON",
+      "jsonExt": ".vata.json",
+      "jsonDesc": "Format natif sans perte — conserve toutes les annotations et relations Vata.",
+      "zipTitle": "Archive complète",
+      "zipExt": ".zip",
+      "zipDesc": "GEDCOM + tous les médias liés (photos, actes, documents) dans une archive."
+    },
+    "versionLabel": "Version GEDCOM",
+    "versionHint": "Par défaut, Vata exporte en 5.5.1 — la version la plus largement supportée par les logiciels de généalogie.",
+    "optionsLabel": "Options de contenu",
+    "options": {
+      "sourcesTitle": "Inclure les sources et citations",
+      "sourcesDesc": "Tags <code>SOUR</code> référencés dans chaque fait.",
+      "hideLivingTitle": "Masquer les personnes vivantes",
+      "hideLivingDesc": "Les fiches sans date de décès seront anonymisées (nom → «Vivant·e»).",
+      "privateNotesTitle": "Inclure les notes privées",
+      "privateNotesDesc": "Notes marquées comme confidentielles dans Vata. Décochez si destiné au partage."
+    },
+    "statsIndividuals": "Individus",
+    "statsFamilies": "Familles",
+    "statsSize": "Taille estimée",
+    "footNote": "Fichier généré localement",
+    "submit": "Télécharger .ged",
+    "exporting": "Exportation…"
+  },
+  "deleteModal": {
+    "title": "Supprimer {{name}} ?",
+    "subtitle": "Cette action est définitive. Toutes les fiches liées à cet arbre seront perdues.",
+    "stats": {
+      "individuals": "Individus",
+      "families": "Familles",
+      "sources": "Sources",
+      "media": "Médias"
+    },
+    "exportBeforeTitle": "Exporter un GEDCOM avant suppression",
+    "exportBeforeDesc": "Téléchargement automatique d'une copie complète de l'arbre (.ged).",
+    "typeToConfirm": "Tapez <code>{{name}}</code> pour confirmer",
+    "typeToConfirmPlaceholder": "Nom exact de l'arbre",
+    "submit": "Supprimer l'arbre",
+    "deleting": "Suppression…"
+  },
+  "preferences": {
+    "appearance": "Apparence",
+    "language": "Langue"
   },
   "debug": {
-    "show": "Afficher le débogage",
-    "hide": "Masquer le débogage",
     "treeFiles": "Fichiers de bases de données",
     "noTreeFiles": "Aucun fichier de base de données trouvé",
     "rawContent": "Contenu brut de system.db"

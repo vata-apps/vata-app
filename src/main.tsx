@@ -1,4 +1,9 @@
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/fraunces/full-italic.css';
 import './index.css';
+import './styles/home.css';
 import './i18n/config';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
