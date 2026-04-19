@@ -71,7 +71,9 @@ export function FamilyViewPage({ treeId, familyId }: FamilyViewPageProps): JSX.E
 
       <div className="mt-4 mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">{tf('familyId', { id: family.id })}</h1>
+          <h1 className="font-serif text-3xl font-medium italic tracking-tight">
+            {tf('familyId', { id: family.id })}
+          </h1>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" disabled title={tf('comingSoon')}>
