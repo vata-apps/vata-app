@@ -1,8 +1,9 @@
 'use client';
 
-import { CircleCheck, Info, LoaderCircle, OctagonX, TriangleAlert } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Toaster as Sonner } from 'sonner';
+
+import { VataIcon } from '$components/ui/vata-icon';
 
 type ToasterProps = React.ComponentProps<typeof Sonner>;
 
@@ -14,11 +15,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       theme={theme as ToasterProps['theme']}
       className="toaster group"
       icons={{
-        success: <CircleCheck className="h-4 w-4" />,
-        info: <Info className="h-4 w-4" />,
-        warning: <TriangleAlert className="h-4 w-4" />,
-        error: <OctagonX className="h-4 w-4" />,
-        loading: <LoaderCircle className="h-4 w-4 animate-spin" />,
+        success: <VataIcon name="circle-check" size={16} />,
+        info: <VataIcon name="info" size={16} />,
+        warning: <VataIcon name="triangle-alert" size={16} />,
+        error: <VataIcon name="octagon-x" size={16} />,
+        loading: <VataIcon name="loader-circle" size={16} className="animate-spin" />,
       }}
       toastOptions={{
         classNames: {

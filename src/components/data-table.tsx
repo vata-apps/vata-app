@@ -9,12 +9,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { Button } from '$components/ui/button';
 import { Input } from '$components/ui/input';
+import { VataIcon } from '$components/ui/vata-icon';
 import {
   Table,
   TableBody,
@@ -107,7 +107,7 @@ export function DataTable<TData, TValue>({
                         onClick={header.column.getToggleSortingHandler()}
                       >
                         {flexRender(header.column.columnDef.header, header.getContext())}
-                        <ArrowUpDown className="h-3 w-3" />
+                        <VataIcon name="arrow-up-down" size={12} />
                       </button>
                     ) : (
                       flexRender(header.column.columnDef.header, header.getContext())

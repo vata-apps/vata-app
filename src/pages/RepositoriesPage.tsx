@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Plus } from 'lucide-react';
+import { VataIcon } from '$components/ui/vata-icon';
 import { useRepositories } from '$/hooks/useRepositories';
 import { createRepository } from '$db-tree/repositories';
 import { queryKeys } from '$/lib/query-keys';
@@ -130,7 +130,7 @@ export function RepositoriesPage({ treeId }: RepositoriesPageProps): JSX.Element
             setModalOpen(true);
           }}
         >
-          <Plus className="mr-1.5 h-3.5 w-3.5" />
+          <VataIcon name="plus" size={14} className="mr-1.5" />
           {t('newRepository')}
         </Button>
       </div>

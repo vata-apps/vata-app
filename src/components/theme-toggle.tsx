@@ -1,4 +1,3 @@
-import { Moon, Sun, Monitor } from 'lucide-react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '$components/ui/button';
@@ -8,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '$components/ui/dropdown-menu';
+import { VataIcon } from '$components/ui/vata-icon';
 import { useAppStore } from '$/store/app-store';
 
 function applyTheme(theme: 'light' | 'dark' | 'system') {
@@ -40,22 +40,30 @@ export function ThemeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <VataIcon
+            name="sun"
+            size={16}
+            className="rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+          />
+          <VataIcon
+            name="moon"
+            size={16}
+            className="absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+          />
           <span className="sr-only">{t('theme.toggle')}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme('light')}>
-          <Sun className="mr-2 h-4 w-4" />
+          <VataIcon name="sun" size={16} className="mr-2" />
           {t('theme.light')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('dark')}>
-          <Moon className="mr-2 h-4 w-4" />
+          <VataIcon name="moon" size={16} className="mr-2" />
           {t('theme.dark')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme('system')}>
-          <Monitor className="mr-2 h-4 w-4" />
+          <VataIcon name="monitor" size={16} className="mr-2" />
           {t('theme.system')}
         </DropdownMenuItem>
       </DropdownMenuContent>
