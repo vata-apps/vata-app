@@ -120,6 +120,7 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
           <button
             type="button"
             className="btn btn-primary"
+            disabled={!canImport}
             aria-disabled={!canImport}
             onClick={handleImport}
           >
@@ -130,7 +131,7 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
       }
     >
       {!file ? (
-        <label className="dropzone" onClick={pickFile}>
+        <button type="button" className="dropzone" onClick={pickFile}>
           <div className="dropzone-icon">
             <Upload size={18} strokeWidth={1.6} />
           </div>
@@ -138,7 +139,7 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
           <div className="dropzone-hint">
             <Trans t={t} i18nKey="importModal.dropzoneHint" components={{ code: <code /> }} />
           </div>
-        </label>
+        </button>
       ) : (
         <>
           <div className="file-list">
