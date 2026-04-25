@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import './styles/vata-ds.css';
 
 @custom-variant dark (&:is(.dark *));
 

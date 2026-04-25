@@ -1,5 +1,4 @@
 import { Moon, Sun, Monitor } from 'lucide-react';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '$components/ui/button';
 import {
@@ -10,31 +9,9 @@ import {
 } from '$components/ui/dropdown-menu';
 import { useAppStore } from '$/store/app-store';
 
-function applyTheme(theme: 'light' | 'dark' | 'system') {
-  const root = document.documentElement;
-  if (theme === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    root.classList.toggle('dark', prefersDark);
-  } else {
-    root.classList.toggle('dark', theme === 'dark');
-  }
-}
-
 export function ThemeToggle() {
   const { t } = useTranslation();
-  const theme = useAppStore((s) => s.theme);
   const setTheme = useAppStore((s) => s.setTheme);
-
-  useEffect(() => {
-    applyTheme(theme);
-
-    if (theme === 'system') {
-      const mq = window.matchMedia('(prefers-color-scheme: dark)');
-      const handler = () => applyTheme('system');
-      mq.addEventListener('change', handler);
-      return () => mq.removeEventListener('change', handler);
-    }
-  }, [theme]);
 
   return (
     <DropdownMenu>
