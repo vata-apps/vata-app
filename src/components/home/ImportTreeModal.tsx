@@ -184,11 +184,9 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
               <span className="flex-1" />
               <span className="badge badge-success">
                 <span className="dot" />
-                {t('importModal.scanStatus', {
-                  count: file.errors,
-                  errors: file.errors,
-                  warnings: file.warnings,
-                })}
+                {t('importModal.scanStatusErrors', { count: file.errors })}
+                {' · '}
+                {t('importModal.scanStatusWarnings', { count: file.warnings })}
               </span>
             </div>
             <div className="scan-grid">

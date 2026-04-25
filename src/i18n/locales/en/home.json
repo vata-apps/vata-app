@@ -67,8 +67,10 @@
     "dropzoneTitle": "Drop your file here, or click to browse",
     "dropzoneHint": "<code>.ged</code> · <code>.gedcom</code> — up to 50 MB",
     "scanTitle": "File analysis",
-    "scanStatus_one": "{{errors}} error · {{warnings, plural, one {# warning} other {# warnings}}}",
-    "scanStatus_other": "{{errors}} errors · {{warnings, plural, one {# warning} other {# warnings}}}",
+    "scanStatusErrors_one": "{{count}} error",
+    "scanStatusErrors_other": "{{count}} errors",
+    "scanStatusWarnings_one": "{{count}} warning",
+    "scanStatusWarnings_other": "{{count}} warnings",
     "scanLabels": {
       "individuals": "Individuals",
       "families": "Families",

@@ -67,8 +67,10 @@
     "dropzoneTitle": "Glissez votre fichier ici, ou cliquez pour parcourir",
     "dropzoneHint": "<code>.ged</code> · <code>.gedcom</code> — jusqu'à 50 Mo",
     "scanTitle": "Analyse du fichier",
-    "scanStatus_one": "{{errors}} erreur · {{warnings, plural, one {# avertissement} other {# avertissements}}}",
-    "scanStatus_other": "{{errors}} erreurs · {{warnings, plural, one {# avertissement} other {# avertissements}}}",
+    "scanStatusErrors_one": "{{count}} erreur",
+    "scanStatusErrors_other": "{{count}} erreurs",
+    "scanStatusWarnings_one": "{{count}} avertissement",
+    "scanStatusWarnings_other": "{{count}} avertissements",
     "scanLabels": {
       "individuals": "Individus",
       "families": "Familles",
@@ -85,7 +87,7 @@
       "livingTitle": "Masquer les personnes vivantes",
       "livingDesc": "Les fiches sans date de décès seront confidentielles par défaut."
     },
-    "footNote": "Le fichier original ne sera pas modifié",
+    "footNote": "Le fichier original ne sera pas modifié.",
     "submit": "Importer l'arbre",
     "importing": "Importation…",
     "readySoon": "Bientôt",

@@ -7,7 +7,7 @@ import { ArrowRight, Bug, Download, FolderOpen, Pencil, Plus, Trash2, Upload } f
 import { createTree, deleteTree, getAllTrees, markTreeOpened, updateTree } from '$/db/system/trees';
 import type { Tree } from '$/types/database';
 import { formatIsoDate } from '$lib/format';
-import { openTreeDb } from '$/db/connection';
+import { closeTreeDb, openTreeDb } from '$/db/connection';
 import { useAppStore } from '$/store/app-store';
 import { queryKeys } from '$lib/query-keys';
 import { toErrorMessage } from '$lib/errors';
@@ -125,7 +125,11 @@ export function HomePage() {
       if (exportBefore) {
         await openTreeDb(treePath);
         const saved = await GedcomManager.exportToFile(treeName, false);
-        if (!saved) return { deleted: false };
+        if (!saved) {
+          await closeTreeDb();
+          return { deleted: false };
+        }
+        await closeTreeDb();
       }
       await deleteTree(id);
       try {
