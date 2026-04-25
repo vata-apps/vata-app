@@ -65,7 +65,12 @@ export function HomePage() {
     return () => document.removeEventListener('keydown', onKey);
   }, []);
 
-  const { data: trees = [] } = useQuery({
+  const {
+    data: trees = [],
+    isError: isTreesError,
+    error: treesError,
+    refetch: refetchTrees,
+  } = useQuery({
     queryKey: queryKeys.trees,
     queryFn: getAllTrees,
   });
@@ -210,6 +215,22 @@ export function HomePage() {
                   </button>
                 </div>
               </div>
+
+              {isTreesError && (
+                <div className="ferror" role="alert" style={{ marginBottom: 12 }}>
+                  <span>
+                    {t('treesError.title')} {toErrorMessage(treesError)}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-outline btn-sm"
+                    onClick={() => void refetchTrees()}
+                    style={{ marginLeft: 12 }}
+                  >
+                    {t('treesError.retry')}
+                  </button>
+                </div>
+              )}
 
               <div className="home-grid">
                 {sortedTrees.map((tree) => (

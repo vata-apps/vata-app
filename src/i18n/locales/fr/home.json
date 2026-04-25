@@ -15,6 +15,10 @@
     "size": "Taille"
   },
   "emptyState": "Aucun arbre. Créez votre premier arbre généalogique pour commencer.",
+  "treesError": {
+    "title": "Impossible de charger vos arbres.",
+    "retry": "Réessayer"
+  },
   "treeCard": {
     "individuals": "individus",
     "families": "familles",
@@ -132,6 +136,7 @@
     "statsIndividuals": "Individus",
     "statsFamilies": "Familles",
     "statsSize": "Taille estimée",
+    "statsSizeValue": "~ {{size}} Mo",
     "footNote": "Fichier généré localement",
     "submit": "Télécharger .ged",
     "exporting": "Exportation…"

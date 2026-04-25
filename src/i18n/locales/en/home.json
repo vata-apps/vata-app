@@ -15,6 +15,10 @@
     "size": "Size"
   },
   "emptyState": "No trees yet. Create your first genealogical tree to get started.",
+  "treesError": {
+    "title": "Couldn't load your trees.",
+    "retry": "Retry"
+  },
   "treeCard": {
     "individuals": "individuals",
     "families": "families",
@@ -125,13 +129,14 @@
       "sourcesTitle": "Include sources and citations",
       "sourcesDesc": "<code>SOUR</code> tags referenced on each fact.",
       "hideLivingTitle": "Hide living individuals",
-      "hideLivingDesc": "Records without a death date are anonymised (name → «Living»).",
+      "hideLivingDesc": "Records without a death date are anonymised (name → “Living”).",
       "privateNotesTitle": "Include private notes",
       "privateNotesDesc": "Notes flagged confidential in Vata. Uncheck if sharing."
     },
     "statsIndividuals": "Individuals",
     "statsFamilies": "Families",
     "statsSize": "Estimated size",
+    "statsSizeValue": "~ {{size}} MB",
     "footNote": "File generated locally",
     "submit": "Download .ged",
     "exporting": "Exporting…"

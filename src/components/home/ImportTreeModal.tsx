@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Upload, X } from 'lucide-react';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { readTextFile, stat } from '@tauri-apps/plugin-fs';
@@ -37,13 +37,17 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
   const [treeName, setTreeName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const closedRef = useRef(false);
 
   useEffect(() => {
     if (open) {
+      closedRef.current = false;
       setFile(null);
       setTreeName('');
       setError(null);
       setIsImporting(false);
+    } else {
+      closedRef.current = true;
     }
   }, [open]);
 
@@ -83,8 +87,10 @@ export function ImportTreeModal({ open, onClose, onSuccess }: ImportTreeModalPro
     setError(null);
     try {
       const result = await GedcomManager.importFromContent(file.content, treeName.trim());
+      if (closedRef.current) return;
       onSuccess(result.treeId);
     } catch (e) {
+      if (closedRef.current) return;
       setError(e instanceof Error ? e.message : String(e));
       setIsImporting(false);
     }

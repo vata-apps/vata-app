@@ -51,7 +51,7 @@ export function DebugDrawer({ open, onClose }: DebugDrawerProps) {
       <div className="debug-drawer-scrim" data-open={open} onClick={onClose} aria-hidden="true" />
       <aside className="debug-drawer" data-open={open} aria-hidden={!open}>
         <div className="debug-drawer-head">
-          <span className="debug-drawer-title">Debug</span>
+          <span className="debug-drawer-title">{t('statusbar.debug')}</span>
           <button
             type="button"
             className="btn btn-icon btn-ghost btn-sm"

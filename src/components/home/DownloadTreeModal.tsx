@@ -44,10 +44,9 @@ export function DownloadTreeModal({ open, onClose, tree, onSuccess }: DownloadTr
     try {
       await openTreeDb(tree.path);
       const ok = await GedcomManager.exportToFile(tree.name, !hideLiving);
+      setIsExporting(false);
       if (ok) {
         onSuccess();
-      } else {
-        setIsExporting(false);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -87,7 +86,7 @@ export function DownloadTreeModal({ open, onClose, tree, onSuccess }: DownloadTr
           <button
             type="button"
             className="btn btn-primary"
-            aria-disabled={!tree || isExporting}
+            disabled={!tree || isExporting}
             onClick={handleExport}
           >
             <Download strokeWidth={1.8} />
@@ -219,7 +218,10 @@ export function DownloadTreeModal({ open, onClose, tree, onSuccess }: DownloadTr
         <div className="ds-meta-grid mt-[4px]">
           <StatCell label={t('downloadModal.statsIndividuals')} value={tree.individualCount} />
           <StatCell label={t('downloadModal.statsFamilies')} value={tree.familyCount} />
-          <StatCell label={t('downloadModal.statsSize')} value={`~ ${estimatedSizeMb} MB`} />
+          <StatCell
+            label={t('downloadModal.statsSize')}
+            value={t('downloadModal.statsSizeValue', { size: estimatedSizeMb })}
+          />
         </div>
       )}
 
