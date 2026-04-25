@@ -124,12 +124,13 @@ export function HomePage() {
     }): Promise<{ deleted: boolean }> => {
       if (exportBefore) {
         await openTreeDb(treePath);
-        const saved = await GedcomManager.exportToFile(treeName, false);
-        if (!saved) {
+        let saved = false;
+        try {
+          saved = await GedcomManager.exportToFile(treeName, false);
+        } finally {
           await closeTreeDb();
-          return { deleted: false };
         }
-        await closeTreeDb();
+        if (!saved) return { deleted: false };
       }
       await deleteTree(id);
       try {

@@ -92,7 +92,6 @@
     "importing": "Importing…",
     "readySoon": "Coming soon",
     "statusReady": "Ready",
-    "ready": "Ready",
     "fileMeta": "{{size}} · GEDCOM {{version}} · {{encoding}}",
     "removeFile": "Remove"
   },
