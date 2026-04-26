@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { searchIndividuals } from '$db-tree/individuals';
 import { getPrimaryName, formatName } from '$db-tree/names';
 import type { Gender } from '$/types/database';
@@ -32,6 +33,7 @@ export function PersonSlot({
   required,
   onChange,
 }: PersonSlotProps): JSX.Element {
+  const { t } = useTranslation('workspace');
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -133,7 +135,7 @@ export function PersonSlot({
           </div>
           <button
             type="button"
-            aria-label="Clear person"
+            aria-label={t('personSlot.clear')}
             onClick={handleClear}
             className="cursor-pointer border-none bg-transparent p-0 text-[11px] text-destructive"
           >
