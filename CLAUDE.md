@@ -187,7 +187,7 @@ const rows = await db
 
 All new development must be done in a **git worktree** on a dedicated feature branch, then submitted as a **pull request**. Never commit new work directly to `main`.
 
-1. **Always use the `EnterWorktree` tool** to create the worktree — never `git worktree add` via Bash. `EnterWorktree` registers the worktree with the Claude Code session so the UI tracks the correct branch and directory; raw `git worktree add` leaves the session pinned to the original repo and breaks the branch indicator.
+1. **Always use the `EnterWorktree` tool** to create the worktree — never `git worktree add` via Bash. `EnterWorktree` puts the worktree under `.claude/worktrees/`, switches the shell into it, registers it with the session for lifecycle tracking, and lets `ExitWorktree` clean up cleanly. Raw `git worktree add` skips this lifecycle and the session can't manage the worktree afterwards. (Note: the Claude Code UI's branch indicator still shows the session's launch directory, regardless of which method you use.)
 2. Do all work in the isolated worktree
 3. Commit, push, and open a PR to `main`
 
