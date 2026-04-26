@@ -1,6 +1,6 @@
 # Genealogical Date Formats
 
-> Parsing, formatting, validation, and all date logic are handled by the in-app module `@vata-apps/gedcom-date` (MVP3). This document covers what matters for the Vata app: user input formats, storage, and display. See [ADR-004](../decisions/adr-004-gedcom-libraries.md).
+> Parsing, formatting, validation, and all date logic are handled by the in-app module `@vata-apps/gedcom-date`. This document covers what matters for the Vata app: user input formats, storage, and display. See [ADR-004](../decisions/adr-004-gedcom-libraries.md).
 
 ---
 

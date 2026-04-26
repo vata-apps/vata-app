@@ -2,33 +2,24 @@
 
 ## Overview
 
-| Category          | Technology      | Version       | Role                                                         | MVP |
-| ----------------- | --------------- | ------------- | ------------------------------------------------------------ | --- |
-| Desktop Framework | Tauri           | 2.0           | Native multi-platform shell                                  | 1   |
-| Backend           | Rust            | Latest stable | Tauri plugins                                                | 1   |
-| Frontend          | React           | 18.x          | Declarative UI                                               | 1   |
-| Language          | TypeScript      | 5.x           | Static typing                                                | 1   |
-| Bundler           | Vite            | 5.x           | Fast build, HMR                                              | 1   |
-| State (Server)    | TanStack Query  | 5.x           | Cache and synchronization                                    | 1   |
-| State (Client)    | Zustand         | 4.x           | Lightweight global state                                     | 1   |
-| Routing           | TanStack Router | 1.x           | Type-safe routing                                            | 1   |
-| Database          | SQLite          | 3.x           | Local storage                                                | 1   |
-| GEDCOM            | In-app module   | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)      | 2   |
-| Dates             | In-app module   | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`) | 3   |
-| Testing           | Vitest + RTL    | 2.x / 16.x    | Unit and integration tests                                   | 3   |
-| UI Components     | shadcn/ui       | Latest        | Radix UI primitives with Tailwind CSS styling                | 5   |
-| CSS Framework     | Tailwind CSS    | 4.x           | Utility-first CSS framework                                  | 5   |
-| Icons             | Lucide React    | Latest        | Consistent iconography                                       | 5   |
-| i18n              | react-i18next   | 15.x          | Internationalization                                         | 5   |
-
-### Adoption by MVP
-
-- **MVP1**: Tauri, React, Vite, TypeScript, TanStack Query, Zustand, TanStack Router, SQLite. No UI library (minimal HTML/CSS).
-- **MVP2**: Integration of in-app module `@vata-apps/gedcom-parser` for import/export.
-- **MVP3**: In-app module `@vata-apps/gedcom-date` for event dates. HTML-only UI with minimal CSS. Vitest + Testing Library introduced.
-- **MVP4**: Sources entity and citation management (HTML-only UI).
-- **MVP5**: shadcn/ui, Tailwind CSS, Lucide React, complete design system, i18n.
-- **MVP6**: File attachment management.
+| Category          | Technology      | Version       | Role                                                         |
+| ----------------- | --------------- | ------------- | ------------------------------------------------------------ |
+| Desktop Framework | Tauri           | 2.0           | Native multi-platform shell                                  |
+| Backend           | Rust            | Latest stable | Tauri plugins                                                |
+| Frontend          | React           | 18.x          | Declarative UI                                               |
+| Language          | TypeScript      | 5.x           | Static typing                                                |
+| Bundler           | Vite            | 5.x           | Fast build, HMR                                              |
+| State (Server)    | TanStack Query  | 5.x           | Cache and synchronization                                    |
+| State (Client)    | Zustand         | 4.x           | Lightweight global state                                     |
+| Routing           | TanStack Router | 1.x           | Type-safe routing                                            |
+| Database          | SQLite          | 3.x           | Local storage                                                |
+| GEDCOM            | In-app module   | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)      |
+| Dates             | In-app module   | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`) |
+| Testing           | Vitest + RTL    | 2.x / 16.x    | Unit and integration tests                                   |
+| UI Components     | shadcn/ui       | Latest        | Radix UI primitives with Tailwind CSS styling                |
+| CSS Framework     | Tailwind CSS    | 4.x           | Utility-first CSS framework                                  |
+| Icons             | Lucide React    | Latest        | Consistent iconography                                       |
+| i18n              | react-i18next   | 15.x          | Internationalization                                         |
 
 ---
 

@@ -4,7 +4,7 @@
 
 This document describes the correspondence between GEDCOM 5.5.1 structures and the Vata data model.
 
-**Note**: GEDCOM parsing and serialization are handled by the in-app module `@vata-apps/gedcom-parser` (MVP2). This document covers the mapping between GEDCOM structures and the Vata database schema. See [ADR-004](../decisions/adr-004-gedcom-libraries.md).
+**Note**: GEDCOM parsing and serialization are handled by the in-app module `@vata-apps/gedcom-parser`. This document covers the mapping between GEDCOM structures and the Vata database schema. See [ADR-004](../decisions/adr-004-gedcom-libraries.md).
 
 ## Main Records
 

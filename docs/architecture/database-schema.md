@@ -1,12 +1,5 @@
 # Database Schema
 
-## Adoption by MVP
-
-- **MVP1** : `system.db` (trees, app_settings)
-- **MVP2** : GEDCOM import/export (utilise le schéma tree)
-- **MVP3** : `individuals`, `names`, `families`, `family_members`, `place_types`, `places`, `events`, `event_participants`, `event_types`, `tree_meta`
-- **MVP4** : `sources`, `source_citations`, `citation_links`, `repositories`, `files`, `source_files` (sources + media merged)
-
 ## Dual-Database Architecture
 
 The application uses two types of SQLite databases:

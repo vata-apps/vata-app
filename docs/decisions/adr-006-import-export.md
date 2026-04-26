@@ -45,4 +45,3 @@ GEDCOM import must handle complex interdependencies: families reference individu
 ## References
 
 - [GEDCOM 5.5.1 Mapping](../references/gedcom-551-mapping.md)
-- [MVP2 GEDCOM — Product Spec](../mvps/mvp-2-gedcom/spec.md)
