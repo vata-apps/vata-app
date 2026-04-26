@@ -113,6 +113,7 @@
     "jsdom": "^28.1.0",
     "lint-staged": "^16.4.0",
     "prettier": "^3.0.0",
+    "shadcn": "^4.5.0",
     "typescript": "^5.6.2",
     "vite": "^5.4.8",
     "vitest": "^2.1.9"
