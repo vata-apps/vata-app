@@ -289,16 +289,20 @@ The app includes `tauri-plugin-mcp-bridge` (debug builds only). You can launch t
 
 The following specialized skills are loaded automatically when relevant, or on demand via the skill tool.
 
-| Skill                  | Trigger                                                                       |
-| ---------------------- | ----------------------------------------------------------------------------- |
-| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs         |
-| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code               |
-| `docs-consistency`     | After any change to `docs/*.md`                                               |
-| `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes) |
-| `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
-| `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
-| `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                 |
-| `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                  |
+| Skill                  | Trigger                                                                                                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs                                                                                                           |
+| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code                                                                                                                 |
+| `docs-consistency`     | After any change to `docs/*.md`                                                                                                                                                 |
+| `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes)                                                                                                   |
+| `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                                                                                                                           |
+| `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure                                                                                                      |
+| `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                                                                                                                   |
+| `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                                                                                                                    |
+| `shadcn` (official)    | Auto-activates when `components.json` is present — generic shadcn rules (semantic tokens, `cn()`, composition, forms, icons, CLI). Source of truth for everything generic.      |
+| `vata-shadcn-rules`    | When writing `src/components/**`, `src/pages/**`, `src/routes/**`, `src/index.css`, or `components.json` — Vata-specific UI rules layered on top of the official `shadcn` skill |
+
+For UI work, the official `shadcn` skill plus the `shadcn` MCP server (configured in `.mcp.json`) are the source of truth. `vata-shadcn-rules` only adds project-specific constraints (i18n, English-only artifacts, no hex colors outside the design layer, no primitive reimplementation, deprecated `vata-ds.css` classes blocked).
 
 ---
 
