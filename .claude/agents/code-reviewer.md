@@ -15,15 +15,18 @@ Run `git diff --name-only main...HEAD` (or use the scope provided in the prompt)
 
 ### Step 2: Classify files and load checklists
 
-| File pattern                                                        | Checklist source                                              |
-| ------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `src/db/**`                                                         | `.claude/skills/sqlite-standards/checklist.md`                |
-| `src/lib/gedcom/**`, `src/managers/GedcomManager.ts`                | `.claude/skills/gedcom-standards/checklist.md`                |
-| `src/**/*.{ts,tsx}` (excluding `src/db/**` and `src/lib/gedcom/**`) | `.claude/skills/typescript-standards/SKILL.md` (sections 1-6) |
-| `src-tauri/**/*.rs`, `tauri.conf.json`                              | `.claude/skills/tauri-standards/SKILL.md`                     |
-| `**/*.{test,spec}.{ts,tsx}`                                         | `.claude/skills/testing-standards/SKILL.md`                   |
+| File pattern                                                                             | Checklist source                                              |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `src/db/**`                                                                              | `.claude/skills/sqlite-standards/checklist.md`                |
+| `src/lib/gedcom/**`, `src/managers/GedcomManager.ts`                                     | `.claude/skills/gedcom-standards/checklist.md`                |
+| `src/**/*.{ts,tsx}` (excluding `src/db/**` and `src/lib/gedcom/**`)                      | `.claude/skills/typescript-standards/SKILL.md` (sections 1-6) |
+| `src/components/**`, `src/pages/**`, `src/routes/**`, `src/index.css`, `components.json` | `.claude/skills/vata-shadcn-rules/checklist.md`               |
+| `src-tauri/**/*.rs`, `tauri.conf.json`                                                   | `.claude/skills/tauri-standards/SKILL.md`                     |
+| `**/*.{test,spec}.{ts,tsx}`                                                              | `.claude/skills/testing-standards/SKILL.md`                   |
 
 Read the relevant checklist file(s) before reviewing. If a file matches multiple patterns, apply all matching checklists. **Do not work from memory** — checklists evolve; always read them fresh.
+
+The official `shadcn` skill at `.claude/skills/shadcn/SKILL.md` covers generic shadcn rules (semantic tokens, `cn()`, composition, forms, icons). Treat its guidance as already-known context; flag only the Vata-specific violations from `vata-shadcn-rules/checklist.md`.
 
 ### Step 3: Review each file
 
