@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
+import { Button } from '$components/ui/button';
 import { getSystemDebugData, listTreeDatabaseFiles } from '$/db/system/debug';
 import { queryKeys } from '$lib/query-keys';
 import { toErrorMessage } from '$lib/errors';
@@ -52,14 +53,15 @@ export function DebugDrawer({ open, onClose }: DebugDrawerProps) {
       <aside className="debug-drawer" data-open={open} aria-hidden={!open}>
         <div className="debug-drawer-head">
           <span className="debug-drawer-title">{t('statusbar.debug')}</span>
-          <button
+          <Button
             type="button"
-            className="btn btn-icon btn-ghost btn-sm"
+            variant="ghost"
+            size="icon"
             onClick={onClose}
             aria-label={tc('actions.close')}
           >
             <X strokeWidth={1.7} />
-          </button>
+          </Button>
         </div>
         <div className="debug-drawer-body">
           <section className="debug-drawer-section">

@@ -13,6 +13,7 @@ import { queryKeys } from '$lib/query-keys';
 import { toErrorMessage } from '$lib/errors';
 import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
 import { GedcomManager } from '$/managers/GedcomManager';
+import { Button } from '$components/ui/button';
 import { NewTreeModal } from '$components/home/NewTreeModal';
 import { ImportTreeModal } from '$components/home/ImportTreeModal';
 import { EditTreeModal } from '$components/home/EditTreeModal';
@@ -173,22 +174,18 @@ export function HomePage() {
                   {t('hero.titleTail') ? ` ${t('hero.titleTail')}` : ''}
                 </h1>
                 <div className="home-hero-actions">
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => setModal({ kind: 'new' })}
-                  >
+                  <Button type="button" onClick={() => setModal({ kind: 'new' })}>
                     <Plus strokeWidth={1.8} />
                     {t('actions.newTree')}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
-                    className="btn btn-outline"
+                    variant="outline"
                     onClick={() => setModal({ kind: 'import' })}
                   >
                     <Upload strokeWidth={1.6} />
                     {t('actions.importGedcom')}
-                  </button>
+                  </Button>
                 </div>
               </section>
 
@@ -222,18 +219,19 @@ export function HomePage() {
               </div>
 
               {isTreesError && (
-                <div className="ferror" role="alert" style={{ marginBottom: 12 }}>
+                <div className="ferror mb-3" role="alert">
                   <span>
                     {t('treesError.title')} {toErrorMessage(treesError)}
                   </span>
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-outline btn-sm"
+                    variant="outline"
+                    size="sm"
+                    className="ml-3"
                     onClick={() => void refetchTrees()}
-                    style={{ marginLeft: 12 }}
                   >
                     {t('treesError.retry')}
-                  </button>
+                  </Button>
                 </div>
               )}
 
@@ -266,9 +264,11 @@ export function HomePage() {
                     </div>
 
                     <div className="tcard-actions">
-                      <button
+                      <Button
                         type="button"
-                        className="btn btn-outline btn-sm tcard-open"
+                        variant="outline"
+                        size="sm"
+                        className="tcard-open"
                         onClick={() => {
                           if (openMutation.isPending) return;
                           openMutation.mutate({ id: tree.id, path: tree.path });
@@ -278,31 +278,34 @@ export function HomePage() {
                         <FolderOpen strokeWidth={1.6} />
                         {t('treeCard.cardActions.open')}
                         <ArrowRight strokeWidth={1.6} />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
-                        className="btn btn-icon btn-ghost btn-sm"
+                        variant="ghost"
+                        size="icon"
                         aria-label={t('treeCard.cardActions.export')}
                         onClick={() => setModal({ kind: 'download', treeId: tree.id })}
                       >
                         <Download strokeWidth={1.6} />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
-                        className="btn btn-icon btn-ghost btn-sm"
+                        variant="ghost"
+                        size="icon"
                         aria-label={t('treeCard.cardActions.rename')}
                         onClick={() => setModal({ kind: 'edit', treeId: tree.id })}
                       >
                         <Pencil strokeWidth={1.6} />
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
-                        className="btn btn-icon btn-ghost btn-sm"
+                        variant="ghost"
+                        size="icon"
                         aria-label={t('treeCard.cardActions.delete')}
                         onClick={() => setModal({ kind: 'delete', treeId: tree.id })}
                       >
                         <Trash2 strokeWidth={1.6} />
-                      </button>
+                      </Button>
                     </div>
                   </article>
                 ))}
