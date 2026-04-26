@@ -1,7 +1,7 @@
 #!/bin/bash
 # PostToolUse hook: detects non-English content in code files
 # Checks comments and identifiers for non-ASCII characters
-# Ignores string literals (handled by i18n in MVP4)
+# Ignores string literals (handled by i18n)
 
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')

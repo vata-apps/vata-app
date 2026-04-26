@@ -103,28 +103,15 @@ src-tauri/        # Rust backend (Tauri shell, plugins)
 docs/             # Product specs, architecture, decisions
 ```
 
-## Roadmap
-
-| MVP | Name             | Status      |
-| --- | ---------------- | ----------- |
-| 1   | Foundation       | Complete    |
-| 2   | GEDCOM           | Complete    |
-| 3   | Primary Entities | Complete    |
-| 4   | Sources          | Not Started |
-| 5   | Files            | Not Started |
-| 6   | UI (shadcn/ui)   | Not Started |
-
-See [`docs/product/roadmap.md`](docs/product/roadmap.md) for details and [`docs/product/prd.md`](docs/product/prd.md) for the full product requirements.
-
 ## Documentation
 
 All project documentation lives in [`docs/`](docs/):
 
+- [Documentation index](docs/README.md)
 - [Product Requirements](docs/product/prd.md)
 - [Architecture Overview](docs/architecture/overview.md)
 - [Tech Stack](docs/architecture/tech-stack.md)
 - [Architecture Decision Records](docs/decisions/)
-- [MVP Specs](docs/mvps/)
 
 ## License
 

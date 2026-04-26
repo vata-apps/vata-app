@@ -253,7 +253,6 @@ The following specialized skills are loaded automatically when relevant, or on d
 | `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes) |
 | `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
 | `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
-| `mvp-tracker`          | When implementing new features or verifying MVP scope                         |
 | `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                 |
 | `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                  |
 
@@ -267,5 +266,4 @@ The following agents can be dispatched as sub-agents for autonomous tasks.
 | ------------------ | ---------------------------------------------------------------------------- |
 | `docs-consistency` | After any change to `docs/*.md` — validates cross-references and consistency |
 | `code-reviewer`    | After implementing a feature — reviews code against project standards        |
-| `scope-validator`  | Before starting a new feature — validates it's in scope for the current MVP  |
 | `test-writer`      | Before implementing a feature — writes behavioral tests (TDD red phase)      |
