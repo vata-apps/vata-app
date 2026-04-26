@@ -253,14 +253,15 @@ chore: upgrade drizzle-orm to 0.30.0
 
 Before creating a pull request (via `gh pr create`, any slash command that opens a PR, or any other means), the agent MUST:
 
-1. Run `pnpm review:all` to get a CodeRabbit local review of the full branch diff.
-2. Read the output and address any **critical** or **high** severity findings in new commits on the branch.
-3. Re-run `pnpm review:all` if meaningful fixes were made.
-4. Only then proceed to create the PR.
+1. Run `/simplify` to launch the three-agent reuse / quality / efficiency review on the branch diff. Apply the fixes that are real issues; skip false positives and stylistic nits.
+2. Run `pnpm review:all` to get a CodeRabbit local review of the full branch diff.
+3. Address any **critical** or **high** severity CodeRabbit findings in new commits on the branch.
+4. Re-run `pnpm review:all` if meaningful fixes were made.
+5. Only then proceed to create the PR.
 
-Low-severity / nitpick findings do not need to be addressed locally — let CodeRabbit raise them on the PR if it still sees them. The goal is to catch the issues that would otherwise trigger 5+ review rounds, not to reach a zero-finding local state.
+Run `/simplify` first: it catches duplication, dead abstractions, and concurrency issues that CodeRabbit doesn't focus on, and shrinks the diff CodeRabbit then reviews. Low-severity / nitpick CodeRabbit findings do not need to be addressed locally — let CodeRabbit raise them on the PR if it still sees them. The goal is to catch the issues that would otherwise trigger 5+ review rounds, not to reach a zero-finding local state.
 
-If `coderabbit` CLI is not installed (command not found), skip this step and note it in the PR description so Steve knows to install it. Do NOT block the PR on tooling that isn't set up.
+If `coderabbit` CLI is not installed (command not found), skip step 2-4 and note it in the PR description so Steve knows to install it. Do NOT block the PR on tooling that isn't set up. `/simplify` (step 1) does not depend on `coderabbit` and must still run.
 
 ---
 
