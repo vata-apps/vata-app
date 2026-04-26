@@ -15,7 +15,7 @@ Apply to changed files under `src/components/**`, `src/pages/**`, `src/routes/**
 ## Primitives
 
 - [ ] No hand-rolled modal, dropdown, popover, tabs, or button. Use `src/components/ui/` primitives.
-- [ ] No use of `home/Modal.tsx` (being deprecated — issue #56).
+- [ ] No use of `home/Modal.tsx` (being deprecated — see open `shadcn-cleanup` issues).
 - [ ] No reintroduction of `.btn`, `.btn-primary`, `.btn-ghost`, `.btn-danger`, `.modal-backdrop`, `.modal-shell`, `.modal-head`.
 
 ## i18n
