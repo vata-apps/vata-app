@@ -7,9 +7,9 @@ interface WorkspaceLayoutProps {
 
 export function WorkspaceLayout({ left, right }: WorkspaceLayoutProps): JSX.Element {
   return (
-    <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-      <div style={{ flex: 1, overflow: 'auto', borderRight: '2px solid #ddd' }}>{left}</div>
-      <div style={{ width: '400px', overflow: 'auto', background: '#fafafa' }}>{right}</div>
+    <div className="flex min-h-0 flex-1">
+      <div className="flex-1 overflow-auto border-r-2 border-border">{left}</div>
+      <div className="w-[400px] overflow-auto bg-muted">{right}</div>
     </div>
   );
 }

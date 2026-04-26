@@ -112,7 +112,7 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="flex h-full flex-col">
       <EventTypeSelector value={templateId} onChange={handleTemplateChange} />
 
       {template && (
@@ -131,30 +131,13 @@ export function RightPanel({ sourceId }: RightPanelProps): JSX.Element {
       )}
 
       {successMessage && (
-        <div
-          style={{
-            margin: '0 1rem',
-            padding: '0.5rem',
-            background: '#e8f5e9',
-            borderRadius: '4px',
-            fontSize: '0.8rem',
-            color: '#2e7d32',
-            textAlign: 'center',
-          }}
-        >
+        <div className="mx-4 rounded bg-success/10 p-2 text-center text-xs text-success">
           {successMessage}
         </div>
       )}
 
       {!template && (
-        <div
-          style={{
-            padding: '2rem 1rem',
-            textAlign: 'center',
-            color: '#888',
-            fontSize: '0.85rem',
-          }}
-        >
+        <div className="px-4 py-8 text-center text-sm text-muted-foreground">
           Select a document type above to begin.
         </div>
       )}

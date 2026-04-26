@@ -67,29 +67,22 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
 
   if (value) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <span style={{ fontSize: '0.8rem' }}>{value.name}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-xs">{value.name}</span>
         <button
           type="button"
           aria-label="Clear place"
           onClick={() => onChange(null)}
-          style={{
-            fontSize: '0.7rem',
-            color: '#c00',
-            cursor: 'pointer',
-            background: 'none',
-            border: 'none',
-            padding: 0,
-          }}
+          className="cursor-pointer border-none bg-transparent p-0 text-[11px] text-destructive"
         >
-          {'\u2715'}
+          {'✕'}
         </button>
       </div>
     );
   }
 
   return (
-    <div ref={containerRef} style={{ position: 'relative' }}>
+    <div ref={containerRef} className="relative">
       <input
         type="text"
         placeholder="Search or type place..."
@@ -98,31 +91,10 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
         onFocus={() => {
           if (results.length > 0) setShowDropdown(true);
         }}
-        style={{
-          width: '100%',
-          padding: '0.3rem 0.5rem',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          fontSize: '0.8rem',
-          boxSizing: 'border-box',
-        }}
+        className="box-border w-full rounded border border-border px-2 py-1 text-xs"
       />
       {showDropdown && (
-        <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: '100%',
-            background: '#fff',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            zIndex: 10,
-            maxHeight: '150px',
-            overflow: 'auto',
-          }}
-        >
+        <div className="absolute left-0 right-0 top-full z-10 max-h-[150px] overflow-auto rounded border border-border bg-popover shadow-md">
           {results.map((r) => (
             <button
               type="button"
@@ -132,19 +104,7 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
                 setQuery('');
                 setShowDropdown(false);
               }}
-              style={{
-                display: 'block',
-                width: '100%',
-                textAlign: 'left',
-                padding: '0.4rem 0.6rem',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
-                background: 'none',
-                borderTop: 'none',
-                borderLeft: 'none',
-                borderRight: 'none',
-                borderBottom: '1px solid #f0f0f0',
-              }}
+              className="block w-full cursor-pointer border-0 border-b border-border bg-transparent px-2.5 py-1.5 text-left text-xs"
             >
               {r.name}
             </button>
@@ -157,18 +117,7 @@ export function PlaceAutocomplete({ value, onChange }: PlaceAutocompleteProps): 
                 setQuery('');
                 setShowDropdown(false);
               }}
-              style={{
-                display: 'block',
-                width: '100%',
-                textAlign: 'left',
-                padding: '0.4rem 0.6rem',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
-                color: '#4a90d9',
-                fontWeight: 500,
-                background: 'none',
-                border: 'none',
-              }}
+              className="block w-full cursor-pointer border-none bg-transparent px-2.5 py-1.5 text-left text-xs font-medium text-primary"
             >
               Create &quot;{query.trim()}&quot;
             </button>

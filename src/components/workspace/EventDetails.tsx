@@ -14,34 +14,12 @@ export function EventDetails({
   onPlaceChange,
 }: EventDetailsProps): JSX.Element {
   return (
-    <div
-      style={{
-        marginBottom: '0.75rem',
-        padding: '0.6rem',
-        border: '1px solid #e0e0e0',
-        borderRadius: '6px',
-        background: '#fff',
-      }}
-    >
-      <div
-        style={{
-          fontSize: '0.7rem',
-          color: '#888',
-          textTransform: 'uppercase',
-          marginBottom: '0.4rem',
-        }}
-      >
-        Event Details
-      </div>
-      <div style={{ marginBottom: '0.4rem' }}>
+    <div className="mb-3 rounded-md border border-border bg-card p-2.5">
+      <div className="mb-1.5 text-[11px] uppercase text-muted-foreground">Event Details</div>
+      <div className="mb-1.5">
         <label
           htmlFor="event-date-input"
-          style={{
-            display: 'block',
-            fontSize: '0.7rem',
-            color: '#666',
-            marginBottom: '0.15rem',
-          }}
+          className="mb-0.5 block text-[11px] text-muted-foreground"
         >
           Date
         </label>
@@ -51,18 +29,11 @@ export function EventDetails({
           value={date}
           onChange={(e) => onDateChange(e.target.value)}
           placeholder="e.g., 15 Jun 1892"
-          style={{
-            width: '100%',
-            padding: '0.3rem 0.5rem',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            fontSize: '0.8rem',
-            boxSizing: 'border-box',
-          }}
+          className="box-border w-full rounded border border-border px-2 py-1 text-xs"
         />
       </div>
       <div>
-        <div style={{ fontSize: '0.7rem', color: '#666', marginBottom: '0.15rem' }}>Place</div>
+        <div className="mb-0.5 text-[11px] text-muted-foreground">Place</div>
         <PlaceAutocomplete value={place} onChange={onPlaceChange} />
       </div>
     </div>

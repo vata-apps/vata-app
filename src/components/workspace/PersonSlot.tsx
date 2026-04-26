@@ -119,38 +119,20 @@ export function PersonSlot({
 
   if (value) {
     return (
-      <div
-        style={{
-          marginBottom: '0.75rem',
-          padding: '0.6rem',
-          border: '1px solid #c0dcc0',
-          borderRadius: '6px',
-          background: '#f0f8f0',
-        }}
-      >
-        <div
-          style={{
-            fontSize: '0.7rem',
-            color: '#888',
-            textTransform: 'uppercase',
-            marginBottom: '0.3rem',
-          }}
-        >
+      <div className="mb-3 rounded-md border border-primary/30 bg-primary/5 p-2.5">
+        <div className="mb-1 text-[11px] uppercase text-muted-foreground">
           {label}
-          {required && <span style={{ color: '#c00' }}> *</span>}
+          {required && <span className="text-destructive"> *</span>}
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="flex items-center justify-between">
           <div>
-            <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>{value.displayName}</div>
-            <div style={{ fontSize: '0.7rem', color: '#666' }}>
+            <div className="text-sm font-semibold">{value.displayName}</div>
+            <div className="text-[11px] text-muted-foreground">
               {value.type === 'existing' ? value.id : 'will be created'}
             </div>
           </div>
-          <span
-            onClick={handleClear}
-            style={{ fontSize: '0.7rem', color: '#c00', cursor: 'pointer' }}
-          >
-            {'\u2715'}
+          <span onClick={handleClear} className="cursor-pointer text-[11px] text-destructive">
+            {'✕'}
           </span>
         </div>
       </div>
@@ -160,25 +142,11 @@ export function PersonSlot({
   return (
     <div
       ref={containerRef}
-      style={{
-        marginBottom: '0.75rem',
-        padding: '0.6rem',
-        border: '1px dashed #ccc',
-        borderRadius: '6px',
-        background: '#fff',
-        position: 'relative',
-      }}
+      className="relative mb-3 rounded-md border border-dashed border-border bg-card p-2.5"
     >
-      <div
-        style={{
-          fontSize: '0.7rem',
-          color: '#888',
-          textTransform: 'uppercase',
-          marginBottom: '0.3rem',
-        }}
-      >
+      <div className="mb-1 text-[11px] uppercase text-muted-foreground">
         {label}
-        {required && <span style={{ color: '#c00' }}> *</span>}
+        {required && <span className="text-destructive"> *</span>}
       </div>
       <input
         type="text"
@@ -188,44 +156,18 @@ export function PersonSlot({
         onFocus={() => {
           if (results.length > 0) setShowDropdown(true);
         }}
-        style={{
-          width: '100%',
-          padding: '0.35rem 0.5rem',
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          fontSize: '0.8rem',
-          boxSizing: 'border-box',
-        }}
+        className="box-border w-full rounded border border-border px-2 py-1 text-xs"
       />
       {showDropdown && (
-        <div
-          style={{
-            position: 'absolute',
-            left: '0.6rem',
-            right: '0.6rem',
-            top: '100%',
-            background: '#fff',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            zIndex: 10,
-            maxHeight: '200px',
-            overflow: 'auto',
-          }}
-        >
+        <div className="absolute left-2.5 right-2.5 top-full z-10 max-h-[200px] overflow-auto rounded border border-border bg-popover shadow-md">
           {results.map((r) => (
             <div
               key={r.id}
               onClick={() => handleSelectExisting(r)}
-              style={{
-                padding: '0.4rem 0.6rem',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
-                borderBottom: '1px solid #f0f0f0',
-              }}
+              className="cursor-pointer border-b border-border px-2.5 py-1.5 text-xs"
             >
-              <span style={{ fontWeight: 500 }}>{r.name}</span>
-              <span style={{ color: '#888', marginLeft: '0.5rem' }}>
+              <span className="font-medium">{r.name}</span>
+              <span className="ml-2 text-muted-foreground">
                 {r.gender} — {r.id}
               </span>
             </div>
@@ -233,21 +175,13 @@ export function PersonSlot({
           {query.trim() && (
             <div
               onClick={handleCreateNew}
-              style={{
-                padding: '0.4rem 0.6rem',
-                cursor: 'pointer',
-                fontSize: '0.8rem',
-                color: '#4a90d9',
-                fontWeight: 500,
-              }}
+              className="cursor-pointer px-2.5 py-1.5 text-xs font-medium text-primary"
             >
               Create &quot;{query.trim()}&quot;
             </div>
           )}
           {isSearching && (
-            <div style={{ padding: '0.4rem 0.6rem', fontSize: '0.8rem', color: '#888' }}>
-              Searching...
-            </div>
+            <div className="px-2.5 py-1.5 text-xs text-muted-foreground">Searching...</div>
           )}
         </div>
       )}

@@ -1,4 +1,5 @@
 import type { TemplateDefinition } from '$/lib/templates';
+import { Button } from '$components/ui/button';
 import type { PersonSlotValue } from './PersonSlot';
 
 interface CreateEventButtonProps {
@@ -79,33 +80,11 @@ export function CreateEventButton({
   summaryParts.push('1 citation');
 
   return (
-    <div
-      style={{
-        margin: '0.75rem 1rem',
-        padding: '0.75rem',
-        background: '#fff',
-        border: '1px solid #e0e0e0',
-        borderRadius: '6px',
-      }}
-    >
-      <button
-        onClick={onSubmit}
-        disabled={disabled}
-        style={{
-          width: '100%',
-          padding: '0.6rem',
-          background: disabled ? '#999' : '#333',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          fontSize: '0.85rem',
-          fontWeight: 600,
-          cursor: disabled ? 'not-allowed' : 'pointer',
-        }}
-      >
+    <div className="mx-4 my-3 rounded-md border border-border bg-card p-3">
+      <Button onClick={onSubmit} disabled={disabled} className="w-full">
         {isPending ? 'Creating...' : label}
-      </button>
-      <div style={{ fontSize: '0.7rem', color: '#888', textAlign: 'center', marginTop: '0.4rem' }}>
+      </Button>
+      <div className="mt-1.5 text-center text-[11px] text-muted-foreground">
         Will create: {summaryParts.join(', ')}
       </div>
     </div>
