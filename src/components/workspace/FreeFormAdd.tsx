@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button } from '$components/ui/button';
 import { PersonSlot, type PersonSlotValue } from './PersonSlot';
 
 interface FreeFormAddProps {
@@ -21,7 +22,7 @@ export function FreeFormAdd({ values, onChange }: FreeFormAddProps): JSX.Element
   }
 
   return (
-    <div style={{ padding: '0 1rem 0.75rem' }}>
+    <div className="px-4 pb-3">
       {values.map((val, index) => (
         <PersonSlot
           key={`freeform-${index}`}
@@ -35,22 +36,9 @@ export function FreeFormAdd({ values, onChange }: FreeFormAddProps): JSX.Element
       {showNew ? (
         <PersonSlot label="New Person" onChange={handleAdd} />
       ) : (
-        <button
-          type="button"
-          onClick={() => setShowNew(true)}
-          style={{
-            width: '100%',
-            textAlign: 'center',
-            fontSize: '0.8rem',
-            color: '#4a90d9',
-            cursor: 'pointer',
-            padding: '0.5rem',
-            background: 'none',
-            border: 'none',
-          }}
-        >
+        <Button type="button" variant="link" onClick={() => setShowNew(true)} className="w-full">
           + Add person
-        </button>
+        </Button>
       )}
     </div>
   );

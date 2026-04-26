@@ -7,23 +7,10 @@ interface EventTypeSelectorProps {
 
 export function EventTypeSelector({ value, onChange }: EventTypeSelectorProps): JSX.Element {
   return (
-    <div
-      style={{
-        padding: '0.75rem 1rem',
-        borderBottom: '1px solid #e0e0e0',
-        background: '#fff',
-      }}
-    >
+    <div className="border-b border-border bg-card px-4 py-3">
       <label
         htmlFor="event-template-select"
-        style={{
-          display: 'block',
-          fontSize: '0.75rem',
-          color: '#888',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-          marginBottom: '0.4rem',
-        }}
+        className="mb-1.5 block text-xs uppercase tracking-wider text-muted-foreground"
       >
         Document Type
       </label>
@@ -31,13 +18,7 @@ export function EventTypeSelector({ value, onChange }: EventTypeSelectorProps): 
         id="event-template-select"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={{
-          width: '100%',
-          padding: '0.5rem',
-          border: '1px solid #ddd',
-          borderRadius: '6px',
-          fontSize: '0.9rem',
-        }}
+        className="w-full rounded-md border border-border bg-background p-2 text-sm"
       >
         <option value="">Select document type...</option>
         {TEMPLATES.map((t) => (
