@@ -36,8 +36,10 @@ The official skill already requires using existing components. Vata-specific rem
 
 These class names are deprecated and being removed:
 
-- `.btn`, `.btn-primary`, `.btn-ghost`, `.btn-danger` → use `<Button variant="...">`
+- Any `.btn-*` modifier (`.btn-primary`, `.btn-ghost`, `.btn-danger`, `.btn-outline`, `.btn-sm`, `.btn-lg`, `.btn-icon`, …) → use `<Button variant="...">` from shadcn
 - `.modal-backdrop`, `.modal-shell`, `.modal-head` → use `<Dialog>` from shadcn
+
+The hook blocks any `btn-*` modifier; the bare `.btn` parent class disappears with its modifiers as part of the same cleanup, so it's not separately enforced.
 
 Layout-only utilities (`.home-seg`, `.home-grid`, `.tcard`) in `src/styles/vata-ds.css` are still allowed.
 
