@@ -9,18 +9,10 @@ interface WorkspaceHeaderProps {
 
 export function WorkspaceHeader({ treeId, sourceId, source }: WorkspaceHeaderProps): JSX.Element {
   return (
-    <div
-      style={{
-        padding: '0.75rem 1rem',
-        borderBottom: '2px solid #ddd',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}
-    >
+    <div className="flex items-center justify-between border-b-2 border-border px-4 py-3">
       <div>
-        <div style={{ fontWeight: 700, fontSize: '1rem' }}>{source.title}</div>
-        <div style={{ fontSize: '0.8rem', color: '#666', marginTop: '2px' }}>
+        <div className="text-base font-bold">{source.title}</div>
+        <div className="mt-0.5 text-xs text-muted-foreground">
           {sourceId}
           {source.author && <> &middot; {source.author}</>}
         </div>
@@ -28,14 +20,7 @@ export function WorkspaceHeader({ treeId, sourceId, source }: WorkspaceHeaderPro
       <Link
         to="/tree/$treeId/source/$sourceId"
         params={{ treeId, sourceId }}
-        style={{
-          padding: '0.3rem 0.6rem',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          fontSize: '0.85rem',
-          textDecoration: 'none',
-          color: '#333',
-        }}
+        className="rounded border border-border px-2.5 py-1 text-sm text-foreground no-underline"
       >
         &larr; Back
       </Link>

@@ -10,22 +10,16 @@ export function CitationsSummary({ treeId, sourceId }: CitationsSummaryProps): J
   const { data: citations, isLoading, isError } = useCitationsWithDetails(sourceId);
 
   if (isLoading) {
-    return (
-      <p style={{ padding: '0.75rem', color: '#888', fontSize: '0.85rem' }}>Loading citations...</p>
-    );
+    return <p className="p-3 text-sm text-muted-foreground">Loading citations...</p>;
   }
 
   if (isError) {
-    return (
-      <p style={{ padding: '0.75rem', color: '#c00', fontSize: '0.85rem' }}>
-        Failed to load citations.
-      </p>
-    );
+    return <p className="p-3 text-sm text-destructive">Failed to load citations.</p>;
   }
 
   if (!citations || citations.length === 0) {
     return (
-      <p style={{ padding: '0.75rem', color: '#888', fontSize: '0.85rem' }}>
+      <p className="p-3 text-sm text-muted-foreground">
         No citations yet — use the panel on the right to start extracting data from this source.
       </p>
     );
@@ -33,42 +27,28 @@ export function CitationsSummary({ treeId, sourceId }: CitationsSummaryProps): J
 
   return (
     <div>
-      <div
-        style={{
-          padding: '0.5rem 0.75rem',
-          fontSize: '0.75rem',
-          color: '#888',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px',
-          borderBottom: '1px solid #e0e0e0',
-        }}
-      >
+      <div className="border-b border-border px-3 py-2 text-xs uppercase tracking-wider text-muted-foreground">
         Citations ({citations.length})
       </div>
       {citations.map((citation) => (
-        <div
-          key={citation.citationId}
-          style={{ padding: '0.6rem 0.75rem', borderBottom: '1px solid #f0f0f0' }}
-        >
-          <div style={{ fontWeight: 600, fontSize: '0.85rem' }}>
+        <div key={citation.citationId} className="border-b border-border px-3 py-2.5">
+          <div className="text-sm font-semibold">
             {citation.eventTypeName ?? 'No event'}
             {citation.eventDate && (
-              <span style={{ fontWeight: 400, color: '#666' }}> — {citation.eventDate}</span>
+              <span className="font-normal text-muted-foreground"> — {citation.eventDate}</span>
             )}
           </div>
           {citation.page && (
-            <div style={{ fontSize: '0.75rem', color: '#888', marginTop: '0.15rem' }}>
-              {citation.page}
-            </div>
+            <div className="mt-0.5 text-xs text-muted-foreground">{citation.page}</div>
           )}
           {citation.linkedIndividuals.length > 0 && (
-            <div style={{ fontSize: '0.8rem', color: '#555', marginTop: '0.25rem' }}>
+            <div className="mt-1 text-sm text-foreground/70">
               {citation.linkedIndividuals.map((ind) => (
                 <Link
                   key={ind.id}
                   to="/tree/$treeId/individual/$individualId"
                   params={{ treeId, individualId: ind.id }}
-                  style={{ color: '#06c', textDecoration: 'none', marginRight: '0.5rem' }}
+                  className="mr-2 text-primary no-underline"
                 >
                   {ind.name}
                 </Link>
