@@ -141,7 +141,7 @@ These tags are **silently ignored** on import:
 
 | Tag  | Reason                            |
 | ---- | --------------------------------- |
-| OBJE | Media — future phase              |
+| OBJE | Media — not yet implemented       |
 | BLOB | Obsolete binary                   |
 | ASSO | Complex associations              |
 | ALIA | Alias — use NAME instead          |
