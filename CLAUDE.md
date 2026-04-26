@@ -255,7 +255,7 @@ Before creating a pull request (via `gh pr create`, any slash command that opens
 
 1. Run `/simplify` to launch the three-agent reuse / quality / efficiency review on the branch diff. Apply the fixes that are real issues; skip false positives and stylistic nits.
 2. Run `pnpm review:all` to get a CodeRabbit local review of the full branch diff.
-3. Address any **critical** or **high** severity CodeRabbit findings in new commits on the branch.
+3. Address any **critical**, **high**, or **medium** severity CodeRabbit findings in new commits on the branch.
 4. Re-run `pnpm review:all` if meaningful fixes were made.
 5. Only then proceed to create the PR.
 
