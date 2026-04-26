@@ -183,13 +183,47 @@ const rows = await db
 
 # Git Workflow
 
-## Worktree + PR
+Never commit new work directly to `main`. Every dev task ships as a PR to `main`.
 
-All new development must be done in a **git worktree** on a dedicated feature branch, then submitted as a **pull request**. Never commit new work directly to `main`.
+## Step 0 — Decide the work mode (ALWAYS ASK FIRST)
 
-1. Create a worktree with a feature branch
-2. Do all work in the isolated worktree
-3. Commit, push, and open a PR to `main`
+Before any edit on a new task, ask the user: **"simple branch or worktree?"** with a default recommendation. Use `AskUserQuestion` when available, otherwise ask in plain text. Never assume.
+
+**Recommend "simple branch"** when:
+
+- Single-file doc fix or typo
+- Trivial config tweak
+- Estimated < 5 min, no risk of context-switch
+
+**Recommend "worktree"** when:
+
+- Multi-file change (>3 files) or cross-layer work
+- New feature, refactor, DB migration
+- Long task likely to span sessions or be interrupted
+- Need to keep `main` clean for parallel work
+
+### Simple branch mode
+
+```bash
+git checkout -b <type>/<short-desc>
+# ...edit, commit, push, PR
+```
+
+### Worktree mode
+
+**ALWAYS use the `EnterWorktree` tool. NEVER use `git worktree add` via Bash. NEVER use the `superpowers:using-git-worktrees` skill** — its `git worktree add` approach bypasses the session lifecycle that `ExitWorktree` relies on.
+
+## Branch naming
+
+Aligned with conventional commits:
+
+- `feat/<short-desc>` — new feature
+- `fix/<short-desc>` — bug fix
+- `refactor/<short-desc>` — refactor
+- `docs/<short-desc>` — documentation
+- `chore/<short-desc>` — config/tooling
+- `test/<short-desc>` — tests only
+- `perf/<short-desc>` — performance work
 
 ## Granular Commits
 
@@ -207,6 +241,11 @@ test: add coverage for GEDCOM date parsing
 docs: update database schema documentation
 chore: upgrade drizzle-orm to 0.30.0
 ```
+
+## After merge
+
+- If worktree: call `ExitWorktree` to clean up the session-registered worktree.
+- Delete the local branch (`git branch -d <branch>`) once merged.
 
 ---
 
