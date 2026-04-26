@@ -261,7 +261,11 @@ Before creating a pull request (via `gh pr create`, any slash command that opens
 
 Run `/simplify` first: it catches duplication, dead abstractions, and concurrency issues that CodeRabbit doesn't focus on, and shrinks the diff CodeRabbit then reviews. Low-severity / nitpick CodeRabbit findings do not need to be addressed locally — let CodeRabbit raise them on the PR if it still sees them. The goal is to catch the issues that would otherwise trigger 5+ review rounds, not to reach a zero-finding local state.
 
-If `coderabbit` CLI is not installed (command not found), skip step 2-4 and note it in the PR description so Steve knows to install it. Do NOT block the PR on tooling that isn't set up. `/simplify` (step 1) does not depend on `coderabbit` and must still run.
+If `coderabbit` CLI is not installed (command not found), skip steps 2-4 and note it in the PR description so Steve knows to install it. Do NOT block the PR on tooling that isn't set up.
+
+If `pnpm review:all` fails because the CodeRabbit plan limit / rate limit is reached (look for messages mentioning quota, plan limit, rate limit, or HTTP 429), skip steps 2-4 and proceed to create the PR. Note in the PR description that CodeRabbit local review was skipped due to plan limit so Steve knows the cloud review is the only signal. Do NOT retry, do NOT block the PR.
+
+`/simplify` (step 1) does not depend on `coderabbit` and must always run.
 
 ---
 
