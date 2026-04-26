@@ -8,12 +8,14 @@ import enHome from './locales/en/home.json';
 import enIndividuals from './locales/en/individuals.json';
 import enRepositories from './locales/en/repositories.json';
 import enSources from './locales/en/sources.json';
+import enWorkspace from './locales/en/workspace.json';
 import frCommon from './locales/fr/common.json';
 import frFamilies from './locales/fr/families.json';
 import frHome from './locales/fr/home.json';
 import frIndividuals from './locales/fr/individuals.json';
 import frRepositories from './locales/fr/repositories.json';
 import frSources from './locales/fr/sources.json';
+import frWorkspace from './locales/fr/workspace.json';
 
 i18n
   .use(LanguageDetector)
@@ -27,6 +29,7 @@ i18n
         individuals: enIndividuals,
         repositories: enRepositories,
         sources: enSources,
+        workspace: enWorkspace,
       },
       fr: {
         common: frCommon,
@@ -35,6 +38,7 @@ i18n
         individuals: frIndividuals,
         repositories: frRepositories,
         sources: frSources,
+        workspace: frWorkspace,
       },
     },
     defaultNS: 'common',
