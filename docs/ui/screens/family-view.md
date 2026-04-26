@@ -1,7 +1,5 @@
 # Family View Screen
 
-**MVP**: MVP3 (family CRUD). MVP4 citations/sources. MVP5 design system.
-
 ## Objective
 
 Display and manage a family unit: spouses (husband/wife), children, and family events (marriage, divorce, etc.). This module uses the three-panel module layout (sidebar / center / aside).

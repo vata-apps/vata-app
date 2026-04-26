@@ -1,6 +1,6 @@
 # Design System
 
-> **MVP5**: The full design system (shadcn/ui + Tailwind CSS, colors, typography, components) is applied from MVP5. MVP1–4 use a minimal HTML UI without a component library.
+> The design system is built on shadcn/ui + Tailwind CSS, with shared colors, typography, and components.
 
 ## Design Principles
 

@@ -1,7 +1,5 @@
 # Home Screen (Tree Selection)
 
-**MVP**: MVP1 (tree list, create, open, close, delete). MVP2 adds Import/Export GEDCOM.
-
 ## Objective
 
 Allow the user to view their existing trees, create a new tree, import a GEDCOM file, and quickly open a recent tree.

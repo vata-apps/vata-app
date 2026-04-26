@@ -1,7 +1,5 @@
 # Individual View Screen (Person Record)
 
-**MVP**: MVP3 (individual CRUD, minimal HTML). MVP4 citations/sources. MVP5 design system.
-
 ## Objective
 
 Display all information about a person: identity and names, life events, families (parents, spouses, children), notes.
