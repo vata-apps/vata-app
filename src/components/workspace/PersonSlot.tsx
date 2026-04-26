@@ -131,9 +131,14 @@ export function PersonSlot({
               {value.type === 'existing' ? value.id : 'will be created'}
             </div>
           </div>
-          <span onClick={handleClear} className="cursor-pointer text-[11px] text-destructive">
+          <button
+            type="button"
+            aria-label="Clear person"
+            onClick={handleClear}
+            className="cursor-pointer border-none bg-transparent p-0 text-[11px] text-destructive"
+          >
             {'✕'}
-          </span>
+          </button>
         </div>
       </div>
     );
@@ -161,24 +166,26 @@ export function PersonSlot({
       {showDropdown && (
         <div className="absolute left-2.5 right-2.5 top-full z-10 max-h-[200px] overflow-auto rounded border border-border bg-popover shadow-md">
           {results.map((r) => (
-            <div
+            <button
+              type="button"
               key={r.id}
               onClick={() => handleSelectExisting(r)}
-              className="cursor-pointer border-b border-border px-2.5 py-1.5 text-xs"
+              className="block w-full cursor-pointer border-0 border-b border-border bg-transparent px-2.5 py-1.5 text-left text-xs"
             >
               <span className="font-medium">{r.name}</span>
               <span className="ml-2 text-muted-foreground">
                 {r.gender} — {r.id}
               </span>
-            </div>
+            </button>
           ))}
           {query.trim() && (
-            <div
+            <button
+              type="button"
               onClick={handleCreateNew}
-              className="cursor-pointer px-2.5 py-1.5 text-xs font-medium text-primary"
+              className="block w-full cursor-pointer border-none bg-transparent px-2.5 py-1.5 text-left text-xs font-medium text-primary"
             >
               Create &quot;{query.trim()}&quot;
-            </div>
+            </button>
           )}
           {isSearching && (
             <div className="px-2.5 py-1.5 text-xs text-muted-foreground">Searching...</div>
