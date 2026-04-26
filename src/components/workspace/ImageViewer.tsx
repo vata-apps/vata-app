@@ -9,6 +9,7 @@ import { generateThumbnail } from '$lib/thumbnails';
 import { createFile, addFileToSource, updateFile, deleteFile } from '$db-tree/files';
 import { queryKeys } from '$lib/query-keys';
 import { getCurrentTreePath } from '$/db/connection';
+import { Button } from '$components/ui/button';
 
 interface ImageViewerProps {
   sourceId: string;
@@ -128,15 +129,7 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
 
   if (isLoading) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#888',
-        }}
-      >
+      <div className="flex flex-1 items-center justify-center text-muted-foreground">
         Loading files...
       </div>
     );
@@ -144,33 +137,11 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
 
   if (!files || files.length === 0) {
     return (
-      <div
-        style={{
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: '#f5f5f5',
-          padding: '2rem',
-        }}
-      >
-        <p style={{ color: '#888', marginBottom: '1rem' }}>No files attached to this source.</p>
-        <button
-          onClick={() => attachFiles()}
-          disabled={isAttaching}
-          style={{
-            padding: '0.5rem 1rem',
-            background: '#333',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '0.85rem',
-          }}
-        >
+      <div className="flex flex-1 flex-col items-center justify-center bg-muted p-8">
+        <p className="mb-4 text-muted-foreground">No files attached to this source.</p>
+        <Button onClick={() => attachFiles()} disabled={isAttaching} size="sm">
           {isAttaching ? 'Attaching...' : 'Attach Files'}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -180,120 +151,69 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
     currentFile && treePath ? convertFileSrc(`${treePath}/${currentFile.relativePath}`) : '';
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#1a1a1a' }}>
-      <div
-        style={{
-          padding: '0.5rem',
-          background: '#2a2a2a',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <button
+    <div className="flex flex-1 flex-col bg-background">
+      <div className="flex items-center justify-between bg-card p-2">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="secondary"
+            size="sm"
             aria-label="Zoom out"
             onClick={() => setZoom((z) => Math.max(0.1, z - 0.25))}
-            style={{
-              color: '#fff',
-              background: '#444',
-              border: 'none',
-              borderRadius: '3px',
-              padding: '0.2rem 0.5rem',
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-            }}
           >
             -
-          </button>
-          <span style={{ color: '#aaa', fontSize: '0.75rem' }}>{Math.round(zoom * 100)}%</span>
-          <button
+          </Button>
+          <span className="text-xs text-muted-foreground">{Math.round(zoom * 100)}%</span>
+          <Button
+            variant="secondary"
+            size="sm"
             aria-label="Zoom in"
             onClick={() => setZoom((z) => Math.min(5, z + 0.25))}
-            style={{
-              color: '#fff',
-              background: '#444',
-              border: 'none',
-              borderRadius: '3px',
-              padding: '0.2rem 0.5rem',
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-            }}
           >
             +
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => {
               setZoom(1);
               setPan({ x: 0, y: 0 });
             }}
-            style={{
-              color: '#fff',
-              background: '#444',
-              border: 'none',
-              borderRadius: '3px',
-              padding: '0.2rem 0.5rem',
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-            }}
           >
             Fit
-          </button>
+          </Button>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <button
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
             aria-label="Previous file"
             onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
             disabled={currentIndex === 0}
-            style={{
-              color: currentIndex === 0 ? '#666' : '#fff',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-            }}
           >
             &laquo;
-          </button>
-          <span style={{ color: '#fff', fontSize: '0.75rem' }}>
+          </Button>
+          <span className="text-xs text-foreground">
             {currentIndex + 1} / {files.length}
           </span>
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             aria-label="Next file"
             onClick={() => setCurrentIndex((i) => Math.min(files.length - 1, i + 1))}
             disabled={currentIndex === files.length - 1}
-            style={{
-              color: currentIndex === files.length - 1 ? '#666' : '#fff',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: '0.75rem',
-            }}
           >
             &raquo;
-          </button>
+          </Button>
         </div>
 
-        <button
-          onClick={() => attachFiles()}
-          disabled={isAttaching}
-          style={{
-            color: '#fff',
-            background: '#444',
-            border: 'none',
-            borderRadius: '3px',
-            padding: '0.2rem 0.5rem',
-            cursor: 'pointer',
-            fontSize: '0.75rem',
-          }}
-        >
+        <Button variant="secondary" size="sm" onClick={() => attachFiles()} disabled={isAttaching}>
           + Add
-        </button>
+        </Button>
       </div>
 
       <div
-        style={{ flex: 1, overflow: 'hidden', cursor: isDragging ? 'grabbing' : 'grab' }}
+        className={`flex-1 overflow-hidden ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
         onWheel={handleWheel}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
@@ -303,12 +223,10 @@ export function ImageViewer({ sourceId }: ImageViewerProps): JSX.Element {
         <img
           src={imageSrc}
           alt={currentFile?.originalFilename ?? ''}
+          className="max-w-none select-none pointer-events-none"
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transformOrigin: '0 0',
-            maxWidth: 'none',
-            userSelect: 'none',
-            pointerEvents: 'none',
           }}
           draggable={false}
         />
