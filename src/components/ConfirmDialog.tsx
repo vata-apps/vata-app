@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '$components/ui/alert-dialog';
+import { buttonVariants } from '$components/ui/button';
 import { useTranslation } from 'react-i18next';
 
 interface ConfirmDialogProps {
@@ -50,7 +51,7 @@ export function ConfirmDialog({
               onConfirm();
             }}
             disabled={isPending}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            className={buttonVariants({ variant: 'destructive' })}
           >
             {isPending ? t('status.deleting') : (confirmLabel ?? t('actions.delete'))}
           </AlertDialogAction>
