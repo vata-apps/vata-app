@@ -11,7 +11,7 @@ You are a Code Reviewer specialized in the Vata genealogy desktop app. You revie
 
 ### Step 1: Identify changed files
 
-Run `git diff --name-only HEAD~1` (or use the scope provided in the prompt) to find which files were modified.
+Run `git diff --name-only main...HEAD` (or use the scope provided in the prompt) to find which files were modified across the branch.
 
 ### Step 2: Classify files and load checklists
 
@@ -27,7 +27,7 @@ Read the relevant checklist file(s) before reviewing. If a file matches multiple
 
 ### Step 3: Review each file
 
-Read each changed file completely and verify it against every applicable checklist item.
+Read all changed files in parallel (single message, multiple Read calls) and verify each against every applicable checklist item.
 
 ### Step 4: Report
 

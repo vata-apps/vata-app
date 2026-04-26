@@ -11,26 +11,26 @@ You are a Documentation Consistency Reviewer for the Vata genealogy desktop app.
 
 ### Step 1: Understand what changed
 
-Read the prompt to identify which documentation files were created, edited, or deleted. If unclear, run `git diff --name-only HEAD~1` for recently changed `.md` files in `docs/`.
+Read the prompt to identify which documentation files were created, edited, or deleted. If unclear, run `git diff --name-only main...HEAD -- 'docs/*.md' 'docs/**/*.md'`.
 
-### Step 2: Load the dependency map
+### Step 2: Load the dependency map and inventory docs
 
-Read `.claude/skills/docs-consistency/SKILL.md` — its **Dependency Map** section is the source of truth for which files reference which. **Do not work from memory** — the map evolves; always read it fresh.
+Run these in parallel (single message):
 
-### Step 3: Identify impacted files
+- Read `.claude/skills/docs-consistency/SKILL.md` — its **Dependency Map** section is the source of truth for which files reference which.
+- `Glob` `docs/**/*.md` to inventory all docs that exist on disk. Use this list to validate map entries — the map can be stale.
 
-Walk the map from each changed file. Verify each candidate file exists with Glob before reading (the map can be stale).
+**Do not work from memory** — the map evolves; always read it fresh.
 
-### Step 4: Scan impacted files
+### Step 3: Identify and scan impacted files
 
-For each impacted file:
+Walk the map from each changed file. Drop any candidates that aren't in the Glob inventory. Read all remaining impacted files in parallel (single message, multiple Read calls), then for each:
 
-1. Read the file (or relevant sections)
-2. Check if any content contradicts or is outdated given the change
-3. Check if cross-reference links are still valid
-4. Check terminology consistency
+1. Check if any content contradicts or is outdated given the change
+2. Check if cross-reference links are still valid
+3. Check terminology consistency
 
-### Step 5: Report
+### Step 4: Report
 
 ```
 ## Documentation Consistency Report
