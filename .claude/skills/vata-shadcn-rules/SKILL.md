@@ -15,40 +15,26 @@ This skill adds Vata-specific constraints on top of the official `shadcn` skill 
 - `src/lib/utils.ts` — `cn()` helper
 - Official skill at `.claude/skills/shadcn/SKILL.md` for everything else
 
-## 1. No raw color values outside the design layer
+## 1. Color literals: only inside the design layer
 
-Hex (`#abc`, `#aabbcc`), `rgb(...)`, `hsl(...)`, and `oklch(...)` literals are **forbidden** anywhere except:
+The official skill already requires semantic tokens. Vata-specific scope:
 
-- `src/index.css` (where the tokens are defined)
-- `src/components/ui/**` (the shadcn components themselves)
+- Allowed: `src/index.css` (where the tokens are defined) and `src/components/ui/**` (shadcn components).
+- Forbidden everywhere else: hex (`#abc`, `#aabbcc`), `rgb(...)`, `rgba(...)`, `hsl(...)`, `hsla(...)`, `oklch(...)`.
 
-Everywhere else (`src/components/**`, `src/pages/**`, `src/routes/**`), use semantic Tailwind utilities only: `bg-background`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-primary`, `text-destructive`, `bg-accent`, etc.
+Enforced by `.claude/hooks/shadcn-guard.sh`.
 
-The hook `.claude/hooks/shadcn-guard.sh` blocks edits that violate this.
+## 2. `style` prop only for runtime values
 
-## 2. No `style={{}}` for static styling
+The official skill prefers `className` for layout. Vata-specific carve-out: `style` is allowed **only** when the value cannot be expressed as a class — e.g. `style={{ width: \`${pct}%\` }}`. Color literals inside any `style` prop are hard-blocked regardless.
 
-`style` props are **only** allowed for runtime values that cannot be expressed as a class:
+## 3. Don't reimplement primitives
 
-```tsx
-// ✅ OK — runtime value
-<div style={{ width: `${pct}%` }} />
-
-// ❌ Not OK — use Tailwind classes
-<div style={{ color: '#666', padding: 16 }} />
-```
-
-For colors specifically, see rule §1 — hex/rgb/hsl/oklch in any `style` prop is blocked by the hook regardless of whether the value is static or dynamic.
-
-## 3. Never reimplement primitives
-
-Before writing any interactive component (modal, dropdown, popover, button, dialog, tooltip, tabs…), check `src/components/ui/`. If it's missing, add it via the **shadcn MCP tools** (preferred) or `pnpm dlx shadcn@latest add <name>`.
-
-Do **not** hand-roll a primitive. Past example to avoid: `src/components/home/Modal.tsx` reimplemented `Dialog` from scratch — see GitHub issue #56 for its migration.
+The official skill already requires using existing components. Vata-specific reminder: a past `src/components/home/Modal.tsx` reimplemented `Dialog` and is being migrated. Don't hand-roll modals, dropdowns, popovers, tabs, etc. — add via the `shadcn` MCP or `pnpm exec shadcn add <name>`.
 
 ## 4. Don't reintroduce `vata-ds.css` legacy classes
 
-These class names are deprecated and being removed (see issue #56):
+These class names are deprecated and being removed:
 
 - `.btn`, `.btn-primary`, `.btn-ghost`, `.btn-danger` → use `<Button variant="...">`
 - `.modal-backdrop`, `.modal-shell`, `.modal-head` → use `<Dialog>` from shadcn
