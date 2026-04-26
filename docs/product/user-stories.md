@@ -1,10 +1,10 @@
 # User Stories
 
-Stories are organized by MVP and reference [Personas](./personas.md). Each story follows the format: _As a [persona], I want [action], so that [benefit]._
+Stories reference [Personas](./personas.md). Each story follows the format: _As a [persona], I want [action], so that [benefit]._
 
 ---
 
-## MVP1 — Foundation
+## Tree Management
 
 ### US-1.1: Create a tree
 
@@ -47,7 +47,7 @@ Acceptance criteria:
 
 ---
 
-## MVP2 — GEDCOM
+## GEDCOM Import & Export
 
 ### US-2.1: Import a GEDCOM file
 
@@ -83,7 +83,7 @@ Acceptance criteria:
 
 ---
 
-## MVP3 — Primary Entities
+## Primary Entities
 
 ### US-3.1: Add an individual
 
@@ -137,7 +137,7 @@ Acceptance criteria:
 
 ---
 
-## MVP4 — Sources & Media
+## Sources & Media
 
 ### US-4.1: Source-centric data entry
 
@@ -191,7 +191,7 @@ Acceptance criteria:
 
 ---
 
-## MVP5 — UI & i18n
+## UI & i18n
 
 ### US-5.1: Complete UI
 
@@ -203,9 +203,7 @@ As **Marie** (beginner), I want the application in my language, so that I can us
 
 ---
 
-## MVP6 — File Manager
-
-> _Stories to be detailed during MVP implementation._
+## File Management
 
 ### US-6.1: Browse tree files
 

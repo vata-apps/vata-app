@@ -6,7 +6,7 @@ Apply this skill when writing or reviewing any GEDCOM-related code or documentat
 
 - Writing or reviewing `src/lib/gedcom/**` (importer, exporter)
 - Writing or reviewing `src/managers/GedcomManager.ts`
-- Editing GEDCOM-related docs: `docs/references/gedcom-551-mapping.md`, `docs/mvps/mvp-2-gedcom/`
+- Editing GEDCOM-related docs: `docs/references/gedcom-551-mapping.md`
 - Any code that handles GEDCOM tags, XREFs, or genealogical data exchange
 
 ---

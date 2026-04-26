@@ -35,7 +35,7 @@ In summary, Vata targets genealogists who want full ownership of their data — 
 | Type            | Desktop application (Windows, macOS, Linux) |
 | Framework       | Tauri 2.0                                   |
 | Frontend        | React 18 + TypeScript 5                     |
-| UI Library      | shadcn/ui + Tailwind CSS (from MVP5)        |
+| UI Library      | shadcn/ui + Tailwind CSS                    |
 | Database        | SQLite (local)                              |
 | Exchange Format | GEDCOM 5.5.1                                |
 
@@ -72,24 +72,19 @@ For technical details, see [Architecture Overview](../architecture/overview.md) 
 - **No backend server**: All logic runs in the frontend (TypeScript) and native shell (Rust/Tauri plugins).
 - **SQLite storage**: One system database for metadata, one file per tree for genealogical data.
 
-## Planned Versions
+## Capabilities
 
-| Version | Name             | Job to be Done                                                                      |
-| ------- | ---------------- | ----------------------------------------------------------------------------------- |
-| MVP1    | Foundation       | Create, modify, open, close, and delete a tree.                                     |
-| MVP2    | GEDCOM           | Create a tree by importing a GEDCOM file and export a tree to GEDCOM.               |
-| MVP3    | Primary Entities | Create, modify, and delete primary entities and navigate between different modules. |
-| MVP4    | Sources & Media  | Create sources with media, link entities via source-centric workspace.              |
-| MVP5    | UI & i18n        | Have a complete, polished UI for the application (shadcn/ui, design system, i18n).  |
-| MVP6    | File Manager     | Browse and manage all media files in a tree.                                        |
-
-For timeline and status, see [Roadmap](./roadmap.md). For detailed specs per version, see the [MVP specs](../mvps/).
+- **Tree management** — Create, modify, open, close, and delete a tree.
+- **GEDCOM** — Import and export GEDCOM 5.5.1 files with round-trip fidelity.
+- **Primary entities** — Create, modify, and delete individuals, names, families, events, places, and navigate between them.
+- **Sources & media** — Create sources with media, link entities via a source-centric workspace.
+- **UI & i18n** — Polished UI built on shadcn/ui and a shared design system, with internationalization.
+- **File management** — Browse and manage all media files in a tree.
 
 ## Related Documents
 
 - [Personas](./personas.md)
 - [User Stories](./user-stories.md)
-- [Roadmap](./roadmap.md)
 - [Success Metrics](./success-metrics.md)
 - [Glossary](./glossary.md)
 - [Architecture Decision Records](../decisions/)

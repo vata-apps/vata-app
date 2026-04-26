@@ -54,8 +54,6 @@
 
 **Local-first** — A design philosophy where the application works entirely offline, with all data stored on the user's machine. No server or internet connection required.
 
-**MVP** — Minimum Viable Product. A version of the product with just enough features to deliver a specific job to be done.
-
 **Round-trip** — The ability to export data (e.g., to GEDCOM) and re-import it without loss. A quality measure for data fidelity.
 
 **SQLite** — A lightweight, file-based relational database. Vata uses one SQLite file for system metadata and one file per tree.

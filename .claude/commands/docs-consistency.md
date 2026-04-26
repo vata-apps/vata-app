@@ -9,12 +9,11 @@ After **every** documentation change (create, edit, or delete) in `docs/`, perfo
 ### Step 1: Identify the scope of the change
 
 Determine what was changed:
-- **Schema or data model** → check API docs, MVP phase docs, GEDCOM mapping, screen docs
-- **UI screen or layout** → check layouts doc, design system, related MVP phase docs
-- **Tech stack or architecture** → check overview, data flow, MVP phase docs, API docs
-- **API or database layer** → check architecture docs, MVP phase docs, screen docs that reference data
-- **MVP phase plan** → check other MVP phases for dependency, README for navigation
-- **Reference doc** → check MVP phase docs and architecture docs that may cite it
+- **Schema or data model** → check API docs, GEDCOM mapping, screen docs
+- **UI screen or layout** → check layouts doc, design system
+- **Tech stack or architecture** → check overview, data flow, API docs
+- **API or database layer** → check architecture docs, screen docs that reference data
+- **Reference doc** → check architecture docs that may cite it
 - **New file added or file deleted** → check `README.md` navigation index
 
 ### Step 2: Consult the dependency map
@@ -43,8 +42,6 @@ docs/README.md
 docs/architecture/database-schema.md
   → api/database-layer.md (TypeScript interfaces mirror schema)
   → references/gedcom-551-mapping.md (GEDCOM ↔ schema mapping)
-  → mvps/mvp-1-foundation/phase-2-database.md (initial schema setup)
-  → mvps/mvp-3-primary-entities/phase-1-tree-schema.md (entity CRUD relies on schema)
   → ui/screens/* (screens display schema data)
 
 docs/architecture/overview.md
@@ -58,7 +55,6 @@ docs/architecture/data-flow.md
 
 docs/architecture/tech-stack.md
   → architecture/overview.md (tech choices affect architecture)
-  → mvps/* (MVP phases implement with these technologies)
 
 docs/api/database-layer.md
   → architecture/database-schema.md (interfaces match schema)
@@ -96,17 +92,10 @@ docs/ui/screens/sources.md (V2)
 docs/references/date-formats.md
   → ui/screens/individual-view.md (dates displayed)
   → references/gedcom-551-mapping.md (date fields in mapping)
-  → mvps/mvp-3-primary-entities/phase-3-dates.md (date implementation)
 
 docs/references/gedcom-551-mapping.md
   → architecture/database-schema.md (schema ↔ GEDCOM)
   → references/date-formats.md (date fields)
-  → mvps/mvp-2-gedcom/phase-1-import.md (GEDCOM import/export)
-
-docs/mvps/*
-  → architecture/database-schema.md (schema they implement)
-  → architecture/tech-stack.md (tech they use)
-  → other MVP phases (sequential dependencies)
 ```
 
 ## Quick Checklist

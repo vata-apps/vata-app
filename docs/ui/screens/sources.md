@@ -1,7 +1,5 @@
 # Sources & Media Screen
 
-**MVP4**: Source-centric workflow with media attachments.
-
 ## Objective
 
 Source-centric data entry: the source document (with its scanned image or photo) is the starting point for creating and linking genealogical entities. Instead of creating entities first and attaching sources later, the user works from the source outward — viewing the document and creating/linking individuals, events, places, and families from one workspace.

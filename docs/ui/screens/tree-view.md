@@ -1,7 +1,5 @@
 # Tree View Screen (Main Tree View)
 
-**MVP**: MVP3 (tree dashboard, module navigation). MVP5 applies the full design system.
-
 ## Objective
 
 Home page after opening a tree, allowing users to:

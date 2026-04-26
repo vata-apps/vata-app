@@ -1,18 +1,20 @@
-# ADR-005: UI Strategy — HTML in MVP1–4, shadcn/ui in MVP5
+# ADR-005: UI Strategy — shadcn/ui as the Foundation
 
 **Status**: Accepted (revised 2026-04-04)
 **Date**: 2025-02-22 (revised 2026-04-04)
 
 ## Context
 
-The application needs a complete UI, but the early MVPs focus on infrastructure and data. Building with a component library before the data model is stable risks rework. The original plan used Mantine v7 and required Figma designs before starting the UI phase.
+The application needs a complete UI library that is accessible, customizable, and fits the local-first desktop context. The original plan used Mantine v7 and required Figma designs before starting UI work.
 
-**Revised decision (2026-04-04)**: Switch from Mantine to shadcn/ui, and remove the Figma dependency. Screens are designed iteratively with AI-assisted development and user feedback.
+**Revised decision (2026-04-04)**: Adopt shadcn/ui and remove the Figma dependency. Screens are designed iteratively with AI-assisted development and user feedback.
 
 ## Decision
 
-- **MVP1–4**: Use plain HTML with minimal CSS. No component library. Focus on infrastructure, data model, and functionality.
-- **MVP5**: Introduce **shadcn/ui** (Radix UI primitives + Tailwind CSS), **Lucide React** icons, a complete design system (theme via CSS variables, colors, typography), and **react-i18next** for internationalization.
+- **UI library**: **shadcn/ui** (Radix UI primitives + Tailwind CSS).
+- **Icons**: **Lucide React**.
+- **Design system**: Theme via CSS variables, colors, typography defined in `src/index.css` and `tailwind.config.ts`.
+- **Internationalization**: **react-i18next** with namespace-based translation files.
 - **Screen design**: Screens are designed iteratively during implementation. No Figma dependency.
 
 ## Why shadcn/ui over Mantine
@@ -26,24 +28,21 @@ The application needs a complete UI, but the early MVPs focus on infrastructure 
 ## Alternatives Considered
 
 - **Mantine v7 (original choice)**: Complete out-of-the-box solution but heavier, less customizable, and requires Figma designs upfront.
-- **Use shadcn/ui from MVP1**: Would create a polished UI early, but distracts from data model and infrastructure work.
 - **Headless UI only (Radix without shadcn)**: Maximum flexibility but requires building all styling from scratch.
 
 ## Consequences
 
 **Positive**:
 
-- Early MVPs ship faster — no design debates or component styling
-- Functionality is validated before investing in UI polish
-- shadcn/ui adoption gives full ownership of component code
+- Full ownership of component code — no surprise breaking changes from a package
+- Tailwind CSS theming via CSS variables keeps light/dark mode straightforward
 - No external design dependency (Figma) blocking progress
-- i18n infrastructure added at the right time (when UI is being built)
+- i18n infrastructure built on the most widely supported React i18n stack
 
 **Negative / Trade-offs**:
 
-- MVP1–4 have a basic, unattractive UI
-- Migration from HTML to shadcn/ui components in MVP5 requires touching every UI file
 - Tailwind CSS adds a build dependency and utility-class learning curve
+- Adding new shadcn components is a manual CLI step rather than a typed import
 
 ## References
 

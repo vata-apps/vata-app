@@ -12,12 +12,12 @@ A good test survives a complete internal refactoring as long as the observable b
 
 ## Tooling
 
-| Tool                        | Role                                      | MVP introduced                           |
+| Tool                        | Role                                      | Status                                   |
 | --------------------------- | ----------------------------------------- | ---------------------------------------- |
-| Vitest 2                    | Test runner (TypeScript)                  | MVP3                                     |
-| @testing-library/react      | React component tests                     | MVP3                                     |
-| @testing-library/user-event | User interaction simulation               | MVP3                                     |
-| better-sqlite3              | In-memory SQLite for DB integration tests | MVP3                                     |
+| Vitest 2                    | Test runner (TypeScript)                  | In use                                   |
+| @testing-library/react      | React component tests                     | In use                                   |
+| @testing-library/user-event | User interaction simulation               | In use                                   |
+| better-sqlite3              | In-memory SQLite for DB integration tests | In use                                   |
 | cargo test                  | Rust unit and integration tests           | When custom Rust commands exist          |
 | tauri-driver                | E2E tests across the IPC boundary         | Future — when stable commands justify it |
 

@@ -1,6 +1,6 @@
 ---
 name: gedcom-standards
-description: Ensures GEDCOM 5.5.1 compliance in code and documentation. Use when writing or reviewing GEDCOM import/export code (src/lib/gedcom/**), GedcomManager, GEDCOM-related docs (gedcom-551-mapping.md, mvp-2-gedcom/), or any code that references GEDCOM tags, XREFs, or genealogical data exchange.
+description: Ensures GEDCOM 5.5.1 compliance in code and documentation. Use when writing or reviewing GEDCOM import/export code (src/lib/gedcom/**), GedcomManager, GEDCOM-related docs (gedcom-551-mapping.md), or any code that references GEDCOM tags, XREFs, or genealogical data exchange.
 ---
 
 # GEDCOM 5.5.1 Standards
@@ -11,7 +11,7 @@ Apply this skill when writing or reviewing any GEDCOM-related code or documentat
 
 - Writing or reviewing `src/lib/gedcom/**` (importer, exporter)
 - Writing or reviewing `src/managers/GedcomManager.ts`
-- Editing GEDCOM-related docs: `docs/references/gedcom-551-mapping.md`, `docs/mvps/mvp-2-gedcom/`
+- Editing GEDCOM-related docs: `docs/references/gedcom-551-mapping.md`
 - Any code that handles GEDCOM tags, XREFs, or genealogical data exchange
 
 ---
@@ -99,7 +99,7 @@ Key principles:
 ### System Event Types
 
 - Have a non-null `event_types.tag` (GEDCOM code, e.g. `BIRT`, `DEAT`, `MARR`)
-- Display name resolved at runtime (hardcoded in MVP3, i18n in MVP4)
+- Display name resolved at runtime via i18n
 - On export, use the tag directly (e.g. `1 BIRT`)
 
 ### Custom Event Types

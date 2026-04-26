@@ -59,11 +59,9 @@ If these modules are later published as separate packages:
 **Negative / trade-offs**:
 
 - Logic lives in the app repo until extraction; any fix is in-app first.
-- Documentation for the “library” API lives in the app docs (e.g. this ADR, phase specs) until packages exist.
+- Documentation for the "library" API lives in the app docs (e.g. this ADR) until packages exist.
 
 ## References
 
 - [GEDCOM 5.5.1 Mapping](../references/gedcom-551-mapping.md)
 - [Date Formats](../references/date-formats.md)
-- MVP2: [Phase 1 Import](../mvps/mvp-2-gedcom/phase-1-import.md), [Phase 2 Export](../mvps/mvp-2-gedcom/phase-2-export.md)
-- MVP3: [Phase 3 Dates](../mvps/mvp-3-primary-entities/phase-3-dates.md)

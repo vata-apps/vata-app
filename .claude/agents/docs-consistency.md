@@ -1,7 +1,7 @@
 ---
 name: docs-consistency
 description: |
-  Use this agent after documentation changes (create, edit, or delete files in docs/) to validate consistency across related documentation files. Checks cross-references, dependency chains, and terminology alignment. <example>Context: User just edited the database schema documentation. user: "I've updated the database-schema.md to add the new sources table" assistant: "Let me dispatch the docs-consistency agent to check if related docs need updating." <commentary>Schema changes ripple to API docs, GEDCOM mapping, MVP phase docs, and screen docs. The agent will scan all dependent files.</commentary></example> <example>Context: User added a new documentation file. user: "I created docs/ui/screens/places.md for the new places screen" assistant: "Let me run the docs-consistency agent to ensure the navigation index and related docs are updated." <commentary>New files must appear in README.md navigation and may need cross-references from layouts and design system docs.</commentary></example>
+  Use this agent after documentation changes (create, edit, or delete files in docs/) to validate consistency across related documentation files. Checks cross-references, dependency chains, and terminology alignment. <example>Context: User just edited the database schema documentation. user: "I've updated the database-schema.md to add the new sources table" assistant: "Let me dispatch the docs-consistency agent to check if related docs need updating." <commentary>Schema changes ripple to API docs, GEDCOM mapping, and screen docs. The agent will scan all dependent files.</commentary></example> <example>Context: User added a new documentation file. user: "I created docs/ui/screens/places.md for the new places screen" assistant: "Let me run the docs-consistency agent to ensure the navigation index and related docs are updated." <commentary>New files must appear in README.md navigation and may need cross-references from layouts and design system docs.</commentary></example>
 model: sonnet
 ---
 
@@ -24,8 +24,6 @@ docs/README.md
 docs/architecture/database-schema.md
   -> api/database-layer.md (TypeScript interfaces mirror schema)
   -> references/gedcom-551-mapping.md (GEDCOM <-> schema mapping)
-  -> mvps/mvp-1-foundation/phase-2-database.md (initial schema setup)
-  -> mvps/mvp-3-primary-entities/phase-1-tree-schema.md (entity CRUD relies on schema)
   -> ui/screens/* (screens display schema data)
 
 docs/architecture/overview.md
@@ -39,7 +37,6 @@ docs/architecture/data-flow.md
 
 docs/architecture/tech-stack.md
   -> architecture/overview.md (tech choices affect architecture)
-  -> mvps/* (MVP phases implement with these technologies)
 
 docs/api/database-layer.md
   -> architecture/database-schema.md (interfaces match schema)
@@ -60,17 +57,10 @@ docs/ui/screens/*.md
 docs/references/date-formats.md
   -> ui/screens/individual-view.md (dates displayed)
   -> references/gedcom-551-mapping.md (date fields in mapping)
-  -> mvps/mvp-3-primary-entities/phase-3-dates.md (date implementation)
 
 docs/references/gedcom-551-mapping.md
   -> architecture/database-schema.md (schema <-> GEDCOM)
   -> references/date-formats.md (date fields)
-  -> mvps/mvp-2-gedcom/phase-1-import.md (GEDCOM import/export)
-
-docs/mvps/*
-  -> architecture/database-schema.md (schema they implement)
-  -> architecture/tech-stack.md (tech they use)
-  -> other MVP phases (sequential dependencies)
 ```
 
 **Important:** Before reading a file from the map, verify it exists with Glob. The map may be stale.

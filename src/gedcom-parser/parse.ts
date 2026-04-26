@@ -56,7 +56,7 @@ export function parseDocument(content: string): GedcomDocument {
           document.families.push(parseFamily(lines, i, line.xref));
         }
         break;
-      // SOUR and REPO parsing deferred to MVP5
+      // TODO: SOUR and REPO parsing not yet implemented
       case 'TRLR':
         // End of file marker - stop processing
         break;

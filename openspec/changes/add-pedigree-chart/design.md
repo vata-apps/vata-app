@@ -11,7 +11,6 @@ Relevant current state:
 Constraints:
 
 - The pedigree fits in a small, bounded space (up to 5 generations = max 31 nodes). Layout and performance are trivial.
-- MVP4 is source-first; MVP5 is UI. This feature fits MVP5 (UI polish / default view).
 - No new routes — replace the content of the existing landing page to make this the default view on tree open.
 - Click-to-navigate only. No zoom/pan (user explicitly scoped this out).
 
