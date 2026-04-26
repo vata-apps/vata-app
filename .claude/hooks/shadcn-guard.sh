@@ -10,9 +10,17 @@ if ! command -v jq >/dev/null 2>&1; then
 fi
 
 INPUT=$(cat)
-eval "$(printf %s "$INPUT" | jq -r '@sh "FILE_PATH=\(.tool_input.file_path // "") CONTENT=\(.tool_input.content // "")"')"
+eval "$(printf %s "$INPUT" | jq -r '@sh "FILE_PATH=\(.tool_input.file_path // "")", @sh "CONTENT=\(.tool_input.content // "")"')"
 
 [ -z "$FILE_PATH" ] && exit 0
+
+# Edit and MultiEdit don't carry the full file content in tool_input. Since this
+# is PostToolUse, the file on disk already reflects the change — read it as the
+# fallback so the regex checks see the post-edit state.
+if [ -z "$CONTENT" ] && [ -f "$FILE_PATH" ]; then
+  CONTENT=$(cat "$FILE_PATH")
+fi
+
 [ -z "$CONTENT" ] && exit 0
 
 # Exclude the design layer where raw color literals are legitimately defined,
@@ -25,7 +33,7 @@ esac
 # Only inspect files under src/ with extensions we care about.
 [[ "$FILE_PATH" != */src/* ]] && exit 0
 case "$FILE_PATH" in
-  *.ts|*.tsx|*.jsx|*.css) ;;
+  *.ts|*.tsx|*.js|*.jsx|*.css) ;;
   *) exit 0 ;;
 esac
 
@@ -63,7 +71,7 @@ fi
 case "$FILE_PATH" in
   */src/styles/vata-ds.css) ;;
   *)
-    if printf %s "$CONTENT" | grep -qE '\b(btn-(primary|ghost|danger)|modal-backdrop|modal-shell|modal-head)\b'; then
+    if printf %s "$CONTENT" | grep -qE '\b(btn-[a-zA-Z]+|modal-backdrop|modal-shell|modal-head)\b'; then
       ERRORS="${ERRORS}[VIOLATION] Reintroduction of deprecated vata-ds.css legacy class.\n"
       ERRORS="${ERRORS}  Rule: vata-shadcn-rules — these classes are being removed.\n"
       ERRORS="${ERRORS}  Fix: use <Button variant=\"...\"> or <Dialog> from \$components/ui/ instead.\n\n"
