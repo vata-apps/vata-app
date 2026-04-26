@@ -52,8 +52,9 @@ if printf %s "$FLAT_CONTENT" | grep -qE 'style=\{\{[^}]*(#[0-9a-fA-F]{3,8}|rgb\(
 fi
 
 # --- HARD BLOCK: color literal in plain CSS files (excluding src/index.css already handled above) ---
+# No `:\s*` anchor — colors appear after other tokens in shorthand (e.g. `border: 1px solid #fff`).
 if [[ "$FILE_PATH" == *.css ]]; then
-  if printf %s "$CONTENT" | grep -qE ':\s*(#[0-9a-fA-F]{3,8}|rgb\(|rgba\(|hsl\(|hsla\(|oklch\()'; then
+  if printf %s "$CONTENT" | grep -qE '(#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(|\boklch\()'; then
     ERRORS="${ERRORS}[VIOLATION] Color literal in CSS file outside src/index.css.\n"
     ERRORS="${ERRORS}  Rule: vata-shadcn-rules — color tokens are defined only in src/index.css; reference semantic tokens (var(--background), etc.) elsewhere.\n\n"
   fi
