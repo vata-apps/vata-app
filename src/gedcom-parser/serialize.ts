@@ -41,10 +41,10 @@ export function serialize(document: GedcomDocument, options: SerializeOptions = 
     lines.push(...serializeFamily(family, maxLineLength));
   }
 
-  // Sources (MVP5 - placeholder)
+  // TODO: Sources (placeholder, not yet supported)
   // for (const source of document.sources) { ... }
 
-  // Repositories (MVP5 - placeholder)
+  // TODO: Repositories (placeholder, not yet supported)
   // for (const repository of document.repositories) { ... }
 
   // Notes (record-level)

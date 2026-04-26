@@ -15,9 +15,9 @@ export interface GedcomDocument {
   individuals: GedcomIndividual[];
   /** Family records (FAM) */
   families: GedcomFamily[];
-  /** Source records (SOUR) - MVP5, empty for now */
+  /** Source records (SOUR) - TODO: not yet supported, empty for now */
   sources: GedcomSource[];
-  /** Repository records (REPO) - MVP5, empty for now */
+  /** Repository records (REPO) - TODO: not yet supported, empty for now */
   repositories: GedcomRepository[];
   /** Note records (NOTE) */
   notes: GedcomNote[];
@@ -61,7 +61,7 @@ export interface GedcomIndividual {
   familySpouseRefs: string[];
   /** Notes attached to this individual */
   notes: string[];
-  /** Source citations - MVP5, empty for now */
+  /** Source citations - TODO: not yet supported, empty for now */
   sources: GedcomSourceCitation[];
 }
 
@@ -103,7 +103,7 @@ export interface GedcomEvent {
   description?: string;
   /** Notes */
   notes: string[];
-  /** Source citations - MVP5, empty for now */
+  /** Source citations - TODO: not yet supported, empty for now */
   sources: GedcomSourceCitation[];
 }
 
@@ -123,12 +123,12 @@ export interface GedcomFamily {
   events: GedcomEvent[];
   /** Notes */
   notes: string[];
-  /** Source citations - MVP5, empty for now */
+  /** Source citations - TODO: not yet supported, empty for now */
   sources: GedcomSourceCitation[];
 }
 
 /**
- * Source record (SOUR) - MVP5 placeholder.
+ * Source record (SOUR) - TODO: placeholder, not yet supported.
  */
 export interface GedcomSource {
   /** XREF identifier */
@@ -146,7 +146,7 @@ export interface GedcomSource {
 }
 
 /**
- * Repository record (REPO) - MVP5 placeholder.
+ * Repository record (REPO) - TODO: placeholder, not yet supported.
  */
 export interface GedcomRepository {
   /** XREF identifier */
@@ -158,7 +158,7 @@ export interface GedcomRepository {
 }
 
 /**
- * Source citation (attached to records) - MVP5 placeholder.
+ * Source citation (attached to records) - TODO: placeholder, not yet supported.
  */
 export interface GedcomSourceCitation {
   /** Source reference (XREF) */

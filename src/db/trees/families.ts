@@ -417,7 +417,7 @@ export async function getFamilyWithMembers(familyId: string): Promise<FamilyWith
       ...individual,
       primaryName,
       names,
-      birthEvent: null, // Events not loaded yet (MVP3 Phase 2.5)
+      birthEvent: null, // TODO: Events not loaded yet
       deathEvent: null,
     };
 
@@ -439,7 +439,7 @@ export async function getFamilyWithMembers(familyId: string): Promise<FamilyWith
     husband,
     wife,
     children,
-    marriageEvent: null, // Events not loaded yet (MVP3 Phase 2.5)
+    marriageEvent: null, // TODO: Events not loaded yet
   };
 }
 

@@ -90,8 +90,8 @@ export async function exportGedcom(options: ExportOptions): Promise<string> {
     },
     individuals: [],
     families: [],
-    sources: [], // MVP5
-    repositories: [], // MVP5
+    sources: [], // TODO: not yet supported
+    repositories: [], // TODO: not yet supported
     notes: [],
   };
 
