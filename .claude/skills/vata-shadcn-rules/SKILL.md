@@ -26,7 +26,7 @@ Enforced by `.claude/hooks/shadcn-guard.sh`.
 
 ## 2. `style` prop only for runtime values
 
-The official skill prefers `className` for layout. Vata-specific carve-out: `style` is allowed **only** when the value cannot be expressed as a class — e.g. `style={{ width: \`${pct}%\` }}`. Color literals inside any `style` prop are hard-blocked regardless.
+The official skill prefers `className` for layout. Vata-specific carve-out: `style` is allowed **only** when the value cannot be expressed as a class — e.g. ``style={{ width: `${pct}%` }}``. Color literals inside any `style` prop are hard-blocked regardless.
 
 ## 3. Don't reimplement primitives
 
