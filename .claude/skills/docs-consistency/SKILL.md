@@ -18,45 +18,45 @@ docs/README.md
   <- ALL files (navigation index, must list every doc)
 
 docs/architecture/database-schema.md
-  -> api/database-layer.md (TypeScript interfaces mirror schema)
-  -> references/gedcom-551-mapping.md (GEDCOM <-> schema mapping)
-  -> ui/screens/* (screens display schema data)
+  -> docs/api/database-layer.md (TypeScript interfaces mirror schema)
+  -> docs/references/gedcom-551-mapping.md (GEDCOM <-> schema mapping)
+  -> docs/ui/screens/* (screens display schema data)
 
 docs/architecture/overview.md
-  -> architecture/data-flow.md (layers referenced)
-  -> architecture/tech-stack.md (technologies referenced)
-  -> api/database-layer.md (DB layer is a layer in overview)
+  -> docs/architecture/data-flow.md (layers referenced)
+  -> docs/architecture/tech-stack.md (technologies referenced)
+  -> docs/api/database-layer.md (DB layer is a layer in overview)
 
 docs/architecture/data-flow.md
-  -> api/database-layer.md (DB operations described)
-  -> architecture/overview.md (flow is part of architecture)
+  -> docs/api/database-layer.md (DB operations described)
+  -> docs/architecture/overview.md (flow is part of architecture)
 
 docs/architecture/tech-stack.md
-  -> architecture/overview.md (tech choices affect architecture)
+  -> docs/architecture/overview.md (tech choices affect architecture)
 
 docs/api/database-layer.md
-  -> architecture/database-schema.md (interfaces match schema)
-  -> architecture/data-flow.md (API is part of flow)
+  -> docs/architecture/database-schema.md (interfaces match schema)
+  -> docs/architecture/data-flow.md (API is part of flow)
 
 docs/ui/design-system.md
-  -> ui/layouts.md (layout uses design tokens)
-  -> ui/screens/* (screens follow design system)
+  -> docs/ui/layouts.md (layout uses design tokens)
+  -> docs/ui/screens/* (screens follow design system)
 
 docs/ui/layouts.md
-  -> ui/design-system.md (uses design tokens)
-  -> ui/screens/* (screens use layouts)
+  -> docs/ui/design-system.md (uses design tokens)
+  -> docs/ui/screens/* (screens use layouts)
 
 docs/ui/screens/*.md
-  -> ui/layouts.md (uses layouts)
-  -> architecture/database-schema.md (displays entity data)
+  -> docs/ui/layouts.md (uses layouts)
+  -> docs/architecture/database-schema.md (displays entity data)
 
 docs/references/date-formats.md
-  -> ui/screens/individual-view.md (dates displayed)
-  -> references/gedcom-551-mapping.md (date fields in mapping)
+  -> docs/ui/screens/individual-view.md (dates displayed)
+  -> docs/references/gedcom-551-mapping.md (date fields in mapping)
 
 docs/references/gedcom-551-mapping.md
-  -> architecture/database-schema.md (schema <-> GEDCOM)
-  -> references/date-formats.md (date fields)
+  -> docs/architecture/database-schema.md (schema <-> GEDCOM)
+  -> docs/references/date-formats.md (date fields)
 ```
 
 The map can become stale — verify each file exists with Glob before reading.
