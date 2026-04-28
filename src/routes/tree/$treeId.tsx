@@ -43,19 +43,19 @@ export const Route = createFileRoute('/tree/$treeId')({
     }, []);
 
     if (treeLoading) {
-      return <div className="p-8 text-muted-foreground">Loading tree...</div>;
+      return <p>Loading tree...</p>;
     }
 
     if (!tree) {
-      return <div className="p-8 text-destructive">Tree not found.</div>;
+      return <p>Tree not found.</p>;
     }
 
     if (error) {
-      return <div className="p-8 text-destructive">Error: {error}</div>;
+      return <p>Error: {error}</p>;
     }
 
     if (!dbReady) {
-      return <div className="p-8 text-muted-foreground">Opening database...</div>;
+      return <p>Opening database...</p>;
     }
 
     return <Outlet />;
