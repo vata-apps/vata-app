@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next';
+
 type SourceWorkspacePageProps = {
   treeId: string;
   sourceId: string;
 };
 
 export function SourceWorkspacePage({ treeId: _treeId, sourceId }: SourceWorkspacePageProps) {
-  return <h1>Source workspace {sourceId}</h1>;
+  const { t } = useTranslation('common');
+  return <h1>{t('source.workspaceHeading', { sourceId })}</h1>;
 }

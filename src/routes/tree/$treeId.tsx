@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { getTreeById } from '$/db/system/trees';
 import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from '$/db/connection';
 import { queryKeys } from '$lib/query-keys';
@@ -7,6 +8,7 @@ import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/tree/$treeId')({
   component: function TreeLayout() {
+    const { t } = useTranslation('common');
     const { treeId } = Route.useParams();
     const [dbReady, setDbReady] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -43,19 +45,19 @@ export const Route = createFileRoute('/tree/$treeId')({
     }, []);
 
     if (treeLoading) {
-      return <p>Loading tree...</p>;
+      return <p>{t('tree.loading')}</p>;
     }
 
     if (!tree) {
-      return <p>Tree not found.</p>;
+      return <p>{t('tree.notFound')}</p>;
     }
 
     if (error) {
-      return <p>Error: {error}</p>;
+      return <p>{t('errors.withMessage', { message: error })}</p>;
     }
 
     if (!dbReady) {
-      return <p>Opening database...</p>;
+      return <p>{t('tree.openingDb')}</p>;
     }
 
     return <Outlet />;
