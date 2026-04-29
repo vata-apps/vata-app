@@ -17,8 +17,8 @@ export function HomePage(): JSX.Element {
 
   if (isLoading) return <p>{t('trees:loading')}</p>;
   if (error) {
-    const message = error instanceof Error ? error.message : t('common:errors.generic');
-    return <p>{t('common:errors.withMessage', { message })}</p>;
+    console.error('Failed to load trees:', error);
+    return <p>{t('common:errors.loadFailed')}</p>;
   }
 
   return (

@@ -11,9 +11,13 @@ export const Route = createFileRoute('/tree/$treeId')({
     const { t } = useTranslation(['common', 'trees']);
     const { treeId } = Route.useParams();
     const [dbReady, setDbReady] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [dbError, setDbError] = useState(false);
 
-    const { data: tree, isLoading: treeLoading } = useQuery({
+    const {
+      data: tree,
+      isLoading: treeLoading,
+      error: treeQueryError,
+    } = useQuery({
       queryKey: queryKeys.tree(treeId),
       queryFn: () => getTreeById(treeId),
     });
@@ -21,7 +25,7 @@ export const Route = createFileRoute('/tree/$treeId')({
     useEffect(() => {
       if (!tree) return;
       setDbReady(false);
-      setError(null);
+      setDbError(false);
       let cancelled = false;
 
       async function ensureDbOpen(): Promise<void> {
@@ -34,9 +38,8 @@ export const Route = createFileRoute('/tree/$treeId')({
           await openTreeDb(tree!.path);
           if (!cancelled) setDbReady(true);
         } catch (err) {
-          if (!cancelled) {
-            setError(err instanceof Error ? err.message : t('common:errors.failedToOpenDatabase'));
-          }
+          console.error('Failed to open tree database:', err);
+          if (!cancelled) setDbError(true);
         }
       }
 
@@ -44,7 +47,7 @@ export const Route = createFileRoute('/tree/$treeId')({
       return () => {
         cancelled = true;
       };
-    }, [tree, t]);
+    }, [tree]);
 
     useEffect(() => {
       return () => {
@@ -56,12 +59,17 @@ export const Route = createFileRoute('/tree/$treeId')({
       return <p>{t('trees:loadingOne')}</p>;
     }
 
+    if (treeQueryError) {
+      console.error('Failed to load tree:', treeQueryError);
+      return <p>{t('common:errors.loadFailed')}</p>;
+    }
+
     if (!tree) {
       return <p>{t('trees:notFound')}</p>;
     }
 
-    if (error) {
-      return <p>{t('common:errors.withMessage', { message: error })}</p>;
+    if (dbError) {
+      return <p>{t('common:errors.failedToOpenDatabase')}</p>;
     }
 
     if (!dbReady) {

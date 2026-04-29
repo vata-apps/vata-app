@@ -13,7 +13,7 @@
   },
   "errors": {
     "generic": "Something went wrong",
-    "withMessage": "Error: {{message}}",
+    "loadFailed": "Failed to load data.",
     "reload": "Reload",
     "failedToOpenDatabase": "Failed to open database"
   }
