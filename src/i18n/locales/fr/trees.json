@@ -1,0 +1,8 @@
+{
+  "loading": "Chargement des arbres...",
+  "empty": "Aucun arbre trouvé.",
+  "heading": "Arbre {{treeId}}",
+  "loadingOne": "Chargement de l'arbre...",
+  "notFound": "Arbre introuvable.",
+  "openingDb": "Ouverture de la base de données..."
+}

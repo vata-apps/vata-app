@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/tree/$treeId')({
   component: function TreeLayout() {
-    const { t } = useTranslation('common');
+    const { t } = useTranslation(['common', 'trees']);
     const { treeId } = Route.useParams();
     const [dbReady, setDbReady] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -20,23 +20,31 @@ export const Route = createFileRoute('/tree/$treeId')({
 
     useEffect(() => {
       if (!tree) return;
+      setDbReady(false);
+      setError(null);
+      let cancelled = false;
 
-      async function ensureDbOpen() {
+      async function ensureDbOpen(): Promise<void> {
         try {
           if (isTreeDbOpen() && getCurrentTreePath() === tree!.path) {
-            setDbReady(true);
+            if (!cancelled) setDbReady(true);
             return;
           }
 
           await openTreeDb(tree!.path);
-          setDbReady(true);
+          if (!cancelled) setDbReady(true);
         } catch (err) {
-          setError(err instanceof Error ? err.message : 'Failed to open database');
+          if (!cancelled) {
+            setError(err instanceof Error ? err.message : t('common:errors.failedToOpenDatabase'));
+          }
         }
       }
 
       void ensureDbOpen();
-    }, [tree]);
+      return () => {
+        cancelled = true;
+      };
+    }, [tree, t]);
 
     useEffect(() => {
       return () => {
@@ -45,19 +53,19 @@ export const Route = createFileRoute('/tree/$treeId')({
     }, []);
 
     if (treeLoading) {
-      return <p>{t('tree.loading')}</p>;
+      return <p>{t('trees:loadingOne')}</p>;
     }
 
     if (!tree) {
-      return <p>{t('tree.notFound')}</p>;
+      return <p>{t('trees:notFound')}</p>;
     }
 
     if (error) {
-      return <p>{t('errors.withMessage', { message: error })}</p>;
+      return <p>{t('common:errors.withMessage', { message: error })}</p>;
     }
 
     if (!dbReady) {
-      return <p>{t('tree.openingDb')}</p>;
+      return <p>{t('trees:openingDb')}</p>;
     }
 
     return <Outlet />;

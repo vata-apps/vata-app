@@ -11,32 +11,10 @@
     "dataBrowser": "Explorateur de données",
     "backToHome": "Retour à l'accueil"
   },
-  "tree": {
-    "heading": "Arbre {{treeId}}",
-    "loading": "Chargement de l'arbre...",
-    "notFound": "Arbre introuvable.",
-    "openingDb": "Ouverture de la base de données..."
-  },
-  "trees": {
-    "loading": "Chargement des arbres...",
-    "empty": "Aucun arbre trouvé."
-  },
-  "individual": {
-    "heading": "Individu {{individualId}}"
-  },
-  "family": {
-    "heading": "Famille {{familyId}}"
-  },
-  "source": {
-    "heading": "Source {{sourceId}}",
-    "workspaceHeading": "Espace de travail de source {{sourceId}}"
-  },
-  "repository": {
-    "heading": "Dépôt {{repositoryId}}"
-  },
   "errors": {
     "generic": "Une erreur est survenue",
     "withMessage": "Erreur : {{message}}",
-    "reload": "Recharger"
+    "reload": "Recharger",
+    "failedToOpenDatabase": "Échec de l'ouverture de la base de données"
   }
 }

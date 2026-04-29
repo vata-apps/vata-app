@@ -11,32 +11,10 @@
     "dataBrowser": "Data Browser",
     "backToHome": "Back to Home"
   },
-  "tree": {
-    "heading": "Tree {{treeId}}",
-    "loading": "Loading tree...",
-    "notFound": "Tree not found.",
-    "openingDb": "Opening database..."
-  },
-  "trees": {
-    "loading": "Loading trees...",
-    "empty": "No trees found."
-  },
-  "individual": {
-    "heading": "Individual {{individualId}}"
-  },
-  "family": {
-    "heading": "Family {{familyId}}"
-  },
-  "source": {
-    "heading": "Source {{sourceId}}",
-    "workspaceHeading": "Source workspace {{sourceId}}"
-  },
-  "repository": {
-    "heading": "Repository {{repositoryId}}"
-  },
   "errors": {
     "generic": "Something went wrong",
     "withMessage": "Error: {{message}}",
-    "reload": "Reload"
+    "reload": "Reload",
+    "failedToOpenDatabase": "Failed to open database"
   }
 }

@@ -1,44 +1,44 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-type TreeViewPageProps = {
+interface TreeViewPageProps {
   treeId: string;
-};
+}
 
-export function TreeViewPage({ treeId }: TreeViewPageProps) {
-  const { t } = useTranslation('common');
+export function TreeViewPage({ treeId }: TreeViewPageProps): JSX.Element {
+  const { t } = useTranslation(['common', 'trees']);
   return (
     <div>
-      <h1>{t('tree.heading', { treeId })}</h1>
+      <h1>{t('trees:heading', { treeId })}</h1>
       <nav>
         <ul>
           <li>
             <Link to="/tree/$treeId/individuals" params={{ treeId }}>
-              {t('nav.individuals')}
+              {t('common:nav.individuals')}
             </Link>
           </li>
           <li>
             <Link to="/tree/$treeId/families" params={{ treeId }}>
-              {t('nav.families')}
+              {t('common:nav.families')}
             </Link>
           </li>
           <li>
             <Link to="/tree/$treeId/sources" params={{ treeId }}>
-              {t('nav.sources')}
+              {t('common:nav.sources')}
             </Link>
           </li>
           <li>
             <Link to="/tree/$treeId/repositories" params={{ treeId }}>
-              {t('nav.repositories')}
+              {t('common:nav.repositories')}
             </Link>
           </li>
           <li>
             <Link to="/tree/$treeId/data" params={{ treeId }}>
-              {t('nav.dataBrowser')}
+              {t('common:nav.dataBrowser')}
             </Link>
           </li>
           <li>
-            <Link to="/">{t('nav.backToHome')}</Link>
+            <Link to="/">{t('common:nav.backToHome')}</Link>
           </li>
         </ul>
       </nav>

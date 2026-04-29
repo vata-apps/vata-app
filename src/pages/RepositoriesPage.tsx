@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 
-type RepositoriesPageProps = {
+interface RepositoriesPageProps {
   treeId: string;
-};
+}
 
-export function RepositoriesPage({ treeId: _treeId }: RepositoriesPageProps) {
+export function RepositoriesPage({ treeId: _treeId }: RepositoriesPageProps): JSX.Element {
   const { t } = useTranslation('common');
   return <h1>{t('nav.repositories')}</h1>;
 }
