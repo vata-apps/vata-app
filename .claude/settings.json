@@ -56,12 +56,6 @@
           },
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/shadcn-guard.sh",
-            "timeout": 10,
-            "statusMessage": "Checking shadcn rules..."
-          },
-          {
-            "type": "command",
             "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/english-guard.sh",
             "timeout": 10,
             "statusMessage": "Checking language..."

@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { getTreeById } from '$/db/system/trees';
 import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from '$/db/connection';
 import { queryKeys } from '$lib/query-keys';
@@ -7,33 +8,45 @@ import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/tree/$treeId')({
   component: function TreeLayout() {
+    const { t } = useTranslation(['common', 'trees']);
     const { treeId } = Route.useParams();
     const [dbReady, setDbReady] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [dbError, setDbError] = useState(false);
 
-    const { data: tree, isLoading: treeLoading } = useQuery({
+    const {
+      data: tree,
+      isLoading: treeLoading,
+      error: treeQueryError,
+    } = useQuery({
       queryKey: queryKeys.tree(treeId),
       queryFn: () => getTreeById(treeId),
     });
 
     useEffect(() => {
       if (!tree) return;
+      setDbReady(false);
+      setDbError(false);
+      let cancelled = false;
 
-      async function ensureDbOpen() {
+      async function ensureDbOpen(): Promise<void> {
         try {
           if (isTreeDbOpen() && getCurrentTreePath() === tree!.path) {
-            setDbReady(true);
+            if (!cancelled) setDbReady(true);
             return;
           }
 
           await openTreeDb(tree!.path);
-          setDbReady(true);
+          if (!cancelled) setDbReady(true);
         } catch (err) {
-          setError(err instanceof Error ? err.message : 'Failed to open database');
+          console.error('Failed to open tree database:', err);
+          if (!cancelled) setDbError(true);
         }
       }
 
       void ensureDbOpen();
+      return () => {
+        cancelled = true;
+      };
     }, [tree]);
 
     useEffect(() => {
@@ -43,19 +56,24 @@ export const Route = createFileRoute('/tree/$treeId')({
     }, []);
 
     if (treeLoading) {
-      return <div className="p-8 text-muted-foreground">Loading tree...</div>;
+      return <p>{t('trees:loadingOne')}</p>;
+    }
+
+    if (treeQueryError) {
+      console.error('Failed to load tree:', treeQueryError);
+      return <p>{t('common:errors.loadFailed')}</p>;
     }
 
     if (!tree) {
-      return <div className="p-8 text-destructive">Tree not found.</div>;
+      return <p>{t('trees:notFound')}</p>;
     }
 
-    if (error) {
-      return <div className="p-8 text-destructive">Error: {error}</div>;
+    if (dbError) {
+      return <p>{t('common:errors.failedToOpenDatabase')}</p>;
     }
 
     if (!dbReady) {
-      return <div className="p-8 text-muted-foreground">Opening database...</div>;
+      return <p>{t('trees:openingDb')}</p>;
     }
 
     return <Outlet />;

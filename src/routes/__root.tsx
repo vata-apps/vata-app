@@ -1,38 +1,19 @@
-import {
-  createRootRoute,
-  Outlet,
-  useRouterState,
-  type ErrorComponentProps,
-} from '@tanstack/react-router';
-import { AppShell } from '$components/app-shell';
-import { Button } from '$components/ui/button';
-import { useThemeSync } from '$hooks/useThemeSync';
+import { createRootRoute, Outlet, type ErrorComponentProps } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
-function RootErrorComponent({ error }: ErrorComponentProps) {
+function RootErrorComponent({ error }: ErrorComponentProps): JSX.Element {
+  const { t } = useTranslation('common');
   return (
-    <AppShell>
-      <div className="p-8 text-destructive">
-        <h1 className="text-lg font-semibold">Something went wrong</h1>
-        <pre className="mt-2 whitespace-pre-wrap break-words text-sm">{error.message}</pre>
-        <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
-          Reload
-        </Button>
-      </div>
-    </AppShell>
+    <div>
+      <h1>{t('errors.generic')}</h1>
+      {import.meta.env.DEV && <pre>{error.message}</pre>}
+      <button onClick={() => window.location.reload()}>{t('errors.reload')}</button>
+    </div>
   );
 }
 
-function RootComponent() {
-  useThemeSync();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  if (pathname === '/') {
-    return <Outlet />;
-  }
-  return (
-    <AppShell>
-      <Outlet />
-    </AppShell>
-  );
+function RootComponent(): JSX.Element {
+  return <Outlet />;
 }
 
 export const Route = createRootRoute({

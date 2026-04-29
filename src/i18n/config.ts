@@ -3,19 +3,17 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
 import enCommon from './locales/en/common.json';
-import enFamilies from './locales/en/families.json';
-import enHome from './locales/en/home.json';
+import enTrees from './locales/en/trees.json';
 import enIndividuals from './locales/en/individuals.json';
-import enRepositories from './locales/en/repositories.json';
+import enFamilies from './locales/en/families.json';
 import enSources from './locales/en/sources.json';
-import enWorkspace from './locales/en/workspace.json';
+import enRepositories from './locales/en/repositories.json';
 import frCommon from './locales/fr/common.json';
-import frFamilies from './locales/fr/families.json';
-import frHome from './locales/fr/home.json';
+import frTrees from './locales/fr/trees.json';
 import frIndividuals from './locales/fr/individuals.json';
-import frRepositories from './locales/fr/repositories.json';
+import frFamilies from './locales/fr/families.json';
 import frSources from './locales/fr/sources.json';
-import frWorkspace from './locales/fr/workspace.json';
+import frRepositories from './locales/fr/repositories.json';
 
 i18n
   .use(LanguageDetector)
@@ -24,21 +22,19 @@ i18n
     resources: {
       en: {
         common: enCommon,
-        families: enFamilies,
-        home: enHome,
+        trees: enTrees,
         individuals: enIndividuals,
-        repositories: enRepositories,
+        families: enFamilies,
         sources: enSources,
-        workspace: enWorkspace,
+        repositories: enRepositories,
       },
       fr: {
         common: frCommon,
-        families: frFamilies,
-        home: frHome,
+        trees: frTrees,
         individuals: frIndividuals,
-        repositories: frRepositories,
+        families: frFamilies,
         sources: frSources,
-        workspace: frWorkspace,
+        repositories: frRepositories,
       },
     },
     defaultNS: 'common',

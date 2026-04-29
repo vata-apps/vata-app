@@ -273,7 +273,6 @@ If `pnpm review:all` fails because the CodeRabbit plan limit / rate limit is rea
 
 - **Path Aliases**: `$db` is bare (no sub-paths). Within `src/db/`, use relative imports. From outside, use `$/db/connection`, `$db-system/*`, `$db-tree/*`. All aliases must exist in both `vite.config.ts` AND `vitest.config.ts`.
 - **React Lists**: When returning a Fragment from `.map()`, always use `<React.Fragment key={...}>`, never `<>`. Key must be on the outermost element.
-- **Modal Dialogs**: Every modal must have `role="dialog"`, `aria-modal="true"`, `aria-labelledby`, and an Escape key handler.
 - **Debug UI**: Guard with `{import.meta.env.DEV && (...)}`. Never ship debug panels to production.
 - **No Unused Exports**: Do not pre-create hooks, functions, or components for future use.
 
@@ -289,20 +288,18 @@ The app includes `tauri-plugin-mcp-bridge` (debug builds only). You can launch t
 
 The following specialized skills are loaded automatically when relevant, or on demand via the skill tool.
 
-| Skill                  | Trigger                                                                                                                                                                         |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs                                                                                                           |
-| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code                                                                                                                 |
-| `docs-consistency`     | After any change to `docs/*.md`                                                                                                                                                 |
-| `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes)                                                                                                   |
-| `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                                                                                                                           |
-| `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure                                                                                                      |
-| `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                                                                                                                   |
-| `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                                                                                                                    |
-| `shadcn` (official)    | Auto-activates when `components.json` is present — generic shadcn rules (semantic tokens, `cn()`, composition, forms, icons, CLI). Source of truth for everything generic.      |
-| `vata-shadcn-rules`    | When writing `src/components/**`, `src/pages/**`, `src/routes/**`, `src/index.css`, or `components.json` — Vata-specific UI rules layered on top of the official `shadcn` skill |
+| Skill                  | Trigger                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs         |
+| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code               |
+| `docs-consistency`     | After any change to `docs/*.md`                                               |
+| `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes) |
+| `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
+| `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
+| `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                 |
+| `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                  |
 
-For UI work, the official `shadcn` skill plus the `shadcn` MCP server (configured in `.mcp.json`) are the source of truth. `vata-shadcn-rules` only adds project-specific constraints (i18n, English-only artifacts, no hex colors outside the design layer, no primitive reimplementation, deprecated `vata-ds.css` classes blocked).
+The UI layer (shadcn, Tailwind, custom design system) was removed; the project currently runs on plain HTML scaffolds with no styling.
 
 ---
 

@@ -1,79 +1,20 @@
 {
+  "app": {
+    "title": "Vata"
+  },
   "nav": {
     "home": "Vata",
     "individuals": "Individus",
     "families": "Familles",
     "sources": "Sources",
     "repositories": "Dépôts",
-    "places": "Lieux",
-    "events": "Événements",
     "dataBrowser": "Explorateur de données",
-    "dataBrowser_overview": "Aperçu",
-    "dataBrowser_raw": "JSON brut",
-    "closeTree": "Fermer l'arbre",
-    "settings": "Paramètres"
-  },
-  "actions": {
-    "create": "Créer",
-    "save": "Enregistrer",
-    "cancel": "Annuler",
-    "delete": "Supprimer",
-    "edit": "Modifier",
-    "open": "Ouvrir",
-    "close": "Fermer",
-    "back": "Retour",
-    "search": "Rechercher...",
-    "export": "Exporter",
-    "import": "Importer",
-    "rename": "Renommer"
-  },
-  "status": {
-    "loading": "Chargement...",
-    "saving": "Enregistrement...",
-    "deleting": "Suppression...",
-    "creating": "Création...",
-    "noResults": "Aucun résultat trouvé."
+    "backToHome": "Retour à l'accueil"
   },
   "errors": {
-    "generic": "Une erreur est survenue.",
-    "notFound": "Introuvable.",
-    "loadFailed": "Échec du chargement des données."
-  },
-  "theme": {
-    "light": "Clair",
-    "dark": "Sombre",
-    "system": "Système",
-    "toggle": "Changer de thème"
-  },
-  "language": {
-    "en": "English",
-    "fr": "Français",
-    "select": "Langue"
-  },
-  "pagination": {
-    "previous": "Précédent",
-    "next": "Suivant",
-    "showing": "Affichage {{from}}-{{to}} sur {{total}}",
-    "page": "Page {{page}} sur {{pages}}"
-  },
-  "dataBrowser": {
-    "description": "Vue de débogage des données GEDCOM importées",
-    "overview": "Aperçu de la base de données",
-    "recordCounts": "Nombre d'enregistrements",
-    "treeMetadata": "Métadonnées de l'arbre",
-    "eventTypes": "Types d'événements",
-    "yes": "Oui",
-    "no": "Non",
-    "hide": "Masquer",
-    "details": "Détails",
-    "copied": "Copié !",
-    "copyToClipboard": "Copier dans le presse-papiers"
-  },
-  "timeline": {
-    "loading": "Chargement des événements...",
-    "error": "Échec du chargement des événements.",
-    "empty": "Aucun événement enregistré.",
-    "noDate": "(sans date)",
-    "addSource": "Ajouter une source"
+    "generic": "Une erreur est survenue",
+    "loadFailed": "Échec du chargement des données.",
+    "reload": "Recharger",
+    "failedToOpenDatabase": "Échec de l'ouverture de la base de données"
   }
 }

@@ -1,0 +1,8 @@
+{
+  "loading": "Loading trees...",
+  "empty": "No trees found.",
+  "heading": "Tree {{treeId}}",
+  "loadingOne": "Loading tree...",
+  "notFound": "Tree not found.",
+  "openingDb": "Opening database..."
+}

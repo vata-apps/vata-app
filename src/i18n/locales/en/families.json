@@ -1,21 +1,3 @@
 {
-  "title": "Families",
-  "empty": "No families found.",
-  "search": "Search families...",
-  "newFamily": "New Family",
-  "backToList": "Back to Families",
-  "familyId": "Family {{id}}",
-  "comingSoon": "Coming soon",
-  "noHusband": "(No husband)",
-  "noWife": "(No wife)",
-  "noChildren": "No children recorded.",
-  "noMarriage": "No marriage event recorded.",
-  "columns": {
-    "id": "ID",
-    "husband": "Husband",
-    "wife": "Wife",
-    "children": "Children",
-    "marriage": "Marriage",
-    "sources": "Sources"
-  }
+  "heading": "Family {{familyId}}"
 }

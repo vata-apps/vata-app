@@ -1,35 +1,47 @@
-import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { getTreeById } from '$/db/system/trees';
-import { queryKeys } from '$lib/query-keys';
 
 interface TreeViewPageProps {
   treeId: string;
 }
 
-export function TreeViewPage({ treeId }: TreeViewPageProps) {
-  const { t } = useTranslation('common');
-  const { data: tree, isLoading } = useQuery({
-    queryKey: queryKeys.tree(treeId),
-    queryFn: () => getTreeById(treeId),
-  });
-
-  if (isLoading) {
-    return <p className="p-6 text-muted-foreground">{t('status.loading')}</p>;
-  }
-
-  if (!tree) {
-    return <p className="p-6 text-destructive">{t('errors.notFound')}</p>;
-  }
-
+export function TreeViewPage({ treeId }: TreeViewPageProps): JSX.Element {
+  const { t } = useTranslation(['common', 'trees']);
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold">{tree.name}</h1>
-      {tree.description && <p className="mb-4 text-sm text-muted-foreground">{tree.description}</p>}
-      <div className="flex gap-6 text-sm text-muted-foreground">
-        <span>{tree.individualCount} individuals</span>
-        <span>{tree.familyCount} families</span>
-      </div>
+    <div>
+      <h1>{t('trees:heading', { treeId })}</h1>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/tree/$treeId/individuals" params={{ treeId }}>
+              {t('common:nav.individuals')}
+            </Link>
+          </li>
+          <li>
+            <Link to="/tree/$treeId/families" params={{ treeId }}>
+              {t('common:nav.families')}
+            </Link>
+          </li>
+          <li>
+            <Link to="/tree/$treeId/sources" params={{ treeId }}>
+              {t('common:nav.sources')}
+            </Link>
+          </li>
+          <li>
+            <Link to="/tree/$treeId/repositories" params={{ treeId }}>
+              {t('common:nav.repositories')}
+            </Link>
+          </li>
+          <li>
+            <Link to="/tree/$treeId/data" params={{ treeId }}>
+              {t('common:nav.dataBrowser')}
+            </Link>
+          </li>
+          <li>
+            <Link to="/">{t('common:nav.backToHome')}</Link>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 }
