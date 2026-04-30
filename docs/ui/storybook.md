@@ -71,24 +71,11 @@ export const Default: Story = {};
 - **`title: 'UI/<Name>'`** — keep primitives under the `UI/` group so they sort together in the sidebar.
 - **One `Story` per variant** plus a `Matrix` story (variants × sizes) for side-by-side review.
 
-### i18n in stories
+### Strings in stories
 
-Stories are dev-facing fixtures, not the app. Hardcoded English literals are fine for demo content (`children: 'Save'`, `placeholder: 'Type something…'`) so the file stays readable.
+Stories are dev-facing fixtures, not the app. Use plain English literals for `children`, `placeholder`, and sample values — the i18n rule from `CLAUDE.md` scopes itself to client-facing strings shipped in the Tauri app, and stories are explicitly out of scope.
 
-What's required is that every wrapper which renders translatable text in production has at least one `I18nDemo` story that uses `useTranslation()` — that proves the i18n pipeline reaches the component and lets the Locale toolbar exercise it. To call hooks, extract a small component:
-
-```tsx
-function TranslatedSearchInput() {
-  const { t } = useTranslation('trees');
-  return <Input type="search" placeholder={t('searchPlaceholder')} />;
-}
-
-export const I18nDemo: Story = {
-  render: () => <TranslatedSearchInput />,
-};
-```
-
-`render` callbacks are not React components, so calling hooks directly inside them violates the React Hooks rules-of-hooks lint rule.
+The Locale toolbar still exercises i18n on every story: the global decorator in `.storybook/preview.tsx` calls `i18n.changeLanguage()` whenever you change it, so any component that _does_ call `t()` internally re-renders with the new language. There is no need for a dedicated `I18nDemo` story to prove the pipeline.
 
 ### What stories are _not_
 

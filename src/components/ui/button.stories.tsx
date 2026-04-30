@@ -1,6 +1,5 @@
 import { Fragment } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useTranslation } from 'react-i18next';
 
 import { Button } from './button';
 
@@ -104,15 +103,4 @@ export const Matrix: Story = {
       ))}
     </div>
   ),
-};
-
-function TranslatedNewTreeButton() {
-  const { t } = useTranslation('trees');
-  return <Button>{t('newTree')}</Button>;
-}
-
-export const I18nDemo: Story = {
-  name: 'i18n / Translated label',
-  parameters: { layout: 'centered' },
-  render: () => <TranslatedNewTreeButton />,
 };

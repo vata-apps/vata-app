@@ -46,24 +46,9 @@ export const Default: Story = {};
 - `tags: ['autodocs']` — the component's JSDoc renders as Docs automatically. Keep JSDoc rich (the `typescript-standards` and component conventions already require it).
 - One `StoryObj` per variant; add a `Matrix` story for side-by-side variant × size comparison.
 
-### 3. i18n in stories — demo content vs. integration check
+### 3. Hardcoded strings are fine in stories
 
-Stories are dev-facing fixtures, not the app. Hardcoded English literals are fine for throwaway demo content (variant labels, placeholder text, sample values) so the file stays readable.
-
-**However:** every wrapper that has any reason to render translated text in production (anything that takes a `children`, `placeholder`, `label`, `aria-label`, …) must include at least one `I18nDemo` story that calls `useTranslation()` against a real namespace. This proves the i18n pipeline reaches the component and lets the Locale toolbar exercise it.
-
-Stories cannot call hooks directly inside `render` callbacks (rules-of-hooks) — extract a tiny wrapper component:
-
-```tsx
-function TranslatedDemo() {
-  const { t } = useTranslation('trees');
-  return <Button>{t('newTree')}</Button>;
-}
-
-export const I18nDemo: Story = {
-  render: () => <TranslatedDemo />,
-};
-```
+Stories are dev-facing fixtures, not the app. Use plain English literals for `children`, `placeholder`, sample values, etc. — `t()` is not required here (CLAUDE.md scopes the i18n rule to client-facing app code; stories are out of scope).
 
 ### 4. Stories are visual docs, not tests
 

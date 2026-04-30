@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useTranslation } from 'react-i18next';
 
 import { Input } from './input';
 
@@ -88,14 +87,4 @@ export const Types: Story = {
       ))}
     </div>
   ),
-};
-
-function TranslatedSearchInput() {
-  const { t } = useTranslation('trees');
-  return <Input type="search" aria-label={t('search')} placeholder={t('searchPlaceholder')} />;
-}
-
-export const I18nDemo: Story = {
-  name: 'i18n / Translated placeholder',
-  render: () => <TranslatedSearchInput />,
 };
