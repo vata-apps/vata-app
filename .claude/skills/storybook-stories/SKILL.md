@@ -46,9 +46,26 @@ export const Default: Story = {};
 - `tags: ['autodocs']` — the component's JSDoc renders as Docs automatically. Keep JSDoc rich (the `typescript-standards` and component conventions already require it).
 - One `StoryObj` per variant; add a `Matrix` story for side-by-side variant × size comparison.
 
-### 3. Hardcoded strings are fine in stories
+### 3. i18n in stories — by atomic-design tier
 
-Stories are dev-facing fixtures, not the app. Use plain English literals for `children`, `placeholder`, sample values, etc. — `t()` is not required here (CLAUDE.md scopes the i18n rule to client-facing app code; stories are out of scope).
+The rule scales with the component tier:
+
+- **Atoms** (`src/components/ui/` — Button, Input, Badge, …): hardcoded English literals are fine. `t()` is not required.
+- **Molecules**: case-by-case. If the molecule is a thin composition of atoms (e.g. an icon button with a static label), literals are fine. If it owns a meaningful piece of copy that ships to users (e.g. an empty-state card, a confirmation banner), use `t()`.
+- **Organisms and pages**: use `t()` for any string that ships to users. The story should look like the production usage.
+
+**Never write a dedicated `I18nDemo` story.** When `t()` is needed, weave it into the regular stories — the Locale toolbar (in `.storybook/preview.tsx`) drives language switching globally, so a separate story adds no signal. To call hooks, extract a small component inside the file and have the regular story render it:
+
+```tsx
+function EmptyStateBanner() {
+  const { t } = useTranslation('individuals');
+  return <Banner>{t('list.empty')}</Banner>;
+}
+
+export const Empty: Story = {
+  render: () => <EmptyStateBanner />,
+};
+```
 
 ### 4. Stories are visual docs, not tests
 

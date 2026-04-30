@@ -71,11 +71,28 @@ export const Default: Story = {};
 - **`title: 'UI/<Name>'`** — keep primitives under the `UI/` group so they sort together in the sidebar.
 - **One `Story` per variant** plus a `Matrix` story (variants × sizes) for side-by-side review.
 
-### Strings in stories
+### Strings in stories — by atomic-design tier
 
-Stories are dev-facing fixtures, not the app. Use plain English literals for `children`, `placeholder`, and sample values — the i18n rule from `CLAUDE.md` scopes itself to client-facing strings shipped in the Tauri app, and stories are explicitly out of scope.
+The rule scales with the component tier:
 
-The Locale toolbar still exercises i18n on every story: the global decorator in `.storybook/preview.tsx` calls `i18n.changeLanguage()` whenever you change it, so any component that _does_ call `t()` internally re-renders with the new language. There is no need for a dedicated `I18nDemo` story to prove the pipeline.
+- **Atoms** (`src/components/ui/`): hardcoded English literals are fine. `t()` is not required.
+- **Molecules**: case-by-case. Thin compositions of atoms can stay literal; molecules that own meaningful user copy (empty states, banners, confirmations) should use `t()`.
+- **Organisms and pages**: use `t()` for any string that ships to users — the story should look like production usage. The Locale toolbar then exercises real translation across both languages.
+
+**Never write a dedicated `I18nDemo` story.** When `t()` is needed, weave it into the regular stories. To call hooks, extract a small component inside the story file and render it from the story:
+
+```tsx
+function EmptyStateBanner() {
+  const { t } = useTranslation('individuals');
+  return <Banner>{t('list.empty')}</Banner>;
+}
+
+export const Empty: Story = {
+  render: () => <EmptyStateBanner />,
+};
+```
+
+The Locale toolbar (defined in `.storybook/preview.tsx`) calls `i18n.changeLanguage()` on the global instance, so any story whose tree calls `t()` re-renders in the chosen language automatically.
 
 ### What stories are _not_
 
