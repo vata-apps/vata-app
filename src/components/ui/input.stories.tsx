@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useTranslation } from 'react-i18next';
 
@@ -65,7 +64,7 @@ const sizes = ['sm', 'md', 'lg'] as const;
 export const Sizes: Story = {
   parameters: { layout: 'padded' },
   render: (args) => (
-    <div className="flex w-72 flex-col gap-3">
+    <div className="flex flex-col gap-3">
       {sizes.map((size) => (
         <Input key={size} {...args} size={size} placeholder={`Size: ${size}`} />
       ))}
@@ -78,14 +77,14 @@ const types = ['text', 'email', 'url', 'tel', 'search', 'password'] as const;
 export const Types: Story = {
   parameters: { layout: 'padded' },
   render: () => (
-    <div className="grid w-[28rem] grid-cols-[6rem_1fr] items-center gap-3">
+    <div className="flex flex-col gap-3">
       {types.map((type) => (
-        <Fragment key={type}>
+        <div key={type} className="flex flex-col gap-1">
           <label className="text-muted-foreground text-xs uppercase" htmlFor={`input-type-${type}`}>
             {type}
           </label>
           <Input id={`input-type-${type}`} type={type} placeholder={type} />
-        </Fragment>
+        </div>
       ))}
     </div>
   ),

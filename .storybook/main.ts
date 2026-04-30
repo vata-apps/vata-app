@@ -14,7 +14,7 @@ const config: StorybookConfig = {
         if (!plugin || typeof plugin !== 'object') return true;
         const name = 'name' in plugin && typeof plugin.name === 'string' ? plugin.name : '';
         if (name.startsWith('vite:react')) return false;
-        if (name.toLowerCase().includes('tanstack-router')) return false;
+        if (name.startsWith('tanstack-router') || name.startsWith('tanstack:router')) return false;
         return true;
       }),
     };

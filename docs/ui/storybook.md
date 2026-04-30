@@ -73,7 +73,9 @@ export const Default: Story = {};
 
 ### i18n in stories
 
-User-facing strings must use `useTranslation()`, not hardcoded literals — same rule as application code (see `CLAUDE.md`). To call hooks, extract a small component:
+Stories are dev-facing fixtures, not the app. Hardcoded English literals are fine for demo content (`children: 'Save'`, `placeholder: 'Type something…'`) so the file stays readable.
+
+What's required is that every wrapper which renders translatable text in production has at least one `I18nDemo` story that uses `useTranslation()` — that proves the i18n pipeline reaches the component and lets the Locale toolbar exercise it. To call hooks, extract a small component:
 
 ```tsx
 function TranslatedSearchInput() {

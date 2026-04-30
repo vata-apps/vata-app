@@ -1,20 +1,9 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect } from 'react';
 import type { Preview } from '@storybook/react-vite';
 import { withThemeByClassName } from '@storybook/addon-themes';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import i18n from '../src/i18n/config';
 import '../src/styles/app.css';
-
-function QueryClientDecorator({ children }: { children: ReactNode }) {
-  const [client] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: { queries: { retry: false, staleTime: Infinity } },
-      })
-  );
-  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
-}
 
 const preview: Preview = {
   parameters: {
@@ -57,11 +46,6 @@ const preview: Preview = {
       }, [locale]);
       return <Story />;
     },
-    (Story) => (
-      <QueryClientDecorator>
-        <Story />
-      </QueryClientDecorator>
-    ),
   ],
 };
 
