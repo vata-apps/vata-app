@@ -4,5 +4,8 @@
   "heading": "Tree {{treeId}}",
   "loadingOne": "Loading tree...",
   "notFound": "Tree not found.",
-  "openingDb": "Opening database..."
+  "openingDb": "Opening database...",
+  "newTree": "New tree",
+  "search": "Search trees",
+  "searchPlaceholder": "Filter by name"
 }

@@ -4,5 +4,8 @@
   "heading": "Arbre {{treeId}}",
   "loadingOne": "Chargement de l'arbre...",
   "notFound": "Arbre introuvable.",
-  "openingDb": "Ouverture de la base de données..."
+  "openingDb": "Ouverture de la base de données...",
+  "newTree": "Nouvel arbre",
+  "search": "Rechercher des arbres",
+  "searchPlaceholder": "Filtrer par nom"
 }
