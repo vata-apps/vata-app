@@ -17,6 +17,21 @@ The dev server reuses the project's `vite.config.ts`, so any path alias (`$compo
 
 ---
 
+## MCP server (for AI agents)
+
+`@storybook/addon-mcp` exposes a Model Context Protocol server at `http://localhost:6006/mcp` while `pnpm storybook` is running. Claude Code is wired to it via `.mcp.json` under the `storybook` server name.
+
+Tools the server provides:
+
+- `list-all-documentation` — discover every component and docs ID in the running Storybook.
+- `get-documentation` / `get-documentation-for-story` — full props, usage, and story details.
+- `get-storybook-story-instructions` — framework-specific patterns the agent should follow before writing stories.
+- `preview-stories` — preview URLs for visual verification.
+
+The server is only reachable while the dev server is up. Start it with `pnpm storybook` before asking an agent to author or check stories.
+
+---
+
 ## Where stories live
 
 Stories are colocated with the component they describe:
