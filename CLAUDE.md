@@ -298,8 +298,9 @@ The following specialized skills are loaded automatically when relevant, or on d
 | `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
 | `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                 |
 | `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                  |
+| `storybook-stories`    | When creating or modifying wrappers in `src/components/ui/**/*.tsx`           |
 
-The UI layer (shadcn, Tailwind, custom design system) was removed; the project currently runs on plain HTML scaffolds with no styling.
+The UI layer is built on Tailwind v4 (CSS-first via `@theme` in `src/styles/app.css`) + Radix primitives + `tailwind-variants`. Wrappers live under `src/components/ui/` with colocated tests and Storybook stories. See `docs/ui/design-system.md` and `docs/ui/storybook.md`.
 
 ---
 
