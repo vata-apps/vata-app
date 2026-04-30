@@ -1,14 +1,23 @@
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { Button } from '$components/ui/button';
 
 interface RepositoryViewPageProps {
   treeId: string;
   repositoryId: string;
 }
 
-export function RepositoryViewPage({
-  treeId: _treeId,
-  repositoryId,
-}: RepositoryViewPageProps): JSX.Element {
+export function RepositoryViewPage({ treeId, repositoryId }: RepositoryViewPageProps): JSX.Element {
+  const { t: tCommon } = useTranslation('common');
   const { t } = useTranslation('repositories');
-  return <h1>{t('heading', { repositoryId })}</h1>;
+  return (
+    <div>
+      <Button asChild variant="ghost" size="sm">
+        <Link to="/tree/$treeId/repositories" params={{ treeId }}>
+          {tCommon('nav.back')}
+        </Link>
+      </Button>
+      <h1>{t('heading', { repositoryId })}</h1>
+    </div>
+  );
 }

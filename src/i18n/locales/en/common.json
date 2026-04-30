@@ -9,7 +9,8 @@
     "sources": "Sources",
     "repositories": "Repositories",
     "dataBrowser": "Data Browser",
-    "backToHome": "Back to Home"
+    "backToHome": "Back to Home",
+    "back": "Back"
   },
   "errors": {
     "generic": "Something went wrong",

@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { getAllTrees } from '$/db/system/trees';
+import { Button } from '$components/ui/button';
+import { Input } from '$components/ui/input';
 import { queryKeys } from '$lib/query-keys';
 
 export function HomePage(): JSX.Element {
@@ -24,6 +26,14 @@ export function HomePage(): JSX.Element {
   return (
     <div>
       <h1>{t('common:app.title')}</h1>
+      <div>
+        <Input
+          type="search"
+          aria-label={t('trees:search')}
+          placeholder={t('trees:searchPlaceholder')}
+        />
+        <Button>{t('trees:newTree')}</Button>
+      </div>
       {!trees || trees.length === 0 ? (
         <p>{t('trees:empty')}</p>
       ) : (

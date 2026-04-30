@@ -9,7 +9,8 @@
     "sources": "Sources",
     "repositories": "Dépôts",
     "dataBrowser": "Explorateur de données",
-    "backToHome": "Retour à l'accueil"
+    "backToHome": "Retour à l'accueil",
+    "back": "Retour"
   },
   "errors": {
     "generic": "Une erreur est survenue",
