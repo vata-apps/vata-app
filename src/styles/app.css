@@ -1,0 +1,161 @@
+@import 'tailwindcss';
+
+/* ============================================================
+   Fonts — self-hosted Geist (latin + latin-ext subsets).
+   Only weight 400 is shipped today; heavier weights synthesize
+   from this regular cut. Add new @font-face blocks (and copy
+   the matching .woff2 into ./fonts/) when a real heavy cut is
+   needed.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/geist-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/geist-latin-400-normal.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
+
+/* ============================================================
+   Theme — semantic tokens consumed via Tailwind utilities and
+   raw CSS variables. Change values here when the design system
+   evolves; component code never references hex/oklch directly.
+   ============================================================ */
+
+@theme {
+  /* Surfaces */
+  --color-background: oklch(0.985 0.012 85);
+  --color-foreground: oklch(0.22 0.028 45);
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.22 0.028 45);
+
+  /* Primary action — terracotta */
+  --color-primary: oklch(0.54 0.13 32);
+  --color-primary-foreground: oklch(0.985 0.012 85);
+
+  /* Secondary surface */
+  --color-secondary: oklch(0.965 0.018 82);
+  --color-secondary-foreground: oklch(0.33 0.04 48);
+
+  /* Muted */
+  --color-muted: oklch(0.965 0.018 82);
+  --color-muted-foreground: oklch(0.46 0.055 52);
+
+  /* Accent (hover/active surfaces) */
+  --color-accent: oklch(0.93 0.024 80);
+  --color-accent-foreground: oklch(0.265 0.065 26);
+
+  /* Destructive */
+  --color-destructive: oklch(0.555 0.195 27);
+  --color-destructive-foreground: oklch(0.985 0.012 85);
+
+  /* Borders, inputs, focus ring */
+  --color-border: oklch(0.22 0.028 45 / 12%);
+  --color-input: oklch(0.22 0.028 45 / 14%);
+  --color-ring: oklch(0.54 0.13 32);
+
+  /* Typography */
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+
+  /* Radii */
+  --radius: 0.5rem;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+/* ============================================================
+   Dark theme — first defined as private aliases on :root, then
+   re-applied to the public --color-* tokens via two selectors:
+     1. :where(.dark)                — explicit class on <html>
+     2. :root:not(.light) under @media prefers-color-scheme: dark
+        — system preference, opt-out via .light
+   Defining the values once on :root and only swapping the
+   public tokens avoids drift between the two selectors.
+   ============================================================ */
+
+@layer theme {
+  :root {
+    --dark-background: oklch(0.155 0.02 42);
+    --dark-foreground: oklch(0.965 0.018 82);
+    --dark-card: oklch(0.195 0.022 44);
+    --dark-primary: oklch(0.62 0.125 34);
+    --dark-secondary: oklch(0.255 0.025 44);
+    --dark-muted: oklch(0.235 0.02 44);
+    --dark-muted-foreground: oklch(0.78 0.042 70);
+    --dark-accent: oklch(0.295 0.035 42);
+    --dark-destructive: oklch(0.635 0.18 27);
+    --dark-border: oklch(1 0 0 / 8%);
+    --dark-input: oklch(1 0 0 / 12%);
+  }
+
+  :where(.dark) {
+    --color-background: var(--dark-background);
+    --color-foreground: var(--dark-foreground);
+    --color-card: var(--dark-card);
+    --color-card-foreground: var(--dark-foreground);
+    --color-primary: var(--dark-primary);
+    --color-primary-foreground: oklch(0.985 0.012 85);
+    --color-secondary: var(--dark-secondary);
+    --color-secondary-foreground: var(--dark-foreground);
+    --color-muted: var(--dark-muted);
+    --color-muted-foreground: var(--dark-muted-foreground);
+    --color-accent: var(--dark-accent);
+    --color-accent-foreground: oklch(0.985 0.012 85);
+    --color-destructive: var(--dark-destructive);
+    --color-destructive-foreground: oklch(0.985 0.012 85);
+    --color-border: var(--dark-border);
+    --color-input: var(--dark-input);
+    --color-ring: var(--dark-primary);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :where(:root:not(.light, .dark)) {
+      --color-background: var(--dark-background);
+      --color-foreground: var(--dark-foreground);
+      --color-card: var(--dark-card);
+      --color-card-foreground: var(--dark-foreground);
+      --color-primary: var(--dark-primary);
+      --color-primary-foreground: oklch(0.985 0.012 85);
+      --color-secondary: var(--dark-secondary);
+      --color-secondary-foreground: var(--dark-foreground);
+      --color-muted: var(--dark-muted);
+      --color-muted-foreground: var(--dark-muted-foreground);
+      --color-accent: var(--dark-accent);
+      --color-accent-foreground: oklch(0.985 0.012 85);
+      --color-destructive: var(--dark-destructive);
+      --color-destructive-foreground: oklch(0.985 0.012 85);
+      --color-border: var(--dark-border);
+      --color-input: var(--dark-input);
+      --color-ring: var(--dark-primary);
+    }
+  }
+}
+
+/* ============================================================
+   Base — minimal global defaults.
+   ============================================================ */
+
+@layer base {
+  html,
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
