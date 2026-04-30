@@ -21,7 +21,7 @@ The dev server reuses the project's `vite.config.ts`, so any path alias (`$compo
 
 Stories are colocated with the component they describe:
 
-```
+```text
 src/components/ui/
 ├── button.tsx
 ├── button.test.tsx        # behavioral RTL tests

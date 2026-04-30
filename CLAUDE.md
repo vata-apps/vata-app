@@ -150,7 +150,17 @@ Everything in this project must be written in English.
 
 ## i18n for User-Facing Strings
 
-Uses `react-i18next` + `i18next`. All user-facing strings must use `useTranslation()` — never hardcode.
+Uses `react-i18next` + `i18next`. All **client-facing** strings must use `useTranslation()` — never hardcode.
+
+**Client-facing means strings shipped to end users in the desktop app:** UI labels, button text, placeholders, error messages, toasts, confirmations — anything an end user sees in `pnpm tauri:dev` / `pnpm tauri:build`.
+
+**Out of scope (literals are fine):**
+
+- Storybook stories under `*.stories.tsx` — dev-facing fixtures, not shipped to users. The dedicated `I18nDemo` story per wrapper is the i18n integration check; the rest may use plain literals as throwaway demo content.
+- Test files (`*.test.{ts,tsx}`) — assertions and fixtures.
+- Developer-only debug UIs guarded by `import.meta.env.DEV`.
+
+If you're not sure whether a surface is client-facing, the test is: _does an end user running the packaged Tauri app see this string?_ If yes, use `t()`. If no, literals are fine.
 
 - Config: `src/i18n/config.ts`
 - Translations: `src/i18n/locales/{en,fr}/<namespace>.json`
