@@ -1,4 +1,4 @@
-name: 💡 Idea / feature request
+name: Idea / feature request
 description: A new capability, improvement, or insight to explore later
 type: feature
 labels: []
@@ -11,16 +11,16 @@ body:
     id: idea
     attributes:
       label: The idea
-      placeholder: What should Vata do (or stop doing)?
+      description: What should Vata do (or stop doing)?
     validations:
       required: true
   - type: textarea
     id: why
     attributes:
       label: Why does this matter?
-      placeholder: Use case, pain point, or constraint motivating the idea
+      description: Use case, pain point, or constraint motivating the idea
   - type: textarea
     id: sketch
     attributes:
       label: Sketch / examples (optional)
-      placeholder: UI mockup, sample data, related code paths
+      description: UI mockup, sample data, related code paths

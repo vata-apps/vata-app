@@ -1,4 +1,4 @@
-name: 🐞 Bug report
+name: Bug report
 description: An unexpected problem or behavior
 type: bug
 labels: []
@@ -31,6 +31,8 @@ body:
       placeholder: |
         Expected: ...
         Actual: ...
+    validations:
+      required: true
   - type: textarea
     id: env
     attributes:

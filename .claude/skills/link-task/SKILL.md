@@ -124,4 +124,3 @@ Don't ask the user to confirm the magic word — Phase A was the explicit-consen
 - Amend or rewrite existing commit messages
 - Create an issue itself — delegate to `capture-idea` if the user wants a new one
 - Change the issue's state from this skill — let the `Closes` magic word handle it at merge time
-- Hardcode the repo — always rely on `gh` inferring from cwd

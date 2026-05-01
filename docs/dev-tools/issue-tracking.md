@@ -4,13 +4,13 @@ Single backlog for everything — bugs, ideas, tasks. GitHub Issues + one org-le
 
 ## Quick start
 
-| Where      | What                                                                                |
-| ---------- | ----------------------------------------------------------------------------------- |
-| Issue Type | One of `Task` / `Bug` / `Feature`, set at the org level (max 25 across all repos)   |
-| Templates  | `.github/ISSUE_TEMPLATE/{bug,feature,task}.yml` — auto-set the type on web UI       |
-| Labels     | 6 labels covering area: `db`, `ui`, `gedcom`, `tauri`, `docs`, `good-first-issue`   |
-| Project    | Org-level "Vata Roadmap" — Status / Priority / Type fields, auto-add for new issues |
-| Skills     | `capture-idea` (file an idea), `link-task` (bind PR to existing issue)              |
+| Where      | What                                                                                      |
+| ---------- | ----------------------------------------------------------------------------------------- |
+| Issue Type | One of `Task` / `Bug` / `Feature`, set at the org level (max 25 across all repos)         |
+| Templates  | `.github/ISSUE_TEMPLATE/{bug,feature,task}.yml` — auto-set the type on web UI             |
+| Labels     | 5 area labels (`db`, `ui`, `gedcom`, `tauri`, `docs`) + 1 meta label (`good-first-issue`) |
+| Project    | Org-level "Vata Roadmap" — Status / Priority / Type fields, auto-add for new issues       |
+| Skills     | `capture-idea` (file an idea), `link-task` (bind PR to existing issue)                    |
 
 ## Issue Types
 
@@ -30,29 +30,28 @@ For ideas/insights captured via `capture-idea`, the default is **Feature** unles
 
 Three YAML issue forms live in `.github/ISSUE_TEMPLATE/`. Each preset its `type:` so issues created via the GitHub web UI ("New issue" → pick a template) are auto-classified.
 
-| File          | Type      | Required fields                         |
-| ------------- | --------- | --------------------------------------- |
-| `bug.yml`     | `bug`     | What's wrong, Steps to reproduce        |
-| `feature.yml` | `feature` | The idea                                |
-| `task.yml`    | `task`    | Goal                                    |
-| `config.yml`  | —         | Disables blank issues, no contact links |
+| File          | Type      | Required fields                  |
+| ------------- | --------- | -------------------------------- |
+| `bug.yml`     | `bug`     | What's wrong, Steps to reproduce |
+| `feature.yml` | `feature` | The idea                         |
+| `task.yml`    | `task`    | Goal                             |
 
-Blank issues are disabled — every new issue must go through one of the three templates. The skills (`capture-idea`) bypass templates because they create issues programmatically; they set the type explicitly via GraphQL after creation, keeping parity with web-UI submissions.
+`config.yml` (no `type`) disables blank issues so new submissions always go through one of the three templates. The skills (`capture-idea`) bypass templates because they create issues programmatically; they set the type via GraphQL after creation, keeping parity with web-UI submissions.
 
 ## Labels
 
-Labels track the **area** of the codebase only. Issue Type is not a label. Priority and Status live on the Project, not as labels.
+Labels split into two groups: **area** (which part of the codebase) and **meta** (how an issue should be triaged). Issue Type, Priority, and Status are not labels — they live on the issue itself or on the Project.
 
-| Label              | Meaning                               | Color     |
-| ------------------ | ------------------------------------- | --------- |
-| `db`               | Schema, queries, migrations           | `#0E8A16` |
-| `ui`               | Components, pages, routing            | `#1D76DB` |
-| `gedcom`           | Import/export GEDCOM                  | `#D93F0B` |
-| `tauri`            | Rust shell, permissions, capabilities | `#5319E7` |
-| `docs`             | Documentation work                    | `#0075CA` |
-| `good-first-issue` | Good for newcomers / small surface    | `#7057FF` |
+| Label              | Group | Meaning                               | Color     |
+| ------------------ | ----- | ------------------------------------- | --------- |
+| `db`               | area  | Schema, queries, migrations           | `#0E8A16` |
+| `ui`               | area  | Components, pages, routing            | `#1D76DB` |
+| `gedcom`           | area  | Import/export GEDCOM                  | `#D93F0B` |
+| `tauri`            | area  | Rust shell, permissions, capabilities | `#5319E7` |
+| `docs`             | area  | Documentation work                    | `#0075CA` |
+| `good-first-issue` | meta  | Good for newcomers / small surface    | `#7057FF` |
 
-An issue can have **0–2 area labels**. Most have one or none.
+An issue can have **0–2 area labels** plus optional meta labels. Most have one area label or none.
 
 ## The Project
 

@@ -77,32 +77,31 @@ Capture the issue URL printed by `gh`. Parse the issue number from it.
 
 ### 6. Set the Issue Type via GraphQL
 
-`gh issue create` does not support setting the org-level Issue Type. Apply it after creation:
+`gh issue create` does not support setting the org-level Issue Type. Apply it after creation. Type IDs are stable for the `vata-apps` org and hardcoded here to save a round-trip:
+
+| Type    | ID                    |
+| ------- | --------------------- |
+| Task    | `IT_kwDODVrl8M4BrCV1` |
+| Bug     | `IT_kwDODVrl8M4BrCV2` |
+| Feature | `IT_kwDODVrl8M4BrCV3` |
 
 ```bash
-# Resolve the type ID
-TYPE_ID=$(gh api graphql -f query='
-  query {
-    organization(login: "vata-apps") {
-      issueTypes(first: 25) { nodes { id name } }
-    }
-  }
-' --jq ".data.organization.issueTypes.nodes[] | select(.name == \"<TYPE>\") | .id")
-
 # Get the new issue's node ID
 ISSUE_NODE_ID=$(gh api "repos/vata-apps/vata-app/issues/<NUMBER>" --jq .node_id)
 
-# Apply the type
+# Apply the type (substitute the right ID from the table above based on step 2)
 gh api graphql -f query='
   mutation($issueId: ID!, $typeId: ID!) {
     updateIssueIssueType(input: { issueId: $issueId, issueTypeId: $typeId }) {
       issue { id }
     }
   }
-' -f issueId="$ISSUE_NODE_ID" -f typeId="$TYPE_ID" >/dev/null
+' -f issueId="$ISSUE_NODE_ID" -f typeId="<TYPE_ID>" >/dev/null
 ```
 
-Substitute `<TYPE>` with `Feature`, `Bug`, or `Task` from step 2. Substitute `<NUMBER>` with the parsed issue number.
+Substitute `<NUMBER>` with the parsed issue number and `<TYPE_ID>` with the value from the table for the type chosen in step 2.
+
+If the type IDs ever change (Steve renamed/recreated a type at the org level), the mutation will return a Not-Found error. In that case, re-resolve via `gh api graphql -f query='{ organization(login:"vata-apps") { issueTypes(first:25) { nodes { id name } } } }'` and update this skill.
 
 ### 7. Add to the Project and set Status to Icebox
 
