@@ -19,13 +19,29 @@ The dev server reuses the project's `vite.config.ts`, so any path alias (`$compo
 
 ## Visual review (Chromatic)
 
-Every push to `main` and every PR triggers `.github/workflows/chromatic.yml`, which uploads the built Storybook to Chromatic and diffs each story against the last accepted baseline. The `onlyChanged: true` option (TurboSnap) makes Chromatic re-snapshot only stories whose dependency graph changed, so most PRs cost only a handful of snapshots.
+Visual diffs are handled by [Chromatic](https://www.chromatic.com/). The setup has three pieces, each with a distinct role:
 
-`exitZeroOnChanges: true` is set on the action so a visual diff never fails the CI status — review and accept diffs in the Chromatic UI instead. Visual approvals are decoupled from build health.
+### 1. CI publish on every push and PR
 
-The project token lives in the repo's GitHub secret `CHROMATIC_PROJECT_TOKEN` (set with `gh secret set`). It is never committed.
+`.github/workflows/chromatic.yml` runs `chromaui/action@v16` on every push to `main` and every pull request. It builds Storybook, uploads each story, and diffs against the last accepted baseline.
 
-To publish from your machine (e.g. seeding a baseline before opening a PR):
+- `onlyChanged: true` (TurboSnap) — re-snapshot only stories whose dependency graph changed; most PRs cost only a handful of snapshots. Activates after the project has 10+ CI builds.
+- `exitZeroOnChanges: true` — visual diffs never fail the CI status. Review and accept them in the Chromatic UI; build health stays decoupled from design review.
+- The project token lives in the repo's GitHub secret `CHROMATIC_PROJECT_TOKEN`. Never committed.
+
+### 2. Project config (`chromatic.config.json`)
+
+Committed at the repo root. Pins the Chromatic project this workspace publishes to (`projectId: "Project:69f4de2cb40ddfb967fe94d1"`) and shared CLI defaults (`onlyChanged`, `zip`). The CI action reads it; the local CLI and the in-Storybook addon read it too — single source of truth for "which Chromatic project."
+
+### 3. In-Storybook Visual Tests addon
+
+`@chromatic-com/storybook` adds a **Visual tests** panel to the local Storybook UI. While `pnpm storybook` is running, the panel lets you trigger a Chromatic build on demand from your machine and see diffs side-by-side inside the addon — no GitHub push needed.
+
+First use on a machine: click **Get started** in the panel and authenticate with the existing `vata-app` Chromatic project (do not create a new one). Subsequent sessions reconnect automatically.
+
+### Publishing from the CLI
+
+For seeding a baseline outside CI (or debugging the publish flow):
 
 ```bash
 CHROMATIC_PROJECT_TOKEN=chpt_… pnpm chromatic
