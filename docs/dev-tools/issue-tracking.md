@@ -107,7 +107,7 @@ Activates at the **start** of a dev task, on phrases like:
 - "add a feature for Z" / "fix bug W"
 - "commençons sur X" / "on s'attaque à X"
 
-Phase A: searches the repo's open issues with `gh issue list --search ...`, lists up to 5 candidates as `#<number> · <type> · <state> · <title>`, lets the user pick or create. Stores the choice in `git config branch.<branch>.ghIssue`.
+Phase A: searches the repo's open issues via the GraphQL `search` API (returns `issueType` alongside title and state — `gh issue list --json` doesn't expose the type field), lists up to 5 candidates as `#<number> · <type> · <state> · <title>`, lets the user pick or create. Stores the choice in `git config branch.<branch>.ghIssue`.
 
 Phase B: at PR creation, reads that git config and appends `Closes #N` to the description. GitHub auto-closes the linked issue on merge, and the Project's auto-status workflow moves it to **Done**.
 

@@ -25,16 +25,30 @@ From the user's task description, build 1–3 short search queries. Examples:
 
 ### 2. Search GitHub Issues
 
-For each query, run:
+`gh issue list --json ...` does **not** expose `issueType` in the current CLI version. Use a GraphQL search instead so the type column is populated:
 
 ```bash
-gh issue list --search "<query> in:title,body" --state open --limit 10 \
-  --json number,title,state,labels,issueType,updatedAt
+gh api graphql -f query='
+  query($q: String!) {
+    search(query: $q, type: ISSUE, first: 10) {
+      nodes {
+        ... on Issue {
+          number
+          title
+          state
+          issueType { name }
+          labels(first: 5) { nodes { name } }
+          updatedAt
+        }
+      }
+    }
+  }
+' -f q="repo:vata-apps/vata-app <query> in:title,body is:issue is:open"
 ```
 
-Don't pass `--repo` — `gh` infers it from the cwd's git remote. The `issueType` field returns the org-level type (`{ name: "Bug" }`, etc.) when set, otherwise an empty value.
+Substitute `<query>` with each search term. Stop once you have 5–10 candidates across all queries — don't enumerate the entire backlog. Repo (`vata-apps/vata-app`) is hardcoded for this project; that's fine because this skill lives in the Vata repo.
 
-Stop once you have 5–10 candidate issues across all queries — don't enumerate the entire backlog.
+If the GraphQL call fails with an auth error, surface it and tell the user to run `gh auth refresh -s read:org`.
 
 ### 3. Present candidates
 
