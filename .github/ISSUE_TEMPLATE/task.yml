@@ -1,0 +1,27 @@
+name: 🛠 Task
+description: A specific piece of dev work with a clear deliverable
+type: task
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this when scope is already concrete (refactor, dep bump, internal cleanup).
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      placeholder: What needs to be done, in one or two sentences
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+  - type: textarea
+    id: notes
+    attributes:
+      label: Implementation notes (optional)
