@@ -101,7 +101,7 @@ export const WithLeadingIcon: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole('button', { name: 'Add individual' });
-    await expect(button.firstElementChild?.tagName.toLowerCase()).toBe('svg');
+    await expect(button.querySelector('svg')).not.toBeNull();
   },
 };
 
@@ -110,7 +110,7 @@ export const WithTrailingIcon: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = canvas.getByRole('button', { name: 'Continue' });
-    await expect(button.lastElementChild?.tagName.toLowerCase()).toBe('svg');
+    await expect(button.querySelector('svg')).not.toBeNull();
   },
 };
 

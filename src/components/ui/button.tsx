@@ -48,15 +48,14 @@ export const buttonRecipe = tv({
       lg: 'h-11 px-5 text-base',
     },
     hideLabel: {
-      true: '',
+      true: 'px-0',
       false: '',
     },
   },
   compoundVariants: [
-    /* Icon-only: collapse to a square of the row height, drop horizontal padding. */
-    { hideLabel: true, size: 'sm', class: 'w-7 px-0' },
-    { hideLabel: true, size: 'md', class: 'w-9 px-0' },
-    { hideLabel: true, size: 'lg', class: 'w-11 px-0' },
+    { hideLabel: true, size: 'sm', class: 'w-7' },
+    { hideLabel: true, size: 'md', class: 'w-9' },
+    { hideLabel: true, size: 'lg', class: 'w-11' },
     /* `link` ignores size dimensions — it lays out inline like text. */
     {
       variant: 'link',
@@ -185,7 +184,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref
 ) {
-  if (asChild && (leadingIcon || trailingIcon)) {
+  if (import.meta.env.DEV && asChild && (leadingIcon || trailingIcon)) {
     throw new Error(
       'Button: `leadingIcon` and `trailingIcon` are not supported when `asChild` is true. ' +
         'Render the icons inside your child element instead.'
