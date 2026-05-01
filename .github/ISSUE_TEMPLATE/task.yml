@@ -22,6 +22,8 @@ body:
       placeholder: |
         - [ ] ...
         - [ ] ...
+    validations:
+      required: true
   - type: textarea
     id: notes
     attributes:

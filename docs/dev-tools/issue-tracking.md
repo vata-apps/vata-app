@@ -196,7 +196,7 @@ The bootstrap script prints these manual steps after running.
 - **`gh` not authenticated**: `gh auth login`.
 - **Skill fails on the type-setting GraphQL step**: missing `read:org` scope. `gh auth refresh -s read:org`.
 - **`setup-gh-project.sh` fails to create a Project field**: confirm the `project` scope is present (`gh auth status`). The script prints manual instructions for any field it couldn't create.
-- **Auto-add isn't picking up new issues**: the workflow on the Project must be enabled (UI step 3 above).
+- **Auto-add isn't picking up new issues**: the workflow on the Project must be enabled (UI step 4 above).
 - **Forgot to link at task start**: trigger `link-task` mid-task — _"link this task to a GitHub issue"_ — Phase A runs again and overwrites `git config`.
 - **Wrong issue linked**: re-run Phase A; `git config` overwrites cleanly.
 - **PR already opened without `Closes #N`**: edit the PR description manually or via `gh pr edit --body "..."`.

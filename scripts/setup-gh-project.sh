@@ -46,7 +46,7 @@ ok "gh authenticated with required scopes"
 
 info "Reconciling labels in $ORG/$REPO..."
 
-EXISTING_LABELS=$(gh label list --repo "$ORG/$REPO" --json name --jq '.[].name')
+EXISTING_LABELS=$(gh label list --repo "$ORG/$REPO" --limit 2000 --json name --jq '.[].name')
 
 # Delete labels that are no longer part of the taxonomy
 for label in "area:ui" "shadcn-cleanup" "tech-debt"; do
