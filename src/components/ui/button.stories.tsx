@@ -1,8 +1,11 @@
-import { Fragment } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Fragment } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
+import { iconRegistry } from './icon';
+
+const iconNames = Object.keys(iconRegistry) as Array<keyof typeof iconRegistry>;
 
 const meta = {
   title: 'UI/Button',
@@ -22,8 +25,17 @@ const meta = {
     },
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg', 'icon'],
+      options: ['sm', 'md', 'lg'],
     },
+    leadingIcon: {
+      control: 'select',
+      options: [undefined, ...iconNames],
+    },
+    trailingIcon: {
+      control: 'select',
+      options: [undefined, ...iconNames],
+    },
+    hideLabel: { control: 'boolean' },
     asChild: { control: 'boolean' },
     disabled: { control: 'boolean' },
   },
@@ -84,16 +96,35 @@ export const Disabled: Story = {
   },
 };
 
+export const WithLeadingIcon: Story = {
+  args: { leadingIcon: 'plus', children: 'Add individual' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Add individual' });
+    await expect(button.firstElementChild?.tagName.toLowerCase()).toBe('svg');
+  },
+};
+
+export const WithTrailingIcon: Story = {
+  args: { trailingIcon: 'arrow-right', variant: 'secondary', children: 'Continue' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Continue' });
+    await expect(button.lastElementChild?.tagName.toLowerCase()).toBe('svg');
+  },
+};
+
 export const IconOnly: Story = {
   args: {
-    size: 'icon',
+    leadingIcon: 'x',
+    hideLabel: true,
     variant: 'ghost',
-    'aria-label': 'Close',
-    children: '×',
+    children: 'Close dialog',
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole('button', { name: 'Close' })).toBeInTheDocument();
+    // The accessible name still comes from the (sr-only) children — no aria-label needed.
+    await expect(canvas.getByRole('button', { name: 'Close dialog' })).toBeInTheDocument();
   },
 };
 
@@ -144,5 +175,46 @@ export const Matrix: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getAllByRole('button')).toHaveLength(variants.length * sizes.length);
+  },
+};
+
+export const IconMatrix: Story = {
+  parameters: { layout: 'padded' },
+  render: () => (
+    <div className="grid grid-cols-[auto_repeat(3,_auto)] items-center gap-x-6 gap-y-3">
+      <div />
+      {sizes.map((size) => (
+        <div key={size} className="text-muted-foreground text-xs uppercase">
+          {size}
+        </div>
+      ))}
+
+      <div className="text-muted-foreground text-xs">leading</div>
+      {sizes.map((size) => (
+        <Button key={size} size={size} leadingIcon="plus">
+          Add
+        </Button>
+      ))}
+
+      <div className="text-muted-foreground text-xs">trailing</div>
+      {sizes.map((size) => (
+        <Button key={size} size={size} trailingIcon="arrow-right" variant="secondary">
+          Continue
+        </Button>
+      ))}
+
+      <div className="text-muted-foreground text-xs">icon-only</div>
+      {sizes.map((size) => (
+        <Button key={size} size={size} leadingIcon="x" hideLabel variant="ghost">
+          Close
+        </Button>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // 3 sizes × 3 rows = 9 buttons; icon-only ones still have an accessible name from sr-only children.
+    await expect(canvas.getAllByRole('button')).toHaveLength(sizes.length * 3);
+    await expect(canvas.getAllByRole('button', { name: 'Close' })).toHaveLength(sizes.length);
   },
 };
