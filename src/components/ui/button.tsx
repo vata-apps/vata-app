@@ -1,6 +1,7 @@
 import { Slot } from '@radix-ui/react-slot';
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
+import { Icon, type IconName } from './icon';
 
 /**
  * Recipe for the Button component's visual variants and sizes.
@@ -17,7 +18,9 @@ import { tv, type VariantProps } from 'tailwind-variants';
  * - `sm` — dense rows, secondary toolbars.
  * - `md` — default size for most buttons.
  * - `lg` — hero CTAs, empty states.
- * - `icon` — square button, used with an aria-label and a single icon child.
+ *
+ * Icon-only look: pair any size with `hideLabel` (and a `leadingIcon` or
+ * `trailingIcon`) — the button collapses to a square of the matching size.
  */
 export const buttonRecipe = tv({
   base: [
@@ -43,28 +46,44 @@ export const buttonRecipe = tv({
       sm: 'h-7 px-2.5 text-xs',
       md: 'h-9 px-3.5 text-sm',
       lg: 'h-11 px-5 text-base',
-      icon: 'h-8 w-8 p-0',
+    },
+    hideLabel: {
+      true: '',
+      false: '',
     },
   },
   compoundVariants: [
+    /* Icon-only: collapse to a square of the row height, drop horizontal padding. */
+    { hideLabel: true, size: 'sm', class: 'w-7 px-0' },
+    { hideLabel: true, size: 'md', class: 'w-9 px-0' },
+    { hideLabel: true, size: 'lg', class: 'w-11 px-0' },
     /* `link` ignores size dimensions — it lays out inline like text. */
     {
       variant: 'link',
-      size: ['sm', 'md', 'lg', 'icon'],
+      size: ['sm', 'md', 'lg'],
       class: 'h-auto w-auto p-0',
     },
   ],
   defaultVariants: {
     variant: 'primary',
     size: 'md',
+    hideLabel: false,
   },
 });
 
 type ButtonRecipeProps = VariantProps<typeof buttonRecipe>;
 
+/** Pixel size of the icon rendered inside a Button at each button size. */
+const ICON_PIXEL_SIZE: Record<NonNullable<ButtonRecipeProps['size']>, number> = {
+  sm: 14,
+  md: 16,
+  lg: 18,
+};
+
 /**
  * Props accepted by {@link Button}. Extends the native `<button>` props plus
- * recipe variants and the `asChild` polymorphism flag.
+ * recipe variants, leading/trailing icon slots, and the `asChild` polymorphism
+ * flag.
  */
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, ButtonRecipeProps {
   /**
@@ -74,10 +93,33 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, Bu
   variant?: ButtonRecipeProps['variant'];
 
   /**
-   * Size of the button. Use `"icon"` for square icon-only buttons (always pair
-   * with `aria-label`). Defaults to `"md"`.
+   * Size of the button. Defaults to `"md"`. For an icon-only look, combine any
+   * size with `hideLabel` and at least one of `leadingIcon` / `trailingIcon`.
    */
   size?: ButtonRecipeProps['size'];
+
+  /**
+   * Icon rendered before the label. Pass a curated {@link IconName}.
+   * The icon is automatically marked `aria-hidden` — the visible (or
+   * `hideLabel`-hidden) `children` carry the accessible name.
+   */
+  leadingIcon?: IconName;
+
+  /**
+   * Icon rendered after the label. See {@link ButtonProps.leadingIcon}.
+   */
+  trailingIcon?: IconName;
+
+  /**
+   * Visually hides `children`, leaving only the icon(s). The label is still
+   * rendered as `sr-only` text so screen readers announce the button. Always
+   * pass meaningful `children` even when this is `true` — never an empty
+   * string.
+   *
+   * @example
+   * <Button leadingIcon="x" hideLabel variant="ghost">Close dialog</Button>
+   */
+  hideLabel?: boolean;
 
   /**
    * When `true`, the Button does not render its own `<button>`: it renders the
@@ -85,6 +127,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, Bu
    * and styling) to it. Use this to style links, router `<Link>` elements, or
    * any custom interactive element with the Button look — without nesting an
    * `<a>` inside a `<button>`, which is invalid HTML.
+   *
+   * Note: `asChild` is incompatible with `leadingIcon` / `trailingIcon`,
+   * because Radix `Slot` requires a single child and we cannot inject siblings
+   * around it without breaking the contract. Render the icons inside your
+   * child element instead.
    *
    * @example
    * <Button asChild variant="outline">
@@ -106,18 +153,16 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, Bu
  * unintentionally; pass `type="submit"` explicitly inside forms.
  *
  * @example
- * // Primary action
- * <Button onClick={handleSave}>Save</Button>
+ * // Primary action with a leading icon
+ * <Button leadingIcon="plus" onClick={handleAdd}>Add individual</Button>
  *
  * @example
- * // Destructive action
- * <Button variant="destructive" onClick={handleDelete}>Remove</Button>
+ * // Trailing icon (e.g., a "next" affordance)
+ * <Button trailingIcon="arrow-right" variant="secondary">Continue</Button>
  *
  * @example
- * // Icon-only button (always provide aria-label)
- * <Button size="icon" variant="ghost" aria-label="Close">
- *   <XIcon />
- * </Button>
+ * // Icon-only — children stay for screen readers
+ * <Button leadingIcon="x" hideLabel variant="ghost">Close dialog</Button>
  *
  * @example
  * // Polymorphic — render a router link with button styling
@@ -126,17 +171,48 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, Bu
  * </Button>
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant, size, asChild = false, className, type, ...props },
+  {
+    variant,
+    size,
+    leadingIcon,
+    trailingIcon,
+    hideLabel = false,
+    asChild = false,
+    className,
+    type,
+    children,
+    ...props
+  },
   ref
 ) {
+  if (asChild && (leadingIcon || trailingIcon)) {
+    throw new Error(
+      'Button: `leadingIcon` and `trailingIcon` are not supported when `asChild` is true. ' +
+        'Render the icons inside your child element instead.'
+    );
+  }
+
   const Component = asChild ? Slot : 'button';
+  const iconSize = ICON_PIXEL_SIZE[size ?? 'md'];
+  const label = hideLabel ? <span className="sr-only">{children}</span> : children;
+
   return (
     <Component
       ref={ref}
       type={asChild ? undefined : (type ?? 'button')}
-      className={buttonRecipe({ variant, size, className })}
+      className={buttonRecipe({ variant, size, hideLabel, className })}
       {...props}
-    />
+    >
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {leadingIcon && <Icon name={leadingIcon} size={iconSize} />}
+          {label}
+          {trailingIcon && <Icon name={trailingIcon} size={iconSize} />}
+        </>
+      )}
+    </Component>
   );
 });
 
