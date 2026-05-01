@@ -80,9 +80,11 @@
 /* ============================================================
    Dark theme — first defined as private aliases on :root, then
    re-applied to the public --color-* tokens via two selectors:
-     1. :where(.dark)                — explicit class on <html>
-     2. :root:not(.light) under @media prefers-color-scheme: dark
+     1. :root.dark                   — explicit class on <html>
+     2. :root:not(.light, .dark) under @media prefers-color-scheme: dark
         — system preference, opt-out via .light
+   Both selectors must out-specify Tailwind's :root from @theme
+   (specificity 0,1,0); :where() would zero them out and lose.
    Defining the values once on :root and only swapping the
    public tokens avoids drift between the two selectors.
    ============================================================ */
@@ -102,7 +104,7 @@
     --dark-input: oklch(1 0 0 / 12%);
   }
 
-  :where(.dark) {
+  :root.dark {
     --color-background: var(--dark-background);
     --color-foreground: var(--dark-foreground);
     --color-card: var(--dark-card);
@@ -123,7 +125,7 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    :where(:root:not(.light, .dark)) {
+    :root:not(.light, .dark) {
       --color-background: var(--dark-background);
       --color-foreground: var(--dark-foreground);
       --color-card: var(--dark-card);
