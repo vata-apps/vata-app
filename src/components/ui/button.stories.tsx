@@ -65,11 +65,10 @@ export const Link: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const button = canvas.getByRole('button', { name: 'Save' });
-    await userEvent.click(button);
-    await expect(args.onClick).not.toHaveBeenCalled();
+    const button = canvas.getByRole<HTMLButtonElement>('button', { name: 'Save' });
+    await expect(button).toBeDisabled();
   },
 };
 

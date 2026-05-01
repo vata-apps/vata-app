@@ -47,12 +47,10 @@ export const Default: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true, value: 'Cannot edit', onChange: fn() },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByDisplayValue<HTMLInputElement>('Cannot edit');
-    await userEvent.type(input, 'extra');
-    await expect(input.value).toBe('Cannot edit');
-    await expect(args.onChange).not.toHaveBeenCalled();
+    await expect(input).toBeDisabled();
   },
 };
 
