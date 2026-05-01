@@ -29,16 +29,16 @@ For each query, run:
 
 ```bash
 gh issue list --search "<query> in:title,body" --state open --limit 10 \
-  --json number,title,state,labels,updatedAt
+  --json number,title,state,labels,issueType,updatedAt
 ```
 
-Don't pass `--repo` — `gh` infers it from the cwd's git remote.
+Don't pass `--repo` — `gh` infers it from the cwd's git remote. The `issueType` field returns the org-level type (`{ name: "Bug" }`, etc.) when set, otherwise an empty value.
 
 Stop once you have 5–10 candidate issues across all queries — don't enumerate the entire backlog.
 
 ### 3. Present candidates
 
-If 1+ candidates found: show up to 5, sorted by `updatedAt` desc, with `#<number> · <state> · <title>` (and labels in parens if any). Ask the user **one** of:
+If 1+ candidates found: show up to 5, sorted by `updatedAt` desc, with `#<number> · <type> · <state> · <title>` (use `—` for the type column when `issueType` is empty; include labels in parens if any). Ask the user **one** of:
 
 > "Which issue is this work for? **#12**, **#34**, **none of these (create new)**, or **no link**?"
 
