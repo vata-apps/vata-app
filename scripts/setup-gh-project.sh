@@ -128,27 +128,33 @@ Project ready: $PROJECT_URL
 
 Manual UI steps still required (not scriptable):
 
-1. Auto-add workflow
+1. Add 'Icebox' to the Status field
+   $PROJECT_URL/settings → Fields → Status → "Add option" → Icebox
+   Drag Icebox to FIRST position so the pipeline reads:
+     Icebox → Todo → In Progress → Done
+
+2. Auto-add workflow
    $PROJECT_URL/workflows
    → Enable "Auto-add to project"
    → Repository: $ORG/$REPO
    → Filter: is:issue,open
 
-2. Auto-status workflow
-   Same workflows page → enable built-in (Status defaults: Todo / In Progress / Done):
+3. Auto-status workflows (built-ins, same Workflows page):
    - "Item added to project"     → set Status: Todo
+     (the capture-idea skill overrides to Icebox after creation)
    - "Pull request opened"       → set Status: In Progress
    - "Pull request merged"       → set Status: Done
    - "Issue closed"              → set Status: Done
 
-3. Views (recommended)
-   - Board grouped by Status
-   - Table grouped by Type (built-in field, maps to org Issue Types)
-   - Roadmap if you start using dates / iterations
+4. Recommended views
+   - Now: Board, group by Status, filter "is:open -status:Icebox -status:Done"
+   - Icebox: Table, group by Type, filter "is:open status:Icebox"
+   - Bugs: Board, group by Status, filter "is:open type:Bug"
+   - Backlog by Priority: Table, group by Priority, filter "is:open -status:Icebox -status:Done"
 
-4. Verify the Issue Types are visible
-   $PROJECT_URL → check that the "Type" column shows Task/Bug/Feature
-   on existing items. If empty, the items predate Issue Types and
-   types must be set on each issue.
+5. Verify Issue Types render
+   $PROJECT_URL → confirm the "Type" column shows Task/Bug/Feature
+   on existing items. Items that predate Issue Types need their
+   type set manually.
 ---------------------------------------------------------------------
 EOF
