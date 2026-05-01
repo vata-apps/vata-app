@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 storybook-static/
+build-storybook.log
 
 # Tauri
 src-tauri/target/
