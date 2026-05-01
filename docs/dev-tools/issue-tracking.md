@@ -64,16 +64,17 @@ Org-level: **Vata Roadmap** at `https://github.com/orgs/vata-apps/projects/<num>
 | ------------ | ------------- | ------------------------------------------------------ |
 | **Title**    | (built-in)    | Issue title                                            |
 | **Type**     | (built-in)    | Maps to org Issue Type (Task / Bug / Feature)          |
-| **Status**   | single-select | Backlog → Todo → In Progress → In Review → Done        |
+| **Status**   | (built-in)    | Default 3-stage pipeline: Todo → In Progress → Done    |
 | **Priority** | single-select | P0 (drop everything) / P1 (this cycle) / P2 (whenever) |
 
 ### Auto-add
 
-A workflow on the Project adds every new issue from `vata-apps/vata-app` automatically. New items land with no Status — set it manually when picked up.
+A workflow on the Project adds every new issue from `vata-apps/vata-app` automatically. New items land with **Status: Todo**.
 
 ### Auto-status (built-in workflows)
 
-- Pull request opened on a linked issue → Status = **In Review**
+- Item added to project → Status = **Todo**
+- Pull request opened on a linked issue → Status = **In Progress**
 - Pull request merged → Status = **Done**
 - Issue closed → Status = **Done**
 
@@ -125,16 +126,16 @@ For first-time setup or when wiring a new dev environment:
    bash scripts/setup-gh-project.sh
    ```
 
-   It reconciles labels (drops obsolete ones, adds missing) and creates the **Vata Roadmap** Project + Status + Priority fields if missing. Idempotent.
+   It reconciles labels (drops obsolete ones, adds missing), creates the **Vata Roadmap** Project if missing, and adds the custom **Priority** field. The built-in **Status** field already provides the Todo / In Progress / Done pipeline. Idempotent.
 
 3. **Configure the Auto-add workflow** in the Project UI (one-time, not scriptable):
    - Project → **Workflows** → enable **Auto-add to project**
    - Repository: `vata-apps/vata-app`
    - Filter: `is:issue,open`
 
-4. **Configure auto-status workflows** (built-ins, also UI-only):
-   - **Item added to project** → set Status: `Backlog`
-   - **Pull request opened** → set Status: `In Review`
+4. **Configure auto-status workflows** (built-ins, also UI-only). Status uses GitHub's default 3-stage pipeline (`Todo / In Progress / Done`):
+   - **Item added to project** → set Status: `Todo`
+   - **Pull request opened** → set Status: `In Progress`
    - **Pull request merged** → set Status: `Done`
    - **Issue closed** → set Status: `Done`
 

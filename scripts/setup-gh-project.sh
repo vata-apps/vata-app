@@ -113,7 +113,8 @@ ensure_field() {
   fi
 }
 
-ensure_field "Status" "Backlog,Todo,In Progress,In Review,Done"
+# Status is a built-in single-select field with default options
+# (Todo / In Progress / Done). We keep the defaults — no need to recreate.
 ensure_field "Priority" "P0,P1,P2"
 
 # -------------------------------------------------------------- next steps ---
@@ -134,9 +135,9 @@ Manual UI steps still required (not scriptable):
    → Filter: is:issue,open
 
 2. Auto-status workflow
-   Same workflows page → enable built-in:
-   - "Item added to project"     → set Status: Backlog
-   - "Pull request opened"       → set Status: In Review
+   Same workflows page → enable built-in (Status defaults: Todo / In Progress / Done):
+   - "Item added to project"     → set Status: Todo
+   - "Pull request opened"       → set Status: In Progress
    - "Pull request merged"       → set Status: Done
    - "Issue closed"              → set Status: Done
 
