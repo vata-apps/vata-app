@@ -1,5 +1,6 @@
 import { Fragment } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Button } from './button';
 
@@ -12,6 +13,7 @@ const meta = {
   },
   args: {
     children: 'Save',
+    onClick: fn(),
   },
   argTypes: {
     variant: {
@@ -32,6 +34,13 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
   args: { variant: 'primary' },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Save' });
+    await expect(button).toHaveAttribute('type', 'button');
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
 };
 
 export const Secondary: Story = {
@@ -56,6 +65,12 @@ export const Link: Story = {
 
 export const Disabled: Story = {
   args: { disabled: true },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const button = canvas.getByRole('button', { name: 'Save' });
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
 };
 
 export const IconOnly: Story = {
@@ -64,6 +79,10 @@ export const IconOnly: Story = {
     variant: 'ghost',
     'aria-label': 'Close',
     children: '×',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name: 'Close' })).toBeInTheDocument();
   },
 };
 
@@ -74,6 +93,14 @@ export const AsChildLink: Story = {
     </Button>
   ),
   args: { variant: 'outline', children: 'Open link' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('link', { name: 'Open link' })).toHaveAttribute(
+      'href',
+      '#example'
+    );
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+  },
 };
 
 const variants = ['primary', 'secondary', 'outline', 'ghost', 'destructive', 'link'] as const;
