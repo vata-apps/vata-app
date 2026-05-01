@@ -1,6 +1,6 @@
 ---
 name: storybook-stories
-description: Ensures every UI wrapper in src/components/ui has a colocated Storybook story. Use when creating or modifying src/components/ui/**/*.tsx (excluding *.test.tsx and *.stories.tsx).
+description: Ensures every UI wrapper in src/components/ui has a colocated Storybook story with play()-based tests. Use when creating or modifying anything under src/components/ui/ (the wrapper file `<name>.tsx` AND its `<name>.stories.tsx`), or any other `*.stories.tsx` in the repo.
 ---
 
 # Storybook Stories — UI Wrappers

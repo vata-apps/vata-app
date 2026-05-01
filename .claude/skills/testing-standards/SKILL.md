@@ -1,6 +1,6 @@
 ---
 name: testing-standards
-description: Defines testing conventions for the project. Use when writing or reviewing test files (**/*.{test,spec}.{ts,tsx}), setting up test infrastructure, or planning test coverage for a new feature.
+description: Defines testing conventions for the project. Use when writing or reviewing any test surface — `**/*.{test,spec}.{ts,tsx}` for unit tests, AND `src/components/**/*.stories.tsx` since each component story's `play()` function is the component test (run by `@storybook/addon-vitest`). Also covers test infrastructure setup and coverage planning for new features.
 ---
 
 # Testing Standards
