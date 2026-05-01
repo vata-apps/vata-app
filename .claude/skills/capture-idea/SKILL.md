@@ -80,7 +80,7 @@ Capture the issue URL printed by `gh`. Parse the issue number from it.
 `gh issue create` does not support setting the org-level Issue Type. Apply it after creation:
 
 ```bash
-# Resolve the type ID (cache in a shell var per session if you create multiple issues)
+# Resolve the type ID
 TYPE_ID=$(gh api graphql -f query='
   query {
     organization(login: "vata-apps") {
@@ -104,24 +104,63 @@ gh api graphql -f query='
 
 Substitute `<TYPE>` with `Feature`, `Bug`, or `Task` from step 2. Substitute `<NUMBER>` with the parsed issue number.
 
-If the GraphQL mutation fails with an auth error, surface it and tell the user to run `gh auth refresh -s read:org`.
+### 7. Add to the Project and set Status to Icebox
 
-The owner/repo (`vata-apps/vata-app`) can be hardcoded for this project; it's not portable, and that's fine — this skill lives in the Vata repo.
+Captured ideas go to the **Icebox** column of the Vata Roadmap project — they're parked, not queued. The web-UI auto-add workflow will already place new issues in `Todo`; we override to `Icebox` explicitly so capture-idea outputs are clearly distinguishable.
 
-### 7. Report back
+Hardcoded IDs (stable for this project):
+
+| Variable           | Value                            |
+| ------------------ | -------------------------------- |
+| `PROJECT_ID`       | `PVT_kwDODVrl8M4BWWni`           |
+| `STATUS_FIELD_ID`  | `PVTSSF_lADODVrl8M4BWWnizhRrpbs` |
+| `ICEBOX_OPTION_ID` | `cdad492c`                       |
+
+```bash
+# Add to project (idempotent — if auto-add already fired, returns the existing item)
+ITEM_ID=$(gh api graphql -f query='
+  mutation($projectId: ID!, $contentId: ID!) {
+    addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
+      item { id }
+    }
+  }
+' -f projectId="PVT_kwDODVrl8M4BWWni" \
+  -f contentId="$ISSUE_NODE_ID" \
+  --jq '.data.addProjectV2ItemById.item.id')
+
+# Set Status to Icebox
+gh api graphql -f query='
+  mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
+    updateProjectV2ItemFieldValue(input: {
+      projectId: $projectId, itemId: $itemId, fieldId: $fieldId,
+      value: { singleSelectOptionId: $optionId }
+    }) { projectV2Item { id } }
+  }
+' -f projectId="PVT_kwDODVrl8M4BWWni" \
+  -f itemId="$ITEM_ID" \
+  -f fieldId="PVTSSF_lADODVrl8M4BWWnizhRrpbs" \
+  -f optionId="cdad492c" >/dev/null
+```
+
+If any GraphQL call fails with an auth error, surface it and tell the user to run `gh auth refresh -s read:org,project`.
+
+The owner/repo (`vata-apps/vata-app`) and the IDs above are hardcoded for this project; that's fine — this skill lives in the Vata repo.
+
+### 8. Report back
 
 Reply to the user with one short sentence in the same language they used. Include the issue number, the URL, the type, and any labels. Example:
 
-> Captured as **#42** (Feature, label: `gedcom`) — https://github.com/vata-apps/vata-app/issues/42
+> Captured in Icebox as **#42** (Feature, label: `gedcom`) — https://github.com/vata-apps/vata-app/issues/42
 
-That's it. Do not summarize the idea back to the user; they just told you what it was.
+Mentioning "Icebox" reinforces that the item is parked, not queued. Do not summarize the idea back to the user; they just told you what it was.
 
 ## Failure handling
 
 - **`gh` not authenticated**: tell the user to run `gh auth login`.
-- **Missing `read:org` scope** (GraphQL step fails with auth error): tell the user to run `gh auth refresh -s read:org`.
+- **Missing `read:org` or `project` scope** (GraphQL step fails with auth error): tell the user to run `gh auth refresh -s read:org,project`.
 - **`gh issue create` returns non-zero**: surface the error verbatim.
 - **GraphQL `updateIssueIssueType` fails after issue creation**: the issue exists but lacks a type. Tell the user the issue number/URL and that the type must be set manually in the GitHub UI; do not delete the issue.
+- **GraphQL `addProjectV2ItemById` or `updateProjectV2ItemFieldValue` fails**: the issue exists (and probably has its type set) but isn't in the project or isn't at Icebox. Surface the error and the issue URL — the user can drag it into Icebox manually. Do not delete the issue.
 - **Not in a git repo**: surface `gh`'s error.
 
 ## What this skill must not do
@@ -132,3 +171,4 @@ That's it. Do not summarize the idea back to the user; they just told you what i
 - Pick more than one Issue Type (each issue gets exactly one)
 - Modify or close existing issues — capture only
 - Skip step 6 — the type must be set for consistency with web-UI issues
+- Skip step 7 — captured ideas must land in Icebox, not Todo, to preserve the "parked vs queued" distinction

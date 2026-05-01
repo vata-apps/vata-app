@@ -64,25 +64,66 @@ Org-level: **Vata Roadmap** at `https://github.com/orgs/vata-apps/projects/<num>
 | ------------ | ------------- | ------------------------------------------------------ |
 | **Title**    | (built-in)    | Issue title                                            |
 | **Type**     | (built-in)    | Maps to org Issue Type (Task / Bug / Feature)          |
-| **Status**   | (built-in)    | Default 3-stage pipeline: Todo → In Progress → Done    |
+| **Status**   | (built-in)    | 4-stage pipeline: Icebox → Todo → In Progress → Done   |
 | **Priority** | single-select | P0 (drop everything) / P1 (this cycle) / P2 (whenever) |
+
+The Status pipeline separates two horizons:
+
+- **Icebox** — vague ideas captured for "maybe someday". Not committed to. `capture-idea` lands here.
+- **Todo** — queued work for the near future. Web-UI submissions via templates land here.
+- **In Progress** — actively being worked on.
+- **Done** — closed or merged.
+
+The transition from `Icebox` → `Todo` is the explicit promotion moment ("yes, I'm going to do this").
 
 ### Auto-add
 
-A workflow on the Project adds every new issue from `vata-apps/vata-app` automatically. New items land with **Status: Todo**.
+A workflow on the Project adds every new issue from `vata-apps/vata-app` automatically. New items land with **Status: Todo** by default. The `capture-idea` skill explicitly overrides the Status to **Icebox** after creation, so skill-captured ideas are clearly distinguishable from deliberate web-UI submissions.
 
 ### Auto-status (built-in workflows)
 
-- Item added to project → Status = **Todo**
+- Item added to project → Status = **Todo** (overridden to **Icebox** by `capture-idea`)
 - Pull request opened on a linked issue → Status = **In Progress**
 - Pull request merged → Status = **Done**
 - Issue closed → Status = **Done**
 
 ### Recommended views
 
-- **Board**: grouped by Status (kanban — current work)
-- **Table**: grouped by Type (everything by category)
-- **Roadmap**: only useful once dates / iterations are in use
+Four views cover the day-to-day. Configure in the Project UI; saved filter syntax shown.
+
+#### View 1 — **Now** (board, default)
+
+Active work. Hides Icebox and Done so only what's queued or in flight shows up.
+
+- **Layout**: Board, grouped by Status
+- **Filter**: `is:open -status:Icebox -status:Done`
+- **Sort**: Priority asc, then updated desc
+
+#### View 2 — **Icebox** (table)
+
+Triage ideas. Open weekly to promote or prune.
+
+- **Layout**: Table, grouped by Type
+- **Filter**: `is:open status:Icebox`
+- **Sort**: updated desc
+- **Visible columns**: Title, Type, Labels, Priority, updated
+
+#### View 3 — **Bugs** (board)
+
+Bug-only board, full pipeline visible (including unreviewed bug reports in Icebox).
+
+- **Layout**: Board, grouped by Status
+- **Filter**: `is:open type:Bug`
+- **Sort**: Priority asc, then updated desc
+
+#### View 4 — **Backlog by Priority** (table)
+
+When you ask "what's truly the most important thing right now?".
+
+- **Layout**: Table, grouped by Priority
+- **Filter**: `is:open -status:Icebox -status:Done`
+- **Sort**: updated desc
+- **Visible columns**: Title, Type, Status, Labels
 
 ## Skills
 
@@ -97,7 +138,7 @@ Activates on phrases like:
 - "to do later", "remember this for later", "save this for later"
 - "save this as an insight", "add this to the backlog"
 
-The agent composes a concise English title (and optional body), reads the repo's existing labels, picks 0–2 that match, creates the issue with `gh issue create`, then sets the org-level Issue Type (Feature by default; Bug or Task if context suggests) via the `updateIssueIssueType` GraphQL mutation. Replies with the issue number, type, labels, and URL.
+The agent composes a concise English title (and optional body), reads the repo's existing labels, picks 0–2 that match, creates the issue with `gh issue create`, then via GraphQL sets the org-level Issue Type (Feature by default; Bug or Task if context suggests) and pins the Project Status to **Icebox**. Replies with the issue number, type, labels, "Icebox", and URL.
 
 ### `link-task`
 
@@ -128,21 +169,26 @@ For first-time setup or when wiring a new dev environment:
 
    It reconciles labels (drops obsolete ones, adds missing), creates the **Vata Roadmap** Project if missing, and adds the custom **Priority** field. The built-in **Status** field already provides the Todo / In Progress / Done pipeline. Idempotent.
 
-3. **Configure the Auto-add workflow** in the Project UI (one-time, not scriptable):
+3. **Add `Icebox` to Status** (Project UI):
+   - Project → ⚙ **Settings** → **Fields** → **Status** → "Add option" → name it `Icebox`
+   - Drag `Icebox` to the **first** position so it sits before `Todo` in the pipeline
+
+4. **Configure the Auto-add workflow** in the Project UI (one-time, not scriptable):
    - Project → **Workflows** → enable **Auto-add to project**
    - Repository: `vata-apps/vata-app`
    - Filter: `is:issue,open`
 
-4. **Configure auto-status workflows** (built-ins, also UI-only). Status uses GitHub's default 3-stage pipeline (`Todo / In Progress / Done`):
-   - **Item added to project** → set Status: `Todo`
+5. **Configure auto-status workflows** (built-ins, also UI-only). Status pipeline is `Icebox / Todo / In Progress / Done`:
+   - **Item added to project** → set Status: `Todo` (the `capture-idea` skill overrides to `Icebox` after the fact)
    - **Pull request opened** → set Status: `In Progress`
    - **Pull request merged** → set Status: `Done`
    - **Issue closed** → set Status: `Done`
 
-5. **Set up views**:
-   - Board grouped by Status
-   - Table grouped by Type
-   - (optional) Roadmap if you start using dates / iterations
+6. **Set up the four recommended views** (see "Recommended views" above for queries):
+   - **Now** — board, hides Icebox + Done
+   - **Icebox** — table of parked ideas
+   - **Bugs** — board filtered to `type:Bug`
+   - **Backlog by Priority** — table grouped by P0/P1/P2
 
 The bootstrap script prints these manual steps after running.
 
