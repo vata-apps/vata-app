@@ -70,7 +70,7 @@
   --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
 
   /* Radii */
-  --radius: 0.5rem;
+  --radius: 1rem;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
