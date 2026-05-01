@@ -1,0 +1,45 @@
+name: Bug report
+description: An unexpected problem or behavior
+type: bug
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Fill in what you can — only fields marked required must be answered.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What's wrong?
+      placeholder: One or two sentences describing the bug
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual
+      placeholder: |
+        Expected: ...
+        Actual: ...
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      placeholder: OS / Vata version / data sample size / GEDCOM source
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      placeholder: Logs, screenshots, related issues

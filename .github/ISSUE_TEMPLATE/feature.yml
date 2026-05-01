@@ -1,0 +1,26 @@
+name: Idea / feature request
+description: A new capability, improvement, or insight to explore later
+type: feature
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Capture the idea — analysis can wait until prioritization.
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What should Vata do (or stop doing)?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why does this matter?
+      description: Use case, pain point, or constraint motivating the idea
+  - type: textarea
+    id: sketch
+    attributes:
+      label: Sketch / examples (optional)
+      description: UI mockup, sample data, related code paths

@@ -44,6 +44,10 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [GEDCOM 5.5.1 Mapping](./references/gedcom-551-mapping.md) — GEDCOM tag to Vata model correspondences
 - [Date Formats](./references/date-formats.md) — Supported genealogical date formats
 
+## Dev Tools
+
+- [Issue Tracking](./dev-tools/issue-tracking.md) — Org-level Issue Types, YAML templates, the Vata Roadmap Project, and the `capture-idea` / `link-task` skills
+
 ## GEDCOM logic (in-app)
 
 GEDCOM parsing and genealogical date handling are implemented as in-app modules (see [ADR-004](./decisions/adr-004-gedcom-libraries.md)): `src/gedcom-date/` and `src/gedcom-parser/`, consumed via `@vata-apps/gedcom-date` and `@vata-apps/gedcom-parser`. They are structured for possible future extraction as separate packages.
