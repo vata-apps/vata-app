@@ -17,6 +17,24 @@ The dev server reuses the project's `vite.config.ts`, so any path alias (`$compo
 
 ---
 
+## Visual review (Chromatic)
+
+Every push to `main` and every PR triggers `.github/workflows/chromatic.yml`, which uploads the built Storybook to Chromatic and diffs each story against the last accepted baseline. The `onlyChanged: true` option (TurboSnap) makes Chromatic re-snapshot only stories whose dependency graph changed, so most PRs cost only a handful of snapshots.
+
+`exitZeroOnChanges: true` is set on the action so a visual diff never fails the CI status — review and accept diffs in the Chromatic UI instead. Visual approvals are decoupled from build health.
+
+The project token lives in the repo's GitHub secret `CHROMATIC_PROJECT_TOKEN` (set with `gh secret set`). It is never committed.
+
+To publish from your machine (e.g. seeding a baseline before opening a PR):
+
+```bash
+CHROMATIC_PROJECT_TOKEN=chpt_… pnpm chromatic
+```
+
+The `pnpm chromatic` script also passes `--exit-zero-on-changes` so it mirrors the CI behavior.
+
+---
+
 ## MCP server (for AI agents)
 
 `@storybook/addon-mcp` exposes a Model Context Protocol server at `http://localhost:6006/mcp` while `pnpm storybook` is running. Claude Code is wired to it via `.mcp.json` under the `storybook` server name.
@@ -161,5 +179,4 @@ These are intentionally not set up yet — add them when there's a need:
 
 - Stories for layouts, pages, or composed components (Home, DataBrowser, …).
 - A "Design Tokens" MDX showcase page (color/spacing/radii).
-- Visual regression (Chromatic, Loki) and any CI hookup.
-- Deploying Storybook (GH Pages, Vercel, …).
+- Deploying the Storybook static site as a public reference (GH Pages, Vercel, …) — Chromatic already hosts each build for review purposes.
