@@ -29,7 +29,7 @@ Check these files for the canonical source of truth:
 - **`strict: true`** is enabled: `noImplicitAny`, `strictNullChecks`, `noUnusedLocals`, `noUnusedParameters` are all enforced.
 - **Return types**: Always annotate return types on exported functions.
 - **Generics**: Use generics for reusable utilities; avoid `as` casts.
-- **Path aliases**: Use project aliases instead of relative paths. Check `tsconfig.json` for the current list.
+- **Path aliases**: Use project aliases for **cross-directory** imports (e.g. `$components/ui/Button` from a route file). Sibling imports within the same directory stay relative (e.g. `import { Button } from './button'` inside `src/components/ui/`) — that's the prevailing convention in `src/db/trees/`, `src/managers/`, `src/lib/`, etc. Check `tsconfig.json` for the current alias list.
 
 ---
 

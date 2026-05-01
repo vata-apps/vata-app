@@ -1,0 +1,40 @@
+name: Chromatic
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  chromatic:
+    name: Visual review
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          # Chromatic compares each commit against the most recent
+          # accepted baseline; full history avoids "ancestor build not
+          # found" warnings on shallow clones.
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.4.0
+        with:
+          version: 9
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@42839e8c28caf61a16433fa96a03b312bbc47ab5 # v16.6.3
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Don't fail the workflow on visual changes — we want the
+          # CI green badge to track build health, not pending design
+          # review. Reviewers approve diffs in the Chromatic UI.
+          exitZeroOnChanges: true
+          onlyChanged: true

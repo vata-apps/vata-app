@@ -15,3 +15,8 @@ knowledge_base:
     filePatterns:
       - "CLAUDE.md"
       - ".claude/skills/**/SKILL.md"
+      # Long-form authoring guides referenced from skills. Skills carry the
+      # contract; these docs carry the deeper context (Chromatic setup,
+      # toolbars, atomic-design tier rules, etc.) that we don't want to
+      # inline into a SKILL.md.
+      - "docs/ui/**/*.md"

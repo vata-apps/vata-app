@@ -150,7 +150,17 @@ Everything in this project must be written in English.
 
 ## i18n for User-Facing Strings
 
-Uses `react-i18next` + `i18next`. All user-facing strings must use `useTranslation()` — never hardcode.
+Uses `react-i18next` + `i18next`. All **client-facing** strings must use `useTranslation()` — never hardcode.
+
+**Client-facing means strings shipped to end users in the desktop app:** UI labels, button text, placeholders, error messages, toasts, confirmations — anything an end user sees in `pnpm tauri:dev` / `pnpm tauri:build`.
+
+**Out of scope (literals are fine):**
+
+- Storybook stories under `*.stories.tsx` — dev-facing fixtures, not shipped to users. The dedicated `I18nDemo` story per wrapper is the i18n integration check; the rest may use plain literals as throwaway demo content.
+- Test files (`*.test.{ts,tsx}`) — assertions and fixtures.
+- Developer-only debug UIs guarded by `import.meta.env.DEV`.
+
+If you're not sure whether a surface is client-facing, the test is: _does an end user running the packaged Tauri app see this string?_ If yes, use `t()`. If no, literals are fine.
 
 - Config: `src/i18n/config.ts`
 - Translations: `src/i18n/locales/{en,fr}/<namespace>.json`
@@ -288,18 +298,19 @@ The app includes `tauri-plugin-mcp-bridge` (debug builds only). You can launch t
 
 The following specialized skills are loaded automatically when relevant, or on demand via the skill tool.
 
-| Skill                  | Trigger                                                                       |
-| ---------------------- | ----------------------------------------------------------------------------- |
-| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs         |
-| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code               |
-| `docs-consistency`     | After any change to `docs/*.md`                                               |
-| `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes) |
-| `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                         |
-| `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure    |
-| `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                 |
-| `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                  |
+| Skill                  | Trigger                                                                                                               |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs                                                 |
+| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code                                                       |
+| `docs-consistency`     | After any change to `docs/*.md`                                                                                       |
+| `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes)                                         |
+| `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                                                                 |
+| `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure                                            |
+| `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                                                         |
+| `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                                                          |
+| `storybook-stories`    | When touching anything under `src/components/ui/` (wrappers + their `*.stories.tsx`) or any `*.stories.tsx` elsewhere |
 
-The UI layer (shadcn, Tailwind, custom design system) was removed; the project currently runs on plain HTML scaffolds with no styling.
+The UI layer is built on Tailwind v4 (CSS-first via `@theme` in `src/styles/app.css`) + Radix primitives + `tailwind-variants`. Wrappers live under `src/components/ui/` with colocated tests and Storybook stories. See `docs/ui/design-system.md` and `docs/ui/storybook.md`.
 
 ---
 

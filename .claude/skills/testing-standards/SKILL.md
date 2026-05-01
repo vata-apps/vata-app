@@ -1,6 +1,6 @@
 ---
 name: testing-standards
-description: Defines testing conventions for the project. Use when writing or reviewing test files (**/*.{test,spec}.{ts,tsx}), setting up test infrastructure, or planning test coverage for a new feature.
+description: Defines testing conventions for the project. Use when writing or reviewing any test surface — `**/*.{test,spec}.{ts,tsx}` for unit tests, AND `src/components/**/*.stories.tsx` since each component story's `play()` function is the component test (run by `@storybook/addon-vitest`). Also covers test infrastructure setup and coverage planning for new features.
 ---
 
 # Testing Standards
@@ -205,30 +205,46 @@ Rules:
 
 ---
 
-## 7. React Component Tests
+## 7. React Component Tests — via Storybook stories
 
-Use `@testing-library/react`. Test what the user sees and does, not internal state:
+Component behavior is verified by `play()` functions inside the colocated `<name>.stories.tsx`. `@storybook/addon-vitest` discovers every story and runs its `play()` as a Vitest test in headless Chromium (Playwright). **Do not** create a `<name>.test.tsx` for UI components.
 
-```typescript
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { ConfirmDialog } from '$components/ConfirmDialog';
+```tsx
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
-it('calls onConfirm when the user clicks the confirm button', async () => {
-  const onConfirm = vi.fn();
-  render(<ConfirmDialog isOpen title="Delete?" message="Sure?" onConfirm={onConfirm} onCancel={vi.fn()} />);
+import { ConfirmDialog } from './confirm-dialog';
 
-  await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
+const meta = {
+  title: 'UI/ConfirmDialog',
+  component: ConfirmDialog,
+  args: {
+    isOpen: true,
+    title: 'Delete?',
+    message: 'Sure?',
+    onConfirm: fn(),
+    onCancel: fn(),
+  },
+} satisfies Meta<typeof ConfirmDialog>;
 
-  expect(onConfirm).toHaveBeenCalledOnce();
-});
+export default meta;
+type Story = StoryObj<typeof meta>;
 
-it('does not render when closed', () => {
-  const { container } = render(
-    <ConfirmDialog isOpen={false} title="Delete?" message="Sure?" onConfirm={vi.fn()} onCancel={vi.fn()} />
-  );
-  expect(container).toBeEmptyDOMElement();
-});
+export const ConfirmsOnClick: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Confirm' }));
+    await expect(args.onConfirm).toHaveBeenCalledOnce();
+  },
+};
+
+export const HiddenWhenClosed: Story = {
+  args: { isOpen: false },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
+  },
+};
 ```
 
 Query priority (highest to lowest):
@@ -238,21 +254,7 @@ Query priority (highest to lowest):
 3. `getByText` — for static content
 4. `getByTestId` — last resort only
 
-Wrap components in providers via a shared utility:
-
-```typescript
-// src/test/utils.tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, type RenderOptions } from '@testing-library/react';
-
-export function renderWithProviders(ui: React.ReactElement, options?: RenderOptions) {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(
-    <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>,
-    options
-  );
-}
-```
+Providers (theme, i18n, QueryClient) are wired globally in `.storybook/preview.tsx` — stories don't need to wrap manually. See `docs/ui/storybook.md` for the run modes (`pnpm vitest run` runs both `unit` + `storybook` projects).
 
 ---
 
@@ -356,14 +358,14 @@ cargo test -- --nocapture           # show println! output
 
 No coverage thresholds. A test's value is measured by its ability to prevent regressions — not by a percentage. 20 useful tests that catch real bugs are better than 100 tests that give a green coverage badge but break on every refactor.
 
-| Layer              | What to test                                              | Approach                                |
-| ------------------ | --------------------------------------------------------- | --------------------------------------- |
-| `src/db/**`        | All public CRUD functions — input/output behavior         | Integration tests with in-memory SQLite |
-| `src/managers/**`  | Orchestration logic and end-to-end workflows              | Integration tests with in-memory SQLite |
-| `src/components/**`| User interactions, error states, conditional rendering    | RTL behavior tests                      |
-| `src/hooks/**`     | Data flow and state transitions                           | Vitest + RTL                            |
-| `src/lib/**`       | Pure logic, edge cases, round-trip behavior               | Unit tests, no mocks                    |
-| Auto-generated     | Nothing — excluded                                        | —                                       |
+| Layer               | What to test                                           | Approach                                                                                 |
+| ------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `src/db/**`         | All public CRUD functions — input/output behavior      | Integration tests with in-memory SQLite                                                  |
+| `src/managers/**`   | Orchestration logic and end-to-end workflows           | Integration tests with in-memory SQLite                                                  |
+| `src/components/**` | User interactions, error states, conditional rendering | Storybook stories with `play()` (run via `@storybook/addon-vitest` in headless Chromium) |
+| `src/hooks/**`      | Data flow and state transitions                        | Vitest + RTL (jsdom)                                                                     |
+| `src/lib/**`        | Pure logic, edge cases, round-trip behavior            | Unit tests, no mocks                                                                     |
+| Auto-generated      | Nothing — excluded                                     | —                                                                                        |
 
 ---
 
