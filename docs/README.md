@@ -46,7 +46,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 ## Dev Tools
 
-- [Issue Tracking](./dev-tools/issue-tracking.md) — Skills wrapping the `gh` CLI for capturing ideas (`capture-idea`) and linking dev tasks to issues with PR auto-close (`link-task`)
+- [Issue Tracking](./dev-tools/issue-tracking.md) — Org-level Issue Types, YAML templates, the Vata Roadmap Project, and the `capture-idea` / `link-task` skills
 
 ## GEDCOM logic (in-app)
 

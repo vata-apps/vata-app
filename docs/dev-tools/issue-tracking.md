@@ -1,93 +1,157 @@
-# Issue Tracking with GitHub Issues
+# Issue Tracking
 
-Single backlog for everything — bugs, ideas, tasks. Two skills wrap the `gh` CLI so capture and linking stay near-zero-friction from a Claude Code session.
+Single backlog for everything — bugs, ideas, tasks. GitHub Issues + one org-level GH Project replace what Linear used to do, with zero external service to keep authenticated.
 
-- **`capture-idea`** — file a future idea as a GitHub issue with appropriate label(s)
-- **`link-task`** — connect the current dev task to an existing issue so the PR auto-closes it at merge
+## Quick start
 
-No MCP, no API key, no extra setup — `gh auth login` is the only requirement, and you've already done it if `gh` works.
+| Where      | What                                                                                |
+| ---------- | ----------------------------------------------------------------------------------- |
+| Issue Type | One of `Task` / `Bug` / `Feature`, set at the org level (max 25 across all repos)   |
+| Templates  | `.github/ISSUE_TEMPLATE/{bug,feature,task}.yml` — auto-set the type on web UI       |
+| Labels     | 6 labels covering area: `db`, `ui`, `gedcom`, `tauri`, `docs`, `good-first-issue`   |
+| Project    | Org-level "Vata Roadmap" — Status / Priority / Type fields, auto-add for new issues |
+| Skills     | `capture-idea` (file an idea), `link-task` (bind PR to existing issue)              |
 
----
+## Issue Types
 
-## Capturing ideas — `capture-idea`
+`vata-apps` has three Issue Types defined at the organization level:
 
-Just say it in chat. The skill (defined at `.claude/skills/capture-idea/SKILL.md`) activates on phrases like:
+| Type        | When to use                                                                         |
+| ----------- | ----------------------------------------------------------------------------------- |
+| **Bug**     | An unexpected problem or behavior — something is broken or wrong                    |
+| **Feature** | A new capability, improvement, or insight — anything that's not a defect or a task  |
+| **Task**    | A concrete piece of dev work with a clear deliverable (refactor, dep bump, cleanup) |
+
+Each issue has exactly one Type (single value). Types are visible in the issue header, in search (`type:"Bug"`), and as a built-in field in the Project. Only org owners can create/edit/disable types in `vata-apps` settings.
+
+For ideas/insights captured via `capture-idea`, the default is **Feature** unless the wording clearly indicates a defect (Bug) or operational task (Task).
+
+## Templates
+
+Three YAML issue forms live in `.github/ISSUE_TEMPLATE/`. Each preset its `type:` so issues created via the GitHub web UI ("New issue" → pick a template) are auto-classified.
+
+| File          | Type      | Required fields                         |
+| ------------- | --------- | --------------------------------------- |
+| `bug.yml`     | `bug`     | What's wrong, Steps to reproduce        |
+| `feature.yml` | `feature` | The idea                                |
+| `task.yml`    | `task`    | Goal                                    |
+| `config.yml`  | —         | Disables blank issues, no contact links |
+
+Blank issues are disabled — every new issue must go through one of the three templates. The skills (`capture-idea`) bypass templates because they create issues programmatically; they set the type explicitly via GraphQL after creation, keeping parity with web-UI submissions.
+
+## Labels
+
+Labels track the **area** of the codebase only. Issue Type is not a label. Priority and Status live on the Project, not as labels.
+
+| Label              | Meaning                               | Color     |
+| ------------------ | ------------------------------------- | --------- |
+| `db`               | Schema, queries, migrations           | `#0E8A16` |
+| `ui`               | Components, pages, routing            | `#1D76DB` |
+| `gedcom`           | Import/export GEDCOM                  | `#D93F0B` |
+| `tauri`            | Rust shell, permissions, capabilities | `#5319E7` |
+| `docs`             | Documentation work                    | `#0075CA` |
+| `good-first-issue` | Good for newcomers / small surface    | `#7057FF` |
+
+An issue can have **0–2 area labels**. Most have one or none.
+
+## The Project
+
+Org-level: **Vata Roadmap** at `https://github.com/orgs/vata-apps/projects/<num>`.
+
+### Fields
+
+| Field        | Type          | Values / behavior                                      |
+| ------------ | ------------- | ------------------------------------------------------ |
+| **Title**    | (built-in)    | Issue title                                            |
+| **Type**     | (built-in)    | Maps to org Issue Type (Task / Bug / Feature)          |
+| **Status**   | single-select | Backlog → Todo → In Progress → In Review → Done        |
+| **Priority** | single-select | P0 (drop everything) / P1 (this cycle) / P2 (whenever) |
+
+### Auto-add
+
+A workflow on the Project adds every new issue from `vata-apps/vata-app` automatically. New items land with no Status — set it manually when picked up.
+
+### Auto-status (built-in workflows)
+
+- Pull request opened on a linked issue → Status = **In Review**
+- Pull request merged → Status = **Done**
+- Issue closed → Status = **Done**
+
+### Recommended views
+
+- **Board**: grouped by Status (kanban — current work)
+- **Table**: grouped by Type (everything by category)
+- **Roadmap**: only useful once dates / iterations are in use
+
+## Skills
+
+Two Claude Code skills, used from any session in the repo.
+
+### `capture-idea`
+
+Activates on phrases like:
 
 - "à faire plus tard", "faire plus tard", "note pour plus tard"
 - "ne pas oublier", "garder pour plus tard"
 - "to do later", "remember this for later", "save this for later"
 - "save this as an insight", "add this to the backlog"
 
-Examples:
+The agent composes a concise English title (and optional body), reads the repo's existing labels, picks 0–2 that match, creates the issue with `gh issue create`, then sets the org-level Issue Type (Feature by default; Bug or Task if context suggests) via the `updateIssueIssueType` GraphQL mutation. Replies with the issue number, type, labels, and URL.
 
-> _"On devrait détecter les doublons à l'import GEDCOM, à faire plus tard."_
+### `link-task`
 
-> _"Note pour plus tard: revoir le wording de la home page."_
-
-> _"Save this as an insight — query perf on individuals list is mediocre."_
-
-The agent composes a concise English title (and optional body), reads the repo's existing labels, picks 0–2 that match, and creates the issue. It replies with the issue number and URL.
-
-### What gets created
-
-- A regular GitHub issue (open state, no assignee, no milestone)
-- Title and body in English (project rule)
-- 0–2 labels picked from existing repo labels (no labels are auto-created)
-- Created via `gh issue create` in whatever repo the current cwd resolves to
-
-Refine in GitHub afterward.
-
----
-
-## Linking a task to an issue — `link-task`
-
-Activates at the **start** of a dev task, right after you decide "simple branch or worktree?" and before code changes. Triggers on phrases like:
+Activates at the **start** of a dev task, on phrases like:
 
 - "let's implement X" / "on travaille sur Y"
 - "add a feature for Z" / "fix bug W"
 - "commençons sur X" / "on s'attaque à X"
 
-Flow:
+Phase A: searches the repo's open issues with `gh issue list --search ...`, lists up to 5 candidates as `#<number> · <type> · <state> · <title>`, lets the user pick or create. Stores the choice in `git config branch.<branch>.ghIssue`.
 
-1. Agent searches the repo's issues with `gh issue list --search ...` for queries derived from the task description
-2. Lists up to 5 candidates with `#<number> · <state> · <title>`
-3. You pick one, ask for a new one (delegates to `capture-idea`), or skip
-4. The picked number is stored in `git config branch.<branch>.ghIssue`
+Phase B: at PR creation, reads that git config and appends `Closes #N` to the description. GitHub auto-closes the linked issue on merge, and the Project's auto-status workflow moves it to **Done**.
 
-When you later open the PR, the agent reads that git config and appends `Closes #N` to the description automatically. GitHub natively closes the linked issue when the PR merges — no external integration needed.
+## Manual setup checklist
 
-The link is per-branch and survives across sessions.
+For first-time setup or when wiring a new dev environment:
 
-### Example session
+1. **Authenticate `gh`** with the right scopes:
+   ```bash
+   gh auth login                              # if not already
+   gh auth refresh -s repo,project,read:org   # add scopes for projects + Issue Types
+   ```
+2. **Run the bootstrap script**:
 
-```
-You: simple branch or worktree?
-Agent: <recommends, you choose>
-You: let's add a CSV export of the individuals list
-Agent: I found these:
-       #12 · open · CSV export of individuals (label: ui)
-       #31 · open · Bulk export options
-       Which one — #12, #31, create new, or no link?
-You: #12
-Agent: Linked to #12. Proceeding.
-... work happens ...
-You: open the PR
-Agent: <opens PR; description includes "Closes #12">
-```
+   ```bash
+   bash scripts/setup-gh-project.sh
+   ```
 
-### What does _not_ happen
+   It reconciles labels (drops obsolete ones, adds missing) and creates the **Vata Roadmap** Project + Status + Priority fields if missing. Idempotent.
 
-- The agent doesn't auto-pick — Phase A always asks
-- The agent doesn't search GitHub at PR time — only at task start
-- Branch names are not modified to include the issue number
-- Existing commits are not amended
+3. **Configure the Auto-add workflow** in the Project UI (one-time, not scriptable):
+   - Project → **Workflows** → enable **Auto-add to project**
+   - Repository: `vata-apps/vata-app`
+   - Filter: `is:issue,open`
 
----
+4. **Configure auto-status workflows** (built-ins, also UI-only):
+   - **Item added to project** → set Status: `Backlog`
+   - **Pull request opened** → set Status: `In Review`
+   - **Pull request merged** → set Status: `Done`
+   - **Issue closed** → set Status: `Done`
+
+5. **Set up views**:
+   - Board grouped by Status
+   - Table grouped by Type
+   - (optional) Roadmap if you start using dates / iterations
+
+The bootstrap script prints these manual steps after running.
 
 ## Troubleshooting
 
-- **`gh` not authenticated**: run `gh auth login`, then retry.
-- **No labels applied when you expected one** (capture flow): the agent only applies labels when the match is unambiguous. Add the label in the repo and the next capture will see it.
-- **Forgot to link at task start**: re-trigger the skill mid-task — _"link this task to a GitHub issue"_ — Phase A runs again and updates `git config`.
+- **`gh` not authenticated**: `gh auth login`.
+- **Skill fails on the type-setting GraphQL step**: missing `read:org` scope. `gh auth refresh -s read:org`.
+- **`setup-gh-project.sh` fails to create a Project field**: confirm the `project` scope is present (`gh auth status`). The script prints manual instructions for any field it couldn't create.
+- **Auto-add isn't picking up new issues**: the workflow on the Project must be enabled (UI step 3 above).
+- **Forgot to link at task start**: trigger `link-task` mid-task — _"link this task to a GitHub issue"_ — Phase A runs again and overwrites `git config`.
 - **Wrong issue linked**: re-run Phase A; `git config` overwrites cleanly.
-- **PR already opened without `Closes #N`**: edit the PR description in GitHub and add the footer manually, or run `gh pr edit --body "..."`. Future PRs on this branch will pick up the link from `git config` automatically if you re-run Phase B.
+- **PR already opened without `Closes #N`**: edit the PR description manually or via `gh pr edit --body "..."`.
+- **Issue lacks a Type after capture**: the GraphQL step failed silently. Set the type from the GitHub UI (issue header → "Type" dropdown).
