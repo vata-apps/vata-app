@@ -9,6 +9,7 @@ const config: StorybookConfig = {
     '@storybook/addon-themes',
     '@storybook/addon-mcp',
     '@storybook/addon-vitest',
+    '@chromatic-com/storybook',
   ],
   typescript: {
     reactDocgen: 'react-docgen-typescript',
