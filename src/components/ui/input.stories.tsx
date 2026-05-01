@@ -114,6 +114,10 @@ export const Sizes: Story = {
       ))}
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getAllByRole('textbox')).toHaveLength(sizes.length);
+  },
 };
 
 const types = ['text', 'email', 'url', 'tel', 'search', 'password'] as const;
@@ -132,4 +136,10 @@ export const Types: Story = {
       ))}
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    for (const type of types) {
+      await expect(canvas.getByLabelText(type)).toHaveAttribute('type', type);
+    }
+  },
 };

@@ -57,14 +57,12 @@ Stories are colocated with the component they describe:
 ```text
 src/components/ui/
 ├── button.tsx
-├── button.test.tsx        # behavioral RTL tests
-├── button.stories.tsx     # Storybook stories
+├── button.stories.tsx     # source of truth: variants + play() tests
 ├── input.tsx
-├── input.test.tsx
 └── input.stories.tsx
 ```
 
-The same convention as `*.test.tsx`. Storybook globs `src/**/*.stories.@(ts|tsx|mdx)`, so any new file is picked up automatically.
+UI wrappers do not ship with `*.test.tsx` — behavior is verified by `play()` functions inside the stories themselves and run as Vitest tests by `@storybook/addon-vitest`. Storybook globs `src/**/*.stories.@(ts|tsx|mdx)`, so any new file is picked up automatically.
 
 ---
 

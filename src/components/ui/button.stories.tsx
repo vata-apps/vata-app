@@ -32,6 +32,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const expectAccessibleButton =
+  (name: string): NonNullable<Story['play']> =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name })).toBeInTheDocument();
+  };
+
 export const Primary: Story = {
   args: { variant: 'primary' },
   play: async ({ canvasElement, args }) => {
@@ -45,22 +52,27 @@ export const Primary: Story = {
 
 export const Secondary: Story = {
   args: { variant: 'secondary' },
+  play: expectAccessibleButton('Save'),
 };
 
 export const Outline: Story = {
   args: { variant: 'outline' },
+  play: expectAccessibleButton('Save'),
 };
 
 export const Ghost: Story = {
   args: { variant: 'ghost' },
+  play: expectAccessibleButton('Save'),
 };
 
 export const Destructive: Story = {
   args: { variant: 'destructive', children: 'Remove' },
+  play: expectAccessibleButton('Remove'),
 };
 
 export const Link: Story = {
   args: { variant: 'link', children: 'Read more' },
+  play: expectAccessibleButton('Read more'),
 };
 
 export const Disabled: Story = {
@@ -129,4 +141,8 @@ export const Matrix: Story = {
       ))}
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getAllByRole('button')).toHaveLength(variants.length * sizes.length);
+  },
 };
