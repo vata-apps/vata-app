@@ -109,20 +109,49 @@ export const Empty: Story = {
 
 The Locale toolbar (defined in `.storybook/preview.tsx`) calls `i18n.changeLanguage()` on the global instance, so any story whose tree calls `t()` re-renders in the chosen language automatically.
 
-### What stories are _not_
+### Stories are tests
 
-Stories are visual documentation. **Never assert classes, styles, or test IDs in story `play()` functions.** Behavior is verified in the colocated `*.test.tsx` file with React Testing Library, where assertions target user-observable outcomes (`getByRole`, `getByLabelText`, …). See `feedback_ui_wrapper_conventions.md` in project memory for the full rationale.
+Behavior is verified by `play()` functions inside the stories themselves. `@storybook/addon-vitest` discovers every story and runs its `play()` as a Vitest test in headless Chromium (Playwright). There are no `*.test.tsx` files for UI wrappers.
+
+```tsx
+import { expect, fn, userEvent, within } from 'storybook/test';
+
+const meta = {
+  // …
+  args: { onClick: fn() },
+} satisfies Meta<typeof Button>;
+
+export const Primary: Story = {
+  args: { variant: 'primary' },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Save' }));
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
+```
+
+Assertions stay on user-observable outcomes — role, accessible name, attributes, callback invocation. Never assert classes, styles, or test IDs.
+
+Run modes:
+
+- `pnpm vitest run` — runs both projects (jsdom unit tests + Chromium story tests).
+- `pnpm vitest run --project storybook` — only the story `play()` tests.
+- `pnpm vitest run --project unit` — only the jsdom tests.
+
+The `unit` project explicitly excludes `src/components/**/*.{test,spec}.tsx` so component behavior never accidentally gets a parallel home in regular Vitest tests.
 
 ---
 
 ## Adding a new wrapper
 
-When you add a file under `src/components/ui/` (anything except `*.test.tsx` / `*.stories.tsx`), the `storybook-stories` skill (`.claude/skills/storybook-stories/SKILL.md`) auto-loads and reminds you to also create:
+When you add a file under `src/components/ui/` (anything except `*.stories.tsx`), the `storybook-stories` skill (`.claude/skills/storybook-stories/SKILL.md`) auto-loads and reminds you to create the colocated `<name>.stories.tsx` with at least:
 
-- `<name>.test.tsx` — behavioral tests (covered by `feedback_ui_wrapper_conventions.md`).
-- `<name>.stories.tsx` — at minimum, one story per variant plus a matrix story.
+- one story per variant,
+- a matrix story (variants × sizes),
+- a `play()` function on each story that asserts something meaningful — accessible name, attribute, callback, typed value, etc.
 
-No exceptions for "trivial" wrappers. If it's worth wrapping, it's worth a story.
+No exceptions for "trivial" wrappers. If it's worth wrapping, it's worth a story with a play().
 
 ---
 
@@ -132,6 +161,5 @@ These are intentionally not set up yet — add them when there's a need:
 
 - Stories for layouts, pages, or composed components (Home, DataBrowser, …).
 - A "Design Tokens" MDX showcase page (color/spacing/radii).
-- `@storybook/addon-vitest` (running `play()` functions as Vitest tests).
 - Visual regression (Chromatic, Loki) and any CI hookup.
 - Deploying Storybook (GH Pages, Vercel, …).

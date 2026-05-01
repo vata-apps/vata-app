@@ -16,17 +16,18 @@ This skill is intentionally minimal and will be iterated as patterns emerge.
 
 ## Rules
 
-### 1. Every wrapper has a story
+### 1. Every wrapper has a story file — no separate test file
 
-If the file is a UI wrapper (Button, Input, Dialog, Select, …), it ships in the same commit as:
+If the file is a UI wrapper (Button, Input, Dialog, Select, …), it ships in the same commit as `<name>.stories.tsx`. **Do not** create a `<name>.test.tsx` for components — behavior is verified by `play()` functions inside the stories themselves, which `@storybook/addon-vitest` runs as Vitest tests in headless Chromium.
 
-- `<name>.test.tsx` — behavioral tests (see `feedback_ui_wrapper_conventions.md` and the `testing-standards` skill).
-- `<name>.stories.tsx` — at minimum: one story per variant, one matrix story (variants × sizes).
+(Non-component code — DB layer, hooks, libs, managers, store — keeps using regular Vitest unit tests in `*.test.{ts,tsx}` against jsdom.)
 
 ### 2. Minimal story-file shape
 
 ```tsx
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, within } from 'storybook/test';
+
 import { MyComponent } from './my-component';
 
 const meta = {
@@ -34,17 +35,27 @@ const meta = {
   component: MyComponent,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+  args: {
+    onClick: fn(),
+  },
 } satisfies Meta<typeof MyComponent>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button'));
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
 ```
 
 - `title` lives under the `UI/` namespace so primitives sort together.
 - `tags: ['autodocs']` — the component's JSDoc renders as Docs automatically. Keep JSDoc rich (the `typescript-standards` and component conventions already require it).
 - One `StoryObj` per variant; add a `Matrix` story for side-by-side variant × size comparison.
+- For event-handler args, use `fn()` from `storybook/test` so Storybook's Actions panel logs the call AND `play()` can assert on it.
 
 ### 3. i18n in stories — by atomic-design tier
 
@@ -67,9 +78,17 @@ export const Empty: Story = {
 };
 ```
 
-### 4. Stories are visual docs, not tests
+### 4. `play()` is the test — assert behavior, not implementation
 
-Never assert classes, styles, or test IDs inside story `play()` functions. Behavior is verified in `<name>.test.tsx` with React Testing Library. If you want to add a `play()` to drive interactions for visual review, do it without assertions on internals.
+Use `play()` to drive interactions and assert what a user can observe:
+
+- ✅ `expect(canvas.getByRole('button', { name: 'Save' })).toBeInTheDocument()`
+- ✅ `expect(args.onClick).toHaveBeenCalledOnce()` after `userEvent.click(...)`
+- ✅ `expect(input).toHaveAttribute('aria-invalid', 'true')`
+- ❌ never `expect(el).toHaveClass('bg-primary')` or `expect(el).toHaveStyle(...)` — those couple tests to the implementation
+- ❌ never query by `data-testid` — query by role / label / text / placeholder, like RTL
+
+Run mode: `pnpm vitest run` runs both the `unit` project (jsdom for non-component code) and the `storybook` project (Chromium for component play() functions). `pnpm vitest run --project storybook` to run just stories.
 
 ### 5. Fragments inside `.map()`
 
