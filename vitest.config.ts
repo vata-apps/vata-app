@@ -56,6 +56,9 @@ export default defineConfig({
       {
         plugins: [storybookTest({ configDir: path.join(__dirname, '.storybook') })],
         resolve: { alias: aliases },
+        optimizeDeps: {
+          include: ['react/jsx-dev-runtime', 'react/jsx-runtime', 'react-dom/client'],
+        },
         test: {
           name: 'storybook',
           browser: {
