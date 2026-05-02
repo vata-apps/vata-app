@@ -24,10 +24,6 @@ pnpm format:check     # Prettier check
 # Tests
 pnpm test             # Vitest watch mode
 pnpm test:coverage    # Coverage report (v8)
-
-# Review
-pnpm review           # CodeRabbit local review (uncommitted changes)
-pnpm review:all       # CodeRabbit full branch review (before PR)
 ```
 
 To run a single test file:
@@ -279,21 +275,15 @@ chore: upgrade drizzle-orm to 0.30.0
 
 # Pre-PR Review
 
-Before creating a pull request (via `gh pr create`, any slash command that opens a PR, or any other means), the agent MUST:
+Before creating a pull request (via `gh pr create`, any slash command that opens a PR, or any other means), the agent MUST run `/simplify` to launch the three-agent reuse / quality / efficiency review on the branch diff. Apply the fixes that are real issues; skip false positives and stylistic nits. Then proceed to create the PR.
 
-1. Run `/simplify` to launch the three-agent reuse / quality / efficiency review on the branch diff. Apply the fixes that are real issues; skip false positives and stylistic nits.
-2. Run `pnpm review:all` to get a CodeRabbit local review of the full branch diff.
-3. Address any **critical**, **high**, or **medium** severity CodeRabbit findings in new commits on the branch.
-4. Re-run `pnpm review:all` if meaningful fixes were made.
-5. Only then proceed to create the PR.
+`/simplify` catches duplication, dead abstractions, and concurrency issues that the cloud reviewer does not focus on, and shrinks the diff before review.
 
-Run `/simplify` first: it catches duplication, dead abstractions, and concurrency issues that CodeRabbit doesn't focus on, and shrinks the diff CodeRabbit then reviews. Low-severity / nitpick CodeRabbit findings do not need to be addressed locally — let CodeRabbit raise them on the PR if it still sees them. The goal is to catch the issues that would otherwise trigger 5+ review rounds, not to reach a zero-finding local state.
+## Cloud reviewer
 
-If `coderabbit` CLI is not installed (command not found), skip steps 2-4 and note it in the PR description so Steve knows to install it. Do NOT block the PR on tooling that isn't set up.
+Once the PR is open, `.github/workflows/claude-review.yml` runs automatically on `pull_request: opened` and on every `synchronize` (new commit). It calls the Claude API with persona-scoped skills loaded from `.claude/skills/**/SKILL.md` (the same skills Claude Code uses locally) and posts inline comments + a review status (`APPROVE` / `REQUEST_CHANGES` / `COMMENT`).
 
-If `pnpm review:all` fails because the CodeRabbit plan limit / rate limit is reached (look for messages mentioning quota, plan limit, rate limit, or HTTP 429), skip steps 2-4 and proceed to create the PR. Note in the PR description that CodeRabbit local review was skipped due to plan limit so Steve knows the cloud review is the only signal. Do NOT retry, do NOT block the PR.
-
-`/simplify` (step 1) does not depend on `coderabbit` and must always run.
+The bot also evaluates replies on its own comments via `pull_request_review_comment: created`: it can mark a thread resolved (GraphQL), push back with a follow-up, or acknowledge silently. Configuration lives in `.github/code-review/persona-config.json` and prompt templates in `.github/code-review/prompts/`. The reviewer source is in `scripts/review/`.
 
 ---
 

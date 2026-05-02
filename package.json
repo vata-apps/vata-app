@@ -37,8 +37,6 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "prepare": "husky && git config core.hooksPath .husky",
-    "review": "coderabbit review --plain --type uncommitted",
-    "review:all": "coderabbit review --plain --type all",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "chromatic": "chromatic --exit-zero-on-changes"
