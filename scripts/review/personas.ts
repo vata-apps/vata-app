@@ -1,8 +1,21 @@
 import { readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { minimatch } from 'minimatch';
 import { z } from 'zod';
+
+const fileCache = new Map<string, Promise<string | null>>();
+
+function cachedReadFile(absPath: string): Promise<string | null> {
+  let p = fileCache.get(absPath);
+  if (!p) {
+    p = readFile(absPath, 'utf8').catch((err: NodeJS.ErrnoException) => {
+      if (err.code === 'ENOENT') return null;
+      throw err;
+    });
+    fileCache.set(absPath, p);
+  }
+  return p;
+}
 
 const PersonaSpec = z.object({
   patterns: z.array(z.string().min(1)).min(1),
@@ -63,16 +76,15 @@ function filesMatchingPatterns(files: readonly string[], patterns: readonly stri
 
 export async function loadSkillContent(repoRoot: string, skillName: string): Promise<string> {
   const path = join(repoRoot, '.claude', 'skills', skillName, 'SKILL.md');
-  if (!existsSync(path)) {
+  const content = await cachedReadFile(path);
+  if (content === null) {
     throw new Error(`Skill not found: ${skillName} (looked at ${path})`);
   }
-  return readFile(path, 'utf8');
+  return content;
 }
 
 export async function loadExtraDoc(repoRoot: string, relativePath: string): Promise<string | null> {
-  const path = join(repoRoot, relativePath);
-  if (!existsSync(path)) return null;
-  return readFile(path, 'utf8');
+  return cachedReadFile(join(repoRoot, relativePath));
 }
 
 export async function buildPersonaContext(repoRoot: string, spec: PersonaSpec): Promise<string> {

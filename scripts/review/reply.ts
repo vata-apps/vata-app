@@ -1,6 +1,5 @@
 import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   findReviewThread,
@@ -12,7 +11,7 @@ import {
   resolveReviewThread,
   type RepoContext,
 } from './github.ts';
-import { BOT_LOGIN } from './state.ts';
+import { BOT_LOGIN, parseAnnotation } from './state.ts';
 import { makeAnthropic, runReplyEvaluation } from './claude.ts';
 
 interface Env {
@@ -50,30 +49,23 @@ function readEnv(): Env {
   };
 }
 
-const RULE_ID_RE = /<!--\s*ruleId:\s*([\w-]+)\s*-->/;
-const SEVERITY_RE = /<sub>(critical|high|medium|low|nit)\s*·/;
-
-function parseAnnotation(body: string): {
-  ruleId: string | null;
-  severity: string | null;
-} {
-  const ruleMatch = RULE_ID_RE.exec(body);
-  const sevMatch = SEVERITY_RE.exec(body);
-  return {
-    ruleId: ruleMatch?.[1] ?? null,
-    severity: sevMatch?.[1] ?? null,
-  };
-}
-
-function readCodeContext(
+async function readCodeContext(
   repoRoot: string,
   path: string,
   line: number,
   windowLines: number = 5
-): string {
+): Promise<string> {
   const fullPath = join(repoRoot, path);
-  if (!existsSync(fullPath)) return '(file not found at HEAD — likely deleted)';
-  const lines = execFileSync('cat', [fullPath], { encoding: 'utf8' }).split('\n');
+  let raw: string;
+  try {
+    raw = await readFile(fullPath, 'utf8');
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+      return '(file not found at HEAD — likely deleted)';
+    }
+    throw err;
+  }
+  const lines = raw.split('\n');
   const start = Math.max(0, line - 1 - windowLines);
   const end = Math.min(lines.length, line + windowLines);
   return lines
@@ -89,12 +81,7 @@ function readCodeContext(
 async function main(): Promise<void> {
   const env = readEnv();
   const { owner, repo } = parseRepo(env.repo);
-  const ctx: RepoContext = {
-    owner,
-    repo,
-    prNumber: env.prNumber,
-    token: env.githubToken,
-  };
+  const ctx: RepoContext = { owner, repo, prNumber: env.prNumber };
 
   const octokit = makeOctokit(env.githubToken);
   const gql = makeGraphql(env.githubToken);
@@ -111,7 +98,11 @@ async function main(): Promise<void> {
     return;
   }
 
-  const parent = await getReviewComment(octokit, ctx, reply.inReplyToId);
+  const [parent, thread] = await Promise.all([
+    getReviewComment(octokit, ctx, reply.inReplyToId),
+    findReviewThread(gql, ctx, reply.inReplyToId),
+  ]);
+
   if (parent.userLogin !== BOT_LOGIN) {
     console.log(`Parent comment author is ${parent.userLogin}, not the bot — skipping.`);
     return;
@@ -120,8 +111,6 @@ async function main(): Promise<void> {
     console.log('Parent comment has no line anchor — skipping.');
     return;
   }
-
-  const thread = await findReviewThread(gql, ctx, parent.id);
   if (thread === null) {
     console.log('Could not locate review thread for parent comment — skipping.');
     return;
@@ -132,8 +121,6 @@ async function main(): Promise<void> {
   }
 
   const { ruleId, severity } = parseAnnotation(parent.body);
-  const codeContext = readCodeContext(env.repoRoot, parent.path, parent.line);
-
   const replyEvaluatorPath = join(
     env.repoRoot,
     '.github',
@@ -141,7 +128,10 @@ async function main(): Promise<void> {
     'prompts',
     'reply-evaluator.md'
   );
-  const systemPromptTemplate = await readFile(replyEvaluatorPath, 'utf8');
+  const [codeContext, systemPromptTemplate] = await Promise.all([
+    readCodeContext(env.repoRoot, parent.path, parent.line),
+    readFile(replyEvaluatorPath, 'utf8'),
+  ]);
 
   const anthropic = makeAnthropic(env.anthropicApiKey);
   const decision = await runReplyEvaluation(anthropic, {

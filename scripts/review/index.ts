@@ -101,19 +101,17 @@ function bumpCount(counts: SeverityCounts, severity: Severity): void {
 async function main(): Promise<void> {
   const env = readEnv();
   const { owner, repo } = parseRepo(env.repo);
-  const ctx: RepoContext = {
-    owner,
-    repo,
-    prNumber: env.prNumber,
-    token: env.githubToken,
-  };
+  const ctx: RepoContext = { owner, repo, prNumber: env.prNumber };
 
   const octokit = makeOctokit(env.githubToken);
   const anthropic = makeAnthropic(env.anthropicApiKey);
 
   console.log(`Reviewing PR #${env.prNumber} (${owner}/${repo})`);
 
-  const issueComments = await listIssueComments(octokit, ctx);
+  const [issueComments, existingReviewComments] = await Promise.all([
+    listIssueComments(octokit, ctx),
+    listReviewComments(octokit, ctx),
+  ]);
   const summary = findExistingSummary(issueComments);
   const previousSha = summary?.state?.sha ?? null;
   const fromSha = previousSha ?? env.baseSha;
@@ -187,7 +185,6 @@ async function main(): Promise<void> {
     })
   );
 
-  const existingReviewComments = await listReviewComments(octokit, ctx);
   const dedupeKeys = dedupeKeysFromExisting(existingReviewComments);
 
   const aggregated: PostReviewCommentInput[] = [];

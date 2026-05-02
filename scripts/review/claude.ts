@@ -6,9 +6,6 @@ import {
   PostReviewCommentInput,
   SUBMIT_REVIEW_VERDICT_TOOL,
   SubmitReviewVerdictInput,
-  type EvaluateReplyInput as TEvaluateReplyInput,
-  type PostReviewCommentInput as TPostReviewCommentInput,
-  type SubmitReviewVerdictInput as TSubmitReviewVerdictInput,
 } from './tools.ts';
 
 const MODEL = 'claude-sonnet-4-6';
@@ -26,8 +23,8 @@ export interface PersonaReviewInput {
 
 export interface PersonaReviewOutput {
   personaName: string;
-  comments: TPostReviewCommentInput[];
-  verdict: TSubmitReviewVerdictInput | null;
+  comments: PostReviewCommentInput[];
+  verdict: SubmitReviewVerdictInput | null;
   iterations: number;
   truncated: boolean;
 }
@@ -67,9 +64,9 @@ export async function runPersonaReview(
 
   const messages: Anthropic.MessageParam[] = [{ role: 'user', content: userText }];
 
-  const collected: TPostReviewCommentInput[] = [];
+  const collected: PostReviewCommentInput[] = [];
   const perFileCount = new Map<string, number>();
-  let verdict: TSubmitReviewVerdictInput | null = null;
+  let verdict: SubmitReviewVerdictInput | null = null;
   let truncated = false;
   let iterations = 0;
 
@@ -177,7 +174,7 @@ export interface ReplyEvaluationInput {
 export async function runReplyEvaluation(
   client: Anthropic,
   input: ReplyEvaluationInput
-): Promise<TEvaluateReplyInput | null> {
+): Promise<EvaluateReplyInput | null> {
   const userText = [
     '## Original review concern',
     `Rule: ${input.ruleId ?? '(unknown)'} · Severity: ${input.severity ?? '(unknown)'}`,

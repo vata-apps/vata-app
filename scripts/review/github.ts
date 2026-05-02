@@ -6,7 +6,6 @@ export interface RepoContext {
   owner: string;
   repo: string;
   prNumber: number;
-  token: string;
 }
 
 export interface ReviewCommentSummary {
