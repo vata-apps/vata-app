@@ -4,6 +4,8 @@
 
 Définir les structures de layout réutilisables. L'app utilise une **barre de navigation en haut** combinée à un **layout trois panneaux** (sidebar / centre / aside) pour les modules d'entités, et un layout pleine largeur pour l'écran d'accueil.
 
+> The two layout modes below are the visual expression of the **two app contexts** (outside picker vs in-tree shell). For the architectural framing, lifecycle, and invariants, see [`docs/architecture/app-structure.md`](../architecture/app-structure.md).
+
 ---
 
 ## What We Display
