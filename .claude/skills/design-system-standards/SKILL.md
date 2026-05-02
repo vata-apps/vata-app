@@ -26,13 +26,13 @@ For any UI element a mockup or feature requires, walk this tree top-down. Stop a
 
 Pick this when the wrapper already covers the need with its current props/variants. Always cite the variant + size you'd use.
 
-Existing wrappers and their variants (verify against the source — this list rots):
+Discover the live wrapper inventory at runtime — never quote variants from this skill, the source rots:
 
-| Wrapper | Variants                                              | Sizes        | Notes                                                                              |
-| ------- | ----------------------------------------------------- | ------------ | ---------------------------------------------------------------------------------- |
-| Button  | primary, secondary, outline, ghost, destructive, link | sm, md, lg   | `leadingIcon`, `trailingIcon`, `hideLabel`, `asChild` (incompatible with icons)    |
-| Input   | state: default, error                                 | sm, md, lg   | text-shaped only (text, email, url, tel, search, password). `invalid` shortcut     |
-| Icon    | curated registry (`IconName`)                         | numeric size | `aria-hidden` defaults to true; pass `aria-label` + `aria-hidden={false}` for solo |
+```bash
+ls src/components/ui/*.tsx                                 # wrapper names
+rg -n "tv\(|variants:|defaultVariants" src/components/ui/  # recipes & axes
+rg -n "^export (interface|type|const|function)" src/components/ui/  # public API
+```
 
 ### 2. Extend an existing wrapper
 
@@ -70,19 +70,15 @@ Only when nothing in Radix or shadcn covers the need. Document why in JSDoc on t
 
 ## Token usage
 
-Every visible value (color, radius, font, spacing) should map to a `@theme` token in `src/styles/app.css`. The token catalogue:
+Every visible value (color, radius, font, spacing) should map to a `@theme` token in `src/styles/app.css`. Read the live token list at runtime — do not quote tokens from this skill:
 
-- **Colors:** `background`, `foreground`, `card`, `card-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `muted`, `muted-foreground`, `accent`, `accent-foreground`, `destructive`, `destructive-foreground`, `border`, `input`, `ring`. Use Tailwind utility names: `bg-primary`, `text-muted-foreground`, etc.
-- **Radii:** `--radius` (0.5rem base), `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-xl`. Use `rounded-md`, `rounded-lg`, etc.
-- **Font:** `--font-sans` (Geist) — applied globally, no per-component override
-- **Dark mode:** swapped via `.dark` class or `prefers-color-scheme: dark`. Never write `dark:bg-…` overrides — use semantic tokens that already swap.
+```bash
+rg -n "^\s*--(color|radius|font|spacing)" src/styles/app.css
+```
 
-**Drift signals to flag:**
+Use Tailwind utility names that map to those CSS variables (`bg-primary`, `text-muted-foreground`, `rounded-md`, …). Never hand-write `dark:` overrides — semantic tokens swap automatically via the `.dark` class and `prefers-color-scheme`.
 
-- Hardcoded `oklch(...)`, `#hex`, `rgb(...)` in JSX or component recipes
-- Hardcoded pixel sizes for radii or spacing where a token exists
-- `dark:` utility prefixes overriding semantic tokens
-- Raw Tailwind palette utilities for status (`bg-blue-500`, `text-emerald-600`) instead of semantic tokens or `Badge`-style components
+For the canonical visual specification (gender colors, type scale, motion curves), see `docs/ui/design-system.md`. Drift rules (no hardcoded `oklch`/hex/rgb, no raw palette utilities for status, no `dark:` overrides) are enumerated in `.claude/skills/shadcn/SKILL.md` Styling rules — flag those when they appear outside `src/styles/`.
 
 ## Variants vs duplication
 
@@ -101,7 +97,14 @@ Run when invoked in audit mode, or when something stands out during normal revie
 
 ### Dead components
 
-A wrapper is dead if `grep -r "from '\$components/ui/<name>'" src/` returns zero hits across `src/` (excluding the wrapper's own story and any test scaffolding). Confirm by also checking imports via the bare name (`import { Foo }`) and by alias variants.
+A wrapper is dead if no file under `src/` (excluding its own `*.stories.tsx` and `*.test.tsx`) imports it. Run for each wrapper `<name>`:
+
+```bash
+rg -n "from ['\"]\\\$(components|/components)/ui/<name>['\"]" src/ \
+  --glob '!**/*.stories.tsx' --glob '!**/*.test.tsx'
+```
+
+Also grep for the bare exported symbol (e.g. `\bButton\b`) to catch direct re-exports through index files.
 
 ### Duplication
 
@@ -113,28 +116,33 @@ Three signals to grep for, in priority order:
 
 ### Token drift
 
-Ripgrep these patterns under `src/components/**`, `src/pages/**`, `src/routes/**`:
+Ripgrep these patterns, scoped to source and skipping fixtures, tests, stories, and GEDCOM byte literals:
 
-- `oklch\(`, `rgb\(`, `rgba\(` outside `src/styles/`
-- `#[0-9a-fA-F]{3,8}\b` outside `src/styles/` (skip imports and comments)
-- `\bdark:(bg|text|border)-` — dark-mode overrides should be unnecessary if semantic tokens are used
+```bash
+rg -n "oklch\(|rgb\(|rgba\(|#[0-9a-fA-F]{3,8}\b" \
+  src/components src/pages src/routes \
+  --glob '!**/*.stories.tsx' --glob '!**/*.test.tsx' \
+  --glob '!src/lib/gedcom/**' --glob '!src/styles/**'
+
+rg -n "\bdark:(bg|text|border|ring)-" src/components src/pages src/routes
+```
 
 ## Pen-to-code mapping
 
-When the input is a Pencil `.pen` file, common node types map to vata-app primitives like this:
+When the input is a Pencil `.pen` file, map nodes to existing wrappers (discovered via the runtime grep above) before considering new ones:
 
-| Pencil node                  | Likely vata primitive                                                       |
-| ---------------------------- | --------------------------------------------------------------------------- |
-| Frame with background fill   | `Card`-style wrapper (when one exists), else `<div>` with semantic bg token |
-| Stack (vertical/horizontal)  | `<div className="flex flex-col gap-N">` / `flex-row`                        |
-| Text (display / headings)    | semantic heading element with type-scale class                              |
-| Text (body)                  | bare text in `text-foreground` / `text-muted-foreground`                    |
-| Image (avatar-shaped)        | dedicated `Avatar` wrapper (create if ≥2 uses)                              |
-| Vector / glyph / icon        | `Icon` from the curated registry — flag if missing                          |
-| Button / interactive element | `Button` with the right variant                                             |
-| Input field                  | `Input` (or its future `Textarea` / `Select` siblings)                      |
+| Pencil node                    | Mapping                                                                                            |
+| ------------------------------ | -------------------------------------------------------------------------------------------------- |
+| Button / interactive element   | Existing `Button` wrapper if found — pick the variant; else propose extension                      |
+| Input field (text-shaped)      | Existing `Input` wrapper if found — pick the size and `invalid` if errored; else propose extension |
+| Vector / glyph / icon          | Existing `Icon` wrapper if the glyph is in its registry; flag as registry-extension if missing     |
+| Frame with background fill     | If a card-style wrapper exists, use it; else compose inline with semantic bg token                 |
+| Stack (vertical / horizontal)  | Inline `<div className="flex flex-col gap-N">` / `flex-row gap-N`; never a new wrapper             |
+| Text (display / headings)      | Semantic heading element with the type-scale class from `docs/ui/design-system.md`                 |
+| Text (body)                    | Bare text using `text-foreground` / `text-muted-foreground`                                        |
+| Image (avatar-shaped, ≥2 uses) | Propose a new `Avatar` wrapper (no existing one); justify and pair with story + `play()` test      |
 
-Always map verbatim — don't invent new vocabulary that doesn't exist in this skill or in `src/components/ui/`.
+Quote real wrapper names from the live `src/components/ui/` listing — never name a wrapper that the inventory grep did not find.
 
 ## Out of scope for this skill
 
