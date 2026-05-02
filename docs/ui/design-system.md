@@ -125,38 +125,25 @@ font-family:
 | small | 12px | 1.5         | 400    | Labels, metadata |
 | xs    | 11px | 1.4         | 400    | Tags, badges     |
 
-### Tailwind CSS Configuration
+### Tailwind v4 — CSS-first configuration
+
+There is **no `tailwind.config.ts`**. Theme tokens live in `@theme { ... }` inside [`src/styles/app.css`](../../src/styles/app.css), expressed in `oklch()`. Light/dark/system theming is handled in the same file.
 
 ```css
-/* src/index.css — CSS variables for theming */
-@layer base {
-  :root {
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
+/* src/styles/app.css (excerpt) */
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --color-background: oklch(0.985 0.012 85);
+  --color-foreground: oklch(0.22 0.028 45);
+  --color-primary: oklch(0.54 0.13 32); /* terracotta */
+  --color-destructive: oklch(0.555 0.195 27);
+  --radius: 0.5rem;
 }
 ```
 
-```typescript
-// tailwind.config.ts
-export default {
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ['var(--font-sans)'],
-      },
-      fontSize: {
-        xs: ['11px', { lineHeight: '1.4' }],
-        sm: ['12px', { lineHeight: '1.5' }],
-        base: ['14px', { lineHeight: '1.5' }],
-        lg: ['16px', { lineHeight: '1.4' }],
-        xl: ['20px', { lineHeight: '1.4' }],
-        '2xl': ['24px', { lineHeight: '1.3' }],
-        '3xl': ['32px', { lineHeight: '1.2' }],
-      },
-    },
-  },
-};
-```
+The type-scale values listed above (h1 32px / body 14px / xs 11px / …) are applied via Tailwind utility classes (`text-3xl`, `text-sm`, `text-xs`, …) on heading and body elements; they map to Tailwind v4's default font-size scale unless overridden in `@theme`.
 
 ---
 

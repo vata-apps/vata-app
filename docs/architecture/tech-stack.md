@@ -18,7 +18,7 @@
 | Testing           | Vitest + RTL      | 2.x / 16.x    | Unit and integration tests                                    |
 | UI Primitives     | Radix UI          | 1.x           | Headless behavior primitives (`@radix-ui/react-slot`)         |
 | Variants          | tailwind-variants | 3.x           | Type-safe className composition (`tv()`)                      |
-| CSS Framework     | Tailwind CSS      | 4.x           | Utility-first, CSS-first via `@theme` in `src/styles/app.css` |
+| CSS Framework     | Tailwind v4       | 4.x           | Utility-first, CSS-first via `@theme` in `src/styles/app.css` |
 | Icons             | Lucide React      | Latest        | Consistent iconography (curated registry in `icon.tsx`)       |
 | i18n              | react-i18next     | 15.x          | Internationalization                                          |
 
@@ -259,13 +259,7 @@ export default defineConfig({
 
 ## UI Layer
 
-### Why this stack?
-
-- **Full ownership without registry overhead**: each wrapper is real source code under `src/components/ui/`, with no CLI step, no `components.json`, and no upstream to sync against — the API is whatever the app needs.
-- **Tailwind v4 CSS-first**: tokens and themes are plain CSS variables inside `@theme`, no JS config to maintain. Light/dark/system theming and design tokens all live in one file.
-- **`tailwind-variants` over `cva`**: identical mental model with native Tailwind class merging baked in (`tailwind-variants` consumes `tailwind-merge` internally), so no app-level `clsx` + `tailwind-merge` + `cn()` glue.
-- **Radix only when needed**: only `@radix-ui/react-slot` is installed today; additional `@radix-ui/react-*` packages are added one at a time when a wrapper requires real Radix behavior (focus trap, dismissible layer, roving tabindex, etc.).
-- **Colocated Storybook + Vitest**: every wrapper has a `<name>.stories.tsx` next to its source, with Storybook `play()` covering behavior — drift is caught immediately.
+The rationale for picking Radix + Tailwind v4 + `tailwind-variants` lives in [ADR-005](../decisions/adr-005-ui-strategy.md). This section documents _what is in the codebase today_, not _why_.
 
 ### Wrappers in `src/components/ui/`
 
