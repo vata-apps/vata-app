@@ -1,21 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 
-// Mock Tauri plugins so importing connection.ts doesn't pull in native bindings.
-// These mocks are not exercised — they only need to satisfy the imports.
 vi.mock('@tauri-apps/plugin-sql', () => ({
-  default: {
-    load: vi.fn(),
-  },
-}));
-
-vi.mock('@tauri-apps/plugin-fs', () => ({
-  mkdir: vi.fn(),
-  rename: vi.fn(),
-  exists: vi.fn(),
-}));
-
-vi.mock('@tauri-apps/api/path', () => ({
-  appDataDir: vi.fn(),
+  default: { load: vi.fn() },
 }));
 
 import { getTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from './connection';
