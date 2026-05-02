@@ -4,13 +4,13 @@ Single backlog for everything — bugs, ideas, tasks. GitHub Issues + one org-le
 
 ## Quick start
 
-| Where      | What                                                                                      |
-| ---------- | ----------------------------------------------------------------------------------------- |
-| Issue Type | One of `Task` / `Bug` / `Feature`, set at the org level (max 25 across all repos)         |
-| Templates  | `.github/ISSUE_TEMPLATE/{bug,feature,task}.yml` — auto-set the type on web UI             |
-| Labels     | 5 area labels (`db`, `ui`, `gedcom`, `tauri`, `docs`) + 1 meta label (`good-first-issue`) |
-| Project    | Org-level "Vata Roadmap" — Status / Priority / Type fields, auto-add for new issues       |
-| Skills     | `capture-idea` (file an idea), `link-task` (bind PR to existing issue)                    |
+| Where      | What                                                                                               |
+| ---------- | -------------------------------------------------------------------------------------------------- |
+| Issue Type | One of `Task` / `Bug` / `Feature`, set at the org level (max 25 across all repos)                  |
+| Templates  | `.github/ISSUE_TEMPLATE/{bug,feature,task}.yml` — auto-set the type on web UI                      |
+| Labels     | 11 product-axis labels (genealogy domains, monetization, etc.) + 1 meta label (`good-first-issue`) |
+| Project    | Org-level "Vata Roadmap" — Status / Priority / Type fields, auto-add for new issues                |
+| Skills     | `capture-idea` (file an idea), `link-task` (bind PR to existing issue)                             |
 
 ## Issue Types
 
@@ -40,18 +40,26 @@ Three YAML issue forms live in `.github/ISSUE_TEMPLATE/`. Each preset its `type:
 
 ## Labels
 
-Labels split into two groups: **area** (which part of the codebase) and **meta** (how an issue should be triaged). Issue Type, Priority, and Status are not labels — they live on the issue itself or on the Project.
+Labels are **product-shaped**, not codebase-shaped. Each one names a user-facing concept (an entity, a workflow, a product surface) so triage and filtering ("show me everything about places") stay useful even as the codebase moves around. Issue Type, Priority, and Status are not labels — they live on the issue itself or on the Project.
 
-| Label              | Group | Meaning                               | Color     |
-| ------------------ | ----- | ------------------------------------- | --------- |
-| `db`               | area  | Schema, queries, migrations           | `#0E8A16` |
-| `ui`               | area  | Components, pages, routing            | `#1D76DB` |
-| `gedcom`           | area  | Import/export GEDCOM                  | `#D93F0B` |
-| `tauri`            | area  | Rust shell, permissions, capabilities | `#5319E7` |
-| `docs`             | area  | Documentation work                    | `#0075CA` |
-| `good-first-issue` | meta  | Good for newcomers / small surface    | `#7057FF` |
+| Label              | Group         | Meaning                                                               | Color     |
+| ------------------ | ------------- | --------------------------------------------------------------------- | --------- |
+| `individuals`      | data          | People, names, lifespan formatting                                    | `#0E8A16` |
+| `families`         | data          | Spouse / parent / child links, pedigree                               | `#196127` |
+| `events`           | data          | Life events, dates, witnesses                                         | `#5DC461` |
+| `places`           | data          | Geography, place hierarchy, external place lookup                     | `#0052CC` |
+| `sources`          | data          | Sources, citations, evidence linking, repositories                    | `#1D76DB` |
+| `media`            | data          | Photos, scans, documents, image attachments and editing               | `#5319E7` |
+| `gedcom`           | data          | GEDCOM 5.5.1 import / export, interoperability                        | `#D93F0B` |
+| `data-quality`     | cross-cutting | Completion tracking, duplicate detection, validation                  | `#FBCA04` |
+| `tree-management`  | platform      | Creating / opening / importing trees, storage location                | `#BFD4F2` |
+| `design-system`    | platform      | Storybook, UI wrappers, design tokens, shadcn migrations              | `#C5DEF5` |
+| `monetization`     | platform      | Paid-tier ideas; Vata is open source and free, these are aspirational | `#B60205` |
+| `good-first-issue` | meta          | Good for newcomers / small surface                                    | `#7057FF` |
 
-An issue can have **0–2 area labels** plus optional meta labels. Most have one area label or none.
+An issue can have **0–2 product labels** plus optional meta labels. Combine two only when the issue is genuinely about the intersection (e.g., "tag people on photos" → `media` + `individuals`).
+
+**Adding a new label**: do it only when a recurring product surface emerges that none of the existing labels cover (likely future candidates: `search`, `i18n`, `accessibility`). The `capture-idea` skill proposes a new label in its report when nothing fits cleanly, and creates it on user confirmation. Don't multiply labels speculatively.
 
 ## The Project
 

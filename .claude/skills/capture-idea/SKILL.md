@@ -51,15 +51,31 @@ Don't pass `--repo` — `gh` infers it from the current working directory's git 
 
 ### 4. Pick labels
 
-Select **0 to 2** labels whose name or description clearly matches the item. Examples (current Vata taxonomy):
+Vata's labels are **product-shaped, not codebase-shaped** — each one names a user-facing concept, not a folder of code. Select **0 to 2** labels whose name or description clearly matches the item. Current taxonomy and how to read them:
 
-- GEDCOM import/export → `gedcom`
-- UI copy or layout → `ui`
-- Query / migration / schema → `db`
-- Rust shell or Tauri permissions → `tauri`
-- Documentation → `docs`
+| Label             | Apply when the idea touches…                                           |
+| ----------------- | ---------------------------------------------------------------------- |
+| `individuals`     | People, names, lifespan formatting                                     |
+| `families`        | Spouse / parent / child links, pedigree                                |
+| `events`          | Life events, dates, witnesses                                          |
+| `places`          | Geography, place hierarchy, external place lookup                      |
+| `sources`         | Sources, citations, evidence linking, repositories                     |
+| `media`           | Photos, scans, documents, image attachments and editing                |
+| `gedcom`          | GEDCOM 5.5.1 import / export, interoperability                         |
+| `data-quality`    | Completion tracking, duplicate detection, validation                   |
+| `tree-management` | Creating / opening / importing trees, storage location                 |
+| `design-system`   | Storybook, UI wrappers, design tokens, shadcn migrations               |
+| `monetization`    | Paid-tier ideas (Vata is open source and free; these are aspirational) |
 
-If nothing fits cleanly, **pass no labels**. Do not invent or stretch a match. Do not create new labels from this skill.
+Combine two only when the issue is genuinely about the intersection (e.g., "tag people on photos" → `media` + `individuals`). If the idea is a Tauri-shell change, a generic refactor, or a small typo with no clear product surface, **pass no labels**. Do not stretch a match.
+
+#### When no existing label fits
+
+If the captured idea points at a recurring product surface that the current taxonomy doesn't cover (e.g., search/filtering, accessibility, performance, i18n) — proceed to create the issue with **no label**, and in the step-8 report, propose a new label by name with a one-line rationale. Example:
+
+> Captured #42 (Feature, no label). Suggestion: create new label `search` for this and future filter/search ideas — reply yes to add it.
+
+Do **not** create the label without confirmation. The user accepts or rejects in the next message; on `yes`, run `gh label create <name> --color <hex> --description <desc>` and `gh issue edit 42 --add-label <name>`. This keeps the taxonomy small until a real second issue appears for that domain.
 
 ### 5. Create the issue
 
@@ -164,9 +180,9 @@ Mentioning "Icebox" reinforces that the item is parked, not queued. Do not summa
 
 ## What this skill must not do
 
-- Ask for confirmation before creating
-- Force a label when no existing label fits
-- Create new labels
+- Ask for confirmation before creating the issue
+- Force a label when no existing label fits — pass none and propose a new one in the report
+- Create new labels without explicit user confirmation
 - Pick more than one Issue Type (each issue gets exactly one)
 - Modify or close existing issues — capture only
 - Skip step 6 — the type must be set for consistency with web-UI issues

@@ -49,7 +49,7 @@ info "Reconciling labels in $ORG/$REPO..."
 EXISTING_LABELS=$(gh label list --repo "$ORG/$REPO" --limit 2000 --json name --jq '.[].name')
 
 # Delete labels that are no longer part of the taxonomy
-for label in "area:ui" "shadcn-cleanup" "tech-debt"; do
+for label in "area:ui" "shadcn-cleanup" "tech-debt" "db" "ui" "tauri" "docs"; do
   if echo "$EXISTING_LABELS" | grep -qx "$label"; then
     if gh label delete "$label" --repo "$ORG/$REPO" --yes; then
       ok "deleted label '$label'"
@@ -63,13 +63,28 @@ done
 ensure_label() {
   local name="$1" color="$2" desc="$3"
   if echo "$EXISTING_LABELS" | grep -qx "$name"; then
+    gh label edit "$name" --repo "$ORG/$REPO" --color "$color" --description "$desc" >/dev/null
+    ok "reconciled label '$name'"
     return 0
   fi
   gh label create "$name" --repo "$ORG/$REPO" --color "$color" --description "$desc"
   ok "created label '$name'"
 }
 
-ensure_label "docs" "0075CA" "Documentation work"
+# Genealogy data domains
+ensure_label "individuals"      "0E8A16" "People, names, lifespan"
+ensure_label "families"         "196127" "Spouse / parent / child links, pedigree"
+ensure_label "events"           "5DC461" "Life events, dates, witnesses"
+ensure_label "places"           "0052CC" "Geography, locations"
+ensure_label "sources"          "1D76DB" "Sources, citations, repositories"
+ensure_label "media"            "5319E7" "Photos, scans, documents"
+ensure_label "gedcom"           "D93F0B" "Import/export GEDCOM"
+# Cross-cutting capability
+ensure_label "data-quality"     "FBCA04" "Completion, duplicates, validation"
+# Platform & meta
+ensure_label "tree-management"  "BFD4F2" "Tree lifecycle and storage"
+ensure_label "design-system"    "C5DEF5" "Storybook, wrappers, tokens"
+ensure_label "monetization"     "B60205" "Paid-tier ideas (Vata is open source and free)"
 ensure_label "good-first-issue" "7057FF" "Good for newcomers / small surface"
 
 ok "Labels reconciled"
