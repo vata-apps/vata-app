@@ -50,6 +50,7 @@ export default [
       'dist/',
       'src-tauri/',
       '.worktrees/',
+      'scripts/review/**',
       'storybook-static/',
       '!.storybook',
     ],

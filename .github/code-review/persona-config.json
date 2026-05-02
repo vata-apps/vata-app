@@ -1,0 +1,37 @@
+{
+  "personas": {
+    "frontend": {
+      "patterns": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "!src/db/**",
+        "!src/lib/gedcom/**",
+        "!src/components/ui/**"
+      ],
+      "skills": ["typescript-standards", "testing-standards"]
+    },
+    "design-system": {
+      "patterns": ["src/components/ui/**", "src/styles/**", "**/*.stories.tsx"],
+      "skills": ["design-system-standards", "storybook-stories"],
+      "extraDocs": ["docs/ui/design-system.md", "docs/ui/storybook.md"]
+    },
+    "backend-rust": {
+      "patterns": ["src-tauri/src/**/*.rs"],
+      "skills": ["tauri-standards"]
+    },
+    "tauri": {
+      "patterns": ["src-tauri/tauri.conf.json", "src-tauri/capabilities/**"],
+      "skills": ["tauri-standards"]
+    },
+    "db": {
+      "patterns": ["src/db/**/*.ts", "**/*.sql"],
+      "skills": ["sqlite-standards", "db-layer"],
+      "extraDocs": ["docs/architecture/database-schema.md"]
+    },
+    "gedcom": {
+      "patterns": ["src/lib/gedcom/**/*.ts"],
+      "skills": ["gedcom-standards"],
+      "extraDocs": ["docs/references/gedcom-551-mapping.md"]
+    }
+  }
+}

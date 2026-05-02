@@ -1,0 +1,24 @@
+{
+  "name": "@vata-app/pr-reviewer",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Claude API-powered PR reviewer for vata-app. Runs as GitHub Actions on pull_request events.",
+  "type": "module",
+  "scripts": {
+    "review": "tsx index.ts",
+    "reply": "tsx reply.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.92.0",
+    "@octokit/graphql": "^9.0.3",
+    "@octokit/rest": "^22.0.1",
+    "minimatch": "^10.2.5",
+    "zod": "^4.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}
