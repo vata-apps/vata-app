@@ -17,42 +17,35 @@ function cachedReadFile(absPath: string): Promise<string | null> {
   return p;
 }
 
-const PersonaSpec = z.object({
+const ReviewerSpec = z.object({
   patterns: z.array(z.string().min(1)).min(1),
   skills: z.array(z.string().min(1)).default([]),
   extraDocs: z.array(z.string().min(1)).default([]),
 });
-export type PersonaSpec = z.infer<typeof PersonaSpec>;
+export type ReviewerSpec = z.infer<typeof ReviewerSpec>;
 
-const PersonaConfig = z.object({
-  personas: z.record(z.string(), PersonaSpec),
+const ReviewersConfig = z.object({
+  reviewers: z.record(z.string(), ReviewerSpec),
 });
-export type PersonaConfig = z.infer<typeof PersonaConfig>;
+export type ReviewersConfig = z.infer<typeof ReviewersConfig>;
 
-export interface LoadedPersona {
-  name: string;
-  spec: PersonaSpec;
-  matchedFiles: string[];
-  context: string;
-}
-
-export async function loadPersonaConfig(repoRoot: string): Promise<PersonaConfig> {
-  const path = join(repoRoot, '.github', 'code-review', 'persona-config.json');
+export async function loadReviewersConfig(repoRoot: string): Promise<ReviewersConfig> {
+  const path = join(repoRoot, '.github', 'code-review', 'reviewers-config.json');
   const raw = await readFile(path, 'utf8');
-  return PersonaConfig.parse(JSON.parse(raw));
+  return ReviewersConfig.parse(JSON.parse(raw));
 }
 
-export function matchPersonas(
-  config: PersonaConfig,
+export function matchReviewers(
+  config: ReviewersConfig,
   changedFiles: readonly string[]
-): Array<{ name: string; spec: PersonaSpec; matchedFiles: string[] }> {
+): Array<{ name: string; spec: ReviewerSpec; matchedFiles: string[] }> {
   const result: Array<{
     name: string;
-    spec: PersonaSpec;
+    spec: ReviewerSpec;
     matchedFiles: string[];
   }> = [];
 
-  for (const [name, spec] of Object.entries(config.personas)) {
+  for (const [name, spec] of Object.entries(config.reviewers)) {
     const matched = filesMatchingPatterns(changedFiles, spec.patterns);
     if (matched.length > 0) {
       result.push({ name, spec, matchedFiles: matched });
@@ -87,7 +80,7 @@ export async function loadExtraDoc(repoRoot: string, relativePath: string): Prom
   return cachedReadFile(join(repoRoot, relativePath));
 }
 
-export async function buildPersonaContext(repoRoot: string, spec: PersonaSpec): Promise<string> {
+export async function buildReviewerContext(repoRoot: string, spec: ReviewerSpec): Promise<string> {
   const sections: string[] = [];
 
   for (const skill of spec.skills) {

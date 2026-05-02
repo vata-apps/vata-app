@@ -1,7 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { buildPersonaContext, loadPersonaConfig, matchPersonas } from './personas.ts';
+import { buildReviewerContext, loadReviewersConfig, matchReviewers } from './reviewers.ts';
 import {
   createReview,
   listIssueComments,
@@ -20,7 +20,7 @@ import {
   findExistingSummary,
   type SeverityCounts,
 } from './state.ts';
-import { makeAnthropic, runPersonaReview } from './claude.ts';
+import { makeAnthropic, runReviewer } from './claude.ts';
 import type { PostReviewCommentInput, ReviewEvent, Severity } from './tools.ts';
 
 interface Env {
@@ -123,20 +123,20 @@ async function main(): Promise<void> {
   const changedFiles = gitChangedFiles(env.repoRoot, fromSha, env.headSha);
   console.log(`Changed files: ${changedFiles.length}`);
 
-  const personaConfig = await loadPersonaConfig(env.repoRoot);
-  const matched = matchPersonas(personaConfig, changedFiles);
-  console.log(`Personas matched: ${matched.map((p) => p.name).join(', ') || '(none)'}`);
+  const reviewersConfig = await loadReviewersConfig(env.repoRoot);
+  const matched = matchReviewers(reviewersConfig, changedFiles);
+  console.log(`Reviewers matched: ${matched.map((r) => r.name).join(', ') || '(none)'}`);
 
   const newState = {
     sha: env.headSha,
     ts: new Date().toISOString(),
-    personas: matched.map((p) => p.name),
+    reviewers: matched.map((r) => r.name),
   };
 
   if (matched.length === 0) {
     const body = buildSummaryBody({
       state: newState,
-      personaSummaries: [],
+      reviewerSummaries: [],
       finalEvent: 'COMMENT',
       totals: emptyCounts(),
     });
@@ -144,20 +144,20 @@ async function main(): Promise<void> {
       body,
       existingId: summary?.commentId ?? null,
     });
-    console.log('Done (no matched personas — summary only, no review submitted).');
+    console.log('Done (no matched reviewers — summary only, no review submitted).');
     return;
   }
 
   const reviewerPromptPath = join(env.repoRoot, '.github', 'code-review', 'prompts', 'reviewer.md');
   const systemPromptTemplate = await readFile(reviewerPromptPath, 'utf8');
 
-  const personaResults = await Promise.all(
+  const reviewerResults = await Promise.all(
     matched.map(async (m) => {
-      const personaContext = await buildPersonaContext(env.repoRoot, m.spec);
+      const reviewerContext = await buildReviewerContext(env.repoRoot, m.spec);
       const diff = gitDiff(env.repoRoot, fromSha, env.headSha, m.matchedFiles);
       if (diff.length === 0) {
         return {
-          personaName: m.name,
+          reviewerName: m.name,
           comments: [],
           verdict: { event: 'APPROVE' as const, summary: 'No diff to review.' },
           iterations: 0,
@@ -167,9 +167,9 @@ async function main(): Promise<void> {
       console.log(
         `[${m.name}] running review (${m.matchedFiles.length} files, ${diff.length} diff chars)`
       );
-      return runPersonaReview(anthropic, {
-        personaName: m.name,
-        personaContext,
+      return runReviewer(anthropic, {
+        reviewerName: m.name,
+        reviewerContext,
         diff,
         changedFiles: m.matchedFiles,
         systemPromptTemplate,
@@ -181,14 +181,14 @@ async function main(): Promise<void> {
 
   const aggregated: PostReviewCommentInput[] = [];
   const totals = emptyCounts();
-  const personaSummaries: Array<{
-    persona: string;
+  const reviewerSummaries: Array<{
+    reviewer: string;
     summary: string;
     counts: SeverityCounts;
   }> = [];
 
-  for (const result of personaResults) {
-    const personaCounts = emptyCounts();
+  for (const result of reviewerResults) {
+    const reviewerCounts = emptyCounts();
     for (const c of result.comments) {
       const key = commentDedupKey({
         path: c.path,
@@ -197,7 +197,7 @@ async function main(): Promise<void> {
       });
       if (dedupeKeys.has(key)) continue;
       dedupeKeys.add(key);
-      bumpCount(personaCounts, c.severity);
+      bumpCount(reviewerCounts, c.severity);
       bumpCount(totals, c.severity);
       aggregated.push({
         ...c,
@@ -207,11 +207,11 @@ async function main(): Promise<void> {
         }),
       });
     }
-    personaSummaries.push({
-      persona: result.personaName,
+    reviewerSummaries.push({
+      reviewer: result.reviewerName,
       summary:
-        result.verdict?.summary ?? '(persona did not return a verdict — capped at max iterations)',
-      counts: personaCounts,
+        result.verdict?.summary ?? '(reviewer did not return a verdict — capped at max iterations)',
+      counts: reviewerCounts,
     });
   }
 
@@ -225,7 +225,7 @@ async function main(): Promise<void> {
 
   const reviewBody =
     `**Claude Review** — ${finalEvent}\n\n` +
-    personaSummaries.map((p) => `- **${p.persona}**: ${p.summary}`).join('\n');
+    reviewerSummaries.map((r) => `- **${r.reviewer}**: ${r.summary}`).join('\n');
 
   await createReview(octokit, ctx, {
     body: reviewBody,
@@ -236,7 +236,7 @@ async function main(): Promise<void> {
 
   const summaryBody = buildSummaryBody({
     state: newState,
-    personaSummaries,
+    reviewerSummaries,
     finalEvent,
     totals,
   });

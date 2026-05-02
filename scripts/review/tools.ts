@@ -94,7 +94,7 @@ export const POST_REVIEW_COMMENT_TOOL: Anthropic.Tool = {
 export const SUBMIT_REVIEW_VERDICT_TOOL: Anthropic.Tool = {
   name: 'submit_review_verdict',
   description:
-    "Call ONCE at the end with this persona's verdict. The orchestrator computes the final review status from severity counts; your event is a hint, not authoritative.",
+    "Call ONCE at the end with this reviewer's verdict. The orchestrator computes the final review status from severity counts; your event is a hint, not authoritative.",
   input_schema: {
     type: 'object',
     required: ['event', 'summary'],
@@ -106,7 +106,7 @@ export const SUBMIT_REVIEW_VERDICT_TOOL: Anthropic.Tool = {
       },
       summary: {
         type: 'string',
-        description: '1-2 sentences explaining what this persona checked and what it found.',
+        description: '1-2 sentences explaining what this reviewer checked and what it found.',
       },
     },
   },

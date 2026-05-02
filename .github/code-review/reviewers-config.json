@@ -1,5 +1,5 @@
 {
-  "personas": {
+  "reviewers": {
     "frontend": {
       "patterns": [
         "src/**/*.ts",

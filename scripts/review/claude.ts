@@ -13,16 +13,16 @@ const MAX_TOKENS = 8192;
 const MAX_ITERATIONS = 6;
 const MAX_COMMENTS_PER_FILE = 10;
 
-export interface PersonaReviewInput {
-  personaName: string;
-  personaContext: string;
+export interface ReviewerInput {
+  reviewerName: string;
+  reviewerContext: string;
   diff: string;
   changedFiles: readonly string[];
   systemPromptTemplate: string;
 }
 
-export interface PersonaReviewOutput {
-  personaName: string;
+export interface ReviewerOutput {
+  reviewerName: string;
   comments: PostReviewCommentInput[];
   verdict: SubmitReviewVerdictInput | null;
   iterations: number;
@@ -33,10 +33,10 @@ export function makeAnthropic(apiKey: string): Anthropic {
   return new Anthropic({ apiKey });
 }
 
-export async function runPersonaReview(
+export async function runReviewer(
   client: Anthropic,
-  input: PersonaReviewInput
-): Promise<PersonaReviewOutput> {
+  input: ReviewerInput
+): Promise<ReviewerOutput> {
   const systemBlocks: Anthropic.TextBlockParam[] = [
     {
       type: 'text',
@@ -45,13 +45,13 @@ export async function runPersonaReview(
     },
     {
       type: 'text',
-      text: `# Active persona: ${input.personaName}\n\n${input.personaContext}`,
+      text: `# Active reviewer: ${input.reviewerName}\n\n${input.reviewerContext}`,
       cache_control: { type: 'ephemeral' },
     },
   ];
 
   const userText = [
-    `Changed files matched by this persona (${input.changedFiles.length}):`,
+    `Changed files matched by this reviewer (${input.changedFiles.length}):`,
     ...input.changedFiles.map((f) => `- ${f}`),
     '',
     'Diff to review (only these hunks — do not invent context outside the diff):',
@@ -152,7 +152,7 @@ export async function runPersonaReview(
   }
 
   return {
-    personaName: input.personaName,
+    reviewerName: input.reviewerName,
     comments: collected,
     verdict,
     iterations,
