@@ -12,7 +12,7 @@ Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Fin
 
 ## The Two Contexts
 
-```
+```text
 ┌────────────────────────────────────────────┐
 │  OUTSIDE  (URL: /)                         │
 │  Tree picker — pick / create / manage      │
@@ -86,7 +86,7 @@ Anything that breaks one of these breaks the contract.
 2. **Never bypass `TreeManager`** for tree-level operations (open / close / create / future rename / delete / duplicate / import / export). The manager keeps `closeTreeDb()` and the Zustand `currentTreeId` in sync.
 3. **Boot starts at `/`.** Do not add auto-resume of the last tree without an explicit decision (currently a non-goal).
 4. **One tree at a time.** Do not add tabs, multi-window, or background "open" of a second tree's DB.
-5. **The route `src/routes/tree/$treeId.tsx` owns the DB lifecycle.** Do not open or close the tree DB from page components, hooks, or managers triggered by them; trust the route layout.
+5. **Inside the tree shell, `src/routes/tree/$treeId.tsx` owns the DB lifecycle.** Do not open or close the tree DB from page components or hooks; trust the route layout. (`TreeManager` remains the authority for tree-level actions from the picker — see invariant 2.)
 6. **Never `SELECT *`** (general SQLite rule, particularly relevant when adding system-DB queries for picker stats — see `docs/architecture/database-schema.md`).
 
 ## Where to Look Next
