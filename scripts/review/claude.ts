@@ -143,14 +143,12 @@ export async function runPersonaReview(
       }
     }
 
-    if (response.stop_reason === 'end_turn' && toolResults.length === 0) {
+    if (toolResults.length === 0) {
       break;
     }
 
     messages.push({ role: 'assistant', content: response.content });
-    if (toolResults.length > 0) {
-      messages.push({ role: 'user', content: toolResults });
-    }
+    messages.push({ role: 'user', content: toolResults });
   }
 
   return {

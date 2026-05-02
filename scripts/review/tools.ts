@@ -32,11 +32,16 @@ export const SubmitReviewVerdictInput = z.object({
 });
 export type SubmitReviewVerdictInput = z.infer<typeof SubmitReviewVerdictInput>;
 
-export const EvaluateReplyInput = z.object({
-  decision: ReplyDecision,
-  reasoning: z.string().min(1).max(1000),
-  replyBody: z.string().max(MAX_BODY_CHARS).optional(),
-});
+export const EvaluateReplyInput = z
+  .object({
+    decision: ReplyDecision,
+    reasoning: z.string().min(1).max(1000),
+    replyBody: z.string().min(1).max(MAX_BODY_CHARS).optional(),
+  })
+  .refine((d) => d.decision !== 'PUSHBACK' || (d.replyBody?.length ?? 0) > 0, {
+    message: 'replyBody is required when decision is PUSHBACK',
+    path: ['replyBody'],
+  });
 export type EvaluateReplyInput = z.infer<typeof EvaluateReplyInput>;
 
 export const POST_REVIEW_COMMENT_TOOL: Anthropic.Tool = {

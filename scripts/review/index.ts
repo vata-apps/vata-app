@@ -90,8 +90,7 @@ function pickFinalEvent(totals: SeverityCounts): ReviewEvent {
   if (totals.critical > 0 || totals.high > 0 || totals.medium > 0) {
     return 'REQUEST_CHANGES';
   }
-  if (totals.low > 0 || totals.nit > 0) return 'COMMENT';
-  return 'APPROVE';
+  return 'COMMENT';
 }
 
 function bumpCount(counts: SeverityCounts, severity: Severity): void {
@@ -135,24 +134,17 @@ async function main(): Promise<void> {
   };
 
   if (matched.length === 0) {
-    const totals = emptyCounts();
     const body = buildSummaryBody({
       state: newState,
       personaSummaries: [],
-      finalEvent: 'APPROVE',
-      totals,
+      finalEvent: 'COMMENT',
+      totals: emptyCounts(),
     });
     await upsertIssueComment(octokit, ctx, {
       body,
       existingId: summary?.commentId ?? null,
     });
-    await createReview(octokit, ctx, {
-      body: 'No personas matched the changed files in this commit range.',
-      event: 'APPROVE',
-      comments: [],
-      commitSha: env.headSha,
-    });
-    console.log('Done (no matched personas).');
+    console.log('Done (no matched personas — summary only, no review submitted).');
     return;
   }
 
