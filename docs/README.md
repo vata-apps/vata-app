@@ -23,6 +23,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 ## Architecture
 
+- [App Structure](./architecture/app-structure.md) — Two-context model (picker outside vs in-tree shell), lifecycle, invariants for AI agents
 - [Overview](./architecture/overview.md) — Global architecture, layers, data flow, state management
 - [Database Schema](./architecture/database-schema.md) — Complete data model (system.db + tree.db)
 - [Data Flow](./architecture/data-flow.md) — Communication between layers (UI → Hooks → Managers → DB)

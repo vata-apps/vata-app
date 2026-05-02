@@ -40,6 +40,10 @@ pnpm vitest run src/db/trees/individuals.test.ts
 
 # Architecture
 
+## Two contexts: picker vs in-tree shell
+
+Vata is a single-tree-at-a-time desktop project editor (think VS Code / Logic Pro). The app has two contexts: the **outside picker** at URL `/`, and the **inside shell** at URL `/tree/$treeId/...`. The boundary is enforced by `src/routes/tree/$treeId.tsx`, which opens the tree DB on mount and closes it on unmount. Read [docs/architecture/app-structure.md](./docs/architecture/app-structure.md) before any work on routing, the home page, the tree shell, or anything that touches `openTreeDb` / `closeTreeDb` / `getTreeDb`.
+
 ## Tech Stack
 
 Tauri 2 (Rust shell) + React 18 + TypeScript + Vite + SQLite (`@tauri-apps/plugin-sql`). State: Zustand 4 (localStorage). Data fetching: TanStack Query v5. Routing: TanStack Router v1 (file-based). Tests: Vitest + jsdom.
