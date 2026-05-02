@@ -14,11 +14,8 @@ Walk this checklist for every UI element identified in a mockup, page, or audit 
 
 ## Token usage
 
-- [ ] Every visible color in the input maps to a semantic token (`bg-primary`, `text-muted-foreground`, …)
-- [ ] No hardcoded `oklch(...)`, `#hex`, `rgb(...)` proposed in JSX
-- [ ] Every radius maps to `rounded-{sm,md,lg,xl}` / `--radius*`
-- [ ] No `dark:` overrides proposed — semantic tokens swap automatically
-- [ ] Status colors use `Badge`/`Alert`/destructive variants, not raw palette utilities
+- [ ] Every visible value (color, radius, font) maps to a `@theme` token from `src/styles/app.css`
+- [ ] All token-drift rules from `.claude/skills/shadcn/SKILL.md` Styling rules satisfied (no raw `oklch`/hex/rgb outside `src/styles/`, no `dark:` overrides, no raw palette utilities for status)
 
 ## Variant hygiene
 
@@ -36,7 +33,8 @@ Walk this checklist for every UI element identified in a mockup, page, or audit 
 
 ## Report quality
 
-- [ ] Every claim cites a file path; usage counts come from real `grep` output
+- [ ] Every claim cites a file path; usage counts come from real `rg`/`grep` output
 - [ ] Variants and sizes named are quoted from the actual `tv()` recipe, not guessed
-- [ ] No new component proposed without naming the underlying Radix primitive or shadcn registry item (or explicit "custom from scratch + reason")
+- [ ] When proposing a new wrapper, named the underlying Radix primitive or shadcn registry item
+- [ ] When the answer is "custom from scratch", provided an explicit one-sentence reason
 - [ ] Open questions section lists everything the agent could not decide alone
