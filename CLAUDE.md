@@ -132,7 +132,6 @@ The `$treeId.tsx` layout route is responsible for opening the tree DB before any
 Test files colocate with source (e.g., `src/db/trees/individuals.test.ts`). Infrastructure in `src/test/`:
 
 - `sqlite-memory.ts` — in-memory SQLite helpers for DB unit tests
-- `mocks/plugin-sql.ts` — mock for Tauri SQL plugin (used in non-Tauri test environments)
 
 ---
 
