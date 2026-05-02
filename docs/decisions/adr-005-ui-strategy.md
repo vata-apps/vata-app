@@ -25,7 +25,7 @@ The application needs a UI foundation that is accessible, customizable, and fits
 
 - **Full ownership without registry overhead**: each wrapper is real source code, but there is no CLI step, no `components.json`, and no synced upstream — the wrapper's API is whatever the app needs.
 - **Tailwind v4 CSS-first**: tokens and themes are plain CSS variables inside `@theme`, no JS config to maintain. Light/dark/system theming and design tokens live in one file.
-- **`tailwind-variants` over `cva`**: identical mental model with native Tailwind class merging, no need for `clsx` + `tailwind-merge` glue.
+- **`tailwind-variants` over `cva`**: identical mental model with native Tailwind class merging baked in (`tailwind-variants` consumes `tailwind-merge` internally), so no app-level `clsx` + `tailwind-merge` + `cn()` glue.
 - **Radix only when needed**: the project pulls in just `@radix-ui/react-slot` today; primitives are added one at a time as wrappers require them, keeping the dep graph minimal.
 - **Colocated Storybook + Vitest tests**: every wrapper has a visual catalog and behavioral coverage right next to the source — drift is caught immediately.
 
@@ -41,7 +41,7 @@ The application needs a UI foundation that is accessible, customizable, and fits
 
 - Wrappers are minimal and fully owned — no surprise upstream changes.
 - Tailwind v4 `@theme` keeps tokens, light/dark theming, and typography in a single CSS file.
-- Type-safe variants via `tv()` with no auxiliary helpers (`cn`/`clsx`/`tailwind-merge` are not installed).
+- Type-safe variants via `tv()` with no app-level helpers (`cn`/`clsx` are not direct dependencies; `tailwind-merge` is only pulled in transitively by `tailwind-variants`).
 - No external design dependency blocking progress.
 
 **Negative / Trade-offs**:

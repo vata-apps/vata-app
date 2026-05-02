@@ -263,7 +263,7 @@ export default defineConfig({
 
 - **Full ownership without registry overhead**: each wrapper is real source code under `src/components/ui/`, with no CLI step, no `components.json`, and no upstream to sync against — the API is whatever the app needs.
 - **Tailwind v4 CSS-first**: tokens and themes are plain CSS variables inside `@theme`, no JS config to maintain. Light/dark/system theming and design tokens all live in one file.
-- **`tailwind-variants` over `cva`**: identical mental model with native Tailwind class merging, no need for `clsx` + `tailwind-merge` glue (neither is installed).
+- **`tailwind-variants` over `cva`**: identical mental model with native Tailwind class merging baked in (`tailwind-variants` consumes `tailwind-merge` internally), so no app-level `clsx` + `tailwind-merge` + `cn()` glue.
 - **Radix only when needed**: only `@radix-ui/react-slot` is installed today; additional `@radix-ui/react-*` packages are added one at a time when a wrapper requires real Radix behavior (focus trap, dismissible layer, roving tabindex, etc.).
 - **Colocated Storybook + Vitest**: every wrapper has a `<name>.stories.tsx` next to its source, with Storybook `play()` covering behavior — drift is caught immediately.
 
@@ -802,40 +802,27 @@ export default [
 ## Complete Dependencies
 
 ```json
-// package.json
+// package.json (excerpt — UI-relevant deps only)
 {
   "dependencies": {
-    "@radix-ui/react-*": "Latest",
+    "@radix-ui/react-slot": "^1",
+    "@tailwindcss/vite": "^4",
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-router": "^1.0.0",
     "@tauri-apps/api": "^2.0.0",
-    "@tauri-apps/plugin-sql": "^2.0.0",
-    "@tauri-apps/plugin-fs": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
+    "@tauri-apps/plugin-fs": "^2.0.0",
+    "@tauri-apps/plugin-sql": "^2.0.0",
     "@tauri-apps/plugin-store": "^2.0.0",
-    "i18next": "^24.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-i18next": "^15.0.0",
-    "zustand": "^4.0.0",
-    "clsx": "^2.0.0",
-    "tailwind-merge": "^2.0.0",
-    "class-variance-authority": "^0.7.0",
-    "lucide-react": "Latest"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
-    "@vitejs/plugin-react": "^4.0.0",
-    "eslint": "^9.0.0",
-    "eslint-plugin-react": "^7.0.0",
-    "eslint-plugin-react-hooks": "^4.0.0",
-    "prettier": "^3.0.0",
-    "typescript": "^5.0.0",
-    "vite": "^5.0.0",
-    "@tauri-apps/cli": "^2.0.0"
+    "i18next": "^26.0.3",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "lucide-react": "^1.14.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^17.0.2",
+    "tailwind-variants": "^3.2.2",
+    "tailwindcss": "^4",
+    "zustand": "^4.0.0"
   }
 }
 ```
