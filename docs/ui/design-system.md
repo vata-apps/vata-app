@@ -1,6 +1,6 @@
 # Design System
 
-> The design system is built on Tailwind v4 (CSS-first via `@theme`) with Radix primitives and `tailwind-variants`. Tokens, wrappers, and visual conventions are shared across the app.
+> The design system is built on Tailwind v4 (CSS-first via `@theme`) with Radix primitives and `tailwind-variants`. The canonical token source is [`src/styles/app.css`](../../src/styles/app.css); UI wrappers live under [`src/components/ui/`](../../src/components/ui/). When this document and the source disagree, **the source wins** — open a PR against this file to bring it back in sync.
 
 ## Design Principles
 
@@ -34,19 +34,7 @@
 
 ### Primary Colors
 
-```
-Brand (Primary Blue)
-├── 50   #f0f4ff  (very light backgrounds)
-├── 100  #dce4f5  (light backgrounds)
-├── 200  #b4c6e7  (borders)
-├── 300  #8aa5da  (inactive icons)
-├── 400  #6889cf  (hover states)
-├── 500  #5278c8  (links)
-├── 600  #466fc6  (primary buttons)
-├── 700  #375eaf  (button hover)
-├── 800  #2d539e  (accents)
-└── 900  #1e478d  (strong text)
-```
+The primary palette and every surface/state token live in [`src/styles/app.css`](../../src/styles/app.css) as `@theme` CSS variables in `oklch()` (current primary: terracotta `--color-primary`). Consume them via Tailwind utilities (`bg-primary`, `text-primary-foreground`, `border-border`, `ring-ring`, …) — never reference hex values in components. The full list of tokens is reproduced below in the [Tailwind v4 — CSS-first configuration](#tailwind-v4--css-first-configuration) section.
 
 ### Semantic Colors
 
@@ -102,16 +90,7 @@ Border         #373a40
 
 ### Primary Font
 
-**Inter** - Modern sans-serif, excellent readability
-
-```css
-font-family:
-  'Inter',
-  -apple-system,
-  BlinkMacSystemFont,
-  'Segoe UI',
-  sans-serif;
-```
+The font stack lives in [`src/styles/app.css`](../../src/styles/app.css) under `--font-sans` — currently **Geist** (self-hosted in `src/styles/fonts/`). Consume it via the Tailwind `font-sans` utility rather than redeclaring `font-family` in component CSS. Override the token in `@theme` if the project needs a different face later; do not hardcode font names in components.
 
 ### Type Scale
 
@@ -317,9 +296,9 @@ Children (5) · Events (12)
 
 ## Iconography
 
-### Library: Lucide React
+### Library: Lucide React (via curated wrapper)
 
-Stroke-style icons, consistent, 24x24 by default. Import from `lucide-react`.
+Icons are exposed through a curated registry in [`src/components/ui/icon.tsx`](../../src/components/ui/icon.tsx) — pages and components must consume them as `<Icon name="…" />` and **never import directly from `lucide-react`**. The wrapper constrains the available icons to the project's design intent, gives a single source of truth for sizing, and keeps unused glyphs out of the bundle. Add a new entry to `iconRegistry` when a screen genuinely needs a new glyph.
 
 ### Main Icons
 
