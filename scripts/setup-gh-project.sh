@@ -71,7 +71,7 @@ ensure_label() {
 
 # Genealogy data domains
 ensure_label "individuals"      "0E8A16" "People, names, lifespan"
-ensure_label "families"         "196127" "Relationships, pedigree"
+ensure_label "families"         "196127" "Spouse / parent / child links, pedigree"
 ensure_label "events"           "5DC461" "Life events, dates, witnesses"
 ensure_label "places"           "0052CC" "Geography, locations"
 ensure_label "sources"          "1D76DB" "Sources, citations, repositories"

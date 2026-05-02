@@ -56,7 +56,7 @@ Vata's labels are **product-shaped, not codebase-shaped** — each one names a u
 | Label             | Apply when the idea touches…                                           |
 | ----------------- | ---------------------------------------------------------------------- |
 | `individuals`     | People, names, lifespan formatting                                     |
-| `families`        | Spouse links, parent/child links, pedigree                             |
+| `families`        | Spouse / parent / child links, pedigree                                |
 | `events`          | Life events, dates, witnesses                                          |
 | `places`          | Geography, place hierarchy, external place lookup                      |
 | `sources`         | Sources, citations, evidence linking, repositories                     |
