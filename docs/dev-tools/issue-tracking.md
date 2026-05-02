@@ -53,7 +53,7 @@ Labels are **product-shaped**, not codebase-shaped. Each one names a user-facing
 | `gedcom`           | data          | GEDCOM 5.5.1 import / export, interoperability                        | `#D93F0B` |
 | `data-quality`     | cross-cutting | Completion tracking, duplicate detection, validation                  | `#FBCA04` |
 | `tree-management`  | platform      | Creating / opening / importing trees, storage location                | `#BFD4F2` |
-| `design-system`    | platform      | Storybook, UI wrappers, design tokens, shadcn migrations              | `#C5DEF5` |
+| `design-system`    | platform      | Storybook, UI wrappers, design tokens, Radix primitives, Tailwind v4  | `#C5DEF5` |
 | `monetization`     | platform      | Paid-tier ideas; Vata is open source and free, these are aspirational | `#B60205` |
 | `good-first-issue` | meta          | Good for newcomers / small surface                                    | `#7057FF` |
 

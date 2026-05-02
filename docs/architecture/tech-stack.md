@@ -2,24 +2,25 @@
 
 ## Overview
 
-| Category          | Technology      | Version       | Role                                                         |
-| ----------------- | --------------- | ------------- | ------------------------------------------------------------ |
-| Desktop Framework | Tauri           | 2.0           | Native multi-platform shell                                  |
-| Backend           | Rust            | Latest stable | Tauri plugins                                                |
-| Frontend          | React           | 18.x          | Declarative UI                                               |
-| Language          | TypeScript      | 5.x           | Static typing                                                |
-| Bundler           | Vite            | 5.x           | Fast build, HMR                                              |
-| State (Server)    | TanStack Query  | 5.x           | Cache and synchronization                                    |
-| State (Client)    | Zustand         | 4.x           | Lightweight global state                                     |
-| Routing           | TanStack Router | 1.x           | Type-safe routing                                            |
-| Database          | SQLite          | 3.x           | Local storage                                                |
-| GEDCOM            | In-app module   | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)      |
-| Dates             | In-app module   | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`) |
-| Testing           | Vitest + RTL    | 2.x / 16.x    | Unit and integration tests                                   |
-| UI Components     | shadcn/ui       | Latest        | Radix UI primitives with Tailwind CSS styling                |
-| CSS Framework     | Tailwind CSS    | 4.x           | Utility-first CSS framework                                  |
-| Icons             | Lucide React    | Latest        | Consistent iconography                                       |
-| i18n              | react-i18next   | 15.x          | Internationalization                                         |
+| Category          | Technology        | Version       | Role                                                          |
+| ----------------- | ----------------- | ------------- | ------------------------------------------------------------- |
+| Desktop Framework | Tauri             | 2.0           | Native multi-platform shell                                   |
+| Backend           | Rust              | Latest stable | Tauri plugins                                                 |
+| Frontend          | React             | 18.x          | Declarative UI                                                |
+| Language          | TypeScript        | 5.x           | Static typing                                                 |
+| Bundler           | Vite              | 5.x           | Fast build, HMR                                               |
+| State (Server)    | TanStack Query    | 5.x           | Cache and synchronization                                     |
+| State (Client)    | Zustand           | 4.x           | Lightweight global state                                      |
+| Routing           | TanStack Router   | 1.x           | Type-safe routing                                             |
+| Database          | SQLite            | 3.x           | Local storage                                                 |
+| GEDCOM            | In-app module     | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)       |
+| Dates             | In-app module     | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`)  |
+| Testing           | Vitest + RTL      | 2.x / 16.x    | Unit and integration tests                                    |
+| UI Primitives     | Radix UI          | 1.x           | Headless behavior primitives (`@radix-ui/react-slot`)         |
+| Variants          | tailwind-variants | 3.x           | Type-safe className composition (`tv()`)                      |
+| CSS Framework     | Tailwind CSS      | 4.x           | Utility-first, CSS-first via `@theme` in `src/styles/app.css` |
+| Icons             | Lucide React      | Latest        | Consistent iconography (curated registry in `icon.tsx`)       |
+| i18n              | react-i18next     | 15.x          | Internationalization                                          |
 
 ---
 
@@ -256,66 +257,80 @@ export default defineConfig({
 
 ---
 
-## shadcn/ui
+## UI Layer
 
-### Why shadcn/ui?
+### Why this stack?
 
-- Components copied into the project (`src/components/ui/`) — full ownership
-- Built on accessible Radix UI primitives
-- Styled with Tailwind CSS utility classes
-- Only install components you need — no monolithic dependency
-- Excellent TypeScript support
-- Widely adopted in the React ecosystem
+- **Full ownership without registry overhead**: each wrapper is real source code under `src/components/ui/`, with no CLI step, no `components.json`, and no upstream to sync against — the API is whatever the app needs.
+- **Tailwind v4 CSS-first**: tokens and themes are plain CSS variables inside `@theme`, no JS config to maintain. Light/dark/system theming and design tokens all live in one file.
+- **`tailwind-variants` over `cva`**: identical mental model with native Tailwind class merging, no need for `clsx` + `tailwind-merge` glue (neither is installed).
+- **Radix only when needed**: only `@radix-ui/react-slot` is installed today; additional `@radix-ui/react-*` packages are added one at a time when a wrapper requires real Radix behavior (focus trap, dismissible layer, roving tabindex, etc.).
+- **Colocated Storybook + Vitest**: every wrapper has a `<name>.stories.tsx` next to its source, with Storybook `play()` covering behavior — drift is caught immediately.
 
-### How It Works
+### Wrappers in `src/components/ui/`
 
-shadcn/ui is **not an npm package**. It is a CLI tool that copies component source code into your project:
+| Wrapper      | Built on                                        | Purpose                          |
+| ------------ | ----------------------------------------------- | -------------------------------- |
+| `button.tsx` | `tailwind-variants` + `@radix-ui/react-slot`    | All button variants and sizes    |
+| `input.tsx`  | `tailwind-variants`                             | Text inputs                      |
+| `icon.tsx`   | Curated `lucide-react` registry (`name` → icon) | Single import path for all icons |
 
-```bash
-# Initialize shadcn/ui (one-time setup)
-npx shadcn@latest init
+Each wrapper ships a colocated `<name>.stories.tsx` (Storybook + `play()` tests).
 
-# Add individual components as needed
-npx shadcn@latest add button card dialog table
+### Recipe pattern (`tv()`)
+
+Wrappers compose className via `tailwind-variants`:
+
+```ts
+// src/components/ui/button.tsx (excerpt)
+import { tv, type VariantProps } from 'tailwind-variants';
+
+export const buttonRecipe = tv({
+  base: ['inline-flex items-center justify-center gap-2' /* … */],
+  variants: {
+    variant: {
+      primary: '…',
+      secondary: '…',
+      outline: '…',
+      ghost: '…',
+      destructive: '…',
+      link: '…',
+    },
+    size: { sm: 'h-7 px-2.5 text-xs', md: 'h-9 px-3.5 text-sm', lg: 'h-11 px-5 text-base' },
+    hideLabel: { true: 'px-0', false: '' },
+  },
+  defaultVariants: { variant: 'primary', size: 'md', hideLabel: false },
+});
+
+type ButtonRecipeProps = VariantProps<typeof buttonRecipe>;
 ```
 
-Components are placed in `src/components/ui/` and can be freely modified.
+### Theming — Tailwind v4 CSS-first
 
-### Theming
-
-Theme is defined via CSS variables in `src/index.css` and mapped in `tailwind.config.ts`:
+Theme tokens live in `@theme { ... }` inside `src/styles/app.css`, expressed in `oklch()`. There is **no `tailwind.config.ts`** and **no `:root` HSL variables block** — Tailwind v4 reads tokens directly from the `@theme` block.
 
 ```css
-/* src/index.css */
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    /* ... */
-  }
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    /* ... */
-  }
+/* src/styles/app.css (excerpt) */
+@import 'tailwindcss';
+
+@theme {
+  --color-background: oklch(0.985 0.012 85);
+  --color-foreground: oklch(0.22 0.028 45);
+  --color-primary: oklch(0.54 0.13 32); /* terracotta */
+  --color-primary-foreground: oklch(0.985 0.012 85);
+  --color-destructive: oklch(0.555 0.195 27);
+  --color-ring: oklch(0.54 0.13 32);
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --radius: 0.5rem;
 }
 ```
 
-### Key Components Used
+Light/dark/system theming is handled in the same file by re-applying private aliases under `:root.dark` and `@media (prefers-color-scheme: dark)`, never via per-component `dark:` overrides.
 
-| Component         | Usage                                          |
-| ----------------- | ---------------------------------------------- |
-| Layout (custom)   | Main layout with sidebar navigation            |
-| `Dialog`          | Confirmations, forms (unsaved changes, delete) |
-| `Table`           | Data lists                                     |
-| `Input`, `Select` | Forms                                          |
-| `Card`            | Person/event cards                             |
-| `Tabs`            | Secondary navigation                           |
-| `Sonner` (toast)  | User feedback                                  |
-| `DropdownMenu`    | Context menus                                  |
-| `Breadcrumb`      | Breadcrumb navigation                          |
+### See also
+
+- [Design System](../ui/design-system.md) — visual specification (colors, typography, spacing, gender colors)
+- [Storybook](../ui/storybook.md) — story conventions, `play()` tests, addon setup
 
 ---
 

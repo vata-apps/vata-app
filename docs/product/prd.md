@@ -30,14 +30,14 @@ In summary, Vata targets genealogists who want full ownership of their data — 
 
 ## Technical Summary
 
-| Aspect          | Choice                                      |
-| --------------- | ------------------------------------------- |
-| Type            | Desktop application (Windows, macOS, Linux) |
-| Framework       | Tauri 2.0                                   |
-| Frontend        | React 18 + TypeScript 5                     |
-| UI Library      | shadcn/ui + Tailwind CSS                    |
-| Database        | SQLite (local)                              |
-| Exchange Format | GEDCOM 5.5.1                                |
+| Aspect          | Choice                                                    |
+| --------------- | --------------------------------------------------------- |
+| Type            | Desktop application (Windows, macOS, Linux)               |
+| Framework       | Tauri 2.0                                                 |
+| Frontend        | React 18 + TypeScript 5                                   |
+| UI Library      | Custom wrappers (Radix + Tailwind v4 + tailwind-variants) |
+| Database        | SQLite (local)                                            |
+| Exchange Format | GEDCOM 5.5.1                                              |
 
 For technical details, see [Architecture Overview](../architecture/overview.md) and [Tech Stack](../architecture/tech-stack.md).
 
@@ -78,7 +78,7 @@ For technical details, see [Architecture Overview](../architecture/overview.md) 
 - **GEDCOM** — Import and export GEDCOM 5.5.1 files with round-trip fidelity.
 - **Primary entities** — Create, modify, and delete individuals, names, families, events, places, and navigate between them.
 - **Sources & media** — Create sources with media, link entities via a source-centric workspace.
-- **UI & i18n** — Polished UI built on shadcn/ui and a shared design system, with internationalization.
+- **UI & i18n** — Polished UI built on a custom design system (Radix primitives + Tailwind v4), with internationalization.
 - **File management** — Browse and manage all media files in a tree.
 
 ## Related Documents
