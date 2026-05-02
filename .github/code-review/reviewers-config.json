@@ -1,12 +1,28 @@
 {
   "reviewers": {
+    "generalist": {
+      "patterns": [
+        "**/*",
+        "!**/*.{lock,lockb,snap}",
+        "!pnpm-lock.yaml",
+        "!package-lock.json",
+        "!yarn.lock",
+        "!**/*.{png,jpg,jpeg,gif,ico,svg,webp,woff,woff2,ttf,otf,eot,pdf,zip,tar,gz}",
+        "!dist/**",
+        "!storybook-static/**",
+        "!src/routeTree.gen.ts",
+        "!**/.gitkeep"
+      ],
+      "skills": ["code-review-baseline"]
+    },
     "frontend": {
       "patterns": [
         "src/**/*.ts",
         "src/**/*.tsx",
         "!src/db/**",
         "!src/lib/gedcom/**",
-        "!src/components/ui/**"
+        "!src/components/ui/**",
+        "!src/routeTree.gen.ts"
       ],
       "skills": ["typescript-standards", "testing-standards"]
     },
