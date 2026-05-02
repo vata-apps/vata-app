@@ -8,14 +8,15 @@ Walk this checklist for every UI element identified in a mockup, page, or audit 
 - [ ] For each element, identified the matching wrapper in `src/components/ui/` (or "none")
 - [ ] When a wrapper matches, named the exact `variant` and `size` that fit
 - [ ] When close-but-not-exact, decided whether a new `tv()` variant or prop covers it (extend) vs a new wrapper (create)
-- [ ] When proposing a new wrapper, checked the shadcn registry first (`npx shadcn@latest search <keyword>`)
 - [ ] When proposing a new wrapper, justified in one sentence why no existing wrapper or extension fits
 - [ ] Flagged any "compose-only" cases where a layout reuses existing atoms — no new file
 
 ## Token usage
 
 - [ ] Every visible value (color, radius, font) maps to a `@theme` token from `src/styles/app.css`
-- [ ] All token-drift rules from `.claude/skills/shadcn/SKILL.md` Styling rules satisfied (no raw `oklch`/hex/rgb outside `src/styles/`, no `dark:` overrides, no raw palette utilities for status)
+- [ ] No raw `oklch()`, hex, `rgb()`, or `rgba()` outside `src/styles/`
+- [ ] No `dark:` overrides — semantic tokens swap automatically
+- [ ] No raw palette utilities for status (`text-red-500`, `bg-green-100`, …) — use semantic tokens
 
 ## Variant hygiene
 
@@ -35,6 +36,6 @@ Walk this checklist for every UI element identified in a mockup, page, or audit 
 
 - [ ] Every claim cites a file path; usage counts come from real `rg`/`grep` output
 - [ ] Variants and sizes named are quoted from the actual `tv()` recipe, not guessed
-- [ ] When proposing a new wrapper, named the underlying Radix primitive or shadcn registry item
+- [ ] When proposing a new wrapper, named the underlying Radix primitive
 - [ ] When the answer is "custom from scratch", provided an explicit one-sentence reason
 - [ ] Open questions section lists everything the agent could not decide alone

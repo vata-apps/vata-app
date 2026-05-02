@@ -16,7 +16,6 @@ Read these first when applying this skill:
 - `docs/ui/design-system.md` — DS philosophy, token reference, gender + semantic colors
 - `docs/ui/storybook.md` — story conventions; any new wrapper needs a colocated `<name>.stories.tsx` with `play()` tests
 - `.claude/skills/storybook-stories/SKILL.md` — story rules for new wrappers
-- `.claude/skills/shadcn/SKILL.md` — registry rules; check before proposing custom-from-scratch
 
 ## Decision tree
 
@@ -56,8 +55,6 @@ Pick this when:
 - Project-specific defaults must be enforced (like `Icon` restricting to a curated registry, `Input` restricting to text-shaped types), **or**
 - There are variants worth tracking centrally (size, intent, state)
 
-Before creating, check the shadcn registry: `npx shadcn@latest search <keyword>`. If a registry component fits, install it via `npx shadcn@latest add` (per the `shadcn` skill) rather than rolling a custom wrapper.
-
 A new wrapper requires, in the same commit:
 
 - The wrapper file `<name>.tsx` with rich JSDoc on the component and its props
@@ -66,7 +63,7 @@ A new wrapper requires, in the same commit:
 
 ### 5. Custom from scratch (rare)
 
-Only when nothing in Radix or shadcn covers the need. Document why in JSDoc on the component.
+Only when nothing in Radix covers the need. Document why in JSDoc on the component.
 
 ## Token usage
 
@@ -78,7 +75,11 @@ rg -n "^\s*--(color|radius|font|spacing)" src/styles/app.css
 
 Use Tailwind utility names that map to those CSS variables (`bg-primary`, `text-muted-foreground`, `rounded-md`, …). Never hand-write `dark:` overrides — semantic tokens swap automatically via the `.dark` class and `prefers-color-scheme`.
 
-For the canonical visual specification (gender colors, type scale, motion curves), see `docs/ui/design-system.md`. Drift rules (no hardcoded `oklch`/hex/rgb, no raw palette utilities for status, no `dark:` overrides) are enumerated in `.claude/skills/shadcn/SKILL.md` Styling rules — flag those when they appear outside `src/styles/`.
+For the canonical visual specification (gender colors, type scale, motion curves), see `docs/ui/design-system.md`. Drift rules to flag when they appear outside `src/styles/`:
+
+- No hardcoded `oklch()`, hex, `rgb()`, or `rgba()` color literals
+- No raw palette utilities for status (`text-red-500`, `bg-green-100`, …) — use semantic tokens (`text-destructive`, `bg-success`, …)
+- No `dark:` overrides — semantic tokens swap automatically
 
 ## Variants vs duplication
 
@@ -150,4 +151,3 @@ Quote real wrapper names from the live `src/components/ui/` listing — never na
 - i18n string review (`react-i18next` and the project's i18n rules cover that)
 - Type-level review of component props (covered by `typescript-standards`)
 - Storybook story shape (covered by `storybook-stories`)
-- shadcn CLI usage (covered by the `shadcn` skill)
