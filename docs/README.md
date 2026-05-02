@@ -18,7 +18,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-002: Frontend Stack](./decisions/adr-002-frontend-stack.md) — React, TypeScript, Vite, TanStack, Zustand
 - [ADR-003: Database Architecture](./decisions/adr-003-database-architecture.md) — Dual DB, string IDs, layer separation
 - [ADR-004: GEDCOM Libraries (in-app)](./decisions/adr-004-gedcom-libraries.md) — gedcom-parser and gedcom-date as in-app modules (@vata-apps/\*)
-- [ADR-005: UI Strategy](./decisions/adr-005-ui-strategy.md) — shadcn/ui as the UI foundation
+- [ADR-005: UI Strategy](./decisions/adr-005-ui-strategy.md) — Radix + Tailwind v4 + tailwind-variants
 - [ADR-006: Import/Export](./decisions/adr-006-import-export.md) — Two-phase import, round-trip export
 
 ## Architecture

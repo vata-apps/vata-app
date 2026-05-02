@@ -4,7 +4,7 @@
 
 Vata is a desktop application built with Tauri 2.0, combining a web frontend (React/TypeScript) and a native backend (Rust). The architecture follows a layered pattern for clear separation of responsibilities.
 
-The UI is built on shadcn/ui (Radix + Tailwind) with a shared design system.
+The UI is built on Radix primitives + Tailwind v4 (CSS-first) with custom wrappers under `src/components/ui/`, sharing a design system documented in [docs/ui/design-system.md](../ui/design-system.md).
 
 ```mermaid
 graph TD
@@ -40,7 +40,7 @@ graph TD
 - **Layouts**: Layout structures (MainLayout, etc.)
 - **Form windows**: Standalone native windows for create/edit flows (e.g. Create Person, Edit Person, Import GEDCOM). They load routes under `/standalone/` and render without MainLayout. Small in-window dialogs are used for unsaved-change and delete confirmations.
 
-**Technologies**: React 18, TanStack Router, shadcn/ui, Tailwind CSS, react-i18next.
+**Technologies**: React 18, TanStack Router, Radix primitives, Tailwind v4, tailwind-variants, react-i18next.
 
 ### 2. Hooks Layer (Data Access)
 

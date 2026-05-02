@@ -1,6 +1,6 @@
 # Design System
 
-> The design system is built on shadcn/ui + Tailwind CSS, with shared colors, typography, and components.
+> The design system is built on Tailwind v4 (CSS-first via `@theme`) with Radix primitives and `tailwind-variants`. Tokens, wrappers, and visual conventions are shared across the app.
 
 ## Design Principles
 
