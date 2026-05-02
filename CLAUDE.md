@@ -212,6 +212,19 @@ Before any edit on a new task, ask the user: **"simple branch or worktree?"** wi
 - Long task likely to span sessions or be interrupted
 - Need to keep `main` clean for parallel work
 
+## Step 1 — Sync `main`, then create the branch/worktree
+
+Every new branch and every new worktree MUST start from a `main` synced with `origin/main`. Exception: branch off something else only when the user explicitly says so; ask if unclear.
+
+From any branch, with a clean working tree:
+
+```bash
+git checkout main
+git pull --ff-only origin main
+```
+
+If the working tree has uncommitted changes or `main` cannot fast-forward, stop and ask the user — never stash, reset, or discard their work to satisfy this rule.
+
 ### Simple branch mode
 
 ```bash
@@ -222,6 +235,8 @@ git checkout -b <type>/<short-desc>
 ### Worktree mode
 
 **ALWAYS use the `EnterWorktree` tool. NEVER use `git worktree add` via Bash. NEVER use the `superpowers:using-git-worktrees` skill** — its `git worktree add` approach bypasses the session lifecycle that `ExitWorktree` relies on.
+
+`EnterWorktree` branches from current `HEAD`, so call it with `main` checked out (the sync above guarantees this).
 
 ## Branch naming
 
