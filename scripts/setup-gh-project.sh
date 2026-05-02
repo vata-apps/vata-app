@@ -63,6 +63,8 @@ done
 ensure_label() {
   local name="$1" color="$2" desc="$3"
   if echo "$EXISTING_LABELS" | grep -qx "$name"; then
+    gh label edit "$name" --repo "$ORG/$REPO" --color "$color" --description "$desc" >/dev/null
+    ok "reconciled label '$name'"
     return 0
   fi
   gh label create "$name" --repo "$ORG/$REPO" --color "$color" --description "$desc"
