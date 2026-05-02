@@ -312,17 +312,18 @@ The app includes `tauri-plugin-mcp-bridge` (debug builds only). You can launch t
 
 The following specialized skills are loaded automatically when relevant, or on demand via the skill tool.
 
-| Skill                  | Trigger                                                                                                               |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `sqlite-standards`     | When writing `src/db/**`, SQL queries, migrations, or DB-related docs                                                 |
-| `gedcom-standards`     | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code                                                       |
-| `docs-consistency`     | After any change to `docs/*.md`                                                                                       |
-| `typescript-standards` | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes)                                         |
-| `tauri-standards`      | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                                                                 |
-| `testing-standards`    | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure                                            |
-| `db-layer`             | When creating a new entity's DB operations in `src/db/trees/`                                                         |
-| `new-route`            | When adding a new page or entity view under `/tree/$treeId/`                                                          |
-| `storybook-stories`    | When touching anything under `src/components/ui/` (wrappers + their `*.stories.tsx`) or any `*.stories.tsx` elsewhere |
+| Skill                     | Trigger                                                                                                                                                                          |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sqlite-standards`        | When writing `src/db/**`, SQL queries, migrations, or DB-related docs                                                                                                            |
+| `gedcom-standards`        | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code                                                                                                                  |
+| `docs-consistency`        | After any change to `docs/*.md`                                                                                                                                                  |
+| `typescript-standards`    | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes)                                                                                                    |
+| `tauri-standards`         | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                                                                                                                            |
+| `testing-standards`       | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure                                                                                                       |
+| `db-layer`                | When creating a new entity's DB operations in `src/db/trees/`                                                                                                                    |
+| `new-route`               | When adding a new page or entity view under `/tree/$treeId/`                                                                                                                     |
+| `storybook-stories`       | When touching anything under `src/components/ui/` (wrappers + their `*.stories.tsx`) or any `*.stories.tsx` elsewhere                                                            |
+| `design-system-standards` | When designing or reviewing UI under `src/components/ui/`, `src/components/**`, or `src/pages/**` — decision tree for reuse / extend / create-new, token rules, audit heuristics |
 
 The UI layer is built on Tailwind v4 (CSS-first via `@theme` in `src/styles/app.css`) + Radix primitives + `tailwind-variants`. Wrappers live under `src/components/ui/` with colocated tests and Storybook stories. See `docs/ui/design-system.md` and `docs/ui/storybook.md`.
 
@@ -332,8 +333,9 @@ The UI layer is built on Tailwind v4 (CSS-first via `@theme` in `src/styles/app.
 
 The following agents can be dispatched as sub-agents for autonomous tasks.
 
-| Agent              | When to Dispatch                                                             |
-| ------------------ | ---------------------------------------------------------------------------- |
-| `docs-consistency` | After any change to `docs/*.md` — validates cross-references and consistency |
-| `code-reviewer`    | After implementing a feature — reviews code against project standards        |
-| `test-writer`      | Before implementing a feature — writes behavioral tests (TDD red phase)      |
+| Agent                  | When to Dispatch                                                                                                                                     |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs-consistency`     | After any change to `docs/*.md` — validates cross-references and consistency                                                                         |
+| `code-reviewer`        | After implementing a feature — reviews code against project standards                                                                                |
+| `test-writer`          | Before implementing a feature — writes behavioral tests (TDD red phase)                                                                              |
+| `design-system-expert` | When planning a feature/page from a mockup (Pencil `.pen`, image, text, route file), or when auditing the DS for duplication, dead components, drift |
