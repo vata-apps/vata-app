@@ -49,7 +49,7 @@ info "Reconciling labels in $ORG/$REPO..."
 EXISTING_LABELS=$(gh label list --repo "$ORG/$REPO" --limit 2000 --json name --jq '.[].name')
 
 # Delete labels that are no longer part of the taxonomy
-for label in "area:ui" "shadcn-cleanup" "tech-debt" "db" "ui" "tauri" "docs"; do
+for label in "area:ui" "tech-debt" "db" "ui" "tauri" "docs"; do
   if echo "$EXISTING_LABELS" | grep -qx "$label"; then
     if gh label delete "$label" --repo "$ORG/$REPO" --yes; then
       ok "deleted label '$label'"
