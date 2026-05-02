@@ -41,7 +41,6 @@ The application needs a UI foundation that is accessible, customizable, and fits
 
 - Wrappers are minimal and fully owned — no surprise upstream changes.
 - Tailwind v4 `@theme` keeps tokens, light/dark theming, and typography in a single CSS file.
-- Type-safe variants via `tv()` with no app-level helpers (`cn`/`clsx` are not direct dependencies; `tailwind-merge` is only pulled in transitively by `tailwind-variants`).
 - No external design dependency blocking progress.
 
 **Negative / Trade-offs**:
