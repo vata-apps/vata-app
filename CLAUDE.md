@@ -26,8 +26,8 @@ pnpm test             # Vitest watch mode
 pnpm test:coverage    # Coverage report (v8)
 
 # Review
-pnpm review           # CodeRabbit local review (uncommitted changes)
-pnpm review:all       # CodeRabbit full branch review (before PR)
+pnpm review           # CodeRabbit local review on uncommitted changes (on demand)
+pnpm review:all       # CodeRabbit local review on full branch diff (on demand)
 ```
 
 To run a single test file:
@@ -282,18 +282,9 @@ chore: upgrade drizzle-orm to 0.30.0
 Before creating a pull request (via `gh pr create`, any slash command that opens a PR, or any other means), the agent MUST:
 
 1. Run `/simplify` to launch the three-agent reuse / quality / efficiency review on the branch diff. Apply the fixes that are real issues; skip false positives and stylistic nits.
-2. Run `pnpm review:all` to get a CodeRabbit local review of the full branch diff.
-3. Address any **critical**, **high**, or **medium** severity CodeRabbit findings in new commits on the branch.
-4. Re-run `pnpm review:all` if meaningful fixes were made.
-5. Only then proceed to create the PR.
+2. Then create the PR.
 
-Run `/simplify` first: it catches duplication, dead abstractions, and concurrency issues that CodeRabbit doesn't focus on, and shrinks the diff CodeRabbit then reviews. Low-severity / nitpick CodeRabbit findings do not need to be addressed locally — let CodeRabbit raise them on the PR if it still sees them. The goal is to catch the issues that would otherwise trigger 5+ review rounds, not to reach a zero-finding local state.
-
-If `coderabbit` CLI is not installed (command not found), skip steps 2-4 and note it in the PR description so Steve knows to install it. Do NOT block the PR on tooling that isn't set up.
-
-If `pnpm review:all` fails because the CodeRabbit plan limit / rate limit is reached (look for messages mentioning quota, plan limit, rate limit, or HTTP 429), skip steps 2-4 and proceed to create the PR. Note in the PR description that CodeRabbit local review was skipped due to plan limit so Steve knows the cloud review is the only signal. Do NOT retry, do NOT block the PR.
-
-`/simplify` (step 1) does not depend on `coderabbit` and must always run.
+CodeRabbit reviews the PR automatically once it is opened — that is the canonical CodeRabbit pass. A local CodeRabbit run is **optional** and can be triggered on demand with `pnpm review` (uncommitted changes) or `pnpm review:all` (full branch diff); it is no longer a required pre-PR step.
 
 ---
 
