@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { getTreeById } from '$/db/system/trees';
 import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from '$/db/connection';
@@ -54,6 +55,17 @@ export const Route = createFileRoute('/tree/$treeId')({
     useEffect(() => {
       return () => {
         void closeTreeDb();
+      };
+    }, []);
+
+    useEffect(() => {
+      invoke('set_close_tree_enabled', { enabled: true }).catch((err) => {
+        console.error('Failed to enable Close Tree menu item:', err);
+      });
+      return () => {
+        invoke('set_close_tree_enabled', { enabled: false }).catch((err) => {
+          console.error('Failed to disable Close Tree menu item:', err);
+        });
       };
     }, []);
 
