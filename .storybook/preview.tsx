@@ -4,7 +4,6 @@ import { withThemeByClassName } from '@storybook/addon-themes';
 
 import i18n from '../src/i18n/config';
 import '../src/styles/app.css';
-import './preview.css';
 
 const preview: Preview = {
   parameters: {
