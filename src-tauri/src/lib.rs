@@ -105,14 +105,12 @@ fn build_app_menu<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Menu<R>> {
                     &PredefinedMenuItem::maximize(app, None)?,
                 ],
             )?,
+            #[cfg(not(target_os = "macos"))]
             &Submenu::with_items(
                 app,
                 "Help",
                 true,
-                &[
-                    #[cfg(not(target_os = "macos"))]
-                    &PredefinedMenuItem::about(app, None, Some(about_metadata))?,
-                ],
+                &[&PredefinedMenuItem::about(app, None, Some(about_metadata))?],
             )?,
         ],
     )
