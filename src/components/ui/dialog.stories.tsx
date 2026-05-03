@@ -13,6 +13,16 @@ const meta: Meta<DialogArgs> = {
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
+    a11y: {
+      // Radix's focus trap renders sentinel <span data-radix-focus-guard
+      // tabindex="0" aria-hidden="true">. axe-core's aria-hidden-focus rule
+      // can't tell that they exist precisely so the trap can catch focus
+      // exiting the dialog — they are NEVER announced or tab-stops in
+      // practice. Suppress the rule on Dialog stories.
+      config: {
+        rules: [{ id: 'aria-hidden-focus', enabled: false }],
+      },
+    },
   },
   argTypes: {
     size: { control: 'select', options: ['sm', 'md', 'lg'] },

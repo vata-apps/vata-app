@@ -16,7 +16,17 @@ const meta: Meta<SelectArgs> = {
   title: 'UI/Select',
   component: Select,
   tags: ['autodocs'],
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    a11y: {
+      // Radix's Select also renders focus-guard sentinels around its
+      // portalised listbox. See `dialog.stories.tsx` for the full
+      // rationale; suppress the same axe rule here.
+      config: {
+        rules: [{ id: 'aria-hidden-focus', enabled: false }],
+      },
+    },
+  },
   argTypes: {
     size: { control: 'select', options: ['sm', 'md', 'lg'] },
     invalid: { control: 'boolean' },

@@ -61,12 +61,14 @@
   --color-destructive: oklch(0.555 0.195 27);
   --color-destructive-foreground: oklch(0.985 0.012 85);
 
-  /* Status — success/warning/info */
-  --color-success: oklch(0.74 0.18 145);
+  /* Status — success/warning/info. Tuned to pass WCAG AA (4.5:1) when used
+     as a background fill paired with the cream foreground, and 3:1 when
+     used as a text colour on the cream `bg-background` card. */
+  --color-success: oklch(0.5 0.15 145);
   --color-success-foreground: oklch(0.985 0.012 85);
-  --color-warning: oklch(0.82 0.16 85);
-  --color-warning-foreground: oklch(0.22 0.028 45);
-  --color-info: oklch(0.69 0.16 245);
+  --color-warning: oklch(0.55 0.16 75);
+  --color-warning-foreground: oklch(0.985 0.012 85);
+  --color-info: oklch(0.5 0.15 245);
   --color-info-foreground: oklch(0.985 0.012 85);
 
   /* Popover surface — floating panels (Dialog content, Select listbox, etc.) */
