@@ -56,15 +56,7 @@ const preview: Preview = {
           void i18n.changeLanguage(locale);
         }
       }, [locale]);
-      // Wrap every story in a `bg-background` container so the per-story
-      // Docs card (which Storybook hard-codes to white) honours the
-      // selected theme. The standalone story page also inherits via the
-      // overrides in `./preview.css`.
-      return (
-        <div className="bg-background text-foreground">
-          <Story />
-        </div>
-      );
+      return <Story />;
     },
   ],
 };

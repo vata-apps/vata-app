@@ -1,20 +1,35 @@
 /*
   Storybook iframe surface overrides.
 
-  The story content already swaps to dark tokens via the `dark` class on
-  `<html>` (set by `@storybook/addon-themes`'s `withThemeByClassName`),
-  but the Storybook body container has its own light background that we
-  need to override so the canvas around centered/padded stories also
-  honours the active theme.
+  The story content swaps to dark tokens via the `dark` class on `<html>`
+  (set by `@storybook/addon-themes`'s `withThemeByClassName`), but
+  Storybook's chrome — body, root, docs preview cards, source-code
+  panels — has its own hard-coded light surfaces. Without these
+  overrides the canvas around a centered story stays light, and the
+  Docs page renders each story inside a white card.
 
-  We target Storybook's root container (`#storybook-root`) and the body
-  with the `sb-show-main` class — both are stable, project-agnostic
-  selectors.
+  Selectors below target Storybook's stable hooks:
+  - `html`, `body`, `#storybook-root`, `.sb-show-main` → standalone
+    story page (Canvas tab).
+  - `.sbdocs`, `.sbdocs-preview`, `.docs-story` → MDX Docs page wrapper
+    and per-story preview cards.
+  - `.sbdocs-content` → text/headings on the Docs page.
 */
 html,
 body,
 #storybook-root,
-.sb-show-main {
+.sb-show-main,
+.sbdocs,
+.sbdocs-preview,
+.docs-story {
   background: var(--color-background) !important;
-  color: var(--color-foreground);
+}
+
+html,
+body,
+#storybook-root,
+.sb-show-main,
+.sbdocs,
+.sbdocs-content {
+  color: var(--color-foreground) !important;
 }
