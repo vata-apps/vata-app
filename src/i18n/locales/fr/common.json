@@ -21,5 +21,17 @@
   "statusBar": {
     "debug": "Débogage",
     "preferences": "Préférences"
+  },
+  "preferences": {
+    "title": "Préférences",
+    "themeLabel": "Thème",
+    "themeLight": "Clair",
+    "themeDark": "Sombre",
+    "themeSystem": "Système",
+    "themeAriaLabel": "Choisir le thème",
+    "languageLabel": "Langue",
+    "languageEn": "English",
+    "languageFr": "Français",
+    "languageAriaLabel": "Choisir la langue"
   }
 }
