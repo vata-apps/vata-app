@@ -120,6 +120,30 @@ export const Sizes: Story = {
   },
 };
 
+export const WithHint: Story = {
+  parameters: { layout: 'padded' },
+  render: (args) => (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor="input-with-hint" className="text-foreground text-sm font-medium">
+        Tree name
+      </label>
+      <Input
+        {...args}
+        id="input-with-hint"
+        hint="Used as the database filename — letters, numbers, and dashes only."
+      />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByLabelText<HTMLInputElement>('Tree name');
+    const describedBy = input.getAttribute('aria-describedby');
+    await expect(describedBy).not.toBeNull();
+    const hint = canvas.getByText(/Used as the database filename/i);
+    await expect(hint.id).toBe(describedBy);
+  },
+};
+
 const types = ['text', 'email', 'url', 'tel', 'search', 'password'] as const;
 
 export const Types: Story = {

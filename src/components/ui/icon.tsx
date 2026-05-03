@@ -3,10 +3,13 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronRight,
+  Download,
+  FolderOpen,
   Pencil,
   Plus,
   Search,
   Trash2,
+  Upload,
   X,
   type LucideProps,
 } from 'lucide-react';
@@ -27,10 +30,13 @@ export const iconRegistry = {
   'arrow-right': ArrowRight,
   'chevron-down': ChevronDown,
   'chevron-right': ChevronRight,
+  download: Download,
+  'folder-open': FolderOpen,
   pencil: Pencil,
   plus: Plus,
   search: Search,
   trash: Trash2,
+  upload: Upload,
   x: X,
 } as const satisfies Record<string, ComponentType<LucideProps>>;
 

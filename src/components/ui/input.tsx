@@ -1,4 +1,4 @@
-import { forwardRef, type InputHTMLAttributes } from 'react';
+import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 /**
@@ -75,6 +75,14 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
    * consistent signal.
    */
   invalid?: boolean;
+
+  /**
+   * Optional help text rendered below the input. When provided, the input is
+   * wrapped in a small block container and `aria-describedby` is wired so
+   * assistive tech announces the hint after the field's accessible name.
+   * Pass localized content from the consumer — the wrapper does not own copy.
+   */
+  hint?: ReactNode;
 }
 
 /**
@@ -104,17 +112,46 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
  * <Input type="search" placeholder="Search trees" aria-label="Search trees" />
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
-  { type = 'text', size, invalid = false, className, ...props },
+  {
+    type = 'text',
+    size,
+    invalid = false,
+    hint,
+    className,
+    id,
+    'aria-describedby': ariaDescribedBy,
+    ...props
+  },
   ref
 ) {
-  return (
+  const reactId = useId();
+  const inputId = id ?? (hint ? `input-${reactId}` : undefined);
+  const hintId = hint ? `${inputId}-hint` : undefined;
+  const describedBy = [ariaDescribedBy, hintId].filter(Boolean).join(' ') || undefined;
+
+  const input = (
     <input
       ref={ref}
+      id={inputId}
       type={type}
       aria-invalid={invalid || undefined}
+      aria-describedby={describedBy}
       className={inputRecipe({ size, state: invalid ? 'error' : 'default', className })}
       {...props}
     />
+  );
+
+  if (!hint) {
+    return input;
+  }
+
+  return (
+    <div className="block">
+      {input}
+      <p id={hintId} className="text-muted-foreground mt-1 text-xs">
+        {hint}
+      </p>
+    </div>
   );
 });
 
