@@ -283,7 +283,7 @@ Before creating a pull request (via `gh pr create`, any slash command that opens
 
 Once the PR is open, `.github/workflows/claude-review.yml` runs automatically on `pull_request: opened` and on every `synchronize` (new commit). It calls the Claude API with persona-scoped skills loaded from `.claude/skills/**/SKILL.md` (the same skills Claude Code uses locally) and posts inline comments + a review status (`APPROVE` / `REQUEST_CHANGES` / `COMMENT`).
 
-The bot also evaluates replies on its own comments via `pull_request_review_comment: created`: it can mark a thread resolved (GraphQL), push back with a follow-up, or acknowledge silently. Configuration lives in `.github/code-review/persona-config.json` and prompt templates in `.github/code-review/prompts/`. The reviewer source is in `scripts/review/`.
+The bot also evaluates replies on its own comments via `pull_request_review_comment: created`: it can mark a thread resolved (GraphQL), push back with a follow-up, or acknowledge silently. Configuration lives in `.github/code-review/reviewers-config.json` and prompt templates in `.github/code-review/prompts/`. The reviewer source is in `scripts/review/`.
 
 ---
 
