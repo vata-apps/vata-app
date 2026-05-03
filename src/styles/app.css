@@ -61,13 +61,27 @@
   --color-destructive: oklch(0.555 0.195 27);
   --color-destructive-foreground: oklch(0.985 0.012 85);
 
+  /* Status — success/warning/info */
+  --color-success: oklch(0.74 0.18 145);
+  --color-success-foreground: oklch(0.985 0.012 85);
+  --color-warning: oklch(0.82 0.16 85);
+  --color-warning-foreground: oklch(0.22 0.028 45);
+  --color-info: oklch(0.69 0.16 245);
+  --color-info-foreground: oklch(0.985 0.012 85);
+
+  /* Popover surface — floating panels (Dialog content, Select listbox, etc.) */
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.22 0.028 45);
+
   /* Borders, inputs, focus ring */
   --color-border: oklch(0.22 0.028 45 / 12%);
   --color-input: oklch(0.22 0.028 45 / 14%);
   --color-ring: oklch(0.54 0.13 32);
 
-  /* Typography */
+  /* Typography — `Fraunces` and `Geist Mono` will fall back until self-hosted in ./fonts/ */
   --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Fraunces', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 
   /* Radii */
   --radius: 0.5rem;
@@ -75,6 +89,12 @@
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 5%);
+  --shadow-sm: 0 1px 3px 0 oklch(0 0 0 / 10%), 0 1px 2px -1px oklch(0 0 0 / 10%);
+  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 10%), 0 4px 6px -4px oklch(0 0 0 / 10%);
+  --shadow-inner: inset 0 2px 4px 0 oklch(0 0 0 / 5%);
 }
 
 /* ============================================================
@@ -100,6 +120,10 @@
     --dark-muted-foreground: oklch(0.78 0.042 70);
     --dark-accent: oklch(0.295 0.035 42);
     --dark-destructive: oklch(0.635 0.18 27);
+    --dark-success: oklch(0.7 0.18 145);
+    --dark-warning: oklch(0.78 0.16 85);
+    --dark-info: oklch(0.66 0.16 245);
+    --dark-popover: oklch(0.195 0.022 44);
     --dark-border: oklch(1 0 0 / 8%);
     --dark-input: oklch(1 0 0 / 12%);
   }
@@ -119,6 +143,14 @@
     --color-accent-foreground: oklch(0.985 0.012 85);
     --color-destructive: var(--dark-destructive);
     --color-destructive-foreground: oklch(0.985 0.012 85);
+    --color-success: var(--dark-success);
+    --color-success-foreground: oklch(0.155 0.02 42);
+    --color-warning: var(--dark-warning);
+    --color-warning-foreground: oklch(0.155 0.02 42);
+    --color-info: var(--dark-info);
+    --color-info-foreground: oklch(0.985 0.012 85);
+    --color-popover: var(--dark-popover);
+    --color-popover-foreground: var(--dark-foreground);
     --color-border: var(--dark-border);
     --color-input: var(--dark-input);
     --color-ring: var(--dark-primary);
@@ -140,6 +172,14 @@
       --color-accent-foreground: oklch(0.985 0.012 85);
       --color-destructive: var(--dark-destructive);
       --color-destructive-foreground: oklch(0.985 0.012 85);
+      --color-success: var(--dark-success);
+      --color-success-foreground: oklch(0.155 0.02 42);
+      --color-warning: var(--dark-warning);
+      --color-warning-foreground: oklch(0.155 0.02 42);
+      --color-info: var(--dark-info);
+      --color-info-foreground: oklch(0.985 0.012 85);
+      --color-popover: var(--dark-popover);
+      --color-popover-foreground: var(--dark-foreground);
       --color-border: var(--dark-border);
       --color-input: var(--dark-input);
       --color-ring: var(--dark-primary);
