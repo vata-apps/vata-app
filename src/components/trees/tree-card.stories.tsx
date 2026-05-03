@@ -3,7 +3,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { TreeCard, type TreeCardProps } from './tree-card';
 
-const labels = {
+const labels: TreeCardProps['labels'] = {
   open: 'Open',
   export: 'Export',
   edit: 'Rename',
@@ -11,6 +11,8 @@ const labels = {
   individuals: 'Individuals',
   families: 'Families',
   generations: 'Generations',
+  createdAt: 'Created',
+  lastAccessedAt: 'Last opened',
 };
 
 const meta = {
@@ -34,7 +36,7 @@ const defaultArgs: TreeCardProps = {
   name: 'Bourgoin family',
   description: "Started from grandpa's notebook in 2024.",
   stats: { individuals: 142, families: 58 },
-  meta: { createdAt: 'Created Jan 12, 2024', lastAccessedAt: 'Last opened 2h ago' },
+  meta: { createdAt: '2024-01-12', lastAccessedAt: '2026-04-11' },
   labels,
   onOpen: fn(),
   onExport: fn(),
@@ -47,6 +49,10 @@ export const Default: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Bourgoin family')).toBeInTheDocument();
+    await expect(canvas.getByText('Individuals')).toBeInTheDocument();
+    await expect(canvas.getByText('Families')).toBeInTheDocument();
+    await expect(canvas.getByText('Created')).toBeInTheDocument();
+    await expect(canvas.getByText('Last opened')).toBeInTheDocument();
     await userEvent.click(canvas.getByRole('button', { name: 'Open' }));
     await expect(args.onOpen).toHaveBeenCalledTimes(1);
   },

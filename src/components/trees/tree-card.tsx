@@ -2,18 +2,12 @@ import { type ReactNode } from 'react';
 import { tv } from 'tailwind-variants';
 
 import { Button } from '$components/ui/button';
-import { Icon } from '$components/ui/icon';
-import { StatGrid } from '$components/ui/stat-grid';
 
 const cardBase = tv({
-  base: ['flex flex-col gap-3 rounded-lg border bg-card p-4 transition-colors duration-150'],
-});
-
-const ctaCardBase = tv({
   base: [
-    'flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed bg-card p-4 text-center',
-    'text-muted-foreground transition-colors duration-150',
-    'hover:border-primary/40 hover:text-foreground',
+    'relative flex min-h-[220px] flex-col gap-3.5 rounded-xl border border-border bg-card p-[18px] pb-4',
+    'transition-colors duration-150',
+    'hover:border-foreground/20 hover:shadow-sm',
   ],
 });
 
@@ -28,18 +22,18 @@ export interface TreeCardStats {
 }
 
 /**
- * Metadata shown at the bottom of the card.
+ * Metadata shown in the card body. Values are pre-formatted by the caller.
  */
 export interface TreeCardMeta {
-  /** Localized "created at" caption (already formatted). */
+  /** Formatted "created at" value (e.g., a localised date string). */
   createdAt: ReactNode;
-  /** Localized "last accessed" caption (already formatted). */
+  /** Formatted "last accessed" value. */
   lastAccessedAt: ReactNode;
 }
 
 /**
- * Localized labels rendered as button accessible names. Required so
- * the wrapper does not own copy.
+ * Localized labels rendered inside the card. Required so the wrapper
+ * does not own copy.
  */
 export interface TreeCardLabels {
   open: string;
@@ -49,6 +43,8 @@ export interface TreeCardLabels {
   individuals: string;
   families: string;
   generations: string;
+  createdAt: string;
+  lastAccessedAt: string;
 }
 
 /**
@@ -59,11 +55,11 @@ export interface TreeCardProps {
   name: ReactNode;
   /** Optional tree description. */
   description?: ReactNode;
-  /** Counts displayed in the StatGrid. */
+  /** Counts displayed in the stats row. */
   stats: TreeCardStats;
   /** Created/last-accessed metadata. */
   meta: TreeCardMeta;
-  /** Localized accessible names for the action buttons and stat labels. */
+  /** Localized labels for stats, metadata keys, and action buttons. */
   labels: TreeCardLabels;
   /** Called when the user clicks "Open". */
   onOpen: () => void;
@@ -75,17 +71,59 @@ export interface TreeCardProps {
   onDelete: () => void;
 }
 
+interface StatProps {
+  value: ReactNode;
+  label: ReactNode;
+}
+
+function Stat({ value, label }: StatProps): JSX.Element {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <span className="font-mono text-lg leading-none font-medium tabular-nums tracking-tight">
+        {value}
+      </span>
+      <span className="text-muted-foreground font-mono text-[10px] leading-none tracking-wider uppercase">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function StatDivider(): JSX.Element {
+  return <span aria-hidden className="bg-border h-6 w-px flex-none" />;
+}
+
+interface MetaRowProps {
+  label: ReactNode;
+  value: ReactNode;
+}
+
+function MetaRow({ label, value }: MetaRowProps): JSX.Element {
+  return (
+    <div className="flex items-center gap-2 font-mono text-[11.5px] leading-snug">
+      <span className="text-muted-foreground w-[120px] flex-none whitespace-nowrap">{label}</span>
+      <span className="text-foreground tabular-nums">{value}</span>
+    </div>
+  );
+}
+
 /**
  * Domain card representing one family tree on the home page.
  *
  * Lives outside `src/components/ui/` because it is genealogy-domain
- * specific — it composes generic UI primitives (Button, Icon, StatGrid)
- * but has its own data shape and call sites. For the "Add a new tree"
- * tile, use the dedicated {@link TreeCardCta} component instead — they
- * share no real runtime code, only family resemblance.
+ * specific — it composes generic UI primitives (Button) but has its
+ * own data shape and call sites. For the "Add a new tree" tile, use
+ * the dedicated `TreeCardCta` component instead — they share no real
+ * runtime code, only family resemblance.
  *
  * All textual content (name, description, button labels, meta) must be
  * localized by the caller; this component does not own copy.
+ *
+ * Visual layout (top-to-bottom):
+ * 1. Title row — serif italic name + 2-line clamped description.
+ * 2. Stats row — inline figures (individuals, families, optional generations) separated by vertical rules.
+ * 3. Meta block — dashed top border, mono key/value rows (created, last opened).
+ * 4. Action row — outline "Open" button (flex-1) followed by ghost icon-only buttons (export, edit, delete).
  *
  * @example
  * <TreeCard
@@ -94,13 +132,15 @@ export interface TreeCardProps {
  *   stats={{ individuals: 142, families: 58 }}
  *   meta={{ createdAt: '2024-01-12', lastAccessedAt: '2 hours ago' }}
  *   labels={{
- *     open: t('trees.open'),
- *     export: t('trees.export'),
- *     edit: t('trees.edit'),
- *     delete: t('trees.delete'),
- *     individuals: t('trees.stats.individuals'),
- *     families: t('trees.stats.families'),
- *     generations: t('trees.stats.generations'),
+ *     open: t('card.open'),
+ *     export: t('card.export'),
+ *     edit: t('card.edit'),
+ *     delete: t('card.delete'),
+ *     individuals: t('card.individuals'),
+ *     families: t('card.families'),
+ *     generations: t('card.generations'),
+ *     createdAt: t('card.createdAt'),
+ *     lastAccessedAt: t('card.lastAccessedAt'),
  *   }}
  *   onOpen={...} onExport={...} onEdit={...} onDelete={...}
  * />
@@ -116,74 +156,57 @@ export function TreeCard({
   onEdit,
   onDelete,
 }: TreeCardProps): JSX.Element {
-  const items = [
-    { value: stats.individuals, label: labels.individuals },
-    { value: stats.families, label: labels.families },
-  ];
-  if (stats.generations != null) {
-    items.push({ value: stats.generations, label: labels.generations });
-  }
-
   return (
-    <article className={`${cardBase()} border-border hover:border-primary/40`}>
-      <header className="flex items-start justify-between gap-2">
-        <div className="flex flex-col gap-0.5">
-          <h3 className="text-foreground text-base font-semibold leading-tight">{name}</h3>
-          {description && (
-            <p className="text-muted-foreground text-xs leading-snug">{description}</p>
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="sm" hideLabel leadingIcon="download" onClick={onExport}>
-            {labels.export}
-          </Button>
-          <Button variant="ghost" size="sm" hideLabel leadingIcon="pencil" onClick={onEdit}>
-            {labels.edit}
-          </Button>
-          <Button variant="ghost" size="sm" hideLabel leadingIcon="trash" onClick={onDelete}>
-            {labels.delete}
-          </Button>
-        </div>
-      </header>
+    <article className={cardBase()}>
+      <div className="flex min-w-0 flex-col gap-1">
+        <h3 className="text-foreground truncate font-serif text-[19px] leading-tight font-medium tracking-tight italic">
+          {name}
+        </h3>
+        {description && (
+          <p className="text-muted-foreground line-clamp-2 text-[13px] leading-snug">
+            {description}
+          </p>
+        )}
+      </div>
 
-      <StatGrid items={items} cols={items.length === 3 ? 3 : 2} />
+      <div className="flex items-center gap-2.5">
+        <Stat value={stats.individuals} label={labels.individuals} />
+        <StatDivider />
+        <Stat value={stats.families} label={labels.families} />
+        {stats.generations != null && (
+          <>
+            <StatDivider />
+            <Stat value={stats.generations} label={labels.generations} />
+          </>
+        )}
+      </div>
 
-      <footer className="flex items-center justify-between gap-2 border-t border-border pt-3">
-        <div className="flex flex-col gap-0.5 text-xs">
-          <span className="text-muted-foreground">{meta.createdAt}</span>
-          <span className="text-muted-foreground">{meta.lastAccessedAt}</span>
-        </div>
-        <Button variant="outline" size="sm" trailingIcon="arrow-right" onClick={onOpen}>
+      <div className="border-border flex flex-col gap-1 border-t border-dashed pt-2.5">
+        <MetaRow label={labels.createdAt} value={meta.createdAt} />
+        <MetaRow label={labels.lastAccessedAt} value={meta.lastAccessedAt} />
+      </div>
+
+      <div className="mt-auto flex items-center gap-1.5 pt-2.5">
+        <Button
+          variant="outline"
+          size="sm"
+          leadingIcon="folder-open"
+          trailingIcon="arrow-right"
+          onClick={onOpen}
+          className="flex-1"
+        >
           {labels.open}
         </Button>
-      </footer>
+        <Button variant="ghost" size="sm" hideLabel leadingIcon="download" onClick={onExport}>
+          {labels.export}
+        </Button>
+        <Button variant="ghost" size="sm" hideLabel leadingIcon="pencil" onClick={onEdit}>
+          {labels.edit}
+        </Button>
+        <Button variant="ghost" size="sm" hideLabel leadingIcon="trash" onClick={onDelete}>
+          {labels.delete}
+        </Button>
+      </div>
     </article>
-  );
-}
-
-/**
- * Props accepted by {@link TreeCardCta}.
- */
-export interface TreeCardCtaProps {
-  /** Localized label for the CTA tile. */
-  label: ReactNode;
-  /** Called when the CTA is clicked. */
-  onClick: () => void;
-}
-
-/**
- * Dashed CTA tile used as the last cell of the trees grid to trigger
- * "Add a new tree". Renders as a `<button>` so it is keyboard-focusable
- * and announced as a button by screen readers.
- *
- * @example
- * <TreeCardCta label={t('trees.new')} onClick={() => navigate('/new')} />
- */
-export function TreeCardCta({ label, onClick }: TreeCardCtaProps): JSX.Element {
-  return (
-    <button type="button" onClick={onClick} className={ctaCardBase()}>
-      <Icon name="plus" size={24} />
-      <span className="text-sm font-medium">{label}</span>
-    </button>
   );
 }
