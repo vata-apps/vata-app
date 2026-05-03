@@ -10,17 +10,15 @@ permissions:
   contents: read
   pull-requests: write
 
-# Group key includes event_name so review and reply jobs don't block each other.
-# cancel-in-progress: false because the second push's review depends on the first's
-# state-marker write — the runs serialize within the group rather than racing, so
-# the second pass reads the SHA the first pass posted and only diffs the new commit.
-concurrency:
-  group: claude-review-${{ github.event.pull_request.number }}-${{ github.event_name }}
-  cancel-in-progress: false
-
 jobs:
   review:
     if: github.event_name == 'pull_request' && github.actor != 'github-actions[bot]'
+    # Review jobs serialize per PR: the second push's run depends on the first's
+    # state-marker write, so cancel-in-progress: false keeps both runs queued.
+    # The second pass reads the SHA the first wrote and only diffs the new commit.
+    concurrency:
+      group: claude-review-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -55,6 +53,12 @@ jobs:
 
   reply:
     if: github.event_name == 'pull_request_review_comment' && github.actor != 'github-actions[bot]'
+    # Per-comment concurrency so a batch of replies on different comments doesn't
+    # cancel each other out. cancel-in-progress: true on same-comment edits keeps
+    # only the latest evaluation.
+    concurrency:
+      group: claude-review-reply-${{ github.event.comment.id }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
