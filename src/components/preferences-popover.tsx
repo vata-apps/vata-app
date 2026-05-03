@@ -62,7 +62,7 @@ export function PreferencesPopover({ children }: PreferencesPopoverProps): JSX.E
           {t('preferences.title')}
         </h2>
 
-        <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col items-start gap-1.5">
           <span className="text-muted-foreground font-mono text-[10.5px] tracking-wider uppercase">
             {t('preferences.themeLabel')}
           </span>
@@ -77,7 +77,7 @@ export function PreferencesPopover({ children }: PreferencesPopoverProps): JSX.E
           />
         </div>
 
-        <div className="mt-4 flex flex-col gap-1.5">
+        <div className="mt-4 flex flex-col items-start gap-1.5">
           <span className="text-muted-foreground font-mono text-[10.5px] tracking-wider uppercase">
             {t('preferences.languageLabel')}
           </span>
