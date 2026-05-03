@@ -59,10 +59,19 @@ function readEnv(): Env {
     githubToken: process.env.GITHUB_TOKEN!,
     repo: process.env.REPO!,
     prNumber: parseIntEnv('PR_NUMBER'),
-    baseSha: process.env.BASE_SHA!,
-    headSha: process.env.HEAD_SHA!,
+    baseSha: requireSha('BASE_SHA'),
+    headSha: requireSha('HEAD_SHA'),
     repoRoot,
   };
+}
+
+function requireSha(name: string): string {
+  const v = process.env[name];
+  if (!v) throw new Error(`Missing env: ${name}`);
+  if (!SHA_RE.test(v)) {
+    throw new Error(`Env ${name} must be a 40-char hex SHA, got ${JSON.stringify(v)}`);
+  }
+  return v;
 }
 
 function gitChangedFiles(repoRoot: string, fromSha: string, toSha: string): string[] {
@@ -136,12 +145,17 @@ function parseAddressableLines(diff: string): Map<string, Set<number>> {
   return out;
 }
 
+const SHA_RE = /^[0-9a-f]{40}$/i;
+
 /**
- * Returns true if `sha` is a known revision in the repo AND an ancestor of `head`.
- * After force-push or rebase, a previously-recorded SHA can be missing or no
- * longer reachable from HEAD; trusting it would break `git diff <sha>..HEAD`.
+ * Returns true if `sha` is a 40-char hex SHA, exists in the local repo, AND
+ * is an ancestor of `head`. After force-push or rebase the SHA may be missing
+ * or no longer reachable from HEAD; trusting it would break `git diff`. The
+ * regex check also blocks crafted strings (e.g. `--upload-pack=...`) that git
+ * could otherwise interpret as a flag.
  */
 function isAncestor(repoRoot: string, sha: string, head: string): boolean {
+  if (!SHA_RE.test(sha) || !SHA_RE.test(head)) return false;
   try {
     execFileSync('git', ['cat-file', '-e', `${sha}^{commit}`], {
       cwd: repoRoot,
