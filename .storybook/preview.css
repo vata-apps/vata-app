@@ -1,0 +1,37 @@
+/*
+  Storybook iframe surface overrides.
+
+  The story content swaps to dark tokens via the `dark` class on `<html>`
+  (set by `@storybook/addon-themes`'s `withThemeByClassName`), but
+  Storybook's chrome — body, root, and the per-story preview cards on
+  the Docs page — has its own hard-coded light surfaces. Without these
+  overrides, dark theme leaves a grey/white card around every story
+  while the component itself renders correctly.
+
+  Selectors below target Storybook 10's actual DOM hooks. Discovered by
+  probing the docs iframe and grepping for elements with light
+  computed backgrounds:
+  - `html`, `body`, `#storybook-root`, `.sb-show-main` → standalone
+    Canvas tab.
+  - `.sb-previewBlock`, `.sb-wrapper`, `.sb-preparing-story`,
+    `.sb-preparing-docs` → Docs page per-story preview cards and
+    loading wrappers.
+*/
+html,
+body,
+#storybook-root,
+.sb-show-main,
+.sb-previewBlock,
+.sb-wrapper,
+.sb-preparing-story,
+.sb-preparing-docs {
+  background: var(--color-background) !important;
+}
+
+html,
+body,
+#storybook-root,
+.sb-show-main,
+.sb-previewBlock {
+  color: var(--color-foreground) !important;
+}
