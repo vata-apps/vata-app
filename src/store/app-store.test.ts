@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { useAppStore } from './app-store';
 
 beforeEach(() => {
-  useAppStore.setState({ currentTreeId: null });
+  useAppStore.setState({ currentTreeId: null, theme: 'system' });
 });
 
 describe('app store — active tree', () => {
@@ -25,5 +25,18 @@ describe('app store — active tree', () => {
     useAppStore.getState().setCurrentTree('5');
     useAppStore.getState().setCurrentTree(null);
     expect(useAppStore.getState().currentTreeId).toBeNull();
+  });
+});
+
+describe('app store — theme', () => {
+  it("defaults to 'system'", () => {
+    expect(useAppStore.getState().theme).toBe('system');
+  });
+
+  it('updates when setTheme is called', () => {
+    useAppStore.getState().setTheme('dark');
+    expect(useAppStore.getState().theme).toBe('dark');
+    useAppStore.getState().setTheme('light');
+    expect(useAppStore.getState().theme).toBe('light');
   });
 });

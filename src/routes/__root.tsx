@@ -1,6 +1,8 @@
 import { createRootRoute, Outlet, type ErrorComponentProps } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
+import { useApplyAppPreferences } from '$hooks/useApplyAppPreferences';
+
 function RootErrorComponent({ error }: ErrorComponentProps): JSX.Element {
   const { t } = useTranslation('common');
   return (
@@ -13,6 +15,7 @@ function RootErrorComponent({ error }: ErrorComponentProps): JSX.Element {
 }
 
 function RootComponent(): JSX.Element {
+  useApplyAppPreferences();
   return <Outlet />;
 }
 
