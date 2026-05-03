@@ -1,6 +1,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  Bug,
   ChevronDown,
   ChevronRight,
   Download,
@@ -8,6 +9,7 @@ import {
   Pencil,
   Plus,
   Search,
+  Settings,
   Trash2,
   Upload,
   X,
@@ -28,6 +30,7 @@ import { forwardRef, type ComponentType } from 'react';
 export const iconRegistry = {
   'arrow-left': ArrowLeft,
   'arrow-right': ArrowRight,
+  bug: Bug,
   'chevron-down': ChevronDown,
   'chevron-right': ChevronRight,
   download: Download,
@@ -35,6 +38,7 @@ export const iconRegistry = {
   pencil: Pencil,
   plus: Plus,
   search: Search,
+  settings: Settings,
   trash: Trash2,
   upload: Upload,
   x: X,

@@ -17,5 +17,9 @@
     "loadFailed": "Échec du chargement des données.",
     "reload": "Recharger",
     "failedToOpenDatabase": "Échec de l'ouverture de la base de données"
+  },
+  "statusBar": {
+    "debug": "Débogage",
+    "preferences": "Préférences"
   }
 }

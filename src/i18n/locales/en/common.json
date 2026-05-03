@@ -17,5 +17,9 @@
     "loadFailed": "Failed to load data.",
     "reload": "Reload",
     "failedToOpenDatabase": "Failed to open database"
+  },
+  "statusBar": {
+    "debug": "Debug",
+    "preferences": "Preferences"
   }
 }
