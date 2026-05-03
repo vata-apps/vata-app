@@ -136,6 +136,27 @@ function parseAddressableLines(diff: string): Map<string, Set<number>> {
   return out;
 }
 
+/**
+ * Returns true if `sha` is a known revision in the repo AND an ancestor of `head`.
+ * After force-push or rebase, a previously-recorded SHA can be missing or no
+ * longer reachable from HEAD; trusting it would break `git diff <sha>..HEAD`.
+ */
+function isAncestor(repoRoot: string, sha: string, head: string): boolean {
+  try {
+    execFileSync('git', ['cat-file', '-e', `${sha}^{commit}`], {
+      cwd: repoRoot,
+      stdio: 'ignore',
+    });
+    execFileSync('git', ['merge-base', '--is-ancestor', sha, head], {
+      cwd: repoRoot,
+      stdio: 'ignore',
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function buildDiffSummary(
   repoRoot: string,
   fromSha: string,
@@ -177,7 +198,15 @@ async function main(): Promise<void> {
     listReviewComments(octokit, ctx),
   ]);
   const summary = findExistingSummary(issueComments);
-  const previousSha = summary?.state?.sha ?? null;
+  const persistedSha = summary?.state?.sha ?? null;
+  const previousSha =
+    persistedSha && isAncestor(env.repoRoot, persistedSha, env.headSha) ? persistedSha : null;
+  if (persistedSha && !previousSha) {
+    console.log(
+      `Persisted SHA ${persistedSha.slice(0, 7)} is no longer reachable from HEAD ` +
+        `(force-push or rebase?) — falling back to base SHA.`
+    );
+  }
   const fromSha = previousSha ?? env.baseSha;
 
   console.log(
@@ -216,6 +245,13 @@ async function main(): Promise<void> {
   const reviewerPromptPath = join(env.repoRoot, '.github', 'code-review', 'prompts', 'reviewer.md');
   const systemPromptTemplate = await readFile(reviewerPromptPath, 'utf8');
 
+  // Compute the addressable-lines map ONCE from the full diff so each reviewer
+  // can validate its post_review_comment anchors at tool-call time and Claude
+  // can self-correct via tool errors instead of having comments silently
+  // dropped post-orchestrator.
+  const fullDiff = gitDiff(env.repoRoot, fromSha, env.headSha, changedFiles);
+  const addressableLines = parseAddressableLines(fullDiff);
+
   const reviewerResults = await Promise.all(
     matched.map(async (m) => {
       const reviewerContext = await buildReviewerContext(env.repoRoot, m.spec);
@@ -224,7 +260,7 @@ async function main(): Promise<void> {
         return {
           reviewerName: m.name,
           comments: [],
-          verdict: { event: 'APPROVE' as const, summary: 'No diff to review.' },
+          verdict: { event: 'COMMENT' as const, summary: 'No diff to review.' },
           iterations: 0,
           truncated: false,
         };
@@ -238,6 +274,7 @@ async function main(): Promise<void> {
         diff,
         changedFiles: m.matchedFiles,
         systemPromptTemplate,
+        addressableLines,
       });
     })
   );
@@ -306,11 +343,13 @@ async function main(): Promise<void> {
     );
   }
 
-  const fullDiff = gitDiff(env.repoRoot, fromSha, env.headSha, changedFiles);
-  const addressable = parseAddressableLines(fullDiff);
+  // Defense in depth — runReviewer already validates anchors at tool-call
+  // time, but if a reviewer ignored the tool error or the orchestrator kept a
+  // bogus comment somehow, this stops the bad anchor from tanking the whole
+  // batch with a 422 from GitHub's createReview.
   const beforeFilter = keptFindings.length;
   keptFindings = keptFindings.filter((f) => {
-    const lines = addressable.get(f.path);
+    const lines = addressableLines.get(f.path);
     if (!lines || !lines.has(f.line)) {
       console.warn(
         `Dropping comment from ${f.reviewer}: ${f.path}:${f.line} not in diff (ruleId=${f.ruleId})`
@@ -323,15 +362,14 @@ async function main(): Promise<void> {
     console.log(`Diff-validity filter: kept ${keptFindings.length}/${beforeFilter} findings`);
   }
 
-  const dedupeKeys = dedupeKeysFromExisting(existingReviewComments);
-  const aggregated: PostReviewCommentInput[] = [];
+  // Severity counts must reflect ALL kept findings, not just the new ones.
+  // Otherwise dedup-against-existing silently demotes the verdict on re-runs:
+  // a high-severity finding posted on an earlier commit would be dedup'd here
+  // and stop contributing to totals → final event flips REQUEST_CHANGES → COMMENT
+  // even though the issue still stands.
   const totals = emptyCounts();
   const reviewerCountsMap = new Map<string, SeverityCounts>();
-
   for (const f of keptFindings) {
-    const key = commentDedupKey({ path: f.path, line: f.line, ruleId: f.ruleId });
-    if (dedupeKeys.has(key)) continue;
-    dedupeKeys.add(key);
     let counts = reviewerCountsMap.get(f.reviewer);
     if (!counts) {
       counts = emptyCounts();
@@ -339,6 +377,14 @@ async function main(): Promise<void> {
     }
     bumpCount(counts, f.severity);
     bumpCount(totals, f.severity);
+  }
+
+  const dedupeKeys = dedupeKeysFromExisting(existingReviewComments);
+  const aggregated: PostReviewCommentInput[] = [];
+  for (const f of keptFindings) {
+    const key = commentDedupKey({ path: f.path, line: f.line, ruleId: f.ruleId });
+    if (dedupeKeys.has(key)) continue;
+    dedupeKeys.add(key);
     const { reviewer: _reviewer, ...comment } = f;
     aggregated.push({
       ...comment,

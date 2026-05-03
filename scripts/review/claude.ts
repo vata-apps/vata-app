@@ -28,6 +28,12 @@ export interface ReviewerInput {
   diff: string;
   changedFiles: readonly string[];
   systemPromptTemplate: string;
+  /**
+   * Optional per-file set of RIGHT-side line numbers that GitHub will accept
+   * as comment anchors. When provided, post_review_comment calls outside this
+   * set return a tool_result error so Claude can retry with a valid line.
+   */
+  addressableLines?: Map<string, Set<number>>;
 }
 
 export interface ReviewerOutput {
@@ -106,6 +112,18 @@ export async function runReviewer(
             content: `Invalid input: ${parsed.error.message}`,
           });
           continue;
+        }
+        if (input.addressableLines) {
+          const lines = input.addressableLines.get(parsed.data.path);
+          if (!lines || !lines.has(parsed.data.line)) {
+            toolResults.push({
+              type: 'tool_result',
+              tool_use_id: block.id,
+              is_error: true,
+              content: `Line ${parsed.data.line} of ${parsed.data.path} is not in the diff (GitHub will reject it). Pick a line that appears in a hunk you can see in the diff.`,
+            });
+            continue;
+          }
         }
         const count = perFileCount.get(parsed.data.path) ?? 0;
         if (count >= MAX_COMMENTS_PER_FILE) {

@@ -26,7 +26,7 @@ Then call `submit_orchestration(summary)` exactly once with a 1-2 sentence summa
 ## Hard rules
 
 - **Never drop `critical` severity.** Always keep.
-- **For `high`:** drop only if a same-line, same-rule duplicate from another reviewer exists. The other reviewer's version stays.
+- **For `high`:** drop only if another reviewer has flagged the same concern at the same line (same-line, semantically-similar bodies — the ruleIds may differ since each reviewer prefixes its own domain). The more specific reviewer's version stays.
 - **Never modify comment bodies.** You can only keep or drop. The downstream pipeline posts comments verbatim.
 - **Every finding gets exactly one decision.** No skipping. The system rejects `submit_orchestration` while any finding is undecided.
 - **One tool call per finding, plus one final `submit_orchestration`.** If you call `keep_comment(5)` twice, the second call is rejected.
