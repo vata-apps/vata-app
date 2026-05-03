@@ -17,22 +17,26 @@ export interface AppStatusBarProps {
    * Visual only — registering the shortcut is the caller's responsibility.
    */
   debugShortcut?: ReactNode;
-  /** Localized label for the preferences button. */
-  preferencesLabel: string;
   /** Called when the debug button is clicked. */
   onDebugClick: () => void;
-  /** Called when the preferences button is clicked. */
-  onPreferencesClick: () => void;
+  /**
+   * Slot rendered in place of a default Preferences button. Typically
+   * a `Popover.Trigger` wrapping a Button so the caller can fully
+   * compose the popover behavior. Required so this wrapper does not
+   * own the preferences UI.
+   */
+  preferencesTrigger: ReactNode;
 }
 
 /**
  * Horizontal status bar pinned at the bottom of the app shell. Shows
- * the brand + version on the left and Debug / Preferences buttons on
- * the right. Owns no copy — every label is supplied by the caller.
+ * the brand + version on the left, a Debug button (with optional
+ * keyboard chip) and a caller-provided preferences trigger on the
+ * right.
  *
- * Composes {@link Button} (outline, sm) so the buttons stay consistent
- * with the rest of the design system. The debug button accepts an
- * optional keyboard-shortcut chip rendered after the label.
+ * Owns no copy — every label is supplied by the caller. The
+ * preferences slot is fully delegated so the caller controls the
+ * popover/dropdown/dialog that opens on click.
  *
  * @example
  * <AppStatusBar
@@ -40,9 +44,14 @@ export interface AppStatusBarProps {
  *   version={packageJson.version}
  *   debugLabel={t('common:statusBar.debug')}
  *   debugShortcut="⌘D"
- *   preferencesLabel={t('common:statusBar.preferences')}
  *   onDebugClick={openDebugPanel}
- *   onPreferencesClick={openPreferences}
+ *   preferencesTrigger={
+ *     <PreferencesPopover>
+ *       <Button variant="outline" size="sm" leadingIcon="settings">
+ *         {t('common:statusBar.preferences')}
+ *       </Button>
+ *     </PreferencesPopover>
+ *   }
  * />
  */
 export function AppStatusBar({
@@ -50,9 +59,8 @@ export function AppStatusBar({
   version,
   debugLabel,
   debugShortcut,
-  preferencesLabel,
   onDebugClick,
-  onPreferencesClick,
+  preferencesTrigger,
 }: AppStatusBarProps): JSX.Element {
   return (
     <footer className="border-border bg-background text-muted-foreground flex h-[52px] items-center gap-3.5 border-t px-[18px] font-mono text-[11px]">
@@ -75,15 +83,7 @@ export function AppStatusBar({
         )}
       </Button>
       <span aria-hidden>·</span>
-      <Button
-        variant="outline"
-        size="sm"
-        leadingIcon="settings"
-        onClick={onPreferencesClick}
-        className="font-mono"
-      >
-        {preferencesLabel}
-      </Button>
+      {preferencesTrigger}
     </footer>
   );
 }

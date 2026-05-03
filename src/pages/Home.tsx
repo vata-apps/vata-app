@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import packageJson from '../../package.json';
 import { AppStatusBar } from '$components/app-status-bar';
+import { PreferencesPopover } from '$components/preferences-popover';
 import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
 import { TreeCardCta } from '$components/trees/tree-card-cta';
 import { TreeSectionDivider } from '$components/trees/tree-section-divider';
@@ -175,9 +176,14 @@ export function HomePage(): JSX.Element {
         version={packageJson.version}
         debugLabel={t('common:statusBar.debug')}
         debugShortcut="⌘D"
-        preferencesLabel={t('common:statusBar.preferences')}
         onDebugClick={comingSoon}
-        onPreferencesClick={comingSoon}
+        preferencesTrigger={
+          <PreferencesPopover>
+            <Button variant="outline" size="sm" leadingIcon="settings" className="font-mono">
+              {t('common:statusBar.preferences')}
+            </Button>
+          </PreferencesPopover>
+        }
       />
     </div>
   );

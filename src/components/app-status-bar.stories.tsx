@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { AppStatusBar } from './app-status-bar';
+import { Button } from './ui/button';
 
 const meta = {
   title: 'App/AppStatusBar',
@@ -12,9 +13,12 @@ const meta = {
     brandLabel: 'Vata',
     version: '0.1.0',
     debugLabel: 'Debug',
-    preferencesLabel: 'Preferences',
     onDebugClick: fn(),
-    onPreferencesClick: fn(),
+    preferencesTrigger: (
+      <Button variant="outline" size="sm" leadingIcon="settings" className="font-mono">
+        Preferences
+      </Button>
+    ),
   },
 } satisfies Meta<typeof AppStatusBar>;
 
@@ -41,15 +45,13 @@ export const WithShortcut: Story = {
   },
 };
 
-export const ButtonsFire: Story = {
+export const DebugFires: Story = {
   args: {
     debugShortcut: '⌘D',
   },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: /Debug/ }));
-    await userEvent.click(canvas.getByRole('button', { name: /Preferences/ }));
     await expect(args.onDebugClick).toHaveBeenCalledTimes(1);
-    await expect(args.onPreferencesClick).toHaveBeenCalledTimes(1);
   },
 };
