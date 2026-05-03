@@ -7,5 +7,34 @@
   "openingDb": "Ouverture de la base de données...",
   "newTree": "Nouvel arbre",
   "search": "Rechercher des arbres",
-  "searchPlaceholder": "Filtrer par nom"
+  "searchPlaceholder": "Filtrer par nom",
+  "home": {
+    "title": "Vos arbres",
+    "titleAccent": "généalogiques",
+    "heroNew": "Nouvel arbre",
+    "heroImport": "Importer GEDCOM",
+    "sectionLabel": "Vos arbres",
+    "sortAriaLabel": "Trier les arbres",
+    "sortRecent": "Récent",
+    "sortName": "Nom",
+    "sortSize": "Taille"
+  },
+  "card": {
+    "open": "Ouvrir",
+    "export": "Exporter",
+    "edit": "Renommer",
+    "delete": "Supprimer",
+    "individuals": "Individus",
+    "families": "Familles",
+    "generations": "Générations",
+    "createdAt": "Créé",
+    "lastAccessedAt": "Dernier accès"
+  },
+  "cta": {
+    "title": "Démarrer un nouvel arbre",
+    "subtitle": "Ou glissez-déposez un fichier .ged"
+  },
+  "actions": {
+    "comingSoon": "Bientôt."
+  }
 }
