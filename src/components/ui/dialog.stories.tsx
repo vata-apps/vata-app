@@ -77,12 +77,20 @@ export const Default: Story = {
   },
 };
 
+// Every Dialog story renders into the same document.body via Radix's
+// Portal. On the autodocs page Storybook stacks every story into a
+// single MDX page, so without `docs.disable` on the variants below we
+// would render N dialogs simultaneously and they'd all overlap. Keep
+// the canonical "Default" story visible in autodocs and hide the rest.
+const HIDE_FROM_DOCS = { docs: { disable: true } } as const;
+
 export const Small: Story = {
   args: {
     size: 'sm',
     title: 'Confirm',
     description: 'This action cannot be undone.',
   },
+  parameters: HIDE_FROM_DOCS,
   render: (args) => (
     <DialogHarness
       {...args}
@@ -102,6 +110,7 @@ export const Large: Story = {
     title: 'Import GEDCOM',
     description: 'Drop a .ged file or pick one from disk to scan it before import.',
   },
+  parameters: HIDE_FROM_DOCS,
   render: (args) => (
     <DialogHarness
       {...args}
@@ -126,6 +135,7 @@ export const WithFooterNote: Story = {
     description: 'Choose a format and the file is generated locally.',
     footerNote: 'File generated locally',
   },
+  parameters: HIDE_FROM_DOCS,
   render: (args) => (
     <DialogHarness
       {...args}
@@ -143,6 +153,7 @@ export const ClosesOnEscape: Story = {
   args: {
     title: 'Press Escape',
   },
+  parameters: HIDE_FROM_DOCS,
   render: (args) => <DialogHarness {...args} />,
   play: async ({ args, canvasElement }) => {
     const body = canvasElement.ownerDocument.body;
@@ -163,6 +174,7 @@ export const ClosesOnCloseButton: Story = {
     title: 'Close via button',
     closeLabel: 'Close dialog',
   },
+  parameters: HIDE_FROM_DOCS,
   render: (args) => <DialogHarness {...args} />,
   play: async ({ args, canvasElement }) => {
     const body = canvasElement.ownerDocument.body;
