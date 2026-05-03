@@ -179,7 +179,7 @@
       --color-warning: var(--dark-warning);
       --color-warning-foreground: oklch(0.155 0.02 42);
       --color-info: var(--dark-info);
-      --color-info-foreground: oklch(0.985 0.012 85);
+      --color-info-foreground: oklch(0.155 0.02 42);
       --color-popover: var(--dark-popover);
       --color-popover-foreground: var(--dark-foreground);
       --color-border: var(--dark-border);
