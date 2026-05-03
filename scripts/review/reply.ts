@@ -13,6 +13,7 @@ import {
 } from './github.ts';
 import { BOT_LOGIN, parseAnnotation } from './state.ts';
 import { makeAnthropic, runReplyEvaluation } from './claude.ts';
+import { parseIntEnv } from './env.ts';
 
 interface Env {
   anthropicApiKey: string;
@@ -47,16 +48,6 @@ function readEnv(): Env {
     commentId: parseIntEnv('COMMENT_ID'),
     repoRoot,
   };
-}
-
-function parseIntEnv(name: string): number {
-  const raw = process.env[name];
-  if (!raw) throw new Error(`Missing env: ${name}`);
-  const n = Number(raw);
-  if (!Number.isInteger(n) || n <= 0) {
-    throw new Error(`Env ${name} must be a positive integer, got ${JSON.stringify(raw)}`);
-  }
-  return n;
 }
 
 async function readCodeContext(

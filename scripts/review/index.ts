@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { parseIntEnv } from './env.ts';
 import { buildReviewerContext, loadReviewersConfig, matchReviewers } from './reviewers.ts';
 import {
   createReview,
@@ -62,16 +63,6 @@ function readEnv(): Env {
     headSha: process.env.HEAD_SHA!,
     repoRoot,
   };
-}
-
-function parseIntEnv(name: string): number {
-  const raw = process.env[name];
-  if (!raw) throw new Error(`Missing env: ${name}`);
-  const n = Number(raw);
-  if (!Number.isInteger(n) || n <= 0) {
-    throw new Error(`Env ${name} must be a positive integer, got ${JSON.stringify(raw)}`);
-  }
-  return n;
 }
 
 function gitChangedFiles(repoRoot: string, fromSha: string, toSha: string): string[] {
