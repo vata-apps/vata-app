@@ -4,6 +4,7 @@ import { withThemeByClassName } from '@storybook/addon-themes';
 
 import i18n from '../src/i18n/config';
 import '../src/styles/app.css';
+import './preview.css';
 
 const preview: Preview = {
   parameters: {
@@ -56,12 +57,11 @@ const preview: Preview = {
         }
       }, [locale]);
       // Wrap every story in a `bg-background` container so the per-story
-      // canvas (which on the Docs page sits inside Storybook's hard-coded
-      // light card) reflects the selected theme. The standalone story page
-      // already inherits via app.css's `html, body` base layer; the docs
-      // page only inherits per the immediate story container.
+      // Docs card (which Storybook hard-codes to white) honours the
+      // selected theme. The standalone story page also inherits via the
+      // overrides in `./preview.css`.
       return (
-        <div className="bg-background text-foreground -m-4 p-4">
+        <div className="bg-background text-foreground">
           <Story />
         </div>
       );

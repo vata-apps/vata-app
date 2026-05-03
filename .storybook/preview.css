@@ -1,0 +1,20 @@
+/*
+  Storybook iframe surface overrides.
+
+  The story content already swaps to dark tokens via the `dark` class on
+  `<html>` (set by `@storybook/addon-themes`'s `withThemeByClassName`),
+  but the Storybook body container has its own light background that we
+  need to override so the canvas around centered/padded stories also
+  honours the active theme.
+
+  We target Storybook's root container (`#storybook-root`) and the body
+  with the `sb-show-main` class — both are stable, project-agnostic
+  selectors.
+*/
+html,
+body,
+#storybook-root,
+.sb-show-main {
+  background: var(--color-background) !important;
+  color: var(--color-foreground);
+}
