@@ -146,7 +146,16 @@ export function Dialog({
           // prop entirely so Radix's automatic aria-describedby takes effect.
           {...(description ? {} : { 'aria-describedby': undefined })}
         >
-          <header className="flex items-start justify-between gap-3 border-b border-border px-6 py-4">
+          <header
+            className={
+              // Use `items-center` when the title has no description (so the
+              // close button visually aligns with the title text), and
+              // `items-start` once a description stacks under the title.
+              `flex justify-between gap-3 border-b border-border px-4 py-3 ${
+                description ? 'items-start' : 'items-center'
+              }`
+            }
+          >
             <div className="flex flex-col gap-1">
               <RadixDialog.Title className="text-foreground text-base font-semibold leading-tight">
                 {title}
@@ -158,16 +167,25 @@ export function Dialog({
               )}
             </div>
             <RadixDialog.Close asChild>
-              <Button variant="ghost" size="sm" hideLabel leadingIcon="x">
+              <Button
+                variant="secondary"
+                size="sm"
+                hideLabel
+                leadingIcon="x"
+                // Slightly muted-down version of the secondary background so
+                // the close button reads as interactive at idle without
+                // competing with the primary CTA in the footer.
+                className="bg-muted hover:bg-accent text-muted-foreground hover:text-foreground"
+              >
                 {closeLabel}
               </Button>
             </RadixDialog.Close>
           </header>
 
-          <div className="flex flex-col gap-4 px-6 py-5">{children}</div>
+          <div className="flex flex-col gap-4 px-4 py-4">{children}</div>
 
           {footer && (
-            <footer className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
+            <footer className="flex items-center justify-between gap-3 border-t border-border px-4 py-3">
               {footerNote ? (
                 <div className="text-muted-foreground text-xs">{footerNote}</div>
               ) : (
