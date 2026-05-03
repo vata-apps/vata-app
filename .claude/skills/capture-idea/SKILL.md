@@ -65,6 +65,7 @@ Vata's labels are **product-shaped, not codebase-shaped** — each one names a u
 | `data-quality`    | Completion tracking, duplicate detection, validation                   |
 | `tree-management` | Creating / opening / importing trees, storage location                 |
 | `design-system`   | Storybook, UI wrappers, design tokens, Radix primitives, Tailwind v4   |
+| `infra`           | CI, scripts, tooling, repo config — non-app changes                    |
 | `monetization`    | Paid-tier ideas (Vata is open source and free; these are aspirational) |
 
 Combine two only when the issue is genuinely about the intersection (e.g., "tag people on photos" → `media` + `individuals`). If the idea is a Tauri-shell change, a generic refactor, or a small typo with no clear product surface, **pass no labels**. Do not stretch a match.
