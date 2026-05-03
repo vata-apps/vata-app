@@ -59,35 +59,39 @@ export const Route = createFileRoute('/tree/$treeId')({
     }, []);
 
     useEffect(() => {
-      invoke('set_close_tree_enabled', { enabled: true }).catch((err) => {
-        console.error('Failed to enable Close Tree menu item:', err);
-      });
-      return () => {
-        invoke('set_close_tree_enabled', { enabled: false }).catch((err) => {
-          console.error('Failed to disable Close Tree menu item:', err);
-        });
-      };
-    }, []);
-
-    useEffect(() => {
       let unlisten: UnlistenFn | undefined;
       let cancelled = false;
+      let enabled = false;
+
       void listen('menu:close-tree', () => {
         void navigate({ to: '/' });
       })
         .then((fn) => {
           if (cancelled) {
             fn();
-          } else {
-            unlisten = fn;
+            return;
           }
+          unlisten = fn;
+          return invoke('set_close_tree_enabled', { enabled: true }).then(() => {
+            if (cancelled) {
+              void invoke('set_close_tree_enabled', { enabled: false }).catch(() => {});
+            } else {
+              enabled = true;
+            }
+          });
         })
         .catch((err) => {
-          console.error('Failed to register menu:close-tree listener:', err);
+          console.error('Failed to register Close Tree menu handler:', err);
         });
+
       return () => {
         cancelled = true;
         unlisten?.();
+        if (enabled) {
+          invoke('set_close_tree_enabled', { enabled: false }).catch((err) => {
+            console.error('Failed to disable Close Tree menu item:', err);
+          });
+        }
       };
     }, [navigate]);
 
