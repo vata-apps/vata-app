@@ -89,6 +89,52 @@ function gitDiff(
   });
 }
 
+/**
+ * Walks a unified diff and returns, per file, the set of RIGHT-side line numbers
+ * that GitHub will accept as anchors (additions + context lines that survive in
+ * the new file). Comments anchored to lines outside this set get rejected with
+ * "Path could not be resolved and Line could not be resolved" — this set lets
+ * us drop those before calling the GitHub API.
+ */
+function parseAddressableLines(diff: string): Map<string, Set<number>> {
+  const out = new Map<string, Set<number>>();
+  let currentFile: string | null = null;
+  let lineNo = 0;
+  let inHunk = false;
+  for (const line of diff.split('\n')) {
+    if (line.startsWith('+++ b/')) {
+      currentFile = line.slice('+++ b/'.length);
+      if (!out.has(currentFile)) out.set(currentFile, new Set());
+      inHunk = false;
+      continue;
+    }
+    if (line.startsWith('--- ') || line.startsWith('diff --git ')) {
+      inHunk = false;
+      continue;
+    }
+    const hunkMatch = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(line);
+    if (hunkMatch) {
+      lineNo = Number(hunkMatch[1]);
+      inHunk = true;
+      continue;
+    }
+    if (!inHunk || currentFile === null) continue;
+    const first = line[0];
+    if (first === '+') {
+      out.get(currentFile)!.add(lineNo);
+      lineNo++;
+    } else if (first === ' ') {
+      out.get(currentFile)!.add(lineNo);
+      lineNo++;
+    } else if (first === '-') {
+      // deleted line — does not consume a RIGHT-side line number
+    } else if (first === '\\') {
+      // "\ No newline at end of file" — skip
+    }
+  }
+  return out;
+}
+
 function buildDiffSummary(
   repoRoot: string,
   fromSha: string,
@@ -250,6 +296,23 @@ async function main(): Promise<void> {
     console.log(
       `Skipping orchestrator: ${rawFindings.length} findings exceeds cap of ${ORCHESTRATOR_MAX_FINDINGS}`
     );
+  }
+
+  const fullDiff = gitDiff(env.repoRoot, fromSha, env.headSha, changedFiles);
+  const addressable = parseAddressableLines(fullDiff);
+  const beforeFilter = keptFindings.length;
+  keptFindings = keptFindings.filter((f) => {
+    const lines = addressable.get(f.path);
+    if (!lines || !lines.has(f.line)) {
+      console.warn(
+        `Dropping comment from ${f.reviewer}: ${f.path}:${f.line} not in diff (ruleId=${f.ruleId})`
+      );
+      return false;
+    }
+    return true;
+  });
+  if (keptFindings.length < beforeFilter) {
+    console.log(`Diff-validity filter: kept ${keptFindings.length}/${beforeFilter} findings`);
   }
 
   const dedupeKeys = dedupeKeysFromExisting(existingReviewComments);
