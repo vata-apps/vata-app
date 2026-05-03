@@ -3,6 +3,8 @@ import { useNavigate } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import packageJson from '../../package.json';
+import { AppStatusBar } from '$components/app-status-bar';
 import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
 import { TreeCardCta } from '$components/trees/tree-card-cta';
 import { TreeSectionDivider } from '$components/trees/tree-section-divider';
@@ -96,75 +98,87 @@ export function HomePage(): JSX.Element {
   };
 
   return (
-    <div className="bg-background min-h-full">
-      <div className="mx-auto max-w-[1080px] px-14 pt-14 pb-10">
-        <section className="mb-9 flex flex-col gap-1.5">
-          <h1 className="text-foreground font-serif text-[56px] leading-none font-medium tracking-tight italic">
-            {t('trees:home.title')}{' '}
-            <span className="text-primary italic">{t('trees:home.titleAccent')}</span>
-          </h1>
-          <div className="mt-5 flex items-center gap-2.5">
-            <Button leadingIcon="plus" onClick={comingSoon}>
-              {t('trees:home.heroNew')}
-            </Button>
-            <Button
-              variant="outline"
-              leadingIcon="download"
-              onClick={() => importMutation.mutate()}
-              disabled={importMutation.isPending}
-            >
-              {t('trees:home.heroImport')}
-            </Button>
-          </div>
-        </section>
-
-        {error ? (
-          <p className="text-muted-foreground">{t('common:errors.loadFailed')}</p>
-        ) : isLoading ? (
-          <p className="text-muted-foreground">{t('trees:loading')}</p>
-        ) : (
-          <>
-            <div className="mt-9 mb-[18px]">
-              <TreeSectionDivider
-                label={t('trees:home.sectionLabel')}
-                count={sortedTrees.length}
-                sortOptions={sortOptions}
-                sortValue={sort}
-                onSortChange={(next) => setSort(next as SortKey)}
-                sortAriaLabel={t('trees:home.sortAriaLabel')}
-              />
+    <div className="bg-background flex h-screen flex-col">
+      <div className="flex-1 overflow-auto">
+        <div className="mx-auto max-w-[1080px] px-14 pt-14 pb-10">
+          <section className="mb-9 flex flex-col gap-1.5">
+            <h1 className="text-foreground font-serif text-[56px] leading-none font-medium tracking-tight italic">
+              {t('trees:home.title')}{' '}
+              <span className="text-primary italic">{t('trees:home.titleAccent')}</span>
+            </h1>
+            <div className="mt-5 flex items-center gap-2.5">
+              <Button leadingIcon="plus" onClick={comingSoon}>
+                {t('trees:home.heroNew')}
+              </Button>
+              <Button
+                variant="outline"
+                leadingIcon="download"
+                onClick={() => importMutation.mutate()}
+                disabled={importMutation.isPending}
+              >
+                {t('trees:home.heroImport')}
+              </Button>
             </div>
+          </section>
 
-            <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
-              {sortedTrees.map((tree) => (
-                <TreeCard
-                  key={tree.id}
-                  name={tree.name}
-                  description={tree.description ?? undefined}
-                  stats={{
-                    individuals: tree.individualCount,
-                    families: tree.familyCount,
-                  }}
-                  meta={{
-                    createdAt: formatIsoDate(tree.createdAt),
-                    lastAccessedAt: formatIsoDate(tree.lastOpenedAt),
-                  }}
-                  labels={cardLabels}
-                  onOpen={() => void handleOpen(tree.id)}
-                  onExport={comingSoon}
-                  onEdit={comingSoon}
-                  onDelete={comingSoon}
+          {error ? (
+            <p className="text-muted-foreground">{t('common:errors.loadFailed')}</p>
+          ) : isLoading ? (
+            <p className="text-muted-foreground">{t('trees:loading')}</p>
+          ) : (
+            <>
+              <div className="mt-9 mb-[18px]">
+                <TreeSectionDivider
+                  label={t('trees:home.sectionLabel')}
+                  count={sortedTrees.length}
+                  sortOptions={sortOptions}
+                  sortValue={sort}
+                  onSortChange={(next) => setSort(next as SortKey)}
+                  sortAriaLabel={t('trees:home.sortAriaLabel')}
                 />
-              ))}
-              <TreeCardCta
-                title={t('trees:cta.title')}
-                subtitle={t('trees:cta.subtitle')}
-                onClick={comingSoon}
-              />
-            </div>
-          </>
-        )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+                {sortedTrees.map((tree) => (
+                  <TreeCard
+                    key={tree.id}
+                    name={tree.name}
+                    description={tree.description ?? undefined}
+                    stats={{
+                      individuals: tree.individualCount,
+                      families: tree.familyCount,
+                    }}
+                    meta={{
+                      createdAt: formatIsoDate(tree.createdAt),
+                      lastAccessedAt: formatIsoDate(tree.lastOpenedAt),
+                    }}
+                    labels={cardLabels}
+                    onOpen={() => void handleOpen(tree.id)}
+                    onExport={comingSoon}
+                    onEdit={comingSoon}
+                    onDelete={comingSoon}
+                  />
+                ))}
+                <TreeCardCta
+                  title={t('trees:cta.title')}
+                  subtitle={t('trees:cta.subtitle')}
+                  onClick={comingSoon}
+                />
+              </div>
+            </>
+          )}
+        </div>
       </div>
+
+      <AppStatusBar
+        brandLabel={t('common:app.title')}
+        version={packageJson.version}
+        debugLabel={t('common:statusBar.debug')}
+        debugShortcut="⌘D"
+        preferencesLabel={t('common:statusBar.preferences')}
+        onDebugClick={comingSoon}
+        onPreferencesClick={comingSoon}
+      />
     </div>
   );
 }
