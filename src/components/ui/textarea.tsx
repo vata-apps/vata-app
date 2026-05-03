@@ -1,19 +1,18 @@
-import { forwardRef, useId, type ReactNode, type TextareaHTMLAttributes } from 'react';
+import { forwardRef, type ReactNode, type TextareaHTMLAttributes } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
+import { FieldWithHint, useFieldHint } from './field';
+
 /**
- * Recipe for the Textarea component's visual variants.
+ * Recipe for the Textarea. Mirrors `fieldRecipe` for colour/border/focus
+ * tokens and overrides only the size variant so multi-line fields use
+ * `min-h-` instead of a fixed `h-` (a textarea must be allowed to grow
+ * vertically while staying tall enough at rest).
  *
  * Sizes:
  * - `sm` — dense forms (inline notes, filters).
  * - `md` — default — standard form notes.
  * - `lg` — long-form descriptions, biographies.
- *
- * State:
- * - `default` — neutral border, accent ring on focus.
- * - `error` — red border + red focus ring; pair with `aria-invalid` and an
- *   adjacent error message. The {@link TextareaProps.invalid} shortcut
- *   handles both.
  */
 export const textareaRecipe = tv({
   base: [
@@ -92,15 +91,17 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   { size, invalid = false, hint, className, id, 'aria-describedby': ariaDescribedBy, ...props },
   ref
 ) {
-  const reactId = useId();
-  const textareaId = id ?? (hint ? `textarea-${reactId}` : undefined);
-  const hintId = hint ? `${textareaId}-hint` : undefined;
-  const describedBy = [ariaDescribedBy, hintId].filter(Boolean).join(' ') || undefined;
+  const { fieldId, hintId, describedBy } = useFieldHint({
+    id,
+    hint,
+    ariaDescribedBy,
+    prefix: 'textarea',
+  });
 
   const textarea = (
     <textarea
       ref={ref}
-      id={textareaId}
+      id={fieldId}
       aria-invalid={invalid || undefined}
       aria-describedby={describedBy}
       className={textareaRecipe({ size, state: invalid ? 'error' : 'default', className })}
@@ -108,18 +109,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
     />
   );
 
-  if (!hint) {
-    return textarea;
-  }
-
-  return (
-    <div className="block">
-      {textarea}
-      <p id={hintId} className="text-muted-foreground mt-1 text-xs">
-        {hint}
-      </p>
-    </div>
-  );
+  return <FieldWithHint field={textarea} hint={hint} hintId={hintId} />;
 });
 
 Textarea.displayName = 'Textarea';

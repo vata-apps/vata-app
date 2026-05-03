@@ -1,5 +1,6 @@
-import { forwardRef, useId, type InputHTMLAttributes, type ReactNode } from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
+
+import { fieldRecipe, FieldWithHint, useFieldHint, type FieldRecipeProps } from './field';
 
 /**
  * HTML input types accepted by {@link Input}. Restricted to text-shaped
@@ -9,45 +10,8 @@ import { tv, type VariantProps } from 'tailwind-variants';
  */
 export type InputTextType = 'text' | 'email' | 'url' | 'tel' | 'search' | 'password';
 
-/**
- * Recipe for the Input component's visual variants.
- *
- * Sizes:
- * - `sm` — dense forms, inline filters.
- * - `md` — default form size.
- * - `lg` — primary onboarding fields, search hero.
- *
- * State:
- * - `default` — neutral border, accent ring on focus.
- * - `error` — red border + red focus ring. Pair with `aria-invalid` and an
- *   adjacent error message; the {@link InputProps.invalid} shortcut handles both.
- */
-export const inputRecipe = tv({
-  base: [
-    'block w-full bg-card text-foreground placeholder:text-muted-foreground',
-    'rounded-md border',
-    'transition-colors duration-150',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-    'disabled:cursor-not-allowed disabled:opacity-50',
-  ],
-  variants: {
-    size: {
-      sm: 'h-7 px-2 text-xs',
-      md: 'h-9 px-3 text-sm',
-      lg: 'h-11 px-4 text-base',
-    },
-    state: {
-      default: 'border-input focus-visible:ring-ring',
-      error: 'border-destructive focus-visible:ring-destructive',
-    },
-  },
-  defaultVariants: {
-    size: 'md',
-    state: 'default',
-  },
-});
-
-type InputRecipeProps = VariantProps<typeof inputRecipe>;
+/** Re-exported for backward compatibility — prefer `fieldRecipe` from `./field`. */
+export const inputRecipe = fieldRecipe;
 
 /**
  * Props accepted by {@link Input}. Extends the native `<input>` props minus
@@ -66,7 +30,7 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
    * which is intentionally not exposed here.
    * Defaults to `"md"`.
    */
-  size?: InputRecipeProps['size'];
+  size?: FieldRecipeProps['size'];
 
   /**
    * Marks the input as invalid for both assistive tech (`aria-invalid="true"`)
@@ -124,35 +88,26 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   },
   ref
 ) {
-  const reactId = useId();
-  const inputId = id ?? (hint ? `input-${reactId}` : undefined);
-  const hintId = hint ? `${inputId}-hint` : undefined;
-  const describedBy = [ariaDescribedBy, hintId].filter(Boolean).join(' ') || undefined;
+  const { fieldId, hintId, describedBy } = useFieldHint({
+    id,
+    hint,
+    ariaDescribedBy,
+    prefix: 'input',
+  });
 
   const input = (
     <input
       ref={ref}
-      id={inputId}
+      id={fieldId}
       type={type}
       aria-invalid={invalid || undefined}
       aria-describedby={describedBy}
-      className={inputRecipe({ size, state: invalid ? 'error' : 'default', className })}
+      className={fieldRecipe({ size, state: invalid ? 'error' : 'default', className })}
       {...props}
     />
   );
 
-  if (!hint) {
-    return input;
-  }
-
-  return (
-    <div className="block">
-      {input}
-      <p id={hintId} className="text-muted-foreground mt-1 text-xs">
-        {hint}
-      </p>
-    </div>
-  );
+  return <FieldWithHint field={input} hint={hint} hintId={hintId} />;
 });
 
 Input.displayName = 'Input';
