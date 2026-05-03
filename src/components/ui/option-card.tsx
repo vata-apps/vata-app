@@ -92,7 +92,7 @@ export function OptionCardGroup({
   cols,
   'aria-label': ariaLabel,
   children,
-}: OptionCardGroupProps) {
+}: OptionCardGroupProps): JSX.Element {
   return (
     <RadixRadioGroup.Root
       value={value}
@@ -145,7 +145,7 @@ export type OptionCardProps = OptionCardBaseProps &
  * (Up/Down/Left/Right between siblings, Space to select) and screen-reader
  * announcements are handled by Radix.
  */
-export function OptionCard(props: OptionCardProps) {
+export function OptionCard(props: OptionCardProps): JSX.Element {
   const { value, label, description, disabled } = props;
   const soon = props.soon === true;
   return (

@@ -55,7 +55,11 @@ export function useFieldHint({
   hint?: ReactNode;
   ariaDescribedBy?: string;
   prefix: string;
-}) {
+}): {
+  fieldId: string;
+  hintId: string | undefined;
+  describedBy: string | undefined;
+} {
   const reactId = useId();
   const fieldId = id ?? `${prefix}-${reactId}`;
   const hintId = hint ? `${fieldId}-hint` : undefined;
@@ -76,7 +80,7 @@ export function FieldWithHint({
   field: ReactNode;
   hint: ReactNode;
   hintId: string | undefined;
-}) {
+}): JSX.Element {
   if (!hint) {
     return <>{field}</>;
   }

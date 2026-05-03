@@ -108,7 +108,7 @@ export function Switch({
   disabled,
   id,
   'aria-describedby': ariaDescribedBy,
-}: SwitchProps) {
+}: SwitchProps): JSX.Element {
   const reactId = useId();
   const switchId = id ?? `switch-${reactId}`;
   const labelId = `${switchId}-label`;

@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Select } from './select';
 
-type SelectArgs = React.ComponentProps<typeof Select>;
+type SelectArgs = ComponentProps<typeof Select>;
 
 const formatOptions = [
   { value: 'gedcom-5.5.1', label: 'GEDCOM 5.5.1' },

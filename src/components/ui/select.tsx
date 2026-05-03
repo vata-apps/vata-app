@@ -120,7 +120,7 @@ export function Select({
   'aria-label': ariaLabel,
   'aria-describedby': ariaDescribedBy,
   id,
-}: SelectProps) {
+}: SelectProps): JSX.Element {
   const { fieldId, hintId, describedBy } = useFieldHint({
     id,
     hint,

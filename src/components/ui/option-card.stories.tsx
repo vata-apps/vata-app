@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { OptionCard, OptionCardGroup } from './option-card';
 
-type GroupArgs = React.ComponentProps<typeof OptionCardGroup>;
+type GroupArgs = ComponentProps<typeof OptionCardGroup>;
 
 const meta: Meta<GroupArgs> = {
   title: 'UI/OptionCard',
@@ -121,5 +121,38 @@ export const Controlled: Story = {
     const fromMe = canvas.getByRole('radio', { name: 'From me' });
     await userEvent.click(fromMe);
     await expect(fromMe).toHaveAttribute('aria-checked', 'true');
+  },
+};
+
+export const Matrix: Story = {
+  parameters: { layout: 'padded' },
+  render: () => (
+    <div className="flex flex-col gap-6">
+      {([1, 2, 3] as const).map((cols) => (
+        <OptionCardGroup
+          key={cols}
+          value="default"
+          onValueChange={() => {}}
+          aria-label={`${cols} column${cols === 1 ? '' : 's'}`}
+          cols={cols}
+        >
+          <OptionCard value="default" label="Default" description="Selectable card." />
+          {cols >= 2 && <OptionCard value="disabled" label="Disabled" disabled />}
+          {cols === 3 && (
+            <OptionCard
+              value="soon"
+              label="Soon"
+              description="Coming later."
+              soon
+              soonLabel="Soon"
+            />
+          )}
+        </OptionCardGroup>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getAllByRole('radiogroup')).toHaveLength(3);
   },
 };

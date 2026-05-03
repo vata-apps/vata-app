@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 import { Icon, type IconName } from './icon';
@@ -143,8 +143,10 @@ export function Dropzone({
   selectedName,
   hint,
   disabled,
-}: DropzoneProps) {
+}: DropzoneProps): JSX.Element {
   const interactive = !disabled && (state === 'idle' || state === 'selected');
+  const reactId = useId();
+  const hintId = hint ? `dropzone-${reactId}-hint` : undefined;
 
   async function handleClick() {
     if (!interactive) return;
@@ -176,6 +178,7 @@ export function Dropzone({
     <button
       type="button"
       aria-disabled={!interactive || undefined}
+      aria-describedby={hintId}
       onClick={handleClick}
       disabled={!interactive}
       className={dropzoneRecipe({ state })}
@@ -194,7 +197,9 @@ export function Dropzone({
   return (
     <div className="flex flex-col gap-1.5">
       {card}
-      <p className="text-muted-foreground text-xs">{hint}</p>
+      <p id={hintId} className="text-muted-foreground text-xs">
+        {hint}
+      </p>
     </div>
   );
 }

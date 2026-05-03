@@ -93,7 +93,7 @@ export interface StatGridProps extends HTMLAttributes<HTMLDivElement> {
  *   ]}
  * />
  */
-export function StatGrid({ items, cols, className, ...props }: StatGridProps) {
+export function StatGrid({ items, cols, className, ...props }: StatGridProps): JSX.Element {
   return (
     <div className={gridRecipe({ cols, className })} {...props}>
       {items.map((item, idx) => (

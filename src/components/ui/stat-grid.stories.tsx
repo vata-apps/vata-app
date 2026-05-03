@@ -89,3 +89,61 @@ export const MixedAccents: Story = {
     await expect(canvas.getByText('Errors')).toBeInTheDocument();
   },
 };
+
+export const TwoColumns: Story = {
+  args: {
+    cols: 2,
+    items: [
+      { value: 142, label: 'Individuals' },
+      { value: 58, label: 'Families' },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('142')).toBeInTheDocument();
+    await expect(canvas.getByText('58')).toBeInTheDocument();
+  },
+};
+
+export const SuccessAccent: Story = {
+  args: {
+    cols: 3,
+    items: [
+      { value: 142, label: 'Imported', accent: 'success' },
+      { value: 0, label: 'Errors', accent: 'success' },
+      { value: 12, label: 'Skipped', accent: 'success' },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Imported')).toBeInTheDocument();
+  },
+};
+
+export const Matrix: Story = {
+  render: () => (
+    <div className="flex flex-col gap-6">
+      {([2, 3, 4] as const).map((cols) => (
+        <StatGrid
+          key={cols}
+          cols={cols}
+          items={(
+            [
+              { value: 10, label: `cols ${cols} – default` },
+              { value: 20, label: 'destructive', accent: 'destructive' },
+              { value: 30, label: 'success', accent: 'success' },
+              { value: 40, label: 'warning', accent: 'warning' },
+            ] as const
+          ).slice(0, cols)}
+        />
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // 2 + 3 + 4 = 9 cells across the three grids.
+    await expect(
+      canvas.getAllByText(/^(default|destructive|success|warning|cols \d+ – default)$/i).length
+    ).toBeGreaterThanOrEqual(3);
+  },
+};

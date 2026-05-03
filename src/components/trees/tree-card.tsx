@@ -115,7 +115,7 @@ export function TreeCard({
   onExport,
   onEdit,
   onDelete,
-}: TreeCardProps) {
+}: TreeCardProps): JSX.Element {
   const items = [
     { value: stats.individuals, label: labels.individuals },
     { value: stats.families, label: labels.families },
@@ -179,7 +179,7 @@ export interface TreeCardCtaProps {
  * @example
  * <TreeCardCta label={t('trees.new')} onClick={() => navigate('/new')} />
  */
-export function TreeCardCta({ label, onClick }: TreeCardCtaProps) {
+export function TreeCardCta({ label, onClick }: TreeCardCtaProps): JSX.Element {
   return (
     <button type="button" onClick={onClick} className={ctaCardBase()}>
       <Icon name="plus" size={24} />

@@ -133,7 +133,7 @@ export function Dialog({
   footerNote,
   size,
   closeLabel,
-}: DialogProps) {
+}: DialogProps): JSX.Element {
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
       <RadixDialog.Portal>

@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { SegmentedControl } from './segmented-control';
 
-type Args = React.ComponentProps<typeof SegmentedControl>;
+type Args = ComponentProps<typeof SegmentedControl>;
 
 const sortOptions = [
   { value: 'recent', label: 'Recent' },
@@ -103,5 +103,27 @@ export const Controlled: Story = {
     const name = canvas.getByRole('radio', { name: 'Name' });
     await userEvent.click(name);
     await expect(name).toHaveAttribute('aria-checked', 'true');
+  },
+};
+
+export const Matrix: Story = {
+  parameters: { layout: 'padded' },
+  render: () => (
+    <div className="flex flex-col gap-4">
+      {(['md', 'sm'] as const).map((size) => (
+        <SegmentedControl
+          key={size}
+          size={size}
+          value="recent"
+          options={sortOptions}
+          aria-label={`Sort by (${size})`}
+          onValueChange={() => {}}
+        />
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getAllByRole('group')).toHaveLength(2);
   },
 };

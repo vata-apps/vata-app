@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Switch } from './switch';
 
-type SwitchArgs = React.ComponentProps<typeof Switch>;
+type SwitchArgs = ComponentProps<typeof Switch>;
 
 const meta: Meta<SwitchArgs> = {
   title: 'UI/Switch',

@@ -21,7 +21,7 @@ const itemRecipe = tv({
     'transition-colors duration-150',
     'text-muted-foreground hover:text-foreground',
     'data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-    'focus-visible:outline-none',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset',
     'disabled:cursor-not-allowed disabled:opacity-50',
   ],
   variants: {
@@ -103,7 +103,7 @@ export function SegmentedControl({
   options,
   size,
   'aria-label': ariaLabel,
-}: SegmentedControlProps) {
+}: SegmentedControlProps): JSX.Element {
   return (
     <RadixToggleGroup.Root
       type="single"
