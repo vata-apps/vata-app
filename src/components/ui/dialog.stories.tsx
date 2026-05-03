@@ -1,6 +1,5 @@
 import { useEffect, useState, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useArgs } from 'storybook/preview-api';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from './button';
@@ -44,18 +43,22 @@ const meta: Meta<DialogArgs> = {
 export default meta;
 type Story = StoryObj<DialogArgs>;
 
-// Presentational harness — receives `open` + `setOpen` from the story's
-// render callback (which itself uses `useArgs` to bind to Storybook's
-// Controls panel). Storybook preview hooks can only be invoked from a
-// story render or a decorator, never a nested sub-component, hence this
-// split.
-function DialogHarness({
-  open,
-  setOpen,
-  body,
-  children,
-  ...props
-}: Omit<DialogArgs, 'open'> & { open: boolean; setOpen: (next: boolean) => void }) {
+// Harness with local open state. The `open` arg from the Controls panel
+// drives the *initial* state and any subsequent panel changes (synced via
+// useEffect). User-triggered closes (Escape, close-button, click outside)
+// only update the local state — the panel won't auto-update to `false`,
+// but the dialog will close visually. Toggle the panel to reopen it.
+//
+// Storybook's `useArgs` would give us full two-way binding but it throws
+// "preview hooks can only be called inside decorators and story
+// functions" when an autodocs story (rendered inline in MDX) calls it,
+// so we fall back to one-way arg → state sync here.
+function DialogHarness({ body, children, open: argOpen, ...props }: DialogArgs) {
+  const [open, setOpen] = useState(Boolean(argOpen));
+  useEffect(() => {
+    setOpen(Boolean(argOpen));
+  }, [argOpen]);
+
   return (
     <>
       <Button onClick={() => setOpen(true)}>Open dialog</Button>
@@ -73,46 +76,18 @@ function DialogHarness({
   );
 }
 
-/**
- * Hybrid state hook: keeps the dialog open/closed via local React state
- * (so test runners and the live preview pick up changes immediately),
- * AND mirrors that state into Storybook's args dictionary so the
- * Controls panel reflects (and can drive) the current state.
- */
-function useOpenArg(): [boolean, (next: boolean) => void] {
-  const [{ open: argOpen }, updateArgs] = useArgs<DialogArgs>();
-  const [localOpen, setLocalOpen] = useState(Boolean(argOpen));
-
-  // Mirror args → local when the user toggles the Controls panel.
-  useEffect(() => {
-    setLocalOpen(Boolean(argOpen));
-  }, [argOpen]);
-
-  const setOpen = (next: boolean) => {
-    setLocalOpen(next);
-    updateArgs({ open: next });
-  };
-
-  return [localOpen, setOpen];
-}
-
 export const Default: Story = {
-  render: function Render(args) {
-    const [open, setOpen] = useOpenArg();
-    return (
-      <DialogHarness
-        {...args}
-        open={open}
-        setOpen={setOpen}
-        footer={
-          <>
-            <Button variant="ghost">Cancel</Button>
-            <Button>Save</Button>
-          </>
-        }
-      />
-    );
-  },
+  render: (args) => (
+    <DialogHarness
+      {...args}
+      footer={
+        <>
+          <Button variant="ghost">Cancel</Button>
+          <Button>Save</Button>
+        </>
+      }
+    />
+  ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Open dialog' }));
@@ -128,22 +103,17 @@ export const Small: Story = {
     title: 'Confirm',
     description: 'This action cannot be undone.',
   },
-  render: function Render(args) {
-    const [open, setOpen] = useOpenArg();
-    return (
-      <DialogHarness
-        {...args}
-        open={open}
-        setOpen={setOpen}
-        footer={
-          <>
-            <Button variant="ghost">Cancel</Button>
-            <Button variant="destructive">Delete</Button>
-          </>
-        }
-      />
-    );
-  },
+  render: (args) => (
+    <DialogHarness
+      {...args}
+      footer={
+        <>
+          <Button variant="ghost">Cancel</Button>
+          <Button variant="destructive">Delete</Button>
+        </>
+      }
+    />
+  ),
 };
 
 export const Large: Story = {
@@ -152,27 +122,22 @@ export const Large: Story = {
     title: 'Import GEDCOM',
     description: 'Drop a .ged file or pick one from disk to scan it before import.',
   },
-  render: function Render(args) {
-    const [open, setOpen] = useOpenArg();
-    return (
-      <DialogHarness
-        {...args}
-        open={open}
-        setOpen={setOpen}
-        body={
-          <div className="border-border bg-foreground/5 flex h-40 items-center justify-center rounded-md border border-dashed">
-            <span className="text-muted-foreground text-sm">Dropzone placeholder</span>
-          </div>
-        }
-        footer={
-          <>
-            <Button variant="ghost">Cancel</Button>
-            <Button>Import</Button>
-          </>
-        }
-      />
-    );
-  },
+  render: (args) => (
+    <DialogHarness
+      {...args}
+      body={
+        <div className="border-border bg-foreground/5 flex h-40 items-center justify-center rounded-md border border-dashed">
+          <span className="text-muted-foreground text-sm">Dropzone placeholder</span>
+        </div>
+      }
+      footer={
+        <>
+          <Button variant="ghost">Cancel</Button>
+          <Button>Import</Button>
+        </>
+      }
+    />
+  ),
 };
 
 export const WithFooterNote: Story = {
@@ -181,32 +146,24 @@ export const WithFooterNote: Story = {
     description: 'Choose a format and the file is generated locally.',
     footerNote: 'File generated locally',
   },
-  render: function Render(args) {
-    const [open, setOpen] = useOpenArg();
-    return (
-      <DialogHarness
-        {...args}
-        open={open}
-        setOpen={setOpen}
-        footer={
-          <>
-            <Button variant="ghost">Cancel</Button>
-            <Button leadingIcon="download">Download .ged</Button>
-          </>
-        }
-      />
-    );
-  },
+  render: (args) => (
+    <DialogHarness
+      {...args}
+      footer={
+        <>
+          <Button variant="ghost">Cancel</Button>
+          <Button leadingIcon="download">Download .ged</Button>
+        </>
+      }
+    />
+  ),
 };
 
 export const ClosesOnEscape: Story = {
   args: {
     title: 'Press Escape',
   },
-  render: function Render(args) {
-    const [open, setOpen] = useOpenArg();
-    return <DialogHarness {...args} open={open} setOpen={setOpen} />;
-  },
+  render: (args) => <DialogHarness {...args} />,
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Open dialog' }));
@@ -227,10 +184,7 @@ export const ClosesOnCloseButton: Story = {
     title: 'Close via button',
     closeLabel: 'Close dialog',
   },
-  render: function Render(args) {
-    const [open, setOpen] = useOpenArg();
-    return <DialogHarness {...args} open={open} setOpen={setOpen} />;
-  },
+  render: (args) => <DialogHarness {...args} />,
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Open dialog' }));
