@@ -62,13 +62,17 @@ export const Route = createFileRoute('/tree/$treeId')({
       let cancelled = false;
       void listen('menu:close-tree', () => {
         void navigate({ to: '/' });
-      }).then((fn) => {
-        if (cancelled) {
-          fn();
-        } else {
-          unlisten = fn;
-        }
-      });
+      })
+        .then((fn) => {
+          if (cancelled) {
+            fn();
+          } else {
+            unlisten = fn;
+          }
+        })
+        .catch((err) => {
+          console.error('Failed to register menu:close-tree listener:', err);
+        });
       return () => {
         cancelled = true;
         unlisten?.();
