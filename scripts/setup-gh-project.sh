@@ -84,6 +84,7 @@ ensure_label "data-quality"     "FBCA04" "Completion, duplicates, validation"
 # Platform & meta
 ensure_label "tree-management"  "BFD4F2" "Tree lifecycle and storage"
 ensure_label "design-system"    "C5DEF5" "Storybook, wrappers, tokens"
+ensure_label "infra"            "6B7280" "CI, scripts, tooling, repo config — non-app changes"
 ensure_label "monetization"     "B60205" "Paid-tier ideas (Vata is open source and free)"
 ensure_label "good-first-issue" "7057FF" "Good for newcomers / small surface"
 

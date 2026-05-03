@@ -4,13 +4,13 @@ Single backlog for everything — bugs, ideas, tasks. GitHub Issues + one org-le
 
 ## Quick start
 
-| Where      | What                                                                                               |
-| ---------- | -------------------------------------------------------------------------------------------------- |
-| Issue Type | One of `Task` / `Bug` / `Feature`, set at the org level (max 25 across all repos)                  |
-| Templates  | `.github/ISSUE_TEMPLATE/{bug,feature,task}.yml` — auto-set the type on web UI                      |
-| Labels     | 11 product-axis labels (genealogy domains, monetization, etc.) + 1 meta label (`good-first-issue`) |
-| Project    | Org-level "Vata Roadmap" — Status / Priority / Type fields, auto-add for new issues                |
-| Skills     | `capture-idea` (file an idea), `link-task` (bind PR to existing issue)                             |
+| Where      | What                                                                                                      |
+| ---------- | --------------------------------------------------------------------------------------------------------- |
+| Issue Type | One of `Task` / `Bug` / `Feature`, set at the org level (max 25 across all repos)                         |
+| Templates  | `.github/ISSUE_TEMPLATE/{bug,feature,task}.yml` — auto-set the type on web UI                             |
+| Labels     | 12 product-axis labels (genealogy domains, monetization, infra, etc.) + 1 meta label (`good-first-issue`) |
+| Project    | Org-level "Vata Roadmap" — Status / Priority / Type fields, auto-add for new issues                       |
+| Skills     | `capture-idea` (file an idea), `link-task` (bind PR to existing issue)                                    |
 
 ## Issue Types
 
@@ -54,6 +54,7 @@ Labels are **product-shaped**, not codebase-shaped. Each one names a user-facing
 | `data-quality`     | cross-cutting | Completion tracking, duplicate detection, validation                  | `#FBCA04` |
 | `tree-management`  | platform      | Creating / opening / importing trees, storage location                | `#BFD4F2` |
 | `design-system`    | platform      | Storybook, UI wrappers, design tokens, Radix primitives, Tailwind v4  | `#C5DEF5` |
+| `infra`            | platform      | CI, scripts, tooling, repo config — non-app changes                   | `#6B7280` |
 | `monetization`     | platform      | Paid-tier ideas; Vata is open source and free, these are aspirational | `#B60205` |
 | `good-first-issue` | meta          | Good for newcomers / small surface                                    | `#7057FF` |
 
