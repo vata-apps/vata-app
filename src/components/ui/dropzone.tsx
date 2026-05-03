@@ -138,7 +138,7 @@ export function Dropzone({
   state = 'idle',
   onFileSelected,
   accept = ['ged', 'gedcom'],
-  formatName = 'GEDCOM',
+  formatName,
   idleLabel,
   selectedName,
   hint,
