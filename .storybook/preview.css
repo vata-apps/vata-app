@@ -3,25 +3,28 @@
 
   The story content swaps to dark tokens via the `dark` class on `<html>`
   (set by `@storybook/addon-themes`'s `withThemeByClassName`), but
-  Storybook's chrome — body, root, docs preview cards, source-code
-  panels — has its own hard-coded light surfaces. Without these
-  overrides the canvas around a centered story stays light, and the
-  Docs page renders each story inside a white card.
+  Storybook's chrome — body, root, and the per-story preview cards on
+  the Docs page — has its own hard-coded light surfaces. Without these
+  overrides, dark theme leaves a grey/white card around every story
+  while the component itself renders correctly.
 
-  Selectors below target Storybook's stable hooks:
+  Selectors below target Storybook 10's actual DOM hooks. Discovered by
+  probing the docs iframe and grepping for elements with light
+  computed backgrounds:
   - `html`, `body`, `#storybook-root`, `.sb-show-main` → standalone
-    story page (Canvas tab).
-  - `.sbdocs`, `.sbdocs-preview`, `.docs-story` → MDX Docs page wrapper
-    and per-story preview cards.
-  - `.sbdocs-content` → text/headings on the Docs page.
+    Canvas tab.
+  - `.sb-previewBlock`, `.sb-wrapper`, `.sb-preparing-story`,
+    `.sb-preparing-docs` → Docs page per-story preview cards and
+    loading wrappers.
 */
 html,
 body,
 #storybook-root,
 .sb-show-main,
-.sbdocs,
-.sbdocs-preview,
-.docs-story {
+.sb-previewBlock,
+.sb-wrapper,
+.sb-preparing-story,
+.sb-preparing-docs {
   background: var(--color-background) !important;
 }
 
@@ -29,7 +32,6 @@ html,
 body,
 #storybook-root,
 .sb-show-main,
-.sbdocs,
-.sbdocs-content {
+.sb-previewBlock {
   color: var(--color-foreground) !important;
 }
