@@ -155,12 +155,11 @@ export function Dropzone({
       // mode) can still render the wrapper without trying to resolve the
       // plugin entry point at module-init time.
       const { open } = await import('@tauri-apps/plugin-dialog');
-      const selected = await open({
+      const path = await open({
         multiple: false,
         filters: [{ name: formatName, extensions: accept }],
       });
-      if (!selected) return;
-      const path = selected as string;
+      if (!path) return;
       const name = path.split(/[/\\]/).pop() ?? path;
       await onFileSelected({ path, name });
     } catch (err) {

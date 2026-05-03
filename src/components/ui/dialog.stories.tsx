@@ -9,6 +9,7 @@ type DialogArgs = ComponentProps<typeof Dialog> & { body?: ReactNode };
 
 const meta: Meta<DialogArgs> = {
   title: 'UI/Dialog',
+  component: Dialog,
   tags: ['autodocs'],
   parameters: {
     layout: 'centered',
