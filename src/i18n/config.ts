@@ -2,6 +2,9 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
+export const SUPPORTED_LANGUAGES = ['en', 'fr'] as const;
+export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+
 import enCommon from './locales/en/common.json';
 import enTrees from './locales/en/trees.json';
 import enIndividuals from './locales/en/individuals.json';

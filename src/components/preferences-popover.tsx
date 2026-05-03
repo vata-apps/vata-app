@@ -3,13 +3,14 @@ import { useTranslation } from 'react-i18next';
 
 import { Popover, PopoverContent, PopoverTrigger } from '$components/ui/popover';
 import { SegmentedControl } from '$components/ui/segmented-control';
+import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '$/i18n/config';
 import { useAppStore, type Theme } from '$/store/app-store';
 
-type Language = 'en' | 'fr';
-
-function normalizeLanguage(raw: string): Language {
+function normalizeLanguage(raw: string): SupportedLanguage {
   const base = raw.split('-')[0]?.toLowerCase();
-  return base === 'fr' ? 'fr' : 'en';
+  return SUPPORTED_LANGUAGES.includes(base as SupportedLanguage)
+    ? (base as SupportedLanguage)
+    : 'en';
 }
 
 /**

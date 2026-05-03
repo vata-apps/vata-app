@@ -13,6 +13,7 @@ import { Button } from '$components/ui/button';
 import { getAllTrees } from '$/db/system/trees';
 import { GedcomManager } from '$/managers/GedcomManager';
 import { TreeManager } from '$/managers/TreeManager';
+import { formatIsoDate } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
 import type { Tree } from '$/types/database';
 
@@ -32,11 +33,6 @@ function sortTrees(trees: Tree[], key: SortKey): Tree[] {
     });
   }
   return copy;
-}
-
-function formatIsoDate(value: string | null | undefined): string {
-  if (!value) return '—';
-  return value.slice(0, 10);
 }
 
 export function HomePage(): JSX.Element {
@@ -98,6 +94,56 @@ export function HomePage(): JSX.Element {
     }
   };
 
+  let treesContent: JSX.Element;
+  if (error) {
+    treesContent = <p className="text-muted-foreground">{t('common:errors.loadFailed')}</p>;
+  } else if (isLoading) {
+    treesContent = <p className="text-muted-foreground">{t('trees:loading')}</p>;
+  } else {
+    treesContent = (
+      <>
+        <div className="mt-9 mb-[18px]">
+          <TreeSectionDivider
+            label={t('trees:home.sectionLabel')}
+            count={sortedTrees.length}
+            sortOptions={sortOptions}
+            sortValue={sort}
+            onSortChange={(next) => setSort(next as SortKey)}
+            sortAriaLabel={t('trees:home.sortAriaLabel')}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+          {sortedTrees.map((tree) => (
+            <TreeCard
+              key={tree.id}
+              name={tree.name}
+              description={tree.description ?? undefined}
+              stats={{
+                individuals: tree.individualCount,
+                families: tree.familyCount,
+              }}
+              meta={{
+                createdAt: formatIsoDate(tree.createdAt),
+                lastAccessedAt: formatIsoDate(tree.lastOpenedAt),
+              }}
+              labels={cardLabels}
+              onOpen={() => void handleOpen(tree.id)}
+              onExport={comingSoon}
+              onEdit={comingSoon}
+              onDelete={comingSoon}
+            />
+          ))}
+          <TreeCardCta
+            title={t('trees:cta.title')}
+            subtitle={t('trees:cta.subtitle')}
+            onClick={comingSoon}
+          />
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="bg-background flex h-screen flex-col">
       <div className="flex-1 overflow-auto">
@@ -122,52 +168,7 @@ export function HomePage(): JSX.Element {
             </div>
           </section>
 
-          {error ? (
-            <p className="text-muted-foreground">{t('common:errors.loadFailed')}</p>
-          ) : isLoading ? (
-            <p className="text-muted-foreground">{t('trees:loading')}</p>
-          ) : (
-            <>
-              <div className="mt-9 mb-[18px]">
-                <TreeSectionDivider
-                  label={t('trees:home.sectionLabel')}
-                  count={sortedTrees.length}
-                  sortOptions={sortOptions}
-                  sortValue={sort}
-                  onSortChange={(next) => setSort(next as SortKey)}
-                  sortAriaLabel={t('trees:home.sortAriaLabel')}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
-                {sortedTrees.map((tree) => (
-                  <TreeCard
-                    key={tree.id}
-                    name={tree.name}
-                    description={tree.description ?? undefined}
-                    stats={{
-                      individuals: tree.individualCount,
-                      families: tree.familyCount,
-                    }}
-                    meta={{
-                      createdAt: formatIsoDate(tree.createdAt),
-                      lastAccessedAt: formatIsoDate(tree.lastOpenedAt),
-                    }}
-                    labels={cardLabels}
-                    onOpen={() => void handleOpen(tree.id)}
-                    onExport={comingSoon}
-                    onEdit={comingSoon}
-                    onDelete={comingSoon}
-                  />
-                ))}
-                <TreeCardCta
-                  title={t('trees:cta.title')}
-                  subtitle={t('trees:cta.subtitle')}
-                  onClick={comingSoon}
-                />
-              </div>
-            </>
-          )}
+          {treesContent}
         </div>
       </div>
 

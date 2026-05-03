@@ -6,6 +6,18 @@
     <title>Vata</title>
   </head>
   <body>
+    <script>
+      // Pre-paint theme: avoids a light flash when the persisted preference
+      // is 'dark'. Mirrors src/hooks/useApplyAppPreferences.ts; 'system'
+      // intentionally clears both classes so the CSS prefers-color-scheme
+      // rule in app.css takes over.
+      try {
+        var stored = JSON.parse(localStorage.getItem('vata-app-storage') || 'null');
+        var theme = stored && stored.state && stored.state.theme;
+        if (theme === 'light') document.documentElement.classList.add('light');
+        else if (theme === 'dark') document.documentElement.classList.add('dark');
+      } catch (e) {}
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
