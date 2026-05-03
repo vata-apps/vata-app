@@ -24,6 +24,8 @@ async fn generate_thumbnail(
     Ok(())
 }
 
+// Mirrors `tauri::menu::Menu::default` with File > "Close Window" replaced by
+// "Close Tree" and Window > "Close Window" removed. Re-sync on Tauri upgrades.
 fn build_app_menu<R: Runtime>(app: &AppHandle<R>) -> tauri::Result<Menu<R>> {
     let pkg_info = app.package_info();
     let config = app.config();
