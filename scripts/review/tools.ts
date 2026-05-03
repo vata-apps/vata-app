@@ -44,6 +44,23 @@ export const EvaluateReplyInput = z
   });
 export type EvaluateReplyInput = z.infer<typeof EvaluateReplyInput>;
 
+export const KeepCommentInput = z.object({
+  index: z.number().int().nonnegative(),
+  reason: z.string().max(500).optional(),
+});
+export type KeepCommentInput = z.infer<typeof KeepCommentInput>;
+
+export const DropCommentInput = z.object({
+  index: z.number().int().nonnegative(),
+  reason: z.string().min(1).max(500),
+});
+export type DropCommentInput = z.infer<typeof DropCommentInput>;
+
+export const SubmitOrchestrationInput = z.object({
+  summary: z.string().min(1).max(500),
+});
+export type SubmitOrchestrationInput = z.infer<typeof SubmitOrchestrationInput>;
+
 export const POST_REVIEW_COMMENT_TOOL: Anthropic.Tool = {
   name: 'post_review_comment',
   description:
@@ -133,6 +150,58 @@ export const EVALUATE_REPLY_TOOL: Anthropic.Tool = {
       replyBody: {
         type: 'string',
         description: 'Required only when decision=PUSHBACK. Markdown, max 500 chars.',
+      },
+    },
+  },
+};
+
+export const KEEP_COMMENT_TOOL: Anthropic.Tool = {
+  name: 'keep_comment',
+  description: 'Keep a finding from the aggregated list as-is in the final review.',
+  input_schema: {
+    type: 'object',
+    required: ['index'],
+    properties: {
+      index: {
+        type: 'number',
+        description: '0-based index into the findings list shown to you.',
+      },
+      reason: {
+        type: 'string',
+        description: 'Optional one-sentence rationale for audit logs.',
+      },
+    },
+  },
+};
+
+export const DROP_COMMENT_TOOL: Anthropic.Tool = {
+  name: 'drop_comment',
+  description:
+    'Drop a finding from the final review. Use for: duplicate of another finding (prefer the more specific reviewer); false positive given diff context; nit overlapping with a higher-severity finding on same line.',
+  input_schema: {
+    type: 'object',
+    required: ['index', 'reason'],
+    properties: {
+      index: { type: 'number', description: '0-based index into the findings list.' },
+      reason: {
+        type: 'string',
+        description: 'Required: one sentence on why this is dropped (logged for audit).',
+      },
+    },
+  },
+};
+
+export const SUBMIT_ORCHESTRATION_TOOL: Anthropic.Tool = {
+  name: 'submit_orchestration',
+  description:
+    'Call ONCE at the end. Confirms orchestration is complete. Every finding must have been kept or dropped exactly once before this call.',
+  input_schema: {
+    type: 'object',
+    required: ['summary'],
+    properties: {
+      summary: {
+        type: 'string',
+        description: '1-2 sentences: how many comments kept vs dropped and why.',
       },
     },
   },

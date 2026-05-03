@@ -20,8 +20,11 @@ import {
   findExistingSummary,
   type SeverityCounts,
 } from './state.ts';
-import { makeAnthropic, runReviewer } from './claude.ts';
+import { makeAnthropic, runOrchestrator, runReviewer } from './claude.ts';
 import type { PostReviewCommentInput, ReviewEvent, Severity } from './tools.ts';
+
+const ORCHESTRATOR_MIN_FINDINGS = 2;
+const ORCHESTRATOR_MAX_FINDINGS = 50;
 
 interface Env {
   anthropicApiKey: string;
@@ -84,6 +87,21 @@ function gitDiff(
     encoding: 'utf8',
     maxBuffer: 32 * 1024 * 1024,
   });
+}
+
+function buildDiffSummary(
+  repoRoot: string,
+  fromSha: string,
+  toSha: string,
+  files: readonly string[]
+): string {
+  if (files.length === 0) return '(no changed files)';
+  const stats = execFileSync(
+    'git',
+    ['diff', '--shortstat', `${fromSha}..${toSha}`, '--', ...files],
+    { cwd: repoRoot, encoding: 'utf8' }
+  ).trim();
+  return [`Changed files (${files.length}):`, ...files.map((f) => `- ${f}`), '', stats].join('\n');
 }
 
 function pickFinalEvent(totals: SeverityCounts): ReviewEvent {
@@ -177,41 +195,93 @@ async function main(): Promise<void> {
     })
   );
 
-  const dedupeKeys = dedupeKeysFromExisting(existingReviewComments);
+  const rawFindings: Array<PostReviewCommentInput & { reviewer: string }> = [];
+  const reviewerVerdicts = new Map<string, string>();
+  for (const result of reviewerResults) {
+    const verdictSummary =
+      result.verdict?.summary ?? '(reviewer did not return a verdict — capped at max iterations)';
+    reviewerVerdicts.set(result.reviewerName, verdictSummary);
+    for (const c of result.comments) {
+      rawFindings.push({ ...c, reviewer: result.reviewerName });
+    }
+  }
 
+  let keptFindings = rawFindings;
+  let orchestratorSummary: string | null = null;
+  if (
+    rawFindings.length >= ORCHESTRATOR_MIN_FINDINGS &&
+    rawFindings.length <= ORCHESTRATOR_MAX_FINDINGS
+  ) {
+    try {
+      const orchestratorPromptPath = join(
+        env.repoRoot,
+        '.github',
+        'code-review',
+        'prompts',
+        'orchestrator.md'
+      );
+      const orchestratorTemplate = await readFile(orchestratorPromptPath, 'utf8');
+      const result = await runOrchestrator(anthropic, {
+        systemPromptTemplate: orchestratorTemplate,
+        findings: rawFindings.map((f) => ({
+          reviewer: f.reviewer,
+          path: f.path,
+          line: f.line,
+          severity: f.severity,
+          ruleId: f.ruleId,
+          body: f.body,
+        })),
+        diffSummary: buildDiffSummary(env.repoRoot, fromSha, env.headSha, changedFiles),
+      });
+      keptFindings = result.keptIndices.map((i) => rawFindings[i]!);
+      orchestratorSummary = result.summary;
+      console.log(
+        `Orchestrator: kept ${keptFindings.length}/${rawFindings.length}, dropped ${result.droppedIndices.length}`
+      );
+      for (const d of result.droppedIndices) {
+        console.log(`  drop[${d.index}] ${d.reason}`);
+      }
+    } catch (err) {
+      console.warn(
+        `Orchestrator failed, posting all findings unfiltered: ${(err as Error).message}`
+      );
+    }
+  } else if (rawFindings.length > ORCHESTRATOR_MAX_FINDINGS) {
+    console.log(
+      `Skipping orchestrator: ${rawFindings.length} findings exceeds cap of ${ORCHESTRATOR_MAX_FINDINGS}`
+    );
+  }
+
+  const dedupeKeys = dedupeKeysFromExisting(existingReviewComments);
   const aggregated: PostReviewCommentInput[] = [];
   const totals = emptyCounts();
-  const reviewerSummaries: Array<{
-    reviewer: string;
-    summary: string;
-    counts: SeverityCounts;
-  }> = [];
+  const reviewerCountsMap = new Map<string, SeverityCounts>();
 
-  for (const result of reviewerResults) {
-    const reviewerCounts = emptyCounts();
-    for (const c of result.comments) {
-      const key = commentDedupKey({
-        path: c.path,
-        line: c.line,
-        ruleId: c.ruleId,
-      });
-      if (dedupeKeys.has(key)) continue;
-      dedupeKeys.add(key);
-      bumpCount(reviewerCounts, c.severity);
-      bumpCount(totals, c.severity);
-      aggregated.push({
-        ...c,
-        body: annotateBody(c.body, {
-          ruleId: c.ruleId,
-          severity: c.severity,
-        }),
-      });
+  for (const f of keptFindings) {
+    const key = commentDedupKey({ path: f.path, line: f.line, ruleId: f.ruleId });
+    if (dedupeKeys.has(key)) continue;
+    dedupeKeys.add(key);
+    let counts = reviewerCountsMap.get(f.reviewer);
+    if (!counts) {
+      counts = emptyCounts();
+      reviewerCountsMap.set(f.reviewer, counts);
     }
+    bumpCount(counts, f.severity);
+    bumpCount(totals, f.severity);
+    const { reviewer: _reviewer, ...comment } = f;
+    aggregated.push({
+      ...comment,
+      body: annotateBody(f.body, { ruleId: f.ruleId, severity: f.severity }),
+    });
+  }
+
+  const reviewerSummaries: Array<{ reviewer: string; summary: string; counts: SeverityCounts }> =
+    [];
+  for (const [reviewer, summary] of reviewerVerdicts) {
     reviewerSummaries.push({
-      reviewer: result.reviewerName,
-      summary:
-        result.verdict?.summary ?? '(reviewer did not return a verdict — capped at max iterations)',
-      counts: reviewerCounts,
+      reviewer,
+      summary,
+      counts: reviewerCountsMap.get(reviewer) ?? emptyCounts(),
     });
   }
 
@@ -239,6 +309,7 @@ async function main(): Promise<void> {
     reviewerSummaries,
     finalEvent,
     totals,
+    orchestratorSummary,
   });
   await upsertIssueComment(octokit, ctx, {
     body: summaryBody,
