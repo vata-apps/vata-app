@@ -26,8 +26,10 @@ export const Popover = RadixPopover.Root;
 export const PopoverTrigger = RadixPopover.Trigger;
 
 /**
- * Floating panel anchored to the trigger. Defaults: `side="top"`,
- * `align="end"`, `sideOffset=6`. Override per call when needed.
+ * Floating panel anchored to the trigger. Only `sideOffset` is
+ * defaulted to `6`; `side` and `align` are not set by this wrapper
+ * and fall through to Radix's own defaults (`"bottom"` / `"center"`).
+ * Override per call when needed.
  *
  * The panel renders inside a portal, traps Tab navigation, closes on
  * Escape and on outside click. All ARIA wiring is handled by Radix.

@@ -10,15 +10,19 @@ export interface AppStatusBarProps {
   brandLabel: ReactNode;
   /** Version string shown after the brand label (rendered as `v {version}`). */
   version: ReactNode;
-  /** Localized label for the debug button. */
-  debugLabel: string;
+  /**
+   * Localized label for the debug button. The button is always
+   * tree-shaken from production builds — even when this prop is
+   * supplied — via an `import.meta.env.DEV` guard inside the component.
+   */
+  debugLabel?: string;
   /**
    * Optional keyboard shortcut chip rendered inside the debug button.
    * Visual only — registering the shortcut is the caller's responsibility.
    */
   debugShortcut?: ReactNode;
   /** Called when the debug button is clicked. */
-  onDebugClick: () => void;
+  onDebugClick?: () => void;
   /**
    * Slot rendered in place of a default Preferences button. Typically
    * a `Popover.Trigger` wrapping a Button so the caller can fully
@@ -68,21 +72,25 @@ export function AppStatusBar({
       <span aria-hidden>·</span>
       <span className="tabular-nums">v {version}</span>
       <span className="flex-1" aria-hidden />
-      <Button
-        variant="outline"
-        size="sm"
-        leadingIcon="bug"
-        onClick={onDebugClick}
-        className="font-mono"
-      >
-        {debugLabel}
-        {debugShortcut && (
-          <span className="border-border bg-foreground/5 text-muted-foreground ml-1 rounded border px-1.5 py-px font-mono text-[10px] leading-none">
-            {debugShortcut}
-          </span>
-        )}
-      </Button>
-      <span aria-hidden>·</span>
+      {import.meta.env.DEV && debugLabel && onDebugClick && (
+        <>
+          <Button
+            variant="outline"
+            size="sm"
+            leadingIcon="bug"
+            onClick={onDebugClick}
+            className="font-mono"
+          >
+            {debugLabel}
+            {debugShortcut && (
+              <span className="border-border bg-foreground/5 text-muted-foreground ml-1 rounded border px-1.5 py-px font-mono text-[10px] leading-none">
+                {debugShortcut}
+              </span>
+            )}
+          </Button>
+          <span aria-hidden>·</span>
+        </>
+      )}
       {preferencesTrigger}
     </footer>
   );

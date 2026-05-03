@@ -10,7 +10,7 @@ import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
 import { TreeCardCta } from '$components/trees/tree-card-cta';
 import { TreeSectionDivider } from '$components/trees/tree-section-divider';
 import { Button } from '$components/ui/button';
-import { getAllTrees } from '$/db/system/trees';
+import { getAllTrees } from '$db-system/trees';
 import { GedcomManager } from '$/managers/GedcomManager';
 import { TreeManager } from '$/managers/TreeManager';
 import { formatIsoDate } from '$lib/format';
@@ -40,6 +40,7 @@ export function HomePage(): JSX.Element {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [sort, setSort] = useState<SortKey>('recent');
+  const [importError, setImportError] = useState<string | null>(null);
 
   const {
     data: trees,
@@ -53,10 +54,12 @@ export function HomePage(): JSX.Element {
   const importMutation = useMutation({
     mutationFn: () => GedcomManager.importFromFile(),
     onSuccess: () => {
+      setImportError(null);
       void queryClient.invalidateQueries({ queryKey: queryKeys.trees });
     },
     onError: (err) => {
       console.error('GEDCOM import failed:', err);
+      setImportError(err instanceof Error ? err.message : t('common:errors.importFailed'));
     },
   });
 
@@ -166,6 +169,11 @@ export function HomePage(): JSX.Element {
                 {t('trees:home.heroImport')}
               </Button>
             </div>
+            {importError && (
+              <p role="alert" className="text-destructive mt-2 text-sm">
+                {importError}
+              </p>
+            )}
           </section>
 
           {treesContent}
