@@ -1,6 +1,7 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { getTreeById } from '$/db/system/trees';
 import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from '$/db/connection';
 import { queryKeys } from '$lib/query-keys';
@@ -10,6 +11,7 @@ export const Route = createFileRoute('/tree/$treeId')({
   component: function TreeLayout() {
     const { t } = useTranslation(['common', 'trees']);
     const { treeId } = Route.useParams();
+    const navigate = useNavigate();
     const [dbReady, setDbReady] = useState(false);
     const [dbError, setDbError] = useState(false);
 
@@ -54,6 +56,24 @@ export const Route = createFileRoute('/tree/$treeId')({
         void closeTreeDb();
       };
     }, []);
+
+    useEffect(() => {
+      let unlisten: UnlistenFn | undefined;
+      let cancelled = false;
+      void listen('menu:close-tree', () => {
+        void navigate({ to: '/' });
+      }).then((fn) => {
+        if (cancelled) {
+          fn();
+        } else {
+          unlisten = fn;
+        }
+      });
+      return () => {
+        cancelled = true;
+        unlisten?.();
+      };
+    }, [navigate]);
 
     if (treeLoading) {
       return <p>{t('trees:loadingOne')}</p>;
