@@ -1,13 +1,47 @@
-import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAllTrees } from '$/db/system/trees';
+
+import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
+import { TreeCardCta } from '$components/trees/tree-card-cta';
+import { TreeSectionDivider } from '$components/trees/tree-section-divider';
 import { Button } from '$components/ui/button';
-import { Input } from '$components/ui/input';
+import { getAllTrees } from '$/db/system/trees';
+import { GedcomManager } from '$/managers/GedcomManager';
+import { TreeManager } from '$/managers/TreeManager';
 import { queryKeys } from '$lib/query-keys';
+import type { Tree } from '$/types/database';
+
+type SortKey = 'recent' | 'name' | 'size';
+
+function sortTrees(trees: Tree[], key: SortKey): Tree[] {
+  const copy = [...trees];
+  if (key === 'name') {
+    copy.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (key === 'size') {
+    copy.sort((a, b) => b.individualCount - a.individualCount);
+  } else {
+    copy.sort((a, b) => {
+      const aTime = a.lastOpenedAt ?? a.createdAt;
+      const bTime = b.lastOpenedAt ?? b.createdAt;
+      return bTime.localeCompare(aTime);
+    });
+  }
+  return copy;
+}
+
+function formatIsoDate(value: string | null | undefined): string {
+  if (!value) return '—';
+  return value.slice(0, 10);
+}
 
 export function HomePage(): JSX.Element {
   const { t } = useTranslation(['common', 'trees']);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [sort, setSort] = useState<SortKey>('recent');
+
   const {
     data: trees,
     isLoading,
@@ -17,38 +51,120 @@ export function HomePage(): JSX.Element {
     queryFn: getAllTrees,
   });
 
-  if (isLoading) return <p>{t('trees:loading')}</p>;
-  if (error) {
-    console.error('Failed to load trees:', error);
-    return <p>{t('common:errors.loadFailed')}</p>;
-  }
+  const importMutation = useMutation({
+    mutationFn: () => GedcomManager.importFromFile(),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.trees });
+    },
+    onError: (err) => {
+      console.error('GEDCOM import failed:', err);
+    },
+  });
+
+  const sortedTrees = useMemo<Tree[]>(() => (trees ? sortTrees(trees, sort) : []), [trees, sort]);
+
+  const cardLabels: TreeCardLabels = {
+    open: t('trees:card.open'),
+    export: t('trees:card.export'),
+    edit: t('trees:card.edit'),
+    delete: t('trees:card.delete'),
+    individuals: t('trees:card.individuals'),
+    families: t('trees:card.families'),
+    generations: t('trees:card.generations'),
+    createdAt: t('trees:card.createdAt'),
+    lastAccessedAt: t('trees:card.lastAccessedAt'),
+  };
+
+  const sortOptions = [
+    { value: 'recent', label: t('trees:home.sortRecent') },
+    { value: 'name', label: t('trees:home.sortName') },
+    { value: 'size', label: t('trees:home.sortSize') },
+  ];
+
+  const comingSoon = (): void => {
+    window.alert(t('trees:actions.comingSoon'));
+  };
+
+  const handleOpen = async (treeId: string): Promise<void> => {
+    try {
+      await TreeManager.open(treeId);
+      void navigate({ to: '/tree/$treeId', params: { treeId } });
+    } catch (err) {
+      console.error('Failed to open tree:', err);
+      window.alert(t('common:errors.failedToOpenDatabase'));
+    }
+  };
 
   return (
-    <div>
-      <h1>{t('common:app.title')}</h1>
-      <div>
-        <Input
-          type="search"
-          aria-label={t('trees:search')}
-          placeholder={t('trees:searchPlaceholder')}
-        />
-        <Button>{t('trees:newTree')}</Button>
+    <div className="bg-background min-h-full">
+      <div className="mx-auto max-w-[1080px] px-14 pt-14 pb-10">
+        <section className="mb-9 flex flex-col gap-1.5">
+          <h1 className="text-foreground font-serif text-[56px] leading-none font-medium tracking-tight italic">
+            {t('trees:home.title')}{' '}
+            <span className="text-primary italic">{t('trees:home.titleAccent')}</span>
+          </h1>
+          <div className="mt-5 flex items-center gap-2.5">
+            <Button leadingIcon="plus" onClick={comingSoon}>
+              {t('trees:home.heroNew')}
+            </Button>
+            <Button
+              variant="outline"
+              leadingIcon="download"
+              onClick={() => importMutation.mutate()}
+              disabled={importMutation.isPending}
+            >
+              {t('trees:home.heroImport')}
+            </Button>
+          </div>
+        </section>
+
+        {error ? (
+          <p className="text-muted-foreground">{t('common:errors.loadFailed')}</p>
+        ) : isLoading ? (
+          <p className="text-muted-foreground">{t('trees:loading')}</p>
+        ) : (
+          <>
+            <div className="mt-9 mb-[18px]">
+              <TreeSectionDivider
+                label={t('trees:home.sectionLabel')}
+                count={sortedTrees.length}
+                sortOptions={sortOptions}
+                sortValue={sort}
+                onSortChange={(next) => setSort(next as SortKey)}
+                sortAriaLabel={t('trees:home.sortAriaLabel')}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+              {sortedTrees.map((tree) => (
+                <TreeCard
+                  key={tree.id}
+                  name={tree.name}
+                  description={tree.description ?? undefined}
+                  stats={{
+                    individuals: tree.individualCount,
+                    families: tree.familyCount,
+                  }}
+                  meta={{
+                    createdAt: formatIsoDate(tree.createdAt),
+                    lastAccessedAt: formatIsoDate(tree.lastOpenedAt),
+                  }}
+                  labels={cardLabels}
+                  onOpen={() => void handleOpen(tree.id)}
+                  onExport={comingSoon}
+                  onEdit={comingSoon}
+                  onDelete={comingSoon}
+                />
+              ))}
+              <TreeCardCta
+                title={t('trees:cta.title')}
+                subtitle={t('trees:cta.subtitle')}
+                onClick={comingSoon}
+              />
+            </div>
+          </>
+        )}
       </div>
-      {!trees || trees.length === 0 ? (
-        <p>{t('trees:empty')}</p>
-      ) : (
-        <ul>
-          {trees.map((tree) => (
-            <li key={tree.id}>
-              <Link to="/tree/$treeId" params={{ treeId: tree.id }}>
-                {tree.name}
-              </Link>
-              {' — '}
-              <span>{tree.path}</span>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
