@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { tv, type VariantProps } from 'tailwind-variants';
 
-import { Icon } from './icon';
+import { Icon, type IconName } from './icon';
 
 /**
  * One of the visual states a Dropzone can be in. The consumer drives
@@ -68,10 +68,12 @@ export interface DropzoneProps {
   accept?: string[];
 
   /**
-   * Localized name for the file format used in the filter label and
-   * fallback strings. Defaults to `"GEDCOM"`.
+   * Localized name for the file format shown in the native open-file
+   * dialog (e.g. "GEDCOM"). Required because Tauri's filter label
+   * surfaces directly to end users — a missing translation must never
+   * fall back to English here.
    */
-  formatName?: string;
+  formatName: string;
 
   /**
    * Localized prompt rendered in the idle state (e.g.,
@@ -95,7 +97,7 @@ export interface DropzoneProps {
   disabled?: boolean;
 }
 
-const stateIcon: Record<DropzoneState, 'upload' | 'download' | 'folder-open' | 'x'> = {
+const stateIcon: Record<DropzoneState, IconName> = {
   idle: 'upload',
   selected: 'folder-open',
   scanning: 'upload',
@@ -166,7 +168,6 @@ export function Dropzone({
   const card = (
     <button
       type="button"
-      role="button"
       aria-disabled={!interactive || undefined}
       onClick={handleClick}
       disabled={!interactive}

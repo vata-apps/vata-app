@@ -85,10 +85,10 @@ export interface DialogProps {
   size?: DialogRecipeProps['size'];
 
   /**
-   * Localized accessible name for the close button. Defaults to the
-   * literal `"Close"`; consumers should pass a translated string.
+   * Localized accessible name for the close button. Required (no
+   * default) so a missing translation never ships English to end users.
    */
-  closeLabel?: string;
+  closeLabel: string;
 }
 
 /**
@@ -132,7 +132,7 @@ export function Dialog({
   footer,
   footerNote,
   size,
-  closeLabel = 'Close',
+  closeLabel,
 }: DialogProps) {
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
@@ -161,7 +161,11 @@ export function Dialog({
 
           {footer && (
             <footer className="flex items-center justify-between gap-3 border-t border-border px-6 py-4">
-              <div className="text-muted-foreground text-xs">{footerNote}</div>
+              {footerNote ? (
+                <div className="text-muted-foreground text-xs">{footerNote}</div>
+              ) : (
+                <div />
+              )}
               <div className="flex items-center gap-2">{footer}</div>
             </footer>
           )}

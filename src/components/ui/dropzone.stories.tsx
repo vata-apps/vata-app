@@ -17,6 +17,7 @@ const meta = {
   },
   args: {
     idleLabel: 'Drop a .ged file or click to browse',
+    formatName: 'GEDCOM',
     onFileSelected: fn(),
   },
   decorators: [

@@ -68,12 +68,14 @@ export const ThreeColumns: Story = {
         label="JSON"
         description="Structured archive with all internal fields."
         soon
+        soonLabel="Soon"
       />
       <OptionCard
         value="zip"
         label="ZIP archive"
         description="GEDCOM + media files bundled together."
         soon
+        soonLabel="Soon"
       />
     </OptionCardGroup>
   ),

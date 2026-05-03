@@ -1,32 +1,21 @@
 import { type ReactNode } from 'react';
-import { tv, type VariantProps } from 'tailwind-variants';
+import { tv } from 'tailwind-variants';
 
 import { Button } from '$components/ui/button';
 import { Icon } from '$components/ui/icon';
 import { StatGrid } from '$components/ui/stat-grid';
 
-/**
- * Recipe for the TreeCard outer shell.
- */
-const cardRecipe = tv({
-  base: [
-    'flex flex-col gap-3 rounded-lg border border-border bg-card p-4',
-    'transition-colors duration-150',
-  ],
-  variants: {
-    variant: {
-      default: 'hover:border-primary/40',
-      cta: [
-        'cursor-pointer items-center justify-center text-center',
-        'border-dashed text-muted-foreground hover:text-foreground hover:border-primary/40',
-        'min-h-[200px]',
-      ],
-    },
-  },
-  defaultVariants: { variant: 'default' },
+const cardBase = tv({
+  base: ['flex flex-col gap-3 rounded-lg border bg-card p-4 transition-colors duration-150'],
 });
 
-type CardRecipeProps = VariantProps<typeof cardRecipe>;
+const ctaCardBase = tv({
+  base: [
+    'flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed bg-card p-4 text-center',
+    'text-muted-foreground transition-colors duration-150',
+    'hover:border-primary/40 hover:text-foreground',
+  ],
+});
 
 /**
  * Stats shown in the card body.
@@ -63,10 +52,9 @@ export interface TreeCardLabels {
 }
 
 /**
- * Default-variant props (a real tree).
+ * Props accepted by {@link TreeCard}.
  */
-export interface TreeCardDefaultProps {
-  variant?: 'default';
+export interface TreeCardProps {
   /** Tree name shown as the card heading. */
   name: ReactNode;
   /** Optional tree description. */
@@ -88,29 +76,13 @@ export interface TreeCardDefaultProps {
 }
 
 /**
- * CTA-variant props (the "Add new tree" tile).
- */
-export interface TreeCardCtaProps {
-  variant: 'cta';
-  /** Localized label for the CTA. */
-  label: ReactNode;
-  /** Called when the CTA is clicked. */
-  onClick: () => void;
-}
-
-export type TreeCardProps = TreeCardDefaultProps | TreeCardCtaProps;
-
-/**
  * Domain card representing one family tree on the home page.
  *
- * Two variants:
- * - `default` — full card with name, optional description, stats grid,
- *   meta, and four action buttons (Open / Export / Edit / Delete).
- * - `cta` — minimal dashed tile used to trigger "Add new tree".
- *
  * Lives outside `src/components/ui/` because it is genealogy-domain
- * specific (composes generic UI primitives — Button, Icon, StatGrid —
- * but has its own data shape and call sites).
+ * specific — it composes generic UI primitives (Button, Icon, StatGrid)
+ * but has its own data shape and call sites. For the "Add a new tree"
+ * tile, use the dedicated {@link TreeCardCta} component instead — they
+ * share no real runtime code, only family resemblance.
  *
  * All textual content (name, description, button labels, meta) must be
  * localized by the caller; this component does not own copy.
@@ -132,28 +104,8 @@ export type TreeCardProps = TreeCardDefaultProps | TreeCardCtaProps;
  *   }}
  *   onOpen={...} onExport={...} onEdit={...} onDelete={...}
  * />
- *
- * @example
- * <TreeCard variant="cta" label={t('trees.new')} onClick={() => navigate('/new')} />
  */
-export function TreeCard(props: TreeCardProps) {
-  if (props.variant === 'cta') {
-    return <TreeCardCta {...props} />;
-  }
-  return <TreeCardDefault {...props} />;
-}
-
-function TreeCardCta({ label, onClick }: TreeCardCtaProps) {
-  const variant: CardRecipeProps['variant'] = 'cta';
-  return (
-    <button type="button" onClick={onClick} className={cardRecipe({ variant })}>
-      <Icon name="plus" size={24} />
-      <span className="text-sm font-medium">{label}</span>
-    </button>
-  );
-}
-
-function TreeCardDefault({
+export function TreeCard({
   name,
   description,
   stats,
@@ -163,7 +115,7 @@ function TreeCardDefault({
   onExport,
   onEdit,
   onDelete,
-}: TreeCardDefaultProps) {
+}: TreeCardProps) {
   const items = [
     { value: stats.individuals, label: labels.individuals },
     { value: stats.families, label: labels.families },
@@ -173,7 +125,7 @@ function TreeCardDefault({
   }
 
   return (
-    <article className={cardRecipe({ variant: 'default' })}>
+    <article className={`${cardBase()} border-border hover:border-primary/40`}>
       <header className="flex items-start justify-between gap-2">
         <div className="flex flex-col gap-0.5">
           <h3 className="text-foreground text-base font-semibold leading-tight">{name}</h3>
@@ -206,5 +158,32 @@ function TreeCardDefault({
         </Button>
       </footer>
     </article>
+  );
+}
+
+/**
+ * Props accepted by {@link TreeCardCta}.
+ */
+export interface TreeCardCtaProps {
+  /** Localized label for the CTA tile. */
+  label: ReactNode;
+  /** Called when the CTA is clicked. */
+  onClick: () => void;
+}
+
+/**
+ * Dashed CTA tile used as the last cell of the trees grid to trigger
+ * "Add a new tree". Renders as a `<button>` so it is keyboard-focusable
+ * and announced as a button by screen readers.
+ *
+ * @example
+ * <TreeCardCta label={t('trees.new')} onClick={() => navigate('/new')} />
+ */
+export function TreeCardCta({ label, onClick }: TreeCardCtaProps) {
+  return (
+    <button type="button" onClick={onClick} className={ctaCardBase()}>
+      <Icon name="plus" size={24} />
+      <span className="text-sm font-medium">{label}</span>
+    </button>
   );
 }

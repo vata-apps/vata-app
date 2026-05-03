@@ -19,6 +19,7 @@ const meta: Meta<DialogArgs> = {
   args: {
     open: true,
     title: 'Dialog title',
+    closeLabel: 'Close',
     onOpenChange: fn(),
     children: null,
   },

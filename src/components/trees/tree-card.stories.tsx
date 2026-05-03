@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { TreeCard, type TreeCardCtaProps, type TreeCardDefaultProps } from './tree-card';
+import { TreeCard, type TreeCardProps } from './tree-card';
 
 const labels = {
   open: 'Open',
@@ -13,12 +13,9 @@ const labels = {
   generations: 'Generations',
 };
 
-// We type Meta against the *default* variant — the CTA story casts at
-// the call site below. Using a plain union here would make Storybook's
-// args helper resolve to `never` for non-shared properties.
 const meta = {
   title: 'Trees/TreeCard',
-  component: TreeCard as unknown as (props: TreeCardDefaultProps) => JSX.Element,
+  component: TreeCard,
   tags: ['autodocs'],
   parameters: { layout: 'padded' },
   decorators: [
@@ -28,13 +25,12 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<TreeCardDefaultProps>;
+} satisfies Meta<typeof TreeCard>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const defaultArgs: TreeCardDefaultProps = {
-  variant: 'default',
+const defaultArgs: TreeCardProps = {
   name: 'Bourgoin family',
   description: "Started from grandpa's notebook in 2024.",
   stats: { individuals: 142, families: 58 },
@@ -89,24 +85,5 @@ export const ActionsFire: Story = {
     await expect(args.onExport).toHaveBeenCalledTimes(1);
     await expect(args.onEdit).toHaveBeenCalledTimes(1);
     await expect(args.onDelete).toHaveBeenCalledTimes(1);
-  },
-};
-
-// CTA variant: the type cast is intentional — see the comment on `meta`.
-const ctaArgs = {
-  variant: 'cta',
-  label: 'Add a new tree',
-  onClick: fn(),
-} as unknown as TreeCardDefaultProps;
-
-export const Cta: Story = {
-  name: 'CTA',
-  args: ctaArgs,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const button = canvas.getByRole('button', { name: /Add a new tree/ });
-    const onClick = (ctaArgs as unknown as TreeCardCtaProps).onClick;
-    await userEvent.click(button);
-    await expect(onClick).toHaveBeenCalledTimes(1);
   },
 };

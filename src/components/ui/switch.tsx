@@ -72,6 +72,13 @@ export interface SwitchProps {
 
   /** Optional id for the underlying button. Auto-generated if omitted. */
   id?: string;
+
+  /**
+   * Optional additional `aria-describedby` ids. Merged with the
+   * generated description id rather than overwritten, so callers can
+   * stack extra descriptions.
+   */
+  'aria-describedby'?: string;
 }
 
 /**
@@ -100,11 +107,13 @@ export function Switch({
   size,
   disabled,
   id,
+  'aria-describedby': ariaDescribedBy,
 }: SwitchProps) {
   const reactId = useId();
   const switchId = id ?? `switch-${reactId}`;
   const labelId = `${switchId}-label`;
   const descriptionId = description ? `${switchId}-description` : undefined;
+  const describedBy = [ariaDescribedBy, descriptionId].filter(Boolean).join(' ') || undefined;
 
   return (
     <label
@@ -127,7 +136,7 @@ export function Switch({
         onCheckedChange={onCheckedChange}
         disabled={disabled}
         aria-labelledby={labelId}
-        aria-describedby={descriptionId}
+        aria-describedby={describedBy}
         className={switchTrackRecipe({ size })}
       >
         <RadixSwitch.Thumb className={switchThumbRecipe({ size })} />

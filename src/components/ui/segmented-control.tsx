@@ -68,6 +68,10 @@ export interface SegmentedControlProps {
    * tech can announce what the segments represent (e.g., "Sort by").
    */
   'aria-label': string;
+
+  // Note: Radix ToggleGroup with type="single" emits an empty string
+  // when the user re-clicks the active segment. Consumers decide
+  // whether to allow deselection or guard with `if (next) ...`.
 }
 
 /**
@@ -104,12 +108,7 @@ export function SegmentedControl({
     <RadixToggleGroup.Root
       type="single"
       value={value}
-      onValueChange={(next) => {
-        // Radix emits an empty string when the user re-clicks the active
-        // segment. We forward that through — consumers decide whether
-        // to allow deselection or guard with `if (next) ...`.
-        onValueChange(next);
-      }}
+      onValueChange={onValueChange}
       aria-label={ariaLabel}
       className={groupRecipe()}
     >

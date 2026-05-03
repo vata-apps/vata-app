@@ -105,10 +105,7 @@ export function OptionCardGroup({
   );
 }
 
-/**
- * Props accepted by {@link OptionCard}.
- */
-export interface OptionCardProps {
+interface OptionCardBaseProps {
   /** Unique value submitted to {@link OptionCardGroup.onValueChange}. */
   value: string;
 
@@ -120,19 +117,26 @@ export interface OptionCardProps {
 
   /** Disables the option (cannot be selected). */
   disabled?: boolean;
-
-  /**
-   * Marks the option as a coming-soon preview. Renders a Badge with
-   * variant `soon` in the top-right and forces `disabled` semantics.
-   */
-  soon?: boolean;
-
-  /**
-   * Localized text for the soon badge. Defaults to `"Soon"`; pass a
-   * translated string. No effect when `soon` is `false`.
-   */
-  soonLabel?: string;
 }
+
+/**
+ * Props accepted by {@link OptionCard}. Discriminated on `soon` so the
+ * `soonLabel` (a client-facing string) is required precisely when the
+ * Badge is rendered — never accidentally falling back to English.
+ */
+export type OptionCardProps = OptionCardBaseProps &
+  (
+    | { soon?: false; soonLabel?: never }
+    | {
+        /**
+         * Marks the option as a coming-soon preview. Renders a Badge with
+         * variant `soon` in the top-right and forces `disabled` semantics.
+         */
+        soon: true;
+        /** Localized text for the soon badge. Required when `soon` is true. */
+        soonLabel: string;
+      }
+  );
 
 /**
  * Single selectable card inside an {@link OptionCardGroup}.
@@ -141,20 +145,15 @@ export interface OptionCardProps {
  * (Up/Down/Left/Right between siblings, Space to select) and screen-reader
  * announcements are handled by Radix.
  */
-export function OptionCard({
-  value,
-  label,
-  description,
-  disabled,
-  soon = false,
-  soonLabel = 'Soon',
-}: OptionCardProps) {
+export function OptionCard(props: OptionCardProps) {
+  const { value, label, description, disabled } = props;
+  const soon = props.soon === true;
   return (
     <RadixRadioGroup.Item value={value} disabled={disabled || soon} className={cardRecipe()}>
       {soon && (
         <span className="absolute right-3 top-3">
           <Badge variant="soon" size="sm">
-            {soonLabel}
+            {props.soonLabel}
           </Badge>
         </span>
       )}
