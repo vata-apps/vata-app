@@ -148,18 +148,25 @@ export function Dropzone({
 
   async function handleClick() {
     if (!interactive) return;
-    // Lazy-load so non-Tauri test contexts (Storybook in Vitest browser
-    // mode) can still render the wrapper without trying to resolve the
-    // plugin entry point at module-init time.
-    const { open } = await import('@tauri-apps/plugin-dialog');
-    const selected = await open({
-      multiple: false,
-      filters: [{ name: formatName, extensions: accept }],
-    });
-    if (!selected) return;
-    const path = selected as string;
-    const name = path.split(/[/\\]/).pop() ?? path;
-    await onFileSelected({ path, name });
+    try {
+      // Lazy-load so non-Tauri test contexts (Storybook in Vitest browser
+      // mode) can still render the wrapper without trying to resolve the
+      // plugin entry point at module-init time.
+      const { open } = await import('@tauri-apps/plugin-dialog');
+      const selected = await open({
+        multiple: false,
+        filters: [{ name: formatName, extensions: accept }],
+      });
+      if (!selected) return;
+      const path = selected as string;
+      const name = path.split(/[/\\]/).pop() ?? path;
+      await onFileSelected({ path, name });
+    } catch (err) {
+      // Surface to the dev console so the unhandled rejection isn't silent;
+      // the consumer is expected to drive the `state` prop to `'error'` from
+      // its own catch in onFileSelected when it needs user feedback.
+      console.error('[Dropzone] file dialog or onFileSelected failed:', err);
+    }
   }
 
   const iconName = stateIcon[state];

@@ -138,7 +138,14 @@ export function Dialog({
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
       <RadixDialog.Portal>
         <RadixDialog.Overlay className="fixed inset-0 z-40 bg-foreground/40 backdrop-blur-sm" />
-        <RadixDialog.Content className={dialogContentRecipe({ size })} aria-describedby={undefined}>
+        <RadixDialog.Content
+          className={dialogContentRecipe({ size })}
+          // Only override Radix's auto-wiring when there is no Description
+          // child — `undefined` here suppresses Radix's dev-only "missing
+          // Description" warning. When `description` IS provided, omit the
+          // prop entirely so Radix's automatic aria-describedby takes effect.
+          {...(description ? {} : { 'aria-describedby': undefined })}
+        >
           <header className="flex items-start justify-between gap-3 border-b border-border px-6 py-4">
             <div className="flex flex-col gap-1">
               <RadixDialog.Title className="text-foreground text-base font-semibold leading-tight">
