@@ -1,6 +1,6 @@
 import { useState, type ComponentProps, type ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from './button';
 import { Dialog } from './dialog';
@@ -136,10 +136,15 @@ export const ClosesOnEscape: Story = {
   render: (args) => <DialogHarness {...args} />,
   play: async ({ args, canvasElement }) => {
     const body = canvasElement.ownerDocument.body;
-    const dialog = within(body).getByRole('dialog');
+    // Wait for Radix to mount the Portal, focus the content, and register
+    // its Escape handler. `findByRole` polls until the dialog is in the DOM.
+    const dialog = await within(body).findByRole('dialog');
     await expect(dialog).toBeInTheDocument();
+    // Dispatch the key on the focused element (the Dialog content) rather
+    // than the document — Playwright's userEvent honors target focus.
+    dialog.focus();
     await userEvent.keyboard('{Escape}');
-    await expect(args.onOpenChange).toHaveBeenCalledWith(false);
+    await waitFor(() => expect(args.onOpenChange).toHaveBeenCalledWith(false));
   },
 };
 
@@ -151,8 +156,9 @@ export const ClosesOnCloseButton: Story = {
   render: (args) => <DialogHarness {...args} />,
   play: async ({ args, canvasElement }) => {
     const body = canvasElement.ownerDocument.body;
-    const closeButton = within(body).getByRole('button', { name: 'Close dialog' });
+    // `findByRole` polls until the close button is mounted and visible.
+    const closeButton = await within(body).findByRole('button', { name: 'Close dialog' });
     await userEvent.click(closeButton);
-    await expect(args.onOpenChange).toHaveBeenCalledWith(false);
+    await waitFor(() => expect(args.onOpenChange).toHaveBeenCalledWith(false));
   },
 };
