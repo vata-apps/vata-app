@@ -10,6 +10,10 @@ permissions:
   contents: read
   pull-requests: write
 
+# Group key includes event_name so review and reply jobs don't block each other.
+# cancel-in-progress: false because the second push's review depends on the first's
+# state-marker write — the runs serialize within the group rather than racing, so
+# the second pass reads the SHA the first pass posted and only diffs the new commit.
 concurrency:
   group: claude-review-${{ github.event.pull_request.number }}-${{ github.event_name }}
   cancel-in-progress: false

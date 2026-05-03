@@ -57,11 +57,21 @@ function readEnv(): Env {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY!,
     githubToken: process.env.GITHUB_TOKEN!,
     repo: process.env.REPO!,
-    prNumber: Number(process.env.PR_NUMBER!),
+    prNumber: parseIntEnv('PR_NUMBER'),
     baseSha: process.env.BASE_SHA!,
     headSha: process.env.HEAD_SHA!,
     repoRoot,
   };
+}
+
+function parseIntEnv(name: string): number {
+  const raw = process.env[name];
+  if (!raw) throw new Error(`Missing env: ${name}`);
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new Error(`Env ${name} must be a positive integer, got ${JSON.stringify(raw)}`);
+  }
+  return n;
 }
 
 function gitChangedFiles(repoRoot: string, fromSha: string, toSha: string): string[] {
@@ -279,7 +289,14 @@ async function main(): Promise<void> {
         })),
         diffSummary: buildDiffSummary(env.repoRoot, fromSha, env.headSha, changedFiles),
       });
-      keptFindings = result.keptIndices.map((i) => rawFindings[i]!);
+      keptFindings = result.keptIndices.flatMap((i) => {
+        const f = rawFindings[i];
+        if (!f) {
+          console.warn(`Orchestrator returned out-of-range index ${i}; skipping.`);
+          return [];
+        }
+        return [f];
+      });
       orchestratorSummary = result.summary;
       console.log(
         `Orchestrator: kept ${keptFindings.length}/${rawFindings.length}, dropped ${result.droppedIndices.length}`

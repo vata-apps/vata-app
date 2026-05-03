@@ -15,9 +15,9 @@ import {
   type Severity,
 } from './tools.ts';
 
-const MODEL = 'claude-sonnet-4-6';
+const MODEL = process.env.CLAUDE_REVIEW_MODEL ?? 'claude-sonnet-4-6';
 const MAX_TOKENS = 8192;
-const MAX_ITERATIONS = 6;
+const MAX_ITERATIONS = 12;
 const MAX_COMMENTS_PER_FILE = 10;
 const ORCHESTRATOR_MAX_ITERATIONS = 3;
 const ORCHESTRATOR_MAX_TOKENS = 4096;
@@ -158,6 +158,13 @@ export async function runReviewer(
 
     messages.push({ role: 'assistant', content: response.content });
     messages.push({ role: 'user', content: toolResults });
+  }
+
+  if (verdict === null && collected.length > 0) {
+    verdict = {
+      event: 'COMMENT',
+      summary: `Posted ${collected.length} finding(s); reviewer hit the max-iterations cap before submitting an explicit verdict (severity ladder will determine the final review status).`,
+    };
   }
 
   return {

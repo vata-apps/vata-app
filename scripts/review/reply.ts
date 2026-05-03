@@ -43,10 +43,20 @@ function readEnv(): Env {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY!,
     githubToken: process.env.GITHUB_TOKEN!,
     repo: process.env.REPO!,
-    prNumber: Number(process.env.PR_NUMBER!),
-    commentId: Number(process.env.COMMENT_ID!),
+    prNumber: parseIntEnv('PR_NUMBER'),
+    commentId: parseIntEnv('COMMENT_ID'),
     repoRoot,
   };
+}
+
+function parseIntEnv(name: string): number {
+  const raw = process.env[name];
+  if (!raw) throw new Error(`Missing env: ${name}`);
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n <= 0) {
+    throw new Error(`Env ${name} must be a positive integer, got ${JSON.stringify(raw)}`);
+  }
+  return n;
 }
 
 async function readCodeContext(
