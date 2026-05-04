@@ -16,7 +16,7 @@
     "generic": "Une erreur est survenue",
     "loadFailed": "Échec du chargement des données.",
     "reload": "Recharger",
-    "failedToOpenDatabase": "Échec de l'ouverture de la base de données",
+    "failedToOpenDatabase": "Échec de l'ouverture de la base de données.",
     "importFailed": "Échec de l'import GEDCOM."
   },
   "statusBar": {

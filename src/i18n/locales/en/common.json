@@ -16,7 +16,7 @@
     "generic": "Something went wrong",
     "loadFailed": "Failed to load data.",
     "reload": "Reload",
-    "failedToOpenDatabase": "Failed to open database",
+    "failedToOpenDatabase": "Failed to open database.",
     "importFailed": "GEDCOM import failed."
   },
   "statusBar": {
