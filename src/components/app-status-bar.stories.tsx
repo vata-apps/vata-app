@@ -4,6 +4,8 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { AppStatusBar } from './app-status-bar';
 import { Button } from './ui/button';
 
+const onDebugClick = fn();
+
 const meta = {
   title: 'App/AppStatusBar',
   component: AppStatusBar,
@@ -12,8 +14,7 @@ const meta = {
   args: {
     brandLabel: 'Vata',
     version: '0.1.0',
-    debugLabel: 'Debug',
-    onDebugClick: fn(),
+    debug: { label: 'Debug', onClick: onDebugClick },
     preferencesTrigger: (
       <Button variant="outline" size="sm" leadingIcon="settings" className="font-mono">
         Preferences
@@ -37,7 +38,7 @@ export const Default: Story = {
 
 export const WithShortcut: Story = {
   args: {
-    debugShortcut: '⌘D',
+    debug: { label: 'Debug', shortcut: '⌘D', onClick: onDebugClick },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -47,11 +48,23 @@ export const WithShortcut: Story = {
 
 export const DebugFires: Story = {
   args: {
-    debugShortcut: '⌘D',
+    debug: { label: 'Debug', shortcut: '⌘D', onClick: onDebugClick },
   },
-  play: async ({ args, canvasElement }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    onDebugClick.mockClear();
     await userEvent.click(canvas.getByRole('button', { name: /Debug/ }));
-    await expect(args.onDebugClick).toHaveBeenCalledTimes(1);
+    await expect(onDebugClick).toHaveBeenCalledTimes(1);
+  },
+};
+
+export const NoDebug: Story = {
+  args: {
+    debug: undefined,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.queryByRole('button', { name: /Debug/ })).not.toBeInTheDocument();
+    await expect(canvas.getByRole('button', { name: /Preferences/ })).toBeInTheDocument();
   },
 };

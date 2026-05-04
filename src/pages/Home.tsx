@@ -183,9 +183,11 @@ export function HomePage(): JSX.Element {
       <AppStatusBar
         brandLabel={t('common:app.title')}
         version={packageJson.version}
-        debugLabel={t('common:statusBar.debug')}
-        debugShortcut="⌘D"
-        onDebugClick={comingSoon}
+        debug={
+          import.meta.env.DEV
+            ? { label: t('common:statusBar.debug'), shortcut: '⌘D', onClick: comingSoon }
+            : undefined
+        }
         preferencesTrigger={
           <PreferencesPopover>
             <Button variant="outline" size="sm" leadingIcon="settings" className="font-mono">

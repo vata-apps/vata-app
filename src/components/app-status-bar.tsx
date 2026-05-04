@@ -3,6 +3,22 @@ import { type ReactNode } from 'react';
 import { Button } from '$components/ui/button';
 
 /**
+ * Optional debug action rendered between the version and the
+ * preferences trigger.
+ */
+export interface AppStatusBarDebugAction {
+  /** Localized label rendered inside the button. */
+  label: string;
+  /**
+   * Optional keyboard shortcut chip rendered after the label. Visual
+   * only — registering the shortcut is the caller's responsibility.
+   */
+  shortcut?: ReactNode;
+  /** Called when the button is clicked. */
+  onClick: () => void;
+}
+
+/**
  * Props accepted by {@link AppStatusBar}.
  */
 export interface AppStatusBarProps {
@@ -11,18 +27,11 @@ export interface AppStatusBarProps {
   /** Version string shown after the brand label (rendered as `v {version}`). */
   version: ReactNode;
   /**
-   * Localized label for the debug button. The button is always
-   * tree-shaken from production builds — even when this prop is
-   * supplied — via an `import.meta.env.DEV` guard inside the component.
+   * Optional debug action. Omit to hide the button entirely. Callers
+   * typically gate this with `import.meta.env.DEV` so production builds
+   * tree-shake the dev-only chrome.
    */
-  debugLabel?: string;
-  /**
-   * Optional keyboard shortcut chip rendered inside the debug button.
-   * Visual only — registering the shortcut is the caller's responsibility.
-   */
-  debugShortcut?: ReactNode;
-  /** Called when the debug button is clicked. */
-  onDebugClick?: () => void;
+  debug?: AppStatusBarDebugAction;
   /**
    * Slot rendered in place of a default Preferences button. Typically
    * a `Popover.Trigger` wrapping a Button so the caller can fully
@@ -34,9 +43,8 @@ export interface AppStatusBarProps {
 
 /**
  * Horizontal status bar pinned at the bottom of the app shell. Shows
- * the brand + version on the left, a Debug button (with optional
- * keyboard chip) and a caller-provided preferences trigger on the
- * right.
+ * the brand + version on the left, an optional Debug button, and a
+ * caller-provided preferences trigger on the right.
  *
  * Owns no copy — every label is supplied by the caller. The
  * preferences slot is fully delegated so the caller controls the
@@ -46,9 +54,11 @@ export interface AppStatusBarProps {
  * <AppStatusBar
  *   brandLabel="Vata"
  *   version={packageJson.version}
- *   debugLabel={t('common:statusBar.debug')}
- *   debugShortcut="⌘D"
- *   onDebugClick={openDebugPanel}
+ *   debug={import.meta.env.DEV ? {
+ *     label: t('common:statusBar.debug'),
+ *     shortcut: '⌘D',
+ *     onClick: openDebugPanel,
+ *   } : undefined}
  *   preferencesTrigger={
  *     <PreferencesPopover>
  *       <Button variant="outline" size="sm" leadingIcon="settings">
@@ -61,9 +71,7 @@ export interface AppStatusBarProps {
 export function AppStatusBar({
   brandLabel,
   version,
-  debugLabel,
-  debugShortcut,
-  onDebugClick,
+  debug,
   preferencesTrigger,
 }: AppStatusBarProps): JSX.Element {
   return (
@@ -72,19 +80,19 @@ export function AppStatusBar({
       <span aria-hidden>·</span>
       <span className="tabular-nums">v {version}</span>
       <span className="flex-1" aria-hidden />
-      {import.meta.env.DEV && debugLabel && onDebugClick && (
+      {debug && (
         <>
           <Button
             variant="outline"
             size="sm"
             leadingIcon="bug"
-            onClick={onDebugClick}
+            onClick={debug.onClick}
             className="font-mono"
           >
-            {debugLabel}
-            {debugShortcut && (
+            {debug.label}
+            {debug.shortcut && (
               <span className="border-border bg-foreground/5 text-muted-foreground ml-1 rounded border px-1.5 py-px font-mono text-[10px] leading-none">
-                {debugShortcut}
+                {debug.shortcut}
               </span>
             )}
           </Button>
