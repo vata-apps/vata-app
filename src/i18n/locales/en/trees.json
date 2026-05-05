@@ -52,6 +52,22 @@
     "closeLabel": "Close",
     "errorGeneric": "Failed to create tree."
   },
+  "editTree": {
+    "title": "Edit tree",
+    "subtitle": "Rename the tree and adjust its description. Records and sources remain unchanged.",
+    "nameLabel": "Tree name",
+    "nameRequired": "*",
+    "descriptionLabel": "Description",
+    "descriptionOptional": "optional",
+    "summaryIndividuals": "Individuals",
+    "summaryCreated": "Created",
+    "summaryLastOpened": "Last opened",
+    "summaryNever": "Never",
+    "cancel": "Cancel",
+    "submit": "Save",
+    "closeLabel": "Close",
+    "errorGeneric": "Failed to update tree."
+  },
   "actions": {
     "comingSoon": "Coming soon."
   }
