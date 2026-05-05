@@ -49,11 +49,11 @@ export async function getTreeById(id: string): Promise<Tree | null> {
 
 export async function treeExistsAtPath(path: string): Promise<boolean> {
   const db = await getSystemDb();
-  const rows = await db.select<{ count: number }[]>(
-    `SELECT COUNT(*) AS count FROM trees WHERE path = $1`,
+  const rows = await db.select<{ exists_flag: number }[]>(
+    `SELECT EXISTS(SELECT 1 FROM trees WHERE path = $1) AS exists_flag`,
     [path]
   );
-  return (rows[0]?.count ?? 0) > 0;
+  return rows[0]?.exists_flag === 1;
 }
 
 export async function createTree(

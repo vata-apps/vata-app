@@ -41,13 +41,15 @@ export class TreeManager {
   }
 
   private static async resolveAvailablePath(baseSlug: string): Promise<string> {
-    let suffix = 0;
-    while (true) {
+    const MAX_ATTEMPTS = 100;
+    for (let suffix = 0; suffix < MAX_ATTEMPTS; suffix++) {
       const slug = suffix === 0 ? baseSlug : `${baseSlug}-${suffix + 1}`;
       const candidate = await getTreePathForSlug(slug);
       if (!(await treeExistsAtPath(candidate))) return candidate;
-      suffix++;
     }
+    throw new Error(
+      `Unable to find an available path for slug "${baseSlug}" after ${MAX_ATTEMPTS} attempts`
+    );
   }
 
   /**
