@@ -80,6 +80,11 @@
   --color-input: oklch(0.22 0.028 45 / 14%);
   --color-ring: oklch(0.54 0.13 32);
 
+  /* Modal/dialog backdrop — always dark in both themes so the underlying
+     page recedes behind the floating surface. Pair with an opacity utility
+     (e.g., `bg-overlay/60`) at the call site. */
+  --color-overlay: oklch(0 0 0);
+
   /* Typography — `Fraunces` and `Geist Mono` will fall back until self-hosted in ./fonts/ */
   --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Fraunces', ui-serif, Georgia, Cambria, 'Times New Roman', serif;

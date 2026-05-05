@@ -5,7 +5,6 @@
   "loadingOne": "Chargement de l'arbre...",
   "notFound": "Arbre introuvable.",
   "openingDb": "Ouverture de la base de données...",
-  "newTree": "Nouvel arbre",
   "search": "Rechercher des arbres",
   "searchPlaceholder": "Filtrer par nom",
   "home": {
@@ -33,6 +32,25 @@
   "cta": {
     "title": "Démarrer un nouvel arbre",
     "subtitle": "Ou glissez-déposez un fichier .ged"
+  },
+  "newTree": {
+    "title": "Démarrer un nouvel arbre",
+    "subtitle": "Donnez un nom à votre arbre et choisissez un point de départ.",
+    "nameLabel": "Nom",
+    "namePlaceholder": "ex. Famille Bourgoin",
+    "descriptionLabel": "Description",
+    "descriptionOptional": "Optionnel",
+    "descriptionPlaceholder": "À propos de cet arbre",
+    "startingPointLabel": "Point de départ",
+    "blankLabel": "Arbre vide",
+    "blankDescription": "Partir d'une toile vierge — aucun individu, aucune famille.",
+    "fromMeLabel": "Arbre à partir de moi",
+    "fromMeDescription": "Pré-remplir avec vous comme individu de départ.",
+    "soonLabel": "Bientôt",
+    "cancel": "Annuler",
+    "submit": "Créer l'arbre",
+    "closeLabel": "Fermer",
+    "errorGeneric": "Échec de la création de l'arbre."
   },
   "actions": {
     "comingSoon": "Bientôt."

@@ -5,7 +5,6 @@
   "loadingOne": "Loading tree...",
   "notFound": "Tree not found.",
   "openingDb": "Opening database...",
-  "newTree": "New tree",
   "search": "Search trees",
   "searchPlaceholder": "Filter by name",
   "home": {
@@ -33,6 +32,25 @@
   "cta": {
     "title": "Start a new tree",
     "subtitle": "Or drop a .ged file"
+  },
+  "newTree": {
+    "title": "Start a new tree",
+    "subtitle": "Give your tree a name and choose how to begin.",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g., Bourgoin family",
+    "descriptionLabel": "Description",
+    "descriptionOptional": "Optional",
+    "descriptionPlaceholder": "What is this tree about?",
+    "startingPointLabel": "Starting point",
+    "blankLabel": "Blank tree",
+    "blankDescription": "Start from a blank canvas — no individuals, no families.",
+    "fromMeLabel": "Tree from me",
+    "fromMeDescription": "Pre-fill with you as the starting individual.",
+    "soonLabel": "Soon",
+    "cancel": "Cancel",
+    "submit": "Create tree",
+    "closeLabel": "Close",
+    "errorGeneric": "Failed to create tree."
   },
   "actions": {
     "comingSoon": "Coming soon."

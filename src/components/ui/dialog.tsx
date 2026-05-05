@@ -137,7 +137,7 @@ export function Dialog({
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
       <RadixDialog.Portal>
-        <RadixDialog.Overlay className="fixed inset-0 z-40 bg-foreground/40 backdrop-blur-sm" />
+        <RadixDialog.Overlay className="fixed inset-0 z-40 bg-overlay/60 backdrop-blur-sm" />
         <RadixDialog.Content
           className={dialogContentRecipe({ size })}
           // Only override Radix's auto-wiring when there is no Description

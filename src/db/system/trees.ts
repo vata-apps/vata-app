@@ -47,6 +47,15 @@ export async function getTreeById(id: string): Promise<Tree | null> {
   return rows[0] ? mapToTree(rows[0]) : null;
 }
 
+export async function treeExistsAtPath(path: string): Promise<boolean> {
+  const db = await getSystemDb();
+  const rows = await db.select<{ exists_flag: number }[]>(
+    `SELECT EXISTS(SELECT 1 FROM trees WHERE path = $1) AS exists_flag`,
+    [path]
+  );
+  return rows[0]?.exists_flag === 1;
+}
+
 export async function createTree(
   data: { name: string; path: string; description?: string },
   dbOverride?: Database

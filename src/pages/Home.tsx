@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import packageJson from '../../package.json';
 import { AppStatusBar } from '$components/app-status-bar';
 import { PreferencesPopover } from '$components/preferences-popover';
+import { NewTreeModal } from '$components/trees/new-tree-modal';
 import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
 import { TreeCardCta } from '$components/trees/tree-card-cta';
 import { TreeSectionDivider } from '$components/trees/tree-section-divider';
@@ -41,6 +42,7 @@ export function HomePage(): JSX.Element {
   const queryClient = useQueryClient();
   const [sort, setSort] = useState<SortKey>('recent');
   const [importError, setImportError] = useState<string | null>(null);
+  const [newTreeOpen, setNewTreeOpen] = useState(false);
 
   const {
     data: trees,
@@ -140,7 +142,7 @@ export function HomePage(): JSX.Element {
           <TreeCardCta
             title={t('trees:cta.title')}
             subtitle={t('trees:cta.subtitle')}
-            onClick={comingSoon}
+            onClick={() => setNewTreeOpen(true)}
           />
         </div>
       </>
@@ -157,7 +159,7 @@ export function HomePage(): JSX.Element {
               <span className="text-primary italic">{t('trees:home.titleAccent')}</span>
             </h1>
             <div className="mt-5 flex items-center gap-2.5">
-              <Button leadingIcon="plus" onClick={comingSoon}>
+              <Button leadingIcon="plus" onClick={() => setNewTreeOpen(true)}>
                 {t('trees:home.heroNew')}
               </Button>
               <Button
@@ -196,6 +198,8 @@ export function HomePage(): JSX.Element {
           </PreferencesPopover>
         }
       />
+
+      <NewTreeModal open={newTreeOpen} onOpenChange={setNewTreeOpen} />
     </div>
   );
 }
