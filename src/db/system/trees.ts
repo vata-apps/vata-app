@@ -47,6 +47,15 @@ export async function getTreeById(id: string): Promise<Tree | null> {
   return rows[0] ? mapToTree(rows[0]) : null;
 }
 
+export async function treeExistsAtPath(path: string): Promise<boolean> {
+  const db = await getSystemDb();
+  const rows = await db.select<{ count: number }[]>(
+    `SELECT COUNT(*) AS count FROM trees WHERE path = $1`,
+    [path]
+  );
+  return (rows[0]?.count ?? 0) > 0;
+}
+
 export async function createTree(
   data: { name: string; path: string; description?: string },
   dbOverride?: Database

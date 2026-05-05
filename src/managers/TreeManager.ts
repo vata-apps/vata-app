@@ -1,5 +1,11 @@
 import { openTreeDb, closeTreeDb } from '$/db/connection';
-import { createTree, getTreeById, updateTreeStats, markTreeOpened } from '$/db/system/trees';
+import {
+  createTree,
+  getTreeById,
+  treeExistsAtPath,
+  updateTreeStats,
+  markTreeOpened,
+} from '$/db/system/trees';
 import { countIndividuals } from '$db-tree/individuals';
 import { countFamilies } from '$db-tree/families';
 import { useAppStore } from '$/store/app-store';
@@ -14,11 +20,14 @@ export class TreeManager {
   /**
    * Create a new tree and open its database.
    * Trees are stored in the app data directory under trees/<slug>/.
+   * Tree names are not unique — when two trees share a slug, a `-2`,
+   * `-3`, ... suffix is appended to the path so the underlying paths
+   * stay unique while the user-visible name is preserved verbatim.
    * @returns The ID of the created tree
    */
   static async create(data: CreateTreeData): Promise<string> {
-    const slug = slugifyTreeName(data.name) || crypto.randomUUID();
-    const treePath = await getTreePathForSlug(slug);
+    const baseSlug = slugifyTreeName(data.name) || crypto.randomUUID();
+    const treePath = await TreeManager.resolveAvailablePath(baseSlug);
 
     const treeId = await createTree({
       name: data.name,
@@ -29,6 +38,16 @@ export class TreeManager {
     await openTreeDb(treePath);
 
     return treeId;
+  }
+
+  private static async resolveAvailablePath(baseSlug: string): Promise<string> {
+    let suffix = 0;
+    while (true) {
+      const slug = suffix === 0 ? baseSlug : `${baseSlug}-${suffix + 1}`;
+      const candidate = await getTreePathForSlug(slug);
+      if (!(await treeExistsAtPath(candidate))) return candidate;
+      suffix++;
+    }
   }
 
   /**
