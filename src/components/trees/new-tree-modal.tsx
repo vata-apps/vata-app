@@ -91,7 +91,6 @@ export function NewTreeModal({
       description: description.trim() || undefined,
     });
   };
-  mutation.error instanceof Error ? mutation.error.message : t('newTree.errorGeneric');
 
   return (
     <Dialog
