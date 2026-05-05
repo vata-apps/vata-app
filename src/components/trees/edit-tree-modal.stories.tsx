@@ -93,7 +93,6 @@ export const Default: Story = {
     const descriptionInput = (await body.findByLabelText(/Description/)) as HTMLTextAreaElement;
     await expect(descriptionInput.value).toBe(sampleTree.description);
 
-    // Summary card values — count + both ISO dates.
     await expect(body.getByText('75')).toBeInTheDocument();
     await expect(body.getByText('2026-02-28')).toBeInTheDocument();
     await expect(body.getByText('2026-04-11')).toBeInTheDocument();

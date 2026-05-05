@@ -62,9 +62,8 @@ export function EditTreeModal({
   const nameId = useId();
   const descriptionId = useId();
 
-  const initialDescription = tree.description ?? '';
   const [name, setName] = useState(tree.name);
-  const [description, setDescription] = useState(initialDescription);
+  const [description, setDescription] = useState(tree.description ?? '');
 
   const mutation = useMutation({
     mutationFn: (input: UpdateTreeInput) => updateTree(tree.id, input),
@@ -83,8 +82,6 @@ export function EditTreeModal({
     },
   });
 
-  // Reset to the latest tree values whenever the modal closes or the
-  // tree prop swaps out (e.g., user edits tree A, closes, opens tree B).
   useEffect(() => {
     if (!open) {
       setName(tree.name);
@@ -92,12 +89,12 @@ export function EditTreeModal({
       mutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, tree.id, tree.name, tree.description]);
+  }, [open, tree.id]);
 
   const trimmedName = name.trim();
   const trimmedDescription = description.trim();
   const nameChanged = trimmedName !== tree.name;
-  const descriptionChanged = trimmedDescription !== initialDescription.trim();
+  const descriptionChanged = trimmedDescription !== (tree.description ?? '').trim();
   const hasChanges = nameChanged || descriptionChanged;
   const canSubmit = trimmedName.length > 0 && hasChanges && !mutation.isPending;
 
