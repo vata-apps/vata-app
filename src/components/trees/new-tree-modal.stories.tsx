@@ -76,7 +76,7 @@ export const Default: Story = {
     const radios = await body.findAllByRole('radio');
     await expect(radios).toHaveLength(2);
     const fromMe = await body.findByRole('radio', { name: /Tree from me/ });
-    await expect(fromMe).toHaveAttribute('aria-disabled', 'true');
+    await expect(fromMe).toBeDisabled();
   },
 };
 

@@ -59,13 +59,6 @@ export function NewTreeModal({
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
-  useEffect(() => {
-    if (!open) {
-      setName('');
-      setDescription('');
-    }
-  }, [open]);
-
   const mutation = useMutation({
     mutationFn: (input: CreateTreeInput) => createTree(input),
     onSuccess: async (treeId) => {
@@ -80,6 +73,13 @@ export function NewTreeModal({
     },
   });
 
+  useEffect(() => {
+    if (!open) {
+      setName('');
+      setDescription('');
+    }
+  }, [open]);
+
   const trimmedName = name.trim();
   const canSubmit = trimmedName.length > 0 && !mutation.isPending;
 
@@ -92,12 +92,21 @@ export function NewTreeModal({
     });
   };
 
+  const closeModal = (): void => {
+    if (mutation.isPending) return;
+    mutation.reset();
+    onOpenChange(false);
+  };
+
   return (
     <Dialog
       open={open}
       onOpenChange={(next) => {
-        if (!next && mutation.isPending) return;
-        onOpenChange(next);
+        if (next) {
+          onOpenChange(true);
+          return;
+        }
+        closeModal();
       }}
       size="md"
       title={<span className="font-serif italic">{t('newTree.title')}</span>}
@@ -105,7 +114,7 @@ export function NewTreeModal({
       closeLabel={t('newTree.closeLabel')}
       footer={
         <>
-          <Button variant="ghost" onClick={() => onOpenChange(false)} disabled={mutation.isPending}>
+          <Button variant="ghost" onClick={closeModal} disabled={mutation.isPending}>
             {t('newTree.cancel')}
           </Button>
           <Button type="submit" form={formId} disabled={!canSubmit}>
