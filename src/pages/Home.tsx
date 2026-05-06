@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import packageJson from '../../package.json';
 import { AppStatusBar } from '$components/app-status-bar';
 import { PreferencesPopover } from '$components/preferences-popover';
+import { DownloadTreeModal } from '$components/trees/download-tree-modal';
 import { EditTreeModal } from '$components/trees/edit-tree-modal';
 import { ImportGedcomModal } from '$components/trees/import-gedcom-modal';
 import { NewTreeModal } from '$components/trees/new-tree-modal';
@@ -43,6 +44,7 @@ export function HomePage(): JSX.Element {
   const [sort, setSort] = useState<SortKey>('recent');
   const [newTreeOpen, setNewTreeOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [exportingTree, setExportingTree] = useState<Tree | null>(null);
   const [editingTree, setEditingTree] = useState<Tree | null>(null);
 
   const {
@@ -123,7 +125,7 @@ export function HomePage(): JSX.Element {
               }}
               labels={cardLabels}
               onOpen={() => void handleOpen(tree.id)}
-              onExport={comingSoon}
+              onExport={() => setExportingTree(tree)}
               onEdit={() => setEditingTree(tree)}
               onDelete={comingSoon}
             />
@@ -180,6 +182,13 @@ export function HomePage(): JSX.Element {
 
       <NewTreeModal open={newTreeOpen} onOpenChange={setNewTreeOpen} />
       <ImportGedcomModal open={importOpen} onOpenChange={setImportOpen} />
+      <DownloadTreeModal
+        tree={exportingTree}
+        open={exportingTree !== null}
+        onOpenChange={(next) => {
+          if (!next) setExportingTree(null);
+        }}
+      />
       {editingTree && (
         <EditTreeModal
           tree={editingTree}
