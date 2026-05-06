@@ -70,7 +70,7 @@ export async function createTree(
 
 export async function updateTree(
   id: string,
-  data: { name?: string; description?: string }
+  data: { name?: string; description?: string | null }
 ): Promise<void> {
   const db = await getSystemDb();
   const sets: string[] = [];

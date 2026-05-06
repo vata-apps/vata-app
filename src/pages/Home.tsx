@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import packageJson from '../../package.json';
 import { AppStatusBar } from '$components/app-status-bar';
 import { PreferencesPopover } from '$components/preferences-popover';
+import { EditTreeModal } from '$components/trees/edit-tree-modal';
 import { NewTreeModal } from '$components/trees/new-tree-modal';
 import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
 import { TreeCardCta } from '$components/trees/tree-card-cta';
@@ -43,6 +44,7 @@ export function HomePage(): JSX.Element {
   const [sort, setSort] = useState<SortKey>('recent');
   const [importError, setImportError] = useState<string | null>(null);
   const [newTreeOpen, setNewTreeOpen] = useState(false);
+  const [editingTree, setEditingTree] = useState<Tree | null>(null);
 
   const {
     data: trees,
@@ -135,7 +137,7 @@ export function HomePage(): JSX.Element {
               labels={cardLabels}
               onOpen={() => void handleOpen(tree.id)}
               onExport={comingSoon}
-              onEdit={comingSoon}
+              onEdit={() => setEditingTree(tree)}
               onDelete={comingSoon}
             />
           ))}
@@ -200,6 +202,15 @@ export function HomePage(): JSX.Element {
       />
 
       <NewTreeModal open={newTreeOpen} onOpenChange={setNewTreeOpen} />
+      {editingTree && (
+        <EditTreeModal
+          tree={editingTree}
+          open={true}
+          onOpenChange={(next) => {
+            if (!next) setEditingTree(null);
+          }}
+        />
+      )}
     </div>
   );
 }

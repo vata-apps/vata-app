@@ -52,6 +52,22 @@
     "closeLabel": "Fermer",
     "errorGeneric": "Échec de la création de l'arbre."
   },
+  "editTree": {
+    "title": "Modifier l'arbre",
+    "subtitle": "Renommez l'arbre et ajustez sa description. Les fiches et sources restent inchangées.",
+    "nameLabel": "Nom de l'arbre",
+    "nameRequired": "*",
+    "descriptionLabel": "Description",
+    "descriptionOptional": "facultatif",
+    "summaryIndividuals": "Individus",
+    "summaryCreated": "Créé",
+    "summaryLastOpened": "Dernier accès",
+    "summaryNever": "Jamais",
+    "cancel": "Annuler",
+    "submit": "Enregistrer",
+    "closeLabel": "Fermer",
+    "errorGeneric": "Échec de la mise à jour de l'arbre."
+  },
   "actions": {
     "comingSoon": "Bientôt."
   }
