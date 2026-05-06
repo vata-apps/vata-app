@@ -70,5 +70,35 @@
   },
   "actions": {
     "comingSoon": "Bientôt."
+  },
+  "importGedcom": {
+    "title": "Importer GEDCOM",
+    "subtitle": "Déposez un fichier .ged ou cliquez pour le sélectionner.",
+    "dropzoneLabel": "Déposez un fichier .ged ici, ou cliquez pour parcourir",
+    "dropzoneHint": "Accepte .ged ou .gedcom",
+    "dropzoneFormatName": "GEDCOM",
+    "fileBadge": "GED",
+    "fileEncoding": "UTF-8",
+    "clearFileLabel": "Choisir un autre fichier",
+    "scanIndividuals": "Individus",
+    "scanFamilies": "Familles",
+    "scanPlaces": "Lieux",
+    "scanSources": "Sources",
+    "warningsLabel_one": "{{count}} avertissement",
+    "warningsLabel_other": "{{count}} avertissements",
+    "errorsLabel": "Erreurs",
+    "nameLabel": "Nom de l'arbre",
+    "namePlaceholder": "ex. Famille Bourgoin",
+    "optionsLabel": "Options",
+    "mergeDuplicatesLabel": "Fusionner les doublons",
+    "importMediaLabel": "Importer les médias liés (OBJE)",
+    "hideLivingLabel": "Masquer les personnes vivantes",
+    "footerNote": "Le fichier d'origine ne sera pas modifié.",
+    "cancel": "Annuler",
+    "submit": "Importer l'arbre",
+    "soonLabel": "Bientôt",
+    "closeLabel": "Fermer",
+    "errorScan": "Échec de la lecture du fichier GEDCOM.",
+    "errorGeneric": "Échec de l'importation GEDCOM."
   }
 }

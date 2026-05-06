@@ -70,5 +70,35 @@
   },
   "actions": {
     "comingSoon": "Coming soon."
+  },
+  "importGedcom": {
+    "title": "Import GEDCOM",
+    "subtitle": "Drop a .ged file or click to select.",
+    "dropzoneLabel": "Drop a .ged file here, or click to browse",
+    "dropzoneHint": "Accepts .ged or .gedcom",
+    "dropzoneFormatName": "GEDCOM",
+    "fileBadge": "GED",
+    "fileEncoding": "UTF-8",
+    "clearFileLabel": "Choose a different file",
+    "scanIndividuals": "Individuals",
+    "scanFamilies": "Families",
+    "scanPlaces": "Places",
+    "scanSources": "Sources",
+    "warningsLabel_one": "{{count}} warning",
+    "warningsLabel_other": "{{count}} warnings",
+    "errorsLabel": "Errors",
+    "nameLabel": "Tree name",
+    "namePlaceholder": "e.g., Bourgoin family",
+    "optionsLabel": "Options",
+    "mergeDuplicatesLabel": "Merge duplicates",
+    "importMediaLabel": "Import linked media (OBJE)",
+    "hideLivingLabel": "Hide living people",
+    "footerNote": "Original file will not be modified.",
+    "cancel": "Cancel",
+    "submit": "Import tree",
+    "soonLabel": "Soon",
+    "closeLabel": "Close",
+    "errorScan": "Failed to read GEDCOM file.",
+    "errorGeneric": "Failed to import GEDCOM."
   }
 }
