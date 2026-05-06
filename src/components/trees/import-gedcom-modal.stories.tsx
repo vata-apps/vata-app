@@ -9,17 +9,23 @@ import { ImportGedcomModal } from './import-gedcom-modal';
 
 type ModalArgs = ComponentProps<typeof ImportGedcomModal>;
 
+/** Build a fresh QueryClient that doesn't retry — keeps stories deterministic. */
 function makeQueryClient(): QueryClient {
   return new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
 }
 
+/** Provides a per-story QueryClient so `useMutation` works inside the modal. */
 function QueryWrapper({ children }: { children: ReactNode }): JSX.Element {
   const [client] = useState(makeQueryClient);
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }
 
+/**
+ * Renders an "Open" button alongside the modal so each play() can
+ * exercise the open transition like a real user would.
+ */
 function ModalHarness({ open: argOpen, onOpenChange, ...props }: ModalArgs): JSX.Element {
   const [open, setOpen] = useState(Boolean(argOpen));
   useEffect(() => {

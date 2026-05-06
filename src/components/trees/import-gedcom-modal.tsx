@@ -55,9 +55,15 @@ export interface ImportGedcomModalProps {
   initialSelection?: SelectedFile;
 }
 
+/** Default `importTree` implementation — wraps `GedcomManager.importFromContent`. */
 const defaultImportTree = (content: string, treeName: string): Promise<ImportResult> =>
   GedcomManager.importFromContent(content, treeName);
 
+/**
+ * Read a GEDCOM file's contents from disk via Tauri's filesystem
+ * plugin. The plugin import is lazy so non-Tauri test contexts can
+ * still load this module without resolving the native dependency.
+ */
 async function readGedcomFile(path: string): Promise<string> {
   const { readTextFile } = await import('@tauri-apps/plugin-fs');
   return readTextFile(path);
@@ -257,6 +263,11 @@ interface FileRowProps {
   onClear: () => void;
 }
 
+/**
+ * Compact row summarising the selected file (badge, filename, size,
+ * encoding) with a clear button that returns the modal to the
+ * pre-selection state so the user can pick a different file.
+ */
 function FileRow({ file, onClear }: FileRowProps): JSX.Element {
   const { t } = useTranslation('trees');
   return (
@@ -281,6 +292,11 @@ interface ScanGridProps {
   scan: ScanResult;
 }
 
+/**
+ * Four-cell stat grid summarising the GEDCOM scan: individuals,
+ * families, places (always 0 — see {@link ScanResult.places}), and
+ * sources. The Places cell renders a `Soon` badge to set expectations.
+ */
 function ScanGrid({ scan }: ScanGridProps): JSX.Element {
   const { t } = useTranslation('trees');
   const items: StatGridItem[] = [
@@ -307,6 +323,11 @@ interface WarningListProps {
   label: string;
 }
 
+/**
+ * Collapsible list of non-fatal scan warnings. Renders inside a
+ * `<details>` so the user can expand individual messages without the
+ * panel dominating the modal when there are many warnings.
+ */
 function WarningList({ warnings, label }: WarningListProps): JSX.Element {
   return (
     <details className="border-warning/40 bg-warning/5 rounded-lg border p-3 text-sm">
@@ -325,6 +346,11 @@ interface ErrorListProps {
   label: string;
 }
 
+/**
+ * Always-visible list of fatal scan errors. Rendered as `role="alert"`
+ * so assistive tech announces it; the modal's submit button stays
+ * disabled while there are entries here.
+ */
 function ErrorList({ errors, label }: ErrorListProps): JSX.Element {
   return (
     <div
