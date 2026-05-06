@@ -117,6 +117,10 @@ export function ImportGedcomModal({
     },
   });
 
+  // Reset form state every time the modal closes. `initialSelection`
+  // is intentionally omitted from the dep array — it's a story-only
+  // seam that never changes mid-session, and adding it would force a
+  // reset on every render.
   useEffect(() => {
     if (!open) {
       setSelected(initialSelection ?? null);
