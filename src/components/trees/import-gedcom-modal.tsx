@@ -10,23 +10,20 @@ import { Input } from '$components/ui/input';
 import { StatGrid, type StatGridItem } from '$components/ui/stat-grid';
 import { Switch } from '$components/ui/switch';
 import { GedcomManager, type ImportResult, type ScanResult } from '$/managers/GedcomManager';
+import { formatBytes } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
 
 /**
- * In-memory description of the user's GEDCOM selection. Lives only
- * inside the modal — the file path is captured for the Tauri-side
- * import flow but the file is never re-read.
+ * In-memory description of the user's GEDCOM selection. The full
+ * content is held in state because we already paid the read cost once
+ * to scan it; re-reading at submit would mean a second Tauri IPC
+ * round-trip for the same bytes.
  */
 interface SelectedFile {
-  /** Absolute path returned by Tauri's open dialog. */
   path: string;
-  /** Filename with extension (e.g. `tree.ged`). */
   name: string;
-  /** Full UTF-8 content read once at selection time. */
   content: string;
-  /** Byte length of the content in UTF-8. */
   size: number;
-  /** Result of `GedcomManager.scan(content)`. */
   scan: ScanResult;
 }
 
@@ -44,20 +41,9 @@ export interface ImportGedcomModalProps {
   onImported?: (result: ImportResult) => void;
 
   /**
-   * Override the file-content reader. Defaults to Tauri's
-   * `readTextFile`. Tests/stories inject a spy here so the flow can be
-   * exercised without hitting the Tauri filesystem plugin.
-   */
-  readFileContent?: (path: string) => Promise<string>;
-
-  /**
-   * Override the scan function. Defaults to {@link GedcomManager.scan}.
-   */
-  scan?: (content: string) => ScanResult;
-
-  /**
    * Override the import function. Defaults to
-   * {@link GedcomManager.importFromContent}.
+   * {@link GedcomManager.importFromContent}. Stories inject a spy here
+   * to assert what the submit handler passes downstream.
    */
   importTree?: (content: string, treeName: string) => Promise<ImportResult>;
 
@@ -69,15 +55,13 @@ export interface ImportGedcomModalProps {
   initialSelection?: SelectedFile;
 }
 
-const defaultReadFileContent = async (path: string): Promise<string> => {
-  const { readTextFile } = await import('@tauri-apps/plugin-fs');
-  return readTextFile(path);
-};
-
-const defaultScan = (content: string): ScanResult => GedcomManager.scan(content);
-
 const defaultImportTree = (content: string, treeName: string): Promise<ImportResult> =>
   GedcomManager.importFromContent(content, treeName);
+
+async function readGedcomFile(path: string): Promise<string> {
+  const { readTextFile } = await import('@tauri-apps/plugin-fs');
+  return readTextFile(path);
+}
 
 /**
  * Strip the extension and any leading directory off a filename to get
@@ -100,8 +84,6 @@ export function ImportGedcomModal({
   open,
   onOpenChange,
   onImported,
-  readFileContent = defaultReadFileContent,
-  scan = defaultScan,
   importTree = defaultImportTree,
   initialSelection,
 }: ImportGedcomModalProps): JSX.Element {
@@ -142,14 +124,13 @@ export function ImportGedcomModal({
   const handleFileSelected = async (file: { path: string; name: string }): Promise<void> => {
     setScanError(null);
     try {
-      const content = await readFileContent(file.path);
-      const scanResult = scan(content);
+      const content = await readGedcomFile(file.path);
       setSelected({
         path: file.path,
         name: file.name,
         content,
-        size: new Blob([content]).size,
-        scan: scanResult,
+        size: new TextEncoder().encode(content).length,
+        scan: GedcomManager.scan(content),
       });
       setName(deriveTreeName(file.name));
     } catch (err) {
@@ -384,10 +365,4 @@ function SoonSwitch({ label }: SoonSwitchProps): JSX.Element {
       }
     />
   );
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
