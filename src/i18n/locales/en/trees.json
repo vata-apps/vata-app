@@ -80,6 +80,7 @@
     "statsMedia": "Media",
     "exportBeforeLabel": "Export GEDCOM before deletion",
     "confirmLabel": "Type the tree name to confirm",
+    "confirmPlaceholder": "Type the tree name",
     "cancel": "Cancel",
     "submit": "Delete tree",
     "soonLabel": "Soon",

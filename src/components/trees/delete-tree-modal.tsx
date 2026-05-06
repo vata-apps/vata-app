@@ -27,7 +27,7 @@ interface DeleteTreeTarget {
 /**
  * Props accepted by {@link DeleteTreeModal}.
  */
-export interface DeleteTreeModalProps {
+interface DeleteTreeModalProps {
   /** Tree to delete. The modal renders nothing when null. */
   tree: DeleteTreeTarget | null;
 
@@ -138,6 +138,16 @@ export function DeleteTreeModal({
     onOpenChange(false);
   };
 
+  const soonLabel = (text: string): JSX.Element => (
+    <span className="inline-flex items-center gap-1.5">
+      {text}
+      <Badge variant="soon" size="sm">
+        {t('deleteTree.soonLabel')}
+      </Badge>
+    </span>
+  );
+
+  const zero = (0).toLocaleString();
   const statItems: StatGridItem[] = [
     {
       value: tree.individualCount.toLocaleString(),
@@ -150,27 +160,13 @@ export function DeleteTreeModal({
       accent: 'destructive',
     },
     {
-      value: 0,
-      label: (
-        <span className="inline-flex items-center gap-1.5">
-          {t('deleteTree.statsSources')}
-          <Badge variant="soon" size="sm">
-            {t('deleteTree.soonLabel')}
-          </Badge>
-        </span>
-      ),
+      value: zero,
+      label: soonLabel(t('deleteTree.statsSources')),
       accent: 'destructive',
     },
     {
-      value: 0,
-      label: (
-        <span className="inline-flex items-center gap-1.5">
-          {t('deleteTree.statsMedia')}
-          <Badge variant="soon" size="sm">
-            {t('deleteTree.soonLabel')}
-          </Badge>
-        </span>
-      ),
+      value: zero,
+      label: soonLabel(t('deleteTree.statsMedia')),
       accent: 'destructive',
     },
   ];
@@ -222,9 +218,10 @@ export function DeleteTreeModal({
             id={confirmId}
             value={confirmName}
             onChange={(event) => setConfirmName(event.target.value)}
-            placeholder={tree.name}
+            placeholder={t('deleteTree.confirmPlaceholder')}
             disabled={mutation.isPending}
             autoComplete="off"
+            aria-required="true"
           />
         </div>
 

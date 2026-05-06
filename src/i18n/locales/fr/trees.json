@@ -80,6 +80,7 @@
     "statsMedia": "Médias",
     "exportBeforeLabel": "Exporter le GEDCOM avant la suppression",
     "confirmLabel": "Tapez le nom de l'arbre pour confirmer",
+    "confirmPlaceholder": "Tapez le nom de l'arbre",
     "cancel": "Annuler",
     "submit": "Supprimer l'arbre",
     "soonLabel": "Bientôt",
