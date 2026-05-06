@@ -110,6 +110,10 @@ export function DeleteTreeModal({
     },
   });
 
+  // Reset form state every time the modal closes. `mutation` is
+  // intentionally omitted from the dep array — including it would
+  // re-trigger this effect every time the mutation transitions
+  // (pending → success/error), which would clobber state mid-flow.
   useEffect(() => {
     if (!open) {
       setExportFirst(true);
