@@ -6,6 +6,7 @@ import { Badge } from '$components/ui/badge';
 import { Button } from '$components/ui/button';
 import { Dialog } from '$components/ui/dialog';
 import { OptionCard, OptionCardGroup } from '$components/ui/option-card';
+import { Select } from '$components/ui/select';
 import { StatGrid, type StatGridItem } from '$components/ui/stat-grid';
 import { Switch } from '$components/ui/switch';
 import { GedcomManager } from '$/managers/GedcomManager';
@@ -48,16 +49,23 @@ export interface DownloadTreeModalProps {
 const defaultExportTree = (treeName: string, includePrivate: boolean): Promise<boolean> =>
   GedcomManager.exportToFile(treeName, includePrivate);
 
+/** A localized estimate of the exported file size, bucketed by magnitude. */
+type SizeEstimate =
+  | { bucket: 'under-kb' }
+  | { bucket: 'kb'; value: string }
+  | { bucket: 'mb'; value: string };
+
 /**
  * Heuristic file-size estimate for the summary stat grid. Real export
  * size depends on the GEDCOM serialiser; this is just a rough
- * order-of-magnitude shown to the user.
+ * order-of-magnitude shown to the user. Returns the raw bucket so the
+ * consumer can render the label via i18n.
  */
-function estimateExportSize(individualCount: number, familyCount: number): string {
+function estimateExportSize(individualCount: number, familyCount: number): SizeEstimate {
   const kb = individualCount * 0.5 + familyCount * 0.2;
-  if (kb < 1) return '< 1 KB';
-  if (kb < 1024) return `≈${kb.toFixed(0)} KB`;
-  return `≈${(kb / 1024).toFixed(1)} MB`;
+  if (kb < 1) return { bucket: 'under-kb' };
+  if (kb < 1024) return { bucket: 'kb', value: kb.toFixed(0) };
+  return { bucket: 'mb', value: (kb / 1024).toFixed(1) };
 }
 
 /**
@@ -111,6 +119,15 @@ export function DownloadTreeModal({
     onOpenChange(false);
   };
 
+  const sizeEstimate = estimateExportSize(tree.individualCount, tree.familyCount);
+  const sizeKey =
+    sizeEstimate.bucket === 'under-kb'
+      ? 'downloadTree.sizeUnderKb'
+      : sizeEstimate.bucket === 'kb'
+        ? 'downloadTree.sizeKb'
+        : 'downloadTree.sizeMb';
+  const sizeValue = sizeEstimate.bucket === 'under-kb' ? '' : sizeEstimate.value;
+
   const statItems: StatGridItem[] = [
     {
       value: tree.individualCount.toLocaleString(),
@@ -118,7 +135,7 @@ export function DownloadTreeModal({
     },
     { value: tree.familyCount.toLocaleString(), label: t('downloadTree.summaryFamilies') },
     {
-      value: estimateExportSize(tree.individualCount, tree.familyCount),
+      value: t(sizeKey, { value: sizeValue }),
       label: t('downloadTree.summaryEstimatedSize'),
     },
   ];
@@ -189,12 +206,17 @@ export function DownloadTreeModal({
               {t('downloadTree.soonLabel')}
             </Badge>
           </span>
-          <input
-            type="text"
-            disabled
+          <Select
             value={t('downloadTree.versionPlaceholder')}
-            readOnly
-            className="border-border bg-muted/40 text-muted-foreground rounded-md border px-3 py-2 font-mono text-sm"
+            onValueChange={() => undefined}
+            options={[
+              {
+                value: t('downloadTree.versionPlaceholder'),
+                label: t('downloadTree.versionPlaceholder'),
+              },
+            ]}
+            placeholder={t('downloadTree.versionPlaceholder')}
+            disabled
             aria-label={t('downloadTree.versionLabel')}
           />
         </div>
