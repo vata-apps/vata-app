@@ -134,8 +134,10 @@ export function ImportGedcomModal({
       });
       setName(deriveTreeName(file.name));
     } catch (err) {
+      // Raw parser/Tauri errors are not translated — log them, surface
+      // a generic localized message in the UI instead.
       console.error('Failed to read or scan GEDCOM file:', err);
-      setScanError(err instanceof Error ? err.message : t('importGedcom.errorScan'));
+      setScanError(t('importGedcom.errorScan'));
     }
   };
 

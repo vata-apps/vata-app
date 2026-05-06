@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '$components/ui/button';
+import type { ImportResult } from '$/managers/GedcomManager';
 import { ImportGedcomModal } from './import-gedcom-modal';
 
 type ModalArgs = ComponentProps<typeof ImportGedcomModal>;
@@ -46,7 +47,7 @@ const sampleSelection = {
   path: '/tmp/family.ged',
   name: 'family.ged',
   content: SAMPLE_CONTENT,
-  size: SAMPLE_CONTENT.length,
+  size: new TextEncoder().encode(SAMPLE_CONTENT).length,
   scan: {
     individuals: 142,
     families: 58,
@@ -173,10 +174,12 @@ export const ErrorsBlockSubmit: Story = {
 export const SubmitCallsImport: Story = {
   args: {
     initialSelection: sampleSelection,
-    importTree: fn(async () => ({
-      treeId: 'tree-42',
-      stats: { individuals: 142, families: 58, places: 0, events: 200, errors: [] },
-    })),
+    importTree: fn(
+      async (): Promise<ImportResult> => ({
+        treeId: 'tree-42',
+        stats: { individuals: 142, families: 58, places: 0, events: 200, errors: [] },
+      })
+    ),
   },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
@@ -202,10 +205,12 @@ export const SubmitCallsImport: Story = {
 
 export const CancelClosesWithoutImport: Story = {
   args: {
-    importTree: fn(async () => ({
-      treeId: 'never',
-      stats: { individuals: 0, families: 0, places: 0, events: 0, errors: [] },
-    })),
+    importTree: fn(
+      async (): Promise<ImportResult> => ({
+        treeId: 'never',
+        stats: { individuals: 0, families: 0, places: 0, events: 0, errors: [] },
+      })
+    ),
   },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
