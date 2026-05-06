@@ -70,5 +70,34 @@
   },
   "actions": {
     "comingSoon": "Coming soon."
+  },
+  "downloadTree": {
+    "title": "Download tree",
+    "subtitle": "{{treeName}}",
+    "formatLabel": "Format",
+    "formatGedcomLabel": "GEDCOM",
+    "formatGedcomDescription": ".ged — universal genealogy format",
+    "formatVataLabel": "Vata JSON",
+    "formatVataDescription": ".vata.json — full fidelity",
+    "formatZipLabel": "Archive",
+    "formatZipDescription": ".zip — bundle with media",
+    "versionLabel": "GEDCOM version",
+    "versionPlaceholder": "5.5.1",
+    "optionsLabel": "Options",
+    "includeSourcesLabel": "Include sources/citations",
+    "hideLivingLabel": "Hide living",
+    "includePrivateNotesLabel": "Include private notes",
+    "summaryIndividuals": "Individuals",
+    "summaryFamilies": "Families",
+    "summaryEstimatedSize": "Estimated size",
+    "sizeUnderKb": "< 1 KB",
+    "sizeKb": "≈{{value}} KB",
+    "sizeMb": "≈{{value}} MB",
+    "footerNote": "File generated locally.",
+    "cancel": "Cancel",
+    "submit": "Download .ged",
+    "soonLabel": "Soon",
+    "closeLabel": "Close",
+    "errorGeneric": "Failed to export tree."
   }
 }

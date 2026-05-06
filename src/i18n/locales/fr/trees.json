@@ -70,5 +70,34 @@
   },
   "actions": {
     "comingSoon": "Bientôt."
+  },
+  "downloadTree": {
+    "title": "Télécharger l'arbre",
+    "subtitle": "{{treeName}}",
+    "formatLabel": "Format",
+    "formatGedcomLabel": "GEDCOM",
+    "formatGedcomDescription": ".ged — format généalogique universel",
+    "formatVataLabel": "Vata JSON",
+    "formatVataDescription": ".vata.json — fidélité complète",
+    "formatZipLabel": "Archive",
+    "formatZipDescription": ".zip — paquet avec médias",
+    "versionLabel": "Version GEDCOM",
+    "versionPlaceholder": "5.5.1",
+    "optionsLabel": "Options",
+    "includeSourcesLabel": "Inclure les sources et citations",
+    "hideLivingLabel": "Masquer les vivants",
+    "includePrivateNotesLabel": "Inclure les notes privées",
+    "summaryIndividuals": "Individus",
+    "summaryFamilies": "Familles",
+    "summaryEstimatedSize": "Taille estimée",
+    "sizeUnderKb": "< 1 Ko",
+    "sizeKb": "≈{{value}} Ko",
+    "sizeMb": "≈{{value}} Mo",
+    "footerNote": "Fichier généré localement.",
+    "cancel": "Annuler",
+    "submit": "Télécharger .ged",
+    "soonLabel": "Bientôt",
+    "closeLabel": "Fermer",
+    "errorGeneric": "Échec de l'exportation de l'arbre."
   }
 }
