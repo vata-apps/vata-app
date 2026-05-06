@@ -70,5 +70,21 @@
   },
   "actions": {
     "comingSoon": "Coming soon."
+  },
+  "deleteTree": {
+    "title": "Delete {{treeName}}?",
+    "subtitle": "This permanently removes the tree and all its data. This cannot be undone.",
+    "statsIndividuals": "Individuals",
+    "statsFamilies": "Families",
+    "statsSources": "Sources",
+    "statsMedia": "Media",
+    "exportBeforeLabel": "Export GEDCOM before deletion",
+    "confirmLabel": "Type the tree name to confirm",
+    "confirmPlaceholder": "Type the tree name",
+    "cancel": "Cancel",
+    "submit": "Delete tree",
+    "soonLabel": "Soon",
+    "closeLabel": "Close",
+    "errorGeneric": "Failed to delete tree."
   }
 }
