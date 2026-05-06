@@ -29,6 +29,23 @@ export interface ValidationResult {
 }
 
 /**
+ * Pre-import scan summary surfaced by the Import GEDCOM modal.
+ *
+ * `places` is exposed for the UI but always 0 today — the local parser
+ * counts top-level records (INDI, FAM, SOUR, REPO) and does not yet
+ * dedupe PLAC sub-tags inside events.
+ */
+export interface ScanResult {
+  individuals: number;
+  families: number;
+  places: number;
+  sources: number;
+  repositories: number;
+  errors: string[];
+  warnings: string[];
+}
+
+/**
  * Manages GEDCOM import/export operations.
  */
 export class GedcomManager {
@@ -178,6 +195,40 @@ export class GedcomManager {
         individuals: result.stats.individuals,
         families: result.stats.families,
       },
+    };
+  }
+
+  /**
+   * Scan GEDCOM content for the import preview.
+   *
+   * Counts top-level records and splits errors from warnings so the
+   * modal can render two distinct lists. `places` is always 0 — see
+   * {@link ScanResult.places}.
+   *
+   * @param content - GEDCOM text content
+   * @returns Scan result with counts and split error/warning lists
+   */
+  static scan(content: string): ScanResult {
+    const result = validate(content);
+
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    for (const err of result.errors) {
+      if (err.severity === 'warning') {
+        warnings.push(err.message);
+      } else {
+        errors.push(err.message);
+      }
+    }
+
+    return {
+      individuals: result.stats.individuals,
+      families: result.stats.families,
+      places: 0,
+      sources: result.stats.sources,
+      repositories: result.stats.repositories,
+      errors,
+      warnings,
     };
   }
 
