@@ -121,7 +121,10 @@ export function DeleteTreeModal({
 
   if (!tree) return null;
 
-  const canSubmit = confirmName.trim() === tree.name && !mutation.isPending;
+  // Trim both sides so accidental whitespace from the user (or, more
+  // importantly, from a tree name persisted with trailing space) doesn't
+  // gate the destructive action.
+  const canSubmit = confirmName.trim() === tree.name.trim() && !mutation.isPending;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
