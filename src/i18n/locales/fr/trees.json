@@ -70,5 +70,20 @@
   },
   "actions": {
     "comingSoon": "Bientôt."
+  },
+  "deleteTree": {
+    "title": "Supprimer {{treeName}} ?",
+    "subtitle": "Cette action supprime définitivement l'arbre et toutes ses données. Elle est irréversible.",
+    "statsIndividuals": "Individus",
+    "statsFamilies": "Familles",
+    "statsSources": "Sources",
+    "statsMedia": "Médias",
+    "exportBeforeLabel": "Exporter le GEDCOM avant la suppression",
+    "confirmLabel": "Tapez le nom de l'arbre pour confirmer",
+    "cancel": "Annuler",
+    "submit": "Supprimer l'arbre",
+    "soonLabel": "Bientôt",
+    "closeLabel": "Fermer",
+    "errorGeneric": "Échec de la suppression de l'arbre."
   }
 }
