@@ -22,10 +22,10 @@ Do **not** invoke before a PR exists. Do not invoke for `/simplify` (that's the 
 
 ## The loop at a glance
 
-```
+```text
 draft PR
   → Phase 0: /review locally → fixes → gh pr ready
-  → Phase 1: wait CI (ignore Chromatic)
+  → Phase 1: wait CI (ignore Chromatic baseline gates)
   → Phase 2: read CodeRabbit verdict
        ├─ APPROVED       → done
        ├─ CHANGES_REQ.   → Phase 3 (triage)
@@ -239,7 +239,9 @@ gh pr view <N> --repo vata-apps/vata-app --json isDraft
 # Flip to ready once /review is clean (Phase 0 exit)
 gh pr ready <N> --repo vata-apps/vata-app
 
-# Settled-state CI check (excluding Chromatic)
+# Settled-state CI check (excluding the expected-pending Chromatic
+# baseline gates `UI Review` and `UI Tests` — the build/deploy
+# Chromatic jobs `Visual review` and `Storybook Publish` stay in)
 gh pr checks <N> --repo vata-apps/vata-app --json name,bucket \
   | jq '[.[] | select(.name|test("UI Review|UI Tests")|not)]'
 
