@@ -82,7 +82,11 @@ Use the `Monitor` tool with the canonical poll:
 gh pr checks <N> --repo vata-apps/vata-app --json name,bucket
 ```
 
-**Treat `UI Review` and `UI Tests` (Chromatic) as expected-pending and ignore them.** `.github/workflows/chromatic.yml` deliberately runs with `exitZeroOnChanges: true`; the user approves Chromatic baselines manually on a separate cadence.
+Three of the checks come from Chromatic, and they're **not** all the same thing — don't conflate them:
+
+- `Visual review` is the Chromatic build job. It runs `exitZeroOnChanges: true`, so it almost always reaches `pass`. **Required green.**
+- `Storybook Publish` is the static deploy of the Storybook bundle. **Required green.**
+- `UI Review` and `UI Tests` are Chromatic's baseline-approval gates. They stay `pending` until the user approves baselines manually in the Chromatic dashboard, on a separate cadence. **Expected-pending — ignore.**
 
 Required-green checks (must reach `pass` before declaring success): `Lint, Format, Build & Test`, `Visual review`, `CodeRabbit`, `Storybook Publish`.
 
