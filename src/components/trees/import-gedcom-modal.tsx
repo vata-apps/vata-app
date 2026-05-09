@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '$components/ui/badge';
@@ -100,7 +100,14 @@ export function ImportGedcomModal({
 
   const [selected, setSelected] = useState<SelectedFile | null>(initialSelection ?? null);
   const [scanError, setScanError] = useState<string | null>(null);
+  const [scanning, setScanning] = useState<string | null>(null);
   const [name, setName] = useState(initialSelection ? deriveTreeName(initialSelection.name) : '');
+
+  // Bumped on every modal close. In-flight scans capture the value at
+  // start and abort their writes if it changed by the time the read or
+  // parse resolves — otherwise stale results would land back in state
+  // after reset and survive into the next reopen.
+  const scanIdRef = useRef(0);
 
   const mutation = useMutation({
     mutationFn: ({ content, treeName }: { content: string; treeName: string }) =>
@@ -123,18 +130,29 @@ export function ImportGedcomModal({
   // reset on every render.
   useEffect(() => {
     if (!open) {
+      scanIdRef.current++;
       setSelected(initialSelection ?? null);
       setName(initialSelection ? deriveTreeName(initialSelection.name) : '');
       setScanError(null);
+      setScanning(null);
       mutation.reset();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const handleFileSelected = async (file: { path: string; name: string }): Promise<void> => {
+    const scanId = ++scanIdRef.current;
     setScanError(null);
+    setScanning(file.name);
     try {
       const content = await readGedcomFile(file.path);
+      if (scanId !== scanIdRef.current) return;
+      // GedcomManager.scan is synchronous and can block the main thread
+      // for hundreds of ms on large files. Yield once so React commits
+      // the spinner frame before the parse starts — otherwise the
+      // loading indicator never paints.
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      if (scanId !== scanIdRef.current) return;
       setSelected({
         path: file.path,
         name: file.name,
@@ -144,10 +162,13 @@ export function ImportGedcomModal({
       });
       setName(deriveTreeName(file.name));
     } catch (err) {
+      if (scanId !== scanIdRef.current) return;
       // Raw parser/Tauri errors are not translated — log them, surface
       // a generic localized message in the UI instead.
       console.error('Failed to read or scan GEDCOM file:', err);
       setScanError(t('importGedcom.errorScan'));
+    } finally {
+      if (scanId === scanIdRef.current) setScanning(null);
     }
   };
 
@@ -196,12 +217,15 @@ export function ImportGedcomModal({
       <form id={formId} onSubmit={handleSubmit} className="flex flex-col gap-4">
         {!selected && (
           <Dropzone
-            state={scanError ? 'error' : 'idle'}
+            state={scanning ? 'scanning' : scanError ? 'error' : 'idle'}
             onFileSelected={handleFileSelected}
             formatName={t('importGedcom.dropzoneFormatName')}
             idleLabel={t('importGedcom.dropzoneLabel')}
+            selectedName={
+              scanning ? t('importGedcom.dropzoneScanning', { name: scanning }) : undefined
+            }
             hint={t('importGedcom.dropzoneHint')}
-            disabled={mutation.isPending}
+            disabled={mutation.isPending || scanning !== null}
           />
         )}
 
