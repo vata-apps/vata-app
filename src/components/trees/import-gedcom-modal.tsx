@@ -185,6 +185,10 @@ export function ImportGedcomModal({
 
   const closeModal = (): void => {
     if (mutation.isPending) return;
+    // Invalidate any in-flight scan synchronously so a read that
+    // resolves between this click and the close-effect reset cannot
+    // sneak a stale setSelected/setName onto the modal.
+    scanIdRef.current++;
     onOpenChange(false);
   };
 
