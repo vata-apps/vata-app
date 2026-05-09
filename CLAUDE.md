@@ -282,9 +282,11 @@ chore: upgrade drizzle-orm to 0.30.0
 Before creating a pull request (via `gh pr create`, any slash command that opens a PR, or any other means), the agent MUST:
 
 1. Run `/simplify` to launch the three-agent reuse / quality / efficiency review on the branch diff. Apply the fixes that are real issues; skip false positives and stylistic nits.
-2. Then create the PR.
+2. Then create the PR. **Always open it as draft** (`gh pr create --draft`, or via `/commit-push-pr` which sets the flag automatically). The draft state holds CodeRabbit off until the local `/review` gate has run, so we don't burn the hourly rate-limit budget on a state we're about to clean up.
 
-CodeRabbit reviews the PR automatically once it is opened — that is the canonical CodeRabbit pass. A local CodeRabbit run is **optional** and can be triggered on demand with `pnpm review` (uncommitted changes) or `pnpm review:all` (full branch diff); it is no longer a required pre-PR step.
+After the PR is opened, invoke the `shepherd-pr` skill. It runs `/review` locally, applies the real findings, flips the PR to ready (`gh pr ready <N>` — that's the explicit handoff to CodeRabbit), then drives CI + CodeRabbit to approval without manual polling.
+
+CodeRabbit reviews the PR automatically once it is marked ready — that is the canonical CodeRabbit pass. A local CodeRabbit run is **optional** and can be triggered on demand with `pnpm review` (uncommitted changes) or `pnpm review:all` (full branch diff); it is no longer a required pre-PR step.
 
 ---
 
@@ -319,6 +321,7 @@ The following specialized skills are loaded automatically when relevant, or on d
 | `new-route`               | When adding a new page or entity view under `/tree/$treeId/`                                                                                                                     |
 | `storybook-stories`       | When touching anything under `src/components/ui/` (wrappers + their `*.stories.tsx`) or any `*.stories.tsx` elsewhere                                                            |
 | `design-system-standards` | When designing or reviewing UI under `src/components/ui/`, `src/components/**`, or `src/pages/**` — decision tree for reuse / extend / create-new, token rules, audit heuristics |
+| `shepherd-pr`             | After `gh pr create` returns — drives the PR through `/review`, the ready-flip, CI, and CodeRabbit until it's approved or surfaces a real blocker                                |
 
 The UI layer is built on Tailwind v4 (CSS-first via `@theme` in `src/styles/app.css`) + Radix primitives + `tailwind-variants`. Wrappers live under `src/components/ui/` with colocated tests and Storybook stories. See `docs/ui/design-system.md` and `docs/ui/storybook.md`.
 
