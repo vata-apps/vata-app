@@ -5,7 +5,7 @@ description: Drive a freshly opened PR through the local `/review` gate, the rea
 
 # Shepherd PR
 
-Takes a freshly opened PR from "just pushed" to "CodeRabbit-approved" without manual polling. Backed by `gh` + GraphQL — no MCP, no API key.
+Takes a freshly opened PR from "just pushed" to "CodeRabbit-approved" without manual polling. Backed by `gh` CLI + GraphQL — no MCP, no API key.
 
 The skill runs **after** PR creation. Pre-PR cleanup belongs to `/simplify`.
 
