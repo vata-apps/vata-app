@@ -75,6 +75,7 @@
     "title": "Import GEDCOM",
     "subtitle": "Drop a .ged file or click to select.",
     "dropzoneLabel": "Drop a .ged file here, or click to browse",
+    "dropzoneScanning": "Scanning {{name}}...",
     "dropzoneHint": "Accepts .ged or .gedcom",
     "dropzoneFormatName": "GEDCOM",
     "fileBadge": "GED",

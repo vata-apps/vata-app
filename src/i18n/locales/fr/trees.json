@@ -75,6 +75,7 @@
     "title": "Importer GEDCOM",
     "subtitle": "Déposez un fichier .ged ou cliquez pour le sélectionner.",
     "dropzoneLabel": "Déposez un fichier .ged ici, ou cliquez pour parcourir",
+    "dropzoneScanning": "Analyse de {{name}}...",
     "dropzoneHint": "Accepte .ged ou .gedcom",
     "dropzoneFormatName": "GEDCOM",
     "fileBadge": "GED",
