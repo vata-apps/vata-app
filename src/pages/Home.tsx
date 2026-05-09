@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,13 +7,13 @@ import packageJson from '../../package.json';
 import { AppStatusBar } from '$components/app-status-bar';
 import { PreferencesPopover } from '$components/preferences-popover';
 import { EditTreeModal } from '$components/trees/edit-tree-modal';
+import { ImportGedcomModal } from '$components/trees/import-gedcom-modal';
 import { NewTreeModal } from '$components/trees/new-tree-modal';
 import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
 import { TreeCardCta } from '$components/trees/tree-card-cta';
 import { TreeSectionDivider } from '$components/trees/tree-section-divider';
 import { Button } from '$components/ui/button';
 import { getAllTrees } from '$db-system/trees';
-import { GedcomManager } from '$/managers/GedcomManager';
 import { TreeManager } from '$/managers/TreeManager';
 import { formatIsoDate } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
@@ -40,10 +40,9 @@ function sortTrees(trees: Tree[], key: SortKey): Tree[] {
 export function HomePage(): JSX.Element {
   const { t } = useTranslation(['common', 'trees']);
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [sort, setSort] = useState<SortKey>('recent');
-  const [importError, setImportError] = useState<string | null>(null);
   const [newTreeOpen, setNewTreeOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [editingTree, setEditingTree] = useState<Tree | null>(null);
 
   const {
@@ -53,18 +52,6 @@ export function HomePage(): JSX.Element {
   } = useQuery({
     queryKey: queryKeys.trees,
     queryFn: getAllTrees,
-  });
-
-  const importMutation = useMutation({
-    mutationFn: () => GedcomManager.importFromFile(),
-    onSuccess: () => {
-      setImportError(null);
-      void queryClient.invalidateQueries({ queryKey: queryKeys.trees });
-    },
-    onError: (err) => {
-      console.error('GEDCOM import failed:', err);
-      setImportError(err instanceof Error ? err.message : t('common:errors.importFailed'));
-    },
   });
 
   const sortedTrees = useMemo<Tree[]>(() => (trees ? sortTrees(trees, sort) : []), [trees, sort]);
@@ -164,20 +151,10 @@ export function HomePage(): JSX.Element {
               <Button leadingIcon="plus" onClick={() => setNewTreeOpen(true)}>
                 {t('trees:home.heroNew')}
               </Button>
-              <Button
-                variant="outline"
-                leadingIcon="download"
-                onClick={() => importMutation.mutate()}
-                disabled={importMutation.isPending}
-              >
+              <Button variant="outline" leadingIcon="download" onClick={() => setImportOpen(true)}>
                 {t('trees:home.heroImport')}
               </Button>
             </div>
-            {importError && (
-              <p role="alert" className="text-destructive mt-2 text-sm">
-                {importError}
-              </p>
-            )}
           </section>
 
           {treesContent}
@@ -202,6 +179,7 @@ export function HomePage(): JSX.Element {
       />
 
       <NewTreeModal open={newTreeOpen} onOpenChange={setNewTreeOpen} />
+      <ImportGedcomModal open={importOpen} onOpenChange={setImportOpen} />
       {editingTree && (
         <EditTreeModal
           tree={editingTree}
