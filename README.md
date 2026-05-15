@@ -1,6 +1,6 @@
 # Vata
 
-> **Vata** (वट, *vaṭa*) is the Sanskrit word for the banyan tree (*Ficus benghalensis*) — a tree whose aerial roots descend from its branches to form new trunks, expanding endlessly. A fitting name for a genealogy app.
+> **Vata** (वट, _vaṭa_) is the Sanskrit word for the banyan tree (_Ficus benghalensis_) — a tree whose aerial roots descend from its branches to form new trunks, expanding endlessly. A fitting name for a genealogy app.
 
 A modern, local-first desktop application for managing genealogical family trees.
 
@@ -17,14 +17,14 @@ Your data stays on your machine. No account, no cloud, no subscription.
 
 ## Tech Stack
 
-| Layer    | Technology                                          |
-| -------- | --------------------------------------------------- |
-| Shell    | [Tauri 2](https://v2.tauri.app/) (Rust)             |
-| Frontend | React 18 + TypeScript 5 + Vite                      |
-| Database | SQLite via `@tauri-apps/plugin-sql`                  |
-| State    | Zustand (client) + TanStack Query (server)           |
-| Routing  | TanStack Router (file-based)                         |
-| Tests    | Vitest + Testing Library                             |
+| Layer    | Technology                                 |
+| -------- | ------------------------------------------ |
+| Shell    | [Tauri 2](https://v2.tauri.app/) (Rust)    |
+| Frontend | React 18 + TypeScript 5 + Vite             |
+| Database | SQLite via `@tauri-apps/plugin-sql`        |
+| State    | Zustand (client) + TanStack Query (server) |
+| Routing  | TanStack Router (file-based)               |
+| Tests    | Vitest + Testing Library                   |
 
 ## Prerequisites
 
@@ -51,18 +51,18 @@ The app opens a native window. A `system.db` file is created automatically on fi
 
 ## Scripts
 
-| Command              | Description                          |
-| -------------------- | ------------------------------------ |
-| `pnpm tauri:dev`     | Full Tauri desktop app (dev mode)    |
-| `pnpm dev`           | Vite dev server only (port 1420)     |
-| `pnpm build`         | TypeScript check + Vite build        |
-| `pnpm tauri:build`   | Build distributable desktop app      |
-| `pnpm test`          | Run tests in watch mode              |
-| `pnpm test:coverage` | Run tests with coverage report       |
-| `pnpm lint`          | ESLint check                         |
-| `pnpm lint:fix`      | ESLint auto-fix                      |
-| `pnpm format`        | Prettier format                      |
-| `pnpm format:check`  | Prettier check                       |
+| Command              | Description                       |
+| -------------------- | --------------------------------- |
+| `pnpm tauri:dev`     | Full Tauri desktop app (dev mode) |
+| `pnpm dev`           | Vite dev server only (port 1420)  |
+| `pnpm build`         | TypeScript check + Vite build     |
+| `pnpm tauri:build`   | Build distributable desktop app   |
+| `pnpm test`          | Run tests in watch mode           |
+| `pnpm test:coverage` | Run tests with coverage report    |
+| `pnpm lint`          | ESLint check                      |
+| `pnpm lint:fix`      | ESLint auto-fix                   |
+| `pnpm format`        | Prettier format                   |
+| `pnpm format:check`  | Prettier check                    |
 
 ## Architecture
 
@@ -111,7 +111,7 @@ All project documentation lives in [`docs/`](docs/):
 - [Product Requirements](docs/product/prd.md)
 - [Architecture Overview](docs/architecture/overview.md)
 - [Tech Stack](docs/architecture/tech-stack.md)
-- [Architecture Decision Records](docs/decisions/)
+- [Architecture Decision Records](docs/adr/)
 
 ## License
 

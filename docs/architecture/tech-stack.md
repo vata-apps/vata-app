@@ -259,7 +259,7 @@ export default defineConfig({
 
 ## UI Layer
 
-The rationale for picking Radix + Tailwind v4 + `tailwind-variants` lives in [ADR-005](../decisions/adr-005-ui-strategy.md). This section documents _what is in the codebase today_, not _why_.
+The rationale for picking Radix + Tailwind v4 + `tailwind-variants` lives in [ADR-005](../adr/0005-ui-strategy.md). This section documents _what is in the codebase today_, not _why_.
 
 ### Wrappers in `src/components/ui/`
 

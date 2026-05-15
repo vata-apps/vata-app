@@ -96,7 +96,7 @@ export function useCreateIndividual() {
 - Static classes or singletons
 - No React dependency
 - Unit testable
-- Uses in-app modules for domain-specific logic (GEDCOM, dates); see [ADR-004](../decisions/adr-004-gedcom-libraries.md)
+- Uses in-app modules for domain-specific logic (GEDCOM, dates); see [ADR-004](../adr/0004-gedcom-libraries.md)
 
 ### 4. Database Layer (Persistence)
 
