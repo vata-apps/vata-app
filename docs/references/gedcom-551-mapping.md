@@ -4,7 +4,7 @@
 
 This document describes the correspondence between GEDCOM 5.5.1 structures and the Vata data model.
 
-**Note**: GEDCOM parsing and serialization are handled by the in-app module `@vata-apps/gedcom-parser`. This document covers the mapping between GEDCOM structures and the Vata database schema. See [ADR-004](../decisions/adr-004-gedcom-libraries.md).
+**Note**: GEDCOM parsing and serialization are handled by the in-app module `@vata-apps/gedcom-parser`. This document covers the mapping between GEDCOM structures and the Vata database schema. See [ADR-004](../adr/0004-gedcom-libraries.md).
 
 ## Main Records
 
@@ -172,18 +172,18 @@ This document describes the correspondence between GEDCOM 5.5.1 structures and t
 
 ## Family Event Tags
 
-| GEDCOM Tag | Name                | event_types.tag |
-| ---------- | ------------------- | --------------- |
-| ANUL       | Annulment           | ANUL            |
-| CENS       | Census              | CENS            |
-| DIV        | Divorce             | DIV             |
-| DIVF       | Divorce Filed       | DIVF            |
-| ENGA       | Engagement          | ENGA            |
-| MARB       | Marriage Banns      | MARB            |
-| MARC       | Marriage Contract   | MARC            |
-| MARL       | Marriage License    | MARL            |
-| MARR       | Marriage            | MARR            |
-| MARS       | Marriage Settlement | MARS            |
+| GEDCOM Tag | Name                | event_types.tag                  |
+| ---------- | ------------------- | -------------------------------- |
+| ANUL       | Annulment           | ANUL                             |
+| CENS       | Census              | CENS                             |
+| DIV        | Divorce             | DIV                              |
+| DIVF       | Divorce Filed       | DIVF                             |
+| ENGA       | Engagement          | ENGA                             |
+| MARB       | Marriage Banns      | MARB                             |
+| MARC       | Marriage Contract   | MARC                             |
+| MARL       | Marriage License    | MARL                             |
+| MARR       | Marriage            | MARR                             |
+| MARS       | Marriage Settlement | MARS                             |
 | EVEN       | Generic Event       | EVEN (+ 2 TYPE for custom types) |
 
 ---
@@ -244,8 +244,8 @@ GEDCOM references use the format `@X123@` where X is the type:
 During import, a `xrefToId` Map maintains the correspondence (values are app display IDs, e.g. from `formatEntityId`):
 
 ```typescript
-xrefToId.set("I1", "I-0042"); // GEDCOM @I1@ → app id I-0042
-xrefToId.set("F1", "F-0015"); // GEDCOM @F1@ → app id F-0015
+xrefToId.set('I1', 'I-0042'); // GEDCOM @I1@ → app id I-0042
+xrefToId.set('F1', 'F-0015'); // GEDCOM @F1@ → app id F-0015
 ```
 
 ### On Export
@@ -253,7 +253,7 @@ xrefToId.set("F1", "F-0015"); // GEDCOM @F1@ → app id F-0015
 On export, the reverse correspondence is created (keys are app display IDs):
 
 ```typescript
-idToXref.set("I-0042", "I1"); // app id I-0042 → GEDCOM @I1@
+idToXref.set('I-0042', 'I1'); // app id I-0042 → GEDCOM @I1@
 ```
 
 ---
@@ -276,13 +276,13 @@ GEDCOM limits lines to 255 characters. Long lines are automatically wrapped usin
 
 The following tags are ignored on import (may be added later):
 
-| Tag  | Reason                            |
-| ---- | --------------------------------- |
+| Tag  | Reason                                             |
+| ---- | -------------------------------------------------- |
 | OBJE | Media — files managed outside GEDCOM import/export |
-| BLOB | Obsolete binary                   |
-| ASSO | Complex associations              |
-| ALIA | Alias - use NAME instead          |
-| ANCI | Genealogical interest             |
-| DESI | Genealogical interest             |
-| SUBM | Submitter - not relevant locally  |
-| SUBN | Submission - not relevant locally |
+| BLOB | Obsolete binary                                    |
+| ASSO | Complex associations                               |
+| ALIA | Alias - use NAME instead                           |
+| ANCI | Genealogical interest                              |
+| DESI | Genealogical interest                              |
+| SUBM | Submitter - not relevant locally                   |
+| SUBN | Submission - not relevant locally                  |

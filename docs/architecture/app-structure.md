@@ -91,11 +91,11 @@ Anything that breaks one of these breaks the contract.
 
 ## Where to Look Next
 
-| Question                                                | Doc                                                                                                |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| What does each layout look like in detail?              | [`docs/ui/layouts.md`](../ui/layouts.md)                                                           |
-| What's in the picker / tree dashboard / module screens? | [`docs/ui/screens/`](../ui/screens/)                                                               |
-| How are layers connected (UI → Hooks → Manager → DB)?   | [`docs/architecture/overview.md`](./overview.md)                                                   |
-| What's in `system.db` vs `tree.db`?                     | [`docs/architecture/database-schema.md`](./database-schema.md)                                     |
-| What's the database CRUD contract?                      | [`docs/api/database-layer.md`](../api/database-layer.md)                                           |
-| Why two databases?                                      | [`docs/decisions/adr-003-database-architecture.md`](../decisions/adr-003-database-architecture.md) |
+| Question                                                | Doc                                                                              |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| What does each layout look like in detail?              | [`docs/ui/layouts.md`](../ui/layouts.md)                                         |
+| What's in the picker / tree dashboard / module screens? | [`docs/ui/screens/`](../ui/screens/)                                             |
+| How are layers connected (UI → Hooks → Manager → DB)?   | [`docs/architecture/overview.md`](./overview.md)                                 |
+| What's in `system.db` vs `tree.db`?                     | [`docs/architecture/database-schema.md`](./database-schema.md)                   |
+| What's the database CRUD contract?                      | [`docs/api/database-layer.md`](../api/database-layer.md)                         |
+| Why two databases?                                      | [`docs/adr/0003-database-architecture.md`](../adr/0003-database-architecture.md) |
