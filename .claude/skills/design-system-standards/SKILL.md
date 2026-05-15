@@ -15,7 +15,7 @@ Read these first when applying this skill:
 - `src/styles/app.css` — `@theme` tokens (colors, radii, font)
 - `docs/ui/design-system.md` — DS philosophy, token reference, gender + semantic colors
 - `docs/ui/storybook.md` — story conventions; any new wrapper needs a colocated `<name>.stories.tsx` with `play()` tests
-- `.claude/skills/storybook-stories/SKILL.md` — story rules for new wrappers
+- `.claude/skills/testing-standards/SKILL.md` — §6 covers story rules for new wrappers (a wrapper's story is its test)
 
 ## Decision tree
 
@@ -58,7 +58,7 @@ Pick this when:
 A new wrapper requires, in the same commit:
 
 - The wrapper file `<name>.tsx` with rich JSDoc on the component and its props
-- A colocated `<name>.stories.tsx` with one story per variant, a matrix story, and `play()` tests (per `storybook-stories`)
+- A colocated `<name>.stories.tsx` with one story per variant, a matrix story, and `play()` tests (per `testing-standards` §6)
 - No separate `<name>.test.tsx` — `play()` is the test
 
 ### 5. Custom from scratch (rare)
@@ -150,4 +150,4 @@ Quote real wrapper names from the live `src/components/ui/` listing — never na
 - Accessibility audits (use the play() tests in `.stories.tsx` and the `testing-standards` skill)
 - i18n string review (`react-i18next` and the project's i18n rules cover that)
 - Type-level review of component props (covered by `typescript-standards`)
-- Storybook story shape (covered by `storybook-stories`)
+- Storybook story shape (covered by `testing-standards` §6)

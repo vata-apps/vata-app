@@ -1,6 +1,6 @@
 ---
 name: sqlite-standards
-description: Ensures SQLite code and documentation follow high standards of performance and data integrity. Use when writing or reviewing SQLite queries, schema, migrations, DB layer code (src/db/**), or database-related docs (database-schema.md, database-layer.md, tech-stack.md).
+description: Ensures SQLite code and documentation follow high standards of performance and data integrity. Use when writing or reviewing SQLite queries, schema, migrations, DB layer code (src/db/**), scaffolding a new entity's DB layer in src/db/trees/, or database-related docs (database-schema.md, database-layer.md, tech-stack.md).
 ---
 
 # SQLite Performance and Data Integrity Standards
@@ -99,6 +99,139 @@ Execute PRAGMAs **before** any transaction. They do not persist across connectio
 - **Test databases must enable `PRAGMA foreign_keys = ON`**: In-memory test databases do not inherit PRAGMAs. Always execute `PRAGMA foreign_keys = ON` after creating the test DB, before running the schema.
 - **Escape LIKE wildcards in user input**: Characters `%`, `_`, and `\` must be escaped with `\` and the query must include `ESCAPE '\'`.
 - **Always pass radix to `parseInt`**: Use `parseInt(id, 10)`, never `parseInt(id)`.
+
+---
+
+## 8. Scaffolding a New DB-Layer File
+
+When creating a new entity's database layer in `src/db/trees/`, follow this structure.
+
+### Files
+
+- `src/db/trees/<entity>.ts` — CRUD operations
+- `src/db/trees/<entity>.test.ts` — unit tests (in-memory SQLite)
+- Type definitions in `src/types/database.ts`
+
+### Required sections of `<entity>.ts`
+
+**1. Imports**
+
+```typescript
+import { getTreeDb } from '../connection';
+import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import type { Entity, CreateEntityInput, UpdateEntityInput } from '$/types/database';
+```
+
+**2. Raw type** (snake_case, matching DB columns)
+
+```typescript
+interface RawEntity {
+  id: number;
+  // ... all columns, snake_case
+  created_at: string;
+  updated_at: string;
+}
+```
+
+**3. Column-list constant** — never `SELECT *` (see §3)
+
+```typescript
+const ENTITY_COLUMNS = 'id, name, ..., created_at, updated_at';
+```
+
+**4. Mapper function**
+
+```typescript
+function mapToEntity(raw: RawEntity): Entity {
+  return {
+    id: formatEntityId('X', raw.id), // correct prefix
+    // ... camelCase fields
+    createdAt: raw.created_at,
+    updatedAt: raw.updated_at,
+  };
+}
+```
+
+Entity ID prefixes: `I` (Individual), `F` (Family), `E` (Event), `P` (Place), `S` (Source), `R` (Repository).
+
+**5. CRUD functions** — all `async`, use `getTreeDb()`, parameterized queries (`$1`, `$2`)
+
+```typescript
+export async function getAllEntities(): Promise<Entity[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<RawEntity[]>(`SELECT ${ENTITY_COLUMNS} FROM entities ORDER BY name`);
+  return rows.map(mapToEntity);
+}
+
+export async function getEntityById(id: string): Promise<Entity | null> {
+  const db = await getTreeDb();
+  const dbId = parseEntityId(id);
+  const rows = await db.select<RawEntity[]>(
+    `SELECT ${ENTITY_COLUMNS} FROM entities WHERE id = $1`,
+    [dbId]
+  );
+  return rows[0] ? mapToEntity(rows[0]) : null;
+}
+
+export async function createEntity(input: CreateEntityInput): Promise<string> {
+  const db = await getTreeDb();
+  const result = await db.execute(`INSERT INTO entities (col1, col2) VALUES ($1, $2)`, [
+    input.col1,
+    input.col2 ?? null,
+  ]);
+  if (result.lastInsertId === undefined) {
+    throw new Error('Failed to create entity: no lastInsertId returned');
+  }
+  return formatEntityId('X', result.lastInsertId);
+}
+
+export async function updateEntity(id: string, input: UpdateEntityInput): Promise<void> {
+  const db = await getTreeDb();
+  const dbId = parseEntityId(id);
+  // Build SET clause dynamically from non-undefined fields
+  await db.execute(`UPDATE entities SET col1 = $1 WHERE id = $2`, [input.col1, dbId]);
+}
+
+export async function deleteEntity(id: string): Promise<void> {
+  const db = await getTreeDb();
+  const dbId = parseEntityId(id);
+  await db.execute(`DELETE FROM entities WHERE id = $1`, [dbId]);
+}
+```
+
+**6. Types** (added to `src/types/database.ts`)
+
+```typescript
+export interface Entity {
+  id: string; // formatted: "X-0001"
+  // ... camelCase fields
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateEntityInput {
+  // required fields only, no id/timestamps
+}
+
+export interface UpdateEntityInput {
+  // all fields optional
+}
+```
+
+### Test file
+
+Use `src/test/sqlite-memory.ts` helpers. See `src/db/trees/repositories.test.ts` for a working example. Tests cover: create, get by ID, get all, update, delete, and edge cases (not found, duplicate constraints).
+
+### Scaffolding checklist
+
+- [ ] No `SELECT *` anywhere
+- [ ] All queries use parameterized placeholders (`$1`, `$2`)
+- [ ] `Raw*` interface matches DB columns exactly (snake_case)
+- [ ] Public type uses camelCase
+- [ ] Entity ID prefix is correct and registered in `entityId.ts`
+- [ ] `created_at` / `updated_at` are included
+- [ ] Types added to `src/types/database.ts`
+- [ ] Test file created with memory DB
 
 ---
 

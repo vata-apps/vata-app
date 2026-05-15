@@ -92,7 +92,7 @@ Use the template below verbatim. Cite file paths and line numbers for every clai
 - **<ProposedWrapper>** — wraps <Radix primitive> / custom
   - Justification: <one sentence>
   - API sketch: variants, sizes, props
-  - Companion files required: `<name>.tsx`, `<name>.stories.tsx` (with `play()` tests per `storybook-stories`)
+  - Companion files required: `<name>.tsx`, `<name>.stories.tsx` (with `play()` tests per `testing-standards`)
 
 ### Compose existing (inline in the page, no new file)
 - <description of composition>
@@ -128,5 +128,5 @@ These are owned by other skills/agents — do not duplicate their work:
 - Accessibility audits → `play()` tests in `*.stories.tsx` + `testing-standards`
 - i18n string review → project i18n rules
 - Component prop typing → `typescript-standards`
-- Storybook story shape → `storybook-stories`
+- Storybook story shape → `testing-standards`
 - Renaming existing wrappers → raise as Open question only
