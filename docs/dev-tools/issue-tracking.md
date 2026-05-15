@@ -148,6 +148,8 @@ Activates on phrases like:
 
 The agent composes a concise English title (and optional body), reads the repo's existing labels, picks 0–2 that match, creates the issue with `gh issue create`, then via GraphQL sets the org-level Issue Type (Feature by default; Bug or Task if context suggests) and pins the Project Status to **Icebox**. Replies with the issue number, type, labels, "Icebox", and URL.
 
+**Batch captures**: when a session produces multiple ideas at once, invoke the skill once per item — never batch via a direct `gh issue create` loop, which bypasses the type and Icebox mutations.
+
 ### `link-task`
 
 Activates at the **start** of a dev task, on phrases like:
@@ -156,11 +158,13 @@ Activates at the **start** of a dev task, on phrases like:
 - "add a feature for Z" / "fix bug W"
 - "commençons sur X" / "on s'attaque à X"
 
+**Habit rule**: for every `feat/` or `fix/` branch, run `link-task` explicitly before writing any code — don't rely on trigger phrases alone. If no matching open issue exists, run `capture-idea` first to file one, then `link-task` to bind it to the branch.
+
 Phase A: searches the repo's open issues via the GraphQL `search` API (returns `issueType` alongside title and state — `gh issue list --json` doesn't expose the type field), lists up to 5 candidates as `#<number> · <type> · <state> · <title>`, lets the user pick from existing open issues. Stores the choice in `git config branch.<branch>.ghIssue`.
 
 **Note**: `link-task` does NOT create new issues — it only links to existing ones. If no matching issue exists, run `capture-idea` to create one first, then run `link-task` to link it.
 
-Phase B: at PR creation, reads that git config and appends `Closes #N` to the description. GitHub auto-closes the linked issue on merge, and the Project's auto-status workflow moves it to **Done**.
+Phase B: at PR creation, reads that git config and appends `Closes #N` to the description. GitHub auto-closes the linked issue on merge, and the Project's auto-status workflow moves it to **Done**. If the branch is `feat/` or `fix/` and no link is stored, Phase B emits a soft warning before proceeding.
 
 ## Manual setup checklist
 
@@ -210,5 +214,5 @@ The bootstrap script prints these manual steps after running.
 - **Auto-add isn't picking up new issues**: the workflow on the Project must be enabled (UI step 4 above).
 - **Forgot to link at task start**: trigger `link-task` mid-task — _"link this task to a GitHub issue"_ — Phase A runs again and overwrites `git config`.
 - **Wrong issue linked**: re-run Phase A; `git config` overwrites cleanly.
-- **PR already opened without `Closes #N`**: edit the PR description manually or via `gh pr edit --body "..."`.
+- **PR already opened without `Closes #N`**: edit the PR description manually or via `gh pr edit --body "..."` .
 - **Issue lacks a Type after capture**: the GraphQL step failed silently. Set the type from the GitHub UI (issue header → "Type" dropdown).

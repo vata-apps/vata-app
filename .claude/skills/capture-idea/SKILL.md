@@ -18,6 +18,12 @@ Activate as soon as the user expresses one of these intents in either French or 
 
 If the user is asking for the work to be done **now**, this skill does not apply — proceed with the task instead.
 
+## Batch captures
+
+When a planning or design session produces multiple icebox items at once, **invoke this skill once per item** — N items means N separate capture-idea invocations. Do not create a batch of issues via a direct `gh issue create` loop: that path bypasses steps 6 and 7 (Issue Type + Icebox status mutations), leaving items untyped and likely at Status=Todo in the project (the auto-add default) rather than Icebox.
+
+If the user says "file all of these as icebox items", work through the list sequentially, running each item through the full capture flow before moving to the next.
+
 ## Capture flow
 
 Follow these steps in order. Do **not** ask the user for confirmation before creating — the trigger phrase is itself the explicit signal.
