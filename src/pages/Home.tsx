@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import packageJson from '../../package.json';
 import { AppStatusBar } from '$components/app-status-bar';
 import { PreferencesPopover } from '$components/preferences-popover';
+import { DeleteTreeModal } from '$components/trees/delete-tree-modal';
 import { DownloadTreeModal } from '$components/trees/download-tree-modal';
 import { EditTreeModal } from '$components/trees/edit-tree-modal';
 import { ImportGedcomModal } from '$components/trees/import-gedcom-modal';
@@ -46,6 +47,7 @@ export function HomePage(): JSX.Element {
   const [importOpen, setImportOpen] = useState(false);
   const [exportingTree, setExportingTree] = useState<Tree | null>(null);
   const [editingTree, setEditingTree] = useState<Tree | null>(null);
+  const [deletingTree, setDeletingTree] = useState<Tree | null>(null);
 
   const {
     data: trees,
@@ -127,7 +129,7 @@ export function HomePage(): JSX.Element {
               onOpen={() => void handleOpen(tree.id)}
               onExport={() => setExportingTree(tree)}
               onEdit={() => setEditingTree(tree)}
-              onDelete={comingSoon}
+              onDelete={() => setDeletingTree(tree)}
             />
           ))}
           <TreeCardCta
@@ -187,6 +189,13 @@ export function HomePage(): JSX.Element {
         open={exportingTree !== null}
         onOpenChange={(next) => {
           if (!next) setExportingTree(null);
+        }}
+      />
+      <DeleteTreeModal
+        tree={deletingTree}
+        open={deletingTree !== null}
+        onOpenChange={(next) => {
+          if (!next) setDeletingTree(null);
         }}
       />
       {editingTree && (
