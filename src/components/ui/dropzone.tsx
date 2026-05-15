@@ -100,7 +100,7 @@ export interface DropzoneProps {
 const stateIcon: Record<DropzoneState, IconName> = {
   idle: 'upload',
   selected: 'folder-open',
-  scanning: 'upload',
+  scanning: 'loader-2',
   done: 'download',
   error: 'x',
 };
@@ -182,7 +182,11 @@ export function Dropzone({
       disabled={!interactive}
       className={dropzoneRecipe({ state })}
     >
-      <Icon name={iconName} size={24} />
+      <Icon
+        name={iconName}
+        size={24}
+        className={state === 'scanning' ? 'animate-spin' : undefined}
+      />
       <span className="text-foreground text-sm font-medium">
         {showSelectedName ? selectedName : idleLabel}
       </span>

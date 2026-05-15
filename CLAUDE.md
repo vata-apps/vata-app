@@ -274,6 +274,7 @@ chore: upgrade drizzle-orm to 0.30.0
 
 - If worktree: call `ExitWorktree` to clean up the session-registered worktree.
 - Delete the local branch (`git branch -d <branch>`) once merged.
+- **Stop monitoring the PR.** Do not keep polling for further CodeRabbit reviews, do not push "nudge" commits, do not recreate a deleted branch. Once the PR is merged, the work is done — wait for the next user instruction.
 
 ---
 
@@ -282,9 +283,31 @@ chore: upgrade drizzle-orm to 0.30.0
 Before creating a pull request (via `gh pr create`, any slash command that opens a PR, or any other means), the agent MUST:
 
 1. Run `/simplify` to launch the three-agent reuse / quality / efficiency review on the branch diff. Apply the fixes that are real issues; skip false positives and stylistic nits.
-2. Then create the PR.
+2. Then create the PR. **Always open it as draft** (`gh pr create --draft`, or via `/commit-push-pr` which sets the flag automatically). The draft state holds CodeRabbit off until the local `/review` gate has run, so we don't burn the hourly rate-limit budget on a state we're about to clean up.
 
-CodeRabbit reviews the PR automatically once it is opened — that is the canonical CodeRabbit pass. A local CodeRabbit run is **optional** and can be triggered on demand with `pnpm review` (uncommitted changes) or `pnpm review:all` (full branch diff); it is no longer a required pre-PR step.
+After the PR is opened, invoke the `shepherd-pr` skill. It runs `/review` locally, applies the real findings, flips the PR to ready (`gh pr ready <N>` — that's the explicit handoff to CodeRabbit), then drives CI + CodeRabbit to approval without manual polling.
+
+CodeRabbit reviews the PR automatically once it is marked ready — that is the canonical CodeRabbit pass. A local CodeRabbit run is **optional** and can be triggered on demand with `pnpm review` (uncommitted changes) or `pnpm review:all` (full branch diff); it is no longer a required pre-PR step.
+
+---
+
+# Research & Bug Fixes
+
+## Research / analysis requests
+
+When the user asks for research, analysis, or "look at how X compares to Y", **dispatch the requested agents in the first turn**. Do not start by exploring the codebase solo — that re-does work the agents will do, and burns context. If the request is ambiguous about parallelism (e.g. "look into X"), default to launching one or more `Explore` / `general-purpose` agents in parallel rather than reading files yourself.
+
+## Scope confirmation
+
+Before executing on a multi-step refactor or "remove X" task, restate the scope back in one line. Phrasings like "rename A to B" can mean either a literal rename or a full conceptual removal — confirm if there's any doubt instead of guessing.
+
+## Bug fixes — root cause first
+
+When fixing a bug:
+
+1. **Reproduce first.** Write a failing test (or a reliable manual repro) that captures the bug _before_ touching any production code.
+2. **Diagnose before patching.** If the first fix doesn't work, stop iterating on variants and investigate the actual code path / runtime / build pipeline. Symptoms vs. cause: debounce / memoize / N+1 cleanup is rarely the root cause of "the UI freezes".
+3. **One swing rule.** After one failed fix, switch to root-cause investigation (often via a `general-purpose` or `Explore` agent) instead of trying a second variant.
 
 ---
 
@@ -319,6 +342,7 @@ The following specialized skills are loaded automatically when relevant, or on d
 | `new-route`               | When adding a new page or entity view under `/tree/$treeId/`                                                                                                                     |
 | `storybook-stories`       | When touching anything under `src/components/ui/` (wrappers + their `*.stories.tsx`) or any `*.stories.tsx` elsewhere                                                            |
 | `design-system-standards` | When designing or reviewing UI under `src/components/ui/`, `src/components/**`, or `src/pages/**` — decision tree for reuse / extend / create-new, token rules, audit heuristics |
+| `shepherd-pr`             | After `gh pr create` returns — drives the PR through `/review`, the ready-flip, CI, and CodeRabbit until it's approved or surfaces a real blocker                                |
 
 The UI layer is built on Tailwind v4 (CSS-first via `@theme` in `src/styles/app.css`) + Radix primitives + `tailwind-variants`. Wrappers live under `src/components/ui/` with colocated tests and Storybook stories. See `docs/ui/design-system.md` and `docs/ui/storybook.md`.
 
