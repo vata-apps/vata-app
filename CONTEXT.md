@@ -25,7 +25,7 @@ The nature of a parent–child link within a family: biological, adopted, foster
 _Avoid_: Lineage, Relationship type
 
 **Event**:
-A dated, placed milestone attached to an individual (birth, death, burial) or a family (marriage, divorce).
+A dated, placed occurrence recorded in a tree — birth, death, burial, marriage, divorce, census.
 _Avoid_: Fact, Milestone, Attribute
 
 **Place**:
@@ -50,7 +50,7 @@ _Avoid_: Export file, Backup
 - An **Individual** has one or more **Names** (exactly one is primary).
 - A **Family** links an optional husband **Individual**, an optional wife **Individual**, and zero or more child **Individuals**.
 - A **Pedigree** qualifies each parent–child link inside a **Family**.
-- An **Event** belongs to exactly one **Individual** or one **Family**, with an optional **Place**.
+- An **Event** has an optional **Place** and one or more participants — each participant is an **Individual** or a **Family** in a role (principal, witness, officiant, …).
 - A citation links a **Source** to an **Individual**, **Family**, or **Event** — the **Source** is never attached directly.
 - A **Repository** holds zero or more **Sources**.
 
