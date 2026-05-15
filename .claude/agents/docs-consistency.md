@@ -49,9 +49,11 @@ Walk the map from each changed file. Drop any candidates that aren't in the Glob
 
 ## Dependency Map
 
+**Scope:** the core working documentation only — architecture, API, UI, and references. ADRs (`docs/adr/`), product docs, and dev-tools docs are intentionally outside this map.
+
 When a file changes, the files it points to (via `->`) may need updates. Verify each file exists (Step 2 Glob) before reading.
 
-```
+```text
 docs/README.md
   <- ALL files (navigation index, must list every doc)
 

@@ -1,6 +1,6 @@
 ---
 name: testing-standards
-description: Defines testing conventions for the project. Use when writing or reviewing any test surface — `**/*.{test,spec}.{ts,tsx}` for unit tests, AND `src/components/**/*.stories.tsx` since each component story's `play()` function is the component test (run by `@storybook/addon-vitest`). Also use when creating any UI wrapper under `src/components/ui/` — every wrapper ships with a colocated story.
+description: Defines testing conventions for the project. Use when writing or reviewing any test surface — `**/*.{test,spec}.{ts,tsx}` for unit tests, AND `**/*.stories.tsx` since each component story's `play()` function is the component test (run by `@storybook/addon-vitest`). Also use when creating any UI wrapper under `src/components/ui/` — every wrapper ships with a colocated story.
 ---
 
 # Testing Standards
@@ -10,7 +10,7 @@ Apply this skill when writing tests, or when creating/modifying a UI wrapper (it
 ## When to Apply
 
 - Writing or reviewing `**/*.test.{ts,tsx}` or `**/*.spec.{ts,tsx}` files
-- Writing or reviewing any `*.stories.tsx` — a component story's `play()` is the component test
+- Writing or reviewing any `**/*.stories.tsx` — a component story's `play()` is the component test
 - Creating or modifying a wrapper under `src/components/ui/` — it ships with a colocated `<name>.stories.tsx`
 - Planning test coverage for a new feature
 
