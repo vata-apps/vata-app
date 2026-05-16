@@ -150,7 +150,7 @@ export function HomePage(): JSX.Element {
           <Box mb="6">
             <Heading size="9">
               {t('trees:home.title')}{' '}
-              <Text as="span" color="brown">
+              <Text as="span" style={{ color: 'var(--accent-11)' }}>
                 {t('trees:home.titleAccent')}
               </Text>
             </Heading>
