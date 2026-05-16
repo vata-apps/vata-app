@@ -4,7 +4,7 @@ The UI foundation is **Radix Themes** (`@radix-ui/themes`), consumed directly. C
 
 There is **no `src/components/ui/` directory**. Internal components under [`src/components/`](../../src/components/) are reserved for **application organisms** — components used across the app that compose Radix Themes and add applicative behavior (e.g. `tree-shell.tsx`, `tree-nav.tsx`, `app-status-bar.tsx`, `preferences-popover.tsx`, `dropzone.tsx`). Never a restyled atom or molecule.
 
-**Brand tokens** are set on the `<Theme>` provider in [`src/components/app-theme.tsx`](../../src/components/app-theme.tsx): `accentColor="bronze"`, `grayColor="sand"`, `radius="medium"`. Light / dark / system appearance is bound to the persisted Zustand theme preference. The Geist font is kept via a `--default-font-family` override and self-hosted `@font-face` blocks; [`src/styles/app.css`](../../src/styles/app.css) is just the Radix Themes stylesheet import plus those font declarations.
+**Brand tokens** are set on the `<Theme>` provider in [`src/components/app-theme.tsx`](../../src/components/app-theme.tsx): `accentColor="brown"`, `grayColor="sand"`, `radius="medium"`. Light / dark / system appearance is bound to the persisted Zustand theme preference. The Geist font is kept via a `--default-font-family` override and self-hosted `@font-face` blocks; [`src/styles/app.css`](../../src/styles/app.css) is just the Radix Themes stylesheet import plus those font declarations.
 
 **Customization ceiling is token-level.** Accent, gray, radius, and scaling are tuned on `<Theme>`; component anatomy (heights, padding, density) is Radix's and is not tuned per component. Genuinely bespoke surfaces (e.g. a future pedigree graph) use scoped local CSS, decided case by case.
 

@@ -313,7 +313,7 @@ function FileRow({ file, onClear }: { file: SelectedFile; onClear: () => void })
   return (
     <Card>
       <Flex align="center" gap="3">
-        <Badge color="bronze">{t('importGedcom.fileBadge')}</Badge>
+        <Badge color="brown">{t('importGedcom.fileBadge')}</Badge>
         <Flex direction="column" gap="1" flexGrow="1">
           <Text size="2" weight="medium">
             {file.name}

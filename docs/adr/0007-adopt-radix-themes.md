@@ -15,7 +15,7 @@ The UI surface is still tiny (one page, the in-tree shell, a handful of modals).
 
 - **UI foundation**: **Radix Themes** (`@radix-ui/themes`), consumed **directly**. No `src/components/ui/` wrapper layer — `import { Button } from '@radix-ui/themes'` at call sites.
 - **Internal components**: reserved for **application organisms only** — components used across the app that compose Radix Themes and add applicative behavior (e.g. `tree-shell`, `tree-nav`, `dropzone`). Never a restyled atom/molecule.
-- **Customization is token-level only**, via the `<Theme>` provider: built-in **`brown`/`bronze`** accent + **`sand`** gray, plus radius and scaling. Component anatomy (heights, padding, density) is Radix's — not tuned per component.
+- **Customization is token-level only**, via the `<Theme>` provider: built-in **`brown`** accent + **`sand`** gray, plus radius and scaling. Component anatomy (heights, padding, density) is Radix's — not tuned per component.
 - **Font**: **Geist kept**, via the `--default-font-family` CSS variable + existing self-hosted `@font-face` blocks.
 - **Tailwind removed entirely** — `tailwindcss`, `tailwind-variants`, `tailwind-merge`, and the Vite plugin. Radix Themes layout primitives (`Flex`, `Grid`, `Box`) and spacing props replace utility-class layout. `app.css` reduces to the theme import + `@font-face`.
 - **Storybook removed** — the `play()`-as-component-test model goes with it.
@@ -25,7 +25,7 @@ The UI surface is still tiny (one page, the in-tree shell, a handful of modals).
 
 - **Drift prevention is structural.** Components are no longer owned, so they cannot diverge — the anti-drift guarantee a solo maintainer cannot enforce by discipline alone.
 - **Maintenance shed.** No hand-written variants, accessibility, stories, or tests for UI primitives. Dark mode is handled by Radix's `appearance`.
-- **Identity preserved where it is cheap.** Terracotta → built-in `brown`/`bronze`, cream → `sand`, Geist retained — brand survives without a custom palette to maintain.
+- **Identity preserved where it is cheap.** Terracotta → built-in `brown`, cream → `sand`, Geist retained — brand survives without a custom palette to maintain.
 
 ## Alternatives Considered
 

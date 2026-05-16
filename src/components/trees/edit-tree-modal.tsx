@@ -145,7 +145,7 @@ export function EditTreeModal({
             <Flex direction="column" gap="1">
               <Text as="label" htmlFor={nameId} size="2" weight="medium">
                 {t('editTree.nameLabel')}{' '}
-                <Text size="2" color="bronze" weight="regular" aria-hidden="true">
+                <Text size="2" color="brown" weight="regular" aria-hidden="true">
                   {t('editTree.nameRequired')}
                 </Text>
               </Text>

@@ -29,7 +29,7 @@
 }
 
 /* ============================================================
-   Theme — Vata consumes Radix Themes. Brand tokens (bronze
+   Theme — Vata consumes Radix Themes. Brand tokens (brown
    accent, sand gray, medium radius) are set on the <Theme>
    component in app-theme.tsx. Only the font family is overridden
    here, because Geist is self-hosted above. See ADR-007.
