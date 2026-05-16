@@ -32,7 +32,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 ## API
 
-- [Database Layer](./api/database-layer.md) — TypeScript interfaces, connection management, CRUD operations
+- [Database Layer](./api/database-layer.md) — DB layer contract: connection lifecycle, conventions, module map
 
 ## User Interface
 
