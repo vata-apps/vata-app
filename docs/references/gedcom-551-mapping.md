@@ -4,7 +4,7 @@
 
 This document describes the correspondence between GEDCOM 5.5.1 structures and the Vata data model.
 
-**Note**: GEDCOM parsing and serialization are handled by the in-app module `@vata-apps/gedcom-parser`. This document covers the mapping between GEDCOM structures and the Vata database schema. See [ADR-004](../adr/0004-gedcom-libraries.md).
+**Note**: GEDCOM parsing and serialization are handled by the in-app module `@vata-apps/gedcom-parser`. See [ADR-004](../adr/0004-gedcom-libraries.md).
 
 ## Main Records
 
@@ -53,17 +53,6 @@ This document describes the correspondence between GEDCOM 5.5.1 structures and t
 
 ### FAM (Family)
 
-```gedcom
-0 @F1@ FAM
-1 HUSB @I2@
-1 WIFE @I3@
-1 CHIL @I1@
-1 CHIL @I4@
-1 MARR
-2 DATE 3 JUN 1870
-2 PLAC Montreal, Quebec
-```
-
 **Mapping:**
 
 | GEDCOM | Table          | Field                         | Notes                                  |
@@ -75,15 +64,6 @@ This document describes the correspondence between GEDCOM 5.5.1 structures and t
 | MARR   | events         | -                             | event_type_id = MARR, linked to family |
 
 ### SOUR (Source)
-
-```gedcom
-0 @S1@ SOUR
-1 TITL Parish Register Notre-Dame de Montreal
-1 AUTH Notre-Dame Parish
-1 PUBL BAnQ
-1 REPO @R1@
-2 CALN CE601-S51
-```
 
 **Mapping:**
 
@@ -97,19 +77,6 @@ This document describes the correspondence between GEDCOM 5.5.1 structures and t
 | CALN   | sources | call_number     |
 
 ### REPO (Repository)
-
-```gedcom
-0 @R1@ REPO
-1 NAME BAnQ Montreal
-1 ADDR 535 avenue Viger Est
-2 CITY Montreal
-2 STAE Quebec
-2 POST H2L 2P3
-2 CTRY Canada
-1 PHON 514-873-1100
-1 EMAIL info@banq.qc.ca
-1 WWW www.banq.qc.ca
-```
 
 **Mapping:**
 
@@ -190,28 +157,19 @@ This document describes the correspondence between GEDCOM 5.5.1 structures and t
 
 ## Place types
 
-Place types (`place_types` table, optional `places.place_type_id`) are not part of GEDCOM 5.5.1. They are application-specific (e.g. city, country, cemetery). Export/import do not map them to GEDCOM.
+Place types (`place_types` table, optional `places.place_type_id`) are not part of GEDCOM 5.5.1. They are application-specific (e.g. city, country, cemetery). Import/export do not map them to GEDCOM.
 
 ---
 
 ## Date Formats
 
-**Note**: Date parsing and formatting are handled by the in-app module `@vata-apps/gedcom-date`. This section describes only how dates are stored in the Vata database.
-
-Dates are stored in the `events` table as:
-
-- `date_original`: The original GEDCOM date string (e.g., `"ABT 15 JAN 1845"`)
-- `date_sort`: ISO string for chronological sorting (e.g., `"1845-01-15"`)
-
-See [Date Formats](./date-formats.md) for details on supported formats and storage.
+Dates are stored in `events.date_original` (original GEDCOM string) and `events.date_sort` (derived ISO string). See [Date Formats](./date-formats.md) for supported formats and storage details.
 
 ---
 
 ## Name Format
 
-**Note**: Name parsing is handled by the in-app module `@vata-apps/gedcom-parser`. This section describes only how names are stored in the Vata database.
-
-GEDCOM names follow the format `Given Names /Surname/ Suffix` and are parsed into the `names` table with the following mapping:
+GEDCOM names follow the format `Given Names /Surname/ Suffix` and are parsed into the `names` table:
 
 | GEDCOM Tag | Vata Field  | Notes                                           |
 | ---------- | ----------- | ----------------------------------------------- |
@@ -223,52 +181,19 @@ GEDCOM names follow the format `Given Names /Surname/ Suffix` and are parsed int
 | TYPE       | type        | Name type: "birth", "married", "aka", etc.      |
 | SPFX       | surname     | Surname prefix (e.g., "de") merged into surname |
 
-See the `@vata-apps/gedcom-parser` module for name parsing details.
-
 ---
 
 ## Links Between Records
 
-### XREF References
+GEDCOM cross-references use the format `@X123@` where `X` is the type: `I` Individual, `F` Family, `S` Source, `R` Repository, `N` Note.
 
-GEDCOM references use the format `@X123@` where X is the type:
-
-- I = Individual
-- F = Family
-- S = Source
-- R = Repository
-- N = Note
-
-### Correspondence Table on Import
-
-During import, a `xrefToId` Map maintains the correspondence (values are app display IDs, e.g. from `formatEntityId`):
-
-```typescript
-xrefToId.set('I1', 'I-0042'); // GEDCOM @I1@ → app id I-0042
-xrefToId.set('F1', 'F-0015'); // GEDCOM @F1@ → app id F-0015
-```
-
-### On Export
-
-On export, the reverse correspondence is created (keys are app display IDs):
-
-```typescript
-idToXref.set('I-0042', 'I1'); // app id I-0042 → GEDCOM @I1@
-```
+A correspondence map translates between GEDCOM xrefs and app display IDs (from `formatEntityId`): on import it maps xref → ID (`I1` → `I-0042`), and on export the reverse (`I-0042` → `I1`).
 
 ---
 
 ## Special Characters
 
-**Note**: Character encoding and line continuation (CONC/CONT) are handled by the in-app module `@vata-apps/gedcom-parser`.
-
-### Encoding
-
-Vata always exports GEDCOM files in UTF-8. The in-app module handles encoding detection and conversion during import.
-
-### Long Lines
-
-GEDCOM limits lines to 255 characters. Long lines are automatically wrapped using CONC/CONT by `@vata-apps/gedcom-parser` during serialization.
+Vata always exports GEDCOM files in UTF-8; the `@vata-apps/gedcom-parser` module handles encoding detection and line continuation (CONC/CONT).
 
 ---
 

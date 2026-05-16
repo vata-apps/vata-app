@@ -23,13 +23,7 @@ A good test survives a complete internal refactoring as long as the observable b
 
 Vitest is pinned to v2 for compatibility with Vite 5. The test configuration lives in `vitest.config.ts` (separate from `vite.config.ts` to avoid version conflicts).
 
-Scripts:
-
-```bash
-pnpm test              # watch mode
-pnpm test:coverage     # single run with coverage report
-cargo test             # Rust tests (run from src-tauri/)
-```
+Test commands (`pnpm test`, `pnpm test:coverage`, `cargo test`) are listed in `CLAUDE.md`.
 
 ---
 
@@ -89,75 +83,16 @@ Query priority:
 
 ### 4. Rust tests
 
-See [Rust tests](#rust-tests) section below.
+The `src-tauri/` crate is currently a plugin-composition shell with no custom `#[tauri::command]` functions and no business logic. **There is nothing to test in Rust today** — do not add placeholder or trivial Rust tests.
 
----
-
-## Rust Tests
-
-### Current state
-
-The `src-tauri/` crate is currently a plugin-composition shell with no custom `#[tauri::command]` functions and no business logic. **There is nothing to test in Rust today.**
-
-Do not add placeholder or trivial Rust tests.
-
-### When to add Rust tests
-
-Add them as soon as any of these appear in `src-tauri/src/`:
+Add Rust tests as soon as any of these appear in `src-tauri/src/`:
 
 - A `#[tauri::command]` with non-trivial logic
 - A data mapping function (DB row → struct)
 - A helper that validates, transforms, or routes data
 - A custom SQL query executed from Rust (not via `tauri-plugin-sql`)
 
-### Unit tests
-
-Inline `#[cfg(test)]` blocks for pure logic:
-
-```rust
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn maps_db_row_to_tree_struct() {
-        let row = RawTree { id: 1, name: "Smith Family".to_string(), /* ... */ };
-        let tree = map_to_tree(row);
-        assert_eq!(tree.id, "1");
-        assert_eq!(tree.name, "Smith Family");
-    }
-}
-```
-
-### Integration tests (in-memory SQLite)
-
-When Rust owns SQL queries directly, use `rusqlite` with `:memory:` — do not mock SQL.
-
-```toml
-# src-tauri/Cargo.toml
-[dev-dependencies]
-rusqlite = { version = "0.31", features = ["bundled"] }
-```
-
-```rust
-fn setup_db() -> Connection {
-    let conn = Connection::open_in_memory().unwrap();
-    conn.execute_batch(include_str!("../migrations/001_initial.sql")).unwrap();
-    conn
-}
-
-#[test]
-fn created_tree_is_retrievable() {
-    let conn = setup_db();
-    let id = create_tree(&conn, "Smith Family", "smith.db", None).unwrap();
-    let tree = get_tree_by_id(&conn, &id).unwrap().unwrap();
-    assert_eq!(tree.name, "Smith Family");
-}
-```
-
-### E2E tests (tauri-driver)
-
-Reserved for flows that cross the Tauri IPC boundary and cannot be covered at a lower level. Only set this up when the app has stable, non-trivial IPC commands worth protecting.
+When that happens, use inline `#[cfg(test)]` blocks for pure logic and `rusqlite` with an in-memory connection for SQL — do not mock SQL. E2E coverage via `tauri-driver` is reserved for flows that cross the IPC boundary and cannot be covered at a lower level; set it up only when the app has stable, non-trivial IPC commands worth protecting.
 
 ---
 

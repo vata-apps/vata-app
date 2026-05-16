@@ -33,4 +33,4 @@ Use **Tauri 2.0** as the desktop framework.
 
 ## References
 
-- [Tech Stack — Tauri 2.0](../architecture/tech-stack.md#tauri-20)
+- [Tech Stack — Tauri 2.0](../architecture/tech-stack.md)
