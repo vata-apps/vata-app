@@ -38,9 +38,9 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
         <TreeNav />
       </header>
       <div className="grid min-h-0 flex-1 grid-cols-[280px_minmax(0,1fr)_320px]">
-        <div className="bg-muted border-border border-r" />
+        <div className="bg-muted border-border overflow-y-auto border-r" />
         <main className="overflow-y-auto">{children}</main>
-        <div className="bg-muted border-border border-l" />
+        <div className="bg-muted border-border overflow-y-auto border-l" />
       </div>
     </div>
   );
