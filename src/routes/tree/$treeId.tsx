@@ -5,6 +5,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { getTreeById } from '$/db/system/trees';
 import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from '$/db/connection';
+import { TreeShell } from '$components/tree-shell';
 import { queryKeys } from '$lib/query-keys';
 import { useEffect, useState } from 'react';
 
@@ -116,6 +117,10 @@ export const Route = createFileRoute('/tree/$treeId')({
       return <p>{t('trees:openingDb')}</p>;
     }
 
-    return <Outlet />;
+    return (
+      <TreeShell>
+        <Outlet />
+      </TreeShell>
+    );
   },
 });
