@@ -1,13 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
+import { withRouter } from '$/test/story-router';
+
 import { TreeShell } from './tree-shell';
 
 const meta = {
   title: 'App/TreeShell',
   component: TreeShell,
   tags: ['autodocs'],
-  parameters: { layout: 'fullscreen' },
+  decorators: [withRouter],
+  parameters: { layout: 'fullscreen', routerPath: '/tree/demo/' },
   args: {
     children: <div className="p-6">Page content</div>,
   },
@@ -16,10 +19,11 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The shell framing a short page: left panel, body, right panel. */
+/** The shell: navigation header, left panel, body, right panel. */
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('navigation')).toBeInTheDocument();
     await expect(canvas.getByRole('main')).toHaveTextContent('Page content');
   },
 };
