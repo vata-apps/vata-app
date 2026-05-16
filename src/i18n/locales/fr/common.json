@@ -3,14 +3,15 @@
     "title": "Vata"
   },
   "nav": {
-    "home": "Vata",
-    "individuals": "Individus",
+    "home": "Accueil",
+    "individuals": "Personnes",
     "families": "Familles",
     "sources": "Sources",
     "repositories": "Dépôts",
     "dataBrowser": "Explorateur de données",
     "backToHome": "Retour à l'accueil",
-    "back": "Retour"
+    "back": "Retour",
+    "ariaLabel": "Sections de l'arbre"
   },
   "errors": {
     "generic": "Une erreur est survenue",
