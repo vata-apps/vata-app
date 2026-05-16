@@ -43,7 +43,7 @@ The Rust shell is a plugin-composition layer with no custom commands. Plugins us
 
 ## UI wrappers
 
-Custom wrappers live under `src/components/ui/` (e.g. `button.tsx`, `input.tsx`, `icon.tsx`), each composing `tailwind-variants` recipes over Radix primitives, and each shipping a colocated `<name>.stories.tsx` (Storybook + `play()` tests). See [Design System](../ui/design-system.md) and [Storybook](../ui/storybook.md).
+Custom wrappers live under `src/components/ui/`, each composing `tailwind-variants` recipes over Radix primitives, and each shipping a colocated `<name>.stories.tsx` (Storybook + `play()` tests). See [Design System](../ui/design-system.md) and [Storybook](../ui/storybook.md).
 
 ## SQLite and i18n
 

@@ -49,54 +49,58 @@ Walk the map from each changed file. Drop any candidates that aren't in the Glob
 
 ## Dependency Map
 
-**Scope:** the core working documentation only — architecture, API, UI, and references. ADRs (`docs/adr/`), product docs, and dev-tools docs are intentionally outside this map.
+**Scope:** this map tracks the docs that cross-reference each other — architecture, API, UI, and references. Leaf docs with no meaningful cross-references are intentionally excluded: the ADRs under `docs/adr/`, `docs/product/*`, `docs/dev-tools/*`, and `docs/architecture/testing-strategy.md`.
 
 When a file changes, the files it points to (via `->`) may need updates. Verify each file exists (Step 2 Glob) before reading.
 
 ```text
 docs/README.md
-  <- ALL files (navigation index, must list every doc)
+  <- ALL files (navigation index — must list every doc)
 
-docs/architecture/database-schema.md
-  -> docs/api/database-layer.md (TypeScript interfaces mirror schema)
-  -> docs/references/gedcom-551-mapping.md (GEDCOM <-> schema mapping)
-  -> docs/ui/screens/* (screens display schema data)
+docs/architecture/app-structure.md
+  -> docs/ui/layouts.md (the two layout modes mirror the two app contexts)
 
 docs/architecture/overview.md
-  -> docs/architecture/data-flow.md (layers referenced)
-  -> docs/architecture/tech-stack.md (technologies referenced)
-  -> docs/api/database-layer.md (DB layer is a layer in overview)
+  -> docs/architecture/data-flow.md
+  -> docs/architecture/tech-stack.md
+  -> docs/api/database-layer.md
 
 docs/architecture/data-flow.md
-  -> docs/api/database-layer.md (DB operations described)
-  -> docs/architecture/overview.md (flow is part of architecture)
+  -> docs/architecture/overview.md
+  -> docs/api/database-layer.md
+
+docs/architecture/database-schema.md
+  -> docs/api/database-layer.md (CRUD contract)
+  -> docs/references/gedcom-551-mapping.md (GEDCOM <-> schema mapping)
 
 docs/architecture/tech-stack.md
-  -> docs/architecture/overview.md (tech choices affect architecture)
+  -> docs/architecture/overview.md
+  -> docs/ui/design-system.md
 
 docs/api/database-layer.md
-  -> docs/architecture/database-schema.md (interfaces match schema)
-  -> docs/architecture/data-flow.md (API is part of flow)
+  -> docs/architecture/database-schema.md
 
 docs/ui/design-system.md
-  -> docs/ui/layouts.md (layout uses design tokens)
-  -> docs/ui/screens/* (screens follow design system)
+  -> docs/ui/storybook.md (Storybook is the live design-system surface)
+  -> docs/ui/layouts.md
 
 docs/ui/layouts.md
-  -> docs/ui/design-system.md (uses design tokens)
-  -> docs/ui/screens/* (screens use layouts)
+  -> docs/architecture/app-structure.md
+  -> docs/ui/design-system.md
+
+docs/ui/storybook.md
+  -> docs/ui/design-system.md
 
 docs/ui/screens/*.md
-  -> docs/ui/layouts.md (uses layouts)
-  -> docs/architecture/database-schema.md (displays entity data)
+  -> docs/ui/layouts.md
+  -> docs/architecture/database-schema.md (screens display entity data)
 
 docs/references/date-formats.md
-  -> docs/ui/screens/individual-view.md (dates displayed)
-  -> docs/references/gedcom-551-mapping.md (date fields in mapping)
+  -> docs/references/gedcom-551-mapping.md
 
 docs/references/gedcom-551-mapping.md
-  -> docs/architecture/database-schema.md (schema <-> GEDCOM)
-  -> docs/references/date-formats.md (date fields)
+  -> docs/architecture/database-schema.md
+  -> docs/references/date-formats.md
 ```
 
 ## Rules

@@ -43,3 +43,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 - [GEDCOM 5.5.1 Mapping](./references/gedcom-551-mapping.md) — GEDCOM tag ↔ Vata model correspondences
 - [Date Formats](./references/date-formats.md) — Genealogical date formats
+
+## Dev Tools
+
+- [Issue Tracking](./dev-tools/issue-tracking.md) — Issue types, labels, status pipeline, and the `capture-idea` / `link-task` skills

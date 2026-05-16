@@ -18,7 +18,7 @@ The app holds two kinds of SQLite database:
 
 Each tree is a **self-contained folder** the user chooses at creation time:
 
-```
+```text
 ~/Documents/tremblay-bouchard/
 ├── tremblay-bouchard.db   # Tree database
 └── media/                 # Media files (scans, images, PDFs)
