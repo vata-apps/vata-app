@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The dashboard shown when a tree is first opened (the Home icon in the in-tree top nav). It summarizes the tree — counts, recent activity, quick creation actions — and is the landing point of the in-tree shell. It is a full-width page, not the three-panel module layout.
+The dashboard shown when a tree is first opened (the Home icon in the in-tree top nav). It summarizes the tree — counts, recent activity, quick creation actions — and is the landing point of the in-tree shell. Like every page under an open tree, it renders inside the in-tree application shell (three-column layout — see [`../layouts.md`](../layouts.md)).
 
 ## Domain note
 
