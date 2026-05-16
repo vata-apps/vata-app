@@ -1,6 +1,5 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -28,47 +27,19 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
+  plugins: [react()],
   resolve: { alias: aliases },
   test: {
+    name: 'unit',
+    css: true,
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.worktrees/**'],
     coverage: {
       provider: 'v8',
       exclude: ['src/routeTree.gen.ts', 'src/main.tsx'],
     },
-    projects: [
-      {
-        plugins: [react()],
-        resolve: { alias: aliases },
-        test: {
-          name: 'unit',
-          css: true,
-          environment: 'jsdom',
-          globals: true,
-          setupFiles: ['./src/test/setup.ts'],
-          include: ['src/**/*.{test,spec}.{ts,tsx}'],
-          exclude: [
-            '**/node_modules/**',
-            '**/dist/**',
-            '.worktrees/**',
-            'src/components/**/*.{test,spec}.tsx',
-          ],
-        },
-      },
-      {
-        plugins: [storybookTest({ configDir: path.join(__dirname, '.storybook') })],
-        resolve: { alias: aliases },
-        optimizeDeps: {
-          include: ['react/jsx-dev-runtime', 'react/jsx-runtime', 'react-dom/client'],
-        },
-        test: {
-          name: 'storybook',
-          browser: {
-            enabled: true,
-            provider: 'playwright',
-            headless: true,
-            instances: [{ browser: 'chromium' }],
-          },
-        },
-      },
-    ],
   },
 });

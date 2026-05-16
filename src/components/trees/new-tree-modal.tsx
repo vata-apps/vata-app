@@ -1,12 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Badge,
+  Button,
+  Callout,
+  Dialog,
+  Flex,
+  RadioCards,
+  Text,
+  TextArea,
+  TextField,
+} from '@radix-ui/themes';
 
-import { Button } from '$components/ui/button';
-import { Dialog } from '$components/ui/dialog';
-import { Input } from '$components/ui/input';
-import { OptionCard, OptionCardGroup } from '$components/ui/option-card';
-import { Textarea } from '$components/ui/textarea';
 import { TreeManager } from '$/managers/TreeManager';
 import { queryKeys } from '$lib/query-keys';
 
@@ -30,8 +36,8 @@ export interface NewTreeModalProps {
 
   /**
    * Override the create function. Defaults to {@link TreeManager.create}.
-   * Tests/stories inject a spy here so the flow can be exercised without
-   * hitting Tauri SQL.
+   * Tests inject a spy here so the flow can be exercised without hitting
+   * Tauri SQL.
    */
   createTree?: (input: CreateTreeInput) => Promise<string>;
 }
@@ -41,8 +47,7 @@ const defaultCreateTree = (input: CreateTreeInput): Promise<string> => TreeManag
 /**
  * Form host for creating a blank tree. Calls `TreeManager.create` and
  * invalidates the `trees` query on success. The "From me" starting
- * point renders a `Soon` badge and is disabled until pre-population
- * lands.
+ * point is disabled until pre-population lands.
  */
 export function NewTreeModal({
   open,
@@ -99,7 +104,7 @@ export function NewTreeModal({
   };
 
   return (
-    <Dialog
+    <Dialog.Root
       open={open}
       onOpenChange={(next) => {
         if (next) {
@@ -108,83 +113,99 @@ export function NewTreeModal({
         }
         closeModal();
       }}
-      size="md"
-      title={<span className="font-serif italic">{t('newTree.title')}</span>}
-      description={t('newTree.subtitle')}
-      closeLabel={t('newTree.closeLabel')}
-      footer={
-        <>
-          <Button variant="ghost" onClick={closeModal} disabled={mutation.isPending}>
+    >
+      <Dialog.Content maxWidth="520px">
+        <Dialog.Title>{t('newTree.title')}</Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          {t('newTree.subtitle')}
+        </Dialog.Description>
+
+        <form id={formId} onSubmit={handleSubmit}>
+          <Flex direction="column" gap="4">
+            <Flex direction="column" gap="1">
+              <Text as="label" htmlFor={nameId} size="2" weight="medium">
+                {t('newTree.nameLabel')}
+              </Text>
+              <TextField.Root
+                id={nameId}
+                required
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder={t('newTree.namePlaceholder')}
+                disabled={mutation.isPending}
+              />
+            </Flex>
+
+            <Flex direction="column" gap="1">
+              <Text as="label" htmlFor={descriptionId} size="2" weight="medium">
+                {t('newTree.descriptionLabel')}{' '}
+                <Text size="2" color="gray" weight="regular">
+                  ({t('newTree.descriptionOptional')})
+                </Text>
+              </Text>
+              <TextArea
+                id={descriptionId}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                placeholder={t('newTree.descriptionPlaceholder')}
+                disabled={mutation.isPending}
+              />
+            </Flex>
+
+            <Flex direction="column" gap="1">
+              <Text size="2" weight="medium">
+                {t('newTree.startingPointLabel')}
+              </Text>
+              <RadioCards.Root
+                defaultValue="blank"
+                columns="2"
+                aria-label={t('newTree.startingPointLabel')}
+              >
+                <RadioCards.Item value="blank">
+                  <Flex direction="column" align="start" gap="1">
+                    <Text size="2" weight="medium">
+                      {t('newTree.blankLabel')}
+                    </Text>
+                    <Text size="1" color="gray">
+                      {t('newTree.blankDescription')}
+                    </Text>
+                  </Flex>
+                </RadioCards.Item>
+                <RadioCards.Item value="from-me" disabled>
+                  <Flex direction="column" align="start" gap="1">
+                    <Flex align="center" gap="2">
+                      <Text size="2" weight="medium">
+                        {t('newTree.fromMeLabel')}
+                      </Text>
+                      <Badge variant="outline" color="gray">
+                        {t('newTree.soonLabel')}
+                      </Badge>
+                    </Flex>
+                    <Text size="1" color="gray">
+                      {t('newTree.fromMeDescription')}
+                    </Text>
+                  </Flex>
+                </RadioCards.Item>
+              </RadioCards.Root>
+            </Flex>
+
+            {mutation.isError && (
+              <Callout.Root color="red" size="1" role="alert">
+                <Callout.Text>{t('newTree.errorGeneric')}</Callout.Text>
+              </Callout.Root>
+            )}
+          </Flex>
+        </form>
+
+        <Flex gap="3" mt="4" justify="end">
+          <Button variant="soft" color="gray" onClick={closeModal} disabled={mutation.isPending}>
             {t('newTree.cancel')}
           </Button>
           <Button type="submit" form={formId} disabled={!canSubmit}>
             {t('newTree.submit')}
           </Button>
-        </>
-      }
-    >
-      <form id={formId} onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={nameId} className="text-foreground text-sm font-medium">
-            {t('newTree.nameLabel')}
-          </label>
-          <Input
-            id={nameId}
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder={t('newTree.namePlaceholder')}
-            disabled={mutation.isPending}
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={descriptionId} className="text-foreground text-sm font-medium">
-            {t('newTree.descriptionLabel')}{' '}
-            <span className="text-muted-foreground font-normal">
-              ({t('newTree.descriptionOptional')})
-            </span>
-          </label>
-          <Textarea
-            id={descriptionId}
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            placeholder={t('newTree.descriptionPlaceholder')}
-            disabled={mutation.isPending}
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <span className="text-foreground text-sm font-medium">
-            {t('newTree.startingPointLabel')}
-          </span>
-          <OptionCardGroup
-            value="blank"
-            onValueChange={() => undefined}
-            aria-label={t('newTree.startingPointLabel')}
-            cols={2}
-          >
-            <OptionCard
-              value="blank"
-              label={t('newTree.blankLabel')}
-              description={t('newTree.blankDescription')}
-            />
-            <OptionCard
-              value="from-me"
-              label={t('newTree.fromMeLabel')}
-              description={t('newTree.fromMeDescription')}
-              soon
-              soonLabel={t('newTree.soonLabel')}
-            />
-          </OptionCardGroup>
-        </div>
-
-        {mutation.isError && (
-          <p role="alert" className="text-destructive text-sm">
-            {t('newTree.errorGeneric')}
-          </p>
-        )}
-      </form>
-    </Dialog>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }

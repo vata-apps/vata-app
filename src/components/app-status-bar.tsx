@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
+import { Box, Button, Flex, Kbd, Text } from '@radix-ui/themes';
 
-import { Button } from '$components/ui/button';
+import { Icon } from '$components/icon';
 
 /**
  * Optional debug action rendered between the version and the
@@ -61,7 +62,7 @@ export interface AppStatusBarProps {
  *   } : undefined}
  *   preferencesTrigger={
  *     <PreferencesPopover>
- *       <Button variant="outline" size="sm" leadingIcon="settings">
+ *       <Button variant="outline" size="1">
  *         {t('common:statusBar.preferences')}
  *       </Button>
  *     </PreferencesPopover>
@@ -75,31 +76,34 @@ export function AppStatusBar({
   preferencesTrigger,
 }: AppStatusBarProps): JSX.Element {
   return (
-    <footer className="border-border bg-background text-muted-foreground flex h-[52px] items-center gap-3.5 border-t px-[18px] font-mono text-[11px]">
-      <span>{brandLabel}</span>
-      <span aria-hidden>·</span>
-      <span className="tabular-nums">v {version}</span>
-      <span className="flex-1" aria-hidden />
-      {debug && (
-        <>
-          <Button
-            variant="outline"
-            size="sm"
-            leadingIcon="bug"
-            onClick={debug.onClick}
-            className="font-mono"
-          >
-            {debug.label}
-            {debug.shortcut && (
-              <span className="border-border bg-foreground/5 text-muted-foreground ml-1 rounded border px-1.5 py-px font-mono text-[10px] leading-none">
-                {debug.shortcut}
-              </span>
-            )}
-          </Button>
-          <span aria-hidden>·</span>
-        </>
-      )}
-      {preferencesTrigger}
-    </footer>
+    <Flex asChild align="center" gap="3" flexShrink="0" px="4" height="52px">
+      <footer
+        style={{ borderTop: '1px solid var(--gray-a5)', fontFamily: 'var(--code-font-family)' }}
+      >
+        <Text size="1" color="gray">
+          {brandLabel}
+        </Text>
+        <Text size="1" color="gray" aria-hidden>
+          ·
+        </Text>
+        <Text size="1" color="gray" style={{ fontVariantNumeric: 'tabular-nums' }}>
+          v {version}
+        </Text>
+        <Box flexGrow="1" aria-hidden />
+        {debug && (
+          <>
+            <Button size="1" variant="outline" color="gray" onClick={debug.onClick}>
+              <Icon name="bug" size={13} />
+              {debug.label}
+              {debug.shortcut && <Kbd size="1">{debug.shortcut}</Kbd>}
+            </Button>
+            <Text size="1" color="gray" aria-hidden>
+              ·
+            </Text>
+          </>
+        )}
+        {preferencesTrigger}
+      </footer>
+    </Flex>
   );
 }

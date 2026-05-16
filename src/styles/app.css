@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import '@radix-ui/themes/styles.css';
 
 /* ============================================================
    Fonts — self-hosted Geist (latin + latin-ext subsets).
@@ -29,182 +29,26 @@
 }
 
 /* ============================================================
-   Theme — semantic tokens consumed via Tailwind utilities and
-   raw CSS variables. Change values here when the design system
-   evolves; component code never references hex/oklch directly.
+   Theme — Vata consumes Radix Themes. Brand tokens (bronze
+   accent, sand gray, medium radius) are set on the <Theme>
+   component in app-theme.tsx. Only the font family is overridden
+   here, because Geist is self-hosted above. See ADR-007.
    ============================================================ */
 
-@theme {
-  /* Surfaces */
-  --color-background: oklch(0.985 0.012 85);
-  --color-foreground: oklch(0.22 0.028 45);
-  --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.22 0.028 45);
-
-  /* Primary action — terracotta */
-  --color-primary: oklch(0.54 0.13 32);
-  --color-primary-foreground: oklch(0.985 0.012 85);
-
-  /* Secondary surface */
-  --color-secondary: oklch(0.965 0.018 82);
-  --color-secondary-foreground: oklch(0.33 0.04 48);
-
-  /* Muted */
-  --color-muted: oklch(0.965 0.018 82);
-  --color-muted-foreground: oklch(0.46 0.055 52);
-
-  /* Accent (hover/active surfaces) */
-  --color-accent: oklch(0.93 0.024 80);
-  --color-accent-foreground: oklch(0.265 0.065 26);
-
-  /* Destructive */
-  --color-destructive: oklch(0.555 0.195 27);
-  --color-destructive-foreground: oklch(0.985 0.012 85);
-
-  /* Status — success/warning/info. Tuned to pass WCAG AA (4.5:1) when used
-     as a background fill paired with the cream foreground, and 3:1 when
-     used as a text colour on the cream `bg-background` card. */
-  --color-success: oklch(0.5 0.15 145);
-  --color-success-foreground: oklch(0.985 0.012 85);
-  --color-warning: oklch(0.55 0.16 75);
-  --color-warning-foreground: oklch(0.985 0.012 85);
-  --color-info: oklch(0.5 0.15 245);
-  --color-info-foreground: oklch(0.985 0.012 85);
-
-  /* Popover surface — floating panels (Dialog content, Select listbox, etc.) */
-  --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.22 0.028 45);
-
-  /* Borders, inputs, focus ring */
-  --color-border: oklch(0.22 0.028 45 / 12%);
-  --color-input: oklch(0.22 0.028 45 / 14%);
-  --color-ring: oklch(0.54 0.13 32);
-
-  /* Modal/dialog backdrop — always dark in both themes so the underlying
-     page recedes behind the floating surface. Pair with an opacity utility
-     (e.g., `bg-overlay/60`) at the call site. */
-  --color-overlay: oklch(0 0 0);
-
-  /* Typography — `Fraunces` and `Geist Mono` will fall back until self-hosted in ./fonts/ */
-  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'Fraunces', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
-  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-
-  /* Radii */
-  --radius: 0.5rem;
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-
-  /* Shadows */
-  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 5%);
-  --shadow-sm: 0 1px 3px 0 oklch(0 0 0 / 10%), 0 1px 2px -1px oklch(0 0 0 / 10%);
-  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 10%), 0 4px 6px -4px oklch(0 0 0 / 10%);
-  --shadow-inner: inset 0 2px 4px 0 oklch(0 0 0 / 5%);
+.radix-themes {
+  --default-font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ============================================================
-   Dark theme — first defined as private aliases on :root, then
-   re-applied to the public --color-* tokens via two selectors:
-     1. :root.dark                   — explicit class on <html>
-     2. :root:not(.light, .dark) under @media prefers-color-scheme: dark
-        — system preference, opt-out via .light
-   Both selectors must out-specify Tailwind's :root from @theme
-   (specificity 0,1,0); :where() would zero them out and lose.
-   Defining the values once on :root and only swapping the
-   public tokens avoids drift between the two selectors.
+   Base — the desktop shell fills the viewport.
    ============================================================ */
 
-@layer theme {
-  :root {
-    --dark-background: oklch(0.155 0.02 42);
-    --dark-foreground: oklch(0.965 0.018 82);
-    --dark-card: oklch(0.195 0.022 44);
-    --dark-primary: oklch(0.62 0.125 34);
-    --dark-secondary: oklch(0.255 0.025 44);
-    --dark-muted: oklch(0.235 0.02 44);
-    --dark-muted-foreground: oklch(0.78 0.042 70);
-    --dark-accent: oklch(0.295 0.035 42);
-    --dark-destructive: oklch(0.635 0.18 27);
-    --dark-success: oklch(0.7 0.18 145);
-    --dark-warning: oklch(0.78 0.16 85);
-    --dark-info: oklch(0.66 0.16 245);
-    --dark-popover: oklch(0.195 0.022 44);
-    --dark-border: oklch(1 0 0 / 8%);
-    --dark-input: oklch(1 0 0 / 12%);
-  }
-
-  :root.dark {
-    --color-background: var(--dark-background);
-    --color-foreground: var(--dark-foreground);
-    --color-card: var(--dark-card);
-    --color-card-foreground: var(--dark-foreground);
-    --color-primary: var(--dark-primary);
-    --color-primary-foreground: oklch(0.985 0.012 85);
-    --color-secondary: var(--dark-secondary);
-    --color-secondary-foreground: var(--dark-foreground);
-    --color-muted: var(--dark-muted);
-    --color-muted-foreground: var(--dark-muted-foreground);
-    --color-accent: var(--dark-accent);
-    --color-accent-foreground: oklch(0.985 0.012 85);
-    --color-destructive: var(--dark-destructive);
-    --color-destructive-foreground: oklch(0.985 0.012 85);
-    --color-success: var(--dark-success);
-    --color-success-foreground: oklch(0.155 0.02 42);
-    --color-warning: var(--dark-warning);
-    --color-warning-foreground: oklch(0.155 0.02 42);
-    --color-info: var(--dark-info);
-    --color-info-foreground: oklch(0.155 0.02 42);
-    --color-popover: var(--dark-popover);
-    --color-popover-foreground: var(--dark-foreground);
-    --color-border: var(--dark-border);
-    --color-input: var(--dark-input);
-    --color-ring: var(--dark-primary);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not(.light, .dark) {
-      --color-background: var(--dark-background);
-      --color-foreground: var(--dark-foreground);
-      --color-card: var(--dark-card);
-      --color-card-foreground: var(--dark-foreground);
-      --color-primary: var(--dark-primary);
-      --color-primary-foreground: oklch(0.985 0.012 85);
-      --color-secondary: var(--dark-secondary);
-      --color-secondary-foreground: var(--dark-foreground);
-      --color-muted: var(--dark-muted);
-      --color-muted-foreground: var(--dark-muted-foreground);
-      --color-accent: var(--dark-accent);
-      --color-accent-foreground: oklch(0.985 0.012 85);
-      --color-destructive: var(--dark-destructive);
-      --color-destructive-foreground: oklch(0.985 0.012 85);
-      --color-success: var(--dark-success);
-      --color-success-foreground: oklch(0.155 0.02 42);
-      --color-warning: var(--dark-warning);
-      --color-warning-foreground: oklch(0.155 0.02 42);
-      --color-info: var(--dark-info);
-      --color-info-foreground: oklch(0.155 0.02 42);
-      --color-popover: var(--dark-popover);
-      --color-popover-foreground: var(--dark-foreground);
-      --color-border: var(--dark-border);
-      --color-input: var(--dark-input);
-      --color-ring: var(--dark-primary);
-    }
-  }
+html,
+body,
+#root {
+  height: 100%;
 }
 
-/* ============================================================
-   Base — minimal global defaults.
-   ============================================================ */
-
-@layer base {
-  html,
-  body {
-    background: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
+body {
+  margin: 0;
 }

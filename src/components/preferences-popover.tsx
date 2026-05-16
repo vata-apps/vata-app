@@ -1,8 +1,7 @@
 import { type ReactNode } from 'react';
+import { Flex, Heading, Popover, SegmentedControl, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
-import { Popover, PopoverContent, PopoverTrigger } from '$components/ui/popover';
-import { SegmentedControl } from '$components/ui/segmented-control';
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '$/i18n/config';
 import { useAppStore, type Theme } from '$/store/app-store';
 
@@ -32,7 +31,7 @@ export interface PreferencesPopoverProps {
  *
  * @example
  * <PreferencesPopover>
- *   <Button variant="outline" size="sm" leadingIcon="settings">
+ *   <Button variant="outline" size="1">
  *     {t('common:statusBar.preferences')}
  *   </Button>
  * </PreferencesPopover>
@@ -44,55 +43,57 @@ export function PreferencesPopover({ children }: PreferencesPopoverProps): JSX.E
 
   const language = normalizeLanguage(i18n.language);
 
-  const themeOptions = [
-    { value: 'light', label: t('preferences.themeLight') },
-    { value: 'dark', label: t('preferences.themeDark') },
-    { value: 'system', label: t('preferences.themeSystem') },
-  ];
-
-  const languageOptions = [
-    { value: 'en', label: t('preferences.languageEn') },
-    { value: 'fr', label: t('preferences.languageFr') },
-  ];
-
   return (
-    <Popover>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent side="top" align="end" className="w-[280px] p-4">
-        <h2 className="text-foreground mb-3 font-serif text-base leading-none font-medium tracking-tight italic">
+    <Popover.Root>
+      <Popover.Trigger>{children}</Popover.Trigger>
+      <Popover.Content side="top" align="end" width="280px">
+        <Heading size="3" mb="3">
           {t('preferences.title')}
-        </h2>
+        </Heading>
 
-        <div className="flex flex-col items-start gap-1.5">
-          <span className="text-muted-foreground font-mono text-[10.5px] tracking-wider uppercase">
-            {t('preferences.themeLabel')}
-          </span>
-          <SegmentedControl
-            size="sm"
-            options={themeOptions}
-            value={theme}
-            onValueChange={(next) => {
-              if (next) setTheme(next as Theme);
-            }}
-            aria-label={t('preferences.themeAriaLabel')}
-          />
-        </div>
+        <Flex direction="column" gap="4">
+          <Flex direction="column" align="start" gap="1">
+            <Text size="1" color="gray">
+              {t('preferences.themeLabel')}
+            </Text>
+            <SegmentedControl.Root
+              size="1"
+              value={theme}
+              onValueChange={(next) => setTheme(next as Theme)}
+              aria-label={t('preferences.themeAriaLabel')}
+            >
+              <SegmentedControl.Item value="light">
+                {t('preferences.themeLight')}
+              </SegmentedControl.Item>
+              <SegmentedControl.Item value="dark">
+                {t('preferences.themeDark')}
+              </SegmentedControl.Item>
+              <SegmentedControl.Item value="system">
+                {t('preferences.themeSystem')}
+              </SegmentedControl.Item>
+            </SegmentedControl.Root>
+          </Flex>
 
-        <div className="mt-4 flex flex-col items-start gap-1.5">
-          <span className="text-muted-foreground font-mono text-[10.5px] tracking-wider uppercase">
-            {t('preferences.languageLabel')}
-          </span>
-          <SegmentedControl
-            size="sm"
-            options={languageOptions}
-            value={language}
-            onValueChange={(next) => {
-              if (next) void i18n.changeLanguage(next);
-            }}
-            aria-label={t('preferences.languageAriaLabel')}
-          />
-        </div>
-      </PopoverContent>
-    </Popover>
+          <Flex direction="column" align="start" gap="1">
+            <Text size="1" color="gray">
+              {t('preferences.languageLabel')}
+            </Text>
+            <SegmentedControl.Root
+              size="1"
+              value={language}
+              onValueChange={(next) => void i18n.changeLanguage(next)}
+              aria-label={t('preferences.languageAriaLabel')}
+            >
+              <SegmentedControl.Item value="en">
+                {t('preferences.languageEn')}
+              </SegmentedControl.Item>
+              <SegmentedControl.Item value="fr">
+                {t('preferences.languageFr')}
+              </SegmentedControl.Item>
+            </SegmentedControl.Root>
+          </Flex>
+        </Flex>
+      </Popover.Content>
+    </Popover.Root>
   );
 }

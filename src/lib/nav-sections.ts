@@ -1,4 +1,4 @@
-import type { IconName } from '$components/ui/icon';
+import type { IconName } from '$components/icon';
 
 /**
  * Identifier of a top-level navigation section of the in-tree shell.

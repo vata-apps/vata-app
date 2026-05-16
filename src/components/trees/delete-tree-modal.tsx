@@ -1,20 +1,26 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useId, useState } from 'react';
+import { type ReactNode, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Badge,
+  Box,
+  Button,
+  Callout,
+  Dialog,
+  Flex,
+  Grid,
+  Switch,
+  Text,
+  TextField,
+} from '@radix-ui/themes';
 
-import { Badge } from '$components/ui/badge';
-import { Button } from '$components/ui/button';
-import { Dialog } from '$components/ui/dialog';
-import { Input } from '$components/ui/input';
-import { StatGrid, type StatGridItem } from '$components/ui/stat-grid';
-import { Switch } from '$components/ui/switch';
 import { deleteTree as defaultDeleteTree } from '$db-system/trees';
 import { GedcomManager } from '$/managers/GedcomManager';
 import { queryKeys } from '$lib/query-keys';
 
 /**
  * Lightweight projection of {@link Tree} carrying just what the modal
- * needs to render. Decoupled from the DB row so stories can build
+ * needs to render. Decoupled from the DB row so tests can build
  * fixtures without touching SQLite.
  */
 interface DeleteTreeTarget {
@@ -38,17 +44,15 @@ interface DeleteTreeModalProps {
   onOpenChange: (open: boolean) => void;
 
   /**
-   * Override the delete function. Defaults to the DB-layer
-   * `deleteTree`. Tests/stories inject a spy here so the flow can be
-   * exercised without hitting Tauri SQL.
+   * Override the delete function. Defaults to the DB-layer `deleteTree`.
+   * Tests inject a spy here so the flow can be exercised without hitting
+   * Tauri SQL.
    */
   deleteTree?: (id: string) => Promise<void>;
 
   /**
    * Override the export function. Defaults to
-   * {@link GedcomManager.exportToFile}. Tests/stories inject a spy
-   * here so the flow can be exercised without hitting Tauri's save
-   * dialog.
+   * {@link GedcomManager.exportToFile}.
    */
   exportTree?: (treeName: string, includePrivate: boolean) => Promise<boolean>;
 }
@@ -90,9 +94,9 @@ export function DeleteTreeModal({
     }) => {
       if (shouldExport) {
         const exported = await exportTree(treeName, true);
-        // Cancelled save dialog → abort the deletion entirely. The
-        // user explicitly asked to keep a backup; if we can't make
-        // one, we don't proceed with the destructive action.
+        // Cancelled save dialog → abort the deletion entirely. The user
+        // explicitly asked to keep a backup; if we can't make one, we
+        // don't proceed with the destructive action.
         if (!exported) return { deleted: false } as const;
       }
       await deleteTree(treeId);
@@ -111,9 +115,7 @@ export function DeleteTreeModal({
   });
 
   // Reset form state every time the modal closes. `mutation` is
-  // intentionally omitted from the dep array — including it would
-  // re-trigger this effect every time the mutation transitions
-  // (pending → success/error), which would clobber state mid-flow.
+  // intentionally omitted from the dep array.
   useEffect(() => {
     if (!open) {
       setExportFirst(true);
@@ -125,9 +127,7 @@ export function DeleteTreeModal({
 
   if (!tree) return null;
 
-  // Trim both sides so accidental whitespace from the user (or, more
-  // importantly, from a tree name persisted with trailing space) doesn't
-  // gate the destructive action.
+  // Trim both sides so accidental whitespace doesn't gate the action.
   const canSubmit = confirmName.trim() === tree.name.trim() && !mutation.isPending;
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
@@ -146,40 +146,24 @@ export function DeleteTreeModal({
   };
 
   const soonLabel = (text: string): JSX.Element => (
-    <span className="inline-flex items-center gap-1.5">
+    <Flex align="center" gap="2" display="inline-flex">
       {text}
-      <Badge variant="soon" size="sm">
+      <Badge variant="outline" color="gray">
         {t('deleteTree.soonLabel')}
       </Badge>
-    </span>
+    </Flex>
   );
 
   const zero = (0).toLocaleString();
-  const statItems: StatGridItem[] = [
-    {
-      value: tree.individualCount.toLocaleString(),
-      label: t('deleteTree.statsIndividuals'),
-      accent: 'destructive',
-    },
-    {
-      value: tree.familyCount.toLocaleString(),
-      label: t('deleteTree.statsFamilies'),
-      accent: 'destructive',
-    },
-    {
-      value: zero,
-      label: soonLabel(t('deleteTree.statsSources')),
-      accent: 'destructive',
-    },
-    {
-      value: zero,
-      label: soonLabel(t('deleteTree.statsMedia')),
-      accent: 'destructive',
-    },
+  const stats: { value: string; label: ReactNode }[] = [
+    { value: tree.individualCount.toLocaleString(), label: t('deleteTree.statsIndividuals') },
+    { value: tree.familyCount.toLocaleString(), label: t('deleteTree.statsFamilies') },
+    { value: zero, label: soonLabel(t('deleteTree.statsSources')) },
+    { value: zero, label: soonLabel(t('deleteTree.statsMedia')) },
   ];
 
   return (
-    <Dialog
+    <Dialog.Root
       open={open}
       onOpenChange={(next) => {
         if (next) {
@@ -188,56 +172,89 @@ export function DeleteTreeModal({
         }
         closeModal();
       }}
-      size="md"
-      title={
-        <span className="font-serif italic">{t('deleteTree.title', { treeName: tree.name })}</span>
-      }
-      description={t('deleteTree.subtitle')}
-      closeLabel={t('deleteTree.closeLabel')}
-      footer={
-        <>
-          <Button variant="ghost" onClick={closeModal} disabled={mutation.isPending}>
+    >
+      <Dialog.Content maxWidth="520px">
+        <Dialog.Title>{t('deleteTree.title', { treeName: tree.name })}</Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          {t('deleteTree.subtitle')}
+        </Dialog.Description>
+
+        <form id={formId} onSubmit={handleSubmit}>
+          <Flex direction="column" gap="4">
+            <Box
+              style={{
+                border: '1px solid var(--red-a5)',
+                background: 'var(--red-a2)',
+                borderRadius: 'var(--radius-3)',
+                padding: 'var(--space-4)',
+              }}
+            >
+              <Grid columns="4" gap="3">
+                {stats.map((stat, idx) => (
+                  <Flex key={idx} direction="column" gap="1">
+                    <Text
+                      size="5"
+                      weight="bold"
+                      color="red"
+                      style={{ fontVariantNumeric: 'tabular-nums' }}
+                    >
+                      {stat.value}
+                    </Text>
+                    <Text
+                      size="1"
+                      color="gray"
+                      style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                    >
+                      {stat.label}
+                    </Text>
+                  </Flex>
+                ))}
+              </Grid>
+            </Box>
+
+            <Text as="label" size="2" weight="medium">
+              <Flex align="center" gap="2">
+                <Switch
+                  checked={exportFirst}
+                  onCheckedChange={setExportFirst}
+                  disabled={mutation.isPending}
+                />
+                {t('deleteTree.exportBeforeLabel')}
+              </Flex>
+            </Text>
+
+            <Flex direction="column" gap="1">
+              <Text as="label" htmlFor={confirmId} size="2" weight="medium">
+                {t('deleteTree.confirmLabel')}
+              </Text>
+              <TextField.Root
+                id={confirmId}
+                value={confirmName}
+                onChange={(event) => setConfirmName(event.target.value)}
+                placeholder={t('deleteTree.confirmPlaceholder')}
+                disabled={mutation.isPending}
+                autoComplete="off"
+                aria-required="true"
+              />
+            </Flex>
+
+            {mutation.isError && (
+              <Callout.Root color="red" size="1" role="alert">
+                <Callout.Text>{t('deleteTree.errorGeneric')}</Callout.Text>
+              </Callout.Root>
+            )}
+          </Flex>
+        </form>
+
+        <Flex gap="3" mt="4" justify="end">
+          <Button variant="soft" color="gray" onClick={closeModal} disabled={mutation.isPending}>
             {t('deleteTree.cancel')}
           </Button>
-          <Button type="submit" form={formId} variant="destructive" disabled={!canSubmit}>
+          <Button type="submit" form={formId} color="red" disabled={!canSubmit}>
             {t('deleteTree.submit')}
           </Button>
-        </>
-      }
-    >
-      <form id={formId} onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="border-destructive/40 bg-destructive/5 rounded-lg border p-4">
-          <StatGrid items={statItems} />
-        </div>
-
-        <Switch
-          checked={exportFirst}
-          onCheckedChange={setExportFirst}
-          label={t('deleteTree.exportBeforeLabel')}
-          disabled={mutation.isPending}
-        />
-
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={confirmId} className="text-foreground text-sm font-medium">
-            {t('deleteTree.confirmLabel')}
-          </label>
-          <Input
-            id={confirmId}
-            value={confirmName}
-            onChange={(event) => setConfirmName(event.target.value)}
-            placeholder={t('deleteTree.confirmPlaceholder')}
-            disabled={mutation.isPending}
-            autoComplete="off"
-            aria-required="true"
-          />
-        </div>
-
-        {mutation.isError && (
-          <p role="alert" className="text-destructive text-sm">
-            {t('deleteTree.errorGeneric')}
-          </p>
-        )}
-      </form>
-    </Dialog>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }

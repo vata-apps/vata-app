@@ -1,24 +1,7 @@
 import { type ReactNode } from 'react';
-import { tv } from 'tailwind-variants';
+import { Card, Flex, Text } from '@radix-ui/themes';
 
-import { Icon } from '$components/ui/icon';
-
-const ctaBase = tv({
-  base: [
-    'group relative flex min-h-[220px] flex-col items-center justify-center gap-3.5 rounded-xl border border-dashed border-foreground/15 bg-transparent p-7 text-center',
-    'cursor-pointer transition-colors duration-150',
-    'hover:border-primary hover:bg-primary/5',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-  ],
-});
-
-const ctaCircle = tv({
-  base: [
-    'flex h-11 w-11 items-center justify-center rounded-full border border-dashed border-foreground/20 text-muted-foreground',
-    'transition-colors duration-150',
-    'group-hover:border-primary group-hover:text-primary',
-  ],
-});
+import { Icon } from '$components/icon';
 
 /**
  * Props accepted by {@link TreeCardCta}.
@@ -33,14 +16,9 @@ export interface TreeCardCtaProps {
 }
 
 /**
- * Dashed CTA tile used as the trailing cell of the trees grid to
- * trigger "Add a new tree". Renders as a `<button>` so it is
- * keyboard-focusable and announced as a button by screen readers.
- *
- * Visual: dashed-border tile holding a circular dashed-border plus
- * icon, a primary title, and an optional muted subtitle. Hover
- * promotes both borders to the primary colour and tints the
- * background with `primary/5`.
+ * CTA tile used as the trailing cell of the trees grid to trigger
+ * "Add a new tree". Renders as a `<button>` inside an interactive Card
+ * so it is keyboard-focusable and announced as a button.
  *
  * @example
  * <TreeCardCta
@@ -51,14 +29,34 @@ export interface TreeCardCtaProps {
  */
 export function TreeCardCta({ title, subtitle, onClick }: TreeCardCtaProps): JSX.Element {
   return (
-    <button type="button" onClick={onClick} className={ctaBase()}>
-      <span className={ctaCircle()}>
-        <Icon name="plus" size={20} />
-      </span>
-      <span className="flex flex-col items-center gap-1">
-        <span className="text-foreground text-sm font-medium">{title}</span>
-        {subtitle && <span className="text-muted-foreground text-xs">{subtitle}</span>}
-      </span>
-    </button>
+    <Card asChild variant="surface" style={{ minHeight: 220, width: '100%' }}>
+      <button type="button" onClick={onClick}>
+        <Flex direction="column" align="center" justify="center" gap="3" height="100%">
+          <Flex
+            align="center"
+            justify="center"
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              border: '1px dashed var(--gray-a7)',
+              color: 'var(--gray-a11)',
+            }}
+          >
+            <Icon name="plus" size={20} />
+          </Flex>
+          <Flex direction="column" align="center" gap="1">
+            <Text size="2" weight="medium">
+              {title}
+            </Text>
+            {subtitle && (
+              <Text size="1" color="gray">
+                {subtitle}
+              </Text>
+            )}
+          </Flex>
+        </Flex>
+      </button>
+    </Card>
   );
 }
