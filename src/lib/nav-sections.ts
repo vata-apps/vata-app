@@ -79,9 +79,8 @@ export function getTreeIdFromPath(pathname: string): string | null {
  * (e.g. the data browser), resolves to `null`.
  */
 export function resolveNavSection(pathname: string): NavSectionId | null {
-  const segments = segmentsOf(pathname);
-  if (segments[0] !== 'tree' || !segments[1]) return null;
-  const sectionSegment = segments[2];
+  if (getTreeIdFromPath(pathname) === null) return null;
+  const sectionSegment = segmentsOf(pathname)[2];
   if (sectionSegment === undefined) return 'home';
   return SECTION_BY_SEGMENT[sectionSegment] ?? null;
 }
