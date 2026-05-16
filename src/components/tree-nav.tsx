@@ -50,6 +50,10 @@ export function TreeNav(): JSX.Element | null {
               <Link
                 to={section.to}
                 params={{ treeId }}
+                // Without `exact`, TanStack's fuzzy matcher marks the Home link
+                // active on every in-tree route (its path is a prefix of them
+                // all); section-active state is driven by resolveNavSection.
+                activeOptions={{ exact: true }}
                 aria-label={label}
                 aria-current={isActive ? 'page' : undefined}
                 className={navItem({ active: isActive })}
