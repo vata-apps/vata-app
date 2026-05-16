@@ -64,7 +64,7 @@ Vata's labels are **product-shaped, not codebase-shaped** — each one names a u
 | `gedcom`          | GEDCOM 5.5.1 import / export, interoperability                         |
 | `data-quality`    | Completion tracking, duplicate detection, validation                   |
 | `tree-management` | Creating / opening / importing trees, storage location                 |
-| `design-system`   | Storybook, UI wrappers, design tokens, Radix primitives, Tailwind v4   |
+| `design-system`   | Radix Themes, brand tokens, app-theme provider, UI organisms           |
 | `infra`           | CI, scripts, tooling, repo config — non-app changes                    |
 | `monetization`    | Paid-tier ideas (Vata is open source and free; these are aspirational) |
 

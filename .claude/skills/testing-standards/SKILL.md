@@ -1,17 +1,16 @@
 ---
 name: testing-standards
-description: Defines testing conventions for the project. Use when writing or reviewing any test surface — `**/*.{test,spec}.{ts,tsx}` for unit tests, AND `**/*.stories.tsx` since each component story's `play()` function is the component test (run by `@storybook/addon-vitest`). Also use when creating any UI wrapper under `src/components/ui/` — every wrapper ships with a colocated story.
+description: Defines testing conventions for the project. Use when writing or reviewing any test surface — `**/*.{test,spec}.{ts,tsx}` for Vitest unit and integration tests, including component tests in `src/components/**`. In-memory SQLite covers the DB layer.
 ---
 
 # Testing Standards
 
-Apply this skill when writing tests, or when creating/modifying a UI wrapper (its story is its test).
+Apply this skill when writing or reviewing tests.
 
 ## When to Apply
 
 - Writing or reviewing `**/*.test.{ts,tsx}` or `**/*.spec.{ts,tsx}` files
-- Writing or reviewing any `**/*.stories.tsx` — a component story's `play()` is the component test
-- Creating or modifying a wrapper under `src/components/ui/` — it ships with a colocated `<name>.stories.tsx`
+- Writing or reviewing component tests for application organisms under `src/components/**`
 - Planning test coverage for a new feature
 
 ---
@@ -148,98 +147,70 @@ Rules:
 
 ---
 
-## 6. Component Tests — Storybook Stories
+## 6. Component Tests — Vitest + RTL
 
-UI components are tested through Storybook, not through `*.test.tsx` files. Storybook is also the project's design-system surface.
+The UI foundation is Radix Themes, consumed directly (see ADR-007). Radix Themes components are owned and tested upstream — **do not write tests for raw Radix Themes usage**. What gets tested is the project's own **application organisms** under `src/components/` (`tree-shell`, `tree-nav`, `app-status-bar`, `preferences-popover`, `dropzone`, …): their applicative behavior, conditional rendering, and user interactions.
 
-### Every wrapper ships with a story
+Component tests are regular Vitest tests in a colocated `<name>.test.tsx`, run with React Testing Library against jsdom — the same harness as the rest of the suite.
 
-Every wrapper under `src/components/ui/` (Button, Input, Dialog, Select, …) ships with a colocated `<name>.stories.tsx` **in the same commit** — no exceptions for "trivial" wrappers. **Do not** create a `<name>.test.tsx` for a component: behavior is verified by `play()` functions inside the stories, which `@storybook/addon-vitest` discovers and runs as Vitest tests in headless Chromium (Playwright).
-
-(Non-component code — DB layer, hooks, libs, managers, store — keeps using regular Vitest unit tests in `*.test.{ts,tsx}` against jsdom.)
-
-### Story-file shape
+### Test-file shape
 
 ```tsx
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ConfirmDialog } from './confirm-dialog';
 
-const meta = {
-  title: 'UI/ConfirmDialog',
-  component: ConfirmDialog,
-  tags: ['autodocs'],
-  args: {
-    isOpen: true,
-    title: 'Delete?',
-    message: 'Sure?',
-    onConfirm: fn(),
-    onCancel: fn(),
-  },
-} satisfies Meta<typeof ConfirmDialog>;
+describe('ConfirmDialog', () => {
+  it('calls onConfirm when the confirm button is clicked', async () => {
+    const onConfirm = vi.fn();
+    render(
+      <ConfirmDialog
+        isOpen
+        title="Delete?"
+        message="Sure?"
+        onConfirm={onConfirm}
+        onCancel={vi.fn()}
+      />
+    );
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }));
 
-export const ConfirmsOnClick: Story = {
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Confirm' }));
-    await expect(args.onConfirm).toHaveBeenCalledOnce();
-  },
-};
+    expect(onConfirm).toHaveBeenCalledOnce();
+  });
 
-export const HiddenWhenClosed: Story = {
-  args: { isOpen: false },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(canvas.queryByRole('dialog')).not.toBeInTheDocument();
-  },
-};
+  it('renders nothing when closed', () => {
+    render(
+      <ConfirmDialog
+        isOpen={false}
+        title="Delete?"
+        message="Sure?"
+        onConfirm={vi.fn()}
+        onCancel={vi.fn()}
+      />
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+});
 ```
 
-- `title` lives under the `UI/` namespace so primitives sort together.
-- `tags: ['autodocs']` — the component's JSDoc renders as Docs automatically. Keep JSDoc rich (`typescript-standards` already requires it).
-- One `StoryObj` per variant; add a `Matrix` story for side-by-side variant × size comparison.
-- For event-handler args, use `fn()` from `storybook/test` so the Actions panel logs the call AND `play()` can assert on it.
-- Providers (theme, i18n, QueryClient) are wired globally in `.storybook/preview.tsx` — stories don't wrap manually.
-- Rendering a fragment from `.map()` (matrix layouts) uses `<Fragment key={…}>` from `react`, never `<>` (CLAUDE.md "Common Pitfalls").
+- Wrap the render in shared providers (theme, i18n, QueryClient) via `renderWithProviders` from `src/test/utils.tsx` when the component needs them.
+- Rendering a fragment from `.map()` uses `<Fragment key={…}>` from `react`, never `<>` (CLAUDE.md "Common Pitfalls").
 
-### `play()` is the test — assert behavior, not implementation
+### Assert behavior, not implementation
 
-- ✅ `expect(canvas.getByRole('button', { name: 'Save' })).toBeInTheDocument()`
-- ✅ `expect(args.onClick).toHaveBeenCalledOnce()` after `userEvent.click(...)`
+- ✅ `expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()`
+- ✅ `expect(onClick).toHaveBeenCalledOnce()` after `userEvent.click(...)`
 - ✅ `expect(input).toHaveAttribute('aria-invalid', 'true')`
-- ❌ never `expect(el).toHaveClass('bg-primary')` / `toHaveStyle(...)` — couples the test to implementation
+- ❌ never `expect(el).toHaveClass(...)` / `toHaveStyle(...)` — couples the test to implementation
 - ❌ never query by `data-testid` — query by role / label / text / placeholder
 
 Query priority (highest to lowest): `getByRole` (interactive elements) → `getByLabelText` (form fields) → `getByText` (static content) → `getByTestId` (last resort only).
 
-### i18n in stories — by atomic-design tier
+### i18n in component tests
 
-- **Atoms** (`src/components/ui/` — Button, Input, Badge, …): hardcoded English literals are fine; `t()` not required.
-- **Molecules**: case-by-case. A thin composition of atoms (icon button with a static label) → literals fine. A molecule that owns user-facing copy (empty-state card, confirmation banner) → use `t()`.
-- **Organisms and pages**: use `t()` for any string that ships to users — the story should look like production usage.
-
-**Never write a dedicated `I18nDemo` story.** When `t()` is needed, weave it into the regular stories — the Locale toolbar in `.storybook/preview.tsx` drives language switching globally. To call hooks, extract a small component inside the file and have the story render it:
-
-```tsx
-function EmptyStateBanner() {
-  const { t } = useTranslation('individuals');
-  return <Banner>{t('list.empty')}</Banner>;
-}
-
-export const Empty: Story = {
-  render: () => <EmptyStateBanner />,
-};
-```
-
-### Run modes
-
-`pnpm vitest run` runs both the `unit` project (jsdom, non-component code) and the `storybook` project (Chromium, component `play()` functions). `pnpm vitest run --project storybook` runs just stories.
-
-Full authoring guide: [`docs/ui/storybook.md`](../../../docs/ui/storybook.md) — run command, toolbars (theme + locale), the i18n decorator, the out-of-scope list.
+Application organisms ship user-facing copy through `t()`. Tests run against the real i18n instance, so query by the rendered English string (the default locale). When a test needs another locale, switch it explicitly via `i18n.changeLanguage()` in the test setup.
 
 ---
 
@@ -343,14 +314,14 @@ cargo test -- --nocapture           # show println! output
 
 No coverage thresholds. A test's value is measured by its ability to prevent regressions — not by a percentage. 20 useful tests that catch real bugs are better than 100 tests that give a green coverage badge but break on every refactor.
 
-| Layer               | What to test                                           | Approach                                                                                 |
-| ------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `src/db/**`         | All public CRUD functions — input/output behavior      | Integration tests with in-memory SQLite                                                  |
-| `src/managers/**`   | Orchestration logic and end-to-end workflows           | Integration tests with in-memory SQLite                                                  |
-| `src/components/**` | User interactions, error states, conditional rendering | Storybook stories with `play()` (run via `@storybook/addon-vitest` in headless Chromium) |
-| `src/hooks/**`      | Data flow and state transitions                        | Vitest + RTL (jsdom)                                                                     |
-| `src/lib/**`        | Pure logic, edge cases, round-trip behavior            | Unit tests, no mocks                                                                     |
-| Auto-generated      | Nothing — excluded                                     | —                                                                                        |
+| Layer               | What to test                                                                      | Approach                                |
+| ------------------- | --------------------------------------------------------------------------------- | --------------------------------------- |
+| `src/db/**`         | All public CRUD functions — input/output behavior                                 | Integration tests with in-memory SQLite |
+| `src/managers/**`   | Orchestration logic and end-to-end workflows                                      | Integration tests with in-memory SQLite |
+| `src/components/**` | Application organism behavior — interactions, error states, conditional rendering | Vitest + RTL (jsdom) — see §6           |
+| `src/hooks/**`      | Data flow and state transitions                                                   | Vitest + RTL (jsdom)                    |
+| `src/lib/**`        | Pure logic, edge cases, round-trip behavior                                       | Unit tests, no mocks                    |
+| Auto-generated      | Nothing — excluded                                                                | —                                       |
 
 ---
 

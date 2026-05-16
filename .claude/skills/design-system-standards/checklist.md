@@ -5,37 +5,33 @@ Walk this checklist for every UI element identified in a mockup, page, or audit 
 ## Per-component classification
 
 - [ ] Listed every distinct UI element in the input (button, input, icon, avatar, card, list row, …)
-- [ ] For each element, identified the matching wrapper in `src/components/ui/` (or "none")
-- [ ] When a wrapper matches, named the exact `variant` and `size` that fit
-- [ ] When close-but-not-exact, decided whether a new `tv()` variant or prop covers it (extend) vs a new wrapper (create)
-- [ ] When proposing a new wrapper, justified in one sentence why no existing wrapper or extension fits
-- [ ] Flagged any "compose-only" cases where a layout reuses existing atoms — no new file
+- [ ] For each element, named the matching Radix Themes component (or "compose" / "organism")
+- [ ] When a Radix Themes component matches, named the exact `variant` / `size` / `color` props that fit
+- [ ] Flagged any "compose-only" cases where a layout reuses known components — no new file
+- [ ] When proposing an internal component, justified in one sentence why it is a genuine application organism (not a restyled atom/molecule)
 
-## Token usage
+## Brand tokens
 
-- [ ] Every visible value (color, radius, font) maps to a `@theme` token from `src/styles/app.css`
-- [ ] No raw `oklch()`, hex, `rgb()`, or `rgba()` outside `src/styles/`
-- [ ] No `dark:` overrides — semantic tokens swap automatically
-- [ ] No raw palette utilities for status (`text-red-500`, `bg-green-100`, …) — use semantic tokens
+- [ ] No hardcoded color literals (`oklch()`, hex, `rgb()`, `rgba()`) in components or pages — color comes from Radix accent/gray scales and the `color` prop
+- [ ] No per-component theme override — appearance is bound at the `<Theme>` provider
+- [ ] No CSS framework utilities (`tailwind`, `tv()`, stray `className`) — layout uses Radix Themes primitives
 
-## Variant hygiene
+## Duplication hygiene
 
-- [ ] No two proposed components differ only by color/size/state (consolidate into a variant)
-- [ ] Existing wrapper variants reused before adding new ones
-- [ ] If extending an existing wrapper, the new variant has a clear semantic name (intent-based, not hex-based)
+- [ ] No Radix Themes composition repeated in 3+ pages without an organism
+- [ ] No same JSX shape inlined in 3+ places without a composition helper
+- [ ] A new internal component is reserved for a real application organism, not a styled primitive
 
 ## Audit-mode checks (when invoked for DS health)
 
-- [ ] Each wrapper in `src/components/ui/` has at least one import in `src/` (excluding its story / test files)
-- [ ] No `tv()` base array repeated across files
-- [ ] No Radix primitive composition repeated in 3+ places without a wrapper
-- [ ] No token drift in `src/components/**`, `src/pages/**`, `src/routes/**` (no raw `oklch`, hex, rgb outside `src/styles/`)
-- [ ] Storybook story exists and is current for every wrapper
+- [ ] Each internal component in `src/components/` has at least one import in `src/` (excluding its own test file)
+- [ ] No Radix Themes composition repeated in 3+ places without an organism
+- [ ] No styling drift in `src/components/**`, `src/pages/**`, `src/routes/**` (no raw color literals, no `tailwind`/`tv(`/stray `className`)
 
 ## Report quality
 
 - [ ] Every claim cites a file path; usage counts come from real `rg`/`grep` output
-- [ ] Variants and sizes named are quoted from the actual `tv()` recipe, not guessed
-- [ ] When proposing a new wrapper, named the underlying Radix primitive
-- [ ] When the answer is "custom from scratch", provided an explicit one-sentence reason
+- [ ] Component and prop names are quoted from the Radix Themes docs, not guessed
+- [ ] When proposing an internal component, named the underlying Radix Themes pieces it composes
+- [ ] When the answer is "bespoke with scoped CSS", provided an explicit one-sentence reason
 - [ ] Open questions section lists everything the agent could not decide alone

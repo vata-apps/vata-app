@@ -4,31 +4,29 @@ This document is a map of the technologies in use. It does **not** reproduce con
 
 ## Overview
 
-| Category          | Technology        | Version       | Role                                                         |
-| ----------------- | ----------------- | ------------- | ------------------------------------------------------------ |
-| Desktop framework | Tauri             | 2.x           | Native multi-platform shell                                  |
-| Backend           | Rust              | Latest stable | Tauri plugin host (no custom commands yet)                   |
-| Frontend          | React             | 18.x          | Declarative UI                                               |
-| Language          | TypeScript        | 5.x           | Static typing                                                |
-| Bundler           | Vite              | 5.x           | Fast build, HMR                                              |
-| Server state      | TanStack Query    | 5.x           | Cache and synchronization                                    |
-| Client state      | Zustand           | 4.x           | Lightweight global state, persisted                          |
-| Routing           | TanStack Router   | 1.x           | Type-safe file-based routing                                 |
-| Database          | SQLite            | 3.x           | Local storage via `@tauri-apps/plugin-sql`                   |
-| GEDCOM            | In-app module     | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)      |
-| Dates             | In-app module     | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`) |
-| Testing           | Vitest + RTL      | 2.x / 16.x    | Unit and integration tests                                   |
-| UI primitives     | Radix UI          | 1.x           | Headless behavior primitives                                 |
-| Variants          | tailwind-variants | 3.x           | Type-safe className composition (`tv()`)                     |
-| CSS framework     | Tailwind          | 4.x           | Utility-first, CSS-first via `@theme`                        |
-| Icons             | Lucide React      | Latest        | Curated icon registry in `icon.tsx`                          |
-| i18n              | react-i18next     | Latest        | Internationalization                                         |
+| Category          | Technology      | Version       | Role                                                         |
+| ----------------- | --------------- | ------------- | ------------------------------------------------------------ |
+| Desktop framework | Tauri           | 2.x           | Native multi-platform shell                                  |
+| Backend           | Rust            | Latest stable | Tauri plugin host (no custom commands yet)                   |
+| Frontend          | React           | 18.x          | Declarative UI                                               |
+| Language          | TypeScript      | 5.x           | Static typing                                                |
+| Bundler           | Vite            | 5.x           | Fast build, HMR                                              |
+| Server state      | TanStack Query  | 5.x           | Cache and synchronization                                    |
+| Client state      | Zustand         | 4.x           | Lightweight global state, persisted                          |
+| Routing           | TanStack Router | 1.x           | Type-safe file-based routing                                 |
+| Database          | SQLite          | 3.x           | Local storage via `@tauri-apps/plugin-sql`                   |
+| GEDCOM            | In-app module   | —             | Import/export GEDCOM 5.5.1 (`@vata-apps/gedcom-parser`)      |
+| Dates             | In-app module   | —             | Genealogical date parsing/display (`@vata-apps/gedcom-date`) |
+| Testing           | Vitest + RTL    | 2.x / 16.x    | Unit and integration tests                                   |
+| UI foundation     | Radix Themes    | Latest        | Themed component library, consumed directly                  |
+| Icons             | Lucide React    | Latest        | Curated icon registry in `src/components/icon.tsx`           |
+| i18n              | react-i18next   | Latest        | Internationalization                                         |
 
 ## Why these choices
 
 - **Tauri** — chosen over Electron for a smaller bundle, lower RAM, and a strict permission sandbox. The full comparison and decision are in [ADR-001](../adr/0001-desktop-framework.md).
 - **React + TypeScript + Vite + TanStack (Query/Router) + Zustand** — the frontend stack and its rationale are in [ADR-002](../adr/0002-frontend-stack.md).
-- **Radix + Tailwind v4 + tailwind-variants** — the UI strategy and why headless primitives over a component kit are in [ADR-005](../adr/0005-ui-strategy.md).
+- **Radix Themes** — the UI foundation, consumed directly with no in-house wrapper layer. The decision to adopt it and drop Tailwind + the wrapper layer is in [ADR-007](../adr/0007-adopt-radix-themes.md), superseding the earlier strategy in [ADR-005](../adr/0005-ui-strategy.md).
 - **In-app GEDCOM and date modules** — why genealogy-specific logic is owned in-house rather than pulled from npm is in [ADR-004](../adr/0004-gedcom-libraries.md).
 
 ## Tauri plugins
@@ -37,13 +35,13 @@ The Rust shell is a plugin-composition layer with no custom commands. Plugins us
 
 ## Non-obvious notes
 
-- **Tailwind v4 is CSS-first.** There is **no `tailwind.config.ts`**. Theme tokens are declared in a `@theme { … }` block in `src/styles/app.css` (in `oklch()`), and light/dark/system theming re-applies private aliases in that same file — never via per-component `dark:` overrides. See [Design System](../ui/design-system.md).
+- **No CSS framework.** `src/styles/app.css` is just the `@radix-ui/themes/styles.css` import plus the self-hosted Geist `@font-face` blocks and a `--default-font-family` override. There is no Tailwind, no PostCSS chain, no `@theme` block.
 - **Vitest is pinned to v2** for compatibility with Vite 5. Test config is in `vitest.config.ts`, kept separate from `vite.config.ts` to avoid version conflicts.
 - **Path aliases** (`$/*`, `$lib/*`, `$db`, …) are documented in `CLAUDE.md` and must be declared in _both_ `vite.config.ts` and `vitest.config.ts`.
 
-## UI wrappers
+## UI foundation
 
-Custom wrappers live under `src/components/ui/`, each composing `tailwind-variants` recipes over Radix primitives, and each shipping a colocated `<name>.stories.tsx` (Storybook + `play()` tests). See [Design System](../ui/design-system.md) and [Storybook](../ui/storybook.md).
+Radix Themes components are imported directly at call sites (`import { Button } from '@radix-ui/themes'`); there is no `src/components/ui/` wrapper layer. Internal components under `src/components/` are reserved for application organisms. Brand tokens (`accentColor`, `grayColor`, `radius`) are set on the `<Theme>` provider in `src/components/app-theme.tsx`. See [Design System](../ui/design-system.md) and [ADR-007](../adr/0007-adopt-radix-themes.md).
 
 ## SQLite and i18n
 

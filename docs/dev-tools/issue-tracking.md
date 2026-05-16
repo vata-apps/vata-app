@@ -29,7 +29,7 @@ Labels are **product-shaped**, not codebase-shaped. Each names a user-facing con
 | `gedcom`           | data          | GEDCOM 5.5.1 import / export, interoperability                        |
 | `data-quality`     | cross-cutting | Completion tracking, duplicate detection, validation                  |
 | `tree-management`  | platform      | Creating / opening / importing trees, storage location                |
-| `design-system`    | platform      | Storybook, UI wrappers, design tokens, Radix primitives, Tailwind v4  |
+| `design-system`    | platform      | Radix Themes, brand tokens, app-theme provider, UI organisms          |
 | `infra`            | platform      | CI, scripts, tooling, repo config — non-app changes                   |
 | `monetization`     | platform      | Paid-tier ideas; Vata is open source and free, these are aspirational |
 | `good-first-issue` | meta          | Good for newcomers / small surface                                    |

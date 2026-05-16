@@ -16,8 +16,9 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-002: Frontend Stack](./adr/0002-frontend-stack.md) — React, TypeScript, Vite, TanStack, Zustand
 - [ADR-003: Database Architecture](./adr/0003-database-architecture.md) — Dual DB, string IDs, layer separation
 - [ADR-004: GEDCOM Libraries (in-app)](./adr/0004-gedcom-libraries.md) — gedcom-parser and gedcom-date as in-app modules
-- [ADR-005: UI Strategy](./adr/0005-ui-strategy.md) — Radix + Tailwind v4 + tailwind-variants
+- [ADR-005: UI Strategy](./adr/0005-ui-strategy.md) — Radix + Tailwind v4 + tailwind-variants (superseded by ADR-007)
 - [ADR-006: Import/Export](./adr/0006-import-export.md) — Two-phase import, round-trip export
+- [ADR-007: UI Foundation](./adr/0007-adopt-radix-themes.md) — Radix Themes, dropping Tailwind + the wrapper layer
 
 ## Architecture
 
@@ -34,9 +35,8 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 ## User Interface
 
-- [Design System](./ui/design-system.md) — Design principles, responsive breakpoints, accessibility
+- [Design System](./ui/design-system.md) — Radix Themes foundation, brand tokens, design principles, accessibility
 - [Layouts](./ui/layouts.md) — Layout modes
-- [Storybook](./ui/storybook.md) — Component workshop and play()-based test setup
 - Screens: [Home](./ui/screens/home.md) · [Tree View](./ui/screens/tree-view.md) · [Individual View](./ui/screens/individual-view.md) · [Family View](./ui/screens/family-view.md) · [Sources](./ui/screens/sources.md)
 
 ## References
