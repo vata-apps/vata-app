@@ -24,7 +24,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('navigation')).toBeInTheDocument();
-    await expect(canvas.getByRole('main')).toHaveTextContent('Page content');
+    await expect(await canvas.findByRole('main')).toHaveTextContent('Page content');
   },
 };
 
@@ -41,6 +41,6 @@ export const WithLongContent: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole('main')).toHaveTextContent('Page content line 1');
+    await expect(await canvas.findByRole('main')).toHaveTextContent('Page content line 1');
   },
 };
