@@ -332,15 +332,12 @@ The following specialized skills are loaded automatically when relevant, or on d
 
 | Skill                     | Trigger                                                                                                                                                                          |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sqlite-standards`        | When writing `src/db/**`, SQL queries, migrations, or DB-related docs                                                                                                            |
+| `sqlite-standards`        | When writing `src/db/**`, SQL, migrations, scaffolding a new entity's DB layer, or DB-related docs                                                                               |
 | `gedcom-standards`        | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code                                                                                                                  |
-| `docs-consistency`        | After any change to `docs/*.md`                                                                                                                                                  |
 | `typescript-standards`    | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes)                                                                                                    |
 | `tauri-standards`         | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                                                                                                                            |
-| `testing-standards`       | When writing `**/*.{test,spec}.{ts,tsx}` or setting up test infrastructure                                                                                                       |
-| `db-layer`                | When creating a new entity's DB operations in `src/db/trees/`                                                                                                                    |
+| `testing-standards`       | When writing `**/*.{test,spec}.{ts,tsx}` or `*.stories.tsx`, or creating a UI wrapper under `src/components/ui/`                                                                 |
 | `new-route`               | When adding a new page or entity view under `/tree/$treeId/`                                                                                                                     |
-| `storybook-stories`       | When touching anything under `src/components/ui/` (wrappers + their `*.stories.tsx`) or any `*.stories.tsx` elsewhere                                                            |
 | `design-system-standards` | When designing or reviewing UI under `src/components/ui/`, `src/components/**`, or `src/pages/**` — decision tree for reuse / extend / create-new, token rules, audit heuristics |
 | `shepherd-pr`             | After `gh pr create` returns — drives the PR through `/review`, the ready-flip, CI, and CodeRabbit until it's approved or surfaces a real blocker                                |
 

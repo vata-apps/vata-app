@@ -8,50 +8,31 @@ Vata is a desktop application that empowers genealogists to manage their family 
 
 Genealogy enthusiasts face a difficult choice today:
 
-- **Cloud-first platforms** (Ancestry, MyHeritage, FamilySearch) store data on remote servers. Users don't fully own or control their data, depend on subscriptions, and risk losing access if a service shuts down.
-- **Existing desktop software** (Gramps, Legacy Family Tree, RootsMagic) exists but often feels dated, with aging UIs and limited modern development practices.
-- **No modern local-first option** combines a contemporary tech stack, native desktop performance, and first-class GEDCOM support in a single application.
+- **Cloud-first platforms** (Ancestry, MyHeritage, FamilySearch) store data on remote servers. Users don't fully own their data, depend on subscriptions, and risk losing access if a service shuts down.
+- **Existing desktop software** (Gramps, Legacy Family Tree, RootsMagic) often feels dated, with aging UIs and limited modern development practices.
 
-Vata fills this gap: a modern, performant, local-first desktop app built with current technologies, where the user's data never leaves their machine unless they explicitly export it.
-
-## Target Users
-
-See [Personas](./personas.md) for detailed user profiles.
-
-In summary, Vata targets genealogists who want full ownership of their data — from beginners organizing their first family records to experienced researchers managing large trees with rigorous source citations.
+No modern local-first option combines a contemporary tech stack, native desktop performance, and first-class GEDCOM support. Vata fills that gap: the user's data never leaves their machine unless they explicitly export it.
 
 ## Guiding Principles
 
-1. **Local-first** — All data remains on the user's computer. No account, no cloud, no subscription.
-2. **Performance** — Responsive interface and fast operations, even on trees with thousands of individuals.
+1. **Local-first** — All data stays on the user's computer. No account, no cloud, no subscription, no network required for any feature.
+2. **Performance** — Responsive even on trees with thousands of individuals.
 3. **Reliability** — Zero data loss. All write operations use database transactions.
 4. **Extensibility** — Modular, layered architecture designed for future evolution.
 5. **Standards** — GEDCOM 5.5.1 compliance for interoperability with other genealogy software.
 
-## Technical Summary
-
-| Aspect          | Choice                                                    |
-| --------------- | --------------------------------------------------------- |
-| Type            | Desktop application (Windows, macOS, Linux)               |
-| Framework       | Tauri 2.0                                                 |
-| Frontend        | React 18 + TypeScript 5                                   |
-| UI Library      | Custom wrappers (Radix + Tailwind v4 + tailwind-variants) |
-| Database        | SQLite (local)                                            |
-| Exchange Format | GEDCOM 5.5.1                                              |
-
-For technical details, see [Architecture Overview](../architecture/overview.md) and [Tech Stack](../architecture/tech-stack.md).
+For the stack and platform choices, see [Tech Stack](../architecture/tech-stack.md).
 
 ## Scope
 
 ### In Scope
 
 - Create, open, rename, and delete genealogical trees
-- CRUD operations on primary entities: individuals, names, families, events, places
-- Import and export GEDCOM 5.5.1 files
-- Source and citation management
-- File attachments linked to entities
-- Complete desktop UI with design system
-- Internationalization infrastructure
+- CRUD on primary entities: individuals, names, families, events, places — with navigation between them
+- Import and export GEDCOM 5.5.1 files with round-trip fidelity
+- Source and citation management via a source-centric workspace
+- File attachments linked to entities; browse all media in a tree
+- Complete desktop UI on a custom design system, with internationalization
 
 ### Out of Scope
 
@@ -63,28 +44,8 @@ For technical details, see [Architecture Overview](../architecture/overview.md) 
 - Mobile applications (iOS, Android)
 - Built-in media editing (photo cropping, etc.)
 
-## Assumptions & Constraints
-
-- **Single-user**: One user per installation, no authentication required.
-- **Desktop only**: Windows, macOS, and Linux via Tauri's cross-platform support.
-- **Offline-first**: No network connection required for any feature.
-- **GEDCOM 5.5.1 only**: The most widely supported version. GEDCOM 7.0 is not in scope.
-- **No backend server**: All logic runs in the frontend (TypeScript) and native shell (Rust/Tauri plugins).
-- **SQLite storage**: One system database for metadata, one file per tree for genealogical data.
-
-## Capabilities
-
-- **Tree management** — Create, modify, open, close, and delete a tree.
-- **GEDCOM** — Import and export GEDCOM 5.5.1 files with round-trip fidelity.
-- **Primary entities** — Create, modify, and delete individuals, names, families, events, places, and navigate between them.
-- **Sources & media** — Create sources with media, link entities via a source-centric workspace.
-- **UI & i18n** — Polished UI built on a custom design system (Radix primitives + Tailwind v4), with internationalization.
-- **File management** — Browse and manage all media files in a tree.
-
 ## Related Documents
 
 - [Personas](./personas.md)
-- [User Stories](./user-stories.md)
-- [Success Metrics](./success-metrics.md)
 - [Glossary](../../CONTEXT.md)
 - [Architecture Decision Records](../adr/)

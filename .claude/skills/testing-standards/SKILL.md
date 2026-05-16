@@ -1,16 +1,17 @@
 ---
 name: testing-standards
-description: Defines testing conventions for the project. Use when writing or reviewing any test surface — `**/*.{test,spec}.{ts,tsx}` for unit tests, AND `src/components/**/*.stories.tsx` since each component story's `play()` function is the component test (run by `@storybook/addon-vitest`). Also covers test infrastructure setup and coverage planning for new features.
+description: Defines testing conventions for the project. Use when writing or reviewing any test surface — `**/*.{test,spec}.{ts,tsx}` for unit tests, AND `**/*.stories.tsx` since each component story's `play()` function is the component test (run by `@storybook/addon-vitest`). Also use when creating any UI wrapper under `src/components/ui/` — every wrapper ships with a colocated story.
 ---
 
 # Testing Standards
 
-Apply this skill when writing tests.
+Apply this skill when writing tests, or when creating/modifying a UI wrapper (its story is its test).
 
 ## When to Apply
 
 - Writing or reviewing `**/*.test.{ts,tsx}` or `**/*.spec.{ts,tsx}` files
-- Setting up the test runner or test utilities
+- Writing or reviewing any `**/*.stories.tsx` — a component story's `play()` is the component test
+- Creating or modifying a wrapper under `src/components/ui/` — it ships with a colocated `<name>.stories.tsx`
 - Planning test coverage for a new feature
 
 ---
@@ -98,69 +99,11 @@ Only mock at the boundary of your test scope — never mock internal implementat
 
 ### E2E tests (Rust / Tauri)
 
-See section 8.
+See section 7.
 
 ---
 
-## 4. Project Setup
-
-Check `package.json` for current test dependencies. Install testing libraries:
-
-```bash
-pnpm add -D vitest @vitest/coverage-v8 @testing-library/react @testing-library/user-event @testing-library/jest-dom jsdom
-```
-
-Use a **separate `vitest.config.ts`** (not inside `vite.config.ts`) to avoid Vite/Vitest version conflicts. Copy the path aliases from `tsconfig.json`:
-
-```typescript
-// vitest.config.ts
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      // Copy path aliases from tsconfig.json
-      ...Object.fromEntries(
-        Object.entries({
-          $: './src',
-          $lib: './src/lib',
-          $components: './src/components',
-          $hooks: './src/hooks',
-          $managers: './src/managers',
-          $db: './src/db',
-          $types: './src/types',
-        }).map(([k, v]) => [k, path.resolve(__dirname, v)])
-      ),
-    },
-  },
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./src/test/setup.ts'],
-    coverage: {
-      provider: 'v8',
-      exclude: ['src/routeTree.gen.ts', 'src/main.tsx'],
-    },
-  },
-});
-```
-
-Scripts in `package.json`:
-
-```json
-"test": "vitest",
-"test:coverage": "vitest run --coverage"
-```
-
----
-
-## 5. File Structure
+## 4. File Structure
 
 Co-locate tests with source files:
 
@@ -182,7 +125,7 @@ The exact structure follows the source directories (`src/db/`, `src/managers/`, 
 
 ---
 
-## 6. Naming Conventions
+## 5. Naming Conventions
 
 ```typescript
 describe('TreeList', () => {
@@ -205,9 +148,17 @@ Rules:
 
 ---
 
-## 7. React Component Tests — via Storybook stories
+## 6. Component Tests — Storybook Stories
 
-Component behavior is verified by `play()` functions inside the colocated `<name>.stories.tsx`. `@storybook/addon-vitest` discovers every story and runs its `play()` as a Vitest test in headless Chromium (Playwright). **Do not** create a `<name>.test.tsx` for UI components.
+UI components are tested through Storybook, not through `*.test.tsx` files. Storybook is also the project's design-system surface.
+
+### Every wrapper ships with a story
+
+Every wrapper under `src/components/ui/` (Button, Input, Dialog, Select, …) ships with a colocated `<name>.stories.tsx` **in the same commit** — no exceptions for "trivial" wrappers. **Do not** create a `<name>.test.tsx` for a component: behavior is verified by `play()` functions inside the stories, which `@storybook/addon-vitest` discovers and runs as Vitest tests in headless Chromium (Playwright).
+
+(Non-component code — DB layer, hooks, libs, managers, store — keeps using regular Vitest unit tests in `*.test.{ts,tsx}` against jsdom.)
+
+### Story-file shape
 
 ```tsx
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -218,6 +169,7 @@ import { ConfirmDialog } from './confirm-dialog';
 const meta = {
   title: 'UI/ConfirmDialog',
   component: ConfirmDialog,
+  tags: ['autodocs'],
   args: {
     isOpen: true,
     title: 'Delete?',
@@ -247,18 +199,51 @@ export const HiddenWhenClosed: Story = {
 };
 ```
 
-Query priority (highest to lowest):
+- `title` lives under the `UI/` namespace so primitives sort together.
+- `tags: ['autodocs']` — the component's JSDoc renders as Docs automatically. Keep JSDoc rich (`typescript-standards` already requires it).
+- One `StoryObj` per variant; add a `Matrix` story for side-by-side variant × size comparison.
+- For event-handler args, use `fn()` from `storybook/test` so the Actions panel logs the call AND `play()` can assert on it.
+- Providers (theme, i18n, QueryClient) are wired globally in `.storybook/preview.tsx` — stories don't wrap manually.
+- Rendering a fragment from `.map()` (matrix layouts) uses `<Fragment key={…}>` from `react`, never `<>` (CLAUDE.md "Common Pitfalls").
 
-1. `getByRole` — preferred for interactive elements
-2. `getByLabelText` — for form fields
-3. `getByText` — for static content
-4. `getByTestId` — last resort only
+### `play()` is the test — assert behavior, not implementation
 
-Providers (theme, i18n, QueryClient) are wired globally in `.storybook/preview.tsx` — stories don't need to wrap manually. See `docs/ui/storybook.md` for the run modes (`pnpm vitest run` runs both `unit` + `storybook` projects).
+- ✅ `expect(canvas.getByRole('button', { name: 'Save' })).toBeInTheDocument()`
+- ✅ `expect(args.onClick).toHaveBeenCalledOnce()` after `userEvent.click(...)`
+- ✅ `expect(input).toHaveAttribute('aria-invalid', 'true')`
+- ❌ never `expect(el).toHaveClass('bg-primary')` / `toHaveStyle(...)` — couples the test to implementation
+- ❌ never query by `data-testid` — query by role / label / text / placeholder
+
+Query priority (highest to lowest): `getByRole` (interactive elements) → `getByLabelText` (form fields) → `getByText` (static content) → `getByTestId` (last resort only).
+
+### i18n in stories — by atomic-design tier
+
+- **Atoms** (`src/components/ui/` — Button, Input, Badge, …): hardcoded English literals are fine; `t()` not required.
+- **Molecules**: case-by-case. A thin composition of atoms (icon button with a static label) → literals fine. A molecule that owns user-facing copy (empty-state card, confirmation banner) → use `t()`.
+- **Organisms and pages**: use `t()` for any string that ships to users — the story should look like production usage.
+
+**Never write a dedicated `I18nDemo` story.** When `t()` is needed, weave it into the regular stories — the Locale toolbar in `.storybook/preview.tsx` drives language switching globally. To call hooks, extract a small component inside the file and have the story render it:
+
+```tsx
+function EmptyStateBanner() {
+  const { t } = useTranslation('individuals');
+  return <Banner>{t('list.empty')}</Banner>;
+}
+
+export const Empty: Story = {
+  render: () => <EmptyStateBanner />,
+};
+```
+
+### Run modes
+
+`pnpm vitest run` runs both the `unit` project (jsdom, non-component code) and the `storybook` project (Chromium, component `play()` functions). `pnpm vitest run --project storybook` runs just stories.
+
+Full authoring guide: [`docs/ui/storybook.md`](../../../docs/ui/storybook.md) — run command, toolbars (theme + locale), the i18n decorator, the out-of-scope list.
 
 ---
 
-## 8. Rust / Tauri Tests
+## 7. Rust / Tauri Tests
 
 ### When to write Rust tests
 
@@ -345,7 +330,7 @@ cargo test -- --nocapture           # show println! output
 
 ---
 
-## 9. What Not to Test
+## 8. What Not to Test
 
 - Auto-generated files (`routeTree.gen.ts`)
 - Trivial wrappers with no logic (e.g., `MainLayout.tsx` is just `<div>{children}</div>`)
@@ -354,7 +339,7 @@ cargo test -- --nocapture           # show println! output
 
 ---
 
-## 10. What to Test Per Layer
+## 9. What to Test Per Layer
 
 No coverage thresholds. A test's value is measured by its ability to prevent regressions — not by a percentage. 20 useful tests that catch real bugs are better than 100 tests that give a green coverage badge but break on every refactor.
 
@@ -369,7 +354,7 @@ No coverage thresholds. A test's value is measured by its ability to prevent reg
 
 ---
 
-## 11. Common Mistakes to Avoid
+## 10. Common Mistakes to Avoid
 
 - **Every in-memory test database must enable `PRAGMA foreign_keys = ON`**: SQLite disables foreign keys by default; in-memory databases do not inherit PRAGMAs. Always execute this immediately after creating the DB, before running the schema.
 - **Apply the same PRAGMAs in tests as production**: At minimum, `foreign_keys = ON`. This ensures tests catch constraint violations that would occur in production.

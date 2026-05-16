@@ -32,7 +32,7 @@ Use **React 18 + TypeScript 5** with **Vite** as bundler, **TanStack Query** for
 
 ## References
 
-- [Tech Stack — React 18](../architecture/tech-stack.md#react-18)
-- [Tech Stack — TanStack Query 5](../architecture/tech-stack.md#tanstack-query-5)
-- [Tech Stack — TanStack Router](../architecture/tech-stack.md#tanstack-router)
-- [Tech Stack — Zustand 4](../architecture/tech-stack.md#zustand-4)
+- [Tech Stack — React 18](../architecture/tech-stack.md)
+- [Tech Stack — TanStack Query 5](../architecture/tech-stack.md)
+- [Tech Stack — TanStack Router](../architecture/tech-stack.md)
+- [Tech Stack — Zustand 4](../architecture/tech-stack.md)

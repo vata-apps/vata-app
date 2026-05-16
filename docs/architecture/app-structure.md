@@ -42,7 +42,7 @@ Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Fin
 - Manager: `src/managers/TreeManager.ts` — `open`, `close`, `create`. Extend here for new operations (rename / delete / duplicate / import / export).
 - System DB queries: `src/db/system/trees.ts`
 
-**UI specifics:** see [`docs/ui/screens/home.md`](../ui/screens/home.md) and the _Home Layout_ section of [`docs/ui/layouts.md`](../ui/layouts.md).
+**UI specifics:** see [`docs/ui/screens/home.md`](../ui/screens/home.md) and the _Two Layout Modes_ section of [`docs/ui/layouts.md`](../ui/layouts.md).
 
 ## Inside: the In-Tree Shell
 
@@ -56,7 +56,7 @@ Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Fin
 - Tree DB queries: `src/db/trees/*`.
 - DB connection helpers: `src/db/connection.ts` — `getTreeDb()`, `isTreeDbOpen()`, `getCurrentTreePath()`.
 
-**UI specifics:** see the _Module Layout (Three-Panel)_ section of [`docs/ui/layouts.md`](../ui/layouts.md), plus per-screen docs in `docs/ui/screens/`.
+**UI specifics:** see the _Two Layout Modes_ section of [`docs/ui/layouts.md`](../ui/layouts.md), plus per-screen docs in `docs/ui/screens/`.
 
 ## Lifecycle
 

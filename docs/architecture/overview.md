@@ -51,35 +51,7 @@ graph TD
 - Provides mutations with automatic invalidation
 - Handles loading and error states
 
-**Convention**: Always use the central `queryKeys` object for TanStack Query keys (never hardcode keys in hooks or invalidations).
-
-**Example**:
-
-```typescript
-// queryKeys.ts
-export const queryKeys = {
-  individual: (id: string) => ['individual', id] as const,
-  individuals: ['individuals'] as const,
-};
-
-// useIndividual.ts
-export function useIndividual(id: string) {
-  return useQuery({
-    queryKey: queryKeys.individual(id),
-    queryFn: () => IndividualManager.getById(id),
-  });
-}
-
-export function useCreateIndividual() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: IndividualManager.create,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.individuals });
-    },
-  });
-}
-```
+**Convention**: Always use the central `queryKeys` object for TanStack Query keys (never hardcode keys in hooks or invalidations). See [Data Flow](data-flow.md) for the read/write sequences.
 
 ### 3. Manager Layer (Business Logic)
 
@@ -163,17 +135,6 @@ graph LR
 - Locale preference stored in Zustand store and persisted
 - Currently English-only, but infrastructure ready for additional languages
 
-```typescript
-// store.ts
-interface AppState {
-  currentTreeId: string | null;
-  theme: 'light' | 'dark' | 'system';
-  locale: string; // e.g., 'en', 'fr' - defaults to system locale
-  setCurrentTree: (id: string | null) => void;
-  setLocale: (locale: string) => void;
-}
-```
-
 ## Error Handling
 
 ```mermaid
@@ -199,11 +160,7 @@ graph TD
 
 ### Tauri Permissions
 
-```json
-{
-  "permissions": ["sql:default", "fs:default", "dialog:default"]
-}
-```
+Each plugin is granted a narrow capability set (SQL, file system, dialog). The capability definitions live in `src-tauri/capabilities/`.
 
 ## Performance
 
@@ -214,10 +171,3 @@ graph TD
 3. **Indexing**: SQLite indexes on frequently searched columns
 4. **Pagination**: Batch loading for large lists
 5. **Debouncing**: Delay on search and filters
-
-### Target Metrics
-
-- Startup time: < 2s
-- Tree opening: < 500ms
-- Search: < 200ms
-- CRUD operations: < 100ms

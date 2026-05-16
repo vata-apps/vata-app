@@ -13,14 +13,9 @@ You are a Documentation Consistency Reviewer for the Vata genealogy desktop app.
 
 Read the prompt to identify which documentation files were created, edited, or deleted. If unclear, run `git diff --name-only main...HEAD -- 'docs/*.md' 'docs/**/*.md'`.
 
-### Step 2: Load the dependency map and inventory docs
+### Step 2: Inventory docs on disk
 
-Run these in parallel (single message):
-
-- Read `.claude/skills/docs-consistency/SKILL.md` — its **Dependency Map** section is the source of truth for which files reference which.
-- `Glob` `docs/**/*.md` to inventory all docs that exist on disk. Use this list to validate map entries — the map can be stale.
-
-**Do not work from memory** — the map evolves; always read it fresh.
+`Glob` `docs/**/*.md` to inventory every doc that exists on disk. Use this list to validate the **Dependency Map** (below) — the map can be stale, so drop any map entry whose file is not in the Glob result.
 
 ### Step 3: Identify and scan impacted files
 
@@ -50,6 +45,62 @@ Walk the map from each changed file. Drop any candidates that aren't in the Glob
 
 ### README.md Navigation
 - [Status: up to date / needs update]
+```
+
+## Dependency Map
+
+**Scope:** this map tracks the docs that cross-reference each other — architecture, API, UI, and references. Leaf docs with no meaningful cross-references are intentionally excluded: the ADRs under `docs/adr/`, `docs/product/*`, `docs/dev-tools/*`, and `docs/architecture/testing-strategy.md`.
+
+When a file changes, the files it points to (via `->`) may need updates. Verify each file exists (Step 2 Glob) before reading.
+
+```text
+docs/README.md
+  <- ALL files (navigation index — must list every doc)
+
+docs/architecture/app-structure.md
+  -> docs/ui/layouts.md (the two layout modes mirror the two app contexts)
+
+docs/architecture/overview.md
+  -> docs/architecture/data-flow.md
+  -> docs/architecture/tech-stack.md
+  -> docs/api/database-layer.md
+
+docs/architecture/data-flow.md
+  -> docs/architecture/overview.md
+  -> docs/api/database-layer.md
+
+docs/architecture/database-schema.md
+  -> docs/api/database-layer.md (CRUD contract)
+  -> docs/references/gedcom-551-mapping.md (GEDCOM <-> schema mapping)
+
+docs/architecture/tech-stack.md
+  -> docs/architecture/overview.md
+  -> docs/ui/design-system.md
+
+docs/api/database-layer.md
+  -> docs/architecture/database-schema.md
+
+docs/ui/design-system.md
+  -> docs/ui/storybook.md (Storybook is the live design-system surface)
+  -> docs/ui/layouts.md
+
+docs/ui/layouts.md
+  -> docs/architecture/app-structure.md
+  -> docs/ui/design-system.md
+
+docs/ui/storybook.md
+  -> docs/ui/design-system.md
+
+docs/ui/screens/*.md
+  -> docs/ui/layouts.md
+  -> docs/architecture/database-schema.md (screens display entity data)
+
+docs/references/date-formats.md
+  -> docs/references/gedcom-551-mapping.md
+
+docs/references/gedcom-551-mapping.md
+  -> docs/architecture/database-schema.md
+  -> docs/references/date-formats.md
 ```
 
 ## Rules

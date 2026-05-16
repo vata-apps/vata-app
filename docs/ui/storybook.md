@@ -95,26 +95,9 @@ Both are wired in `.storybook/preview.tsx`.
 
 ## Authoring a story file
 
-Every wrapper in `src/components/ui/` ships with a colocated `<name>.stories.tsx`. Minimum shape:
+Every wrapper in `src/components/ui/` ships with a colocated `<name>.stories.tsx`. See [`button.stories.tsx`](../../src/components/ui/button.stories.tsx) for the canonical shape. Conventions:
 
-```tsx
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { MyComponent } from './my-component';
-
-const meta = {
-  title: 'UI/MyComponent',
-  component: MyComponent,
-  tags: ['autodocs'],
-  parameters: { layout: 'centered' },
-} satisfies Meta<typeof MyComponent>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const Default: Story = {};
-```
-
-- **`tags: ['autodocs']`** — the JSDoc on the component and props is auto-rendered into a Docs page. Keep JSDoc rich; it doubles as Storybook documentation.
+- **`tags: ['autodocs']`** on `meta` — the JSDoc on the component and props is auto-rendered into a Docs page. Keep JSDoc rich; it doubles as Storybook documentation.
 - **`title: 'UI/<Name>'`** — keep primitives under the `UI/` group so they sort together in the sidebar.
 - **One `Story` per variant** plus a `Matrix` story (variants × sizes) for side-by-side review.
 
@@ -143,25 +126,7 @@ The Locale toolbar (defined in `.storybook/preview.tsx`) calls `i18n.changeLangu
 
 ### Stories are tests
 
-Behavior is verified by `play()` functions inside the stories themselves. `@storybook/addon-vitest` discovers every story and runs its `play()` as a Vitest test in headless Chromium (Playwright). There are no `*.test.tsx` files for UI wrappers.
-
-```tsx
-import { expect, fn, userEvent, within } from 'storybook/test';
-
-const meta = {
-  // …
-  args: { onClick: fn() },
-} satisfies Meta<typeof Button>;
-
-export const Primary: Story = {
-  args: { variant: 'primary' },
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Save' }));
-    await expect(args.onClick).toHaveBeenCalledOnce();
-  },
-};
-```
+Behavior is verified by `play()` functions inside the stories themselves. `@storybook/addon-vitest` discovers every story and runs its `play()` as a Vitest test in headless Chromium (Playwright). There are no `*.test.tsx` files for UI wrappers — see [`button.stories.tsx`](../../src/components/ui/button.stories.tsx) for a real `play()` example.
 
 Assertions stay on user-observable outcomes — role, accessible name, attributes, callback invocation. Never assert classes, styles, or test IDs.
 
@@ -172,18 +137,6 @@ Run modes:
 - `pnpm vitest run --project unit` — only the jsdom tests.
 
 The `unit` project explicitly excludes `src/components/**/*.{test,spec}.tsx` so component behavior never accidentally gets a parallel home in regular Vitest tests.
-
----
-
-## Adding a new wrapper
-
-When you add a file under `src/components/ui/` (anything except `*.stories.tsx`), the `storybook-stories` skill (`.claude/skills/storybook-stories/SKILL.md`) auto-loads and reminds you to create the colocated `<name>.stories.tsx` with at least:
-
-- one story per variant,
-- a matrix story (variants × sizes),
-- a `play()` function on each story that asserts something meaningful — accessible name, attribute, callback, typed value, etc.
-
-No exceptions for "trivial" wrappers. If it's worth wrapping, it's worth a story with a play().
 
 ---
 

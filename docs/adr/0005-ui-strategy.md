@@ -16,7 +16,7 @@ The application needs a UI foundation that is accessible, customizable, and fits
 - **CSS framework**: **Tailwind v4** in CSS-first mode. Theme tokens live in `@theme { ... }` inside `src/styles/app.css`, expressed in `oklch()`. No `tailwind.config.ts`, no PostCSS plugin chain.
 - **Behavior primitives**: **Radix UI**, currently only `@radix-ui/react-slot`. Additional `@radix-ui/react-*` packages are added on demand, only when a real Radix behavior is required (focus trap, dismissible layer, roving tabindex, etc.).
 - **Variants**: **`tailwind-variants`** via `tv()` for type-safe className composition.
-- **Wrappers**: hand-rolled under `src/components/ui/` (currently `button`, `icon`, `input`), with a colocated Storybook story (`<name>.stories.tsx`) and Vitest tests (Storybook `play()` + colocated `.test.tsx` where needed).
+- **Wrappers**: hand-rolled under `src/components/ui/`, each with a colocated Storybook story (`<name>.stories.tsx`) whose `play()` functions are the component's tests — no separate `.test.tsx`.
 - **Icons**: **Lucide React** consumed through a curated registry in `src/components/ui/icon.tsx` — pages do not import from `lucide-react` directly.
 - **Internationalization**: **react-i18next** with namespace-based translation files (unchanged).
 - **Screen design**: still iterative. No Figma dependency.
@@ -51,7 +51,7 @@ The application needs a UI foundation that is accessible, customizable, and fits
 
 ## References
 
-- [Tech Stack — UI Layer](../architecture/tech-stack.md#ui-layer)
-- [Tech Stack — Internationalization](../architecture/tech-stack.md#internationalization-i18n)
+- [Tech Stack — UI Layer](../architecture/tech-stack.md)
+- [Tech Stack — Internationalization](../architecture/tech-stack.md)
 - [Design System](../ui/design-system.md)
 - [Storybook conventions](../ui/storybook.md)
