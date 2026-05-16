@@ -9,8 +9,8 @@ A single family tree — the complete genealogical dataset for one research proj
 _Avoid_: Project, File, Database
 
 **Individual**:
-A person in a tree.
-_Avoid_: Person, Profile, Record
+A person in a tree. **Individual** names the concept in code, DB schema, types, and GEDCOM (`INDI`); the user-facing UI label for the same concept is **Person** / **People**.
+_Avoid_: Profile, Record
 
 **Name**:
 A naming record for an individual; an individual can hold several (birth, married, adopted), one flagged as primary.
@@ -79,4 +79,4 @@ _Avoid_: Export file, Backup
 
 - "Marriage" was used for both the **Family** union record and the marriage **Event** — resolved: the **Family** is the union, the **Event** is the dated ceremony.
 - "Source" vs "Citation" — the **Source** is the document itself; a **Citation** is a specific reference into it (page, quality). Distinct records: one **Source** has many **Citations**.
-- "Person" / "Individual" — canonical term is **Individual**, matching the GEDCOM `INDI` record and the `individuals` table.
+- "Person" / "Individual" — the same concept, named per layer by deliberate decision: **Individual** in code, DB schema, types, and GEDCOM (`INDI`, the `individuals` table); **Person** / **People** on user-facing UI surfaces. A button reading "People" above an `individuals` table is correct, not drift.
