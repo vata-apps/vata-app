@@ -34,11 +34,23 @@ _Avoid_: Location, Address
 
 **Source**:
 A piece of documentary evidence supporting a genealogical fact (a parish register, a census, a certificate).
-_Avoid_: Citation, Document, Reference
+_Avoid_: Document, Record
+
+**Citation**:
+A specific reference into a Source — a page, a **Quality** assessment, a consultation date, an optional transcription — reusable to support several facts across the tree.
+_Avoid_: Reference, Source citation
 
 **Repository**:
 An institution that holds sources (an archive, a library, a church).
 _Avoid_: Archive, Library
+
+**Media**:
+A digitized file attached to genealogical records — a scanned document, a photograph, a certificate image.
+_Avoid_: File, Attachment, Object
+
+**Quality**:
+The assessment of how reliable a piece of evidence is — primary, secondary, questionable, or unreliable.
+_Avoid_: Confidence, Reliability, Accuracy
 
 **GEDCOM**:
 The text-based interchange format (`.ged`, version 5.5.1) Vata imports from and exports to.
@@ -51,18 +63,20 @@ _Avoid_: Export file, Backup
 - A **Family** links an optional husband **Individual**, an optional wife **Individual**, and zero or more child **Individuals**.
 - A **Pedigree** qualifies each parent–child link inside a **Family**.
 - An **Event** has an optional **Place** and one or more participants — each participant is an **Individual** or a **Family** in a role (principal, witness, officiant, …).
-- A citation links a **Source** to an **Individual**, **Family**, or **Event** — the **Source** is never attached directly.
+- A **Citation** belongs to exactly one **Source**.
+- A **Citation** can be attached to many entities — an **Individual**, a **Family**, an **Event**, a **Place**, or a **Name**. A **Source** is never attached directly; it is reached only through a **Citation**.
 - A **Repository** holds zero or more **Sources**.
+- A **Media** is attached to one or more entities — most often a **Source**, but also directly to an **Individual** (a portrait) or an **Event**.
 
 ## Example dialogue
 
 > **Dev:** "When two people marry, do we create a Family or a marriage Event?"
 > **Domain expert:** "Both, and they stay distinct. The **Family** is the union record — it exists even with no recorded ceremony. The marriage is an **Event** attached to that **Family**, carrying the date and **Place**."
 > **Dev:** "And if I attach a parish register that proves the marriage?"
-> **Domain expert:** "The register is a **Source**. It doesn't hang off the **Event** directly — a citation links the **Source** to the **Event**. The register itself lives in a **Repository**, the archive that holds it."
+> **Domain expert:** "The register is a **Source**. It doesn't hang off the **Event** directly — a **Citation** does: page 12 of that register, and that same **Citation** can back the children's birth records too. The register itself lives in a **Repository**, the archive that holds it."
 
 ## Flagged ambiguities
 
 - "Marriage" was used for both the **Family** union record and the marriage **Event** — resolved: the **Family** is the union, the **Event** is the dated ceremony.
-- "Source" vs citation — the **Source** is the document itself; a citation is the link from a **Source** to an entity. Keep them separate.
+- "Source" vs "Citation" — the **Source** is the document itself; a **Citation** is a specific reference into it (page, quality). Distinct records: one **Source** has many **Citations**.
 - "Person" / "Individual" — canonical term is **Individual**, matching the GEDCOM `INDI` record and the `individuals` table.
