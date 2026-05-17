@@ -54,4 +54,3 @@ The application needs a UI foundation that is accessible, customizable, and fits
 - [Tech Stack — UI Layer](../architecture/tech-stack.md)
 - [Tech Stack — Internationalization](../architecture/tech-stack.md)
 - [Design System](../ui/design-system.md)
-- [Storybook conventions](../ui/storybook.md)

@@ -63,6 +63,10 @@ export interface TreeCardProps {
   onDelete: () => void;
 }
 
+/**
+ * One stat in the card body — a large tabular number above a small
+ * uppercase mono label (e.g. the individual or family count).
+ */
 function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Element {
   return (
     <Flex direction="column" gap="2">
@@ -83,6 +87,10 @@ function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Ele
   );
 }
 
+/**
+ * One metadata row in the card body — a fixed-width label beside a
+ * tabular-numeric value, both in mono (e.g. "Created" / a date).
+ */
 function MetaRow({ label, value }: { label: ReactNode; value: ReactNode }): JSX.Element {
   return (
     <Flex gap="3" style={{ fontFamily: 'var(--code-font-family)', fontSize: 12.5 }}>

@@ -3,7 +3,7 @@ import { Flex, Heading, Popover, SegmentedControl, Text } from '@radix-ui/themes
 import { useTranslation } from 'react-i18next';
 
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '$/i18n/config';
-import { useAppStore, type Theme } from '$/store/app-store';
+import { useAppStore } from '$/store/app-store';
 
 function normalizeLanguage(raw: string): SupportedLanguage {
   const base = raw.split('-')[0]?.toLowerCase();
@@ -59,7 +59,11 @@ export function PreferencesPopover({ children }: PreferencesPopoverProps): JSX.E
             <SegmentedControl.Root
               size="1"
               value={theme}
-              onValueChange={(next) => setTheme(next as Theme)}
+              onValueChange={(next) => {
+                if (next === 'light' || next === 'dark' || next === 'system') {
+                  setTheme(next);
+                }
+              }}
               aria-label={t('preferences.themeAriaLabel')}
             >
               <SegmentedControl.Item value="light">
