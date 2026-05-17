@@ -70,14 +70,90 @@
 }
 
 /* ============================================================
-   Theme — Vata consumes Radix Themes. Brand tokens (brown
-   accent, sand gray, medium radius) are set on the <Theme>
-   component in app-theme.tsx. Only the font family is overridden
-   here, because Geist is self-hosted above. See ADR-007.
+   Theme — Vata's custom Radix Themes palette.
+
+   The accent (clay / terracotta) and gray (sand) scales below are
+   12-step Radix scales carrying Vata's warm earthy identity. Each
+   step keeps the lightness role Radix expects (1-2 backgrounds,
+   3-5 component fills, 6-8 borders, 9-10 solid, 11-12 text) while
+   the hue and chroma come from the brand ramps.
+
+   `<Theme>` keeps `accentColor="brown"` / `grayColor="sand"` in
+   app-theme.tsx — those still supply the alpha (overlay) steps,
+   which stay warm and compatible. Only the font family and the
+   solid scales are overridden here.
    ============================================================ */
 
 .radix-themes {
   --default-font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+
+  /* Accent — clay / terracotta — light */
+  --accent-1: oklch(0.993 0.006 46);
+  --accent-2: oklch(0.981 0.013 45);
+  --accent-3: oklch(0.96 0.024 44);
+  --accent-4: oklch(0.936 0.036 42);
+  --accent-5: oklch(0.908 0.05 41);
+  --accent-6: oklch(0.871 0.066 39);
+  --accent-7: oklch(0.821 0.086 38);
+  --accent-8: oklch(0.748 0.106 36);
+  --accent-9: oklch(0.585 0.132 34);
+  --accent-10: oklch(0.545 0.13 33);
+  --accent-11: oklch(0.515 0.122 32);
+  --accent-12: oklch(0.31 0.072 28);
+  --accent-contrast: oklch(0.985 0.012 85);
+  --accent-surface: oklch(0.96 0.024 44 / 0.8);
+  --accent-indicator: var(--accent-9);
+  --accent-track: var(--accent-9);
+
+  /* Gray — sand — light */
+  --gray-1: oklch(0.993 0.003 85);
+  --gray-2: oklch(0.984 0.006 84);
+  --gray-3: oklch(0.965 0.012 82);
+  --gray-4: oklch(0.946 0.016 81);
+  --gray-5: oklch(0.927 0.02 80);
+  --gray-6: oklch(0.903 0.024 78);
+  --gray-7: oklch(0.869 0.03 75);
+  --gray-8: oklch(0.802 0.04 71);
+  --gray-9: oklch(0.642 0.052 63);
+  --gray-10: oklch(0.602 0.052 61);
+  --gray-11: oklch(0.508 0.05 54);
+  --gray-12: oklch(0.243 0.028 45);
+  --gray-surface: oklch(1 0 0 / 0.85);
+}
+
+.radix-themes.dark {
+  /* Accent — clay / terracotta — dark */
+  --accent-1: oklch(0.193 0.02 32);
+  --accent-2: oklch(0.223 0.03 32);
+  --accent-3: oklch(0.262 0.044 31);
+  --accent-4: oklch(0.298 0.058 31);
+  --accent-5: oklch(0.337 0.072 30);
+  --accent-6: oklch(0.388 0.09 31);
+  --accent-7: oklch(0.453 0.108 32);
+  --accent-8: oklch(0.547 0.126 33);
+  --accent-9: oklch(0.585 0.132 34);
+  --accent-10: oklch(0.632 0.124 35);
+  --accent-11: oklch(0.76 0.098 40);
+  --accent-12: oklch(0.901 0.044 54);
+  --accent-contrast: oklch(0.985 0.012 85);
+  --accent-surface: oklch(0.262 0.044 31 / 0.5);
+  --accent-indicator: var(--accent-9);
+  --accent-track: var(--accent-9);
+
+  /* Gray — sand — dark */
+  --gray-1: oklch(0.163 0.01 44);
+  --gray-2: oklch(0.203 0.014 44);
+  --gray-3: oklch(0.249 0.018 44);
+  --gray-4: oklch(0.283 0.02 44);
+  --gray-5: oklch(0.32 0.022 45);
+  --gray-6: oklch(0.366 0.025 46);
+  --gray-7: oklch(0.431 0.029 49);
+  --gray-8: oklch(0.537 0.033 53);
+  --gray-9: oklch(0.612 0.04 58);
+  --gray-10: oklch(0.662 0.04 60);
+  --gray-11: oklch(0.772 0.034 66);
+  --gray-12: oklch(0.944 0.014 80);
+  --gray-surface: oklch(0.203 0.014 44 / 0.5);
 }
 
 /* ============================================================
