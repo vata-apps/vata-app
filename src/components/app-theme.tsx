@@ -32,10 +32,10 @@ function useResolvedAppearance(): 'light' | 'dark' {
  * radius and panel background, and binds the appearance to the persisted
  * theme preference. Mounted once, at the React root (see `main.tsx`).
  *
- * The accent and gray scales are Vata's custom clay + sand palette,
- * defined in `app.css`. `accentColor="brown"` / `grayColor="sand"` here
- * only seed the alpha (overlay) steps, which the custom palette leaves
- * to Radix.
+ * The accent and gray scales are Vata's custom clay + sand palette —
+ * every step, alphas included, is defined in `app.css`.
+ * `accentColor="brown"` / `grayColor="sand"` only pick the Radix base
+ * scales those overrides sit on top of; the values in `app.css` win.
  */
 export function AppTheme({ children }: { children: ReactNode }): JSX.Element {
   const appearance = useResolvedAppearance();

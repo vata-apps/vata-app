@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Box, Button, Card, Flex, Heading, IconButton, Separator, Text } from '@radix-ui/themes';
+import { Box, Button, Card, Flex, Heading, IconButton, Text } from '@radix-ui/themes';
 
 import { Icon } from '$components/icon';
 
@@ -65,14 +65,25 @@ export interface TreeCardProps {
 
 function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Element {
   return (
-    <Flex direction="column" gap="1">
-      <Text size="5" weight="bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
+    <Flex direction="column" gap="2">
+      <Text
+        style={{
+          fontSize: 30,
+          lineHeight: 1,
+          letterSpacing: '-0.02em',
+          fontVariantNumeric: 'tabular-nums',
+        }}
+      >
         {value}
       </Text>
       <Text
-        size="1"
-        weight="medium"
-        style={{ textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-a10)' }}
+        color="gray"
+        style={{
+          fontFamily: 'var(--code-font-family)',
+          fontSize: 10.5,
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+        }}
       >
         {label}
       </Text>
@@ -82,13 +93,9 @@ function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Ele
 
 function MetaRow({ label, value }: { label: ReactNode; value: ReactNode }): JSX.Element {
   return (
-    <Flex gap="2" align="center">
-      <Text size="1" style={{ width: 120, flex: 'none', color: 'var(--gray-a10)' }}>
-        {label}
-      </Text>
-      <Text size="1" color="gray" style={{ fontVariantNumeric: 'tabular-nums' }}>
-        {value}
-      </Text>
+    <Flex gap="3" style={{ fontFamily: 'var(--code-font-family)', fontSize: 12.5 }}>
+      <Text style={{ width: 110, flex: 'none', color: 'var(--gray-a10)' }}>{label}</Text>
+      <Text style={{ color: 'var(--gray-12)', fontVariantNumeric: 'tabular-nums' }}>{value}</Text>
     </Flex>
   );
 }
@@ -115,45 +122,41 @@ export function TreeCard({
   onDelete,
 }: TreeCardProps): JSX.Element {
   return (
-    <Card asChild variant="surface" style={{ minHeight: 220 }}>
+    <Card asChild variant="surface" size="3" style={{ minHeight: 240 }}>
       <article>
-        <Flex direction="column" gap="3" height="100%">
+        <Flex direction="column" gap="4" height="100%">
           <Box>
-            <Heading size="4" weight="medium" truncate>
+            <Heading size="6" weight="regular" truncate>
               {name}
             </Heading>
-            {description && (
-              <Text
-                as="p"
-                size="2"
-                color="gray"
-                mt="1"
-                style={{
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                }}
-              >
-                {description}
-              </Text>
-            )}
+            <Text
+              as="p"
+              size="2"
+              color="gray"
+              mt="2"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                // Always reserve two lines so cards align on a shared grid.
+                minHeight: 'calc(2 * 1.5 * var(--font-size-2))',
+              }}
+            >
+              {description}
+            </Text>
           </Box>
 
-          <Flex align="center" gap="3">
+          <Flex gap="6">
             <Stat value={stats.individuals} label={labels.individuals} />
-            <Separator orientation="vertical" size="2" />
             <Stat value={stats.families} label={labels.families} />
             {stats.generations != null && (
-              <>
-                <Separator orientation="vertical" size="2" />
-                <Stat value={stats.generations} label={labels.generations} />
-              </>
+              <Stat value={stats.generations} label={labels.generations} />
             )}
           </Flex>
 
           <Box>
-            <Separator size="4" mb="2" />
+            <Box mb="3" style={{ height: 0, borderTop: '1px dashed var(--gray-a6)' }} />
             <Flex direction="column" gap="1">
               <MetaRow label={labels.createdAt} value={meta.createdAt} />
               <MetaRow label={labels.lastAccessedAt} value={meta.lastAccessedAt} />
@@ -161,27 +164,43 @@ export function TreeCard({
           </Box>
 
           <Flex align="center" gap="3" pt="1" style={{ marginTop: 'auto' }}>
-            <Button variant="outline" color="gray" onClick={onOpen} style={{ flex: 1 }}>
-              <Icon name="folder-open" size={14} />
+            <Button variant="soft" size="3" onClick={onOpen} style={{ flex: 1 }}>
+              <Icon name="folder-open" size={16} />
               {labels.open}
-              <Icon name="arrow-right" size={14} />
+              <Icon name="arrow-right" size={16} />
             </Button>
-            <IconButton variant="ghost" color="gray" onClick={onExport} aria-label={labels.export}>
-              <Icon name="download" size={14} />
-            </IconButton>
-            <IconButton variant="ghost" color="gray" onClick={onEdit} aria-label={labels.edit}>
-              <Icon name="pencil" size={14} />
+            {/*
+              The icon actions are sized to a 40px square — the height of the
+              size-3 Open button — while keeping the ghost variant. A ghost
+              IconButton otherwise hugs its icon, so the box is set explicitly;
+              `margin: 0` drops the ghost negative margins so the Flex gap holds.
+            */}
+            <IconButton
+              variant="ghost"
+              size="3"
+              onClick={onExport}
+              aria-label={labels.export}
+              style={{ width: 40, height: 40, padding: 0, margin: 0 }}
+            >
+              <Icon name="download" size={16} />
             </IconButton>
             <IconButton
               variant="ghost"
-              color="gray"
+              size="3"
+              onClick={onEdit}
+              aria-label={labels.edit}
+              style={{ width: 40, height: 40, padding: 0, margin: 0 }}
+            >
+              <Icon name="pencil" size={16} />
+            </IconButton>
+            <IconButton
+              variant="ghost"
+              size="3"
               onClick={onDelete}
               aria-label={labels.delete}
-              // Cancel the ghost variant's -6px right margin so the row ends
-              // flush with the card padding, matching the left edge.
-              style={{ marginRight: 0 }}
+              style={{ width: 40, height: 40, padding: 0, margin: 0 }}
             >
-              <Icon name="trash" size={14} />
+              <Icon name="trash" size={16} />
             </IconButton>
           </Flex>
         </Flex>

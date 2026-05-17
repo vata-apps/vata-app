@@ -29,21 +29,21 @@ export interface TreeCardCtaProps {
  */
 export function TreeCardCta({ title, subtitle, onClick }: TreeCardCtaProps): JSX.Element {
   return (
-    <Card asChild variant="surface" style={{ minHeight: 220, width: '100%' }}>
+    <Card asChild variant="surface" size="3" style={{ minHeight: 240, width: '100%' }}>
       <button type="button" onClick={onClick}>
         <Flex direction="column" align="center" justify="center" gap="3" height="100%">
           <Flex
             align="center"
             justify="center"
             style={{
-              width: 44,
-              height: 44,
+              width: 56,
+              height: 56,
               borderRadius: '50%',
-              border: '1px dashed var(--gray-a7)',
-              color: 'var(--gray-a11)',
+              border: '1px dashed var(--accent-a7)',
+              color: 'var(--accent-11)',
             }}
           >
-            <Icon name="plus" size={20} />
+            <Icon name="plus" size={24} />
           </Flex>
           <Flex direction="column" align="center" gap="1">
             <Text size="2" weight="medium">

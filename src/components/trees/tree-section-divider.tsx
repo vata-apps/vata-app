@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Badge, Flex, SegmentedControl, Separator, Text } from '@radix-ui/themes';
+import { Box, Flex, SegmentedControl, Text } from '@radix-ui/themes';
 
 /**
  * One option inside the sort segmented control.
@@ -17,7 +17,7 @@ export interface SegmentedControlOption {
 export interface TreeSectionDividerProps {
   /** Localized section label (uppercase, e.g., "Your trees"). */
   label: ReactNode;
-  /** Item count rendered in an outline badge next to the label. */
+  /** Item count rendered in a circular badge next to the label. */
   count: number;
   /** Sort options rendered as a segmented control on the right. */
   sortOptions: SegmentedControlOption[];
@@ -30,9 +30,9 @@ export interface TreeSectionDividerProps {
 }
 
 /**
- * Section header for the trees grid: an uppercase label, a count
- * badge, a horizontal rule that fills the available space, and a
- * segmented control bound to a sort selection.
+ * Section header for the trees grid: a mono uppercase label, a circular
+ * count badge, a horizontal rule that fades into the available space,
+ * and a segmented control bound to a sort selection.
  *
  * Owns no copy — every label is supplied by the caller.
  *
@@ -58,15 +58,39 @@ export function TreeSectionDivider({
     <Flex align="center" gap="3">
       <Text
         size="1"
-        weight="medium"
-        style={{ textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-a10)' }}
+        style={{
+          fontFamily: 'var(--code-font-family)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          color: 'var(--accent-11)',
+        }}
       >
         {label}
       </Text>
-      <Badge variant="outline" color="gray" radius="full">
+      <Flex
+        align="center"
+        justify="center"
+        aria-hidden
+        style={{
+          width: 24,
+          height: 24,
+          flex: 'none',
+          borderRadius: '50%',
+          border: '1px solid var(--accent-a5)',
+          fontFamily: 'var(--code-font-family)',
+          fontSize: 11,
+          color: 'var(--accent-11)',
+        }}
+      >
         {count}
-      </Badge>
-      <Separator style={{ flex: 1 }} />
+      </Flex>
+      <Box
+        style={{
+          flex: 1,
+          height: 1,
+          background: 'linear-gradient(90deg, var(--accent-a4), transparent 80%)',
+        }}
+      />
       <SegmentedControl.Root
         size="1"
         value={sortValue}

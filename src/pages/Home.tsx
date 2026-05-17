@@ -101,7 +101,7 @@ export function HomePage(): JSX.Element {
   } else {
     treesContent = (
       <>
-        <Box mt="6" mb="4">
+        <Box style={{ marginTop: 'clamp(48px, 7vw, 76px)', marginBottom: 22 }}>
           <TreeSectionDivider
             label={t('trees:home.sectionLabel')}
             count={sortedTrees.length}
@@ -112,7 +112,7 @@ export function HomePage(): JSX.Element {
           />
         </Box>
 
-        <Grid columns={{ initial: '1', sm: '2', lg: '3' }} gap="4">
+        <Grid className="trees-grid" gap="5">
           {sortedTrees.map((tree) => (
             <TreeCard
               key={tree.id}
@@ -146,21 +146,38 @@ export function HomePage(): JSX.Element {
   return (
     <Flex direction="column" height="100vh">
       <Box flexGrow="1" overflow="auto">
-        <Box px="8" pt="8" pb="7" style={{ maxWidth: 1080, marginInline: 'auto' }}>
-          <Box mb="6">
+        <Box
+          style={{
+            maxWidth: 1480,
+            marginInline: 'auto',
+            paddingInline: 'clamp(28px, 6vw, 88px)',
+            paddingTop: 'clamp(48px, 8vw, 96px)',
+            paddingBottom: 56,
+            backgroundImage:
+              'radial-gradient(800px 500px at 8% 0%, var(--accent-a2), transparent 70%), ' +
+              'radial-gradient(600px 400px at 100% 100%, var(--accent-a1), transparent 70%)',
+          }}
+        >
+          <Box style={{ marginBottom: 'clamp(32px, 5vw, 56px)' }}>
             <Heading
-              weight="medium"
-              style={{ fontSize: '56px', lineHeight: 1, letterSpacing: '-0.02em' }}
+              as="h1"
+              weight="regular"
+              style={{
+                fontSize: 'clamp(40px, 6vw, 80px)',
+                lineHeight: 1.04,
+                letterSpacing: '-0.035em',
+                textWrap: 'balance',
+              }}
             >
               {t('trees:home.title')}{' '}
-              <span style={{ color: 'var(--accent-11)' }}>{t('trees:home.titleAccent')}</span>
+              <span style={{ color: 'var(--accent-10)' }}>{t('trees:home.titleAccent')}</span>
             </Heading>
-            <Flex align="center" gap="3" mt="4">
-              <Button onClick={() => setNewTreeOpen(true)}>
+            <Flex align="center" gap="3" mt="6" wrap="wrap">
+              <Button size="3" onClick={() => setNewTreeOpen(true)}>
                 <Icon name="plus" size={16} />
                 {t('trees:home.heroNew')}
               </Button>
-              <Button variant="outline" color="gray" onClick={() => setImportOpen(true)}>
+              <Button size="3" variant="soft" onClick={() => setImportOpen(true)}>
                 <Icon name="download" size={16} />
                 {t('trees:home.heroImport')}
               </Button>
