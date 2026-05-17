@@ -62,7 +62,6 @@ export function TreeSectionDivider({
       <Flex
         align="center"
         justify="center"
-        aria-hidden
         style={{
           width: 24,
           height: 24,
