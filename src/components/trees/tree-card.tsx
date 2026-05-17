@@ -119,7 +119,7 @@ export function TreeCard({
       <article>
         <Flex direction="column" gap="3" height="100%">
           <Box>
-            <Heading size="4" truncate>
+            <Heading size="4" weight="medium" truncate>
               {name}
             </Heading>
             {description && (

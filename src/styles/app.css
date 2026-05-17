@@ -69,6 +69,16 @@
     U+A720-A7FF;
 }
 
+/* Fraunces — variable serif (italic only), used for headings.
+   The latin subset covers French + English; headings are Latin-script. */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./fonts/fraunces-latin-standard-italic.woff2') format('woff2');
+}
+
 /* ============================================================
    Theme — Vata's custom Radix Themes palette.
 
@@ -86,6 +96,7 @@
 
 .radix-themes {
   --default-font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --heading-font-family: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
 
   /* Accent — clay / terracotta — light */
   --accent-1: oklch(0.993 0.006 46);
@@ -133,7 +144,7 @@
   --accent-8: oklch(0.547 0.126 33);
   --accent-9: oklch(0.585 0.132 34);
   --accent-10: oklch(0.632 0.124 35);
-  --accent-11: oklch(0.705 0.084 30);
+  --accent-11: oklch(0.685 0.07 26);
   --accent-12: oklch(0.901 0.044 54);
   --accent-contrast: oklch(0.985 0.012 85);
   --accent-surface: oklch(0.262 0.044 31 / 0.5);
@@ -154,6 +165,15 @@
   --gray-11: oklch(0.778 0.048 66);
   --gray-12: oklch(0.93 0.032 78);
   --gray-surface: oklch(0.188 0.02 42 / 0.5);
+}
+
+/* ============================================================
+   Headings — Vata renders every Radix Themes Heading as Fraunces
+   italic (the --heading-font-family above supplies the family).
+   ============================================================ */
+
+.rt-Heading {
+  font-style: italic;
 }
 
 /* ============================================================

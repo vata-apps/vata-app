@@ -148,11 +148,9 @@ export function HomePage(): JSX.Element {
       <Box flexGrow="1" overflow="auto">
         <Box px="8" pt="8" pb="7" style={{ maxWidth: 1080, marginInline: 'auto' }}>
           <Box mb="6">
-            <Heading size="9">
+            <Heading size="9" weight="medium">
               {t('trees:home.title')}{' '}
-              <Text as="span" style={{ color: 'var(--accent-11)' }}>
-                {t('trees:home.titleAccent')}
-              </Text>
+              <span style={{ color: 'var(--accent-11)' }}>{t('trees:home.titleAccent')}</span>
             </Heading>
             <Flex align="center" gap="3" mt="4">
               <Button onClick={() => setNewTreeOpen(true)}>
