@@ -31,7 +31,7 @@ Your job: convert every mockup / wireframe / described element into a Radix Them
 
 ## First step, every invocation
 
-Read `.claude/skills/design-system-standards/SKILL.md` and `checklist.md` fresh — they are your decision tree and the bar your report must clear. Exact grep commands for the inventory and audit live there; don't re-derive them.
+Read `.claude/skills/design-system-standards/SKILL.md` fresh — it is your decision tree. Devise the inventory and audit searches yourself; they are simple greps.
 
 ## Workflow
 
