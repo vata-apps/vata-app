@@ -56,7 +56,11 @@ export function TreeSectionDivider({
 }: TreeSectionDividerProps): JSX.Element {
   return (
     <Flex align="center" gap="3">
-      <Text size="1" color="gray" style={{ textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+      <Text
+        size="1"
+        weight="medium"
+        style={{ textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-a10)' }}
+      >
         {label}
       </Text>
       <Badge variant="outline" color="gray" radius="full">

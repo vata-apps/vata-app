@@ -202,8 +202,12 @@ export function DeleteTreeModal({
                     </Text>
                     <Text
                       size="1"
-                      color="gray"
-                      style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
+                      weight="medium"
+                      style={{
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: 'var(--gray-a10)',
+                      }}
                     >
                       {stat.label}
                     </Text>

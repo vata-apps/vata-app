@@ -363,13 +363,17 @@ function ScanGrid({ scan }: { scan: ScanResult }): JSX.Element {
       <Grid columns="4" gap="3">
         {items.map((item, idx) => (
           <Flex key={idx} direction="column" gap="1">
-            <Text size="4" weight="medium" style={{ fontVariantNumeric: 'tabular-nums' }}>
+            <Text size="5" weight="bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
               {item.value}
             </Text>
             <Text
               size="1"
-              color="gray"
-              style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
+              weight="medium"
+              style={{
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: 'var(--gray-a10)',
+              }}
             >
               {item.label}
             </Text>

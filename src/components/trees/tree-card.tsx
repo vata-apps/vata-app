@@ -66,10 +66,14 @@ export interface TreeCardProps {
 function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Element {
   return (
     <Flex direction="column" gap="1">
-      <Text size="4" weight="medium" style={{ fontVariantNumeric: 'tabular-nums' }}>
+      <Text size="5" weight="bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
         {value}
       </Text>
-      <Text size="1" color="gray" style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <Text
+        size="1"
+        weight="medium"
+        style={{ textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-a10)' }}
+      >
         {label}
       </Text>
     </Flex>
@@ -79,10 +83,10 @@ function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Ele
 function MetaRow({ label, value }: { label: ReactNode; value: ReactNode }): JSX.Element {
   return (
     <Flex gap="2" align="center">
-      <Text size="1" color="gray" style={{ width: 120, flex: 'none' }}>
+      <Text size="1" style={{ width: 120, flex: 'none', color: 'var(--gray-a10)' }}>
         {label}
       </Text>
-      <Text size="1" style={{ fontVariantNumeric: 'tabular-nums' }}>
+      <Text size="1" color="gray" style={{ fontVariantNumeric: 'tabular-nums' }}>
         {value}
       </Text>
     </Flex>
@@ -156,7 +160,7 @@ export function TreeCard({
             </Flex>
           </Box>
 
-          <Flex align="center" gap="2" style={{ marginTop: 'auto' }}>
+          <Flex align="center" gap="3" pt="1" style={{ marginTop: 'auto' }}>
             <Button variant="outline" color="gray" onClick={onOpen} style={{ flex: 1 }}>
               <Icon name="folder-open" size={14} />
               {labels.open}
@@ -168,7 +172,15 @@ export function TreeCard({
             <IconButton variant="ghost" color="gray" onClick={onEdit} aria-label={labels.edit}>
               <Icon name="pencil" size={14} />
             </IconButton>
-            <IconButton variant="ghost" color="gray" onClick={onDelete} aria-label={labels.delete}>
+            <IconButton
+              variant="ghost"
+              color="gray"
+              onClick={onDelete}
+              aria-label={labels.delete}
+              // Cancel the ghost variant's -6px right margin so the row ends
+              // flush with the card padding, matching the left edge.
+              style={{ marginRight: 0 }}
+            >
               <Icon name="trash" size={14} />
             </IconButton>
           </Flex>

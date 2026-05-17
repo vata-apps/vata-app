@@ -29,14 +29,21 @@ function useResolvedAppearance(): 'light' | 'dark' {
 
 /**
  * Application-wide Radix Themes provider. Wraps the entire app, fixes
- * the Vata brand tokens (brown accent, sand gray, medium radius), and
+ * the Vata brand tokens (brown accent, sand gray, large radius, solid
+ * panels), and
  * binds the appearance to the persisted theme preference. Mounted once,
  * at the React root (see `main.tsx`).
  */
 export function AppTheme({ children }: { children: ReactNode }): JSX.Element {
   const appearance = useResolvedAppearance();
   return (
-    <Theme appearance={appearance} accentColor="brown" grayColor="sand" radius="medium">
+    <Theme
+      appearance={appearance}
+      accentColor="brown"
+      grayColor="sand"
+      radius="large"
+      panelBackground="solid"
+    >
       {children}
     </Theme>
   );

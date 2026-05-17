@@ -216,7 +216,11 @@ export function EditTreeModal({
 function SummaryStat({ label, value }: { label: ReactNode; value: ReactNode }): JSX.Element {
   return (
     <Flex direction="column" gap="1">
-      <Text size="1" color="gray" style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+      <Text
+        size="1"
+        weight="medium"
+        style={{ textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-a10)' }}
+      >
         {label}
       </Text>
       <Text size="2" style={{ fontVariantNumeric: 'tabular-nums' }}>
