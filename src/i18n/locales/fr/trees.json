@@ -143,7 +143,6 @@
     "confirmPlaceholder": "Tapez le nom de l'arbre",
     "cancel": "Annuler",
     "submit": "Supprimer l'arbre",
-    "soonLabel": "Bientôt",
     "closeLabel": "Fermer",
     "errorGeneric": "Échec de la suppression de l'arbre."
   }

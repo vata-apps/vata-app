@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { type ReactNode, useEffect, useId, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Badge,
   Box,
   Button,
   Callout,
@@ -145,21 +144,12 @@ export function DeleteTreeModal({
     onOpenChange(false);
   };
 
-  const soonLabel = (text: string): JSX.Element => (
-    <Flex align="center" gap="2" display="inline-flex">
-      {text}
-      <Badge variant="outline" color="gray">
-        {t('deleteTree.soonLabel')}
-      </Badge>
-    </Flex>
-  );
-
   const zero = (0).toLocaleString();
-  const stats: { value: string; label: ReactNode }[] = [
+  const stats: { value: string; label: string }[] = [
     { value: tree.individualCount.toLocaleString(), label: t('deleteTree.statsIndividuals') },
     { value: tree.familyCount.toLocaleString(), label: t('deleteTree.statsFamilies') },
-    { value: zero, label: soonLabel(t('deleteTree.statsSources')) },
-    { value: zero, label: soonLabel(t('deleteTree.statsMedia')) },
+    { value: zero, label: t('deleteTree.statsSources') },
+    { value: zero, label: t('deleteTree.statsMedia') },
   ];
 
   return (
