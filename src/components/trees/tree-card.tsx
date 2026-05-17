@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 import { Box, Button, Card, Flex, Heading, IconButton, Text } from '@radix-ui/themes';
 
-import { Icon } from '$components/icon';
+import { Icon, type IconName } from '$components/icon';
 
 /**
  * Stats shown in the card body.
@@ -76,15 +76,7 @@ function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Ele
       >
         {value}
       </Text>
-      <Text
-        color="gray"
-        style={{
-          fontFamily: 'var(--code-font-family)',
-          fontSize: 10.5,
-          textTransform: 'uppercase',
-          letterSpacing: '0.12em',
-        }}
-      >
+      <Text color="gray" className="mono-label" style={{ fontSize: 10.5 }}>
         {label}
       </Text>
     </Flex>
@@ -97,6 +89,34 @@ function MetaRow({ label, value }: { label: ReactNode; value: ReactNode }): JSX.
       <Text style={{ width: 110, flex: 'none', color: 'var(--gray-a10)' }}>{label}</Text>
       <Text style={{ color: 'var(--gray-12)', fontVariantNumeric: 'tabular-nums' }}>{value}</Text>
     </Flex>
+  );
+}
+
+/**
+ * One ghost icon action in the card's action row, sized to a 40px
+ * square — the height of the size-3 Open button. A ghost IconButton
+ * otherwise hugs its icon and carries negative margins, so the box is
+ * set explicitly and `margin: 0` keeps the row's Flex gap intact.
+ */
+function CardIconAction({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: IconName;
+  label: string;
+  onClick: () => void;
+}): JSX.Element {
+  return (
+    <IconButton
+      variant="ghost"
+      size="3"
+      onClick={onClick}
+      aria-label={label}
+      style={{ width: 40, height: 40, padding: 0, margin: 0 }}
+    >
+      <Icon name={icon} size={16} />
+    </IconButton>
   );
 }
 
@@ -169,39 +189,9 @@ export function TreeCard({
               {labels.open}
               <Icon name="arrow-right" size={16} />
             </Button>
-            {/*
-              The icon actions are sized to a 40px square — the height of the
-              size-3 Open button — while keeping the ghost variant. A ghost
-              IconButton otherwise hugs its icon, so the box is set explicitly;
-              `margin: 0` drops the ghost negative margins so the Flex gap holds.
-            */}
-            <IconButton
-              variant="ghost"
-              size="3"
-              onClick={onExport}
-              aria-label={labels.export}
-              style={{ width: 40, height: 40, padding: 0, margin: 0 }}
-            >
-              <Icon name="download" size={16} />
-            </IconButton>
-            <IconButton
-              variant="ghost"
-              size="3"
-              onClick={onEdit}
-              aria-label={labels.edit}
-              style={{ width: 40, height: 40, padding: 0, margin: 0 }}
-            >
-              <Icon name="pencil" size={16} />
-            </IconButton>
-            <IconButton
-              variant="ghost"
-              size="3"
-              onClick={onDelete}
-              aria-label={labels.delete}
-              style={{ width: 40, height: 40, padding: 0, margin: 0 }}
-            >
-              <Icon name="trash" size={16} />
-            </IconButton>
+            <CardIconAction icon="download" label={labels.export} onClick={onExport} />
+            <CardIconAction icon="pencil" label={labels.edit} onClick={onEdit} />
+            <CardIconAction icon="trash" label={labels.delete} onClick={onDelete} />
           </Flex>
         </Flex>
       </article>
