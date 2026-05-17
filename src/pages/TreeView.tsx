@@ -1,5 +1,6 @@
-import { Link } from '@tanstack/react-router';
+import { Link as RouterLink } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { Box, Flex, Heading, Link } from '@radix-ui/themes';
 
 interface TreeViewPageProps {
   treeId: string;
@@ -8,40 +9,40 @@ interface TreeViewPageProps {
 export function TreeViewPage({ treeId }: TreeViewPageProps): JSX.Element {
   const { t } = useTranslation(['common', 'trees']);
   return (
-    <div>
-      <h1>{t('trees:heading', { treeId })}</h1>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/tree/$treeId/individuals" params={{ treeId }}>
+    <Box p="5">
+      <Heading mb="3">{t('trees:heading', { treeId })}</Heading>
+      <Flex asChild direction="column" gap="2" align="start">
+        <nav>
+          <Link asChild>
+            <RouterLink to="/tree/$treeId/individuals" params={{ treeId }}>
               {t('common:nav.individuals')}
-            </Link>
-          </li>
-          <li>
-            <Link to="/tree/$treeId/families" params={{ treeId }}>
+            </RouterLink>
+          </Link>
+          <Link asChild>
+            <RouterLink to="/tree/$treeId/families" params={{ treeId }}>
               {t('common:nav.families')}
-            </Link>
-          </li>
-          <li>
-            <Link to="/tree/$treeId/sources" params={{ treeId }}>
+            </RouterLink>
+          </Link>
+          <Link asChild>
+            <RouterLink to="/tree/$treeId/sources" params={{ treeId }}>
               {t('common:nav.sources')}
-            </Link>
-          </li>
-          <li>
-            <Link to="/tree/$treeId/repositories" params={{ treeId }}>
+            </RouterLink>
+          </Link>
+          <Link asChild>
+            <RouterLink to="/tree/$treeId/repositories" params={{ treeId }}>
               {t('common:nav.repositories')}
-            </Link>
-          </li>
-          <li>
-            <Link to="/tree/$treeId/data" params={{ treeId }}>
+            </RouterLink>
+          </Link>
+          <Link asChild>
+            <RouterLink to="/tree/$treeId/data" params={{ treeId }}>
               {t('common:nav.dataBrowser')}
-            </Link>
-          </li>
-          <li>
-            <Link to="/">{t('common:nav.backToHome')}</Link>
-          </li>
-        </ul>
-      </nav>
-    </div>
+            </RouterLink>
+          </Link>
+          <Link asChild>
+            <RouterLink to="/">{t('common:nav.backToHome')}</RouterLink>
+          </Link>
+        </nav>
+      </Flex>
+    </Box>
   );
 }

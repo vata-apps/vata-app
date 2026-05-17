@@ -1,14 +1,23 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Badge,
+  Box,
+  Button,
+  Callout,
+  Card,
+  Dialog,
+  Flex,
+  Grid,
+  IconButton,
+  Switch,
+  Text,
+  TextField,
+} from '@radix-ui/themes';
 
-import { Badge } from '$components/ui/badge';
-import { Button } from '$components/ui/button';
-import { Dialog } from '$components/ui/dialog';
-import { Dropzone } from '$components/ui/dropzone';
-import { Input } from '$components/ui/input';
-import { StatGrid, type StatGridItem } from '$components/ui/stat-grid';
-import { Switch } from '$components/ui/switch';
+import { Dropzone } from '$components/dropzone';
+import { Icon } from '$components/icon';
 import { GedcomManager, type ImportResult, type ScanResult } from '$/managers/GedcomManager';
 import { formatBytes } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
@@ -42,13 +51,12 @@ export interface ImportGedcomModalProps {
 
   /**
    * Override the import function. Defaults to
-   * {@link GedcomManager.importFromContent}. Stories inject a spy here
-   * to assert what the submit handler passes downstream.
+   * {@link GedcomManager.importFromContent}.
    */
   importTree?: (content: string, treeName: string) => Promise<ImportResult>;
 
   /**
-   * Pre-populates the modal with a selected file. Stories use this to
+   * Pre-populates the modal with a selected file. Tests use this to
    * exercise the post-selection state without driving the Tauri file
    * dialog. Production code does not pass this prop.
    */
@@ -71,8 +79,7 @@ async function readGedcomFile(path: string): Promise<string> {
 
 /**
  * Strip the extension and any leading directory off a filename to get
- * a sensible default tree name. Mirrors what `importFromFile` does
- * silently today.
+ * a sensible default tree name.
  */
 function deriveTreeName(filename: string): string {
   const base = filename.split(/[/\\]/).pop() ?? filename;
@@ -81,10 +88,7 @@ function deriveTreeName(filename: string): string {
 
 /**
  * Form host for importing a GEDCOM file into a new tree. Wraps the
- * scan-preview-then-submit flow described in the home-page mockup.
- *
- * The modal owns its own error state — there is no inline error left
- * on the home page after this lands.
+ * scan-preview-then-submit flow.
  */
 export function ImportGedcomModal({
   open,
@@ -105,8 +109,7 @@ export function ImportGedcomModal({
 
   // Bumped on every modal close. In-flight scans capture the value at
   // start and abort their writes if it changed by the time the read or
-  // parse resolves — otherwise stale results would land back in state
-  // after reset and survive into the next reopen.
+  // parse resolves.
   const scanIdRef = useRef(0);
 
   const mutation = useMutation({
@@ -125,9 +128,8 @@ export function ImportGedcomModal({
   });
 
   // Reset form state every time the modal closes. `initialSelection`
-  // is intentionally omitted from the dep array — it's a story-only
-  // seam that never changes mid-session, and adding it would force a
-  // reset on every render.
+  // is intentionally omitted from the dep array — it's a test-only
+  // seam that never changes mid-session.
   useEffect(() => {
     if (!open) {
       scanIdRef.current++;
@@ -149,8 +151,7 @@ export function ImportGedcomModal({
       if (scanId !== scanIdRef.current) return;
       // GedcomManager.scan is synchronous and can block the main thread
       // for hundreds of ms on large files. Yield once so React commits
-      // the spinner frame before the parse starts — otherwise the
-      // loading indicator never paints.
+      // the spinner frame before the parse starts.
       await new Promise((resolve) => setTimeout(resolve, 0));
       if (scanId !== scanIdRef.current) return;
       setSelected({
@@ -193,7 +194,7 @@ export function ImportGedcomModal({
   };
 
   return (
-    <Dialog
+    <Dialog.Root
       open={open}
       onOpenChange={(next) => {
         if (next) {
@@ -202,97 +203,104 @@ export function ImportGedcomModal({
         }
         closeModal();
       }}
-      size="lg"
-      title={<span className="font-serif italic">{t('importGedcom.title')}</span>}
-      description={t('importGedcom.subtitle')}
-      closeLabel={t('importGedcom.closeLabel')}
-      footerNote={<span className="font-mono">{t('importGedcom.footerNote')}</span>}
-      footer={
-        <>
-          <Button variant="ghost" onClick={closeModal} disabled={mutation.isPending}>
-            {t('importGedcom.cancel')}
-          </Button>
-          <Button type="submit" form={formId} disabled={!canSubmit}>
-            {t('importGedcom.submit')}
-          </Button>
-        </>
-      }
     >
-      <form id={formId} onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {!selected && (
-          <Dropzone
-            state={scanning ? 'scanning' : scanError ? 'error' : 'idle'}
-            onFileSelected={handleFileSelected}
-            formatName={t('importGedcom.dropzoneFormatName')}
-            idleLabel={t('importGedcom.dropzoneLabel')}
-            selectedName={
-              scanning ? t('importGedcom.dropzoneScanning', { name: scanning }) : undefined
-            }
-            hint={t('importGedcom.dropzoneHint')}
-            disabled={mutation.isPending || scanning !== null}
-          />
-        )}
+      <Dialog.Content maxWidth="720px">
+        <Dialog.Title>{t('importGedcom.title')}</Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          {t('importGedcom.subtitle')}
+        </Dialog.Description>
 
-        {scanError && !selected && (
-          <p role="alert" className="text-destructive text-sm">
-            {scanError}
-          </p>
-        )}
-
-        {selected && (
-          <>
-            <FileRow file={selected} onClear={() => setSelected(null)} />
-            <ScanGrid scan={selected.scan} />
-
-            {selected.scan.warnings.length > 0 && (
-              <WarningList
-                warnings={selected.scan.warnings}
-                label={t('importGedcom.warningsLabel', { count: selected.scan.warnings.length })}
+        <form id={formId} onSubmit={handleSubmit}>
+          <Flex direction="column" gap="4">
+            {!selected && (
+              <Dropzone
+                state={scanning ? 'scanning' : scanError ? 'error' : 'idle'}
+                onFileSelected={handleFileSelected}
+                formatName={t('importGedcom.dropzoneFormatName')}
+                idleLabel={t('importGedcom.dropzoneLabel')}
+                selectedName={
+                  scanning ? t('importGedcom.dropzoneScanning', { name: scanning }) : undefined
+                }
+                hint={t('importGedcom.dropzoneHint')}
+                disabled={mutation.isPending || scanning !== null}
               />
             )}
 
-            {selected.scan.errors.length > 0 && (
-              <ErrorList errors={selected.scan.errors} label={t('importGedcom.errorsLabel')} />
+            {scanError && !selected && (
+              <Callout.Root color="red" size="1" role="alert">
+                <Callout.Text>{scanError}</Callout.Text>
+              </Callout.Root>
             )}
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor={nameId} className="text-foreground text-sm font-medium">
-                {t('importGedcom.nameLabel')}
-              </label>
-              <Input
-                id={nameId}
-                required
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                placeholder={t('importGedcom.namePlaceholder')}
-                disabled={mutation.isPending}
-              />
-            </div>
+            {selected && (
+              <>
+                <FileRow file={selected} onClear={() => setSelected(null)} />
+                <ScanGrid scan={selected.scan} />
 
-            <div className="border-border flex flex-col gap-1 rounded-lg border p-3">
-              <span className="text-foreground text-sm font-medium">
-                {t('importGedcom.optionsLabel')}
-              </span>
-              <SoonSwitch label={t('importGedcom.mergeDuplicatesLabel')} />
-              <SoonSwitch label={t('importGedcom.importMediaLabel')} />
-              <SoonSwitch label={t('importGedcom.hideLivingLabel')} />
-            </div>
-          </>
-        )}
+                {selected.scan.warnings.length > 0 && (
+                  <WarningList
+                    warnings={selected.scan.warnings}
+                    label={t('importGedcom.warningsLabel', {
+                      count: selected.scan.warnings.length,
+                    })}
+                  />
+                )}
 
-        {mutation.isError && (
-          <p role="alert" className="text-destructive text-sm">
-            {t('importGedcom.errorGeneric')}
-          </p>
-        )}
-      </form>
-    </Dialog>
+                {selected.scan.errors.length > 0 && (
+                  <ErrorList errors={selected.scan.errors} label={t('importGedcom.errorsLabel')} />
+                )}
+
+                <Flex direction="column" gap="1">
+                  <Text as="label" htmlFor={nameId} size="2" weight="medium">
+                    {t('importGedcom.nameLabel')}
+                  </Text>
+                  <TextField.Root
+                    id={nameId}
+                    required
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    placeholder={t('importGedcom.namePlaceholder')}
+                    disabled={mutation.isPending}
+                  />
+                </Flex>
+
+                <Card>
+                  <Flex direction="column" gap="2">
+                    <Text size="2" weight="medium">
+                      {t('importGedcom.optionsLabel')}
+                    </Text>
+                    <SoonSwitch label={t('importGedcom.mergeDuplicatesLabel')} />
+                    <SoonSwitch label={t('importGedcom.importMediaLabel')} />
+                    <SoonSwitch label={t('importGedcom.hideLivingLabel')} />
+                  </Flex>
+                </Card>
+              </>
+            )}
+
+            {mutation.isError && (
+              <Callout.Root color="red" size="1" role="alert">
+                <Callout.Text>{t('importGedcom.errorGeneric')}</Callout.Text>
+              </Callout.Root>
+            )}
+          </Flex>
+        </form>
+
+        <Flex gap="3" mt="4" justify="between" align="center">
+          <Text size="1" color="gray">
+            {t('importGedcom.footerNote')}
+          </Text>
+          <Flex gap="3">
+            <Button variant="soft" color="gray" onClick={closeModal} disabled={mutation.isPending}>
+              {t('importGedcom.cancel')}
+            </Button>
+            <Button type="submit" form={formId} disabled={!canSubmit}>
+              {t('importGedcom.submit')}
+            </Button>
+          </Flex>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
-}
-
-interface FileRowProps {
-  file: SelectedFile;
-  onClear: () => void;
 }
 
 /**
@@ -300,28 +308,31 @@ interface FileRowProps {
  * encoding) with a clear button that returns the modal to the
  * pre-selection state so the user can pick a different file.
  */
-function FileRow({ file, onClear }: FileRowProps): JSX.Element {
+function FileRow({ file, onClear }: { file: SelectedFile; onClear: () => void }): JSX.Element {
   const { t } = useTranslation('trees');
   return (
-    <div className="border-border flex items-center gap-3 rounded-lg border p-3">
-      <Badge variant="primary" size="sm">
-        {t('importGedcom.fileBadge')}
-      </Badge>
-      <div className="flex flex-1 flex-col gap-0.5">
-        <span className="text-foreground text-sm font-medium">{file.name}</span>
-        <span className="text-muted-foreground font-mono text-xs">
-          {formatBytes(file.size)} · {t('importGedcom.fileEncoding')}
-        </span>
-      </div>
-      <Button variant="ghost" size="sm" leadingIcon="x" hideLabel onClick={onClear}>
-        {t('importGedcom.clearFileLabel')}
-      </Button>
-    </div>
+    <Card>
+      <Flex align="center" gap="3">
+        <Badge>{t('importGedcom.fileBadge')}</Badge>
+        <Flex direction="column" gap="1" flexGrow="1">
+          <Text size="2" weight="medium">
+            {file.name}
+          </Text>
+          <Text size="1" color="gray">
+            {formatBytes(file.size)} · {t('importGedcom.fileEncoding')}
+          </Text>
+        </Flex>
+        <IconButton
+          variant="ghost"
+          color="gray"
+          onClick={onClear}
+          aria-label={t('importGedcom.clearFileLabel')}
+        >
+          <Icon name="x" size={16} />
+        </IconButton>
+      </Flex>
+    </Card>
   );
-}
-
-interface ScanGridProps {
-  scan: ScanResult;
 }
 
 /**
@@ -329,30 +340,48 @@ interface ScanGridProps {
  * families, places (always 0 — see {@link ScanResult.places}), and
  * sources. The Places cell renders a `Soon` badge to set expectations.
  */
-function ScanGrid({ scan }: ScanGridProps): JSX.Element {
+function ScanGrid({ scan }: { scan: ScanResult }): JSX.Element {
   const { t } = useTranslation('trees');
-  const items: StatGridItem[] = [
+  const items: { value: number; label: React.ReactNode }[] = [
     { value: scan.individuals, label: t('importGedcom.scanIndividuals') },
     { value: scan.families, label: t('importGedcom.scanFamilies') },
     {
       value: scan.places,
       label: (
-        <span className="inline-flex items-center gap-1.5">
+        <Flex align="center" gap="2" display="inline-flex">
           {t('importGedcom.scanPlaces')}
-          <Badge variant="soon" size="sm">
+          <Badge variant="outline" color="gray">
             {t('importGedcom.soonLabel')}
           </Badge>
-        </span>
+        </Flex>
       ),
     },
     { value: scan.sources, label: t('importGedcom.scanSources') },
   ];
-  return <StatGrid items={items} />;
-}
-
-interface WarningListProps {
-  warnings: string[];
-  label: string;
+  return (
+    <Card>
+      <Grid columns="4" gap="3">
+        {items.map((item, idx) => (
+          <Flex key={idx} direction="column" gap="1">
+            <Text size="5" weight="bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
+              {item.value}
+            </Text>
+            <Text
+              size="1"
+              weight="medium"
+              style={{
+                textTransform: 'uppercase',
+                letterSpacing: '0.06em',
+                color: 'var(--gray-a10)',
+              }}
+            >
+              {item.label}
+            </Text>
+          </Flex>
+        ))}
+      </Grid>
+    </Card>
+  );
 }
 
 /**
@@ -360,22 +389,35 @@ interface WarningListProps {
  * `<details>` so the user can expand individual messages without the
  * panel dominating the modal when there are many warnings.
  */
-function WarningList({ warnings, label }: WarningListProps): JSX.Element {
+function WarningList({ warnings, label }: { warnings: string[]; label: string }): JSX.Element {
   return (
-    <details className="border-warning/40 bg-warning/5 rounded-lg border p-3 text-sm">
-      <summary className="text-warning cursor-pointer font-medium">{label}</summary>
-      <ul className="text-muted-foreground mt-2 flex list-disc flex-col gap-1 pl-5">
-        {warnings.map((message, idx) => (
-          <li key={idx}>{message}</li>
-        ))}
-      </ul>
-    </details>
+    <Box
+      asChild
+      style={{
+        border: '1px solid var(--amber-a5)',
+        background: 'var(--amber-a2)',
+        borderRadius: 'var(--radius-3)',
+        padding: 'var(--space-3)',
+      }}
+    >
+      <details>
+        <summary style={{ cursor: 'pointer' }}>
+          <Text size="2" weight="medium" color="amber">
+            {label}
+          </Text>
+        </summary>
+        <ul style={{ margin: 'var(--space-2) 0 0', paddingLeft: 'var(--space-5)' }}>
+          {warnings.map((message, idx) => (
+            <li key={idx}>
+              <Text size="2" color="gray">
+                {message}
+              </Text>
+            </li>
+          ))}
+        </ul>
+      </details>
+    </Box>
   );
-}
-
-interface ErrorListProps {
-  errors: string[];
-  label: string;
 }
 
 /**
@@ -383,46 +425,49 @@ interface ErrorListProps {
  * so assistive tech announces it; the modal's submit button stays
  * disabled while there are entries here.
  */
-function ErrorList({ errors, label }: ErrorListProps): JSX.Element {
+function ErrorList({ errors, label }: { errors: string[]; label: string }): JSX.Element {
   return (
-    <div
+    <Box
       role="alert"
-      className="border-destructive/40 bg-destructive/5 rounded-lg border p-3 text-sm"
+      style={{
+        border: '1px solid var(--red-a5)',
+        background: 'var(--red-a2)',
+        borderRadius: 'var(--radius-3)',
+        padding: 'var(--space-3)',
+      }}
     >
-      <p className="text-destructive font-medium">{label}</p>
-      <ul className="text-muted-foreground mt-2 flex list-disc flex-col gap-1 pl-5">
+      <Text size="2" weight="medium" color="red">
+        {label}
+      </Text>
+      <ul style={{ margin: 'var(--space-2) 0 0', paddingLeft: 'var(--space-5)' }}>
         {errors.map((message, idx) => (
-          <li key={idx}>{message}</li>
+          <li key={idx}>
+            <Text size="2" color="gray">
+              {message}
+            </Text>
+          </li>
         ))}
       </ul>
-    </div>
+    </Box>
   );
-}
-
-interface SoonSwitchProps {
-  label: string;
 }
 
 /**
  * Disabled switch with a `Soon` badge — visually present in the
- * options panel so the user sees future capability, but doesn't fool
- * them into thinking it has any effect today.
+ * options panel so the user sees future capability without being
+ * fooled into thinking it has any effect today.
  */
-function SoonSwitch({ label }: SoonSwitchProps): JSX.Element {
+function SoonSwitch({ label }: { label: string }): JSX.Element {
   const { t } = useTranslation('trees');
   return (
-    <Switch
-      checked={false}
-      onCheckedChange={() => undefined}
-      disabled
-      label={
-        <span className="inline-flex items-center gap-2">
-          {label}
-          <Badge variant="soon" size="sm">
-            {t('importGedcom.soonLabel')}
-          </Badge>
-        </span>
-      }
-    />
+    <Text as="label" size="2" color="gray">
+      <Flex align="center" gap="2">
+        <Switch disabled />
+        {label}
+        <Badge variant="outline" color="gray">
+          {t('importGedcom.soonLabel')}
+        </Badge>
+      </Flex>
+    </Text>
   );
 }

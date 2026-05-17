@@ -1,6 +1,6 @@
 # ADR-005: UI Strategy — Radix + Tailwind v4 + tailwind-variants
 
-**Status**: Accepted (revised 2026-05-02)
+**Status**: Superseded by [ADR-007](./0007-adopt-radix-themes.md) (2026-05-16)
 **Date**: 2025-02-22 (revised 2026-04-04, 2026-05-02)
 
 ## Context
@@ -54,4 +54,3 @@ The application needs a UI foundation that is accessible, customizable, and fits
 - [Tech Stack — UI Layer](../architecture/tech-stack.md)
 - [Tech Stack — Internationalization](../architecture/tech-stack.md)
 - [Design System](../ui/design-system.md)
-- [Storybook conventions](../ui/storybook.md)

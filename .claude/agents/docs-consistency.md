@@ -81,14 +81,11 @@ docs/api/database-layer.md
   -> docs/architecture/database-schema.md
 
 docs/ui/design-system.md
-  -> docs/ui/storybook.md (Storybook is the live design-system surface)
   -> docs/ui/layouts.md
+  -> docs/adr/0007-adopt-radix-themes.md (the UI-foundation decision)
 
 docs/ui/layouts.md
   -> docs/architecture/app-structure.md
-  -> docs/ui/design-system.md
-
-docs/ui/storybook.md
   -> docs/ui/design-system.md
 
 docs/ui/screens/*.md

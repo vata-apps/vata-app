@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Button } from '$components/ui/button';
+import { Box, Button, Heading } from '@radix-ui/themes';
 
 interface SourcesPageProps {
   treeId: string;
@@ -9,13 +9,13 @@ interface SourcesPageProps {
 export function SourcesPage({ treeId }: SourcesPageProps): JSX.Element {
   const { t } = useTranslation('common');
   return (
-    <div>
-      <Button asChild variant="ghost" size="sm">
+    <Box p="5">
+      <Button asChild variant="ghost" color="gray" size="1">
         <Link to="/tree/$treeId" params={{ treeId }}>
           {t('nav.back')}
         </Link>
       </Button>
-      <h1>{t('nav.sources')}</h1>
-    </div>
+      <Heading mt="2">{t('nav.sources')}</Heading>
+    </Box>
   );
 }

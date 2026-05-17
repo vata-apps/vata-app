@@ -1,15 +1,23 @@
 import { type ReactNode } from 'react';
+import { Box, Flex, SegmentedControl, Text } from '@radix-ui/themes';
 
-import { Badge } from '$components/ui/badge';
-import { SegmentedControl, type SegmentedControlOption } from '$components/ui/segmented-control';
+/**
+ * One option inside the sort segmented control.
+ */
+export interface SegmentedControlOption {
+  /** Submitted value. */
+  value: string;
+  /** Localized label rendered in the segment. */
+  label: ReactNode;
+}
 
 /**
  * Props accepted by {@link TreeSectionDivider}.
  */
 export interface TreeSectionDividerProps {
-  /** Localized section label (mono uppercase, e.g., "Your trees"). */
+  /** Localized section label (uppercase, e.g., "Your trees"). */
   label: ReactNode;
-  /** Item count rendered in an outline badge next to the label. */
+  /** Item count rendered in a circular badge next to the label. */
   count: number;
   /** Sort options rendered as a segmented control on the right. */
   sortOptions: SegmentedControlOption[];
@@ -22,22 +30,17 @@ export interface TreeSectionDividerProps {
 }
 
 /**
- * Section header for the trees grid: a mono uppercase label, a count
- * badge, a thin horizontal rule that fills the available space, and a
- * segmented control bound to a sort selection.
+ * Section header for the trees grid: a mono uppercase label, a circular
+ * count badge, a horizontal rule that fades into the available space,
+ * and a segmented control bound to a sort selection.
  *
- * Composes existing primitives ({@link Badge}, {@link SegmentedControl})
- * and owns no copy — every label is supplied by the caller.
+ * Owns no copy — every label is supplied by the caller.
  *
  * @example
  * <TreeSectionDivider
  *   label={t('home.sectionLabel')}
  *   count={trees.length}
- *   sortOptions={[
- *     { value: 'recent', label: t('home.sortRecent') },
- *     { value: 'name', label: t('home.sortName') },
- *     { value: 'size', label: t('home.sortSize') },
- *   ]}
+ *   sortOptions={[{ value: 'recent', label: t('home.sortRecent') }]}
  *   sortValue={sort}
  *   onSortChange={setSort}
  *   sortAriaLabel={t('home.sortAriaLabel')}
@@ -52,23 +55,45 @@ export function TreeSectionDivider({
   sortAriaLabel,
 }: TreeSectionDividerProps): JSX.Element {
   return (
-    <div className="flex items-center gap-3.5">
-      <span className="text-muted-foreground font-mono text-[10.5px] tracking-wider uppercase">
+    <Flex align="center" gap="3">
+      <Text size="1" className="mono-label" style={{ color: 'var(--accent-11)' }}>
         {label}
-      </span>
-      <Badge variant="outline" size="sm" className="font-mono">
-        {count}
-      </Badge>
-      <span aria-hidden className="bg-border h-px flex-1" />
-      <SegmentedControl
-        size="sm"
-        options={sortOptions}
-        value={sortValue}
-        onValueChange={(next) => {
-          if (next) onSortChange(next);
+      </Text>
+      <Flex
+        align="center"
+        justify="center"
+        style={{
+          width: 24,
+          height: 24,
+          flex: 'none',
+          borderRadius: '50%',
+          border: '1px solid var(--accent-a5)',
+          fontFamily: 'var(--code-font-family)',
+          fontSize: 11,
+          color: 'var(--accent-11)',
         }}
-        aria-label={sortAriaLabel}
+      >
+        {count}
+      </Flex>
+      <Box
+        style={{
+          flex: 1,
+          height: 1,
+          background: 'linear-gradient(90deg, var(--accent-a4), transparent 80%)',
+        }}
       />
-    </div>
+      <SegmentedControl.Root
+        size="1"
+        value={sortValue}
+        onValueChange={onSortChange}
+        aria-label={sortAriaLabel}
+      >
+        {sortOptions.map((option) => (
+          <SegmentedControl.Item key={option.value} value={option.value}>
+            {option.label}
+          </SegmentedControl.Item>
+        ))}
+      </SegmentedControl.Root>
+    </Flex>
   );
 }

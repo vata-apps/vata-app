@@ -1,21 +1,23 @@
 import { createRootRoute, Outlet, type ErrorComponentProps } from '@tanstack/react-router';
+import { Button, Code, Flex, Heading } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
-
-import { useApplyAppPreferences } from '$hooks/useApplyAppPreferences';
 
 function RootErrorComponent({ error }: ErrorComponentProps): JSX.Element {
   const { t } = useTranslation('common');
   return (
-    <div>
-      <h1>{t('errors.generic')}</h1>
-      {import.meta.env.DEV && <pre>{error.message}</pre>}
-      <button onClick={() => window.location.reload()}>{t('errors.reload')}</button>
-    </div>
+    <Flex direction="column" align="start" gap="3" p="6">
+      <Heading size="6">{t('errors.generic')}</Heading>
+      {import.meta.env.DEV && (
+        <Code variant="soft" size="2" style={{ whiteSpace: 'pre-wrap' }}>
+          {error.message}
+        </Code>
+      )}
+      <Button onClick={() => window.location.reload()}>{t('errors.reload')}</Button>
+    </Flex>
   );
 }
 
 function RootComponent(): JSX.Element {
-  useApplyAppPreferences();
   return <Outlet />;
 }
 

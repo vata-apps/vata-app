@@ -1,19 +1,25 @@
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Badge,
+  Button,
+  Callout,
+  Card,
+  Dialog,
+  Flex,
+  Grid,
+  Select,
+  Switch,
+  Text,
+} from '@radix-ui/themes';
 
-import { Badge } from '$components/ui/badge';
-import { Button } from '$components/ui/button';
-import { Dialog } from '$components/ui/dialog';
-import { OptionCard, OptionCardGroup } from '$components/ui/option-card';
-import { Select } from '$components/ui/select';
-import { StatGrid, type StatGridItem } from '$components/ui/stat-grid';
-import { Switch } from '$components/ui/switch';
+import { Icon } from '$components/icon';
 import { GedcomManager } from '$/managers/GedcomManager';
 
 /**
  * Lightweight projection of {@link Tree} carrying just what the modal
- * needs to render. Decoupled from the DB row so stories can build
+ * needs to render. Decoupled from the DB row so tests can build
  * fixtures without touching SQLite.
  */
 export interface DownloadTreeTarget {
@@ -38,9 +44,7 @@ export interface DownloadTreeModalProps {
 
   /**
    * Override the export function. Defaults to
-   * {@link GedcomManager.exportToFile}. Tests/stories inject a spy
-   * here so the flow can be exercised without hitting Tauri's save
-   * dialog.
+   * {@link GedcomManager.exportToFile}.
    */
   exportTree?: (treeName: string, includePrivate: boolean) => Promise<boolean>;
 }
@@ -58,8 +62,7 @@ type SizeEstimate =
 /**
  * Heuristic file-size estimate for the summary stat grid. Real export
  * size depends on the GEDCOM serialiser; this is just a rough
- * order-of-magnitude shown to the user. Returns the raw bucket so the
- * consumer can render the label via i18n.
+ * order-of-magnitude shown to the user.
  */
 function estimateExportSize(individualCount: number, familyCount: number): SizeEstimate {
   const kb = individualCount * 0.5 + familyCount * 0.2;
@@ -128,20 +131,14 @@ export function DownloadTreeModal({
         : 'downloadTree.sizeMb';
   const sizeValue = sizeEstimate.bucket === 'under-kb' ? '' : sizeEstimate.value;
 
-  const statItems: StatGridItem[] = [
-    {
-      value: tree.individualCount.toLocaleString(),
-      label: t('downloadTree.summaryIndividuals'),
-    },
+  const stats: { value: string; label: string }[] = [
+    { value: tree.individualCount.toLocaleString(), label: t('downloadTree.summaryIndividuals') },
     { value: tree.familyCount.toLocaleString(), label: t('downloadTree.summaryFamilies') },
-    {
-      value: t(sizeKey, { value: sizeValue }),
-      label: t('downloadTree.summaryEstimatedSize'),
-    },
+    { value: t(sizeKey, { value: sizeValue }), label: t('downloadTree.summaryEstimatedSize') },
   ];
 
   return (
-    <Dialog
+    <Dialog.Root
       open={open}
       onOpenChange={(next) => {
         if (next) {
@@ -150,129 +147,180 @@ export function DownloadTreeModal({
         }
         closeModal();
       }}
-      size="md"
-      title={<span className="font-serif italic">{t('downloadTree.title')}</span>}
-      description={t('downloadTree.subtitle', { treeName: tree.name })}
-      closeLabel={t('downloadTree.closeLabel')}
-      footerNote={<span className="font-mono">{t('downloadTree.footerNote')}</span>}
-      footer={
-        <>
-          <Button variant="ghost" onClick={closeModal} disabled={mutation.isPending}>
-            {t('downloadTree.cancel')}
-          </Button>
-          <Button type="submit" form={formId} leadingIcon="download" disabled={mutation.isPending}>
-            {t('downloadTree.submit')}
-          </Button>
-        </>
-      }
     >
-      <form id={formId} onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <span className="text-foreground text-sm font-medium">
-            {t('downloadTree.formatLabel')}
-          </span>
-          <OptionCardGroup
-            value="gedcom"
-            onValueChange={() => undefined}
-            aria-label={t('downloadTree.formatLabel')}
-            cols={3}
-          >
-            <OptionCard
-              value="gedcom"
-              label={t('downloadTree.formatGedcomLabel')}
-              description={t('downloadTree.formatGedcomDescription')}
-            />
-            <OptionCard
-              value="vata"
-              label={t('downloadTree.formatVataLabel')}
-              description={t('downloadTree.formatVataDescription')}
-              soon
-              soonLabel={t('downloadTree.soonLabel')}
-            />
-            <OptionCard
-              value="zip"
-              label={t('downloadTree.formatZipLabel')}
-              description={t('downloadTree.formatZipDescription')}
-              soon
-              soonLabel={t('downloadTree.soonLabel')}
-            />
-          </OptionCardGroup>
-        </div>
+      <Dialog.Content maxWidth="520px">
+        <Dialog.Title>{t('downloadTree.title')}</Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          {t('downloadTree.subtitle', { treeName: tree.name })}
+        </Dialog.Description>
 
-        <div className="flex flex-col gap-1.5">
-          <span className="text-foreground inline-flex items-center gap-2 text-sm font-medium">
-            {t('downloadTree.versionLabel')}
-            <Badge variant="soon" size="sm">
-              {t('downloadTree.soonLabel')}
-            </Badge>
-          </span>
-          <Select
-            value={t('downloadTree.versionPlaceholder')}
-            onValueChange={() => undefined}
-            options={[
-              {
-                value: t('downloadTree.versionPlaceholder'),
-                label: t('downloadTree.versionPlaceholder'),
-              },
-            ]}
-            placeholder={t('downloadTree.versionPlaceholder')}
-            disabled
-            aria-label={t('downloadTree.versionLabel')}
-          />
-        </div>
+        <form id={formId} onSubmit={handleSubmit}>
+          <Flex direction="column" gap="4">
+            <Flex direction="column" gap="1">
+              <Text size="2" weight="medium">
+                {t('downloadTree.formatLabel')}
+              </Text>
+              <Grid columns="3" gap="2">
+                <FormatCard
+                  label={t('downloadTree.formatGedcomLabel')}
+                  description={t('downloadTree.formatGedcomDescription')}
+                  selected
+                />
+                <FormatCard
+                  label={t('downloadTree.formatVataLabel')}
+                  description={t('downloadTree.formatVataDescription')}
+                  soonLabel={t('downloadTree.soonLabel')}
+                />
+                <FormatCard
+                  label={t('downloadTree.formatZipLabel')}
+                  description={t('downloadTree.formatZipDescription')}
+                  soonLabel={t('downloadTree.soonLabel')}
+                />
+              </Grid>
+            </Flex>
 
-        <div className="border-border flex flex-col gap-1 rounded-lg border p-3">
-          <span className="text-foreground text-sm font-medium">
-            {t('downloadTree.optionsLabel')}
-          </span>
-          <SoonSwitch label={t('downloadTree.includeSourcesLabel')} />
-          <Switch
-            checked={hideLiving}
-            onCheckedChange={setHideLiving}
-            label={t('downloadTree.hideLivingLabel')}
-            disabled={mutation.isPending}
-          />
-          <SoonSwitch label={t('downloadTree.includePrivateNotesLabel')} />
-        </div>
+            <Flex direction="column" gap="1">
+              <Flex align="center" gap="2">
+                <Text size="2" weight="medium">
+                  {t('downloadTree.versionLabel')}
+                </Text>
+                <Badge variant="outline" color="gray">
+                  {t('downloadTree.soonLabel')}
+                </Badge>
+              </Flex>
+              <Select.Root disabled defaultValue="placeholder">
+                <Select.Trigger aria-label={t('downloadTree.versionLabel')} />
+                <Select.Content>
+                  <Select.Item value="placeholder">
+                    {t('downloadTree.versionPlaceholder')}
+                  </Select.Item>
+                </Select.Content>
+              </Select.Root>
+            </Flex>
 
-        <div className="border-border bg-muted/30 rounded-lg border p-4">
-          <StatGrid items={statItems} cols={3} />
-        </div>
+            <Card>
+              <Flex direction="column" gap="2">
+                <Text size="2" weight="medium">
+                  {t('downloadTree.optionsLabel')}
+                </Text>
+                <SoonSwitch label={t('downloadTree.includeSourcesLabel')} />
+                <Text as="label" size="2">
+                  <Flex align="center" gap="2">
+                    <Switch
+                      checked={hideLiving}
+                      onCheckedChange={setHideLiving}
+                      disabled={mutation.isPending}
+                    />
+                    {t('downloadTree.hideLivingLabel')}
+                  </Flex>
+                </Text>
+                <SoonSwitch label={t('downloadTree.includePrivateNotesLabel')} />
+              </Flex>
+            </Card>
 
-        {mutation.isError && (
-          <p role="alert" className="text-destructive text-sm">
-            {t('downloadTree.errorGeneric')}
-          </p>
-        )}
-      </form>
-    </Dialog>
+            <Card>
+              <Grid columns="3" gap="3">
+                {stats.map((stat, idx) => (
+                  <Flex key={idx} direction="column" gap="1">
+                    <Text size="5" weight="bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
+                      {stat.value}
+                    </Text>
+                    <Text
+                      size="1"
+                      weight="medium"
+                      style={{
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: 'var(--gray-a10)',
+                      }}
+                    >
+                      {stat.label}
+                    </Text>
+                  </Flex>
+                ))}
+              </Grid>
+            </Card>
+
+            {mutation.isError && (
+              <Callout.Root color="red" size="1" role="alert">
+                <Callout.Text>{t('downloadTree.errorGeneric')}</Callout.Text>
+              </Callout.Root>
+            )}
+          </Flex>
+        </form>
+
+        <Flex gap="3" mt="4" justify="between" align="center">
+          <Text size="1" color="gray">
+            {t('downloadTree.footerNote')}
+          </Text>
+          <Flex gap="3">
+            <Button variant="soft" color="gray" onClick={closeModal} disabled={mutation.isPending}>
+              {t('downloadTree.cancel')}
+            </Button>
+            <Button type="submit" form={formId} disabled={mutation.isPending}>
+              <Icon name="download" size={16} />
+              {t('downloadTree.submit')}
+            </Button>
+          </Flex>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }
 
-interface SoonSwitchProps {
+/**
+ * One format option in the export format grid. The GEDCOM card is the
+ * only selectable one today; the rest render a `Soon` badge and a
+ * dimmed, non-interactive look.
+ */
+function FormatCard({
+  label,
+  description,
+  selected,
+  soonLabel,
+}: {
   label: string;
+  description: string;
+  selected?: boolean;
+  soonLabel?: string;
+}): JSX.Element {
+  return (
+    <Card variant={selected ? 'surface' : 'classic'} style={{ opacity: soonLabel ? 0.6 : 1 }}>
+      <Flex direction="column" align="start" gap="1">
+        <Flex align="center" gap="2">
+          <Text size="2" weight="medium">
+            {label}
+          </Text>
+          {soonLabel && (
+            <Badge variant="outline" color="gray">
+              {soonLabel}
+            </Badge>
+          )}
+        </Flex>
+        <Text size="1" color="gray">
+          {description}
+        </Text>
+      </Flex>
+    </Card>
+  );
 }
 
 /**
  * Disabled switch with a `Soon` badge — visually present in the
- * options panel so the user sees future capability, but doesn't fool
- * them into thinking it has any effect today.
+ * options panel so the user sees future capability without being
+ * fooled into thinking it has any effect today.
  */
-function SoonSwitch({ label }: SoonSwitchProps): JSX.Element {
+function SoonSwitch({ label }: { label: string }): JSX.Element {
   const { t } = useTranslation('trees');
   return (
-    <Switch
-      checked={false}
-      onCheckedChange={() => undefined}
-      disabled
-      label={
-        <span className="inline-flex items-center gap-2">
-          {label}
-          <Badge variant="soon" size="sm">
-            {t('downloadTree.soonLabel')}
-          </Badge>
-        </span>
-      }
-    />
+    <Text as="label" size="2" color="gray">
+      <Flex align="center" gap="2">
+        <Switch disabled />
+        {label}
+        <Badge variant="outline" color="gray">
+          {t('downloadTree.soonLabel')}
+        </Badge>
+      </Flex>
+    </Text>
   );
 }

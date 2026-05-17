@@ -4,7 +4,6 @@ import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
-import storybook from 'eslint-plugin-storybook';
 
 export default [
   js.configs.recommended,
@@ -36,22 +35,14 @@ export default [
     },
   },
   {
-    files: ['vite.config.ts'],
+    files: ['vite.config.ts', 'vitest.config.ts'],
     languageOptions: {
       globals: {
         ...globals.node,
       },
     },
   },
-  ...storybook.configs['flat/recommended'],
   {
-    ignores: [
-      'src/routeTree.gen.ts',
-      'dist/',
-      'src-tauri/',
-      '.worktrees/',
-      'storybook-static/',
-      '!.storybook',
-    ],
+    ignores: ['src/routeTree.gen.ts', 'dist/', 'src-tauri/', '.worktrees/'],
   },
 ];

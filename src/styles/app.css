@@ -1,11 +1,15 @@
-@import 'tailwindcss';
+@import '@radix-ui/themes/styles.css';
 
 /* ============================================================
-   Fonts — self-hosted Geist (latin + latin-ext subsets).
-   Only weight 400 is shipped today; heavier weights synthesize
-   from this regular cut. Add new @font-face blocks (and copy
-   the matching .woff2 into ./fonts/) when a real heavy cut is
-   needed.
+   Fonts — self-hosted Geist / Geist Mono / Fraunces.
+
+   - Geist        → body + UI (weights 400 / 500 / 700)
+   - Geist Mono   → labels, metadata, status bar (weight 400)
+   - Fraunces     → headings, italic only (weights 400 / 500 / 700)
+
+   Latin + latin-ext subsets are shipped for Geist and Geist Mono.
+   Add a new @font-face pair (and copy the matching .woff2 from the
+   brand kit into ./fonts/) if another weight is needed.
    ============================================================ */
 
 @font-face {
@@ -28,183 +32,283 @@
     U+A720-A7FF;
 }
 
-/* ============================================================
-   Theme — semantic tokens consumed via Tailwind utilities and
-   raw CSS variables. Change values here when the design system
-   evolves; component code never references hex/oklch directly.
-   ============================================================ */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./fonts/geist-latin-ext-500-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./fonts/geist-latin-500-normal.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
 
-@theme {
-  /* Surfaces */
-  --color-background: oklch(0.985 0.012 85);
-  --color-foreground: oklch(0.22 0.028 45);
-  --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.22 0.028 45);
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/geist-latin-ext-700-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/geist-latin-700-normal.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
 
-  /* Primary action — terracotta */
-  --color-primary: oklch(0.54 0.13 32);
-  --color-primary-foreground: oklch(0.985 0.012 85);
+/* Geist Mono — code/label face. Used for uppercase labels, metadata
+   and the status bar (via --code-font-family), all at weight 400. */
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/geist-mono-latin-ext-400-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/geist-mono-latin-400-normal.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+    U+A720-A7FF;
+}
 
-  /* Secondary surface */
-  --color-secondary: oklch(0.965 0.018 82);
-  --color-secondary-foreground: oklch(0.33 0.04 48);
-
-  /* Muted */
-  --color-muted: oklch(0.965 0.018 82);
-  --color-muted-foreground: oklch(0.46 0.055 52);
-
-  /* Accent (hover/active surfaces) */
-  --color-accent: oklch(0.93 0.024 80);
-  --color-accent-foreground: oklch(0.265 0.065 26);
-
-  /* Destructive */
-  --color-destructive: oklch(0.555 0.195 27);
-  --color-destructive-foreground: oklch(0.985 0.012 85);
-
-  /* Status — success/warning/info. Tuned to pass WCAG AA (4.5:1) when used
-     as a background fill paired with the cream foreground, and 3:1 when
-     used as a text colour on the cream `bg-background` card. */
-  --color-success: oklch(0.5 0.15 145);
-  --color-success-foreground: oklch(0.985 0.012 85);
-  --color-warning: oklch(0.55 0.16 75);
-  --color-warning-foreground: oklch(0.985 0.012 85);
-  --color-info: oklch(0.5 0.15 245);
-  --color-info-foreground: oklch(0.985 0.012 85);
-
-  /* Popover surface — floating panels (Dialog content, Select listbox, etc.) */
-  --color-popover: oklch(1 0 0);
-  --color-popover-foreground: oklch(0.22 0.028 45);
-
-  /* Borders, inputs, focus ring */
-  --color-border: oklch(0.22 0.028 45 / 12%);
-  --color-input: oklch(0.22 0.028 45 / 14%);
-  --color-ring: oklch(0.54 0.13 32);
-
-  /* Modal/dialog backdrop — always dark in both themes so the underlying
-     page recedes behind the floating surface. Pair with an opacity utility
-     (e.g., `bg-overlay/60`) at the call site. */
-  --color-overlay: oklch(0 0 0);
-
-  /* Typography — `Fraunces` and `Geist Mono` will fall back until self-hosted in ./fonts/ */
-  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
-  --font-serif: 'Fraunces', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
-  --font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-
-  /* Radii */
-  --radius: 0.5rem;
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-
-  /* Shadows */
-  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 5%);
-  --shadow-sm: 0 1px 3px 0 oklch(0 0 0 / 10%), 0 1px 2px -1px oklch(0 0 0 / 10%);
-  --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 10%), 0 4px 6px -4px oklch(0 0 0 / 10%);
-  --shadow-inner: inset 0 2px 4px 0 oklch(0 0 0 / 5%);
+/* Fraunces — serif used for headings (italic only). Static Google
+   Fonts cuts; the latin subset covers French + English. The hero and
+   card headings render at weight 400; 500/700 cover heavier headings. */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/fraunces-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('./fonts/fraunces-latin-500-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/fraunces-latin-700-italic.woff2') format('woff2');
 }
 
 /* ============================================================
-   Dark theme — first defined as private aliases on :root, then
-   re-applied to the public --color-* tokens via two selectors:
-     1. :root.dark                   — explicit class on <html>
-     2. :root:not(.light, .dark) under @media prefers-color-scheme: dark
-        — system preference, opt-out via .light
-   Both selectors must out-specify Tailwind's :root from @theme
-   (specificity 0,1,0); :where() would zero them out and lose.
-   Defining the values once on :root and only swapping the
-   public tokens avoids drift between the two selectors.
+   Theme — Vata's custom Radix Themes palette.
+
+   The accent (clay / terracotta) and gray (sand) scales below are
+   12-step Radix scales — solid steps plus alpha steps — carrying
+   Vata's warm earthy identity. They are ported verbatim from the
+   Vata design system (Claude Design handoff). Each step keeps the
+   role Radix expects (1-2 backgrounds, 3-5 component fills, 6-8
+   borders, 9-10 solid, 11-12 text).
+
+   Because every accent/gray step (alphas included) is defined here,
+   the `accentColor` / `grayColor` props on `<Theme>` only seed the
+   Radix attribute selectors; the values below win.
    ============================================================ */
 
-@layer theme {
-  :root {
-    --dark-background: oklch(0.155 0.02 42);
-    --dark-foreground: oklch(0.965 0.018 82);
-    --dark-card: oklch(0.195 0.022 44);
-    --dark-primary: oklch(0.62 0.125 34);
-    --dark-secondary: oklch(0.255 0.025 44);
-    --dark-muted: oklch(0.235 0.02 44);
-    --dark-muted-foreground: oklch(0.78 0.042 70);
-    --dark-accent: oklch(0.295 0.035 42);
-    --dark-destructive: oklch(0.635 0.18 27);
-    --dark-success: oklch(0.7 0.18 145);
-    --dark-warning: oklch(0.78 0.16 85);
-    --dark-info: oklch(0.66 0.16 245);
-    --dark-popover: oklch(0.195 0.022 44);
-    --dark-border: oklch(1 0 0 / 8%);
-    --dark-input: oklch(1 0 0 / 12%);
-  }
+.radix-themes {
+  --default-font-family: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --heading-font-family: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+  --code-font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
-  :root.dark {
-    --color-background: var(--dark-background);
-    --color-foreground: var(--dark-foreground);
-    --color-card: var(--dark-card);
-    --color-card-foreground: var(--dark-foreground);
-    --color-primary: var(--dark-primary);
-    --color-primary-foreground: oklch(0.985 0.012 85);
-    --color-secondary: var(--dark-secondary);
-    --color-secondary-foreground: var(--dark-foreground);
-    --color-muted: var(--dark-muted);
-    --color-muted-foreground: var(--dark-muted-foreground);
-    --color-accent: var(--dark-accent);
-    --color-accent-foreground: oklch(0.985 0.012 85);
-    --color-destructive: var(--dark-destructive);
-    --color-destructive-foreground: oklch(0.985 0.012 85);
-    --color-success: var(--dark-success);
-    --color-success-foreground: oklch(0.155 0.02 42);
-    --color-warning: var(--dark-warning);
-    --color-warning-foreground: oklch(0.155 0.02 42);
-    --color-info: var(--dark-info);
-    --color-info-foreground: oklch(0.155 0.02 42);
-    --color-popover: var(--dark-popover);
-    --color-popover-foreground: var(--dark-foreground);
-    --color-border: var(--dark-border);
-    --color-input: var(--dark-input);
-    --color-ring: var(--dark-primary);
-  }
+  /* Accent — clay / terracotta — light */
+  --accent-1: oklch(0.992 0.005 38);
+  --accent-2: oklch(0.98 0.012 38);
+  --accent-3: oklch(0.96 0.022 36);
+  --accent-4: oklch(0.935 0.034 35);
+  --accent-5: oklch(0.9 0.05 34);
+  --accent-6: oklch(0.86 0.067 34);
+  --accent-7: oklch(0.805 0.09 34);
+  --accent-8: oklch(0.72 0.115 34);
+  --accent-9: oklch(0.62 0.125 34);
+  --accent-10: oklch(0.56 0.13 33);
+  --accent-11: oklch(0.47 0.115 31);
+  --accent-12: oklch(0.275 0.065 26);
+  --accent-a1: rgba(120, 50, 10, 0.02);
+  --accent-a2: rgba(120, 50, 10, 0.05);
+  --accent-a3: rgba(120, 50, 10, 0.09);
+  --accent-a4: rgba(120, 50, 10, 0.14);
+  --accent-a5: rgba(120, 50, 10, 0.2);
+  --accent-a6: rgba(120, 50, 10, 0.275);
+  --accent-a7: rgba(120, 50, 10, 0.365);
+  --accent-a8: rgba(120, 50, 10, 0.51);
+  --accent-a9: rgba(186, 73, 30, 0.86);
+  --accent-a10: rgba(170, 60, 22, 0.91);
+  --accent-a11: rgba(110, 36, 8, 0.815);
+  --accent-a12: rgba(56, 20, 4, 0.94);
+  --accent-contrast: #fff;
+  --accent-surface: rgba(252, 246, 240, 0.85);
+  --accent-indicator: var(--accent-9);
+  --accent-track: var(--accent-9);
 
-  @media (prefers-color-scheme: dark) {
-    :root:not(.light, .dark) {
-      --color-background: var(--dark-background);
-      --color-foreground: var(--dark-foreground);
-      --color-card: var(--dark-card);
-      --color-card-foreground: var(--dark-foreground);
-      --color-primary: var(--dark-primary);
-      --color-primary-foreground: oklch(0.985 0.012 85);
-      --color-secondary: var(--dark-secondary);
-      --color-secondary-foreground: var(--dark-foreground);
-      --color-muted: var(--dark-muted);
-      --color-muted-foreground: var(--dark-muted-foreground);
-      --color-accent: var(--dark-accent);
-      --color-accent-foreground: oklch(0.985 0.012 85);
-      --color-destructive: var(--dark-destructive);
-      --color-destructive-foreground: oklch(0.985 0.012 85);
-      --color-success: var(--dark-success);
-      --color-success-foreground: oklch(0.155 0.02 42);
-      --color-warning: var(--dark-warning);
-      --color-warning-foreground: oklch(0.155 0.02 42);
-      --color-info: var(--dark-info);
-      --color-info-foreground: oklch(0.155 0.02 42);
-      --color-popover: var(--dark-popover);
-      --color-popover-foreground: var(--dark-foreground);
-      --color-border: var(--dark-border);
-      --color-input: var(--dark-input);
-      --color-ring: var(--dark-primary);
-    }
+  /* Gray — sand — light (warm, chromatic — a brown scale, not a neutral) */
+  --gray-1: oklch(0.992 0.005 85);
+  --gray-2: oklch(0.98 0.012 84);
+  --gray-3: oklch(0.962 0.018 82);
+  --gray-4: oklch(0.945 0.022 81);
+  --gray-5: oklch(0.925 0.026 80);
+  --gray-6: oklch(0.895 0.03 78);
+  --gray-7: oklch(0.855 0.036 74);
+  --gray-8: oklch(0.775 0.044 70);
+  --gray-9: oklch(0.68 0.055 65);
+  --gray-10: oklch(0.62 0.058 62);
+  --gray-11: oklch(0.48 0.052 52);
+  --gray-12: oklch(0.215 0.028 44);
+  --gray-a1: rgba(60, 45, 20, 0.02);
+  --gray-a2: rgba(60, 45, 20, 0.05);
+  --gray-a3: rgba(60, 45, 20, 0.085);
+  --gray-a4: rgba(60, 45, 20, 0.12);
+  --gray-a5: rgba(60, 45, 20, 0.16);
+  --gray-a6: rgba(60, 45, 20, 0.21);
+  --gray-a7: rgba(60, 45, 20, 0.285);
+  --gray-a8: rgba(60, 45, 20, 0.4);
+  --gray-a9: rgba(95, 70, 30, 0.56);
+  --gray-a10: rgba(85, 60, 24, 0.64);
+  --gray-a11: rgba(60, 40, 12, 0.78);
+  --gray-a12: rgba(40, 25, 6, 0.94);
+  --gray-surface: rgba(252, 248, 240, 0.85);
+}
+
+.radix-themes.dark {
+  /* Accent — clay / terracotta — dark */
+  --accent-1: oklch(0.16 0.012 36);
+  --accent-2: oklch(0.19 0.018 36);
+  --accent-3: oklch(0.225 0.028 36);
+  --accent-4: oklch(0.26 0.038 35);
+  --accent-5: oklch(0.3 0.048 34);
+  --accent-6: oklch(0.345 0.062 34);
+  --accent-7: oklch(0.4 0.082 34);
+  --accent-8: oklch(0.48 0.105 34);
+  --accent-9: oklch(0.62 0.125 34);
+  --accent-10: oklch(0.67 0.135 34);
+  --accent-11: oklch(0.785 0.092 34);
+  --accent-12: oklch(0.935 0.04 38);
+  --accent-a1: rgba(255, 165, 110, 0.025);
+  --accent-a2: rgba(255, 170, 115, 0.055);
+  --accent-a3: rgba(255, 170, 115, 0.095);
+  --accent-a4: rgba(255, 170, 115, 0.145);
+  --accent-a5: rgba(255, 170, 115, 0.205);
+  --accent-a6: rgba(255, 170, 115, 0.285);
+  --accent-a7: rgba(255, 170, 115, 0.385);
+  --accent-a8: rgba(255, 165, 110, 0.53);
+  --accent-a9: rgba(255, 140, 90, 0.87);
+  --accent-a10: rgba(255, 160, 110, 0.925);
+  --accent-a11: rgba(255, 205, 165, 0.87);
+  --accent-a12: rgba(255, 235, 215, 0.955);
+  --accent-contrast: #fff;
+  --accent-surface: rgba(40, 22, 12, 0.55);
+  --accent-indicator: var(--accent-9);
+  --accent-track: var(--accent-9);
+
+  /* Gray — sand — dark (warm, chromatic — a brown scale, not a neutral) */
+  --gray-1: oklch(0.155 0.02 42);
+  --gray-2: oklch(0.18 0.022 43);
+  --gray-3: oklch(0.215 0.025 44);
+  --gray-4: oklch(0.25 0.028 44);
+  --gray-5: oklch(0.29 0.032 46);
+  --gray-6: oklch(0.34 0.038 48);
+  --gray-7: oklch(0.4 0.045 52);
+  --gray-8: oklch(0.485 0.052 56);
+  --gray-9: oklch(0.68 0.055 65);
+  --gray-10: oklch(0.73 0.052 67);
+  --gray-11: oklch(0.87 0.034 76);
+  --gray-12: oklch(0.965 0.018 82);
+  --gray-a1: rgba(245, 235, 210, 0.02);
+  --gray-a2: rgba(248, 240, 220, 0.045);
+  --gray-a3: rgba(248, 240, 220, 0.085);
+  --gray-a4: rgba(248, 240, 220, 0.125);
+  --gray-a5: rgba(248, 240, 220, 0.17);
+  --gray-a6: rgba(248, 240, 220, 0.23);
+  --gray-a7: rgba(248, 240, 220, 0.31);
+  --gray-a8: rgba(248, 240, 220, 0.43);
+  --gray-a9: rgba(250, 220, 170, 0.61);
+  --gray-a10: rgba(252, 226, 180, 0.7);
+  --gray-a11: rgba(252, 240, 220, 0.88);
+  --gray-a12: rgba(255, 250, 240, 0.965);
+  --gray-surface: rgba(40, 30, 18, 0.55);
+}
+
+/* ============================================================
+   Headings — Vata renders every Radix Themes Heading as Fraunces
+   italic (the --heading-font-family above supplies the family).
+   ============================================================ */
+
+.rt-Heading {
+  font-style: italic;
+}
+
+/* ============================================================
+   Mono label — the small uppercase caption shared by stat labels
+   and section headers: Geist Mono, uppercase, wide tracking. Size
+   and color stay at the call site.
+   ============================================================ */
+
+.mono-label {
+  font-family: var(--code-font-family);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+/* ============================================================
+   Trees grid — responsive column count. The Radix Grid steps
+   don't include a 1440px stop, so the home grid uses custom
+   breakpoints: 1 column below 720px, 2 up to 1440px, 3 beyond.
+   ============================================================ */
+
+.trees-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 720px) {
+  .trees-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1440px) {
+  .trees-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 /* ============================================================
-   Base — minimal global defaults.
+   Base — the desktop shell fills the viewport.
    ============================================================ */
 
-@layer base {
-  html,
-  body {
-    background: var(--color-background);
-    color: var(--color-foreground);
-    font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
 }

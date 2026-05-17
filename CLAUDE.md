@@ -159,7 +159,6 @@ Uses `react-i18next` + `i18next`. All **client-facing** strings must use `useTra
 
 **Out of scope (literals are fine):**
 
-- Storybook stories under `*.stories.tsx` — dev-facing fixtures, not shipped to users. The dedicated `I18nDemo` story per wrapper is the i18n integration check; the rest may use plain literals as throwaway demo content.
 - Test files (`*.test.{ts,tsx}`) — assertions and fixtures.
 - Developer-only debug UIs guarded by `import.meta.env.DEV`.
 
@@ -330,18 +329,18 @@ The app includes `tauri-plugin-mcp-bridge` (debug builds only). You can launch t
 
 The following specialized skills are loaded automatically when relevant, or on demand via the skill tool.
 
-| Skill                     | Trigger                                                                                                                                                                          |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sqlite-standards`        | When writing `src/db/**`, SQL, migrations, scaffolding a new entity's DB layer, or DB-related docs                                                                               |
-| `gedcom-standards`        | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code                                                                                                                  |
-| `typescript-standards`    | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes)                                                                                                    |
-| `tauri-standards`         | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                                                                                                                            |
-| `testing-standards`       | When writing `**/*.{test,spec}.{ts,tsx}` or `*.stories.tsx`, or creating a UI wrapper under `src/components/ui/`                                                                 |
-| `new-route`               | When adding a new page or entity view under `/tree/$treeId/`                                                                                                                     |
-| `design-system-standards` | When designing or reviewing UI under `src/components/ui/`, `src/components/**`, or `src/pages/**` — decision tree for reuse / extend / create-new, token rules, audit heuristics |
-| `shepherd-pr`             | After `gh pr create` returns — drives the PR through `/review`, the ready-flip, CI, and CodeRabbit until it's approved or surfaces a real blocker                                |
+| Skill                     | Trigger                                                                                                                                                                 |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sqlite-standards`        | When writing `src/db/**`, SQL, migrations, scaffolding a new entity's DB layer, or DB-related docs                                                                      |
+| `gedcom-standards`        | When writing `src/lib/gedcom/**`, GEDCOM docs, or XREF/tag code                                                                                                         |
+| `typescript-standards`    | When writing `src/**/*.{ts,tsx}` (components, hooks, managers, store, routes)                                                                                           |
+| `tauri-standards`         | When writing `src-tauri/**/*.rs` or `tauri.conf.json`                                                                                                                   |
+| `testing-standards`       | When writing `**/*.{test,spec}.{ts,tsx}` — Vitest unit/integration conventions, in-memory SQLite for the DB layer                                                       |
+| `new-route`               | When adding a new page or entity view under `/tree/$treeId/`                                                                                                            |
+| `design-system-standards` | When designing or reviewing UI under `src/components/**` or `src/pages/**` — when to reuse a Radix Themes component, compose primitives, or add an application organism |
+| `shepherd-pr`             | After `gh pr create` returns — drives the PR through `/review`, the ready-flip, CI, and CodeRabbit until it's approved or surfaces a real blocker                       |
 
-The UI layer is built on Tailwind v4 (CSS-first via `@theme` in `src/styles/app.css`) + Radix primitives + `tailwind-variants`. Wrappers live under `src/components/ui/` with colocated tests and Storybook stories. See `docs/ui/design-system.md` and `docs/ui/storybook.md`.
+The UI foundation is [Radix Themes](https://www.radix-ui.com/themes) (`@radix-ui/themes`), consumed directly — `import { Button, Dialog, Flex } from '@radix-ui/themes'`. There is no `src/components/ui/` wrapper layer; internal components under `src/components/` are reserved for application organisms (`tree-shell.tsx`, `tree-nav.tsx`, `app-status-bar.tsx`, …). Brand tokens (`accentColor`, `grayColor`, `radius`) are set on the `<Theme>` provider in `src/components/app-theme.tsx`; the Lucide icon registry lives at `src/components/icon.tsx`. See `docs/ui/design-system.md` and [ADR-007](./docs/adr/0007-adopt-radix-themes.md).
 
 ---
 

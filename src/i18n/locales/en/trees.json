@@ -143,7 +143,6 @@
     "confirmPlaceholder": "Type the tree name",
     "cancel": "Cancel",
     "submit": "Delete tree",
-    "soonLabel": "Soon",
     "closeLabel": "Close",
     "errorGeneric": "Failed to delete tree."
   }

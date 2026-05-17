@@ -1,11 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ReactNode, useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {
+  Button,
+  Callout,
+  Card,
+  Dialog,
+  Flex,
+  Grid,
+  Text,
+  TextArea,
+  TextField,
+} from '@radix-ui/themes';
 
-import { Button } from '$components/ui/button';
-import { Dialog } from '$components/ui/dialog';
-import { Input } from '$components/ui/input';
-import { Textarea } from '$components/ui/textarea';
 import { updateTree as defaultUpdateTree } from '$db-system/trees';
 import { formatIsoDate } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
@@ -34,8 +41,8 @@ export interface EditTreeModalProps {
 
   /**
    * Override the update function. Defaults to the DB-layer `updateTree`.
-   * Tests/stories inject a spy here so the flow can be exercised without
-   * hitting Tauri SQL.
+   * Tests inject a spy here so the flow can be exercised without hitting
+   * Tauri SQL.
    */
   updateTree?: (id: string, input: UpdateTreeInput) => Promise<void>;
 }
@@ -46,8 +53,7 @@ export interface EditTreeModalProps {
  * `queryKeys.tree(id)` on success so the home grid and the tree shell
  * pick up the new values.
  *
- * The Save button stays disabled until something actually changes — there
- * is no value in submitting a no-op.
+ * The Save button stays disabled until something actually changes.
  */
 export function EditTreeModal({
   tree,
@@ -118,7 +124,7 @@ export function EditTreeModal({
     : t('editTree.summaryNever');
 
   return (
-    <Dialog
+    <Dialog.Root
       open={open}
       onOpenChange={(next) => {
         if (next) {
@@ -127,84 +133,99 @@ export function EditTreeModal({
         }
         closeModal();
       }}
-      size="md"
-      title={<span className="font-serif italic">{t('editTree.title')}</span>}
-      description={t('editTree.subtitle')}
-      closeLabel={t('editTree.closeLabel')}
-      footer={
-        <>
-          <Button variant="ghost" onClick={closeModal} disabled={mutation.isPending}>
+    >
+      <Dialog.Content maxWidth="520px">
+        <Dialog.Title>{t('editTree.title')}</Dialog.Title>
+        <Dialog.Description size="2" color="gray" mb="4">
+          {t('editTree.subtitle')}
+        </Dialog.Description>
+
+        <form id={formId} onSubmit={handleSubmit}>
+          <Flex direction="column" gap="4">
+            <Flex direction="column" gap="1">
+              <Text as="label" htmlFor={nameId} size="2" weight="medium">
+                {t('editTree.nameLabel')}{' '}
+                <Text
+                  size="2"
+                  weight="regular"
+                  aria-hidden="true"
+                  style={{ color: 'var(--accent-11)' }}
+                >
+                  {t('editTree.nameRequired')}
+                </Text>
+              </Text>
+              <TextField.Root
+                id={nameId}
+                required
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                disabled={mutation.isPending}
+              />
+            </Flex>
+
+            <Flex direction="column" gap="1">
+              <Text as="label" htmlFor={descriptionId} size="2" weight="medium">
+                {t('editTree.descriptionLabel')}{' '}
+                <Text size="2" color="gray" weight="regular">
+                  — {t('editTree.descriptionOptional')}
+                </Text>
+              </Text>
+              <TextArea
+                id={descriptionId}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                disabled={mutation.isPending}
+              />
+            </Flex>
+
+            <Card>
+              <Grid columns="3" gap="4">
+                <SummaryStat
+                  label={t('editTree.summaryIndividuals')}
+                  value={tree.individualCount.toLocaleString()}
+                />
+                <SummaryStat
+                  label={t('editTree.summaryCreated')}
+                  value={formatIsoDate(tree.createdAt)}
+                />
+                <SummaryStat label={t('editTree.summaryLastOpened')} value={lastOpenedDisplay} />
+              </Grid>
+            </Card>
+
+            {mutation.isError && (
+              <Callout.Root color="red" size="1" role="alert">
+                <Callout.Text>{t('editTree.errorGeneric')}</Callout.Text>
+              </Callout.Root>
+            )}
+          </Flex>
+        </form>
+
+        <Flex gap="3" mt="4" justify="end">
+          <Button variant="soft" color="gray" onClick={closeModal} disabled={mutation.isPending}>
             {t('editTree.cancel')}
           </Button>
           <Button type="submit" form={formId} disabled={!canSubmit}>
             {t('editTree.submit')}
           </Button>
-        </>
-      }
-    >
-      <form id={formId} onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={nameId} className="text-foreground text-sm font-medium">
-            {t('editTree.nameLabel')}{' '}
-            <span aria-hidden className="text-primary font-normal">
-              {t('editTree.nameRequired')}
-            </span>
-          </label>
-          <Input
-            id={nameId}
-            required
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            disabled={mutation.isPending}
-          />
-        </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor={descriptionId} className="text-foreground text-sm font-medium">
-            {t('editTree.descriptionLabel')}{' '}
-            <span className="text-muted-foreground font-normal">
-              — {t('editTree.descriptionOptional')}
-            </span>
-          </label>
-          <Textarea
-            id={descriptionId}
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            disabled={mutation.isPending}
-          />
-        </div>
-
-        <div className="border-border bg-muted/30 grid grid-cols-3 gap-4 rounded-lg border p-4">
-          <SummaryStat
-            label={t('editTree.summaryIndividuals')}
-            value={tree.individualCount.toLocaleString()}
-          />
-          <SummaryStat label={t('editTree.summaryCreated')} value={formatIsoDate(tree.createdAt)} />
-          <SummaryStat label={t('editTree.summaryLastOpened')} value={lastOpenedDisplay} />
-        </div>
-
-        {mutation.isError && (
-          <p role="alert" className="text-destructive text-sm">
-            {t('editTree.errorGeneric')}
-          </p>
-        )}
-      </form>
-    </Dialog>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }
 
-interface SummaryStatProps {
-  label: ReactNode;
-  value: ReactNode;
-}
-
-function SummaryStat({ label, value }: SummaryStatProps): JSX.Element {
+function SummaryStat({ label, value }: { label: ReactNode; value: ReactNode }): JSX.Element {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="text-muted-foreground font-mono text-[10px] leading-none tracking-wider uppercase">
+    <Flex direction="column" gap="1">
+      <Text
+        size="1"
+        weight="medium"
+        style={{ textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-a10)' }}
+      >
         {label}
-      </span>
-      <span className="text-foreground font-mono text-base leading-none tabular-nums">{value}</span>
-    </div>
+      </Text>
+      <Text size="2" style={{ fontVariantNumeric: 'tabular-nums' }}>
+        {value}
+      </Text>
+    </Flex>
   );
 }

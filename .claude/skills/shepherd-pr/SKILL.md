@@ -1,6 +1,6 @@
 ---
 name: shepherd-pr
-description: Drive a freshly opened PR through the local `/review` gate, the ready-flip, CI, and CodeRabbit until the bot posts an APPROVED review with all non-Chromatic checks green. Use immediately after `gh pr create` (or `/commit-push-pr`) returns, or when the user says things like "watch the PR", "wait for CodeRabbit", "make sure CI passes", "shepherd PR #N". Polls check status, parses CodeRabbit's rate-limit messages, retriggers stalled reviews, triages inline threads (fix-and-push vs reply-and-resolve), and stops when approval arrives or a real blocker needs the user.
+description: Drive a freshly opened PR through the local `/review` gate, the ready-flip, CI, and CodeRabbit until the bot posts an APPROVED review with all checks green. Use immediately after `gh pr create` (or `/commit-push-pr`) returns, or when the user says things like "watch the PR", "wait for CodeRabbit", "make sure CI passes", "shepherd PR #N". Polls check status, parses CodeRabbit's rate-limit messages, retriggers stalled reviews, triages inline threads (fix-and-push vs reply-and-resolve), and stops when approval arrives or a real blocker needs the user.
 ---
 
 # Shepherd PR
@@ -25,7 +25,7 @@ Do **not** invoke before a PR exists. Do not invoke for `/simplify` (that's the 
 ```text
 draft PR
   → Phase 0: /review locally → fixes → gh pr ready
-  → Phase 1: wait CI (ignore Chromatic baseline gates)
+  → Phase 1: wait CI
   → Phase 2: read CodeRabbit verdict
        ├─ APPROVED       → done
        ├─ CHANGES_REQ.   → Phase 3 (triage)
@@ -82,13 +82,7 @@ Use the `Monitor` tool with the canonical poll:
 gh pr checks <N> --repo vata-apps/vata-app --json name,bucket
 ```
 
-Three of the checks come from Chromatic, and they're **not** all the same thing — don't conflate them:
-
-- `Visual review` is the Chromatic build job. It runs `exitZeroOnChanges: true`, so it almost always reaches `pass`. **Required green.**
-- `Storybook Publish` is the static deploy of the Storybook bundle. **Required green.**
-- `UI Review` and `UI Tests` are Chromatic's baseline-approval gates. They stay `pending` until the user approves baselines manually in the Chromatic dashboard, on a separate cadence. **Expected-pending — ignore.**
-
-Required-green checks (must reach `pass` before declaring success): `Lint, Format, Build & Test`, `Visual review`, `CodeRabbit`, `Storybook Publish`.
+Required-green checks (must reach `pass` before declaring success): `Lint, Format, Build & Test` and `CodeRabbit`.
 
 If `Lint, Format, Build & Test` fails, fix the failure (lint, types, broken test), push, and re-enter Phase 1. Do not move on while it's red.
 
@@ -105,7 +99,7 @@ Three mutually exclusive states:
 
 ### Approved
 
-`state == APPROVED`. All non-Chromatic checks green. **Done — exit and hand back to the user.**
+`state == APPROVED`. All checks green. **Done — exit and hand back to the user.**
 
 ### Changes requested
 
@@ -211,7 +205,7 @@ CodeRabbit's review body lists named pre-merge checks. Most pass automatically w
 
 ## Stop conditions
 
-1. CodeRabbit's latest review is `APPROVED` AND all non-Chromatic checks are `pass`. → success, hand back to the user.
+1. CodeRabbit's latest review is `APPROVED` AND all checks are `pass`. → success, hand back to the user.
 2. Two consecutive rate-limit retriggers fail to produce a new review. → escalate with a one-line summary.
 3. A finding requires user judgment (e.g., an architectural disagreement, a backwards-compat call, or a security-sensitive trade-off). → escalate with a one-paragraph summary.
 
@@ -221,7 +215,7 @@ The user merges. This skill never runs `gh pr merge`.
 
 ## What this skill must not do
 
-- Auto-merge the PR. Chromatic baselines may still be pending; the user owns merge.
+- Auto-merge the PR. The user owns merge.
 - Override the `Closes #N` footer from `link-task` Phase B.
 - Apply CodeRabbit suggestions blindly — every thread goes through the triage table.
 - Push to `main` or any branch other than the PR's own.
@@ -239,11 +233,8 @@ gh pr view <N> --repo vata-apps/vata-app --json isDraft
 # Flip to ready once /review is clean (Phase 0 exit)
 gh pr ready <N> --repo vata-apps/vata-app
 
-# Settled-state CI check (excluding the expected-pending Chromatic
-# baseline gates `UI Review` and `UI Tests` — the build/deploy
-# Chromatic jobs `Visual review` and `Storybook Publish` stay in)
-gh pr checks <N> --repo vata-apps/vata-app --json name,bucket \
-  | jq '[.[] | select(.name|test("UI Review|UI Tests")|not)]'
+# Settled-state CI check
+gh pr checks <N> --repo vata-apps/vata-app --json name,bucket
 
 # Latest CodeRabbit review state
 gh pr view <N> --repo vata-apps/vata-app --json reviews \

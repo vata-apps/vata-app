@@ -1,15 +1,7 @@
 import { type ReactNode } from 'react';
-import { tv } from 'tailwind-variants';
+import { Box, Button, Card, Flex, Heading, IconButton, Text } from '@radix-ui/themes';
 
-import { Button } from '$components/ui/button';
-
-const cardBase = tv({
-  base: [
-    'relative flex min-h-[220px] flex-col gap-3.5 rounded-xl border border-border bg-card p-[18px] pb-4',
-    'transition-colors duration-150',
-    'hover:border-foreground/20 hover:shadow-sm',
-  ],
-});
+import { Icon, type IconName } from '$components/icon';
 
 /**
  * Stats shown in the card body.
@@ -32,7 +24,7 @@ export interface TreeCardMeta {
 }
 
 /**
- * Localized labels rendered inside the card. Required so the wrapper
+ * Localized labels rendered inside the card. Required so the component
  * does not own copy.
  */
 export interface TreeCardLabels {
@@ -71,79 +63,80 @@ export interface TreeCardProps {
   onDelete: () => void;
 }
 
-interface StatProps {
-  value: ReactNode;
-  label: ReactNode;
-}
-
-function Stat({ value, label }: StatProps): JSX.Element {
+/**
+ * One stat in the card body — a large tabular number above a small
+ * uppercase mono label (e.g. the individual or family count).
+ */
+function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Element {
   return (
-    <div className="flex flex-col gap-0.5">
-      <span className="font-mono text-lg leading-none font-medium tabular-nums tracking-tight">
+    <Flex direction="column" gap="2">
+      <Text
+        style={{
+          fontSize: 30,
+          lineHeight: 1,
+          letterSpacing: '-0.02em',
+          fontVariantNumeric: 'tabular-nums',
+        }}
+      >
         {value}
-      </span>
-      <span className="text-muted-foreground font-mono text-[10px] leading-none tracking-wider uppercase">
+      </Text>
+      <Text color="gray" className="mono-label" style={{ fontSize: 10.5 }}>
         {label}
-      </span>
-    </div>
+      </Text>
+    </Flex>
   );
 }
 
-function StatDivider(): JSX.Element {
-  return <span aria-hidden className="bg-border h-6 w-px flex-none" />;
-}
-
-interface MetaRowProps {
-  label: ReactNode;
-  value: ReactNode;
-}
-
-function MetaRow({ label, value }: MetaRowProps): JSX.Element {
+/**
+ * One metadata row in the card body — a fixed-width label beside a
+ * tabular-numeric value, both in mono (e.g. "Created" / a date).
+ */
+function MetaRow({ label, value }: { label: ReactNode; value: ReactNode }): JSX.Element {
   return (
-    <div className="flex items-center gap-2 font-mono text-[11.5px] leading-snug">
-      <span className="text-muted-foreground w-[120px] flex-none whitespace-nowrap">{label}</span>
-      <span className="text-foreground tabular-nums">{value}</span>
-    </div>
+    <Flex gap="3" style={{ fontFamily: 'var(--code-font-family)', fontSize: 12.5 }}>
+      <Text style={{ width: 110, flex: 'none', color: 'var(--gray-a10)' }}>{label}</Text>
+      <Text style={{ color: 'var(--gray-12)', fontVariantNumeric: 'tabular-nums' }}>{value}</Text>
+    </Flex>
+  );
+}
+
+/**
+ * One ghost icon action in the card's action row, sized to a 40px
+ * square — the height of the size-3 Open button. A ghost IconButton
+ * otherwise hugs its icon and carries negative margins, so the box is
+ * set explicitly and `margin: 0` keeps the row's Flex gap intact.
+ */
+function CardIconAction({
+  icon,
+  label,
+  onClick,
+}: {
+  icon: IconName;
+  label: string;
+  onClick: () => void;
+}): JSX.Element {
+  return (
+    <IconButton
+      variant="ghost"
+      size="3"
+      onClick={onClick}
+      aria-label={label}
+      style={{ width: 40, height: 40, padding: 0, margin: 0 }}
+    >
+      <Icon name={icon} size={16} />
+    </IconButton>
   );
 }
 
 /**
  * Domain card representing one family tree on the home page.
  *
- * Lives outside `src/components/ui/` because it is genealogy-domain
- * specific — it composes generic UI primitives (Button) but has its
- * own data shape and call sites. For the "Add a new tree" tile, use
- * the dedicated `TreeCardCta` component instead — they share no real
- * runtime code, only family resemblance.
+ * Composes Radix Themes primitives (Card, Button, IconButton) but has
+ * its own genealogy-domain data shape and call sites. For the "Add a
+ * new tree" tile, use {@link TreeCardCta} instead.
  *
  * All textual content (name, description, button labels, meta) must be
  * localized by the caller; this component does not own copy.
- *
- * Visual layout (top-to-bottom):
- * 1. Title row — serif italic name + 2-line clamped description.
- * 2. Stats row — inline figures (individuals, families, optional generations) separated by vertical rules.
- * 3. Meta block — dashed top border, mono key/value rows (created, last opened).
- * 4. Action row — outline "Open" button (flex-1) followed by ghost icon-only buttons (export, edit, delete).
- *
- * @example
- * <TreeCard
- *   name="Bourgoin family"
- *   description="Started from grandpa's notebook in 2024."
- *   stats={{ individuals: 142, families: 58 }}
- *   meta={{ createdAt: '2024-01-12', lastAccessedAt: '2 hours ago' }}
- *   labels={{
- *     open: t('card.open'),
- *     export: t('card.export'),
- *     edit: t('card.edit'),
- *     delete: t('card.delete'),
- *     individuals: t('card.individuals'),
- *     families: t('card.families'),
- *     generations: t('card.generations'),
- *     createdAt: t('card.createdAt'),
- *     lastAccessedAt: t('card.lastAccessedAt'),
- *   }}
- *   onOpen={...} onExport={...} onEdit={...} onDelete={...}
- * />
  */
 export function TreeCard({
   name,
@@ -157,56 +150,59 @@ export function TreeCard({
   onDelete,
 }: TreeCardProps): JSX.Element {
   return (
-    <article className={cardBase()}>
-      <div className="flex min-w-0 flex-col gap-1">
-        <h3 className="text-foreground truncate font-serif text-[19px] leading-tight font-medium tracking-tight italic">
-          {name}
-        </h3>
-        {description && (
-          <p className="text-muted-foreground line-clamp-2 text-[13px] leading-snug">
-            {description}
-          </p>
-        )}
-      </div>
+    <Card asChild variant="surface" size="3" style={{ minHeight: 240 }}>
+      <article>
+        <Flex direction="column" gap="4" height="100%">
+          <Box>
+            <Heading as="h2" size="6" weight="regular" truncate>
+              {name}
+            </Heading>
+            <Text
+              as="p"
+              size="2"
+              color="gray"
+              mt="2"
+              style={{
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                // Always reserve two lines so cards align on a shared grid.
+                minHeight: 'calc(2 * 1.5 * var(--font-size-2))',
+              }}
+            >
+              {description}
+            </Text>
+          </Box>
 
-      <div className="flex items-center gap-2.5">
-        <Stat value={stats.individuals} label={labels.individuals} />
-        <StatDivider />
-        <Stat value={stats.families} label={labels.families} />
-        {stats.generations != null && (
-          <>
-            <StatDivider />
-            <Stat value={stats.generations} label={labels.generations} />
-          </>
-        )}
-      </div>
+          <Flex gap="6">
+            <Stat value={stats.individuals} label={labels.individuals} />
+            <Stat value={stats.families} label={labels.families} />
+            {stats.generations != null && (
+              <Stat value={stats.generations} label={labels.generations} />
+            )}
+          </Flex>
 
-      <div className="border-border flex flex-col gap-1 border-t border-dashed pt-2.5">
-        <MetaRow label={labels.createdAt} value={meta.createdAt} />
-        <MetaRow label={labels.lastAccessedAt} value={meta.lastAccessedAt} />
-      </div>
+          <Box>
+            <Box mb="3" style={{ height: 0, borderTop: '1px dashed var(--gray-a6)' }} />
+            <Flex direction="column" gap="1">
+              <MetaRow label={labels.createdAt} value={meta.createdAt} />
+              <MetaRow label={labels.lastAccessedAt} value={meta.lastAccessedAt} />
+            </Flex>
+          </Box>
 
-      <div className="mt-auto flex items-center gap-1.5 pt-2.5">
-        <Button
-          variant="outline"
-          size="sm"
-          leadingIcon="folder-open"
-          trailingIcon="arrow-right"
-          onClick={onOpen}
-          className="flex-1"
-        >
-          {labels.open}
-        </Button>
-        <Button variant="ghost" size="sm" hideLabel leadingIcon="download" onClick={onExport}>
-          {labels.export}
-        </Button>
-        <Button variant="ghost" size="sm" hideLabel leadingIcon="pencil" onClick={onEdit}>
-          {labels.edit}
-        </Button>
-        <Button variant="ghost" size="sm" hideLabel leadingIcon="trash" onClick={onDelete}>
-          {labels.delete}
-        </Button>
-      </div>
-    </article>
+          <Flex align="center" gap="3" pt="1" style={{ marginTop: 'auto' }}>
+            <Button variant="soft" size="3" onClick={onOpen} style={{ flex: 1 }}>
+              <Icon name="folder-open" size={16} />
+              {labels.open}
+              <Icon name="arrow-right" size={16} />
+            </Button>
+            <CardIconAction icon="download" label={labels.export} onClick={onExport} />
+            <CardIconAction icon="pencil" label={labels.edit} onClick={onEdit} />
+            <CardIconAction icon="trash" label={labels.delete} onClick={onDelete} />
+          </Flex>
+        </Flex>
+      </article>
+    </Card>
   );
 }

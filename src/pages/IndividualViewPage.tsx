@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Button } from '$components/ui/button';
+import { Box, Button, Heading } from '@radix-ui/themes';
 
 interface IndividualViewPageProps {
   treeId: string;
@@ -11,13 +11,13 @@ export function IndividualViewPage({ treeId, individualId }: IndividualViewPageP
   const { t: tCommon } = useTranslation('common');
   const { t } = useTranslation('individuals');
   return (
-    <div>
-      <Button asChild variant="ghost" size="sm">
+    <Box p="5">
+      <Button asChild variant="ghost" color="gray" size="1">
         <Link to="/tree/$treeId/individuals" params={{ treeId }}>
           {tCommon('nav.back')}
         </Link>
       </Button>
-      <h1>{t('heading', { individualId })}</h1>
-    </div>
+      <Heading mt="2">{t('heading', { individualId })}</Heading>
+    </Box>
   );
 }

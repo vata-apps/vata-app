@@ -2,9 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Box, Button, Flex, Grid, Heading, Text } from '@radix-ui/themes';
 
 import packageJson from '../../package.json';
 import { AppStatusBar } from '$components/app-status-bar';
+import { Icon } from '$components/icon';
 import { PreferencesPopover } from '$components/preferences-popover';
 import { DeleteTreeModal } from '$components/trees/delete-tree-modal';
 import { DownloadTreeModal } from '$components/trees/download-tree-modal';
@@ -14,7 +16,6 @@ import { NewTreeModal } from '$components/trees/new-tree-modal';
 import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
 import { TreeCardCta } from '$components/trees/tree-card-cta';
 import { TreeSectionDivider } from '$components/trees/tree-section-divider';
-import { Button } from '$components/ui/button';
 import { getAllTrees } from '$db-system/trees';
 import { TreeManager } from '$/managers/TreeManager';
 import { formatIsoDate } from '$lib/format';
@@ -94,13 +95,13 @@ export function HomePage(): JSX.Element {
 
   let treesContent: JSX.Element;
   if (error) {
-    treesContent = <p className="text-muted-foreground">{t('common:errors.loadFailed')}</p>;
+    treesContent = <Text color="gray">{t('common:errors.loadFailed')}</Text>;
   } else if (isLoading) {
-    treesContent = <p className="text-muted-foreground">{t('trees:loading')}</p>;
+    treesContent = <Text color="gray">{t('trees:loading')}</Text>;
   } else {
     treesContent = (
       <>
-        <div className="mt-9 mb-[18px]">
+        <Box style={{ marginTop: 'clamp(48px, 7vw, 76px)', marginBottom: 22 }}>
           <TreeSectionDivider
             label={t('trees:home.sectionLabel')}
             count={sortedTrees.length}
@@ -109,9 +110,9 @@ export function HomePage(): JSX.Element {
             onSortChange={(next) => setSort(next as SortKey)}
             sortAriaLabel={t('trees:home.sortAriaLabel')}
           />
-        </div>
+        </Box>
 
-        <div className="grid grid-cols-1 gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+        <Grid className="trees-grid" gap="5">
           {sortedTrees.map((tree) => (
             <TreeCard
               key={tree.id}
@@ -137,33 +138,55 @@ export function HomePage(): JSX.Element {
             subtitle={t('trees:cta.subtitle')}
             onClick={() => setNewTreeOpen(true)}
           />
-        </div>
+        </Grid>
       </>
     );
   }
 
   return (
-    <div className="bg-background flex h-screen flex-col">
-      <div className="flex-1 overflow-auto">
-        <div className="mx-auto max-w-[1080px] px-14 pt-14 pb-10">
-          <section className="mb-9 flex flex-col gap-1.5">
-            <h1 className="text-foreground font-serif text-[56px] leading-none font-medium tracking-tight italic">
+    <Flex direction="column" height="100vh">
+      <Box flexGrow="1" overflow="auto">
+        <Box
+          style={{
+            maxWidth: 1480,
+            marginInline: 'auto',
+            paddingInline: 'clamp(28px, 6vw, 88px)',
+            paddingTop: 'clamp(48px, 8vw, 96px)',
+            paddingBottom: 56,
+            backgroundImage:
+              'radial-gradient(800px 500px at 8% 0%, var(--accent-a2), transparent 70%), ' +
+              'radial-gradient(600px 400px at 100% 100%, var(--accent-a1), transparent 70%)',
+          }}
+        >
+          <Box style={{ marginBottom: 'clamp(32px, 5vw, 56px)' }}>
+            <Heading
+              as="h1"
+              weight="regular"
+              style={{
+                fontSize: 'clamp(40px, 6vw, 80px)',
+                lineHeight: 1.04,
+                letterSpacing: '-0.035em',
+                textWrap: 'balance',
+              }}
+            >
               {t('trees:home.title')}{' '}
-              <span className="text-primary italic">{t('trees:home.titleAccent')}</span>
-            </h1>
-            <div className="mt-5 flex items-center gap-2.5">
-              <Button leadingIcon="plus" onClick={() => setNewTreeOpen(true)}>
+              <span style={{ color: 'var(--accent-10)' }}>{t('trees:home.titleAccent')}</span>
+            </Heading>
+            <Flex align="center" gap="3" mt="6" wrap="wrap">
+              <Button size="3" onClick={() => setNewTreeOpen(true)}>
+                <Icon name="plus" size={16} />
                 {t('trees:home.heroNew')}
               </Button>
-              <Button variant="outline" leadingIcon="download" onClick={() => setImportOpen(true)}>
+              <Button size="3" variant="soft" onClick={() => setImportOpen(true)}>
+                <Icon name="download" size={16} />
                 {t('trees:home.heroImport')}
               </Button>
-            </div>
-          </section>
+            </Flex>
+          </Box>
 
           {treesContent}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       <AppStatusBar
         brandLabel={t('common:app.title')}
@@ -175,7 +198,8 @@ export function HomePage(): JSX.Element {
         }
         preferencesTrigger={
           <PreferencesPopover>
-            <Button variant="outline" size="sm" leadingIcon="settings" className="font-mono">
+            <Button variant="outline" size="1" color="gray">
+              <Icon name="settings" size={13} />
               {t('common:statusBar.preferences')}
             </Button>
           </PreferencesPopover>
@@ -207,6 +231,6 @@ export function HomePage(): JSX.Element {
           }}
         />
       )}
-    </div>
+    </Flex>
   );
 }

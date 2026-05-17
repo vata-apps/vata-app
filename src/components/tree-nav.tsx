@@ -1,23 +1,9 @@
 import { Link, useRouterState } from '@tanstack/react-router';
+import { Flex, IconButton } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
-import { tv } from 'tailwind-variants';
 
-import { Icon } from '$components/ui/icon';
+import { Icon } from '$components/icon';
 import { NAV_SECTIONS, getTreeIdFromPath, resolveNavSection } from '$lib/nav-sections';
-
-const navItem = tv({
-  base: [
-    'flex h-9 w-9 items-center justify-center rounded-md',
-    'transition-colors duration-150 ease-out',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-  ],
-  variants: {
-    active: {
-      true: 'bg-primary text-primary-foreground',
-      false: 'text-muted-foreground hover:bg-accent hover:text-foreground',
-    },
-  },
-});
 
 /**
  * The in-tree icon navigation bar — one icon per top-level section
@@ -41,29 +27,37 @@ export function TreeNav(): JSX.Element | null {
 
   return (
     <nav aria-label={t('nav.ariaLabel')}>
-      <ul className="flex items-center gap-1">
-        {NAV_SECTIONS.map((section) => {
-          const label = t(section.labelKey);
-          const isActive = section.id === activeSection;
-          return (
-            <li key={section.id}>
-              <Link
-                to={section.to}
-                params={{ treeId }}
-                // Without `exact`, TanStack's fuzzy matcher marks the Home link
-                // active on every in-tree route (its path is a prefix of them
-                // all); section-active state is driven by resolveNavSection.
-                activeOptions={{ exact: true }}
-                aria-label={label}
-                aria-current={isActive ? 'page' : undefined}
-                className={navItem({ active: isActive })}
-              >
-                <Icon name={section.icon} size={18} />
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+      <Flex asChild align="center" gap="1">
+        <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+          {NAV_SECTIONS.map((section) => {
+            const label = t(section.labelKey);
+            const isActive = section.id === activeSection;
+            return (
+              <li key={section.id}>
+                <IconButton
+                  asChild
+                  size="3"
+                  variant={isActive ? 'solid' : 'ghost'}
+                  color={isActive ? undefined : 'gray'}
+                  aria-label={label}
+                >
+                  <Link
+                    to={section.to}
+                    params={{ treeId }}
+                    // Without `exact`, TanStack's fuzzy matcher marks the Home link
+                    // active on every in-tree route (its path is a prefix of them
+                    // all); section-active state is driven by resolveNavSection.
+                    activeOptions={{ exact: true }}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <Icon name={section.icon} size={18} />
+                  </Link>
+                </IconButton>
+              </li>
+            );
+          })}
+        </ul>
+      </Flex>
     </nav>
   );
 }

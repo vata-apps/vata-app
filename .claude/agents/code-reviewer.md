@@ -20,7 +20,7 @@ Run `git diff --name-only main...HEAD` (or use the scope provided in the prompt)
 | `src/db/**`                                                                | `.claude/skills/sqlite-standards/checklist.md`                |
 | `src/lib/gedcom/**`, `src/managers/GedcomManager.ts`                       | `.claude/skills/gedcom-standards/checklist.md`                |
 | `src/**/*.{ts,tsx}` (excluding `src/db/**` and `src/lib/gedcom/**`)        | `.claude/skills/typescript-standards/SKILL.md` (sections 1-6) |
-| `src/components/**`, `src/pages/**`, `src/routes/**`, `src/styles/app.css` | `.claude/skills/design-system-standards/checklist.md`         |
+| `src/components/**`, `src/pages/**`, `src/routes/**`, `src/styles/app.css` | `.claude/skills/design-system-standards/SKILL.md`             |
 | `src-tauri/**/*.rs`, `tauri.conf.json`                                     | `.claude/skills/tauri-standards/SKILL.md`                     |
 | `**/*.{test,spec}.{ts,tsx}`                                                | `.claude/skills/testing-standards/SKILL.md`                   |
 
