@@ -148,7 +148,10 @@ export function HomePage(): JSX.Element {
       <Box flexGrow="1" overflow="auto">
         <Box px="8" pt="8" pb="7" style={{ maxWidth: 1080, marginInline: 'auto' }}>
           <Box mb="6">
-            <Heading size="9" weight="regular">
+            <Heading
+              weight="medium"
+              style={{ fontSize: '56px', lineHeight: 1, letterSpacing: '-0.02em' }}
+            >
               {t('trees:home.title')}{' '}
               <span style={{ color: 'var(--accent-11)' }}>{t('trees:home.titleAccent')}</span>
             </Heading>

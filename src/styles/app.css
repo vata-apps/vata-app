@@ -69,14 +69,21 @@
     U+A720-A7FF;
 }
 
-/* Fraunces — variable serif (italic only), used for headings.
-   The latin subset covers French + English; headings are Latin-script. */
+/* Fraunces — serif used for headings (italic only). Static Google
+   Fonts cuts; the latin subset covers French + English. */
 @font-face {
   font-family: 'Fraunces';
   font-style: italic;
-  font-weight: 100 900;
+  font-weight: 500;
   font-display: swap;
-  src: url('./fonts/fraunces-latin-wght-italic.woff2') format('woff2');
+  src: url('./fonts/fraunces-latin-500-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./fonts/fraunces-latin-700-italic.woff2') format('woff2');
 }
 
 /* ============================================================
