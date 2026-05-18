@@ -123,7 +123,8 @@ Active routes:
 - `/` → `src/routes/index.tsx` → `src/pages/Home.tsx`
 - `/tree/$treeId` → `src/routes/tree/$treeId.tsx` (loads tree metadata, opens DB)
 - `/tree/$treeId/` → `src/pages/TreeView.tsx`
-- `/tree/$treeId/data` → `src/pages/DataBrowser.tsx`
+- `/tree/$treeId/individuals` → `src/pages/IndividualsPage.tsx`
+- `/tree/$treeId/families` → `src/pages/FamiliesPage.tsx`
 
 The `$treeId.tsx` layout route is responsible for opening the tree DB before any child route renders.
 

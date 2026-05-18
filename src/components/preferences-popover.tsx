@@ -18,6 +18,12 @@ function normalizeLanguage(raw: string): SupportedLanguage {
 export interface PreferencesPopoverProps {
   /** The trigger element wrapped by `Popover.Trigger`. */
   children: ReactNode;
+  /**
+   * Which side of the trigger the panel opens on. Use `'top'` for a
+   * trigger pinned to the bottom of the screen, `'bottom'` for one in a
+   * header. Defaults to `'top'`.
+   */
+  side?: 'top' | 'bottom';
 }
 
 /**
@@ -36,7 +42,10 @@ export interface PreferencesPopoverProps {
  *   </Button>
  * </PreferencesPopover>
  */
-export function PreferencesPopover({ children }: PreferencesPopoverProps): JSX.Element {
+export function PreferencesPopover({
+  children,
+  side = 'top',
+}: PreferencesPopoverProps): JSX.Element {
   const { t, i18n } = useTranslation('common');
   const theme = useAppStore((state) => state.theme);
   const setTheme = useAppStore((state) => state.setTheme);
@@ -46,7 +55,7 @@ export function PreferencesPopover({ children }: PreferencesPopoverProps): JSX.E
   return (
     <Popover.Root>
       <Popover.Trigger>{children}</Popover.Trigger>
-      <Popover.Content side="top" align="end" width="280px">
+      <Popover.Content side={side} align="end" width="280px">
         <Heading size="3" mb="3">
           {t('preferences.title')}
         </Heading>

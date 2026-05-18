@@ -37,7 +37,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 - [Design System](./ui/design-system.md) — Radix Themes foundation, brand tokens, design principles, accessibility
 - [Layouts](./ui/layouts.md) — Layout modes
-- Screens: [Home](./ui/screens/home.md) · [Tree View](./ui/screens/tree-view.md) · [Individual View](./ui/screens/individual-view.md) · [Family View](./ui/screens/family-view.md) · [Sources](./ui/screens/sources.md)
+- Screens: [Home](./ui/screens/home.md) · [Tree View](./ui/screens/tree-view.md) · [Individual View](./ui/screens/individual-view.md) · [Family View](./ui/screens/family-view.md)
 
 ## References
 

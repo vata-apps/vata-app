@@ -66,7 +66,7 @@ Only add these when the logic is non-trivial. Do not write unit tests for files 
 **Examples that do not:**
 
 - `queryKeys.ts` — just array literals
-- `MainLayout.tsx` — just `<div>{children}</div>`
+- A trivial layout wrapper that is just `<div>{children}</div>`
 
 ### 3. Component tests — React (TypeScript)
 
@@ -101,7 +101,7 @@ When that happens, use inline `#[cfg(test)]` blocks for pure logic and `rusqlite
 | Situation                                  | Reason                                            |
 | ------------------------------------------ | ------------------------------------------------- |
 | Auto-generated files (`routeTree.gen.ts`)  | Not authored code                                 |
-| Trivial layout wrappers (`MainLayout.tsx`) | No logic to break                                 |
+| Trivial layout wrappers (shell pass-throughs) | No logic to break                                 |
 | Configuration objects (`queryKeys.ts`)     | Assertions would just repeat the definition       |
 | SQL string structure                       | Refactor the query freely; test the data returned |
 | Internal mock call counts                  | Tests the plumbing, not the outcome               |

@@ -6,9 +6,8 @@
     "home": "Home",
     "individuals": "People",
     "families": "Families",
-    "sources": "Sources",
-    "repositories": "Repositories",
-    "dataBrowser": "Data Browser",
+    "events": "Events",
+    "places": "Places",
     "backToHome": "Back to Home",
     "back": "Back",
     "ariaLabel": "Tree sections"

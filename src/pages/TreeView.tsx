@@ -24,21 +24,6 @@ export function TreeViewPage({ treeId }: TreeViewPageProps): JSX.Element {
             </RouterLink>
           </Link>
           <Link asChild>
-            <RouterLink to="/tree/$treeId/sources" params={{ treeId }}>
-              {t('common:nav.sources')}
-            </RouterLink>
-          </Link>
-          <Link asChild>
-            <RouterLink to="/tree/$treeId/repositories" params={{ treeId }}>
-              {t('common:nav.repositories')}
-            </RouterLink>
-          </Link>
-          <Link asChild>
-            <RouterLink to="/tree/$treeId/data" params={{ treeId }}>
-              {t('common:nav.dataBrowser')}
-            </RouterLink>
-          </Link>
-          <Link asChild>
             <RouterLink to="/">{t('common:nav.backToHome')}</RouterLink>
           </Link>
         </nav>
