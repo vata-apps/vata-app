@@ -1,5 +1,7 @@
+import './tree-nav.css';
+
 import { Link, useRouterState } from '@tanstack/react-router';
-import { Button, Flex } from '@radix-ui/themes';
+import { Flex } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
 import { Icon } from '$components/icon';
@@ -10,11 +12,10 @@ import { NAV_SECTIONS, getTreeIdFromPath, resolveNavSection } from '$lib/nav-sec
  * (Home, People, Families, Events, Places). It sits in the shell header
  * and persists across every page of an open tree.
  *
- * Each button carries the section icon and label. The section currently
- * in view is highlighted with the soft accent variant, including on that
- * section's detail routes (an individual detail highlights People).
- * Sections whose route does not exist yet (Events, Places) render
- * disabled and non-navigable.
+ * Each item is a fixed-height icon-and-label button. The section in view
+ * gets a soft-accent pill, including on that section's detail routes (an
+ * individual detail highlights People). Sections whose route does not
+ * exist yet (Events, Places) render disabled and non-navigable.
  *
  * Reads the active tree and section from the current route; renders
  * nothing when used outside the in-tree context.
@@ -38,10 +39,10 @@ export function TreeNav(): JSX.Element | null {
             if (section.to === null) {
               return (
                 <li key={section.id}>
-                  <Button size="2" variant="ghost" color="gray" disabled>
+                  <button type="button" className="tree-nav-item tree-nav-item--disabled" disabled>
                     <Icon name={section.icon} size={16} />
                     {label}
-                  </Button>
+                  </button>
                 </li>
               );
             }
@@ -49,25 +50,19 @@ export function TreeNav(): JSX.Element | null {
             const isActive = section.id === activeSection;
             return (
               <li key={section.id}>
-                <Button
-                  asChild
-                  size="2"
-                  variant={isActive ? 'soft' : 'ghost'}
-                  color={isActive ? undefined : 'gray'}
+                <Link
+                  to={section.to}
+                  params={{ treeId }}
+                  className="tree-nav-item"
+                  // Without `exact`, TanStack's fuzzy matcher marks the Home link
+                  // active on every in-tree route (its path is a prefix of them
+                  // all); section-active state is driven by resolveNavSection.
+                  activeOptions={{ exact: true }}
+                  aria-current={isActive ? 'page' : undefined}
                 >
-                  <Link
-                    to={section.to}
-                    params={{ treeId }}
-                    // Without `exact`, TanStack's fuzzy matcher marks the Home link
-                    // active on every in-tree route (its path is a prefix of them
-                    // all); section-active state is driven by resolveNavSection.
-                    activeOptions={{ exact: true }}
-                    aria-current={isActive ? 'page' : undefined}
-                  >
-                    <Icon name={section.icon} size={16} />
-                    {label}
-                  </Link>
-                </Button>
+                  <Icon name={section.icon} size={16} />
+                  {label}
+                </Link>
               </li>
             );
           })}

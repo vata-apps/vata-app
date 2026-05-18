@@ -1,0 +1,54 @@
+/* The in-tree navigation bar item.
+ *
+ * Geometry and states come straight from the AppShell design handoff: a
+ * fixed 32px-tall button, transparent by default, with a soft-accent pill
+ * when its section is in view. Radix's Button variants do not fit here —
+ * `ghost` carries inline-text geometry (negative margins, no fixed
+ * height) and `soft` always paints a background — so the item is styled
+ * directly, on top of Radix colour tokens. */
+
+.tree-nav-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-3);
+  background: transparent;
+  color: var(--gray-12);
+  font-size: var(--font-size-2);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 120ms,
+    color 120ms;
+}
+
+.tree-nav-item:hover {
+  background: var(--gray-a3);
+}
+
+.tree-nav-item:focus-visible {
+  outline: 2px solid var(--focus-8);
+  outline-offset: -1px;
+}
+
+.tree-nav-item[aria-current='page'] {
+  background: var(--accent-a3);
+  color: var(--accent-11);
+}
+
+.tree-nav-item[aria-current='page']:hover {
+  background: var(--accent-a4);
+}
+
+.tree-nav-item--disabled,
+.tree-nav-item--disabled:hover {
+  background: transparent;
+  color: var(--gray-a8);
+  cursor: not-allowed;
+}
