@@ -6,9 +6,8 @@
     "home": "Accueil",
     "individuals": "Personnes",
     "families": "Familles",
-    "sources": "Sources",
-    "repositories": "Dépôts",
-    "dataBrowser": "Explorateur de données",
+    "events": "Évènements",
+    "places": "Lieux",
     "backToHome": "Retour à l'accueil",
     "back": "Retour",
     "ariaLabel": "Sections de l'arbre"

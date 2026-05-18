@@ -1,6 +1,9 @@
 import { type ReactNode } from 'react';
-import { Box, Flex, Grid } from '@radix-ui/themes';
+import { Box, Flex, Grid, IconButton } from '@radix-ui/themes';
+import { useTranslation } from 'react-i18next';
 
+import { Icon } from '$components/icon';
+import { PreferencesPopover } from '$components/preferences-popover';
 import { TreeNav } from './tree-nav';
 
 /**
@@ -15,9 +18,10 @@ export interface TreeShellProps {
  * The in-tree application shell — the persistent frame around every page
  * under an open tree.
  *
- * It is a persistent header carrying the {@link TreeNav} icon navigation
- * bar, above a fixed three-column layout: a left panel, the page body,
- * and a right panel.
+ * A persistent 56px header carries the {@link TreeNav} navigation bar on
+ * the left and a Settings button (opening the {@link PreferencesPopover})
+ * on the right, above a fixed three-column layout: a 264px left panel,
+ * the page body, and a 320px right panel.
  *
  * The two side panels are intentionally empty in this iteration. They are
  * the reserved structural home for contextual content (entity lists,
@@ -33,24 +37,47 @@ export interface TreeShellProps {
  * </TreeShell>
  */
 export function TreeShell({ children }: TreeShellProps): JSX.Element {
+  const { t } = useTranslation('common');
   return (
     <Flex direction="column" height="100vh" overflow="hidden">
-      <Flex asChild align="center" flexShrink="0" px="3" height="56px">
-        <header style={{ borderBottom: '1px solid var(--gray-a5)' }}>
+      <Flex
+        asChild
+        align="center"
+        justify="between"
+        flexShrink="0"
+        height="56px"
+        style={{
+          paddingInline: 20,
+          background: 'var(--color-panel-solid)',
+          borderBottom: '1px solid var(--gray-a4)',
+        }}
+      >
+        <header>
           <TreeNav />
+          <PreferencesPopover side="bottom">
+            <IconButton size="2" variant="ghost" color="gray" aria-label={t('preferences.title')}>
+              <Icon name="settings" size={16} />
+            </IconButton>
+          </PreferencesPopover>
         </header>
       </Flex>
-      <Grid columns="280px minmax(0, 1fr) 320px" flexGrow="1" minHeight="0">
+      <Grid columns="264px minmax(0, 1fr) 320px" flexGrow="1" minHeight="0">
         <Box
           overflow="auto"
-          style={{ background: 'var(--gray-2)', borderRight: '1px solid var(--gray-a5)' }}
+          style={{
+            background: 'var(--color-panel-solid)',
+            borderRight: '1px solid var(--gray-a4)',
+          }}
         />
         <Box asChild overflow="auto">
-          <main>{children}</main>
+          <main style={{ background: 'var(--color-background)' }}>{children}</main>
         </Box>
         <Box
           overflow="auto"
-          style={{ background: 'var(--gray-2)', borderLeft: '1px solid var(--gray-a5)' }}
+          style={{
+            background: 'var(--color-panel-solid)',
+            borderLeft: '1px solid var(--gray-a4)',
+          }}
         />
       </Grid>
     </Flex>

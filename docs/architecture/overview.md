@@ -35,10 +35,10 @@ graph TD
 
 **Responsibility**: Display and user interactions
 
-- **Pages**: Full application screens (Home, TreeView, IndividualView, etc.)
-- **Components**: Reusable components (PersonCard, EventList, SourceBadge, etc.)
-- **Layouts**: Layout structures (MainLayout, etc.)
-- **Form windows**: Standalone native windows for create/edit flows (e.g. Create Person, Edit Person, Import GEDCOM). They load routes under `/standalone/` and render without MainLayout. Small in-window dialogs are used for unsaved-change and delete confirmations.
+- **Pages**: Full application screens (Home, TreeView, IndividualView, FamilyView, etc.)
+- **Components**: Application organisms composed from Radix Themes primitives (`tree-shell.tsx`, `tree-nav.tsx`, `preferences-popover.tsx`, etc.)
+- **Shell**: The in-tree shell (`TreeShell`) wraps every route under `/tree/$treeId/...` with a persistent navigation header and a fixed three-column layout.
+- **Form windows**: Standalone native Tauri windows for create/edit flows (e.g. Create Person, Edit Person, Import GEDCOM). These open separately from the main shell and contain only the form content — no header, no side panels.
 
 **Technologies**: React 18, TanStack Router, Radix Themes, react-i18next.
 
@@ -131,7 +131,7 @@ graph LR
 
 - All UI strings go through `react-i18next` translation system
 - Database stores identifiers only (e.g., `event_types.tag = 'BIRT'`), display names resolved via i18n (`t('eventType.BIRT')` → "Birth")
-- Translation files organized by namespace (common, home, individual, family, event, source, place, settings)
+- Translation files organized by namespace — `common` (shared), plus one per entity with an active screen (e.g. `individuals`, `families`, `trees`)
 - Locale preference stored in Zustand store and persisted
 - Currently English-only, but infrastructure ready for additional languages
 

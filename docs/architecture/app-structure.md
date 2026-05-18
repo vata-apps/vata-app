@@ -51,8 +51,8 @@ Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Fin
 **Where it lives:**
 
 - Layout route (the context boundary): `src/routes/tree/$treeId.tsx` — opens the DB before rendering children, closes it on unmount.
-- Tree dashboard (in-tree "home"): `src/pages/TreeView.tsx` — the landing page after opening, accessed via the Home icon in the top nav.
-- Entity routes under `src/routes/tree/$treeId/`: `individuals.tsx`, `families.tsx`, `sources.tsx`, `repositories.tsx`, `data.tsx`, plus detail routes (`individual/$individualId`, `family/$familyId`, `source/$sourceId`, `repository/$repositoryId`).
+- Tree dashboard (in-tree "home"): `src/pages/TreeView.tsx` — the landing page after opening, accessed via the Home button in the top nav.
+- Entity routes under `src/routes/tree/$treeId/`: `individuals.tsx`, `families.tsx`, plus detail routes (`individual/$individualId`, `family/$familyId`). Events and Places appear in the nav but have no route yet; Sources and Repositories keep their DB layer (`src/db/trees/`) but no longer have screens.
 - Tree DB queries: `src/db/trees/*`.
 - DB connection helpers: `src/db/connection.ts` — `getTreeDb()`, `isTreeDbOpen()`, `getCurrentTreePath()`.
 

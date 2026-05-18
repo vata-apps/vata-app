@@ -30,7 +30,7 @@ For the stack and platform choices, see [Tech Stack](../architecture/tech-stack.
 - Create, open, rename, and delete genealogical trees
 - CRUD on primary entities: individuals, names, families, events, places — with navigation between them
 - Import and export GEDCOM 5.5.1 files with round-trip fidelity
-- Source and citation management via a source-centric workspace
+- Source and citation management (data layer complete; screens to be built)
 - File attachments linked to entities; browse all media in a tree
 - Complete desktop UI on a custom design system, with internationalization
 

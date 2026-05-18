@@ -18,19 +18,10 @@ describe('resolveNavSection', () => {
     expect(resolveNavSection('/tree/42/family/F-0002')).toBe('families');
   });
 
-  it('resolves the sources list, a source detail and a source edit to the sources section', () => {
-    expect(resolveNavSection('/tree/42/sources')).toBe('sources');
-    expect(resolveNavSection('/tree/42/source/S-0003')).toBe('sources');
-    expect(resolveNavSection('/tree/42/source/S-0003/edit')).toBe('sources');
-  });
-
-  it('resolves the repositories list and a repository detail to the repositories section', () => {
-    expect(resolveNavSection('/tree/42/repositories')).toBe('repositories');
-    expect(resolveNavSection('/tree/42/repository/R-0004')).toBe('repositories');
-  });
-
   it('resolves an in-tree path with no matching section to null', () => {
-    expect(resolveNavSection('/tree/42/data')).toBeNull();
+    // Segments with no route (a removed module, an unknown path) map to null.
+    expect(resolveNavSection('/tree/42/sources')).toBeNull();
+    expect(resolveNavSection('/tree/42/unknown')).toBeNull();
   });
 
   it('resolves a path outside the in-tree shell to null', () => {
