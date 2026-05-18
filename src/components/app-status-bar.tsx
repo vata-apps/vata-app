@@ -62,7 +62,7 @@ export interface AppStatusBarProps {
  *   } : undefined}
  *   preferencesTrigger={
  *     <PreferencesPopover>
- *       <Button variant="outline" size="1">
+ *       <Button variant="soft" size="2">
  *         {t('common:statusBar.preferences')}
  *       </Button>
  *     </PreferencesPopover>
@@ -91,16 +91,11 @@ export function AppStatusBar({
         </Text>
         <Box flexGrow="1" aria-hidden />
         {debug && (
-          <>
-            <Button size="1" variant="outline" color="gray" onClick={debug.onClick}>
-              <Icon name="bug" size={13} />
-              {debug.label}
-              {debug.shortcut && <Kbd size="1">{debug.shortcut}</Kbd>}
-            </Button>
-            <Text size="1" color="gray" aria-hidden>
-              ·
-            </Text>
-          </>
+          <Button size="2" variant="soft" color="gray" onClick={debug.onClick}>
+            <Icon name="bug" size={16} />
+            {debug.label}
+            {debug.shortcut && <Kbd size="1">{debug.shortcut}</Kbd>}
+          </Button>
         )}
         {preferencesTrigger}
       </footer>

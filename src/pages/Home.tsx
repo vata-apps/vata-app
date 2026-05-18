@@ -145,7 +145,15 @@ export function HomePage(): JSX.Element {
 
   return (
     <Flex direction="column" height="100vh">
-      <Box flexGrow="1" overflow="auto">
+      <Box
+        flexGrow="1"
+        overflow="auto"
+        style={{
+          backgroundImage:
+            'radial-gradient(800px 500px at 8% 0%, var(--accent-a2), transparent 70%), ' +
+            'radial-gradient(600px 400px at 100% 100%, var(--accent-a1), transparent 70%)',
+        }}
+      >
         <Box
           style={{
             maxWidth: 1480,
@@ -153,9 +161,6 @@ export function HomePage(): JSX.Element {
             paddingInline: 'clamp(28px, 6vw, 88px)',
             paddingTop: 'clamp(48px, 8vw, 96px)',
             paddingBottom: 56,
-            backgroundImage:
-              'radial-gradient(800px 500px at 8% 0%, var(--accent-a2), transparent 70%), ' +
-              'radial-gradient(600px 400px at 100% 100%, var(--accent-a1), transparent 70%)',
           }}
         >
           <Box style={{ marginBottom: 'clamp(32px, 5vw, 56px)' }}>
@@ -198,8 +203,8 @@ export function HomePage(): JSX.Element {
         }
         preferencesTrigger={
           <PreferencesPopover>
-            <Button variant="outline" size="1" color="gray">
-              <Icon name="settings" size={13} />
+            <Button variant="soft" size="2" color="gray">
+              <Icon name="settings" size={16} />
               {t('common:statusBar.preferences')}
             </Button>
           </PreferencesPopover>

@@ -30,20 +30,15 @@ export interface TreeCardCtaProps {
 export function TreeCardCta({ title, subtitle, onClick }: TreeCardCtaProps): JSX.Element {
   return (
     <Card asChild variant="surface" size="3" style={{ minHeight: 240, width: '100%' }}>
-      <button type="button" onClick={onClick}>
+      <button type="button" className="tree-card-cta" onClick={onClick}>
         <Flex direction="column" align="center" justify="center" gap="3" height="100%">
           <Flex
             align="center"
             justify="center"
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: '50%',
-              border: '1px dashed var(--accent-a7)',
-              color: 'var(--accent-11)',
-            }}
+            style={{ position: 'relative', width: 56, height: 56, color: 'var(--accent-11)' }}
           >
-            <Icon name="plus" size={24} />
+            <span className="cta-ring" aria-hidden />
+            <Icon name="plus" size={24} className="cta-plus" />
           </Flex>
           <Flex direction="column" align="center" gap="1">
             <Text size="2" weight="medium">

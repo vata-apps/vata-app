@@ -139,6 +139,12 @@
   --heading-font-family: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
   --code-font-family: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
+  /* Buttons get the pointer cursor — Radix Themes ships `default`. */
+  --cursor-button: pointer;
+
+  /* Shared decelerating ease for hover micro-interactions (easeOutQuint). */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
   /* Accent — clay / terracotta — light */
   --accent-1: oklch(0.992 0.005 38);
   --accent-2: oklch(0.98 0.012 38);
@@ -296,6 +302,117 @@
 @media (min-width: 1440px) {
   .trees-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ============================================================
+   Tree cards — a light hover cue: the card lifts a few pixels
+   and its border warms to the accent, so the card under the
+   pointer reads as active. Kept subtle: the card is not itself
+   a click target (the actions inside it are).
+   ============================================================ */
+
+.tree-card {
+  transition:
+    transform 240ms var(--ease-out-quint),
+    box-shadow 240ms ease;
+}
+
+.tree-card::after {
+  transition: box-shadow 240ms ease;
+}
+
+.tree-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px -18px rgba(0, 0, 0, 0.6);
+}
+
+.tree-card:hover::after {
+  box-shadow: 0 0 0 1px var(--accent-a7);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* The transform/box-shadow transitions stay declared but inert —
+     with `transform` unchanged on hover there is nothing to animate. */
+  .tree-card:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   "Start a new tree" CTA tile.
+
+   The card wears a dashed border — echoing the dashed ring
+   inside — so it reads as an empty "new tree" slot rather than
+   a data card. Radix draws the card border as a box-shadow on
+   ::after; swap it for a real border so it can actually dash.
+   (Keyboard focus is a separate `outline`, so this is safe.)
+
+   On hover (and keyboard focus) the whole tile swells slightly
+   and its border brightens — a card-level cue distinct from the
+   data cards' lift — while the ring at the centre brightens,
+   blooms a warm halo, scales up, and the plus lifts toward it.
+   ============================================================ */
+
+.tree-card-cta {
+  transition: scale 260ms var(--ease-out-quint);
+}
+
+.tree-card-cta::after {
+  box-shadow: none;
+  border: 1px dashed var(--accent-a7);
+  transition: border-color 220ms ease;
+}
+
+.cta-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed var(--accent-a7);
+  scale: 1;
+  transition:
+    border-color 220ms ease,
+    box-shadow 260ms ease,
+    scale 340ms var(--ease-out-quint);
+}
+
+.cta-plus {
+  transition: scale 340ms var(--ease-out-quint);
+}
+
+.tree-card-cta:hover .cta-ring,
+.tree-card-cta:focus-visible .cta-ring {
+  border-color: var(--accent-9);
+  scale: 1.07;
+  box-shadow: 0 0 26px -4px var(--accent-a6);
+}
+
+.tree-card-cta:hover .cta-plus,
+.tree-card-cta:focus-visible .cta-plus {
+  scale: 1.14;
+}
+
+.tree-card-cta:hover,
+.tree-card-cta:focus-visible {
+  scale: 1.015;
+}
+
+.tree-card-cta:hover::after,
+.tree-card-cta:focus-visible::after {
+  border-color: var(--accent-9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Neutralise only the scale; border-color and box-shadow keep
+     transitioning (a fade is not motion). The scale transitions stay
+     declared but inert once `scale` is unchanged on hover. */
+  .tree-card-cta:hover,
+  .tree-card-cta:focus-visible,
+  .tree-card-cta:hover .cta-ring,
+  .tree-card-cta:focus-visible .cta-ring,
+  .tree-card-cta:hover .cta-plus,
+  .tree-card-cta:focus-visible .cta-plus {
+    scale: 1;
   }
 }
 
