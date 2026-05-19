@@ -33,12 +33,20 @@ const SORT_LABEL_KEYS: Record<SortValue, string> = {
 
 const SKELETON_ROW_COUNT = 7;
 
-/** Year of an event, read from its normalized `YYYY-MM-DD` sort date. */
+/**
+ * Year of an event, read from the first four characters of its
+ * normalized `YYYY-MM-DD` sort date. Null when the event or its sort
+ * date is missing.
+ */
 function eventYear(event: { dateSort: string | null } | null): string | null {
   return event?.dateSort ? event.dateSort.slice(0, 4) : null;
 }
 
-/** Avatar initials — first given-name letter + first surname letter. */
+/**
+ * Avatar initials for a name — the first given-name letter and the first
+ * surname letter, uppercased. Falls back to the nickname's first letter,
+ * then to `?` when the name carries no usable text.
+ */
 function initialsOf(name: Name | null): string {
   if (!name) return '?';
   const given = name.givenNames?.trim().split(/\s+/)[0]?.charAt(0) ?? '';
@@ -49,14 +57,21 @@ function initialsOf(name: Name | null): string {
   return nickname ? nickname.toUpperCase() : '?';
 }
 
-/** Lifespan string — `1854 — 1921`, `1854 —` when living, `?` per unknown year. */
+/**
+ * The lifespan line for a person — `1854 — 1921`, or `1854 —` when the
+ * person is living. An unknown birth or death year shows as `?`.
+ */
 function lifespanOf(person: IndividualWithDetails): string {
   const birth = eventYear(person.birthEvent) ?? '?';
   if (person.isLiving) return `${birth} —`;
   return `${birth} — ${eventYear(person.deathEvent) ?? '?'}`;
 }
 
-/** The comparable key a person sorts on, for the given order. */
+/**
+ * The comparable key a person sorts on for the given order: the sortable
+ * name for surname sorts, the given names for the given-name sort, and
+ * the birth year (nullable) for birth sorts.
+ */
 function sortKeyOf(person: IndividualWithDetails, sort: SortValue): string | null {
   switch (sort) {
     case 'given-asc':
