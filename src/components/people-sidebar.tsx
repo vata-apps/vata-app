@@ -11,14 +11,18 @@ import { useIndividuals } from '$hooks/useIndividuals';
 import { formatName } from '$db-tree/names';
 import type { IndividualWithDetails, Name } from '$/types/database';
 
-/** The sort orders offered by the People sidebar. */
-type SortValue = 'surname-asc' | 'surname-desc' | 'given-asc' | 'birth-asc' | 'birth-desc';
+/** The sort orders offered by the People sidebar, in display order. */
+const SORT_VALUES = [
+  'surname-asc',
+  'surname-desc',
+  'given-asc',
+  'birth-asc',
+  'birth-desc',
+] as const;
 
-/**
- * i18n label key per sort order — the single source the option list is
- * derived from, so the `SortValue` union and the rendered options cannot
- * drift apart.
- */
+type SortValue = (typeof SORT_VALUES)[number];
+
+/** i18n label key per sort order — one entry is required for every SortValue. */
 const SORT_LABEL_KEYS: Record<SortValue, string> = {
   'surname-asc': 'sidebar.sort.surnameAsc',
   'surname-desc': 'sidebar.sort.surnameDesc',
@@ -189,11 +193,7 @@ export function PeopleSidebar(): JSX.Element | null {
   const rows = useMemo(() => (data ? sortPeople(data, sort) : []), [data, sort]);
 
   const sortOptions = useMemo<EntityListSortOption<SortValue>[]>(
-    () =>
-      (Object.keys(SORT_LABEL_KEYS) as SortValue[]).map((value) => ({
-        value,
-        label: t(SORT_LABEL_KEYS[value]),
-      })),
+    () => SORT_VALUES.map((value) => ({ value, label: t(SORT_LABEL_KEYS[value]) })),
     [t]
   );
 

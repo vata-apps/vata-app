@@ -68,6 +68,13 @@ export function EntityListPanel<T extends string = string>({
   sort,
   children,
 }: EntityListPanelProps<T>): JSX.Element {
+  // Radix Select hands back a plain string; resolve it against the typed
+  // options instead of asserting, so an unknown value is a no-op.
+  const handleSortChange = (value: string): void => {
+    const option = sort.options.find((candidate) => candidate.value === value);
+    if (option) sort.onChange(option.value);
+  };
+
   return (
     <Flex asChild direction="column" height="100%" overflow="hidden">
       <aside aria-label={title}>
@@ -104,11 +111,7 @@ export function EntityListPanel<T extends string = string>({
           >
             {sort.label}
           </Text>
-          <Select.Root
-            value={sort.value}
-            onValueChange={(value) => sort.onChange(value as T)}
-            disabled={sort.disabled}
-          >
+          <Select.Root value={sort.value} onValueChange={handleSortChange} disabled={sort.disabled}>
             <Select.Trigger aria-label={sort.label} style={{ flex: 1 }} />
             <Select.Content>
               {sort.options.map((option) => (

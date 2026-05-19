@@ -1,3 +1,10 @@
+/**
+ * Scoped styles for the PeopleSidebar person rows. Radix Themes covers the
+ * panel structure, but the row link's interaction and selection states
+ * (hover, focus, aria-current) plus the dashed-circle initials avatar and
+ * compact two-line typography are a bespoke surface with no Radix primitive
+ * — hence local CSS.
+ */
 .person-row {
   display: flex;
   align-items: center;
