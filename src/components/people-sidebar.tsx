@@ -67,8 +67,11 @@ function sortKeyOf(person: IndividualWithDetails, sort: SortValue): string | nul
   }
 }
 
+/**
+ * Compare two sort keys for the given order. A null key — an unknown
+ * birth year — always sorts last, whichever direction is active.
+ */
 function compareKeys(a: string | null, b: string | null, sort: SortValue): number {
-  // A null key (an unknown birth year) sorts last regardless of direction.
   if (a === null || b === null) {
     if (a === b) return 0;
     return a === null ? 1 : -1;
@@ -89,6 +92,7 @@ function sortPeople(people: IndividualWithDetails[], sort: SortValue): Individua
     .map((decorated) => decorated.person);
 }
 
+/** Props accepted by {@link PersonRow}. */
 interface PersonRowProps {
   person: IndividualWithDetails;
   treeId: string;
