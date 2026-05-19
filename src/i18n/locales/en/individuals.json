@@ -1,3 +1,16 @@
 {
-  "heading": "Individual {{individualId}}"
+  "heading": "Individual {{individualId}}",
+  "sidebar": {
+    "newButton": "New",
+    "sortLabel": "Sort by",
+    "sort": {
+      "surnameAsc": "Surname (A → Z)",
+      "surnameDesc": "Surname (Z → A)",
+      "givenAsc": "Given name (A → Z)",
+      "birthAsc": "Birth (oldest first)",
+      "birthDesc": "Birth (newest first)"
+    },
+    "empty": "No people yet",
+    "unknownName": "Unknown"
+  }
 }
