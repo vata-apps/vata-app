@@ -1,0 +1,102 @@
+/**
+ * Scoped styles for the PeopleSidebar person rows. Radix Themes covers the
+ * panel structure, but the row link's interaction and selection states
+ * (hover, focus, aria-current) plus the dashed-circle initials avatar and
+ * compact two-line typography are a bespoke surface with no Radix primitive
+ * — hence local CSS.
+ */
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-3);
+  color: var(--gray-12);
+  text-decoration: none;
+  cursor: var(--cursor-link);
+  transition:
+    background-color 120ms,
+    border-color 120ms;
+}
+
+.person-row:hover {
+  background-color: var(--gray-a2);
+  border-color: var(--gray-a4);
+}
+
+.person-row:focus-visible {
+  outline: 2px solid var(--focus-a8);
+  outline-offset: -1px;
+}
+
+.person-row[aria-current='page'] {
+  background-color: var(--accent-a3);
+  border-color: var(--accent-a7);
+}
+
+.person-row__avatar {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1.25px dashed var(--gray-a7);
+  border-radius: 9999px;
+  color: var(--gray-11);
+  font-family: var(--code-font-family);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.person-row[aria-current='page'] .person-row__avatar {
+  border-color: var(--accent-a8);
+  color: var(--accent-11);
+}
+
+.person-row__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.2;
+}
+
+.person-row__name {
+  overflow: hidden;
+  color: var(--gray-12);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.person-row[aria-current='page'] .person-row__name {
+  color: var(--accent-12);
+}
+
+.person-row__meta {
+  overflow: hidden;
+  color: var(--gray-10);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.person-row[aria-current='page'] .person-row__meta {
+  color: var(--accent-a11);
+}
+
+.person-row__chev {
+  flex: 0 0 14px;
+  color: var(--gray-9);
+}
+
+.person-row[aria-current='page'] .person-row__chev {
+  color: var(--accent-11);
+}

@@ -8,19 +8,19 @@ The two layouts are the visual expression of the **two app contexts** (outside p
 
 ## Two Layout Modes
 
-| Layout mode   | When used                                     | Key characteristic                                                       |
-| ------------- | --------------------------------------------- | ------------------------------------------------------------------------ |
-| Picker layout | Before opening a tree (tree selection screen) | Full-width content, no header, no side panels                            |
-| In-tree shell | Every page inside an open tree                | Navigation header + fixed three-column layout (left / body / right)      |
+| Layout mode   | When used                                     | Key characteristic                                                  |
+| ------------- | --------------------------------------------- | ------------------------------------------------------------------- |
+| Picker layout | Before opening a tree (tree selection screen) | Full-width content, no header, no side panels                       |
+| In-tree shell | Every page inside an open tree                | Navigation header + fixed three-column layout (left / body / right) |
 
 ## The In-Tree Shell
 
 `TreeShell` (`src/components/tree-shell.tsx`) frames every route under `/tree/$treeId/...`:
 
 - A persistent **header** carrying `TreeNav` — the navigation bar for the tree's sections (Home, People, Families, Events, Places). Each section is an icon-and-label button; the section in view is highlighted, and Events and Places render disabled until their routes exist. A Settings button on the right opens the preferences popover. The header does not remount as the user moves between sections.
-- A fixed **three-column** body: a 264px left panel, the routed page, and a 320px right panel. Column widths are fixed; each column scrolls independently.
+- A fixed **three-column** body: a 332px left panel, the routed page, and a 320px right panel. Column widths are fixed; each column scrolls independently.
 
-The two side panels are reserved structural space — they hold contextual content (entity lists, contextual detail panels) added in later work. The shell applies to **all** in-tree routes, the tree overview included — there is no full-width exception.
+The **left panel** holds the active section's entity list — for the People section, the list of people (`PeopleSidebar`); the shell picks it from the active navigation section, so it persists (and keeps the open entity highlighted) as the user moves between a section's list and detail routes. The **right panel** is reserved structural space for contextual detail, added in later work. The shell applies to **all** in-tree routes, the tree overview included — there is no full-width exception.
 
 ## Forms Open in Separate Windows
 
