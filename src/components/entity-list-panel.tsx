@@ -2,29 +2,29 @@ import { type ReactNode } from 'react';
 import { Badge, Box, Flex, Select, Text } from '@radix-ui/themes';
 
 /** A single option offered by the {@link EntityListPanel} sort control. */
-export interface EntityListSortOption {
+export interface EntityListSortOption<T extends string = string> {
   /** Stable value persisted as the active sort. */
-  value: string;
+  value: T;
   /** Translated, user-facing label. */
   label: string;
 }
 
 /** Configuration for the {@link EntityListPanel} sort footer. */
-export interface EntityListSort {
+export interface EntityListSort<T extends string = string> {
   /** Translated label shown before the select (e.g. "Sort by"). */
   label: string;
   /** Available sort options, in display order. */
-  options: EntityListSortOption[];
+  options: EntityListSortOption<T>[];
   /** Currently selected option value. */
-  value: string;
+  value: T;
   /** Called with the new value when the user picks an option. */
-  onChange: (value: string) => void;
+  onChange: (value: T) => void;
   /** Disables the select — e.g. while the list has no rows to sort. */
   disabled?: boolean;
 }
 
 /** Props accepted by {@link EntityListPanel}. */
-export interface EntityListPanelProps {
+export interface EntityListPanelProps<T extends string = string> {
   /** Panel title — the entity name in plural (e.g. "People"). */
   title: string;
   /**
@@ -35,7 +35,7 @@ export interface EntityListPanelProps {
   /** Primary action control, rendered top-right (e.g. a "New" button). */
   action?: ReactNode;
   /** Sort footer configuration. */
-  sort: EntityListSort;
+  sort: EntityListSort<T>;
   /** The list body — entity rows, or a loading / empty / error state. */
   children: ReactNode;
 }
@@ -48,25 +48,26 @@ export interface EntityListPanelProps {
  * It is entity-agnostic by composition — the body is supplied as
  * `children` and the panel never inspects row shape, so People,
  * Families, Places and Events can each render their own row markup
- * through the same frame.
+ * through the same frame. The sort-value type `T` flows through, so each
+ * consumer keeps its own typed union of sort options.
  *
  * @example
  * <EntityListPanel
  *   title={t('nav.individuals')}
  *   count={people.length}
- *   action={<Button size="1" disabled>{t('sidebar.newButton')}</Button>}
+ *   action={<Button size="2" disabled>{t('sidebar.newButton')}</Button>}
  *   sort={{ label, options, value, onChange }}
  * >
  *   {people.map((person) => <PersonRow key={person.id} ... />)}
  * </EntityListPanel>
  */
-export function EntityListPanel({
+export function EntityListPanel<T extends string = string>({
   title,
   count,
   action,
   sort,
   children,
-}: EntityListPanelProps): JSX.Element {
+}: EntityListPanelProps<T>): JSX.Element {
   return (
     <Flex asChild direction="column" height="100%" overflow="hidden">
       <aside aria-label={title}>
@@ -103,7 +104,11 @@ export function EntityListPanel({
           >
             {sort.label}
           </Text>
-          <Select.Root value={sort.value} onValueChange={sort.onChange} disabled={sort.disabled}>
+          <Select.Root
+            value={sort.value}
+            onValueChange={(value) => sort.onChange(value as T)}
+            disabled={sort.disabled}
+          >
             <Select.Trigger aria-label={sort.label} style={{ flex: 1 }} />
             <Select.Content>
               {sort.options.map((option) => (

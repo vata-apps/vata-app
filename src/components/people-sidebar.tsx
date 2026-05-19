@@ -14,6 +14,19 @@ import type { IndividualWithDetails, Name } from '$/types/database';
 /** The sort orders offered by the People sidebar. */
 type SortValue = 'surname-asc' | 'surname-desc' | 'given-asc' | 'birth-asc' | 'birth-desc';
 
+/**
+ * i18n label key per sort order — the single source the option list is
+ * derived from, so the `SortValue` union and the rendered options cannot
+ * drift apart.
+ */
+const SORT_LABEL_KEYS: Record<SortValue, string> = {
+  'surname-asc': 'sidebar.sort.surnameAsc',
+  'surname-desc': 'sidebar.sort.surnameDesc',
+  'given-asc': 'sidebar.sort.givenAsc',
+  'birth-asc': 'sidebar.sort.birthAsc',
+  'birth-desc': 'sidebar.sort.birthDesc',
+};
+
 const SKELETON_ROW_COUNT = 7;
 
 /** Year of an event, read from its normalized `YYYY-MM-DD` sort date. */
@@ -39,30 +52,41 @@ function lifespanOf(person: IndividualWithDetails): string {
   return `${birth} — ${eventYear(person.deathEvent) ?? '?'}`;
 }
 
-function comparePeople(
-  a: IndividualWithDetails,
-  b: IndividualWithDetails,
-  sort: SortValue
-): number {
+/** The comparable key a person sorts on, for the given order. */
+function sortKeyOf(person: IndividualWithDetails, sort: SortValue): string | null {
   switch (sort) {
-    case 'surname-desc':
-      return formatName(b.primaryName).sortable.localeCompare(formatName(a.primaryName).sortable);
     case 'given-asc':
-      return (a.primaryName?.givenNames ?? '').localeCompare(b.primaryName?.givenNames ?? '');
+      return person.primaryName?.givenNames ?? '';
     case 'birth-asc':
-    case 'birth-desc': {
-      const ay = eventYear(a.birthEvent);
-      const by = eventYear(b.birthEvent);
-      // Individuals with no known birth year sort last in both directions.
-      if (ay === by) return 0;
-      if (ay === null) return 1;
-      if (by === null) return -1;
-      return sort === 'birth-asc' ? ay.localeCompare(by) : by.localeCompare(ay);
-    }
+    case 'birth-desc':
+      return eventYear(person.birthEvent);
     case 'surname-asc':
+    case 'surname-desc':
     default:
-      return formatName(a.primaryName).sortable.localeCompare(formatName(b.primaryName).sortable);
+      return formatName(person.primaryName).sortable;
   }
+}
+
+function compareKeys(a: string | null, b: string | null, sort: SortValue): number {
+  // A null key (an unknown birth year) sorts last regardless of direction.
+  if (a === null || b === null) {
+    if (a === b) return 0;
+    return a === null ? 1 : -1;
+  }
+  const order = a.localeCompare(b);
+  return sort === 'surname-desc' || sort === 'birth-desc' ? -order : order;
+}
+
+/**
+ * Sort people by the given order. Decorate-sort-undecorate: each person's
+ * key is computed once up front, so `formatName` runs O(n) times rather
+ * than O(n log n) inside the comparator.
+ */
+function sortPeople(people: IndividualWithDetails[], sort: SortValue): IndividualWithDetails[] {
+  return people
+    .map((person) => ({ person, key: sortKeyOf(person, sort) }))
+    .sort((a, b) => compareKeys(a.key, b.key, sort))
+    .map((decorated) => decorated.person);
 }
 
 interface PersonRowProps {
@@ -158,18 +182,16 @@ export function PeopleSidebar(): JSX.Element | null {
   const { data, isLoading, isError } = useIndividuals();
   const [sort, setSort] = useState<SortValue>('surname-asc');
 
-  const rows = useMemo(
-    () => (data ? [...data].sort((a, b) => comparePeople(a, b, sort)) : []),
-    [data, sort]
-  );
+  const rows = useMemo(() => (data ? sortPeople(data, sort) : []), [data, sort]);
 
-  const sortOptions: EntityListSortOption[] = [
-    { value: 'surname-asc', label: t('sidebar.sort.surnameAsc') },
-    { value: 'surname-desc', label: t('sidebar.sort.surnameDesc') },
-    { value: 'given-asc', label: t('sidebar.sort.givenAsc') },
-    { value: 'birth-asc', label: t('sidebar.sort.birthAsc') },
-    { value: 'birth-desc', label: t('sidebar.sort.birthDesc') },
-  ];
+  const sortOptions = useMemo<EntityListSortOption<SortValue>[]>(
+    () =>
+      (Object.keys(SORT_LABEL_KEYS) as SortValue[]).map((value) => ({
+        value,
+        label: t(SORT_LABEL_KEYS[value]),
+      })),
+    [t]
+  );
 
   const treeId = params.treeId;
   if (treeId === undefined) return null;
@@ -210,7 +232,7 @@ export function PeopleSidebar(): JSX.Element | null {
         label: t('sidebar.sortLabel'),
         options: sortOptions,
         value: sort,
-        onChange: (value) => setSort(value as SortValue),
+        onChange: setSort,
         disabled: rows.length === 0,
       }}
     >
