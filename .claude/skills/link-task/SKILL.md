@@ -90,6 +90,12 @@ git config branch."$(git branch --show-current)".ghIssue 2>/dev/null
 
 If the value is empty, no link exists for this branch. **Do not search GitHub at PR time** — Phase A is the only entry point for that. Just create the PR without a magic word.
 
+Exception: if the branch name begins with `feat/` or `fix/` and no link is stored, emit a soft one-line warning before proceeding:
+
+> ⚠ No issue linked for this `feat/` branch — if it closes a backlog item, run Phase A first. Continuing without `Closes #N`.
+
+This does not block PR creation — it surfaces the gap so the user can decide to run Phase A retroactively.
+
 ### 2. Inject the magic word
 
 If the value is `<N>`, ensure the PR description body ends with a footer line:
