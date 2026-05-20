@@ -104,6 +104,7 @@ export interface NameDisplay {
   full: string;
   short: string;
   sortable: string;
+  surnameFirst: string;
 }
 
 // =============================================================================

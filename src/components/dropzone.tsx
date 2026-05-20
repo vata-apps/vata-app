@@ -124,6 +124,12 @@ export function Dropzone({
 
   const showSelectedName = state !== 'idle' && selectedName;
 
+  const cursor = ((): 'pointer' | 'progress' | 'default' => {
+    if (interactive) return 'pointer';
+    if (state === 'scanning') return 'progress';
+    return 'default';
+  })();
+
   const card = (
     <button
       type="button"
@@ -140,7 +146,7 @@ export function Dropzone({
         padding: 'var(--space-6)',
         color: 'inherit',
         font: 'inherit',
-        cursor: interactive ? 'pointer' : state === 'scanning' ? 'progress' : 'default',
+        cursor,
         opacity: !interactive && state === 'idle' ? 0.6 : 1,
       }}
     >

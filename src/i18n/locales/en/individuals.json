@@ -7,6 +7,7 @@
       "surnameAsc": "Surname (A → Z)",
       "surnameDesc": "Surname (Z → A)",
       "givenAsc": "Given name (A → Z)",
+      "givenDesc": "Given name (Z → A)",
       "birthAsc": "Birth (oldest first)",
       "birthDesc": "Birth (newest first)"
     },

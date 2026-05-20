@@ -16,6 +16,7 @@ const SORT_VALUES = [
   'surname-asc',
   'surname-desc',
   'given-asc',
+  'given-desc',
   'birth-asc',
   'birth-desc',
 ] as const;
@@ -27,6 +28,7 @@ const SORT_LABEL_KEYS: Record<SortValue, string> = {
   'surname-asc': 'sidebar.sort.surnameAsc',
   'surname-desc': 'sidebar.sort.surnameDesc',
   'given-asc': 'sidebar.sort.givenAsc',
+  'given-desc': 'sidebar.sort.givenDesc',
   'birth-asc': 'sidebar.sort.birthAsc',
   'birth-desc': 'sidebar.sort.birthDesc',
 };
@@ -68,6 +70,20 @@ function lifespanOf(person: IndividualWithDetails): string {
 }
 
 /**
+ * Which name representation a row renders. Mirrors the user-visible
+ * sort order: a given-name sort is the only case where the row leads
+ * with the given names; every other sort (surname asc/desc, birth
+ * asc/desc) leads with the surname so the user can scan the column
+ * by the value being sorted on.
+ */
+type NameDisplayMode = 'givenFirst' | 'surnameFirst';
+
+/** The display mode that matches the given sort order. */
+function displayModeFor(sort: SortValue): NameDisplayMode {
+  return sort === 'given-asc' || sort === 'given-desc' ? 'givenFirst' : 'surnameFirst';
+}
+
+/**
  * The comparable key a person sorts on for the given order: the sortable
  * name for surname sorts, the given names for the given-name sort, and
  * the birth year (nullable) for birth sorts.
@@ -75,6 +91,7 @@ function lifespanOf(person: IndividualWithDetails): string {
 function sortKeyOf(person: IndividualWithDetails, sort: SortValue): string | null {
   switch (sort) {
     case 'given-asc':
+    case 'given-desc':
       return person.primaryName?.givenNames ?? '';
     case 'birth-asc':
     case 'birth-desc':
@@ -96,7 +113,7 @@ function compareKeys(a: string | null, b: string | null, sort: SortValue): numbe
     return a === null ? 1 : -1;
   }
   const order = a.localeCompare(b);
-  return sort === 'surname-desc' || sort === 'birth-desc' ? -order : order;
+  return sort.endsWith('-desc') ? -order : order;
 }
 
 /**
@@ -116,13 +133,18 @@ interface PersonRowProps {
   person: IndividualWithDetails;
   treeId: string;
   selected: boolean;
+  displayMode: NameDisplayMode;
 }
 
 /** A single navigable person row — avatar, name, lifespan, chevron. */
-function PersonRow({ person, treeId, selected }: PersonRowProps): JSX.Element {
+function PersonRow({ person, treeId, selected, displayMode }: PersonRowProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const name = person.primaryName;
-  const displayName = name ? formatName(name).full : t('sidebar.unknownName');
+  const displayName = ((): string => {
+    if (!name) return t('sidebar.unknownName');
+    const formatted = formatName(name);
+    return displayMode === 'surnameFirst' ? formatted.surnameFirst : formatted.full;
+  })();
 
   return (
     <Link
@@ -206,6 +228,7 @@ export function PeopleSidebar(): JSX.Element | null {
   const [sort, setSort] = useState<SortValue>('surname-asc');
 
   const rows = useMemo(() => (data ? sortPeople(data, sort) : []), [data, sort]);
+  const displayMode = displayModeFor(sort);
 
   const sortOptions = useMemo<EntityListSortOption<SortValue>[]>(
     () => SORT_VALUES.map((value) => ({ value, label: t(SORT_LABEL_KEYS[value]) })),
@@ -231,6 +254,7 @@ export function PeopleSidebar(): JSX.Element | null {
             person={person}
             treeId={treeId}
             selected={person.id === params.individualId}
+            displayMode={displayMode}
           />
         ))}
       </Flex>

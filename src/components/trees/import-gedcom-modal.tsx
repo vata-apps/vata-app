@@ -193,6 +193,12 @@ export function ImportGedcomModal({
     onOpenChange(false);
   };
 
+  const dropzoneState = ((): 'scanning' | 'error' | 'idle' => {
+    if (scanning) return 'scanning';
+    if (scanError) return 'error';
+    return 'idle';
+  })();
+
   return (
     <Dialog.Root
       open={open}
@@ -214,7 +220,7 @@ export function ImportGedcomModal({
           <Flex direction="column" gap="4">
             {!selected && (
               <Dropzone
-                state={scanning ? 'scanning' : scanError ? 'error' : 'idle'}
+                state={dropzoneState}
                 onFileSelected={handleFileSelected}
                 formatName={t('importGedcom.dropzoneFormatName')}
                 idleLabel={t('importGedcom.dropzoneLabel')}

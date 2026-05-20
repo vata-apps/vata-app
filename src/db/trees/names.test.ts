@@ -269,6 +269,7 @@ describe('formatName', () => {
     expect(result.full).toBe('(Unknown)');
     expect(result.short).toBe('(Unknown)');
     expect(result.sortable).toBe('');
+    expect(result.surnameFirst).toBe('(Unknown)');
   });
 
   it('formats a complete name', () => {
@@ -283,6 +284,7 @@ describe('formatName', () => {
     expect(result.full).toBe('Dr. John Paul Dupont Jr.');
     expect(result.short).toBe('John Dupont');
     expect(result.sortable).toBe('Dupont, John Paul');
+    expect(result.surnameFirst).toBe('Dupont, Dr. John Paul Jr.');
   });
 
   it('formats name with only given names', () => {
@@ -291,6 +293,8 @@ describe('formatName', () => {
     expect(result.full).toBe('John');
     expect(result.short).toBe('John');
     expect(result.sortable).toBe('John');
+    // No surname → no comma, falls back to `full`.
+    expect(result.surnameFirst).toBe('John');
   });
 
   it('formats name with only surname', () => {
@@ -299,6 +303,8 @@ describe('formatName', () => {
     expect(result.full).toBe('Smith');
     expect(result.short).toBe('Smith');
     expect(result.sortable).toBe('Smith');
+    // No given names → no comma, falls back to `full`.
+    expect(result.surnameFirst).toBe('Smith');
   });
 
   it('formats name with given names and surname', () => {
@@ -307,6 +313,7 @@ describe('formatName', () => {
     expect(result.full).toBe('Jean Marie Martin');
     expect(result.short).toBe('Jean Martin');
     expect(result.sortable).toBe('Martin, Jean Marie');
+    expect(result.surnameFirst).toBe('Martin, Jean Marie');
   });
 
   it('uses nickname as fallback when no other name parts', () => {
@@ -314,6 +321,7 @@ describe('formatName', () => {
     const result = formatName(name);
     expect(result.full).toBe('Johnny');
     expect(result.short).toBe('Johnny');
+    expect(result.surnameFirst).toBe('Johnny');
   });
 
   it('uses prefix in full but not short', () => {
@@ -321,6 +329,8 @@ describe('formatName', () => {
     const result = formatName(name);
     expect(result.full).toBe('Rev. Thomas Clark');
     expect(result.short).toBe('Thomas Clark');
+    // Prefix is preserved on the given-names side of the comma.
+    expect(result.surnameFirst).toBe('Clark, Rev. Thomas');
   });
 
   it('uses suffix in full but not short', () => {
@@ -328,6 +338,22 @@ describe('formatName', () => {
     const result = formatName(name);
     expect(result.full).toBe('John Smith III');
     expect(result.short).toBe('John Smith');
+    // Suffix is preserved on the given-names side of the comma.
+    expect(result.surnameFirst).toBe('Smith, John III');
+  });
+
+  it('keeps sortable free of affixes so it stays a clean sort key', () => {
+    // Two people sharing a surname must sort by given name regardless of
+    // an honorific. `sortable` therefore omits prefix/suffix; only
+    // `surnameFirst` carries them for display.
+    const withPrefix = createMockName({
+      prefix: 'Dr.',
+      givenNames: 'Steve',
+      surname: 'Bourgoin',
+    });
+    const withoutPrefix = createMockName({ givenNames: 'Stéphane', surname: 'Bourgoin' });
+    expect(formatName(withPrefix).sortable).toBe('Bourgoin, Steve');
+    expect(formatName(withoutPrefix).sortable).toBe('Bourgoin, Stéphane');
   });
 });
 
