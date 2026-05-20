@@ -113,7 +113,7 @@ function compareKeys(a: string | null, b: string | null, sort: SortValue): numbe
     return a === null ? 1 : -1;
   }
   const order = a.localeCompare(b);
-  return sort === 'surname-desc' || sort === 'given-desc' || sort === 'birth-desc' ? -order : order;
+  return sort.endsWith('-desc') ? -order : order;
 }
 
 /**
