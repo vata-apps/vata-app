@@ -123,12 +123,11 @@ export function DownloadTreeModal({
   };
 
   const sizeEstimate = estimateExportSize(tree.individualCount, tree.familyCount);
-  const sizeKey =
-    sizeEstimate.bucket === 'under-kb'
-      ? 'downloadTree.sizeUnderKb'
-      : sizeEstimate.bucket === 'kb'
-        ? 'downloadTree.sizeKb'
-        : 'downloadTree.sizeMb';
+  const sizeKey = ((): string => {
+    if (sizeEstimate.bucket === 'under-kb') return 'downloadTree.sizeUnderKb';
+    if (sizeEstimate.bucket === 'kb') return 'downloadTree.sizeKb';
+    return 'downloadTree.sizeMb';
+  })();
   const sizeValue = sizeEstimate.bucket === 'under-kb' ? '' : sizeEstimate.value;
 
   const stats: { value: string; label: string }[] = [

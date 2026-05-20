@@ -445,16 +445,11 @@ export function formatName(name: Name | null): NameDisplay {
   // Surname-first display: only meaningful when both surname and given
   // names are present — otherwise there is no second half to put after
   // the comma, so we fall back to `full`.
-  let surnameFirst: string;
-  if (surname && givenNames) {
-    const rightParts: string[] = [];
-    if (prefix) rightParts.push(prefix);
-    rightParts.push(givenNames);
-    if (suffix) rightParts.push(suffix);
-    surnameFirst = `${surname}, ${rightParts.join(' ')}`;
-  } else {
-    surnameFirst = full;
-  }
+  const surnameFirst = ((): string => {
+    if (!surname || !givenNames) return full;
+    const rightParts = [prefix, givenNames, suffix].filter(Boolean).join(' ');
+    return `${surname}, ${rightParts}`;
+  })();
 
   return { full, short, sortable, surnameFirst };
 }

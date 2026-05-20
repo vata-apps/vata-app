@@ -123,7 +123,11 @@ async function importIndividual(individual: GedcomIndividual, ctx: ImportContext
   const { db, xrefToId } = ctx;
 
   // Parse gender
-  const gender: Gender = individual.gender === 'M' ? 'M' : individual.gender === 'F' ? 'F' : 'U';
+  const gender: Gender = ((): Gender => {
+    if (individual.gender === 'M') return 'M';
+    if (individual.gender === 'F') return 'F';
+    return 'U';
+  })();
 
   // Determine if living: individual is deceased if they have a DEAT event
   const isLiving = !individual.events.some((e) => e.tag === 'DEAT');

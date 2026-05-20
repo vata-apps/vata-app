@@ -140,12 +140,11 @@ interface PersonRowProps {
 function PersonRow({ person, treeId, selected, displayMode }: PersonRowProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const name = person.primaryName;
-  const formatted = name ? formatName(name) : null;
-  const displayName = formatted
-    ? displayMode === 'surnameFirst'
-      ? formatted.surnameFirst
-      : formatted.full
-    : t('sidebar.unknownName');
+  const displayName = ((): string => {
+    if (!name) return t('sidebar.unknownName');
+    const formatted = formatName(name);
+    return displayMode === 'surnameFirst' ? formatted.surnameFirst : formatted.full;
+  })();
 
   return (
     <Link
