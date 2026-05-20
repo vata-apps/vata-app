@@ -51,5 +51,5 @@ The transition from `Icebox` → `Todo` is the explicit promotion moment ("yes, 
 
 Two Claude Code skills automate the workflow — see their skill files for trigger phrases and behavior:
 
-- **`capture-idea`** — files an idea as an issue, picks 0–2 labels, sets the type, and pins Status to **Icebox**.
-- **`link-task`** — at the start of a dev task, binds the branch to an existing open issue so the PR auto-closes it on merge. It does not create issues; use `capture-idea` first if none exists.
+- **`capture-idea`** — files an idea as an issue, picks 0–2 labels, sets the type, and pins Status to **Icebox**. **Batch captures**: when a session produces multiple ideas at once, invoke the skill once per item — never batch via a direct `gh issue create` loop, which bypasses the type and Icebox mutations.
+- **`link-task`** — at the start of a dev task, binds the branch to an existing open issue so the PR auto-closes it on merge. It does not create issues; use `capture-idea` first if none exists. **Habit rule**: for every `feat/` or `fix/` branch, run `link-task` explicitly before writing any code — don't rely on trigger phrases alone. If Phase B detects a `feat/`/`fix/` branch with no stored link, it emits a soft warning before proceeding.
