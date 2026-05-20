@@ -95,48 +95,7 @@ export async function getCitationDetailsForSource(sourceId: string): Promise<Cit
   // (b) Individuals linked via the event (event_participants)
   // Only for citations that have an event link
   const eventLinkedCitations = citationRows.filter((r) => r.event_id !== null);
-  let participantRows: RawIndividualRow[] = [];
-
-  if (eventLinkedCitations.length > 0) {
-    // Build a mapping: event_id → citation_id (we know there is at most one
-    // event per citation from the query above)
-    const eventIds = eventLinkedCitations.map((r) => r.event_id as number);
-    const eventIdToCitationId = new Map<number, number>(
-      eventLinkedCitations.map((r) => [r.event_id as number, r.citation_id])
-    );
-
-    const rawParticipants = await db.select<
-      {
-        event_id: number;
-        individual_id: number;
-        given_names: string | null;
-        surname: string | null;
-      }[]
-    >(
-      `SELECT
-         ep.event_id                            AS event_id,
-         i.id                                   AS individual_id,
-         n.given_names                          AS given_names,
-         n.surname                              AS surname
-       FROM event_participants ep
-       JOIN individuals i
-         ON i.id = ep.individual_id
-       LEFT JOIN names n
-         ON n.individual_id = i.id
-         AND n.is_primary = 1
-       WHERE ep.event_id IN (${eventIds.map((_, idx) => `$${idx + 1}`).join(', ')})
-         AND ep.individual_id IS NOT NULL
-       ORDER BY ep.event_id, i.id`,
-      eventIds
-    );
-
-    participantRows = rawParticipants.map((r) => ({
-      citation_id: eventIdToCitationId.get(r.event_id)!,
-      individual_id: r.individual_id,
-      given_names: r.given_names,
-      surname: r.surname,
-    }));
-  }
+  const participantRows = await loadEventParticipantRows(eventLinkedCitations);
 
   // Step 3: merge and deduplicate individuals per citation
   const individualsByCitation = new Map<number, Map<number, { id: string; name: string }>>();
@@ -170,4 +129,56 @@ export async function getCitationDetailsForSource(sourceId: string): Promise<Cit
       linkedIndividuals,
     };
   });
+}
+
+/**
+ * Fetch the individuals linked to a set of event-bearing citations via
+ * `event_participants`. Returns an empty array when no citation has an
+ * event link; each result row carries the citation id so callers can
+ * merge with directly-linked individuals.
+ */
+async function loadEventParticipantRows(
+  eventLinkedCitations: RawCitationRow[]
+): Promise<RawIndividualRow[]> {
+  if (eventLinkedCitations.length === 0) return [];
+  const db = await getTreeDb();
+
+  // Build a mapping: event_id → citation_id (we know there is at most one
+  // event per citation from the parent query)
+  const eventIds = eventLinkedCitations.map((r) => r.event_id as number);
+  const eventIdToCitationId = new Map<number, number>(
+    eventLinkedCitations.map((r) => [r.event_id as number, r.citation_id])
+  );
+
+  const rawParticipants = await db.select<
+    {
+      event_id: number;
+      individual_id: number;
+      given_names: string | null;
+      surname: string | null;
+    }[]
+  >(
+    `SELECT
+       ep.event_id                            AS event_id,
+       i.id                                   AS individual_id,
+       n.given_names                          AS given_names,
+       n.surname                              AS surname
+     FROM event_participants ep
+     JOIN individuals i
+       ON i.id = ep.individual_id
+     LEFT JOIN names n
+       ON n.individual_id = i.id
+       AND n.is_primary = 1
+     WHERE ep.event_id IN (${eventIds.map((_, idx) => `$${idx + 1}`).join(', ')})
+       AND ep.individual_id IS NOT NULL
+     ORDER BY ep.event_id, i.id`,
+    eventIds
+  );
+
+  return rawParticipants.map((r) => ({
+    citation_id: eventIdToCitationId.get(r.event_id)!,
+    individual_id: r.individual_id,
+    given_names: r.given_names,
+    surname: r.surname,
+  }));
 }

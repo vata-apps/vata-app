@@ -63,18 +63,11 @@ export function parse(input: string): ParseResult {
  * Parse a simple date with optional modifier.
  */
 function parseSimple(input: string, original: string): ParseResult {
-  let remaining = input;
-  let modifier: DateModifier | undefined;
-
-  // Check for modifier prefix
+  // Check for modifier prefix — pick the first matching one (none of
+  // ABT/CAL/EST/BEF/AFT is a prefix of another, so order is irrelevant).
   const modifiers: DateModifier[] = ['ABT', 'CAL', 'EST', 'BEF', 'AFT'];
-  for (const mod of modifiers) {
-    if (remaining.startsWith(mod + ' ')) {
-      modifier = mod;
-      remaining = remaining.slice(mod.length + 1).trim();
-      break;
-    }
-  }
+  const modifier = modifiers.find((mod) => input.startsWith(mod + ' '));
+  const remaining = modifier ? input.slice(modifier.length + 1).trim() : input;
 
   const datePoint = parseDatePoint(remaining);
   if (!datePoint) {
@@ -150,10 +143,9 @@ function parseRange(input: string, original: string): ParseResult {
  * Parse a date period (FROM ... TO ...).
  */
 function parsePeriod(input: string, original: string): ParseResult {
-  let from: DatePoint | undefined;
-  let to: DatePoint | undefined;
-
-  // Check for FROM ... TO ... pattern
+  // Each branch (FROM ... TO, FROM only, TO only, neither) is self-
+  // contained and returns its full ParseResult, so `from` / `to` can
+  // stay as branch-local `const`s instead of outer `let`s.
   if (input.startsWith('FROM ')) {
     const content = input.slice(5).trim();
     const toIndex = content.indexOf(' TO ');
@@ -163,60 +155,39 @@ function parsePeriod(input: string, original: string): ParseResult {
       const fromStr = content.slice(0, toIndex).trim();
       const toStr = content.slice(toIndex + 4).trim();
 
-      const fromParsed = parseDatePoint(fromStr);
-      if (!fromParsed) {
-        return {
-          success: false,
-          error: `Invalid period start date: ${fromStr}`,
-          original,
-        };
+      const from = parseDatePoint(fromStr);
+      if (!from) {
+        return { success: false, error: `Invalid period start date: ${fromStr}`, original };
       }
-      from = fromParsed;
 
-      const toParsed = parseDatePoint(toStr);
-      if (!toParsed) {
-        return {
-          success: false,
-          error: `Invalid period end date: ${toStr}`,
-          original,
-        };
+      const to = parseDatePoint(toStr);
+      if (!to) {
+        return { success: false, error: `Invalid period end date: ${toStr}`, original };
       }
-      to = toParsed;
-    } else {
-      // FROM ... only
-      const fromParsed = parseDatePoint(content);
-      if (!fromParsed) {
-        return {
-          success: false,
-          error: `Invalid period start date: ${content}`,
-          original,
-        };
-      }
-      from = fromParsed;
+
+      return { success: true, date: { type: 'period', from, to }, original };
     }
-  } else if (input.startsWith('TO ')) {
-    // TO ... only
-    const content = input.slice(3).trim();
-    const toParsed = parseDatePoint(content);
-    if (!toParsed) {
-      return {
-        success: false,
-        error: `Invalid period end date: ${content}`,
-        original,
-      };
+
+    // FROM ... only
+    const from = parseDatePoint(content);
+    if (!from) {
+      return { success: false, error: `Invalid period start date: ${content}`, original };
     }
-    to = toParsed;
+    return { success: true, date: { type: 'period', from, to: undefined }, original };
   }
 
-  return {
-    success: true,
-    date: {
-      type: 'period',
-      from,
-      to,
-    },
-    original,
-  };
+  if (input.startsWith('TO ')) {
+    // TO ... only
+    const content = input.slice(3).trim();
+    const to = parseDatePoint(content);
+    if (!to) {
+      return { success: false, error: `Invalid period end date: ${content}`, original };
+    }
+    return { success: true, date: { type: 'period', from: undefined, to }, original };
+  }
+
+  // Neither FROM nor TO prefix — empty period.
+  return { success: true, date: { type: 'period', from: undefined, to: undefined }, original };
 }
 
 /**

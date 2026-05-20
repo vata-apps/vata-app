@@ -33,12 +33,15 @@ export default [
       'no-unused-vars': 'off',
       'no-undef': 'off', // TypeScript handles this
       'no-nested-ternary': 'error',
-      // Prefer immutable bindings. For values derived from a branch, use
-      // a `const` initialised by an IIFE (or a lookup table) rather than
-      // a `let` reassigned across an if/else. No built-in rule enforces
-      // the IIFE-vs-let preference, so it lives as a convention enforced
-      // by review; `prefer-const` covers the simple "never reassigned"
-      // case.
+      // Prefer immutable bindings. For values derived from a branch,
+      // use a `const` initialised by an IIFE (or a lookup table, or a
+      // small named helper) rather than a `let` reassigned across an
+      // if/else. `prefer-const` covers the never-reassigned case;
+      // beyond that, the IIFE-vs-let preference is enforced by review
+      // — `init-declarations` was tried and reverted because it
+      // forced cosmetic `= undefined` initialisers on genuine
+      // loop-accumulator `let`s and pushed branch-derived values into
+      // sub-optimal async IIFEs.
       'prefer-const': 'error',
     },
   },

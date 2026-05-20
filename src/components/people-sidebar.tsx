@@ -238,15 +238,11 @@ export function PeopleSidebar(): JSX.Element | null {
   const treeId = params.treeId;
   if (treeId === undefined) return null;
 
-  let body: ReactNode;
-  if (isLoading) {
-    body = <PeopleListSkeleton />;
-  } else if (isError) {
-    body = <PeopleListMessage>{tCommon('errors.loadFailed')}</PeopleListMessage>;
-  } else if (rows.length === 0) {
-    body = <PeopleListMessage icon>{t('sidebar.empty')}</PeopleListMessage>;
-  } else {
-    body = (
+  const body: ReactNode = ((): ReactNode => {
+    if (isLoading) return <PeopleListSkeleton />;
+    if (isError) return <PeopleListMessage>{tCommon('errors.loadFailed')}</PeopleListMessage>;
+    if (rows.length === 0) return <PeopleListMessage icon>{t('sidebar.empty')}</PeopleListMessage>;
+    return (
       <Flex direction="column" gap="1" p="2">
         {rows.map((person) => (
           <PersonRow
@@ -259,7 +255,7 @@ export function PeopleSidebar(): JSX.Element | null {
         ))}
       </Flex>
     );
-  }
+  })();
 
   return (
     <EntityListPanel

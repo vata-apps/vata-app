@@ -92,6 +92,22 @@ function mapToEventParticipant(raw: RawEventParticipant): EventParticipant {
   };
 }
 
+/**
+ * Look up the Place row referenced by an event. Returns `null` when
+ * the place no longer exists (orphaned foreign key — the schema does
+ * not enforce ON DELETE behaviour here).
+ */
+async function loadPlaceForEvent(placeId: string): Promise<Place | null> {
+  const db = await getTreeDb();
+  const placeRows = await db.select<RawPlace[]>(
+    `SELECT id, name, full_name, place_type_id, parent_id, latitude, longitude, notes, created_at, updated_at
+     FROM places
+     WHERE id = $1`,
+    [parseEntityId(placeId)]
+  );
+  return placeRows[0] ? mapToPlace(placeRows[0]) : null;
+}
+
 // =============================================================================
 // EventType Operations
 // =============================================================================
@@ -244,19 +260,7 @@ export async function getEventWithDetails(id: string): Promise<EventWithDetails 
   }
 
   // Get place if exists
-  let place: Place | null = null;
-  if (event.placeId) {
-    const db = await getTreeDb();
-    const placeRows = await db.select<RawPlace[]>(
-      `SELECT id, name, full_name, place_type_id, parent_id, latitude, longitude, notes, created_at, updated_at
-       FROM places
-       WHERE id = $1`,
-      [parseEntityId(event.placeId)]
-    );
-    if (placeRows[0]) {
-      place = mapToPlace(placeRows[0]);
-    }
-  }
+  const place = event.placeId ? await loadPlaceForEvent(event.placeId) : null;
 
   // Get participants
   const participants = await getEventParticipants(id);

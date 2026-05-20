@@ -213,15 +213,17 @@ function parseIndividual(lines: GedcomLine[], startIndex: number, xref: string):
 function parseName(lines: GedcomLine[], startIndex: number, value?: string): GedcomName {
   const name: GedcomName = {};
 
-  // Parse name value (e.g., "Jean /DUPONT/ Jr.")
-  let parsedSuffix: string | undefined;
-  if (value) {
+  // Parse name value (e.g., "Jean /DUPONT/ Jr.") — populates `name`
+  // with whatever we can derive from the inline value, and surfaces
+  // the parsed suffix separately so we can fall back to it later if
+  // no NSFX sub-tag is seen.
+  const parsed = value ? parseNameValue(value) : null;
+  if (value && parsed) {
     name.value = value;
-    const parsed = parseNameValue(value);
     if (parsed.givenNames) name.givenNames = parsed.givenNames;
     if (parsed.surname) name.surname = parsed.surname;
-    parsedSuffix = parsed.suffix;
   }
+  const parsedSuffix = parsed?.suffix;
 
   // Parse sub-tags
   const children = getChildLines(lines, startIndex);

@@ -93,13 +93,10 @@ export function HomePage(): JSX.Element {
     }
   };
 
-  let treesContent: JSX.Element;
-  if (error) {
-    treesContent = <Text color="gray">{t('common:errors.loadFailed')}</Text>;
-  } else if (isLoading) {
-    treesContent = <Text color="gray">{t('trees:loading')}</Text>;
-  } else {
-    treesContent = (
+  const treesContent = ((): JSX.Element => {
+    if (error) return <Text color="gray">{t('common:errors.loadFailed')}</Text>;
+    if (isLoading) return <Text color="gray">{t('trees:loading')}</Text>;
+    return (
       <>
         <Box style={{ marginTop: 'clamp(48px, 7vw, 76px)', marginBottom: 22 }}>
           <TreeSectionDivider
@@ -141,7 +138,7 @@ export function HomePage(): JSX.Element {
         </Grid>
       </>
     );
-  }
+  })();
 
   return (
     <Flex direction="column" height="100vh">
