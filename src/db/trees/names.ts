@@ -385,8 +385,19 @@ export async function countNamesForIndividual(individualId: string): Promise<num
 // =============================================================================
 
 /**
- * Format a name for display
- * Returns full, short, and sortable versions
+ * Format a name for display. Returns four representations:
+ *
+ * - `full` — given-first, all parts: `Dr. John Paul Dupont Jr.`
+ * - `short` — first given + surname only: `John Dupont`
+ * - `sortable` — surname-first sort key, no affixes: `Dupont, John Paul`
+ * - `surnameFirst` — surname-first display, affixes preserved on the
+ *   given-names side: `Dupont, Dr. John Paul Jr.`. When the name has no
+ *   surname or no given names, the comma rule does not apply and the
+ *   result matches `full`.
+ *
+ * `sortable` stays free of prefix/suffix because it doubles as a sort
+ * key (a `Dr.` in front would otherwise break intra-surname ordering);
+ * `surnameFirst` is the display string for surname-first list rows.
  */
 export function formatName(name: Name | null): NameDisplay {
   if (!name) {
@@ -394,6 +405,7 @@ export function formatName(name: Name | null): NameDisplay {
       full: '(Unknown)',
       short: '(Unknown)',
       sortable: '',
+      surnameFirst: '(Unknown)',
     };
   }
 
@@ -414,7 +426,7 @@ export function formatName(name: Name | null): NameDisplay {
   }
   if (surname) shortParts.push(surname);
 
-  // Sortable: "Surname, Given Names" format
+  // Sortable: "Surname, Given Names" format — sort key, no affixes
   const sortableParts: string[] = [];
   if (surname) sortableParts.push(surname);
   if (givenNames) {
@@ -430,7 +442,21 @@ export function formatName(name: Name | null): NameDisplay {
   const short = shortParts.length > 0 ? shortParts.join(' ') : (nickname ?? '(Unknown)');
   const sortable = sortableParts.join('');
 
-  return { full, short, sortable };
+  // Surname-first display: only meaningful when both surname and given
+  // names are present — otherwise there is no second half to put after
+  // the comma, so we fall back to `full`.
+  let surnameFirst: string;
+  if (surname && givenNames) {
+    const rightParts: string[] = [];
+    if (prefix) rightParts.push(prefix);
+    rightParts.push(givenNames);
+    if (suffix) rightParts.push(suffix);
+    surnameFirst = `${surname}, ${rightParts.join(' ')}`;
+  } else {
+    surnameFirst = full;
+  }
+
+  return { full, short, sortable, surnameFirst };
 }
 
 /**
