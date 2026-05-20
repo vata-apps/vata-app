@@ -104,6 +104,19 @@ export async function importGedcom(content: string): Promise<ImportStats> {
 /**
  * Load event types into cache for fast lookup.
  */
+/**
+ * Try to derive a `date_sort` value from a raw GEDCOM date string.
+ * Returns `null` when the date is absent, unparseable, or has no
+ * usable point — callers always store the original string in
+ * `date_original` regardless.
+ */
+function tryParseSortDate(date: string | undefined): string | null {
+  if (!date) return null;
+  const parsed = parse(date);
+  if (parsed.success && parsed.date) return toSortDate(parsed.date);
+  return null;
+}
+
 async function loadEventTypeCache(ctx: ImportContext): Promise<void> {
   const { db, eventTypeCache } = ctx;
 
@@ -197,29 +210,19 @@ async function importIndividualEvent(
 ): Promise<boolean> {
   const { db, eventTypeCache } = ctx;
 
-  // Get event type ID
-  let eventTypeId: number | undefined;
-
-  if (event.tag === 'EVEN' && event.type) {
-    // Custom event - create or get custom event type
-    eventTypeId = await getOrCreateCustomEventType(event.type, 'individual', ctx);
-  } else {
-    eventTypeId = eventTypeCache.get(event.tag);
-  }
+  // Get event type ID — either a custom one we materialise on the fly,
+  // or one pulled from the cache for a standard tag.
+  const eventTypeId =
+    event.tag === 'EVEN' && event.type
+      ? await getOrCreateCustomEventType(event.type, 'individual', ctx)
+      : eventTypeCache.get(event.tag);
 
   if (eventTypeId === undefined) {
     // Unknown event type - skip silently
     return false;
   }
 
-  // Parse date
-  let dateSort: string | null = null;
-  if (event.date) {
-    const parsed = parse(event.date);
-    if (parsed.success && parsed.date) {
-      dateSort = toSortDate(parsed.date);
-    }
-  }
+  const dateSort = tryParseSortDate(event.date);
 
   // Get or create place
   const placeId = event.place ? await getOrCreatePlace(event.place, ctx) : null;
@@ -315,28 +318,18 @@ async function importFamilyEvent(
 ): Promise<boolean> {
   const { db, eventTypeCache } = ctx;
 
-  // Get event type ID
-  let eventTypeId: number | undefined;
-
-  if (event.tag === 'EVEN' && event.type) {
-    // Custom event
-    eventTypeId = await getOrCreateCustomEventType(event.type, 'family', ctx);
-  } else {
-    eventTypeId = eventTypeCache.get(event.tag);
-  }
+  // Get event type ID — either a custom one we materialise on the fly,
+  // or one pulled from the cache for a standard tag.
+  const eventTypeId =
+    event.tag === 'EVEN' && event.type
+      ? await getOrCreateCustomEventType(event.type, 'family', ctx)
+      : eventTypeCache.get(event.tag);
 
   if (eventTypeId === undefined) {
     return false;
   }
 
-  // Parse date
-  let dateSort: string | null = null;
-  if (event.date) {
-    const parsed = parse(event.date);
-    if (parsed.success && parsed.date) {
-      dateSort = toSortDate(parsed.date);
-    }
-  }
+  const dateSort = tryParseSortDate(event.date);
 
   // Get or create place
   const placeId = event.place ? await getOrCreatePlace(event.place, ctx) : null;

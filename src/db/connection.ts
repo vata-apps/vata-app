@@ -380,15 +380,12 @@ async function migrateSystemDbFilenameToPath(db: Database): Promise<void> {
     if (tree.path.startsWith(treesDir + '/')) continue;
 
     try {
-      // Determine the slug from the old value
-      let slug: string;
-      if (tree.path.endsWith('.db')) {
-        // Bare filename: "harry-potter-demo.db" → "harry-potter-demo"
-        slug = tree.path.replace(/\.db$/, '');
-      } else {
-        // Bad path from previous migration: extract last segment
-        slug = tree.path.split('/').pop() ?? tree.path;
-      }
+      // Determine the slug from the old value: bare filename strips the
+      // `.db` suffix; a bad path from a previous migration keeps only
+      // its last segment.
+      const slug = tree.path.endsWith('.db')
+        ? tree.path.replace(/\.db$/, '')
+        : (tree.path.split('/').pop() ?? tree.path);
 
       const newPath = await getTreePathForSlug(slug);
       const oldFilename = `${slug}.db`;

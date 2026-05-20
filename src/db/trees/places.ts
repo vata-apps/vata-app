@@ -381,16 +381,10 @@ export async function getPlaceWithHierarchy(id: string): Promise<PlaceWithHierar
   if (!place) return null;
 
   // Get place type
-  let placeType: PlaceType | null = null;
-  if (place.placeTypeId) {
-    placeType = await getPlaceTypeById(place.placeTypeId);
-  }
+  const placeType = place.placeTypeId ? await getPlaceTypeById(place.placeTypeId) : null;
 
   // Get parent place
-  let parent: Place | null = null;
-  if (place.parentId) {
-    parent = await getPlaceById(place.parentId);
-  }
+  const parent = place.parentId ? await getPlaceById(place.parentId) : null;
 
   // Get children
   const children = await getChildPlaces(id);
