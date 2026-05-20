@@ -16,6 +16,7 @@ const SORT_VALUES = [
   'surname-asc',
   'surname-desc',
   'given-asc',
+  'given-desc',
   'birth-asc',
   'birth-desc',
 ] as const;
@@ -27,6 +28,7 @@ const SORT_LABEL_KEYS: Record<SortValue, string> = {
   'surname-asc': 'sidebar.sort.surnameAsc',
   'surname-desc': 'sidebar.sort.surnameDesc',
   'given-asc': 'sidebar.sort.givenAsc',
+  'given-desc': 'sidebar.sort.givenDesc',
   'birth-asc': 'sidebar.sort.birthAsc',
   'birth-desc': 'sidebar.sort.birthDesc',
 };
@@ -78,7 +80,7 @@ type NameDisplayMode = 'givenFirst' | 'surnameFirst';
 
 /** The display mode that matches the given sort order. */
 function displayModeFor(sort: SortValue): NameDisplayMode {
-  return sort === 'given-asc' ? 'givenFirst' : 'surnameFirst';
+  return sort === 'given-asc' || sort === 'given-desc' ? 'givenFirst' : 'surnameFirst';
 }
 
 /**
@@ -89,6 +91,7 @@ function displayModeFor(sort: SortValue): NameDisplayMode {
 function sortKeyOf(person: IndividualWithDetails, sort: SortValue): string | null {
   switch (sort) {
     case 'given-asc':
+    case 'given-desc':
       return person.primaryName?.givenNames ?? '';
     case 'birth-asc':
     case 'birth-desc':
@@ -110,7 +113,7 @@ function compareKeys(a: string | null, b: string | null, sort: SortValue): numbe
     return a === null ? 1 : -1;
   }
   const order = a.localeCompare(b);
-  return sort === 'surname-desc' || sort === 'birth-desc' ? -order : order;
+  return sort === 'surname-desc' || sort === 'given-desc' || sort === 'birth-desc' ? -order : order;
 }
 
 /**
