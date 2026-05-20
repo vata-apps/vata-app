@@ -4,6 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+# Scope Discipline
+
+- Do EXACTLY what was requested. Do not explore 'related guidance', do not audit the surrounding codebase, and do not expand scope without asking. If a user asks for a multi-agent analysis, launch the agents immediately rather than exploring first.
+
+---
+
 # Commands
 
 ```bash
@@ -24,10 +30,6 @@ pnpm format:check     # Prettier check
 # Tests
 pnpm test             # Vitest watch mode
 pnpm test:coverage    # Coverage report (v8)
-
-# Review
-pnpm review           # CodeRabbit local review on uncommitted changes (on demand)
-pnpm review:all       # CodeRabbit local review on full branch diff (on demand)
 ```
 
 To run a single test file:
@@ -215,6 +217,10 @@ Before any edit on a new task, ask the user: **"simple branch or worktree?"** wi
 - Long task likely to span sessions or be interrupted
 - Need to keep `main` clean for parallel work
 
+## Branch Hygiene
+
+- Always branch from an up-to-date main. Before starting work, fetch and verify main is current. Never start work on a stale base.
+
 ## Step 1 — Sync `main`, then create the branch/worktree
 
 Every new branch and every new worktree MUST start from a `main` synced with `origin/main`. Exception: branch off something else only when the user explicitly says so; ask if unclear.
@@ -274,7 +280,13 @@ chore: upgrade drizzle-orm to 0.30.0
 
 - If worktree: call `ExitWorktree` to clean up the session-registered worktree.
 - Delete the local branch (`git branch -d <branch>`) once merged.
-- **Stop monitoring the PR.** Do not keep polling for further CodeRabbit reviews, do not push "nudge" commits, do not recreate a deleted branch. Once the PR is merged, the work is done — wait for the next user instruction.
+- **Stop monitoring the PR.** Do not push "nudge" commits and do not recreate a deleted branch. Once the PR is merged, the work is done — wait for the next user instruction.
+
+---
+
+# Post-Merge Behavior
+
+- Once a PR is merged, STOP. Do not push nudge commits, and do not resurrect deleted branches. Consider the work complete.
 
 ---
 
@@ -283,11 +295,8 @@ chore: upgrade drizzle-orm to 0.30.0
 Before creating a pull request (via `gh pr create`, any slash command that opens a PR, or any other means), the agent MUST:
 
 1. Run `/simplify` to launch the three-agent reuse / quality / efficiency review on the branch diff. Apply the fixes that are real issues; skip false positives and stylistic nits.
-2. Then create the PR. **Always open it as draft** (`gh pr create --draft`, or via `/commit-push-pr` which sets the flag automatically). The draft state holds CodeRabbit off until the local `/review` gate has run, so we don't burn the hourly rate-limit budget on a state we're about to clean up.
-
-After the PR is opened, invoke the `shepherd-pr` skill. It runs `/review` locally, applies the real findings, flips the PR to ready (`gh pr ready <N>` — that's the explicit handoff to CodeRabbit), then drives CI + CodeRabbit to approval without manual polling.
-
-CodeRabbit reviews the PR automatically once it is marked ready — that is the canonical CodeRabbit pass. A local CodeRabbit run is **optional** and can be triggered on demand with `pnpm review` (uncommitted changes) or `pnpm review:all` (full branch diff); it is no longer a required pre-PR step.
+2. Then run `/review` locally and address the real findings.
+3. Create the PR.
 
 ---
 
@@ -339,7 +348,6 @@ The following specialized skills are loaded automatically when relevant, or on d
 | `testing-standards`       | When writing `**/*.{test,spec}.{ts,tsx}` — Vitest unit/integration conventions, in-memory SQLite for the DB layer                                                       |
 | `new-route`               | When adding a new page or entity view under `/tree/$treeId/`                                                                                                            |
 | `design-system-standards` | When designing or reviewing UI under `src/components/**` or `src/pages/**` — when to reuse a Radix Themes component, compose primitives, or add an application organism |
-| `shepherd-pr`             | After `gh pr create` returns — drives the PR through `/review`, the ready-flip, CI, and CodeRabbit until it's approved or surfaces a real blocker                       |
 
 The UI foundation is [Radix Themes](https://www.radix-ui.com/themes) (`@radix-ui/themes`), consumed directly — `import { Button, Dialog, Flex } from '@radix-ui/themes'`. There is no `src/components/ui/` wrapper layer; internal components under `src/components/` are reserved for application organisms (`tree-shell.tsx`, `tree-nav.tsx`, `app-status-bar.tsx`, …). Brand tokens (`accentColor`, `grayColor`, `radius`) are set on the `<Theme>` provider in `src/components/app-theme.tsx`; the Lucide icon registry lives at `src/components/icon.tsx`. See `docs/ui/design-system.md` and [ADR-007](./docs/adr/0007-adopt-radix-themes.md).
 
