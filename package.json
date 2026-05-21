@@ -33,6 +33,7 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
+    "verify": "pnpm lint && pnpm format:check && pnpm build && pnpm vitest run",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
@@ -68,6 +69,7 @@
     ]
   },
   "devDependencies": {
+    "@ai-hero/sandcastle": "^0.5.11",
     "@eslint/js": "^9.39.3",
     "@tanstack/router-plugin": "^1.0.0",
     "@tauri-apps/cli": "^2.0.0",

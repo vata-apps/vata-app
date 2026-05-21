@@ -19,6 +19,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-005: UI Strategy](./adr/0005-ui-strategy.md) — Radix + Tailwind v4 + tailwind-variants (superseded by ADR-007)
 - [ADR-006: Import/Export](./adr/0006-import-export.md) — Two-phase import, round-trip export
 - [ADR-007: UI Foundation](./adr/0007-adopt-radix-themes.md) — Radix Themes, dropping Tailwind + the wrapper layer
+- [ADR-008: Autonomous Agent Execution](./adr/0008-autonomous-agent-execution.md) — Sandcastle on GitHub Actions, label-triggered, Sonnet default
 
 ## Architecture
 
@@ -47,3 +48,4 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 ## Dev Tools
 
 - [Issue Tracking](./dev-tools/issue-tracking.md) — Issue types, labels, status pipeline, and the `capture-idea` / `link-task` skills
+- [Agent Workflow](./dev-tools/agent-workflow.md) — Label-triggered autonomous execution via Sandcastle (ADR-008)
