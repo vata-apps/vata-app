@@ -104,11 +104,8 @@ jobs:
             echo "outcome=partial" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Push branch
-        if: steps.outcome.outputs.outcome == 'success' || steps.outcome.outputs.outcome == 'partial'
-        run: git push origin "${{ steps.agent.outputs.branch }}"
-
-      - name: Open PR
+      - name: Push branch and open PR
+        id: deliver
         if: steps.outcome.outputs.outcome == 'success' || steps.outcome.outputs.outcome == 'partial'
         env:
           OUTCOME: ${{ steps.outcome.outputs.outcome }}
@@ -116,6 +113,8 @@ jobs:
           ITERATIONS: ${{ steps.agent.outputs.iterations }}
           MODEL: ${{ steps.agent.outputs.model }}
         run: |
+          git push origin "$BRANCH"
+
           ISSUE_TITLE=$(jq -r .title /tmp/issue.json)
           DRAFT_FLAG=""
           TITLE_PREFIX=""
@@ -139,12 +138,20 @@ jobs:
             --body "$BODY"
 
       - name: Comment on failure
-        if: steps.outcome.outputs.outcome == 'failed'
+        if: steps.outcome.outputs.outcome == 'failed' || steps.deliver.outcome == 'failure'
         env:
+          DELIVER: ${{ steps.deliver.outcome }}
+          BRANCH: ${{ steps.agent.outputs.branch }}
           ITERATIONS: ${{ steps.agent.outputs.iterations }}
           COMMITS: ${{ steps.agent.outputs.commits }}
           MODEL: ${{ steps.agent.outputs.model }}
         run: |
+          if [ "$DELIVER" = "failure" ]; then
+            DETAIL="The agent's work is committed on branch \`${BRANCH}\`, but pushing it or opening the PR failed. Open a PR from that branch manually, or re-label \`agent:ready\` to retry from scratch."
+          else
+            DETAIL="Amend the issue body (if scoping issue) and re-label \`agent:ready\` to retry. Optionally add \`agent:use-opus\` to escalate."
+          fi
+
           BODY="❌ Agent run failed.
 
           - Iterations: ${ITERATIONS:-n/a}
@@ -153,7 +160,7 @@ jobs:
 
           Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-          Amend the issue body (if scoping issue) and re-label \`agent:ready\` to retry. Optionally add \`agent:use-opus\` to escalate."
+          ${DETAIL}"
 
           gh issue comment "$ISSUE_NUMBER" --body "$BODY"
 
@@ -161,7 +168,12 @@ jobs:
         if: always()
         env:
           OUTCOME: ${{ steps.outcome.outputs.outcome }}
+          DELIVER: ${{ steps.deliver.outcome }}
         run: |
           gh issue edit "$ISSUE_NUMBER" --remove-label "agent:running" 2>/dev/null || true
-          LABEL_OUTCOME="${OUTCOME:-failed}"
+          if [ "$DELIVER" = "failure" ]; then
+            LABEL_OUTCOME="failed"
+          else
+            LABEL_OUTCOME="${OUTCOME:-failed}"
+          fi
           gh issue edit "$ISSUE_NUMBER" --add-label "agent:${LABEL_OUTCOME}"
