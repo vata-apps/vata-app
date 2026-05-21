@@ -1,7 +1,7 @@
 import { getTreeDb } from '../connection';
 import { parseEntityId, formatEntityId } from '$/lib/entityId';
 import { getEventsByIndividualIdWithDetails } from './events';
-import type { EventTimelineEntry, EventTimelineThumbnail } from '$/types/database';
+import type { EventTimelineEntry, EventTimelineThumbnail } from '$types/database';
 
 interface RawCitationSource {
   event_id: number;

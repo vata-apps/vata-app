@@ -16,7 +16,7 @@ import {
 } from '@vata-apps/gedcom-parser';
 import { parse, toSortDate } from '@vata-apps/gedcom-date';
 import { getTreeDb } from '$/db/connection';
-import type { Gender } from '$/types/database';
+import type { Gender } from '$types/database';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
 import type Database from '@tauri-apps/plugin-sql';
 

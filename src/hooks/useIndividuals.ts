@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '$/lib/query-keys';
-import { IndividualManager } from '$/managers/IndividualManager';
+import { IndividualManager } from '$managers/IndividualManager';
 
 export function useIndividuals() {
   return useQuery({

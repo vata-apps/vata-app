@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '$/lib/query-keys';
-import { FamilyManager } from '$/managers/FamilyManager';
+import { FamilyManager } from '$managers/FamilyManager';
 
 export function useFamilies() {
   return useQuery({

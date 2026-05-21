@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createTreeInMemoryDb } from '$/test/sqlite-memory';
 import { createIndividual } from './individuals';
-import type { Name } from '$/types/database';
+import type { Name } from '$types/database';
 import {
   getNamesByIndividualId,
   getPrimaryName,

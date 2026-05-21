@@ -10,7 +10,7 @@ import type {
   Pedigree,
   FamilyWithMembers,
   IndividualWithDetails,
-} from '$/types/database';
+} from '$types/database';
 import { getIndividualById } from './individuals';
 import { getPrimaryName, getNamesByIndividualId } from './names';
 
