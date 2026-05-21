@@ -31,10 +31,18 @@ These are particular to this CI run and are **not** in `CLAUDE.md`:
 - The Tauri desktop app cannot be launched here (no display server). `pnpm tauri:dev` / `pnpm tauri:build` are unavailable. UI verification is performed manually by the maintainer after you finish.
 - Do not modify anything under `.sandcastle/` or `.github/workflows/agent-run.yml` unless the issue is explicitly about the agent workflow itself.
 
+# Commit before completing
+
+You **must commit your changes** with `git add` + `git commit` before signaling completion. Sandcastle collects commits from the branch — uncommitted edits are lost. Make one or more commits with conventional commit messages (`feat:`, `fix:`, `refactor:`, …) as described in `CLAUDE.md`. After committing, confirm `git status` shows a clean working tree.
+
 # When you're done
 
-When `pnpm verify` is green and the change matches the issue body:
+When all of these are true:
 
-Emit `<promise>COMPLETE</promise>` on its own line.
+1. `pnpm verify` is green on the final state of the branch
+2. The change matches the issue body
+3. `git status` shows no uncommitted changes (everything is committed)
+
+Then — and only then — emit `<promise>COMPLETE</promise>` on its own line.
 
 Do not emit this signal under any other condition.
