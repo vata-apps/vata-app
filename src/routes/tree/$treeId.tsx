@@ -3,11 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { getTreeById } from '$/db/system/trees';
 import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from '$/db/connection';
 import { TreeShell } from '$components/tree-shell';
 import { queryKeys } from '$lib/query-keys';
-import { useEffect, useState } from 'react';
+
+// DEV-only: lazy-loaded so the module is never bundled in production builds.
+const DebugDrawer = import.meta.env.DEV
+  ? lazy(() => import('$components/debug-drawer').then((m) => ({ default: m.DebugDrawer })))
+  : null;
 
 export const Route = createFileRoute('/tree/$treeId')({
   component: function TreeLayout() {
@@ -16,6 +21,19 @@ export const Route = createFileRoute('/tree/$treeId')({
     const navigate = useNavigate();
     const [dbReady, setDbReady] = useState(false);
     const [dbError, setDbError] = useState(false);
+    const [debugOpen, setDebugOpen] = useState(false);
+
+    useEffect(() => {
+      if (!import.meta.env.DEV) return;
+      const handler = (e: KeyboardEvent) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
+          e.preventDefault();
+          setDebugOpen((prev) => !prev);
+        }
+      };
+      document.addEventListener('keydown', handler);
+      return () => document.removeEventListener('keydown', handler);
+    }, []);
 
     const {
       data: tree,
@@ -118,9 +136,16 @@ export const Route = createFileRoute('/tree/$treeId')({
     }
 
     return (
-      <TreeShell>
-        <Outlet />
-      </TreeShell>
+      <>
+        <TreeShell>
+          <Outlet />
+        </TreeShell>
+        {import.meta.env.DEV && DebugDrawer && (
+          <Suspense fallback={null}>
+            <DebugDrawer open={debugOpen} onOpenChange={setDebugOpen} />
+          </Suspense>
+        )}
+      </>
     );
   },
 });

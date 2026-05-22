@@ -65,17 +65,11 @@ function SystemDbTab({ data }: { data: SystemDebugData | null }): JSX.Element {
             ) : (
               data.trees.map((tree) => (
                 <Table.Row key={tree.id}>
-                  <Table.Cell>
-                    <Code size="1">{tree.id}</Code>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Code size="1">{tree.name}</Code>
-                  </Table.Cell>
+                  <Table.Cell>{tree.id}</Table.Cell>
+                  <Table.Cell>{tree.name}</Table.Cell>
                   <Table.Cell>{tree.individual_count}</Table.Cell>
                   <Table.Cell>{tree.family_count}</Table.Cell>
-                  <Table.Cell>
-                    <Code size="1">{tree.last_opened_at ?? '—'}</Code>
-                  </Table.Cell>
+                  <Table.Cell>{tree.last_opened_at ?? '—'}</Table.Cell>
                 </Table.Row>
               ))
             )}
@@ -180,9 +174,7 @@ function TreeDbTab({
           <Table.Body>
             {countRows.map(([label, count]) => (
               <Table.Row key={label}>
-                <Table.Cell>
-                  <Code size="1">{label}</Code>
-                </Table.Cell>
+                <Table.Cell>{label}</Table.Cell>
                 <Table.Cell>{count}</Table.Cell>
               </Table.Row>
             ))}
@@ -205,12 +197,8 @@ function TreeDbTab({
             <Table.Body>
               {Object.entries(data.meta).map(([key, value]) => (
                 <Table.Row key={key}>
-                  <Table.Cell>
-                    <Code size="1">{key}</Code>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Code size="1">{value}</Code>
-                  </Table.Cell>
+                  <Table.Cell>{key}</Table.Cell>
+                  <Table.Cell>{value}</Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>
@@ -229,13 +217,6 @@ function I18nTab(): JSX.Element {
     ? Object.keys(i18n.options.resources[resolvedLanguage] ?? {})
     : [];
 
-  const rows: Array<[string, string]> = [
-    ['language', language],
-    ['resolvedLanguage', resolvedLanguage],
-    ['namespaces', namespaces.join(', ') || t('debug.i18nTab.noneValue')],
-    ['fallbackLng', String(i18n.options.fallbackLng ?? t('debug.i18nTab.notSetValue'))],
-  ];
-
   return (
     <Table.Root variant="surface" size="1">
       <Table.Header>
@@ -245,16 +226,42 @@ function I18nTab(): JSX.Element {
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {rows.map(([key, value]) => (
-          <Table.Row key={key}>
-            <Table.Cell>
-              <Code size="1">{key}</Code>
-            </Table.Cell>
-            <Table.Cell>
-              <Code size="1">{value}</Code>
-            </Table.Cell>
-          </Table.Row>
-        ))}
+        <Table.Row>
+          <Table.Cell>language</Table.Cell>
+          <Table.Cell>
+            <Code size="1">{language}</Code>
+          </Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>resolvedLanguage</Table.Cell>
+          <Table.Cell>
+            <Code size="1">{resolvedLanguage}</Code>
+          </Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>namespaces</Table.Cell>
+          <Table.Cell>
+            {namespaces.length === 0 ? (
+              t('debug.i18nTab.noneValue')
+            ) : (
+              <Flex gap="1" wrap="wrap">
+                {namespaces.map((ns) => (
+                  <Code key={ns} size="1">
+                    {ns}
+                  </Code>
+                ))}
+              </Flex>
+            )}
+          </Table.Cell>
+        </Table.Row>
+        <Table.Row>
+          <Table.Cell>fallbackLng</Table.Cell>
+          <Table.Cell>
+            <Code size="1">
+              {String(i18n.options.fallbackLng ?? t('debug.i18nTab.notSetValue'))}
+            </Code>
+          </Table.Cell>
+        </Table.Row>
       </Table.Body>
     </Table.Root>
   );
@@ -263,12 +270,6 @@ function I18nTab(): JSX.Element {
 function ThemeTab(): JSX.Element {
   const { t } = useTranslation('common');
   const theme = useAppStore((state) => state.theme);
-  const currentTreeId = useAppStore((state) => state.currentTreeId);
-
-  const rows: Array<[string, string]> = [
-    ['theme', theme],
-    ['currentTreeId', currentTreeId ?? t('debug.i18nTab.noneValue')],
-  ];
 
   return (
     <Table.Root variant="surface" size="1">
@@ -279,16 +280,12 @@ function ThemeTab(): JSX.Element {
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {rows.map(([key, value]) => (
-          <Table.Row key={key}>
-            <Table.Cell>
-              <Code size="1">{key}</Code>
-            </Table.Cell>
-            <Table.Cell>
-              <Badge size="1">{value}</Badge>
-            </Table.Cell>
-          </Table.Row>
-        ))}
+        <Table.Row>
+          <Table.Cell>theme</Table.Cell>
+          <Table.Cell>
+            <Badge size="1">{theme}</Badge>
+          </Table.Cell>
+        </Table.Row>
       </Table.Body>
     </Table.Root>
   );
@@ -296,12 +293,6 @@ function ThemeTab(): JSX.Element {
 
 function BuildTab(): JSX.Element {
   const { t } = useTranslation('common');
-
-  const rows: Array<[string, string]> = [
-    ['app.version', packageJson.version],
-    ['vite.mode', import.meta.env.MODE],
-    ['vite.dev', String(import.meta.env.DEV)],
-  ];
 
   return (
     <Table.Root variant="surface" size="1">
@@ -312,16 +303,12 @@ function BuildTab(): JSX.Element {
         </Table.Row>
       </Table.Header>
       <Table.Body>
-        {rows.map(([key, value]) => (
-          <Table.Row key={key}>
-            <Table.Cell>
-              <Code size="1">{key}</Code>
-            </Table.Cell>
-            <Table.Cell>
-              <Code size="1">{value}</Code>
-            </Table.Cell>
-          </Table.Row>
-        ))}
+        <Table.Row>
+          <Table.Cell>app.version</Table.Cell>
+          <Table.Cell>
+            <Code size="1">{packageJson.version}</Code>
+          </Table.Cell>
+        </Table.Row>
       </Table.Body>
     </Table.Root>
   );
