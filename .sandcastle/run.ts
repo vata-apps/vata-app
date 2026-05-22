@@ -1,10 +1,17 @@
-import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { claudeCode, createWorktree } from '@ai-hero/sandcastle';
 import { noSandbox } from '@ai-hero/sandcastle/sandboxes/no-sandbox';
+import {
+  extractTag,
+  MODEL_OPUS,
+  MODEL_SONNET,
+  required,
+  verify,
+  writeGithubOutput,
+} from './shared';
 
-const MODEL_OPUS = 'claude-opus-4-7';
-const MODEL_SONNET = 'claude-sonnet-4-6';
+// Entry point for the issue → PR flow, invoked by .github/workflows/agent-run.yml.
+// See docs/adr/0008-autonomous-agent-execution.md.
 
 const issueNumber = required('ISSUE_NUMBER');
 const issueDataPath = process.env.ISSUE_DATA_PATH ?? '/tmp/issue.json';
@@ -81,38 +88,3 @@ writeGithubOutput({
   verify_passed: String(verifyPassed),
   model,
 });
-
-function verify(cwd: string): boolean {
-  console.log('\nVerifying branch quality...');
-  try {
-    execSync('pnpm verify', { cwd, stdio: 'inherit' });
-    console.log('Verify: passed');
-    return true;
-  } catch {
-    console.log('Verify: failed');
-    return false;
-  }
-}
-
-function extractTag(text: string, tag: string): string | null {
-  const match = text.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
-  return match ? match[1].trim() : null;
-}
-
-function required(name: string): string {
-  const value = process.env[name];
-  if (!value) {
-    console.error(`${name} env var is required`);
-    process.exit(1);
-  }
-  return value;
-}
-
-function writeGithubOutput(outputs: Record<string, string>) {
-  const path = process.env.GITHUB_OUTPUT;
-  if (!path) return;
-  const lines = Object.entries(outputs)
-    .map(([k, v]) => `${k}=${v}`)
-    .join('\n');
-  writeFileSync(path, `${lines}\n`, { flag: 'a' });
-}
