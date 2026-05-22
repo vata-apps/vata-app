@@ -20,6 +20,7 @@ jobs:
     timeout-minutes: 45
     env:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
+      PR_TITLE_PATH: /tmp/agent-pr-title.txt
       PR_BODY_PATH: /tmp/agent-pr-body.md
 
     steps:
@@ -135,7 +136,11 @@ jobs:
         run: |
           git push origin "$BRANCH"
 
-          ISSUE_TITLE=$(jq -r .title /tmp/issue.json)
+          if [ -f "$PR_TITLE_PATH" ]; then
+            TITLE=$(cat "$PR_TITLE_PATH")
+          else
+            TITLE=$(jq -r .title /tmp/issue.json)
+          fi
           DRAFT_FLAG=""
           TITLE_PREFIX=""
           NOTE=""
@@ -161,7 +166,7 @@ jobs:
           gh pr create $DRAFT_FLAG \
             --head "$BRANCH" \
             --base main \
-            --title "${TITLE_PREFIX}${ISSUE_TITLE}" \
+            --title "${TITLE_PREFIX}${TITLE}" \
             --body "$BODY"
 
       - name: Comment on failure

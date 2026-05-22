@@ -35,9 +35,19 @@ These are particular to this CI run and are **not** in `CLAUDE.md`:
 
 You **must commit your changes** with `git add` + `git commit` before signaling completion. Sandcastle collects commits from the branch — uncommitted edits are lost. Make one or more commits with conventional commit messages (`feat:`, `fix:`, `refactor:`, …) as described in `CLAUDE.md`. After committing, confirm `git status` shows a clean working tree.
 
-# Pull request description
+# Pull request title and description
 
-Before signaling completion, write a pull request description and wrap it in `<pr-description>` tags so the workflow can extract it. Example shape:
+Before signaling completion, emit two blocks the workflow extracts to open the PR.
+
+**1. A PR title** — a single line in conventional-commits format (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`, `test:`, `perf:`, optionally scoped: `feat(individuals): …`). Match the type to the actual change; keep it under ~70 characters.
+
+```
+<pr-title>
+feat(individuals): add birthdate column to the people sidebar
+</pr-title>
+```
+
+**2. A PR description** — wrapped in `<pr-description>` tags. Do **not** include a `Closes #` line — the workflow adds that. Focus on what a reviewer needs to know, not a blow-by-blow of every edit.
 
 ```
 <pr-description>
@@ -51,8 +61,6 @@ Trade-offs, follow-ups, or areas that need extra scrutiny. Omit this section if 
 </pr-description>
 ```
 
-Write it in markdown. Do **not** include a `Closes #` line — the workflow adds that. Focus on what a reviewer needs to know, not a blow-by-blow of every edit.
-
 # When you're done
 
 When all of these are true:
@@ -60,7 +68,7 @@ When all of these are true:
 1. `pnpm verify` is green on the final state of the branch
 2. The change matches the issue body
 3. `git status` shows no uncommitted changes (everything is committed)
-4. You have emitted the `<pr-description>` block
+4. You have emitted both the `<pr-title>` and `<pr-description>` blocks
 
 Then — and only then — emit `<promise>COMPLETE</promise>` on its own line.
 
