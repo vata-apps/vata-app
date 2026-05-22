@@ -34,5 +34,48 @@
     "languageEn": "English",
     "languageFr": "Français",
     "languageAriaLabel": "Choose language"
+  },
+  "debug": {
+    "title": "Debug",
+    "badgeDev": "DEV",
+    "panelAriaLabel": "Debug panel",
+    "closePanelAriaLabel": "Close debug panel",
+    "loading": "Loading…",
+    "tabs": {
+      "systemDb": "System DB",
+      "treeDb": "Tree DB",
+      "i18n": "i18n",
+      "theme": "Theme",
+      "build": "Build"
+    },
+    "columns": {
+      "id": "ID",
+      "name": "Name",
+      "key": "Key",
+      "value": "Value",
+      "property": "Property",
+      "table": "Table",
+      "rows": "Rows",
+      "individuals": "Individuals",
+      "families": "Families",
+      "lastOpened": "Last Opened"
+    },
+    "systemDb": {
+      "noData": "No system data available.",
+      "treesHeading": "Trees ({{count}})",
+      "noTrees": "No trees found.",
+      "appSettingsHeading": "App Settings ({{count}})",
+      "noSettings": "No settings found."
+    },
+    "treeDb": {
+      "noActiveTree": "No active tree",
+      "noData": "No tree data available.",
+      "entityCountsHeading": "Entity Counts",
+      "treeMetaHeading": "Tree Meta"
+    },
+    "i18nTab": {
+      "noneValue": "(none)",
+      "notSetValue": "(not set)"
+    }
   }
 }

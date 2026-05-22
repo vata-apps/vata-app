@@ -27,10 +27,12 @@ export interface DebugDrawerProps {
 }
 
 function SystemDbTab({ data }: { data: SystemDebugData | null }): JSX.Element {
+  const { t } = useTranslation('common');
+
   if (!data) {
     return (
       <Text color="gray" size="2">
-        No system data available.
+        {t('debug.systemDb.noData')}
       </Text>
     );
   }
@@ -39,16 +41,16 @@ function SystemDbTab({ data }: { data: SystemDebugData | null }): JSX.Element {
     <Flex direction="column" gap="4">
       <Box>
         <Heading size="2" mb="2">
-          Trees ({data.trees.length})
+          {t('debug.systemDb.treesHeading', { count: data.trees.length })}
         </Heading>
         <Table.Root variant="surface" size="1">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell>ID</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Individuals</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Families</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Last Opened</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.id')}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.name')}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.individuals')}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.families')}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.lastOpened')}</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -56,7 +58,7 @@ function SystemDbTab({ data }: { data: SystemDebugData | null }): JSX.Element {
               <Table.Row>
                 <Table.Cell>
                   <Text color="gray" size="1">
-                    No trees found.
+                    {t('debug.systemDb.noTrees')}
                   </Text>
                 </Table.Cell>
               </Table.Row>
@@ -83,13 +85,15 @@ function SystemDbTab({ data }: { data: SystemDebugData | null }): JSX.Element {
 
       <Box>
         <Heading size="2" mb="2">
-          App Settings ({Object.keys(data.appSettings).length})
+          {t('debug.systemDb.appSettingsHeading', {
+            count: Object.keys(data.appSettings).length,
+          })}
         </Heading>
         <Table.Root variant="surface" size="1">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell>Key</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Value</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.key')}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.value')}</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -97,7 +101,7 @@ function SystemDbTab({ data }: { data: SystemDebugData | null }): JSX.Element {
               <Table.Row>
                 <Table.Cell>
                   <Text color="gray" size="1">
-                    No settings found.
+                    {t('debug.systemDb.noSettings')}
                   </Text>
                 </Table.Cell>
               </Table.Row>
@@ -127,11 +131,13 @@ function TreeDbTab({
   data: TreeDebugData | null;
   error: string | null;
 }): JSX.Element {
+  const { t } = useTranslation('common');
+
   if (error) {
     return (
       <Flex direction="column" gap="2">
         <Badge color="gray" size="1">
-          No active tree
+          {t('debug.treeDb.noActiveTree')}
         </Badge>
         <Text color="gray" size="2">
           {error}
@@ -143,7 +149,7 @@ function TreeDbTab({
   if (!data) {
     return (
       <Text color="gray" size="2">
-        No tree data available.
+        {t('debug.treeDb.noData')}
       </Text>
     );
   }
@@ -162,13 +168,13 @@ function TreeDbTab({
     <Flex direction="column" gap="4">
       <Box>
         <Heading size="2" mb="2">
-          Entity Counts
+          {t('debug.treeDb.entityCountsHeading')}
         </Heading>
         <Table.Root variant="surface" size="1">
           <Table.Header>
             <Table.Row>
-              <Table.ColumnHeaderCell>Table</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>Rows</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.table')}</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell>{t('debug.columns.rows')}</Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -187,13 +193,13 @@ function TreeDbTab({
       {Object.keys(data.meta).length > 0 && (
         <Box>
           <Heading size="2" mb="2">
-            Tree Meta
+            {t('debug.treeDb.treeMetaHeading')}
           </Heading>
           <Table.Root variant="surface" size="1">
             <Table.Header>
               <Table.Row>
-                <Table.ColumnHeaderCell>Key</Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell>Value</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>{t('debug.columns.key')}</Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell>{t('debug.columns.value')}</Table.ColumnHeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>
@@ -216,7 +222,7 @@ function TreeDbTab({
 }
 
 function I18nTab(): JSX.Element {
-  const { i18n } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   const language = i18n.language;
   const resolvedLanguage = i18n.resolvedLanguage ?? language;
   const namespaces = i18n.options.resources
@@ -226,16 +232,16 @@ function I18nTab(): JSX.Element {
   const rows: Array<[string, string]> = [
     ['language', language],
     ['resolvedLanguage', resolvedLanguage],
-    ['namespaces', namespaces.join(', ') || '(none)'],
-    ['fallbackLng', String(i18n.options.fallbackLng ?? '(not set)')],
+    ['namespaces', namespaces.join(', ') || t('debug.i18nTab.noneValue')],
+    ['fallbackLng', String(i18n.options.fallbackLng ?? t('debug.i18nTab.notSetValue'))],
   ];
 
   return (
     <Table.Root variant="surface" size="1">
       <Table.Header>
         <Table.Row>
-          <Table.ColumnHeaderCell>Property</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>Value</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>{t('debug.columns.property')}</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>{t('debug.columns.value')}</Table.ColumnHeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -255,20 +261,21 @@ function I18nTab(): JSX.Element {
 }
 
 function ThemeTab(): JSX.Element {
+  const { t } = useTranslation('common');
   const theme = useAppStore((state) => state.theme);
   const currentTreeId = useAppStore((state) => state.currentTreeId);
 
   const rows: Array<[string, string]> = [
     ['theme', theme],
-    ['currentTreeId', currentTreeId ?? '(none)'],
+    ['currentTreeId', currentTreeId ?? t('debug.i18nTab.noneValue')],
   ];
 
   return (
     <Table.Root variant="surface" size="1">
       <Table.Header>
         <Table.Row>
-          <Table.ColumnHeaderCell>Key</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>Value</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>{t('debug.columns.key')}</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>{t('debug.columns.value')}</Table.ColumnHeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -288,6 +295,8 @@ function ThemeTab(): JSX.Element {
 }
 
 function BuildTab(): JSX.Element {
+  const { t } = useTranslation('common');
+
   const rows: Array<[string, string]> = [
     ['app.version', packageJson.version],
     ['vite.mode', import.meta.env.MODE],
@@ -298,8 +307,8 @@ function BuildTab(): JSX.Element {
     <Table.Root variant="surface" size="1">
       <Table.Header>
         <Table.Row>
-          <Table.ColumnHeaderCell>Property</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>Value</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>{t('debug.columns.property')}</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>{t('debug.columns.value')}</Table.ColumnHeaderCell>
         </Table.Row>
       </Table.Header>
       <Table.Body>
@@ -319,6 +328,7 @@ function BuildTab(): JSX.Element {
 }
 
 export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Element | null {
+  const { t } = useTranslation('common');
   const [systemData, setSystemData] = useState<SystemDebugData | null>(null);
   const [treeData, setTreeData] = useState<TreeDebugData | null>(null);
   const [treeError, setTreeError] = useState<string | null>(null);
@@ -358,7 +368,9 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
         setTreeData(treeResult.value);
       } else {
         setTreeError(
-          treeResult.reason instanceof Error ? treeResult.reason.message : 'No active tree'
+          treeResult.reason instanceof Error
+            ? treeResult.reason.message
+            : t('debug.treeDb.noActiveTree')
         );
       }
 
@@ -366,7 +378,7 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
     };
 
     void loadAll();
-  }, [open]);
+  }, [open, t]);
 
   if (!open) return null;
 
@@ -385,7 +397,7 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
       <Box
         role="dialog"
         aria-modal="true"
-        aria-label="Debug panel"
+        aria-label={t('debug.panelAriaLabel')}
         style={{
           position: 'fixed',
           right: 0,
@@ -409,9 +421,9 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
         >
           <Flex align="center" gap="2">
             <Icon name="bug" size={16} />
-            <Heading size="3">Debug</Heading>
+            <Heading size="3">{t('debug.title')}</Heading>
             <Badge color="orange" size="1">
-              DEV
+              {t('debug.badgeDev')}
             </Badge>
           </Flex>
           <IconButton
@@ -419,7 +431,7 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
             color="gray"
             size="2"
             onClick={() => onOpenChange(false)}
-            aria-label="Close debug panel"
+            aria-label={t('debug.closePanelAriaLabel')}
           >
             <Icon name="x" size={16} />
           </IconButton>
@@ -430,11 +442,11 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
           style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
         >
           <Tabs.List style={{ flexShrink: 0 }}>
-            <Tabs.Trigger value="system">System DB</Tabs.Trigger>
-            <Tabs.Trigger value="tree">Tree DB</Tabs.Trigger>
-            <Tabs.Trigger value="i18n">i18n</Tabs.Trigger>
-            <Tabs.Trigger value="theme">Theme</Tabs.Trigger>
-            <Tabs.Trigger value="build">Build</Tabs.Trigger>
+            <Tabs.Trigger value="system">{t('debug.tabs.systemDb')}</Tabs.Trigger>
+            <Tabs.Trigger value="tree">{t('debug.tabs.treeDb')}</Tabs.Trigger>
+            <Tabs.Trigger value="i18n">{t('debug.tabs.i18n')}</Tabs.Trigger>
+            <Tabs.Trigger value="theme">{t('debug.tabs.theme')}</Tabs.Trigger>
+            <Tabs.Trigger value="build">{t('debug.tabs.build')}</Tabs.Trigger>
           </Tabs.List>
 
           <Box style={{ flex: 1, overflow: 'auto' }}>
@@ -443,7 +455,7 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
                 <Flex align="center" gap="2" py="4">
                   <Spinner />
                   <Text size="2" color="gray">
-                    Loading…
+                    {t('debug.loading')}
                   </Text>
                 </Flex>
               ) : (
