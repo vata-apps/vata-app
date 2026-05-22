@@ -65,13 +65,11 @@ You **must** emit two blocks before the completion signal.
 </review-replies>
 ```
 
-**2. A summary** — short markdown, wrapped in `<review-summary>` tags, covering how you handled the review summary feedback and anything else the maintainer should know on re-review.
+**2. A brief summary** — wrapped in `<review-summary>` tags. One or two sentences, no headings, no bullet lists. Cover only the review's _summary-level_ feedback (the review body) and anything cross-cutting the maintainer should know on re-review — the per-comment work is already covered by the replies above, so do not restate it. If there was nothing beyond the line comments, a single sentence is correct. Match the length of the summary to the size of the change.
 
 ```
 <review-summary>
-## Changes
-
-- Brief bullets on what you changed across the requested-changes review
+Switched the debug-drawer copy to i18n keys as requested; no changes beyond the inline comments.
 </review-summary>
 ```
 
