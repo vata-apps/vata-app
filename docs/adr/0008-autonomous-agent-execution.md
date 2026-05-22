@@ -87,7 +87,7 @@ Project Status (Icebox / Todo / In Progress / Done) is **not piloted by the work
 
 Label cleanup before each run is performed inline in `agent-run.yml` via a batched `gh issue edit --remove-label … --remove-label …` call — no separate script.
 
-In CI, `ANTHROPIC_API_KEY`, `AGENT_APP_ID`, and `AGENT_APP_PRIVATE_KEY` are supplied from repo secrets — no `.env` file is created. `.sandcastle/.env` and `.sandcastle/logs/` are gitignored for any future local-debug use.
+In CI, `ANTHROPIC_API_KEY`, `AGENT_APP_CLIENT_ID`, and `AGENT_APP_PRIVATE_KEY` are supplied from secrets — no `.env` file is created. `.sandcastle/.env` and `.sandcastle/logs/` are gitignored for any future local-debug use.
 
 ## Why
 
