@@ -102,7 +102,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           USE_OPUS: ${{ steps.model.outputs.use_opus }}
           ISSUE_DATA_PATH: /tmp/issue.json
-        run: pnpm exec tsx .sandcastle/main.ts
+        run: pnpm exec tsx .sandcastle/run.ts
 
       - name: Compute outcome
         id: outcome
