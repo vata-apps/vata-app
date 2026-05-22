@@ -68,6 +68,21 @@ console.log(`\nIterations: ${result.iterations.length}`);
 console.log(`Commits: ${commits}`);
 console.log(`Completion signal: ${completed ? 'yes' : 'no'}`);
 
+const prTitleRaw = extractTag(result.stdout, 'pr-title');
+const prTitle = prTitleRaw
+  ?.split('\n')
+  .map((l) => l.trim())
+  .find((l) => l.length > 0);
+if (prTitle) {
+  const prTitlePath = process.env.PR_TITLE_PATH;
+  if (prTitlePath) {
+    writeFileSync(prTitlePath, prTitle);
+    console.log(`PR title written to ${prTitlePath}: ${prTitle}`);
+  }
+} else {
+  console.log('No <pr-title> block found in agent output — falling back to issue title');
+}
+
 const prDescription = extractTag(result.stdout, 'pr-description');
 if (prDescription) {
   const prBodyPath = process.env.PR_BODY_PATH;
