@@ -3,6 +3,7 @@ import { claudeCode, createWorktree } from '@ai-hero/sandcastle';
 import { noSandbox } from '@ai-hero/sandcastle/sandboxes/no-sandbox';
 import {
   extractTag,
+  logCost,
   MODEL_OPUS,
   MODEL_SONNET,
   required,
@@ -100,6 +101,8 @@ if (summary) {
 
 // 0 commits is a legitimate "all skipped" outcome — nothing to verify.
 const verifyPassed = commits > 0 ? verify(wt.worktreePath) : true;
+
+logCost(model, result.iterations);
 
 writeGithubOutput({
   branch: result.branch,
