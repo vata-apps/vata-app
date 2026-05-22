@@ -60,6 +60,17 @@ console.log(`\nIterations: ${result.iterations.length}`);
 console.log(`Commits: ${commits}`);
 console.log(`Completion signal: ${completed ? 'yes' : 'no'}`);
 
+const prDescription = extractTag(result.stdout, 'pr-description');
+if (prDescription) {
+  const prBodyPath = process.env.PR_BODY_PATH;
+  if (prBodyPath) {
+    writeFileSync(prBodyPath, `${prDescription}\n`);
+    console.log(`PR description written to ${prBodyPath}`);
+  }
+} else {
+  console.log('No <pr-description> block found in agent output');
+}
+
 const verifyPassed = commits > 0 ? verify(wt.worktreePath) : false;
 
 writeGithubOutput({
@@ -81,6 +92,11 @@ function verify(cwd: string): boolean {
     console.log('Verify: failed');
     return false;
   }
+}
+
+function extractTag(text: string, tag: string): string | null {
+  const match = text.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
+  return match ? match[1].trim() : null;
 }
 
 function required(name: string): string {
