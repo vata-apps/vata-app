@@ -28,7 +28,7 @@ import type {
   IndividualWithDetails,
   Name,
   UpdateIndividualInput,
-} from '$/types/database';
+} from '$types/database';
 
 export interface CreateIndividualWithNameInput extends CreateIndividualInput {
   name?: {

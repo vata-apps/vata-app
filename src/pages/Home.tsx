@@ -17,10 +17,10 @@ import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
 import { TreeCardCta } from '$components/trees/tree-card-cta';
 import { TreeSectionDivider } from '$components/trees/tree-section-divider';
 import { getAllTrees } from '$db-system/trees';
-import { TreeManager } from '$/managers/TreeManager';
+import { TreeManager } from '$managers/TreeManager';
 import { formatIsoDate } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
-import type { Tree } from '$/types/database';
+import type { Tree } from '$types/database';
 
 type SortKey = 'recent' | 'name' | 'size';
 

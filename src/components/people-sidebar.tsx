@@ -9,7 +9,7 @@ import { EntityListPanel, type EntityListSortOption } from './entity-list-panel'
 import { Icon } from '$components/icon';
 import { useIndividuals } from '$hooks/useIndividuals';
 import { formatName } from '$db-tree/names';
-import type { IndividualWithDetails, Name } from '$/types/database';
+import type { IndividualWithDetails, Name } from '$types/database';
 
 /** The sort orders offered by the People sidebar, in display order. */
 const SORT_VALUES = [

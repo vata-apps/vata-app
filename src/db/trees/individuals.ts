@@ -6,7 +6,7 @@ import type {
   Gender,
   CreateIndividualInput,
   UpdateIndividualInput,
-} from '$/types/database';
+} from '$types/database';
 
 // =============================================================================
 // Raw database row type (snake_case as in SQLite)
