@@ -1,6 +1,6 @@
 # Agent Workflow
 
-Operational guide for the autonomous-execution workflow. For the design rationale, label schema, cost bounds, and trade-offs, read [ADR-008](../adr/0008-autonomous-agent-execution.md) first — this page does not restate them.
+Operational guide for the autonomous-execution workflows. For the design rationale, label schema, cost bounds, and trade-offs, read [ADR-008](../adr/0008-autonomous-agent-execution.md) (issue → PR) and [ADR-009](../adr/0009-agent-review-feedback.md) (addressing review feedback) first — this page does not restate them.
 
 ## When to use it
 
@@ -55,11 +55,34 @@ Full schema and transition rules are in [ADR-008 → Label-based outcome trackin
 
 The workflow does not auto-retry. Every run is intentional and paid for.
 
+## Addressing review feedback
+
+When the agent's PR is close but needs adjustments, you don't have to hand-edit or re-run from scratch. Submit a **"Request changes"** review and the agent addresses your feedback on the same branch.
+
+How it works:
+
+1. Review the agent's PR — leave line comments, write a review summary.
+2. Submit the review as **Request changes** (not "Comment", not "Approve").
+3. `agent-address-review.yml` fires. The agent gets your review body, your line comments, and the original issue, then works on the PR's branch.
+4. It pushes new commits and reports back:
+   - **Per-thread replies** — every line comment gets `Addressed in <sha> — …` or `Not addressed — <reason>`.
+   - **A summary comment** — the overall verdict plus the review-body feedback.
+5. Re-review. Resolve the threads you're satisfied with yourself — the agent never auto-resolves.
+
+Notes:
+
+- Only **"Request changes"** triggers it. "Comment" reviews are discussion only — use them to leave notes without dispatching the agent. "Approve" does nothing (the PR is ready).
+- An empty "Request changes" review (no body, no line comments) is treated as a misclick — the workflow posts a comment and runs nothing.
+- The model follows the original issue: if the issue carries `agent:use-opus`, the review run uses Opus too.
+- A review the agent disagrees with entirely is a valid outcome — it makes no commits and explains each skip in the thread replies.
+- Each review run spends tokens, like an issue run. The monthly spend limit covers both.
+
 ## What stays manual
 
 - Writing the PRD (Opus / `to-prd` / `grill-with-docs`)
 - Setting the initial label `agent:ready`
 - Reviewing the PR — code _and_ UI in `pnpm tauri:dev`
+- Resolving review threads after the agent addresses them
 - Merging
 - Amending the PRD on retry
 
@@ -91,4 +114,5 @@ The workflow's job is the boring middle: read, execute, check, package as a PR. 
 - **No UI verification in CI.** A green pipeline does not mean the feature works visually. Manual QA in `pnpm tauri:dev` is non-optional.
 - **Out-of-scope edits.** The agent may touch files outside the PRD's scope. Review the diff for unexpected churn before merging.
 - **Stuck `agent:running`.** If a job dies without cleanup (rare), the label may stay on. Remove it manually and re-label `agent:ready` to restart.
-- **Vendor lock on `@ai-hero/sandcastle`.** A future major version could require migrating `.sandcastle/main.ts`. Pin the version in `package.json` until a deliberate upgrade.
+- **Vendor lock on `@ai-hero/sandcastle`.** A future major version could require migrating the `.sandcastle/` scripts. Pin the version in `package.json` until a deliberate upgrade.
+- **`agent:ready` vs an in-flight review run.** Re-labelling an issue `agent:ready` while a review run is addressing its PR can discard that work — re-labelling means "start over from scratch". Don't do both at once.
