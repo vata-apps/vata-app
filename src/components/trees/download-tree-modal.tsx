@@ -15,7 +15,7 @@ import {
 } from '@radix-ui/themes';
 
 import { Icon } from '$components/icon';
-import { GedcomManager } from '$/managers/GedcomManager';
+import { GedcomManager } from '$managers/GedcomManager';
 
 /**
  * Lightweight projection of {@link Tree} carrying just what the modal

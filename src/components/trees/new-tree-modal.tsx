@@ -13,7 +13,7 @@ import {
   TextField,
 } from '@radix-ui/themes';
 
-import { TreeManager } from '$/managers/TreeManager';
+import { TreeManager } from '$managers/TreeManager';
 import { queryKeys } from '$lib/query-keys';
 
 interface CreateTreeInput {

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createTreeInMemoryDb } from '$/test/sqlite-memory';
 import { getCitationDetailsForSource } from './citations-with-details';
 import { createSource } from './sources';
-import { SourceWorkspaceManager } from '$/managers/SourceWorkspaceManager';
+import { SourceWorkspaceManager } from '$managers/SourceWorkspaceManager';
 
 // A single in-memory DB shared across all tests in this file.
 const db = createTreeInMemoryDb();

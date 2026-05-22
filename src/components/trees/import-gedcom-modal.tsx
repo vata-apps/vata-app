@@ -18,7 +18,7 @@ import {
 
 import { Dropzone } from '$components/dropzone';
 import { Icon } from '$components/icon';
-import { GedcomManager, type ImportResult, type ScanResult } from '$/managers/GedcomManager';
+import { GedcomManager, type ImportResult, type ScanResult } from '$managers/GedcomManager';
 import { formatBytes } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
 

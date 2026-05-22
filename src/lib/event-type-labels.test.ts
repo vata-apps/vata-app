@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import type { EventType } from '$/types/database';
+import type { EventType } from '$types/database';
 
 import { getEventTypeLabel } from './event-type-labels';
 

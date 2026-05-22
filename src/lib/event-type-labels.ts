@@ -1,4 +1,4 @@
-import type { EventType } from '$/types/database';
+import type { EventType } from '$types/database';
 
 const GEDCOM_EVENT_TYPE_LABELS: Record<string, string> = {
   // Individual events

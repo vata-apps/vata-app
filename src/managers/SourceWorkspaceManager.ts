@@ -5,7 +5,7 @@ import { createFamily, addFamilyMember } from '$db-tree/families';
 import { createCitation, createCitationLink } from '$db-tree/citations';
 import { createPlace } from '$db-tree/places';
 import { getTemplateById, type TemplateDefinition } from '$lib/templates';
-import type { Gender } from '$/types/database';
+import type { Gender } from '$types/database';
 
 // =============================================================================
 // Types

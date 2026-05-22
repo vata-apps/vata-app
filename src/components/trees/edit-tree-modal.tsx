@@ -16,7 +16,7 @@ import {
 import { updateTree as defaultUpdateTree } from '$db-system/trees';
 import { formatIsoDate } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
-import type { Tree } from '$/types/database';
+import type { Tree } from '$types/database';
 
 interface UpdateTreeInput {
   name: string;

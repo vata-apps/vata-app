@@ -110,11 +110,11 @@ Each file in `src/db/trees/` and `src/db/system/` follows this structure:
 | `$lib/*`        | `src/lib/*`        |
 | `$components/*` | `src/components/*` |
 | `$hooks/*`      | `src/hooks/*`      |
-| `$managers`     | `src/managers`     |
+| `$managers/*`   | `src/managers/*`   |
 | `$db`           | `src/db`           |
 | `$db-system/*`  | `src/db/system/*`  |
 | `$db-tree/*`    | `src/db/trees/*`   |
-| `$types`        | `src/types`        |
+| `$types/*`      | `src/types/*`      |
 
 ## Routing
 
