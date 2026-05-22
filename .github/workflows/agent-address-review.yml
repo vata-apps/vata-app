@@ -1,0 +1,238 @@
+name: Agent Address Review
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: agent-review-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  # Lightweight gate: only proceed for changes-requested reviews on open
+  # agent PRs that actually carry feedback. Keeps an empty "Request changes"
+  # misclick from spending a paid agent run.
+  triage:
+    if: >-
+      github.event.review.state == 'changes_requested' &&
+      github.event.pull_request.state == 'open' &&
+      github.event.pull_request.user.login == 'vata-agent[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      proceed: ${{ steps.check.outputs.proceed }}
+    steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.AGENT_APP_ID }}
+          private-key: ${{ secrets.AGENT_APP_PRIVATE_KEY }}
+
+      - name: Check for actionable feedback
+        id: check
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REVIEW_ID: ${{ github.event.review.id }}
+          REVIEW_BODY: ${{ github.event.review.body }}
+        run: |
+          COMMENT_COUNT=$(gh api "repos/$REPO/pulls/$PR_NUMBER/comments" --paginate \
+            --jq "[.[] | select(.pull_request_review_id == $REVIEW_ID)] | length")
+          if [ -n "$REVIEW_BODY" ] || [ "${COMMENT_COUNT:-0}" -gt 0 ]; then
+            echo "proceed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "proceed=false" >> "$GITHUB_OUTPUT"
+            gh pr comment "$PR_NUMBER" --body "🤖 This \"Request changes\" review has no summary and no line comments — nothing to address. Add comments and re-submit the review to dispatch the agent."
+          fi
+
+  address:
+    needs: triage
+    if: needs.triage.outputs.proceed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      BRANCH: ${{ github.event.pull_request.head.ref }}
+      REVIEW_ID: ${{ github.event.review.id }}
+      REVIEW_DATA_PATH: /tmp/review-context.json
+      REVIEW_REPLIES_PATH: /tmp/review-replies.json
+      REVIEW_SUMMARY_PATH: /tmp/review-summary.md
+
+    steps:
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.AGENT_APP_ID }}
+          private-key: ${{ secrets.AGENT_APP_PRIVATE_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.4.0
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Configure git identity
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+        run: |
+          BOT_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config --global user.name "${APP_SLUG}[bot]"
+          git config --global user.email "${BOT_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+
+      - name: Resolve issue number
+        id: issue
+        run: |
+          case "$BRANCH" in
+            agent/issue-*)
+              echo "number=${BRANCH#agent/issue-}" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "::error::PR branch '$BRANCH' is not an agent/issue-* branch"
+              exit 1 ;;
+          esac
+
+      - name: Detect Opus opt-in
+        id: model
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: |
+          if gh issue view "$ISSUE_NUMBER" --json labels --jq '.labels[].name' | grep -qx 'agent:use-opus'; then
+            echo "use_opus=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "use_opus=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Prepare PR branch
+        run: |
+          git fetch origin "$BRANCH" main
+          git checkout -B main origin/main
+          git branch -f "$BRANCH" "origin/$BRANCH"
+
+      - name: Gather review context
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+          REVIEW_BODY: ${{ github.event.review.body }}
+        run: |
+          gh api "repos/$REPO/pulls/$PR_NUMBER/comments" --paginate \
+            --jq "[.[] | select(.pull_request_review_id == $REVIEW_ID) | {id, path, line, body, diffHunk: .diff_hunk}]" \
+            > /tmp/line-comments.json
+          gh issue view "$ISSUE_NUMBER" --json number,title,body > /tmp/issue.json
+          jq -n \
+            --argjson prNumber "$PR_NUMBER" \
+            --arg reviewBody "$REVIEW_BODY" \
+            --slurpfile lineComments /tmp/line-comments.json \
+            --slurpfile issue /tmp/issue.json \
+            '{prNumber: $prNumber, reviewBody: $reviewBody, lineComments: $lineComments[0], issue: $issue[0]}' \
+            > "$REVIEW_DATA_PATH"
+
+      - name: Run agent
+        id: agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          USE_OPUS: ${{ steps.model.outputs.use_opus }}
+          ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
+        run: pnpm exec tsx .sandcastle/address-review.ts
+
+      - name: Compute outcome
+        id: outcome
+        if: always()
+        env:
+          AGENT_STEP: ${{ steps.agent.outcome }}
+          COMMITS: ${{ steps.agent.outputs.commits }}
+          COMPLETED: ${{ steps.agent.outputs.completed }}
+          VERIFY_PASSED: ${{ steps.agent.outputs.verify_passed }}
+          HAS_REPLIES: ${{ steps.agent.outputs.has_replies }}
+        run: |
+          if [ "$AGENT_STEP" != "success" ]; then
+            echo "outcome=failed" >> "$GITHUB_OUTPUT"
+          elif [ "${COMMITS:-0}" = "0" ] && [ "$HAS_REPLIES" != "true" ]; then
+            echo "outcome=failed" >> "$GITHUB_OUTPUT"
+          elif [ "$VERIFY_PASSED" != "true" ]; then
+            echo "outcome=failed" >> "$GITHUB_OUTPUT"
+          elif [ "$COMPLETED" = "true" ]; then
+            echo "outcome=success" >> "$GITHUB_OUTPUT"
+          else
+            echo "outcome=partial" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push branch
+        if: >-
+          (steps.outcome.outputs.outcome == 'success' || steps.outcome.outputs.outcome == 'partial')
+          && steps.agent.outputs.commits != '0'
+        run: git push origin "$BRANCH"
+
+      - name: Post per-thread replies
+        if: steps.outcome.outputs.outcome == 'success' || steps.outcome.outputs.outcome == 'partial'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          [ -f "$REVIEW_REPLIES_PATH" ] || exit 0
+          jq -c '.[]' "$REVIEW_REPLIES_PATH" | while read -r entry; do
+            id=$(echo "$entry" | jq -r '.id')
+            sha=$(echo "$entry" | jq -r '.sha // empty')
+            note=$(echo "$entry" | jq -r '.note')
+            if [ -n "$sha" ]; then
+              body="🤖 Addressed in \`$sha\` — $note"
+            else
+              body="🤖 Not addressed — $note"
+            fi
+            gh api "repos/$REPO/pulls/$PR_NUMBER/comments/$id/replies" -f body="$body" || true
+          done
+
+      - name: Post summary comment
+        if: always() && steps.outcome.outputs.outcome != ''
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          OUTCOME: ${{ steps.outcome.outputs.outcome }}
+          COMMITS: ${{ steps.agent.outputs.commits }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          case "$OUTCOME" in
+            success)
+              if [ "${COMMITS:-0}" = "0" ]; then
+                HEADER="ℹ️ Reviewed your feedback — no code changes. See the per-comment replies for why."
+              else
+                HEADER="✅ Addressed your review in ${COMMITS} commit(s). Re-review when ready."
+              fi ;;
+            partial)
+              HEADER="⚠️ Ran out of iterations — partially addressed (${COMMITS} commit(s)). Re-review." ;;
+            *)
+              HEADER="❌ Couldn't address the review. Logs: ${RUN_URL}" ;;
+          esac
+          {
+            echo "$HEADER"
+            if [ -f "$REVIEW_SUMMARY_PATH" ]; then
+              echo
+              cat "$REVIEW_SUMMARY_PATH"
+            fi
+          } > /tmp/summary-comment.md
+          gh pr comment "$PR_NUMBER" --body-file /tmp/summary-comment.md
