@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Button, Flex, Grid, Heading, Text } from '@radix-ui/themes';
 
@@ -21,6 +21,12 @@ import { TreeManager } from '$managers/TreeManager';
 import { formatIsoDate } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
 import type { Tree } from '$types/database';
+
+// DEV-only: lazy-loaded so the module (and its Tauri DB imports) are never
+// bundled in production builds where import.meta.env.DEV is false.
+const DebugDrawer = import.meta.env.DEV
+  ? lazy(() => import('$components/debug-drawer').then((m) => ({ default: m.DebugDrawer })))
+  : null;
 
 type SortKey = 'recent' | 'name' | 'size';
 
@@ -49,6 +55,20 @@ export function HomePage(): JSX.Element {
   const [exportingTree, setExportingTree] = useState<Tree | null>(null);
   const [editingTree, setEditingTree] = useState<Tree | null>(null);
   const [deletingTree, setDeletingTree] = useState<Tree | null>(null);
+  const [debugOpen, setDebugOpen] = useState(false);
+
+  // Register ⌘D / Ctrl+D shortcut to toggle the debug drawer (DEV only)
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'd') {
+        e.preventDefault();
+        setDebugOpen((prev) => !prev);
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
 
   const {
     data: trees,
@@ -78,10 +98,6 @@ export function HomePage(): JSX.Element {
     { value: 'name', label: t('trees:home.sortName') },
     { value: 'size', label: t('trees:home.sortSize') },
   ];
-
-  const comingSoon = (): void => {
-    window.alert(t('trees:actions.comingSoon'));
-  };
 
   const handleOpen = async (treeId: string): Promise<void> => {
     try {
@@ -195,7 +211,11 @@ export function HomePage(): JSX.Element {
         version={packageJson.version}
         debug={
           import.meta.env.DEV
-            ? { label: t('common:statusBar.debug'), shortcut: '⌘D', onClick: comingSoon }
+            ? {
+                label: t('common:statusBar.debug'),
+                shortcut: '⌘D',
+                onClick: () => setDebugOpen((prev) => !prev),
+              }
             : undefined
         }
         preferencesTrigger={
@@ -232,6 +252,12 @@ export function HomePage(): JSX.Element {
             if (!next) setEditingTree(null);
           }}
         />
+      )}
+
+      {import.meta.env.DEV && DebugDrawer && (
+        <Suspense fallback={null}>
+          <DebugDrawer open={debugOpen} onOpenChange={setDebugOpen} />
+        </Suspense>
       )}
     </Flex>
   );
