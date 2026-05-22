@@ -20,6 +20,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-006: Import/Export](./adr/0006-import-export.md) — Two-phase import, round-trip export
 - [ADR-007: UI Foundation](./adr/0007-adopt-radix-themes.md) — Radix Themes, dropping Tailwind + the wrapper layer
 - [ADR-008: Autonomous Agent Execution](./adr/0008-autonomous-agent-execution.md) — Sandcastle on GitHub Actions, label-triggered, Sonnet default
+- [ADR-009: Agent Addresses PR Review Feedback](./adr/0009-agent-review-feedback.md) — review-triggered agent loop on agent PRs
 
 ## Architecture
 
