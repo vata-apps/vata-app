@@ -79,11 +79,12 @@ The workflow's job is the boring middle: read, execute, check, package as a PR. 
    ```
 
 2. Create a dedicated Anthropic API key (`vata-sandcastle-prod`) with a $100/month spend limit in the Anthropic Console. Store as repo secret `ANTHROPIC_API_KEY`.
-3. Create a fine-grained PAT scoped to this repo with **Contents: Read and write**, **Pull requests: Read and write**, **Issues: Read and write**. Store as repo secret `AGENT_GH_TOKEN`. The workflow uses it instead of `GITHUB_TOKEN` so the agent's PR triggers `ci.yml`.
-4. Enable **Allow GitHub Actions to create and approve pull requests** at the org level (`github.com/organizations/vata-apps/settings/actions`) — a repo-level toggle cannot override an org that disallows it.
-5. Confirm `.sandcastle/main.ts` and `.sandcastle/prompts/default.md` are present (scaffolded during installation).
-6. Confirm `.github/workflows/agent-run.yml` is present (added during configuration).
-7. Dry-test on a small `Task`-type issue (rename, doc fix) before pointing it at anything substantive.
+3. Create a GitHub App (`vata-agent`) on the org with **Contents: Read and write**, **Pull requests: Read and write**, **Issues: Read and write** (webhook disabled). Install it on this repo. The workflow mints a token from it instead of `GITHUB_TOKEN` so the agent's PR triggers `ci.yml`, and instead of a PAT so all activity is attributed to `vata-agent[bot]` rather than a person. Store as repo secrets:
+   - `AGENT_APP_ID` — the App ID
+   - `AGENT_APP_PRIVATE_KEY` — the full contents of the App's generated `.pem` private key
+4. Confirm `.sandcastle/main.ts` and `.sandcastle/prompts/default.md` are present (scaffolded during installation).
+5. Confirm `.github/workflows/agent-run.yml` is present (added during configuration).
+6. Dry-test on a small `Task`-type issue (rename, doc fix) before pointing it at anything substantive.
 
 ## Limits and known issues
 
