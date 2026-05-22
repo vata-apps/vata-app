@@ -201,7 +201,7 @@ jobs:
             sha=$(echo "$entry" | jq -r '.sha // empty')
             note=$(echo "$entry" | jq -r '.note')
             if [ -n "$sha" ]; then
-              body="🤖 Addressed in \`$sha\` — $note"
+              body="🤖 Addressed in [\`$sha\`](${{ github.server_url }}/${REPO}/commit/$sha) — $note"
             else
               body="🤖 Not addressed — $note"
             fi
