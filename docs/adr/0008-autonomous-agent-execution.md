@@ -37,7 +37,8 @@ Adopt **`@ai-hero/sandcastle`** as the execution engine, **invoked exclusively f
 - **Concurrency**: at most one run per issue (`concurrency.group: agent-issue-${number}`), `cancel-in-progress: false`. Parallel runs across different issues are allowed.
 - **Branch**: sandcastle creates a worktree on `agent/issue-N` with `branchStrategy: { type: "branch" }`.
 - **Quality gate**: between iterations, the agent runs the `pnpm verify` suite (lint + format check + build + vitest) so it sees its own failures and self-corrects. The same suite is re-run by `main.ts` in the worktree after sandcastle finishes, as an independent verification.
-- **PR creation**: opened by the workflow (not by the agent) once the run completes successfully, with `Closes #N` in the body for auto-close at merge.
+- **PR creation**: opened by the workflow (not by the agent) once the run completes successfully, with `Closes #N` in the body for auto-close at merge. The PR body itself is written by the agent (a `<pr-description>` block extracted from its output); the workflow only frames it with the `Closes` line and a metadata footer.
+- **Token**: the workflow authenticates with a fine-grained PAT (`AGENT_GH_TOKEN`), not the default `GITHUB_TOKEN`. GitHub suppresses downstream workflow triggers for `GITHUB_TOKEN`-authored events, so a PAT is required for the agent's PR to run `ci.yml`.
 
 ### Label-based outcome tracking
 
@@ -86,7 +87,7 @@ Project Status (Icebox / Todo / In Progress / Done) is **not piloted by the work
 
 Label cleanup before each run is performed inline in `agent-run.yml` via a batched `gh issue edit --remove-label … --remove-label …` call — no separate script.
 
-In CI, `ANTHROPIC_API_KEY` is supplied directly to the workflow step from the repo secret of the same name — no `.env` file is created. `.sandcastle/.env` and `.sandcastle/logs/` are gitignored for any future local-debug use.
+In CI, `ANTHROPIC_API_KEY` and `AGENT_GH_TOKEN` are supplied from repo secrets — no `.env` file is created. `.sandcastle/.env` and `.sandcastle/logs/` are gitignored for any future local-debug use.
 
 ## Why
 

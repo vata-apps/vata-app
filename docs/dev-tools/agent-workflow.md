@@ -79,9 +79,11 @@ The workflow's job is the boring middle: read, execute, check, package as a PR. 
    ```
 
 2. Create a dedicated Anthropic API key (`vata-sandcastle-prod`) with a $100/month spend limit in the Anthropic Console. Store as repo secret `ANTHROPIC_API_KEY`.
-3. Confirm `.sandcastle/main.ts` and `.sandcastle/prompts/default.md` are present (scaffolded during installation).
-4. Confirm `.github/workflows/agent-run.yml` is present (added during configuration).
-5. Dry-test on a small `Task`-type issue (rename, doc fix) before pointing it at anything substantive.
+3. Create a fine-grained PAT scoped to this repo with **Contents: Read and write**, **Pull requests: Read and write**, **Issues: Read and write**. Store as repo secret `AGENT_GH_TOKEN`. The workflow uses it instead of `GITHUB_TOKEN` so the agent's PR triggers `ci.yml`.
+4. Enable **Allow GitHub Actions to create and approve pull requests** at the org level (`github.com/organizations/vata-apps/settings/actions`) — a repo-level toggle cannot override an org that disallows it.
+5. Confirm `.sandcastle/main.ts` and `.sandcastle/prompts/default.md` are present (scaffolded during installation).
+6. Confirm `.github/workflows/agent-run.yml` is present (added during configuration).
+7. Dry-test on a small `Task`-type issue (rename, doc fix) before pointing it at anything substantive.
 
 ## Limits and known issues
 
@@ -89,4 +91,3 @@ The workflow's job is the boring middle: read, execute, check, package as a PR. 
 - **Out-of-scope edits.** The agent may touch files outside the PRD's scope. Review the diff for unexpected churn before merging.
 - **Stuck `agent:running`.** If a job dies without cleanup (rare), the label may stay on. Remove it manually and re-label `agent:ready` to restart.
 - **Vendor lock on `@ai-hero/sandcastle`.** A future major version could require migrating `.sandcastle/main.ts`. Pin the version in `package.json` until a deliberate upgrade.
-- **`ci.yml` does not run on the agent's initial PR.** Because the workflow uses the default `GITHUB_TOKEN` to open PRs, GitHub does not fire downstream workflows to prevent loops. `ci.yml` runs as soon as you push a corrective commit to the branch. The agent's own `pnpm verify` step already ran against the same code, so this is a missing badge, not a missing check.
