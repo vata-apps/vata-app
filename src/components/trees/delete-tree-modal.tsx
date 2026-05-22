@@ -14,7 +14,7 @@ import {
 } from '@radix-ui/themes';
 
 import { deleteTree as defaultDeleteTree } from '$db-system/trees';
-import { GedcomManager } from '$/managers/GedcomManager';
+import { GedcomManager } from '$managers/GedcomManager';
 import { queryKeys } from '$lib/query-keys';
 
 /**

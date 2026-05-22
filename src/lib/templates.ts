@@ -1,4 +1,4 @@
-import type { ParticipantRole } from '$/types/database';
+import type { ParticipantRole } from '$types/database';
 
 export interface TemplateSlot {
   key: string;

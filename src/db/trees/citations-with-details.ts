@@ -1,6 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
-import type { CitationDetail } from '$/types/database';
+import type { CitationDetail } from '$types/database';
 
 // =============================================================================
 // Raw database row types (snake_case as in SQLite)

@@ -1,6 +1,6 @@
 import type Database from '@tauri-apps/plugin-sql';
 import { getSystemDb } from '../connection';
-import type { Tree } from '$/types/database';
+import type { Tree } from '$types/database';
 
 interface RawTree {
   id: number;

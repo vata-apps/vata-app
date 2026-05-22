@@ -5,7 +5,7 @@ import type {
   CreateFileInput,
   UpdateFileInput,
   CreateSourceFileInput,
-} from '$/types/database';
+} from '$types/database';
 
 // =============================================================================
 // Raw database row types (snake_case as in SQLite)

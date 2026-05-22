@@ -19,7 +19,7 @@ import type {
   FamilyWithMembers,
   IndividualWithDetails,
   Pedigree,
-} from '$/types/database';
+} from '$types/database';
 
 export class FamilyManager {
   /**
