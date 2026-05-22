@@ -38,7 +38,7 @@ Adopt **`@ai-hero/sandcastle`** as the execution engine, **invoked exclusively f
 - **Branch**: sandcastle creates a worktree on `agent/issue-N` with `branchStrategy: { type: "branch" }`.
 - **Quality gate**: between iterations, the agent runs the `pnpm verify` suite (lint + format check + build + vitest) so it sees its own failures and self-corrects. The same suite is re-run by `main.ts` in the worktree after sandcastle finishes, as an independent verification.
 - **PR creation**: opened by the workflow (not by the agent) once the run completes successfully, with `Closes #N` in the body for auto-close at merge. The PR body itself is written by the agent (a `<pr-description>` block extracted from its output); the workflow only frames it with the `Closes` line and a metadata footer.
-- **Token**: the workflow authenticates with a fine-grained PAT (`AGENT_GH_TOKEN`), not the default `GITHUB_TOKEN`. GitHub suppresses downstream workflow triggers for `GITHUB_TOKEN`-authored events, so a PAT is required for the agent's PR to run `ci.yml`.
+- **Token**: the workflow authenticates with a token minted from a dedicated GitHub App (`vata-agent`), not the default `GITHUB_TOKEN` and not a PAT. GitHub suppresses downstream workflow triggers for `GITHUB_TOKEN`-authored events (so `ci.yml` would not run on the agent's PR); a PAT would fix that but attributes every commit, PR, and comment to a person. The App gives both: `ci.yml` runs, and all activity is attributed to `vata-agent[bot]`.
 
 ### Label-based outcome tracking
 
@@ -87,7 +87,7 @@ Project Status (Icebox / Todo / In Progress / Done) is **not piloted by the work
 
 Label cleanup before each run is performed inline in `agent-run.yml` via a batched `gh issue edit --remove-label … --remove-label …` call — no separate script.
 
-In CI, `ANTHROPIC_API_KEY` and `AGENT_GH_TOKEN` are supplied from repo secrets — no `.env` file is created. `.sandcastle/.env` and `.sandcastle/logs/` are gitignored for any future local-debug use.
+In CI, `ANTHROPIC_API_KEY`, `AGENT_APP_ID`, and `AGENT_APP_PRIVATE_KEY` are supplied from repo secrets — no `.env` file is created. `.sandcastle/.env` and `.sandcastle/logs/` are gitignored for any future local-debug use.
 
 ## Why
 

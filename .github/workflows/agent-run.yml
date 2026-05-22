@@ -20,16 +20,23 @@ jobs:
     timeout-minutes: 45
     env:
       ISSUE_NUMBER: ${{ github.event.issue.number }}
-      # PAT (not GITHUB_TOKEN) so the agent's PR triggers ci.yml — GitHub
-      # suppresses downstream workflows for GITHUB_TOKEN-authored events.
-      GH_TOKEN: ${{ secrets.AGENT_GH_TOKEN }}
       PR_BODY_PATH: /tmp/agent-pr-body.md
 
     steps:
+      # Mint a token from the vata-agent GitHub App — used instead of
+      # GITHUB_TOKEN (whose PRs do not trigger ci.yml) and instead of a PAT
+      # (whose actions are attributed to a person, not the bot).
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.AGENT_APP_ID }}
+          private-key: ${{ secrets.AGENT_APP_PRIVATE_KEY }}
+
       - name: Checkout main
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          token: ${{ secrets.AGENT_GH_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
 
       - name: Setup pnpm
@@ -50,11 +57,17 @@ jobs:
         run: npm install -g @anthropic-ai/claude-code
 
       - name: Configure git identity
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
         run: |
-          git config user.name "vata-agent[bot]"
-          git config user.email "vata-agent@users.noreply.github.com"
+          BOT_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
+          git config --global user.name "${APP_SLUG}[bot]"
+          git config --global user.email "${BOT_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
 
       - name: Fetch issue data
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: gh issue view "$ISSUE_NUMBER" --json title,body,url,labels > /tmp/issue.json
 
       - name: Detect Opus opt-in
@@ -67,6 +80,8 @@ jobs:
           fi
 
       - name: Reset agent labels to running
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh issue edit "$ISSUE_NUMBER" \
             --remove-label "agent:ready" \
@@ -112,6 +127,7 @@ jobs:
         id: deliver
         if: steps.outcome.outputs.outcome == 'success' || steps.outcome.outputs.outcome == 'partial'
         env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           OUTCOME: ${{ steps.outcome.outputs.outcome }}
           BRANCH: ${{ steps.agent.outputs.branch }}
           ITERATIONS: ${{ steps.agent.outputs.iterations }}
@@ -151,6 +167,7 @@ jobs:
       - name: Comment on failure
         if: steps.outcome.outputs.outcome == 'failed' || steps.deliver.outcome == 'failure'
         env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           DELIVER: ${{ steps.deliver.outcome }}
           BRANCH: ${{ steps.agent.outputs.branch }}
           ITERATIONS: ${{ steps.agent.outputs.iterations }}
@@ -178,6 +195,7 @@ jobs:
       - name: Apply final label
         if: always()
         env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
           OUTCOME: ${{ steps.outcome.outputs.outcome }}
           DELIVER: ${{ steps.deliver.outcome }}
         run: |
