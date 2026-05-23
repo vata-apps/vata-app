@@ -1,7 +1,7 @@
 import type { EventType } from '$types/database';
 
 /**
- * The ten system tags whose translations live in the `events` namespace.
+ * System tags whose translations live in the `events` namespace.
  * BAPM and CHR intentionally share the same key (both render as Baptism/Baptême).
  */
 const KNOWN_TAG_KEYS: Record<string, string> = {
@@ -15,6 +15,8 @@ const KNOWN_TAG_KEYS: Record<string, string> = {
   EMIG: 'types.EMIG',
   DEAT: 'types.DEAT',
   BURI: 'types.BURI',
+  RESI: 'types.RESI',
+  OCCU: 'types.OCCU',
 };
 
 /**

@@ -20,6 +20,8 @@
     "CENS": "Census",
     "EMIG": "Emigration",
     "DEAT": "Death",
-    "BURI": "Burial"
+    "BURI": "Burial",
+    "RESI": "Residence",
+    "OCCU": "Occupation"
   }
 }
