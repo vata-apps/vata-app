@@ -104,6 +104,9 @@ jobs:
           BOT_ID=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)
           git config --global user.name "${APP_SLUG}[bot]"
           git config --global user.email "${BOT_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+          # actions/checkout v6 stopped persisting the auth header to .git/config,
+          # so wire gh's credential helper into git for later push steps.
+          gh auth setup-git
 
       - name: Resolve issue number
         id: issue
