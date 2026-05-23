@@ -25,16 +25,13 @@ export interface NavSection {
 
 /**
  * The sections of the in-tree navigation bar, in display order.
- *
- * `Events` and `Places` have no `to`: their routes are not built yet, so
- * they render disabled. Give them a route here once it exists.
  */
 export const NAV_SECTIONS = [
   { id: 'home', icon: 'house', labelKey: 'nav.home', to: '/tree/$treeId' },
   { id: 'people', icon: 'user', labelKey: 'nav.individuals', to: '/tree/$treeId/individuals' },
   { id: 'families', icon: 'users', labelKey: 'nav.families', to: '/tree/$treeId/families' },
   { id: 'events', icon: 'calendar', labelKey: 'nav.events', to: '/tree/$treeId/events' },
-  { id: 'places', icon: 'map-pin', labelKey: 'nav.places', to: null },
+  { id: 'places', icon: 'map-pin', labelKey: 'nav.places', to: '/tree/$treeId/places' },
 ] as const satisfies readonly NavSection[];
 
 /**
@@ -49,6 +46,8 @@ const SECTION_BY_SEGMENT: Record<string, NavSectionId> = {
   family: 'families',
   events: 'events',
   event: 'events',
+  places: 'places',
+  place: 'places',
 };
 
 /** Splits a pathname into its `/`-delimited, non-empty segments. */
