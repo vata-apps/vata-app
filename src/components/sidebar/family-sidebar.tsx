@@ -1,15 +1,18 @@
 import './family-sidebar.css';
 
-import { type ReactNode, useMemo, useState } from 'react';
-import { Link, useParams } from '@tanstack/react-router';
+import { useMemo, useState } from 'react';
+import { useParams } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, Skeleton, Text } from '@radix-ui/themes';
+import { Button, Flex, Skeleton } from '@radix-ui/themes';
 
-import { EntityListPanel, type EntityListSortOption } from './entity-list-panel';
+import { EntityListPanel } from './entity-list-panel';
+import { EntityListBody } from './entity-list-body';
+import { SidebarRow } from './sidebar-row';
+import { buildSortOptions, initialsOf } from './sort-helpers';
 import { Icon } from '$components/icon';
 import { useFamilies } from '$hooks/useFamilies';
 import { formatName } from '$db-tree/names';
-import type { FamilyWithMembers, Name } from '$types/database';
+import type { FamilyWithMembers } from '$types/database';
 
 const SORT_VALUES = [
   'husband-surname-asc',
@@ -31,18 +34,6 @@ const SORT_LABEL_KEYS: Record<SortValue, string> = {
   'children-asc': 'sidebar.sort.childrenAsc',
 };
 
-const SKELETON_ROW_COUNT = 7;
-
-function initialsOf(name: Name | null): string {
-  if (!name) return '?';
-  const given = name.givenNames?.trim().split(/\s+/)[0]?.charAt(0) ?? '';
-  const surname = name.surname?.trim().charAt(0) ?? '';
-  const initials = (given + surname).toUpperCase();
-  if (initials) return initials;
-  const nickname = name.nickname?.trim().charAt(0);
-  return nickname ? nickname.toUpperCase() : '?';
-}
-
 function sortFamilies(families: FamilyWithMembers[], sort: SortValue): FamilyWithMembers[] {
   type Decorated = { family: FamilyWithMembers; key: string | null; count: number };
 
@@ -53,7 +44,6 @@ function sortFamilies(families: FamilyWithMembers[], sort: SortValue): FamilyWit
     } else if (sort === 'wife-surname-asc' || sort === 'wife-surname-desc') {
       key = family.wife ? formatName(family.wife.primaryName).sortable || null : null;
     } else {
-      // Children sorts: use husband surname falling back to wife for tie-break.
       if (family.husband) {
         key = formatName(family.husband.primaryName).sortable || null;
       } else if (family.wife) {
@@ -69,13 +59,11 @@ function sortFamilies(families: FamilyWithMembers[], sort: SortValue): FamilyWit
     if (sort === 'children-desc' || sort === 'children-asc') {
       const diff = a.count - b.count;
       if (diff !== 0) return sort === 'children-desc' ? -diff : diff;
-      // Tie-break alphabetically by surname key.
       if (a.key === null && b.key === null) return 0;
       if (a.key === null) return 1;
       if (b.key === null) return -1;
       return a.key.localeCompare(b.key);
     }
-    // Surname sort — null keys always sink to bottom.
     if (a.key === null && b.key === null) return 0;
     if (a.key === null) return 1;
     if (b.key === null) return -1;
@@ -109,77 +97,40 @@ function FamilyRow({ family, treeId, selected }: FamilyRowProps): JSX.Element {
     : formatName(wifeName).surnameFirst;
 
   return (
-    <Link
+    <SidebarRow
       to="/tree/$treeId/family/$familyId"
       params={{ treeId, familyId: family.id }}
-      className="family-row"
-      aria-current={selected ? 'page' : undefined}
+      selected={selected}
+      leading={
+        <span className="family-row__couple-avatar" aria-hidden="true">
+          <span className={`family-row__spouse-circle${husbandIsUnknown ? ' is-unknown' : ''}`}>
+            {initialsOf(husbandName)}
+          </span>
+          <span className={`family-row__spouse-circle${wifeIsUnknown ? ' is-unknown' : ''}`}>
+            {initialsOf(wifeName)}
+          </span>
+        </span>
+      }
     >
-      <span className="family-row__couple-avatar" aria-hidden="true">
-        <span className={`family-row__spouse-circle${husbandIsUnknown ? ' is-unknown' : ''}`}>
-          {initialsOf(husbandName)}
-        </span>
-        <span className={`family-row__spouse-circle${wifeIsUnknown ? ' is-unknown' : ''}`}>
-          {initialsOf(wifeName)}
-        </span>
-      </span>
-      <span className="family-row__text">
-        <span className={`family-row__spouse-name${husbandIsUnknown ? ' is-unknown' : ''}`}>
-          {husbandDisplay}
-        </span>
-        <span className={`family-row__spouse-name${wifeIsUnknown ? ' is-unknown' : ''}`}>
-          {wifeDisplay}
-        </span>
-        <span className="family-row__meta">
-          {t('sidebar.childrenCount', { count: family.children.length })}
-        </span>
-      </span>
-      <Icon name="chevron-right" size={14} className="family-row__chev" />
-    </Link>
+      <SidebarRow.Name unknown={husbandIsUnknown}>{husbandDisplay}</SidebarRow.Name>
+      <SidebarRow.Name unknown={wifeIsUnknown}>{wifeDisplay}</SidebarRow.Name>
+      <SidebarRow.Meta>
+        {t('sidebar.childrenCount', { count: family.children.length })}
+      </SidebarRow.Meta>
+    </SidebarRow>
   );
 }
 
-function FamilyListSkeleton(): JSX.Element {
-  return (
-    <Flex direction="column" gap="1" p="2" aria-hidden="true">
-      {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
-        <Flex key={index} align="center" gap="3" px="2" py="2">
-          <Skeleton width="42px" height="30px" style={{ borderRadius: '4px' }} />
-          <Flex direction="column" gap="1" flexGrow="1">
-            <Skeleton width="60%" height="12px" />
-            <Skeleton width="50%" height="12px" />
-            <Skeleton width="30%" height="10px" />
-          </Flex>
-        </Flex>
-      ))}
+const FAMILY_SKELETON_ROW = (
+  <Flex align="center" gap="3" px="2" py="2">
+    <Skeleton width="42px" height="30px" style={{ borderRadius: '4px' }} />
+    <Flex direction="column" gap="1" flexGrow="1">
+      <Skeleton width="60%" height="12px" />
+      <Skeleton width="50%" height="12px" />
+      <Skeleton width="30%" height="10px" />
     </Flex>
-  );
-}
-
-function FamilyListMessage({
-  children,
-  icon,
-}: {
-  children: ReactNode;
-  icon?: boolean;
-}): JSX.Element {
-  return (
-    <Flex
-      direction="column"
-      align="center"
-      justify="center"
-      gap="2"
-      px="5"
-      py="8"
-      style={{ textAlign: 'center' }}
-    >
-      {icon && <Icon name="users" size={24} style={{ color: 'var(--gray-8)' }} />}
-      <Text size="2" color="gray">
-        {children}
-      </Text>
-    </Flex>
-  );
-}
+  </Flex>
+);
 
 /**
  * The Families section sidebar — the list of every family in the open
@@ -192,10 +143,8 @@ function FamilyListMessage({
  * on the bottom line, and a children count. A missing spouse renders as
  * italic "Unknown" with a `?` avatar.
  *
- * Clicking a row opens that family's detail route; the row matching the
- * open `$familyId` is highlighted. Composed on top of
- * {@link EntityListPanel}, the entity-agnostic shell shared by every
- * section list.
+ * Composed on top of {@link EntityListPanel} + {@link EntityListBody} +
+ * {@link SidebarRow}, the shared shell and primitives for every section list.
  */
 export function FamilySidebar(): JSX.Element | null {
   const { t } = useTranslation('families');
@@ -206,31 +155,15 @@ export function FamilySidebar(): JSX.Element | null {
 
   const rows = useMemo(() => (data ? sortFamilies(data, sort) : []), [data, sort]);
 
-  const sortOptions = useMemo<EntityListSortOption<SortValue>[]>(
-    () => SORT_VALUES.map((value) => ({ value, label: t(SORT_LABEL_KEYS[value]) })),
-    [t]
-  );
+  const sortOptions = useMemo(() => buildSortOptions(SORT_VALUES, SORT_LABEL_KEYS, t), [t]);
 
   const treeId = params.treeId;
   if (treeId === undefined) return null;
 
-  const body: ReactNode = ((): ReactNode => {
-    if (isLoading) return <FamilyListSkeleton />;
-    if (isError) return <FamilyListMessage>{tCommon('errors.loadFailed')}</FamilyListMessage>;
-    if (rows.length === 0) return <FamilyListMessage icon>{t('sidebar.empty')}</FamilyListMessage>;
-    return (
-      <Flex direction="column" gap="1" p="2">
-        {rows.map((family) => (
-          <FamilyRow
-            key={family.id}
-            family={family}
-            treeId={treeId}
-            selected={family.id === params.familyId}
-          />
-        ))}
-      </Flex>
-    );
-  })();
+  let status: 'loading' | 'error' | 'empty' | 'ready' = 'ready';
+  if (isLoading) status = 'loading';
+  else if (isError) status = 'error';
+  else if (rows.length === 0) status = 'empty';
 
   return (
     <EntityListPanel
@@ -250,7 +183,22 @@ export function FamilySidebar(): JSX.Element | null {
         disabled: rows.length === 0,
       }}
     >
-      {body}
+      <EntityListBody
+        status={status}
+        skeletonRow={FAMILY_SKELETON_ROW}
+        emptyIcon="users"
+        emptyMessage={t('sidebar.empty')}
+        errorMessage={tCommon('errors.loadFailed')}
+      >
+        {rows.map((family) => (
+          <FamilyRow
+            key={family.id}
+            family={family}
+            treeId={treeId}
+            selected={family.id === params.familyId}
+          />
+        ))}
+      </EntityListBody>
     </EntityListPanel>
   );
 }

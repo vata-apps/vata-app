@@ -1,0 +1,52 @@
+/**
+ * Per-entity leading visual for FamilySidebar: the dual-circle couple avatar.
+ * Row chrome (hover, focus, aria-current) lives in sidebar-row.css.
+ */
+
+/* 42×30 wrapper; two 26×26 dashed circles, second offset 16px right to overlap. */
+.family-row__couple-avatar {
+  flex: 0 0 42px;
+  width: 42px;
+  height: 30px;
+  position: relative;
+}
+
+.family-row__spouse-circle {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  top: 2px;
+  display: grid;
+  place-items: center;
+  border: 1.25px dashed var(--gray-a7);
+  border-radius: 9999px;
+  background: var(--color-panel-solid);
+  color: var(--gray-11);
+  font-family: var(--code-font-family);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.family-row__spouse-circle:first-child {
+  left: 0;
+  z-index: 1;
+}
+
+.family-row__spouse-circle:last-child {
+  left: 16px;
+  z-index: 0;
+}
+
+.family-row__spouse-circle.is-unknown {
+  color: var(--gray-9);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.sidebar-row[aria-current='page'] .family-row__spouse-circle {
+  border-color: var(--accent-a8);
+  color: var(--accent-11);
+}

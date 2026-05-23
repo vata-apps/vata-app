@@ -1,0 +1,23 @@
+/**
+ * Per-entity leading visual for PeopleSidebar: the dashed-circle initials
+ * avatar. Row chrome (hover, focus, aria-current) lives in sidebar-row.css.
+ */
+.person-row__avatar {
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1.25px dashed var(--gray-a7);
+  border-radius: 9999px;
+  color: var(--gray-11);
+  font-family: var(--code-font-family);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-row[aria-current='page'] .person-row__avatar {
+  border-color: var(--accent-a8);
+  color: var(--accent-11);
+}

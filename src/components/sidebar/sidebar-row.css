@@ -1,0 +1,124 @@
+/**
+ * Shared row chrome for all entity sidebar lists.
+ *
+ * Covers: link layout, border, hover, focus-visible, aria-current selection,
+ * text-block wrapper, and the Name / Meta / Eyebrow typography slots.
+ * Per-entity leading-visual styles (avatar circle, couple circles) live in
+ * the entity's own CSS file and target the class names they declare.
+ */
+.sidebar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-3);
+  color: var(--gray-12);
+  text-decoration: none;
+  cursor: var(--cursor-link);
+  transition:
+    background-color 120ms,
+    border-color 120ms;
+}
+
+/* Rows with a leading visual (avatar, couple circles) get a tighter left pad
+   so the leading element sits close to the panel edge. */
+.sidebar-row--has-leading {
+  padding-left: 8px;
+}
+
+.sidebar-row:hover {
+  background-color: var(--gray-a2);
+  border-color: var(--gray-a4);
+}
+
+.sidebar-row:focus-visible {
+  outline: 2px solid var(--focus-a8);
+  outline-offset: -1px;
+}
+
+.sidebar-row[aria-current='page'] {
+  background-color: var(--accent-a3);
+  border-color: var(--accent-a7);
+}
+
+/* ── Text block ─────────────────────────────────────────────────────────── */
+
+.sidebar-row__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.2;
+}
+
+/* ── Name slot ──────────────────────────────────────────────────────────── */
+
+.sidebar-row__name {
+  overflow: hidden;
+  color: var(--gray-12);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sidebar-row[aria-current='page'] .sidebar-row__name {
+  color: var(--accent-12);
+}
+
+.sidebar-row__name--unknown {
+  color: var(--gray-9);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.sidebar-row[aria-current='page'] .sidebar-row__name--unknown {
+  color: var(--accent-a9);
+}
+
+/* ── Meta slot ──────────────────────────────────────────────────────────── */
+
+.sidebar-row__meta {
+  overflow: hidden;
+  color: var(--gray-10);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sidebar-row[aria-current='page'] .sidebar-row__meta {
+  color: var(--accent-a11);
+}
+
+/* ── Eyebrow slot ───────────────────────────────────────────────────────── */
+
+.sidebar-row__eyebrow {
+  overflow: hidden;
+  color: var(--gray-10);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sidebar-row[aria-current='page'] .sidebar-row__eyebrow {
+  color: var(--accent-a10);
+}
+
+/* ── Chevron ────────────────────────────────────────────────────────────── */
+
+.sidebar-row__chev {
+  flex: 0 0 14px;
+  color: var(--gray-9);
+}
+
+.sidebar-row[aria-current='page'] .sidebar-row__chev {
+  color: var(--accent-11);
+}

@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '$components/icon';
 import { PreferencesPopover } from '$components/preferences-popover';
 import { resolveNavSection } from '$lib/nav-sections';
-import { EventsSidebar } from './events-sidebar';
-import { FamilySidebar } from './family-sidebar';
-import { PeopleSidebar } from './people-sidebar';
-import { PlacesSidebar } from './places-sidebar';
+import { EventsSidebar } from './sidebar/events-sidebar';
+import { FamilySidebar } from './sidebar/family-sidebar';
+import { PeopleSidebar } from './sidebar/people-sidebar';
+import { PlacesSidebar } from './sidebar/places-sidebar';
 import { TreeNav } from './tree-nav';
 
 /**

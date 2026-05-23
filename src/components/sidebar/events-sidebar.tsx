@@ -1,11 +1,12 @@
-import './events-sidebar.css';
-
-import React, { type ReactNode, useMemo, useState } from 'react';
-import { Link, useParams } from '@tanstack/react-router';
+import React, { useMemo, useState } from 'react';
+import { useParams } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, Skeleton, Text } from '@radix-ui/themes';
+import { Button, Flex, Skeleton } from '@radix-ui/themes';
 
-import { EntityListPanel, type EntityListSortOption } from './entity-list-panel';
+import { EntityListPanel } from './entity-list-panel';
+import { EntityListBody } from './entity-list-body';
+import { SidebarRow } from './sidebar-row';
+import { buildSortOptions } from './sort-helpers';
 import { Icon } from '$components/icon';
 import { useEvents } from '$hooks/useEvents';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
@@ -20,9 +21,6 @@ const SORT_LABEL_KEYS: Record<SortValue, string> = {
   'date-desc': 'sidebar.sort.dateDesc',
 };
 
-const SKELETON_ROW_COUNT = 7;
-
-/** Display name for a single principal name slot — italic unknown when null. */
 function PrincipalName({
   name,
   unknownLabel,
@@ -32,16 +30,15 @@ function PrincipalName({
 }): JSX.Element {
   if (!name) {
     return (
-      <span className="event-row__name event-row__name--unknown" aria-label={unknownLabel}>
+      <SidebarRow.Name unknown aria-label={unknownLabel}>
         {unknownLabel}
-      </span>
+      </SidebarRow.Name>
     );
   }
   const display = formatName(name).full;
-  return <span className="event-row__name">{display || unknownLabel}</span>;
+  return <SidebarRow.Name>{display || unknownLabel}</SidebarRow.Name>;
 }
 
-/** Renders the principal line(s) for an event row. */
 function PrincipalsBlock({
   principals,
   unknownLabel,
@@ -50,7 +47,7 @@ function PrincipalsBlock({
   unknownLabel: string;
 }): JSX.Element {
   if (principals.length === 0) {
-    return <span className="event-row__name event-row__name--unknown">{unknownLabel}</span>;
+    return <SidebarRow.Name unknown>{unknownLabel}</SidebarRow.Name>;
   }
   return (
     <>
@@ -69,7 +66,6 @@ function PrincipalsBlock({
   );
 }
 
-/** The meta line: date · 📍 place (or whichever parts are present). */
 function MetaLine({
   event,
   dateUnknownLabel,
@@ -88,10 +84,9 @@ function MetaLine({
   }
   if (placePart) parts.push(`📍 ${placePart}`);
 
-  return <span className="event-row__meta">{parts.join(' · ')}</span>;
+  return <SidebarRow.Meta>{parts.join(' · ')}</SidebarRow.Meta>;
 }
 
-/** Sort events by date, NULLs last. */
 function sortEvents(events: EventListEntry[], sort: SortValue): EventListEntry[] {
   return [...events].sort((a, b) => {
     const aDate = a.dateSort;
@@ -123,60 +118,25 @@ function EventRow({
   const label = eventTypeLabel(event.eventType, t);
 
   return (
-    <Link
+    <SidebarRow
       to="/tree/$treeId/event/$eventId"
       params={{ treeId, eventId: event.id }}
-      className="event-row"
-      aria-current={selected ? 'page' : undefined}
+      selected={selected}
     >
-      <span className="event-row__text">
-        <span className="event-row__eyebrow">{label}</span>
-        <PrincipalsBlock principals={event.principals} unknownLabel={unknownLabel} />
-        <MetaLine event={event} dateUnknownLabel={dateUnknownLabel} />
-      </span>
-      <Icon name="chevron-right" size={14} className="event-row__chev" />
-    </Link>
+      <SidebarRow.Eyebrow>{label}</SidebarRow.Eyebrow>
+      <PrincipalsBlock principals={event.principals} unknownLabel={unknownLabel} />
+      <MetaLine event={event} dateUnknownLabel={dateUnknownLabel} />
+    </SidebarRow>
   );
 }
 
-function EventsListSkeleton(): JSX.Element {
-  return (
-    <Flex direction="column" gap="1" p="2" aria-hidden="true">
-      {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
-        <Flex key={index} direction="column" gap="1" px="2" py="2">
-          <Skeleton width="40%" height="10px" />
-          <Skeleton width="70%" height="12px" />
-          <Skeleton width="55%" height="10px" />
-        </Flex>
-      ))}
-    </Flex>
-  );
-}
-
-function EventsListMessage({
-  children,
-  icon,
-}: {
-  children: ReactNode;
-  icon?: boolean;
-}): JSX.Element {
-  return (
-    <Flex
-      direction="column"
-      align="center"
-      justify="center"
-      gap="2"
-      px="5"
-      py="8"
-      style={{ textAlign: 'center' }}
-    >
-      {icon && <Icon name="calendar" size={24} style={{ color: 'var(--gray-8)' }} />}
-      <Text size="2" color="gray">
-        {children}
-      </Text>
-    </Flex>
-  );
-}
+const EVENTS_SKELETON_ROW = (
+  <Flex direction="column" gap="1" px="2" py="2">
+    <Skeleton width="40%" height="10px" />
+    <Skeleton width="70%" height="12px" />
+    <Skeleton width="55%" height="10px" />
+  </Flex>
+);
 
 /**
  * The Events section sidebar — the list of every event in the open tree,
@@ -187,8 +147,8 @@ function EventsListMessage({
  * name(s) below (italic Unknown when missing), and a meta line with the
  * date and place. Marriage rows stack both spouse names.
  *
- * Composed on top of {@link EntityListPanel}, the same reusable shell
- * used by the People sidebar.
+ * Composed on top of {@link EntityListPanel} + {@link EntityListBody} +
+ * {@link SidebarRow}, the shared shell and primitives for every section list.
  */
 export function EventsSidebar(): JSX.Element | null {
   const { t } = useTranslation('events');
@@ -199,10 +159,7 @@ export function EventsSidebar(): JSX.Element | null {
 
   const rows = useMemo(() => (data ? sortEvents(data, sort) : []), [data, sort]);
 
-  const sortOptions = useMemo<EntityListSortOption<SortValue>[]>(
-    () => SORT_VALUES.map((value) => ({ value, label: t(SORT_LABEL_KEYS[value]) })),
-    [t]
-  );
+  const sortOptions = useMemo(() => buildSortOptions(SORT_VALUES, SORT_LABEL_KEYS, t), [t]);
 
   const treeId = params.treeId;
   if (treeId === undefined) return null;
@@ -210,25 +167,10 @@ export function EventsSidebar(): JSX.Element | null {
   const unknownLabel = t('sidebar.unknownPrincipal');
   const dateUnknownLabel = t('sidebar.dateUnknown');
 
-  const body: ReactNode = ((): ReactNode => {
-    if (isLoading) return <EventsListSkeleton />;
-    if (isError) return <EventsListMessage>{tCommon('errors.loadFailed')}</EventsListMessage>;
-    if (rows.length === 0) return <EventsListMessage icon>{t('sidebar.empty')}</EventsListMessage>;
-    return (
-      <Flex direction="column" gap="1" p="2">
-        {rows.map((event) => (
-          <EventRow
-            key={event.id}
-            event={event}
-            treeId={treeId}
-            selected={event.id === params.eventId}
-            unknownLabel={unknownLabel}
-            dateUnknownLabel={dateUnknownLabel}
-          />
-        ))}
-      </Flex>
-    );
-  })();
+  let status: 'loading' | 'error' | 'empty' | 'ready' = 'ready';
+  if (isLoading) status = 'loading';
+  else if (isError) status = 'error';
+  else if (rows.length === 0) status = 'empty';
 
   return (
     <EntityListPanel
@@ -248,7 +190,24 @@ export function EventsSidebar(): JSX.Element | null {
         disabled: rows.length === 0,
       }}
     >
-      {body}
+      <EntityListBody
+        status={status}
+        skeletonRow={EVENTS_SKELETON_ROW}
+        emptyIcon="calendar"
+        emptyMessage={t('sidebar.empty')}
+        errorMessage={tCommon('errors.loadFailed')}
+      >
+        {rows.map((event) => (
+          <EventRow
+            key={event.id}
+            event={event}
+            treeId={treeId}
+            selected={event.id === params.eventId}
+            unknownLabel={unknownLabel}
+            dateUnknownLabel={dateUnknownLabel}
+          />
+        ))}
+      </EntityListBody>
     </EntityListPanel>
   );
 }
