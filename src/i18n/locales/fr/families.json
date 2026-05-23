@@ -1,3 +1,17 @@
 {
-  "heading": "Famille {{familyId}}"
+  "heading": "Famille {{familyId}}",
+  "sidebar": {
+    "newButton": "Nouveau",
+    "sortLabel": "Trier par",
+    "sort": {
+      "surnameAsc": "Nom (A → Z)",
+      "surnameDesc": "Nom (Z → A)",
+      "childrenDesc": "Plus d'enfants",
+      "childrenAsc": "Moins d'enfants"
+    },
+    "empty": "Aucune famille",
+    "unknownSpouse": "Inconnu(e)",
+    "childrenCount_one": "{{count}} enfant",
+    "childrenCount_other": "{{count}} enfants"
+  }
 }
