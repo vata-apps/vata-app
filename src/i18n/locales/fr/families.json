@@ -4,8 +4,10 @@
     "newButton": "Nouveau",
     "sortLabel": "Trier par",
     "sort": {
-      "surnameAsc": "Nom (A → Z)",
-      "surnameDesc": "Nom (Z → A)",
+      "husbandSurnameAsc": "Nom du mari (A → Z)",
+      "husbandSurnameDesc": "Nom du mari (Z → A)",
+      "wifeSurnameAsc": "Nom de l'épouse (A → Z)",
+      "wifeSurnameDesc": "Nom de l'épouse (Z → A)",
       "childrenDesc": "Plus d'enfants",
       "childrenAsc": "Moins d'enfants"
     },

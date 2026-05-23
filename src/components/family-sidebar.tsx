@@ -11,13 +11,22 @@ import { useFamilies } from '$hooks/useFamilies';
 import { formatName } from '$db-tree/names';
 import type { FamilyWithMembers, Name } from '$types/database';
 
-const SORT_VALUES = ['surname-asc', 'surname-desc', 'children-desc', 'children-asc'] as const;
+const SORT_VALUES = [
+  'husband-surname-asc',
+  'husband-surname-desc',
+  'wife-surname-asc',
+  'wife-surname-desc',
+  'children-desc',
+  'children-asc',
+] as const;
 
 type SortValue = (typeof SORT_VALUES)[number];
 
 const SORT_LABEL_KEYS: Record<SortValue, string> = {
-  'surname-asc': 'sidebar.sort.surnameAsc',
-  'surname-desc': 'sidebar.sort.surnameDesc',
+  'husband-surname-asc': 'sidebar.sort.husbandSurnameAsc',
+  'husband-surname-desc': 'sidebar.sort.husbandSurnameDesc',
+  'wife-surname-asc': 'sidebar.sort.wifeSurnameAsc',
+  'wife-surname-desc': 'sidebar.sort.wifeSurnameDesc',
   'children-desc': 'sidebar.sort.childrenDesc',
   'children-asc': 'sidebar.sort.childrenAsc',
 };
@@ -34,30 +43,27 @@ function initialsOf(name: Name | null): string {
   return nickname ? nickname.toUpperCase() : '?';
 }
 
-/**
- * The sort key for surname-based ordering. Uses the husband's primary
- * surname, falling back to the wife's when no husband is recorded, and
- * to `null` when neither spouse is recorded. A `null` key always sinks
- * to the bottom, regardless of asc/desc direction.
- */
-function spouseSortKey(family: FamilyWithMembers): string | null {
-  if (family.husband !== null) {
-    return formatName(family.husband.primaryName).sortable || null;
-  }
-  if (family.wife !== null) {
-    return formatName(family.wife.primaryName).sortable || null;
-  }
-  return null;
-}
-
 function sortFamilies(families: FamilyWithMembers[], sort: SortValue): FamilyWithMembers[] {
   type Decorated = { family: FamilyWithMembers; key: string | null; count: number };
 
-  const decorated: Decorated[] = families.map((family) => ({
-    family,
-    key: spouseSortKey(family),
-    count: family.children.length,
-  }));
+  const decorated: Decorated[] = families.map((family) => {
+    let key: string | null;
+    if (sort === 'husband-surname-asc' || sort === 'husband-surname-desc') {
+      key = family.husband ? formatName(family.husband.primaryName).sortable || null : null;
+    } else if (sort === 'wife-surname-asc' || sort === 'wife-surname-desc') {
+      key = family.wife ? formatName(family.wife.primaryName).sortable || null : null;
+    } else {
+      // Children sorts: use husband surname falling back to wife for tie-break.
+      if (family.husband) {
+        key = formatName(family.husband.primaryName).sortable || null;
+      } else if (family.wife) {
+        key = formatName(family.wife.primaryName).sortable || null;
+      } else {
+        key = null;
+      }
+    }
+    return { family, key, count: family.children.length };
+  });
 
   decorated.sort((a, b) => {
     if (sort === 'children-desc' || sort === 'children-asc') {
@@ -74,7 +80,7 @@ function sortFamilies(families: FamilyWithMembers[], sort: SortValue): FamilyWit
     if (a.key === null) return 1;
     if (b.key === null) return -1;
     const order = a.key.localeCompare(b.key);
-    return sort === 'surname-desc' ? -order : order;
+    return sort === 'husband-surname-desc' || sort === 'wife-surname-desc' ? -order : order;
   });
 
   return decorated.map((d) => d.family);
@@ -196,7 +202,7 @@ export function FamilySidebar(): JSX.Element | null {
   const { t: tCommon } = useTranslation('common');
   const params = useParams({ strict: false });
   const { data, isLoading, isError } = useFamilies();
-  const [sort, setSort] = useState<SortValue>('surname-asc');
+  const [sort, setSort] = useState<SortValue>('husband-surname-asc');
 
   const rows = useMemo(() => (data ? sortFamilies(data, sort) : []), [data, sort]);
 

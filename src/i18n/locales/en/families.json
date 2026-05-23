@@ -4,8 +4,10 @@
     "newButton": "New",
     "sortLabel": "Sort by",
     "sort": {
-      "surnameAsc": "Surname (A → Z)",
-      "surnameDesc": "Surname (Z → A)",
+      "husbandSurnameAsc": "Husband surname (A → Z)",
+      "husbandSurnameDesc": "Husband surname (Z → A)",
+      "wifeSurnameAsc": "Wife surname (A → Z)",
+      "wifeSurnameDesc": "Wife surname (Z → A)",
       "childrenDesc": "Most children",
       "childrenAsc": "Fewest children"
     },
