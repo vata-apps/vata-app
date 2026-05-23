@@ -1,0 +1,12 @@
+{
+  "heading": "Lieu {{placeId}}",
+  "sidebar": {
+    "newButton": "Nouveau",
+    "sortLabel": "Trier par",
+    "sort": {
+      "nameAsc": "Nom A → Z",
+      "nameDesc": "Nom Z → A"
+    },
+    "empty": "Aucun lieu"
+  }
+}

@@ -13,8 +13,7 @@ import { NAV_SECTIONS, getTreeIdFromPath, resolveNavSection } from '$lib/nav-sec
  *
  * Each item is a fixed-height icon-and-label control. The section in view
  * gets a soft-accent pill, including on that section's detail routes (an
- * individual detail highlights People). Sections whose route does not
- * exist yet (Events, Places) render disabled and non-navigable.
+ * individual detail highlights People).
  *
  * Reads the active tree and section from the current route; renders
  * nothing when used outside the in-tree context.
@@ -32,19 +31,6 @@ export function TreeNav(): JSX.Element | null {
       <ul className="tree-nav-list">
         {NAV_SECTIONS.map((section) => {
           const label = t(section.labelKey);
-
-          // Events / Places have no route yet — render a disabled button.
-          if (section.to === null) {
-            return (
-              <li key={section.id}>
-                <button type="button" className="tree-nav-item tree-nav-item--disabled" disabled>
-                  <Icon name={section.icon} size={16} />
-                  {label}
-                </button>
-              </li>
-            );
-          }
-
           const isActive = section.id === activeSection;
           return (
             <li key={section.id}>

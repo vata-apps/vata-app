@@ -1,0 +1,12 @@
+{
+  "heading": "Place {{placeId}}",
+  "sidebar": {
+    "newButton": "New",
+    "sortLabel": "Sort by",
+    "sort": {
+      "nameAsc": "Name (A → Z)",
+      "nameDesc": "Name (Z → A)"
+    },
+    "empty": "No places yet"
+  }
+}

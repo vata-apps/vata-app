@@ -1,0 +1,79 @@
+/**
+ * Scoped styles for the PlacesSidebar place rows. Mirrors the visual
+ * language of events-sidebar.css — same interaction states and link styles —
+ * with the name/meta two-line layout specific to places.
+ */
+.place-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 6px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-3);
+  color: var(--gray-12);
+  text-decoration: none;
+  cursor: var(--cursor-link);
+  transition:
+    background-color 120ms,
+    border-color 120ms;
+}
+
+.place-row:hover {
+  background-color: var(--gray-a2);
+  border-color: var(--gray-a4);
+}
+
+.place-row:focus-visible {
+  outline: 2px solid var(--focus-a8);
+  outline-offset: -1px;
+}
+
+.place-row[aria-current='page'] {
+  background-color: var(--accent-a3);
+  border-color: var(--accent-a7);
+}
+
+.place-row__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  line-height: 1.2;
+}
+
+.place-row__name {
+  overflow: hidden;
+  color: var(--gray-12);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.place-row[aria-current='page'] .place-row__name {
+  color: var(--accent-12);
+}
+
+.place-row__meta {
+  overflow: hidden;
+  color: var(--gray-10);
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.place-row[aria-current='page'] .place-row__meta {
+  color: var(--accent-a11);
+}
+
+.place-row__chev {
+  flex: 0 0 14px;
+  color: var(--gray-9);
+}
+
+.place-row[aria-current='page'] .place-row__chev {
+  color: var(--accent-11);
+}
