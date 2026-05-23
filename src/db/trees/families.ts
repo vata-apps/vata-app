@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import type {
   Family,
   CreateFamilyInput,
@@ -492,6 +493,59 @@ export async function getChildrenInFamily(familyId: string): Promise<string[]> {
   );
 
   return rows.map((row) => formatEntityId('I', row.individual_id));
+}
+
+/**
+ * Return the husband and wife individual IDs for a batch of family IDs.
+ * A single query per chunk (chunked to stay under the SQLite host-parameter
+ * limit). Intended for EventManager.getAll so it can resolve family principals
+ * without loading the entire family graph.
+ */
+export async function getSpousesForFamilies(
+  familyIds: string[]
+): Promise<{ familyId: string; husbandId: string | null; wifeId: string | null }[]> {
+  if (familyIds.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = familyIds.map(parseEntityId);
+
+  interface RawSpouseRow {
+    family_id: number;
+    individual_id: number;
+    role: 'husband' | 'wife';
+  }
+
+  const rows: RawSpouseRow[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawSpouseRow[]>(
+      `SELECT family_id, individual_id, role
+       FROM family_members
+       WHERE family_id IN (${placeholders})
+         AND role IN ('husband', 'wife')
+       ORDER BY family_id, role`,
+      idsChunk
+    );
+    rows.push(...chunkRows);
+  }
+
+  const byFamily = new Map<string, { husbandId: string | null; wifeId: string | null }>();
+  for (const familyId of familyIds) {
+    byFamily.set(familyId, { husbandId: null, wifeId: null });
+  }
+  for (const row of rows) {
+    const familyId = formatEntityId('F', row.family_id);
+    const entry = byFamily.get(familyId) ?? { husbandId: null, wifeId: null };
+    const individualId = formatEntityId('I', row.individual_id);
+    if (row.role === 'husband') entry.husbandId = individualId;
+    if (row.role === 'wife') entry.wifeId = individualId;
+    byFamily.set(familyId, entry);
+  }
+
+  return Array.from(byFamily.entries()).map(([familyId, { husbandId, wifeId }]) => ({
+    familyId,
+    husbandId,
+    wifeId,
+  }));
 }
 
 /**

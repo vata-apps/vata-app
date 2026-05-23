@@ -813,6 +813,24 @@ export async function getBirthDeathEventsForIndividuals(
 }
 
 /**
+ * Get every event in the tree with full details (event type, place, participants).
+ * Uses a constant number of SQL queries regardless of event count.
+ * Intended for EventManager.getAll list-view batch loading.
+ * Results are ordered by date_sort ascending (NULLs last), then by id.
+ */
+export async function getAllEventsWithDetails(): Promise<EventWithDetails[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<RawEventWithType[]>(
+    `SELECT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+            et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+     FROM events e
+     INNER JOIN event_types et ON et.id = e.event_type_id
+     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`
+  );
+  return assembleEventsWithDetails(rows);
+}
+
+/**
  * Get every MARR event in the tree with full details.
  * Uses a constant number of SQL queries regardless of event count.
  * Intended for list-view batch loading (e.g. FamilyManager.getAll).

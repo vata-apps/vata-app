@@ -1,0 +1,27 @@
+{
+  "heading": "Événement {{eventId}}",
+  "sidebar": {
+    "newButton": "Nouveau",
+    "sortLabel": "Trier par",
+    "sort": {
+      "dateAsc": "Date (plus ancienne d'abord)",
+      "dateDesc": "Date (plus récente d'abord)"
+    },
+    "empty": "Aucun événement",
+    "unknownPrincipal": "Inconnu(e)",
+    "dateUnknown": "Date inconnue"
+  },
+  "types": {
+    "BIRT": "Naissance",
+    "BAPM": "Baptême",
+    "CONF": "Confirmation",
+    "MARR": "Mariage",
+    "DIV": "Divorce",
+    "CENS": "Recensement",
+    "EMIG": "Émigration",
+    "DEAT": "Décès",
+    "BURI": "Inhumation",
+    "RESI": "Résidence",
+    "OCCU": "Occupation"
+  }
+}
