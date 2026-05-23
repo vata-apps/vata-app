@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '$components/icon';
 import { PreferencesPopover } from '$components/preferences-popover';
 import { resolveNavSection } from '$lib/nav-sections';
+import { EventsSidebar } from './events-sidebar';
 import { FamilySidebar } from './family-sidebar';
 import { PeopleSidebar } from './people-sidebar';
 import { TreeNav } from './tree-nav';
@@ -78,6 +79,7 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
         >
           {activeSection === 'people' && <PeopleSidebar />}
           {activeSection === 'families' && <FamilySidebar />}
+          {activeSection === 'events' && <EventsSidebar />}
         </Box>
         <Box asChild overflow="auto">
           <main style={{ background: 'var(--color-background)' }}>{children}</main>

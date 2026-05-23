@@ -1,0 +1,25 @@
+{
+  "heading": "Event {{eventId}}",
+  "sidebar": {
+    "newButton": "New",
+    "sortLabel": "Sort by",
+    "sort": {
+      "dateAsc": "Date (oldest first)",
+      "dateDesc": "Date (newest first)"
+    },
+    "empty": "No events yet",
+    "unknownPrincipal": "Unknown",
+    "dateUnknown": "Date unknown"
+  },
+  "types": {
+    "BIRT": "Birth",
+    "BAPM": "Baptism",
+    "CONF": "Confirmation",
+    "MARR": "Marriage",
+    "DIV": "Divorce",
+    "CENS": "Census",
+    "EMIG": "Emigration",
+    "DEAT": "Death",
+    "BURI": "Burial"
+  }
+}

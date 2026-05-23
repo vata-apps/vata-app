@@ -33,7 +33,7 @@ export const NAV_SECTIONS = [
   { id: 'home', icon: 'house', labelKey: 'nav.home', to: '/tree/$treeId' },
   { id: 'people', icon: 'user', labelKey: 'nav.individuals', to: '/tree/$treeId/individuals' },
   { id: 'families', icon: 'users', labelKey: 'nav.families', to: '/tree/$treeId/families' },
-  { id: 'events', icon: 'calendar', labelKey: 'nav.events', to: null },
+  { id: 'events', icon: 'calendar', labelKey: 'nav.events', to: '/tree/$treeId/events' },
   { id: 'places', icon: 'map-pin', labelKey: 'nav.places', to: null },
 ] as const satisfies readonly NavSection[];
 
@@ -47,6 +47,8 @@ const SECTION_BY_SEGMENT: Record<string, NavSectionId> = {
   individual: 'people',
   families: 'families',
   family: 'families',
+  events: 'events',
+  event: 'events',
 };
 
 /** Splits a pathname into its `/`-delimited, non-empty segments. */

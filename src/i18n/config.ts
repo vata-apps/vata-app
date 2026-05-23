@@ -9,10 +9,12 @@ import enCommon from './locales/en/common.json';
 import enTrees from './locales/en/trees.json';
 import enIndividuals from './locales/en/individuals.json';
 import enFamilies from './locales/en/families.json';
+import enEvents from './locales/en/events.json';
 import frCommon from './locales/fr/common.json';
 import frTrees from './locales/fr/trees.json';
 import frIndividuals from './locales/fr/individuals.json';
 import frFamilies from './locales/fr/families.json';
+import frEvents from './locales/fr/events.json';
 
 i18n
   .use(LanguageDetector)
@@ -24,12 +26,14 @@ i18n
         trees: enTrees,
         individuals: enIndividuals,
         families: enFamilies,
+        events: enEvents,
       },
       fr: {
         common: frCommon,
         trees: frTrees,
         individuals: frIndividuals,
         families: frFamilies,
+        events: frEvents,
       },
     },
     defaultNS: 'common',
