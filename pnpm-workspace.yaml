@@ -1,0 +1,6 @@
+allowBuilds:
+  '@parcel/watcher': false
+  better-sqlite3: true
+  esbuild: true
+  msgpackr-extract: false
+  msw: false
