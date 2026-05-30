@@ -1,5 +1,91 @@
 {
   "heading": "Individu {{individualId}}",
+  "overview": {
+    "tabs": {
+      "overview": "Vue d'ensemble",
+      "pedigree": "Arbre généalogique",
+      "events": "Évènements",
+      "relations": "Relations",
+      "sources": "Sources",
+      "notes": "Notes"
+    },
+    "loading": "Chargement…",
+    "error": "Impossible de charger la personne",
+    "notFound": "Personne introuvable",
+    "unknownPerson": "Inconnu(e)",
+    "plusNames": "+{{count}} noms",
+    "badge": {
+      "living": "Vivant(e)"
+    },
+    "meta": {
+      "sex": "Sexe",
+      "id": "ID",
+      "born": "n. {{date}}",
+      "died": "d. {{date}}",
+      "gender": {
+        "M": "Masculin",
+        "F": "Féminin",
+        "U": "Inconnu"
+      }
+    },
+    "stats": {
+      "events": "Évènements",
+      "relations": "Relations",
+      "sources": "Sources",
+      "media": "Médias",
+      "genUp": "Gén. asc.",
+      "genDown": "Gén. desc."
+    },
+    "family": {
+      "heading": "Famille",
+      "parents": "Parents",
+      "marriages": "Mariages",
+      "noParentFamily": "Aucune famille d'origine enregistrée",
+      "noMarriages": "Aucun mariage enregistré",
+      "marriageDate": "Marié(e) {{date}}",
+      "marriageDateUnknown": "Date de mariage inconnue",
+      "childrenHeading": "Enfants",
+      "noChildren": "Aucun enfant enregistré"
+    },
+    "timeline": {
+      "heading": "La vie en un coup d'œil",
+      "today": "aujourd'hui",
+      "noTimeline": "Aucun évènement à afficher"
+    },
+    "vitals": {
+      "heading": "Données personnelles",
+      "namesLabel": "Noms",
+      "birth": "Naissance",
+      "baptism": "Baptême",
+      "death": "Décès",
+      "burial": "Inhumation",
+      "noData": "—",
+      "add": "Ajouter"
+    },
+    "media": {
+      "heading": "Médias",
+      "empty": "Aucun média attaché",
+      "viewAll": "Tout voir"
+    },
+    "placesLived": {
+      "heading": "Lieux de vie",
+      "empty": "Aucun lieu enregistré"
+    },
+    "rail": {
+      "quickActions": {
+        "heading": "Actions rapides",
+        "empty": "Les actions rapides apparaîtront ici"
+      },
+      "researchNotes": {
+        "heading": "Notes de recherche",
+        "empty": "Les notes de recherche apparaîtront ici"
+      },
+      "suggestions": {
+        "heading": "Suggestions",
+        "empty": "Les suggestions apparaîtront ici"
+      }
+    }
+  },
   "sidebar": {
     "newButton": "Nouveau",
     "sortLabel": "Trier par",

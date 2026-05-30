@@ -22,4 +22,5 @@ export const queryKeys = {
   citationsWithDetails: (sourceId: string) => ['citationsWithDetails', sourceId] as const,
   files: (sourceId: string) => ['files', sourceId] as const,
   eventTimeline: (individualId: string) => ['eventTimeline', individualId] as const,
+  individualOverview: (id: string) => ['individualOverview', id] as const,
 };

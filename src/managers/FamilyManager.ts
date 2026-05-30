@@ -9,6 +9,8 @@ import {
   getFamilyMembers,
   addFamilyMember,
   removeFamilyMember,
+  getParentFamilies,
+  getSpouseFamilies,
 } from '$db-tree/families';
 import { getAllMarriageEvents, getFamilyEventByType } from '$db-tree/events';
 import { IndividualManager } from './IndividualManager';
@@ -217,5 +219,23 @@ export class FamilyManager {
    */
   static async removeChild(familyId: string, individualId: string): Promise<void> {
     await removeFamilyMember(familyId, individualId);
+  }
+
+  /**
+   * Get all families where an individual is a child, each with enriched members.
+   */
+  static async getParentFamiliesWithMembers(individualId: string): Promise<FamilyWithMembers[]> {
+    const families = await getParentFamilies(individualId);
+    const results = await Promise.all(families.map((f) => FamilyManager.getById(f.id)));
+    return results.filter(Boolean) as FamilyWithMembers[];
+  }
+
+  /**
+   * Get all families where an individual is a spouse, each with enriched members.
+   */
+  static async getSpouseFamiliesWithMembers(individualId: string): Promise<FamilyWithMembers[]> {
+    const families = await getSpouseFamilies(individualId);
+    const results = await Promise.all(families.map((f) => FamilyManager.getById(f.id)));
+    return results.filter(Boolean) as FamilyWithMembers[];
   }
 }

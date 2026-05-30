@@ -1,5 +1,91 @@
 {
   "heading": "Individual {{individualId}}",
+  "overview": {
+    "tabs": {
+      "overview": "Overview",
+      "pedigree": "Pedigree chart",
+      "events": "Events",
+      "relations": "Relations",
+      "sources": "Sources",
+      "notes": "Notes"
+    },
+    "loading": "Loading…",
+    "error": "Failed to load person",
+    "notFound": "Person not found",
+    "unknownPerson": "Unknown",
+    "plusNames": "+{{count}} names",
+    "badge": {
+      "living": "Living"
+    },
+    "meta": {
+      "sex": "Sex",
+      "id": "ID",
+      "born": "b. {{date}}",
+      "died": "d. {{date}}",
+      "gender": {
+        "M": "Male",
+        "F": "Female",
+        "U": "Unknown"
+      }
+    },
+    "stats": {
+      "events": "Events",
+      "relations": "Relations",
+      "sources": "Sources",
+      "media": "Media",
+      "genUp": "Gen. up",
+      "genDown": "Gen. down"
+    },
+    "family": {
+      "heading": "Family",
+      "parents": "Parents",
+      "marriages": "Marriages",
+      "noParentFamily": "No parent family recorded",
+      "noMarriages": "No marriages recorded",
+      "marriageDate": "Married {{date}}",
+      "marriageDateUnknown": "Marriage date unknown",
+      "childrenHeading": "Children",
+      "noChildren": "No children recorded"
+    },
+    "timeline": {
+      "heading": "Life at a glance",
+      "today": "today",
+      "noTimeline": "No life events to display"
+    },
+    "vitals": {
+      "heading": "Vitals",
+      "namesLabel": "Names",
+      "birth": "Birth",
+      "baptism": "Baptism",
+      "death": "Death",
+      "burial": "Burial",
+      "noData": "—",
+      "add": "Add"
+    },
+    "media": {
+      "heading": "Media",
+      "empty": "No media attached",
+      "viewAll": "View all"
+    },
+    "placesLived": {
+      "heading": "Places lived",
+      "empty": "No places recorded"
+    },
+    "rail": {
+      "quickActions": {
+        "heading": "Quick actions",
+        "empty": "Quick actions will appear here"
+      },
+      "researchNotes": {
+        "heading": "Research notes",
+        "empty": "Research notes will appear here"
+      },
+      "suggestions": {
+        "heading": "Suggestions",
+        "empty": "Suggestions will appear here"
+      }
+    }
+  },
   "sidebar": {
     "newButton": "New",
     "sortLabel": "Sort by",
