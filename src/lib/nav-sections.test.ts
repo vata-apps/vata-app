@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getTreeIdFromPath, resolveNavSection } from './nav-sections';
+import { getTreeIdFromPath, isFullWidthDetailRoute, resolveNavSection } from './nav-sections';
 
 describe('resolveNavSection', () => {
   it('resolves the bare tree path to the home section', () => {
@@ -27,6 +27,23 @@ describe('resolveNavSection', () => {
   it('resolves a path outside the in-tree shell to null', () => {
     expect(resolveNavSection('/')).toBeNull();
     expect(resolveNavSection('/tree')).toBeNull();
+  });
+});
+
+describe('isFullWidthDetailRoute', () => {
+  it('treats an individual detail route as full-width', () => {
+    expect(isFullWidthDetailRoute('/tree/42/individual/I-0001')).toBe(true);
+  });
+
+  it('treats the individuals list and the bare individual segment as not full-width', () => {
+    expect(isFullWidthDetailRoute('/tree/42/individuals')).toBe(false);
+    expect(isFullWidthDetailRoute('/tree/42/individual')).toBe(false);
+  });
+
+  it('treats other detail routes and outside paths as not full-width', () => {
+    expect(isFullWidthDetailRoute('/tree/42/family/F-0002')).toBe(false);
+    expect(isFullWidthDetailRoute('/tree/42')).toBe(false);
+    expect(isFullWidthDetailRoute('/')).toBe(false);
   });
 });
 

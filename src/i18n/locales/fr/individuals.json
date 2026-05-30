@@ -13,5 +13,71 @@
     },
     "empty": "Aucune personne",
     "unknownName": "Sans nom"
+  },
+  "overview": {
+    "tabs": {
+      "overview": "Aperçu",
+      "pedigree": "Ascendance",
+      "events": "Événements",
+      "relations": "Relations",
+      "sources": "Sources",
+      "notes": "Notes"
+    },
+    "ancestorPill": "Ancêtre direct · {{count}} gén",
+    "lifespan": {
+      "aged": "{{age}} ans",
+      "media": "{{count}} médias"
+    },
+    "figures": {
+      "events": "événements",
+      "relations": "relations",
+      "sources": "sources",
+      "media": "médias"
+    },
+    "parents": {
+      "title": "Parents"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "addEvent": "Ajouter un événement",
+      "addSource": "Ajouter une source",
+      "addMedia": "Ajouter un média",
+      "addNote": "Ajouter une note"
+    },
+    "milestone": {
+      "born": "Naissance",
+      "died": "Décès"
+    },
+    "editAction": "Modifier",
+    "deleteAction": "Supprimer",
+    "places": {
+      "title": "Lieux habités",
+      "subtitle": "{{count}} lieux · {{region}}",
+      "manage": "Gérer les lieux"
+    },
+    "completion": {
+      "title": "Complétude du profil",
+      "footer": "{{done}} sur {{total}} complétés",
+      "items": {
+        "vitalDates": "Dates de vie",
+        "parentsLinked": "Parents liés",
+        "marriagesChildren": "Mariages et enfants",
+        "birthplace": "Lieu de naissance",
+        "deathRecord": "Acte de décès",
+        "profilePhoto": "Photo de profil",
+        "sourcesCited": "Sources citées"
+      }
+    },
+    "media": {
+      "title": "Médias",
+      "viewAll": "Tout voir"
+    },
+    "researchNotes": {
+      "title": "Notes de recherche",
+      "empty": "Aucune note de recherche"
+    },
+    "suggestions": {
+      "title": "Suggestions"
+    }
   }
 }

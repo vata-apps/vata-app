@@ -13,5 +13,71 @@
     },
     "empty": "No people yet",
     "unknownName": "Unknown"
+  },
+  "overview": {
+    "tabs": {
+      "overview": "Overview",
+      "pedigree": "Pedigree",
+      "events": "Events",
+      "relations": "Relations",
+      "sources": "Sources",
+      "notes": "Notes"
+    },
+    "ancestorPill": "Direct ancestor · {{count}} gen",
+    "lifespan": {
+      "aged": "aged {{age}}",
+      "media": "{{count}} media"
+    },
+    "figures": {
+      "events": "events",
+      "relations": "relations",
+      "sources": "sources",
+      "media": "media"
+    },
+    "parents": {
+      "title": "Parents"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "addEvent": "Add event",
+      "addSource": "Add source",
+      "addMedia": "Add media",
+      "addNote": "Add note"
+    },
+    "milestone": {
+      "born": "Born",
+      "died": "Died"
+    },
+    "editAction": "Edit",
+    "deleteAction": "Delete",
+    "places": {
+      "title": "Places lived",
+      "subtitle": "{{count}} places · {{region}}",
+      "manage": "Manage places"
+    },
+    "completion": {
+      "title": "Profile completion",
+      "footer": "{{done}} of {{total}} complete",
+      "items": {
+        "vitalDates": "Vital dates",
+        "parentsLinked": "Parents linked",
+        "marriagesChildren": "Marriages & children",
+        "birthplace": "Birthplace",
+        "deathRecord": "Death record",
+        "profilePhoto": "Profile photo",
+        "sourcesCited": "Sources cited"
+      }
+    },
+    "media": {
+      "title": "Media",
+      "viewAll": "View all"
+    },
+    "researchNotes": {
+      "title": "Research notes",
+      "empty": "No research notes yet"
+    },
+    "suggestions": {
+      "title": "Suggestions"
+    }
   }
 }

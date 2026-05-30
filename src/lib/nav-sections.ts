@@ -66,6 +66,20 @@ export function getTreeIdFromPath(pathname: string): string | null {
 }
 
 /**
+ * Whether a pathname is a full-width detail route — one the in-tree shell
+ * renders edge to edge, without the list/detail side panels.
+ *
+ * The person overview (`/tree/{treeId}/individual/{individualId}`) is a
+ * self-contained, full-width canvas with its own internal columns, so it
+ * opts out of the standard three-column shell layout.
+ */
+export function isFullWidthDetailRoute(pathname: string): boolean {
+  if (getTreeIdFromPath(pathname) === null) return false;
+  const segments = segmentsOf(pathname);
+  return segments[2] === 'individual' && segments[3] !== undefined;
+}
+
+/**
  * Maps a pathname to the navigation section it belongs to.
  *
  * Both the list route and the detail routes of a section resolve to that
