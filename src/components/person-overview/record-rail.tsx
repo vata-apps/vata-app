@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '$components/icon';
 import type { OverviewFigures, OverviewMarriageInfo, OverviewParent } from './overview-mock';
+import { PANEL_SURFACE, PanelTitle } from './panel';
 
 interface RecordRailProps {
   figures: OverviewFigures;
@@ -33,18 +34,7 @@ function FiguresStrip({ figures }: { figures: OverviewFigures }): JSX.Element {
     [figures.media, t('overview.figures.media')],
   ];
   return (
-    <Grid
-      columns="2"
-      gapX="3"
-      gapY="2"
-      px="3"
-      py="3"
-      style={{
-        background: 'var(--gray-3)',
-        border: '1px solid var(--gray-a5)',
-        borderRadius: 'var(--radius-3)',
-      }}
-    >
+    <Grid columns="2" gapX="3" gapY="2" px="3" py="3" style={PANEL_SURFACE}>
       {items.map(([value, label]) => (
         <Flex key={label} align="baseline" gap="1" minWidth="0">
           <Text size="3" weight="medium">
@@ -105,9 +95,7 @@ function QuickActions(): JSX.Element {
   return (
     <Card>
       <Flex direction="column" gap="3">
-        <Text size="4" weight="medium" style={{ color: 'var(--accent-11)' }}>
-          {t('overview.quickActions.title')}
-        </Text>
+        <PanelTitle size="4">{t('overview.quickActions.title')}</PanelTitle>
         <Button size="3" style={{ width: '100%' }}>
           <Icon name="plus" size={16} />
           {t('overview.quickActions.addEvent')}

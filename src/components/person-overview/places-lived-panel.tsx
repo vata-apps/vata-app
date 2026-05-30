@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '$components/icon';
 import type { OverviewPin, OverviewPlaceLegend } from './overview-mock';
+import { PANEL_SURFACE } from './panel';
 
 interface PlacesLivedPanelProps {
   region: string;
@@ -81,17 +82,7 @@ export function PlacesLivedPanel({ region, pins, legend }: PlacesLivedPanelProps
 
         <Grid columns={{ initial: '1', sm: '3' }} gap="3">
           {legend.map((entry, i) => (
-            <Flex
-              key={entry.place}
-              align="center"
-              gap="3"
-              p="3"
-              style={{
-                background: 'var(--gray-3)',
-                border: '1px solid var(--gray-a5)',
-                borderRadius: 'var(--radius-3)',
-              }}
-            >
+            <Flex key={entry.place} align="center" gap="3" p="3" style={PANEL_SURFACE}>
               <Flex
                 align="center"
                 justify="center"

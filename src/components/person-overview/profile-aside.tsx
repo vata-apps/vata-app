@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '$components/icon';
 import type { OverviewChecklistItem, OverviewMediaTile, OverviewSuggestion } from './overview-mock';
+import { PANEL_SURFACE, PanelTitle } from './panel';
 
 interface ProfileAsideProps {
   completion: { percent: number; items: OverviewChecklistItem[] };
@@ -22,15 +23,6 @@ export function ProfileAside({ completion, media, suggestions }: ProfileAsidePro
       <ResearchNotes />
       <Suggestions suggestions={suggestions} />
     </Flex>
-  );
-}
-
-/** The accent section title shared by every aside panel. */
-function PanelTitle({ children }: { children: React.ReactNode }): JSX.Element {
-  return (
-    <Text size="3" weight="medium" style={{ color: 'var(--accent-11)' }}>
-      {children}
-    </Text>
   );
 }
 
@@ -94,16 +86,7 @@ function MediaPanel({ media }: { media: OverviewMediaTile[] }): JSX.Element {
         <Grid columns="2" gap="2">
           {media.map((tile) => (
             <Flex key={tile.caption} direction="column" gap="1">
-              <Flex
-                align="center"
-                justify="center"
-                height="72px"
-                style={{
-                  background: 'var(--gray-3)',
-                  border: '1px solid var(--gray-a5)',
-                  borderRadius: 'var(--radius-3)',
-                }}
-              >
+              <Flex align="center" justify="center" height="72px" style={PANEL_SURFACE}>
                 <Icon name={tile.icon} size={20} style={{ color: 'var(--gray-9)' }} />
               </Flex>
               <Text size="1" align="center" style={{ color: 'var(--gray-10)' }}>

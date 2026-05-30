@@ -52,6 +52,9 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const activeSection = resolveNavSection(pathname);
   const fullWidth = isFullWidthDetailRoute(pathname);
+  // The centre column is invariant across both layouts; only the chrome
+  // around it (side panels vs. none) differs, so `main` is defined once.
+  const main = <main style={{ background: 'var(--color-background)' }}>{children}</main>;
   return (
     <Flex direction="column" height="100vh" overflow="hidden">
       <Flex
@@ -77,7 +80,7 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
       </Flex>
       {fullWidth ? (
         <Box asChild flexGrow="1" minHeight="0" overflow="auto">
-          <main style={{ background: 'var(--color-background)' }}>{children}</main>
+          {main}
         </Box>
       ) : (
         <Grid columns="332px minmax(0, 1fr) 320px" flexGrow="1" minHeight="0">
@@ -94,7 +97,7 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
             {activeSection === 'places' && <PlacesSidebar />}
           </Box>
           <Box asChild overflow="auto">
-            <main style={{ background: 'var(--color-background)' }}>{children}</main>
+            {main}
           </Box>
           <Box
             overflow="auto"
