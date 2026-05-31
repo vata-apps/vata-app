@@ -25,7 +25,13 @@
     "ancestorPill": "Ancêtre direct · {{count}} gén",
     "lifespan": {
       "aged": "{{age}} ans",
-      "media": "{{count}} médias"
+      "media": "{{count}} médias",
+      "otherNames_one": "{{count}} autre nom",
+      "otherNames_other": "{{count}} autres noms"
+    },
+    "vital": {
+      "event": "{{date}}, {{place}}",
+      "sex": "Sexe"
     },
     "figures": {
       "events": "événements",
@@ -34,7 +40,24 @@
       "media": "médias"
     },
     "parents": {
-      "title": "Parents"
+      "title": "Parents",
+      "edit": "Modifier",
+      "father": "Père",
+      "mother": "Mère",
+      "missingFather": "Père inconnu",
+      "missingMother": "Mère inconnue",
+      "addFather": "Ajouter le père",
+      "addMother": "Ajouter la mère"
+    },
+    "names": {
+      "title": "Noms",
+      "edit": "Modifier",
+      "primary": "Principal",
+      "types": {
+        "birth": "Naissance",
+        "married": "Mariage",
+        "nickname": "Surnom"
+      }
     },
     "quickActions": {
       "title": "Actions rapides",
@@ -44,12 +67,21 @@
       "addNote": "Ajouter une note"
     },
     "milestone": {
+      "title": "Événements de vie",
+      "viewAll": "Tout voir",
       "born": "Naissance",
-      "died": "Décès"
+      "marriage": "Mariage",
+      "death": "Décès",
+      "children": "Enfants",
+      "missingBorn": "Naissance non enregistrée",
+      "missingDeath": "Décès non enregistré",
+      "addBorn": "Ajouter la naissance",
+      "addDeath": "Ajouter le décès"
     },
     "editAction": "Modifier",
     "deleteAction": "Supprimer",
     "places": {
+      "showAll": "Voir tous les lieux",
       "title": "Lieux habités",
       "subtitle": "{{count}} lieux · {{region}}",
       "manage": "Gérer les lieux"
@@ -58,25 +90,37 @@
       "title": "Complétude du profil",
       "footer": "{{done}} sur {{total}} complétés",
       "items": {
-        "vitalDates": "Dates de vie",
-        "parentsLinked": "Parents liés",
-        "marriagesChildren": "Mariages et enfants",
-        "birthplace": "Lieu de naissance",
-        "deathRecord": "Acte de décès",
-        "profilePhoto": "Photo de profil",
-        "sourcesCited": "Sources citées"
+        "birthDatePlace": "Date et lieu de naissance",
+        "birthSource": "Source de naissance",
+        "marriageDatePlace": "Date et lieu de mariage",
+        "marriageSource": "Source de mariage",
+        "deathDatePlace": "Date et lieu de décès",
+        "deathSource": "Source de décès"
       }
     },
     "media": {
       "title": "Médias",
-      "viewAll": "Tout voir"
+      "viewAll": "Tout voir",
+      "empty": "Aucun média pour le moment",
+      "captions": {
+        "profile": "Photo de profil",
+        "wedding": "Photo de mariage",
+        "register": "Registre paroissial"
+      }
     },
     "researchNotes": {
       "title": "Notes de recherche",
-      "empty": "Aucune note de recherche"
+      "empty": "Aucune note de recherche",
+      "showAll": "Tout afficher",
+      "more": "{{count}} autres notes",
+      "markDone": "Marquer comme fait",
+      "delete": "Supprimer"
     },
     "suggestions": {
-      "title": "Suggestions"
+      "title": "Suggestions",
+      "empty": "Aucune suggestion pour le moment",
+      "showAll": "Tout afficher",
+      "more": "{{count}} autre(s)"
     }
   }
 }

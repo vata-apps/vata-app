@@ -56,7 +56,7 @@ export function TreeSectionDivider({
 }: TreeSectionDividerProps): JSX.Element {
   return (
     <Flex align="center" gap="3">
-      <Text size="1" className="mono-label" style={{ color: 'var(--accent-11)' }}>
+      <Text size="1" color="gray">
         {label}
       </Text>
       <Flex

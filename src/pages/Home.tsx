@@ -125,7 +125,7 @@ export function HomePage(): JSX.Element {
           />
         </Box>
 
-        <Grid className="trees-grid" gap="5">
+        <Grid columns={{ initial: '1', sm: '2', lg: '3' }} gap="5">
           {sortedTrees.map((tree) => (
             <TreeCard
               key={tree.id}

@@ -25,7 +25,13 @@
     "ancestorPill": "Direct ancestor · {{count}} gen",
     "lifespan": {
       "aged": "aged {{age}}",
-      "media": "{{count}} media"
+      "media": "{{count}} media",
+      "otherNames_one": "{{count}} other name",
+      "otherNames_other": "{{count}} other names"
+    },
+    "vital": {
+      "event": "{{date}}, {{place}}",
+      "sex": "Sex"
     },
     "figures": {
       "events": "events",
@@ -34,7 +40,24 @@
       "media": "media"
     },
     "parents": {
-      "title": "Parents"
+      "title": "Parents",
+      "edit": "Edit",
+      "father": "Father",
+      "mother": "Mother",
+      "missingFather": "Father unknown",
+      "missingMother": "Mother unknown",
+      "addFather": "Add father",
+      "addMother": "Add mother"
+    },
+    "names": {
+      "title": "Names",
+      "edit": "Edit",
+      "primary": "Primary",
+      "types": {
+        "birth": "Birth",
+        "married": "Married",
+        "nickname": "Nickname"
+      }
     },
     "quickActions": {
       "title": "Quick actions",
@@ -44,39 +67,60 @@
       "addNote": "Add note"
     },
     "milestone": {
+      "title": "Life events",
+      "viewAll": "View all",
       "born": "Born",
-      "died": "Died"
+      "marriage": "Married",
+      "death": "Died",
+      "children": "Children",
+      "missingBorn": "Birth not recorded",
+      "missingDeath": "Death not recorded",
+      "addBorn": "Add birth",
+      "addDeath": "Add death"
     },
     "editAction": "Edit",
     "deleteAction": "Delete",
     "places": {
       "title": "Places lived",
       "subtitle": "{{count}} places · {{region}}",
-      "manage": "Manage places"
+      "manage": "Manage places",
+      "showAll": "Show all places"
     },
     "completion": {
       "title": "Profile completion",
       "footer": "{{done}} of {{total}} complete",
       "items": {
-        "vitalDates": "Vital dates",
-        "parentsLinked": "Parents linked",
-        "marriagesChildren": "Marriages & children",
-        "birthplace": "Birthplace",
-        "deathRecord": "Death record",
-        "profilePhoto": "Profile photo",
-        "sourcesCited": "Sources cited"
+        "birthDatePlace": "Birth date and place",
+        "birthSource": "Birth source",
+        "marriageDatePlace": "Marriage date and place",
+        "marriageSource": "Marriage source",
+        "deathDatePlace": "Death date and place",
+        "deathSource": "Death source"
       }
     },
     "media": {
       "title": "Media",
-      "viewAll": "View all"
+      "viewAll": "View all",
+      "empty": "No media yet",
+      "captions": {
+        "profile": "Profile picture",
+        "wedding": "Wedding photo",
+        "register": "Parish register"
+      }
     },
     "researchNotes": {
       "title": "Research notes",
-      "empty": "No research notes yet"
+      "empty": "No research notes yet",
+      "showAll": "Show all",
+      "more": "{{count}} more notes",
+      "markDone": "Mark as done",
+      "delete": "Delete"
     },
     "suggestions": {
-      "title": "Suggestions"
+      "title": "Suggestions",
+      "empty": "No suggestions yet",
+      "showAll": "Show all",
+      "more": "{{count}} more"
     }
   }
 }

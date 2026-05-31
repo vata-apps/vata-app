@@ -50,6 +50,27 @@ export function TreeNav(): JSX.Element | null {
             </li>
           );
         })}
+        {/* TEMPORARY: dev-only links to pure-Radix Person Overview experiments. Remove before PR. */}
+        {import.meta.env.DEV && (
+          <li>
+            <Link to="/tree/$treeId/individual-radix" params={{ treeId }} className="tree-nav-item">
+              <Icon name="sparkles" size={16} />
+              Radix overview
+            </Link>
+          </li>
+        )}
+        {import.meta.env.DEV && (
+          <li>
+            <Link
+              to="/tree/$treeId/individual-radix-empty"
+              params={{ treeId }}
+              className="tree-nav-item"
+            >
+              <Icon name="circle" size={16} />
+              Empty overview
+            </Link>
+          </li>
+        )}
       </ul>
     </nav>
   );

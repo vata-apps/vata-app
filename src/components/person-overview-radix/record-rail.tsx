@@ -1,113 +1,161 @@
-import { Avatar, Button, Card, DataList, Flex, Grid, Heading, Text } from '@radix-ui/themes';
+import { Box, Card, Flex, Grid, Heading, Inset, Separator, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
-import type { OverviewFigures, OverviewMarriageInfo, OverviewParent } from './overview-mock';
+import type {
+  OverviewMediaTile,
+  OverviewName,
+  OverviewParents,
+  PersonRefData,
+} from './overview-mock';
+import { Icon } from '../icon';
+import { PersonRef } from './person-ref';
 
 interface RecordRailProps {
-  figures: OverviewFigures;
-  parents: OverviewParent[];
-  marriage: OverviewMarriageInfo;
+  parents: OverviewParents;
+  names: OverviewName[];
+  media: OverviewMediaTile[];
 }
 
 /**
- * The left record rail: a figures strip, the parents panel, and the
- * quick-actions panel. Pure `@radix-ui/themes`: `DataList` for the figures,
- * `Avatar` for parents, and label-only `Button`s for the actions.
+ * The left record rail: the parents panel, the names panel, and the media
+ * panel. Pure `@radix-ui/themes`: `PersonRef` for parents, flat rows for names,
+ * and a thumbnail grid (or empty state) for media.
  */
-export function RecordRail({ figures, parents, marriage }: RecordRailProps): JSX.Element {
+export function RecordRail({ parents, names, media }: RecordRailProps): JSX.Element {
   return (
     <Flex direction="column" gap="4">
-      <FiguresStrip figures={figures} />
-      <ParentsPanel parents={parents} marriage={marriage} />
-      <QuickActions />
+      <ParentsPanel parents={parents} />
+      <NamesPanel names={names} />
+      <MediaPanel media={media} />
     </Flex>
   );
 }
 
-function FiguresStrip({ figures }: { figures: OverviewFigures }): JSX.Element {
-  const { t } = useTranslation('individuals');
-  const items: Array<[number, string]> = [
-    [figures.events, t('overview.figures.events')],
-    [figures.relations, t('overview.figures.relations')],
-    [figures.sources, t('overview.figures.sources')],
-    [figures.media, t('overview.figures.media')],
-  ];
-  return (
-    <Card>
-      <DataList.Root orientation="horizontal" size="2">
-        {items.map(([value, label]) => (
-          <DataList.Item key={label}>
-            <DataList.Label minWidth="0">{label}</DataList.Label>
-            <DataList.Value>
-              <Text weight="medium">{value}</Text>
-            </DataList.Value>
-          </DataList.Item>
-        ))}
-      </DataList.Root>
-    </Card>
-  );
-}
-
-function ParentsPanel({
-  parents,
-  marriage,
-}: {
-  parents: OverviewParent[];
-  marriage: OverviewMarriageInfo;
-}): JSX.Element {
+function ParentsPanel({ parents }: { parents: OverviewParents }): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
     <Card>
       <Flex direction="column" gap="3">
-        <Text size="1" color="gray">
-          {t('overview.parents.title')}
-        </Text>
-        {parents.map((parent) => (
-          <Flex key={parent.name} align="center" gap="3">
-            <Avatar variant="solid" radius="full" size="2" fallback={parent.initials} />
-            <Flex direction="column">
-              <Text size="3">{parent.name}</Text>
-              <Text size="1" color="gray">
-                b. {parent.bornYear}
-              </Text>
-            </Flex>
-          </Flex>
-        ))}
-        <Flex align="center" gap="2" wrap="wrap">
-          <Text size="2" color="gray">
-            {marriage.label}
-          </Text>
-          <Text size="2" color="gray">
-            ·
-          </Text>
-          <Text size="2" color="teal">
-            {marriage.place}
-          </Text>
+        <Heading size="4">{t('overview.parents.title')}</Heading>
+        {/* Always two fixed slots: father on top, mother below. Missing slots
+            show a muted label + an "Add" button instead of a PersonRef. */}
+        <Flex direction="column">
+          <ParentSlot
+            role="father"
+            label={t('overview.parents.father')}
+            missingLabel={t('overview.parents.missingFather')}
+            person={parents.father}
+          />
+          <Separator size="4" my="3" />
+          <ParentSlot
+            role="mother"
+            label={t('overview.parents.mother')}
+            missingLabel={t('overview.parents.missingMother')}
+            person={parents.mother}
+          />
         </Flex>
       </Flex>
     </Card>
   );
 }
 
-function QuickActions(): JSX.Element {
+interface ParentSlotProps {
+  role: 'father' | 'mother';
+  label: string;
+  missingLabel: string;
+  person?: PersonRefData;
+}
+
+function ParentSlot({ missingLabel, person }: ParentSlotProps): JSX.Element {
+  if (person) {
+    return <PersonRef person={person} />;
+  }
+  return (
+    <Flex align="center" gap="2">
+      <Icon name="user" size={14} style={{ color: 'var(--gray-7)' }} />
+      <Text size="2" color="gray">
+        {missingLabel}
+      </Text>
+    </Flex>
+  );
+}
+
+function NamesPanel({ names }: { names: OverviewName[] }): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
     <Card>
       <Flex direction="column" gap="3">
-        <Heading size="4">{t('overview.quickActions.title')}</Heading>
-        <Button size="3">{t('overview.quickActions.addEvent')}</Button>
-        <Grid columns="2" gap="2">
-          <Button variant="soft" color="gray">
-            {t('overview.quickActions.addSource')}
-          </Button>
-          <Button variant="soft" color="gray">
-            {t('overview.quickActions.addMedia')}
-          </Button>
-        </Grid>
-        <Button variant="soft" color="gray">
-          {t('overview.quickActions.addNote')}
-        </Button>
+        <Heading size="4">{t('overview.names.title')}</Heading>
+        {/* Flat, separator-divided rows — same list pattern as Parents. */}
+        <Flex direction="column">
+          {names.map((name, i) => (
+            <Flex key={name.id} direction="column">
+              {i > 0 && <Separator size="4" my="3" />}
+              <NameRow name={name} />
+            </Flex>
+          ))}
+        </Flex>
       </Flex>
+    </Card>
+  );
+}
+
+function NameRow({ name }: { name: OverviewName }): JSX.Element {
+  const { t } = useTranslation('individuals');
+  return (
+    <Flex direction="column" gap="1">
+      <Flex align="center" gap="2">
+        <Text size="1" color="gray">
+          {t(`overview.names.types.${name.type}`)}
+        </Text>
+        {name.isPrimary && (
+          <Text size="1" color="indigo">
+            {t('overview.names.primary')}
+          </Text>
+        )}
+      </Flex>
+      <Text size="3">{name.text}</Text>
+    </Flex>
+  );
+}
+
+function MediaPanel({ media }: { media: OverviewMediaTile[] }): JSX.Element {
+  const { t } = useTranslation('individuals');
+  return (
+    <Card>
+      <Flex direction="column" gap="3">
+        <Heading size="4">{t('overview.media.title')}</Heading>
+        {media.length === 0 ? (
+          <Box px="3" py="5">
+            <Text size="2" color="gray" align="center" as="div">
+              {t('overview.media.empty')}
+            </Text>
+          </Box>
+        ) : (
+          <Grid columns="3" gap="2">
+            {media.map((tile) => (
+              <MediaTile key={tile.id} tile={tile} />
+            ))}
+          </Grid>
+        )}
+      </Flex>
+    </Card>
+  );
+}
+
+function MediaTile({ tile }: { tile: OverviewMediaTile }): JSX.Element {
+  const { t } = useTranslation('individuals');
+  // Caption still labels the image for assistive tech, just not shown visually.
+  const caption = t(`overview.media.captions.${tile.caption}`);
+  return (
+    <Card size="1">
+      <Inset>
+        <img
+          src={tile.imageUrl}
+          alt={caption}
+          style={{ display: 'block', width: '100%', aspectRatio: '1', objectFit: 'cover' }}
+        />
+      </Inset>
     </Card>
   );
 }

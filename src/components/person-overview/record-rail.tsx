@@ -60,7 +60,7 @@ function ParentsPanel({
   return (
     <Card>
       <Flex direction="column" gap="3">
-        <Text className="mono-label" size="1" color="gray">
+        <Text size="1" color="gray">
           {t('overview.parents.title')}
         </Text>
         {parents.map((parent) => (

@@ -2,27 +2,23 @@ import { Box, Flex, Grid } from '@radix-ui/themes';
 
 import { IdentityHeader, OverviewTabs } from '$components/person-overview-radix/identity-header';
 import { LifeSpine } from '$components/person-overview-radix/life-spine';
-import { personOverview } from '$components/person-overview-radix/overview-mock';
+import { edouardTremblayOverview } from '$components/person-overview-radix/overview-mock';
 import { PlacesPanel } from '$components/person-overview-radix/places-panel';
 import { ProfileAside } from '$components/person-overview-radix/profile-aside';
 import { RecordRail } from '$components/person-overview-radix/record-rail';
 
 /**
- * A pure-`@radix-ui/themes` rebuild of the Person Overview, used to test how
- * far the design carries with Radix components alone — no Lucide `Icon`, no
- * custom CSS, no raw color tokens. Features Radix cannot express (the map
- * surface, milestone glyphs, the timeline rail) are dropped rather than faked.
+ * "Missing data" state of the Person Overview — Édouard Tremblay has only his
+ * father and the marriage to Marie Garneau recorded. Every other section
+ * (birth, death, places, media, research notes) is empty, exercising the
+ * empty/unknown states of each panel.
  *
- * Layout: two columns from the very top — the left holds the identity band,
- * the tabs, and the tabbed content (record rail, life spine); the right is a
- * persistent aside, outside both the header and the tabs.
- *
- * Static design experiment: content comes from {@link personOverview}, not the
- * live tree database.
+ * Static design experiment: content comes from {@link edouardTremblayOverview},
+ * not the live tree database.
  */
-export function IndividualOverviewRadixPage(): JSX.Element {
+export function IndividualOverviewEmptyPage(): JSX.Element {
   const { person, parents, names, media, milestones, places, researchNotes, suggestions } =
-    personOverview;
+    edouardTremblayOverview;
 
   return (
     <Box p="4">
@@ -40,13 +36,13 @@ export function IndividualOverviewRadixPage(): JSX.Element {
               <RecordRail parents={parents} names={names} media={media} />
               <Flex direction="column" gap="4">
                 <LifeSpine milestones={milestones} />
-                <PlacesPanel legend={places.legend} />
+                {places.legend.length > 0 && <PlacesPanel legend={places.legend} />}
               </Flex>
             </Grid>
           </Flex>
         </Flex>
 
-        {/* Right: persistent aside, outside the header and the tabs */}
+        {/* Right: persistent aside */}
         <ProfileAside researchNotes={researchNotes} suggestions={suggestions} />
       </Grid>
     </Box>

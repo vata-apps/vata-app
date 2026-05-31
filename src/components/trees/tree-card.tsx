@@ -80,7 +80,7 @@ function Stat({ value, label }: { value: ReactNode; label: ReactNode }): JSX.Ele
       >
         {value}
       </Text>
-      <Text color="gray" className="mono-label" style={{ fontSize: 10.5 }}>
+      <Text size="1" color="gray">
         {label}
       </Text>
     </Flex>
@@ -150,7 +150,7 @@ export function TreeCard({
   onDelete,
 }: TreeCardProps): JSX.Element {
   return (
-    <Card asChild variant="surface" size="3" className="tree-card" style={{ minHeight: 240 }}>
+    <Card asChild variant="surface" size="3" style={{ minHeight: 240 }}>
       <article>
         <Flex direction="column" gap="4" height="100%">
           <Box>
