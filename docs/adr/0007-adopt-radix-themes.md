@@ -1,7 +1,9 @@
 # ADR-007: UI Foundation — Adopt Radix Themes, Drop Tailwind + Wrapper Layer
 
-**Status**: Accepted
+**Status**: Accepted — superseded in part by [ADR-010](./0010-pure-radix-themes.md) (2026-05-31)
 **Date**: 2026-05-16
+
+> **Note (2026-05-31):** [ADR-010](./0010-pure-radix-themes.md) removes three things this ADR preserved — the Geist/Fraunces/Geist Mono fonts, the custom brand palette, and scoped local CSS as an escape hatch. The Radix Themes foundation, the no-wrapper-layer rule, and the kept Lucide icon registry all still stand.
 
 ## Context
 
