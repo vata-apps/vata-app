@@ -3,8 +3,8 @@ import { Card, Flex, Spinner, Text } from '@radix-ui/themes';
 
 import { Icon, type IconName } from '$components/icon';
 
-/** Radix accent color carrying each state's feedback (undefined = neutral). */
-type StateColor = 'gray' | 'indigo' | 'green' | 'red' | undefined;
+/** Radix accent color carrying each state's feedback. */
+type StateColor = 'gray' | 'indigo' | 'green' | 'red';
 
 /**
  * One of the visual states a Dropzone can be in. The consumer drives
@@ -142,9 +142,7 @@ export function Dropzone({
             <Spinner size="3" />
           ) : (
             <Text asChild color={color}>
-              <span>
-                <Icon name={stateIcon[state]} size={24} />
-              </span>
+              <Icon name={stateIcon[state]} size={24} />
             </Text>
           )}
           <Text size="2" weight="medium" color={color}>

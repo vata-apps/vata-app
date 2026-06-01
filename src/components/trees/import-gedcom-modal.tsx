@@ -18,6 +18,7 @@ import {
 
 import { Dropzone } from '$components/dropzone';
 import { Icon } from '$components/icon';
+import { StatCell } from '$components/trees/stat-cell';
 import { GedcomManager, type ImportResult, type ScanResult } from '$managers/GedcomManager';
 import { formatBytes } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
@@ -368,14 +369,7 @@ function ScanGrid({ scan }: { scan: ScanResult }): JSX.Element {
     <Card>
       <Grid columns="4" gap="3">
         {items.map((item, idx) => (
-          <Flex key={idx} direction="column" gap="1">
-            <Text size="5" weight="bold">
-              {item.value}
-            </Text>
-            <Text size="1" weight="medium" color="gray">
-              {item.label}
-            </Text>
-          </Flex>
+          <StatCell key={idx} value={item.value} label={item.label} />
         ))}
       </Grid>
     </Card>

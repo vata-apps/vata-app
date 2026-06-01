@@ -15,6 +15,7 @@ import {
 } from '@radix-ui/themes';
 
 import { Icon } from '$components/icon';
+import { StatCell } from '$components/trees/stat-cell';
 import { GedcomManager } from '$managers/GedcomManager';
 
 /**
@@ -220,14 +221,7 @@ export function DownloadTreeModal({
             <Card>
               <Grid columns="3" gap="3">
                 {stats.map((stat, idx) => (
-                  <Flex key={idx} direction="column" gap="1">
-                    <Text size="5" weight="bold">
-                      {stat.value}
-                    </Text>
-                    <Text size="1" weight="medium" color="gray">
-                      {stat.label}
-                    </Text>
-                  </Flex>
+                  <StatCell key={idx} value={stat.value} label={stat.label} />
                 ))}
               </Grid>
             </Card>

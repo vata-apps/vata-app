@@ -179,9 +179,7 @@ function EventsListMessage({
     <Flex direction="column" align="center" justify="center" gap="2" px="5" py="8">
       {icon && (
         <Text color="gray" asChild>
-          <span>
-            <Icon name="calendar" size={24} />
-          </span>
+          <Icon name="calendar" size={24} />
         </Text>
       )}
       <Text size="2" color="gray" align="center">
