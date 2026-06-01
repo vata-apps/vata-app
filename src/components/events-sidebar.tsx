@@ -1,9 +1,7 @@
-import './events-sidebar.css';
-
 import React, { type ReactNode, useMemo, useState } from 'react';
 import { Link, useParams } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, Skeleton, Text } from '@radix-ui/themes';
+import { Button, Card, Flex, Skeleton, Text } from '@radix-ui/themes';
 
 import { EntityListPanel, type EntityListSortOption } from './entity-list-panel';
 import { Icon } from '$components/icon';
@@ -32,13 +30,17 @@ function PrincipalName({
 }): JSX.Element {
   if (!name) {
     return (
-      <span className="event-row__name event-row__name--unknown" aria-label={unknownLabel}>
+      <Text size="2" weight="medium" color="gray" aria-label={unknownLabel} truncate>
         {unknownLabel}
-      </span>
+      </Text>
     );
   }
   const display = formatName(name).full;
-  return <span className="event-row__name">{display || unknownLabel}</span>;
+  return (
+    <Text size="2" weight="medium" truncate>
+      {display || unknownLabel}
+    </Text>
+  );
 }
 
 /** Renders the principal line(s) for an event row. */
@@ -50,7 +52,11 @@ function PrincipalsBlock({
   unknownLabel: string;
 }): JSX.Element {
   if (principals.length === 0) {
-    return <span className="event-row__name event-row__name--unknown">{unknownLabel}</span>;
+    return (
+      <Text size="2" weight="medium" color="gray" truncate>
+        {unknownLabel}
+      </Text>
+    );
   }
   return (
     <>
@@ -88,7 +94,11 @@ function MetaLine({
   }
   if (placePart) parts.push(`📍 ${placePart}`);
 
-  return <span className="event-row__meta">{parts.join(' · ')}</span>;
+  return (
+    <Text size="1" color="gray" truncate>
+      {parts.join(' · ')}
+    </Text>
+  );
 }
 
 /** Sort events by date, NULLs last. */
@@ -123,19 +133,24 @@ function EventRow({
   const label = eventTypeLabel(event.eventType, t);
 
   return (
-    <Link
-      to="/tree/$treeId/event/$eventId"
-      params={{ treeId, eventId: event.id }}
-      className="event-row"
-      aria-current={selected ? 'page' : undefined}
-    >
-      <span className="event-row__text">
-        <span className="event-row__eyebrow">{label}</span>
-        <PrincipalsBlock principals={event.principals} unknownLabel={unknownLabel} />
-        <MetaLine event={event} dateUnknownLabel={dateUnknownLabel} />
-      </span>
-      <Icon name="chevron-right" size={14} className="event-row__chev" />
-    </Link>
+    <Card asChild size="1" variant={selected ? 'surface' : 'ghost'}>
+      <Link
+        to="/tree/$treeId/event/$eventId"
+        params={{ treeId, eventId: event.id }}
+        aria-current={selected ? 'page' : undefined}
+      >
+        <Flex align="center" gap="2">
+          <Flex direction="column" flexGrow="1" minWidth="0">
+            <Text size="1" color="gray" weight="medium" truncate>
+              {label}
+            </Text>
+            <PrincipalsBlock principals={event.principals} unknownLabel={unknownLabel} />
+            <MetaLine event={event} dateUnknownLabel={dateUnknownLabel} />
+          </Flex>
+          <Icon name="chevron-right" size={14} />
+        </Flex>
+      </Link>
+    </Card>
   );
 }
 
@@ -161,17 +176,15 @@ function EventsListMessage({
   icon?: boolean;
 }): JSX.Element {
   return (
-    <Flex
-      direction="column"
-      align="center"
-      justify="center"
-      gap="2"
-      px="5"
-      py="8"
-      style={{ textAlign: 'center' }}
-    >
-      {icon && <Icon name="calendar" size={24} style={{ color: 'var(--gray-8)' }} />}
-      <Text size="2" color="gray">
+    <Flex direction="column" align="center" justify="center" gap="2" px="5" py="8">
+      {icon && (
+        <Text color="gray" asChild>
+          <span>
+            <Icon name="calendar" size={24} />
+          </span>
+        </Text>
+      )}
+      <Text size="2" color="gray" align="center">
         {children}
       </Text>
     </Flex>

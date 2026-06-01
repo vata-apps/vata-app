@@ -1,9 +1,7 @@
-import './family-sidebar.css';
-
 import { type ReactNode, useMemo, useState } from 'react';
 import { Link, useParams } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, Skeleton, Text } from '@radix-ui/themes';
+import { Avatar, Button, Card, Flex, Skeleton, Text } from '@radix-ui/themes';
 
 import { EntityListPanel, type EntityListSortOption } from './entity-list-panel';
 import { Icon } from '$components/icon';
@@ -109,33 +107,44 @@ function FamilyRow({ family, treeId, selected }: FamilyRowProps): JSX.Element {
     : formatName(wifeName).surnameFirst;
 
   return (
-    <Link
-      to="/tree/$treeId/family/$familyId"
-      params={{ treeId, familyId: family.id }}
-      className="family-row"
-      aria-current={selected ? 'page' : undefined}
-    >
-      <span className="family-row__couple-avatar" aria-hidden="true">
-        <span className={`family-row__spouse-circle${husbandIsUnknown ? ' is-unknown' : ''}`}>
-          {initialsOf(husbandName)}
-        </span>
-        <span className={`family-row__spouse-circle${wifeIsUnknown ? ' is-unknown' : ''}`}>
-          {initialsOf(wifeName)}
-        </span>
-      </span>
-      <span className="family-row__text">
-        <span className={`family-row__spouse-name${husbandIsUnknown ? ' is-unknown' : ''}`}>
-          {husbandDisplay}
-        </span>
-        <span className={`family-row__spouse-name${wifeIsUnknown ? ' is-unknown' : ''}`}>
-          {wifeDisplay}
-        </span>
-        <span className="family-row__meta">
-          {t('sidebar.childrenCount', { count: family.children.length })}
-        </span>
-      </span>
-      <Icon name="chevron-right" size={14} className="family-row__chev" />
-    </Link>
+    <Card asChild size="1" variant={selected ? 'surface' : 'ghost'}>
+      <Link
+        to="/tree/$treeId/family/$familyId"
+        params={{ treeId, familyId: family.id }}
+        aria-current={selected ? 'page' : undefined}
+      >
+        <Flex align="center" gap="2">
+          <Flex gap="1" aria-hidden="true">
+            <Avatar
+              size="1"
+              radius="full"
+              variant="soft"
+              color={!husbandIsUnknown && selected ? 'indigo' : 'gray'}
+              fallback={initialsOf(husbandName)}
+            />
+            <Avatar
+              size="1"
+              radius="full"
+              variant="soft"
+              color={!wifeIsUnknown && selected ? 'indigo' : 'gray'}
+              fallback={initialsOf(wifeName)}
+            />
+          </Flex>
+          <Flex direction="column" flexGrow="1" minWidth="0">
+            <Text size="2" weight="medium" color={husbandIsUnknown ? 'gray' : undefined} truncate>
+              {husbandDisplay}
+            </Text>
+            <Text size="2" weight="medium" color={wifeIsUnknown ? 'gray' : undefined} truncate>
+              {wifeDisplay}
+            </Text>
+            <Text size="1" color="gray" truncate>
+              {t('sidebar.childrenCount', { count: family.children.length })}
+            </Text>
+          </Flex>
+          <Icon name="chevron-right" size={14} />
+        </Flex>
+      </Link>
+    </Card>
   );
 }
 
@@ -144,7 +153,7 @@ function FamilyListSkeleton(): JSX.Element {
     <Flex direction="column" gap="1" p="2" aria-hidden="true">
       {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
         <Flex key={index} align="center" gap="3" px="2" py="2">
-          <Skeleton width="42px" height="30px" style={{ borderRadius: '4px' }} />
+          <Skeleton width="42px" height="30px" />
           <Flex direction="column" gap="1" flexGrow="1">
             <Skeleton width="60%" height="12px" />
             <Skeleton width="50%" height="12px" />
@@ -164,17 +173,15 @@ function FamilyListMessage({
   icon?: boolean;
 }): JSX.Element {
   return (
-    <Flex
-      direction="column"
-      align="center"
-      justify="center"
-      gap="2"
-      px="5"
-      py="8"
-      style={{ textAlign: 'center' }}
-    >
-      {icon && <Icon name="users" size={24} style={{ color: 'var(--gray-8)' }} />}
-      <Text size="2" color="gray">
+    <Flex direction="column" align="center" justify="center" gap="2" px="5" py="8">
+      {icon && (
+        <Text color="gray" asChild>
+          <span>
+            <Icon name="users" size={24} />
+          </span>
+        </Text>
+      )}
+      <Text size="2" color="gray" align="center">
         {children}
       </Text>
     </Flex>
