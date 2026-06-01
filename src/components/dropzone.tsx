@@ -1,7 +1,10 @@
 import { useId, type ReactNode } from 'react';
-import { Flex, Spinner, Text } from '@radix-ui/themes';
+import { Card, Flex, Spinner, Text } from '@radix-ui/themes';
 
 import { Icon, type IconName } from '$components/icon';
+
+/** Radix accent color carrying each state's feedback (undefined = neutral). */
+type StateColor = 'gray' | 'indigo' | 'green' | 'red' | undefined;
 
 /**
  * One of the visual states a Dropzone can be in. The consumer drives
@@ -71,13 +74,13 @@ const stateIcon: Record<Exclude<DropzoneState, 'scanning'>, IconName> = {
   error: 'x',
 };
 
-/** Border colour per state, expressed in Radix Themes scale tokens. */
-const stateBorderColor: Record<DropzoneState, string> = {
-  idle: 'var(--gray-a6)',
-  selected: 'var(--accent-8)',
-  scanning: 'var(--accent-8)',
-  done: 'var(--green-8)',
-  error: 'var(--red-8)',
+/** Feedback colour per state, applied to the icon and label. */
+const stateColor: Record<DropzoneState, StateColor> = {
+  idle: 'gray',
+  selected: 'indigo',
+  scanning: 'indigo',
+  done: 'green',
+  error: 'red',
 };
 
 /**
@@ -123,40 +126,33 @@ export function Dropzone({
   }
 
   const showSelectedName = state !== 'idle' && selectedName;
-
-  const cursor = ((): 'pointer' | 'progress' | 'default' => {
-    if (interactive) return 'pointer';
-    if (state === 'scanning') return 'progress';
-    return 'default';
-  })();
+  const color = stateColor[state];
 
   const card = (
-    <button
-      type="button"
-      aria-disabled={!interactive || undefined}
-      aria-describedby={hintId}
-      onClick={() => void handleClick()}
-      disabled={!interactive}
-      style={{
-        display: 'block',
-        width: '100%',
-        background: 'var(--color-panel-solid)',
-        border: `1px dashed ${stateBorderColor[state]}`,
-        borderRadius: 'var(--radius-4)',
-        padding: 'var(--space-6)',
-        color: 'inherit',
-        font: 'inherit',
-        cursor,
-        opacity: !interactive && state === 'idle' ? 0.6 : 1,
-      }}
-    >
-      <Flex direction="column" align="center" justify="center" gap="2">
-        {state === 'scanning' ? <Spinner size="3" /> : <Icon name={stateIcon[state]} size={24} />}
-        <Text size="2" weight="medium">
-          {showSelectedName ? selectedName : idleLabel}
-        </Text>
-      </Flex>
-    </button>
+    <Card asChild size="3">
+      <button
+        type="button"
+        aria-disabled={!interactive || undefined}
+        aria-describedby={hintId}
+        onClick={() => void handleClick()}
+        disabled={!interactive}
+      >
+        <Flex direction="column" align="center" justify="center" gap="2" width="100%">
+          {state === 'scanning' ? (
+            <Spinner size="3" />
+          ) : (
+            <Text asChild color={color}>
+              <span>
+                <Icon name={stateIcon[state]} size={24} />
+              </span>
+            </Text>
+          )}
+          <Text size="2" weight="medium" color={color}>
+            {showSelectedName ? selectedName : idleLabel}
+          </Text>
+        </Flex>
+      </button>
+    </Card>
   );
 
   if (!hint) return card;

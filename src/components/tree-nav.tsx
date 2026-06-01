@@ -1,5 +1,4 @@
-import './tree-nav.css';
-
+import { Button, Flex } from '@radix-ui/themes';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -11,9 +10,9 @@ import { NAV_SECTIONS, getTreeIdFromPath, resolveNavSection } from '$lib/nav-sec
  * (Home, People, Families, Events, Places). It sits in the shell header
  * and persists across every page of an open tree.
  *
- * Each item is a fixed-height icon-and-label control. The section in view
- * gets a soft-accent pill, including on that section's detail routes (an
- * individual detail highlights People).
+ * Each item is a Radix `Button` wrapping a router `Link`. The section in
+ * view gets a soft-accent button (including on that section's detail
+ * routes — an individual detail highlights People); the rest are ghost.
  *
  * Reads the active tree and section from the current route; renders
  * nothing when used outside the in-tree context.
@@ -27,17 +26,22 @@ export function TreeNav(): JSX.Element | null {
   if (treeId === null) return null;
 
   return (
-    <nav aria-label={t('nav.ariaLabel')}>
-      <ul className="tree-nav-list">
+    <Flex asChild align="center" gap="1">
+      <nav aria-label={t('nav.ariaLabel')}>
         {NAV_SECTIONS.map((section) => {
           const label = t(section.labelKey);
           const isActive = section.id === activeSection;
           return (
-            <li key={section.id}>
+            <Button
+              key={section.id}
+              asChild
+              size="2"
+              variant={isActive ? 'soft' : 'ghost'}
+              color={isActive ? undefined : 'gray'}
+            >
               <Link
                 to={section.to}
                 params={{ treeId }}
-                className="tree-nav-item"
                 // Without `exact`, TanStack's fuzzy matcher marks the Home link
                 // active on every in-tree route (its path is a prefix of them
                 // all); section-active state is driven by resolveNavSection.
@@ -47,10 +51,10 @@ export function TreeNav(): JSX.Element | null {
                 <Icon name={section.icon} size={16} />
                 {label}
               </Link>
-            </li>
+            </Button>
           );
         })}
-      </ul>
-    </nav>
+      </nav>
+    </Flex>
   );
 }

@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Badge, Box, Flex, Select, Text } from '@radix-ui/themes';
+import { Badge, Box, Flex, Select, Separator, Text } from '@radix-ui/themes';
 
 /** A single option offered by the {@link EntityListPanel} sort control. */
 export interface EntityListSortOption<T extends string = string> {
@@ -78,14 +78,9 @@ export function EntityListPanel<T extends string = string>({
   return (
     <Flex asChild direction="column" height="100%" overflow="hidden">
       <aside aria-label={title}>
-        <Flex
-          align="center"
-          gap="2"
-          flexShrink="0"
-          style={{ padding: '14px 14px 12px', borderBottom: '1px solid var(--gray-a4)' }}
-        >
+        <Flex align="center" gap="2" flexShrink="0" px="3" py="3">
           <Text asChild size="5" weight="bold" trim="both">
-            <h2 style={{ margin: 0 }}>{title}</h2>
+            <h2>{title}</h2>
           </Text>
           <Badge variant="outline" color="gray" radius="full">
             {count ?? '–'}
@@ -93,26 +88,21 @@ export function EntityListPanel<T extends string = string>({
           <Box flexGrow="1" />
           {action}
         </Flex>
+        <Separator size="4" />
 
         <Box flexGrow="1" minHeight="0" overflow="auto">
           {children}
         </Box>
 
-        <Flex
-          align="center"
-          gap="3"
-          flexShrink="0"
-          style={{ padding: '10px 14px', borderTop: '1px solid var(--gray-a4)' }}
-        >
-          <Text
-            size="1"
-            color="gray"
-            style={{ fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}
-          >
+        <Separator size="4" />
+        <Flex align="center" gap="3" flexShrink="0" px="3" py="2">
+          <Text size="1" color="gray" weight="medium">
             {sort.label}
           </Text>
           <Select.Root value={sort.value} onValueChange={handleSortChange} disabled={sort.disabled}>
-            <Select.Trigger aria-label={sort.label} style={{ flex: 1 }} />
+            <Box flexGrow="1" asChild>
+              <Select.Trigger aria-label={sort.label} />
+            </Box>
             <Select.Content>
               {sort.options.map((option) => (
                 <Select.Item key={option.value} value={option.value}>
