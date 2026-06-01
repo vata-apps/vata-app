@@ -315,7 +315,7 @@ function BuildTab(): JSX.Element {
   );
 }
 
-export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Element | null {
+export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Element {
   const { t } = useTranslation('common');
   const [systemData, setSystemData] = useState<SystemDebugData | null>(null);
   const [treeData, setTreeData] = useState<TreeDebugData | null>(null);
