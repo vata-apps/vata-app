@@ -1,17 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Box,
-  Button,
-  Callout,
-  Dialog,
-  Flex,
-  Grid,
-  Switch,
-  Text,
-  TextField,
-} from '@radix-ui/themes';
+import { Button, Callout, Dialog, Flex, Grid, Switch, Text, TextField } from '@radix-ui/themes';
 
 import { deleteTree as defaultDeleteTree } from '$db-system/trees';
 import { GedcomManager } from '$managers/GedcomManager';
@@ -171,40 +161,20 @@ export function DeleteTreeModal({
 
         <form id={formId} onSubmit={handleSubmit}>
           <Flex direction="column" gap="4">
-            <Box
-              style={{
-                border: '1px solid var(--red-a5)',
-                background: 'var(--red-a2)',
-                borderRadius: 'var(--radius-3)',
-                padding: 'var(--space-4)',
-              }}
-            >
-              <Grid columns="4" gap="3">
+            <Callout.Root color="red">
+              <Grid columns="4" gap="3" width="100%">
                 {stats.map((stat, idx) => (
                   <Flex key={idx} direction="column" gap="1">
-                    <Text
-                      size="5"
-                      weight="bold"
-                      color="red"
-                      style={{ fontVariantNumeric: 'tabular-nums' }}
-                    >
+                    <Text size="5" weight="bold" color="red">
                       {stat.value}
                     </Text>
-                    <Text
-                      size="1"
-                      weight="medium"
-                      style={{
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.06em',
-                        color: 'var(--gray-a10)',
-                      }}
-                    >
+                    <Text size="1" weight="medium" color="gray">
                       {stat.label}
                     </Text>
                   </Flex>
                 ))}
               </Grid>
-            </Box>
+            </Callout.Root>
 
             <Text as="label" size="2" weight="medium">
               <Flex align="center" gap="2">
