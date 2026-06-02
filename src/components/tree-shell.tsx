@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Box, Flex, Grid, IconButton } from '@radix-ui/themes';
+import { Box, Flex, IconButton, Separator } from '@radix-ui/themes';
 import { useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -49,18 +49,7 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
   const activeSection = resolveNavSection(pathname);
   return (
     <Flex direction="column" height="100vh" overflow="hidden">
-      <Flex
-        asChild
-        align="center"
-        justify="between"
-        flexShrink="0"
-        height="56px"
-        style={{
-          paddingInline: 20,
-          background: 'var(--color-panel-solid)',
-          borderBottom: '1px solid var(--gray-a4)',
-        }}
-      >
+      <Flex asChild align="center" justify="between" flexShrink="0" height="56px" px="5">
         <header>
           <TreeNav />
           <PreferencesPopover side="bottom">
@@ -70,30 +59,21 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
           </PreferencesPopover>
         </header>
       </Flex>
-      <Grid columns="332px minmax(0, 1fr) 320px" flexGrow="1" minHeight="0">
-        <Box
-          overflow="hidden"
-          style={{
-            background: 'var(--color-panel-solid)',
-            borderRight: '1px solid var(--gray-a4)',
-          }}
-        >
+      <Separator size="4" />
+      <Flex flexGrow="1" minHeight="0">
+        <Box width="332px" flexShrink="0" overflow="hidden">
           {activeSection === 'people' && <PeopleSidebar />}
           {activeSection === 'families' && <FamilySidebar />}
           {activeSection === 'events' && <EventsSidebar />}
           {activeSection === 'places' && <PlacesSidebar />}
         </Box>
-        <Box asChild overflow="auto">
-          <main style={{ background: 'var(--color-background)' }}>{children}</main>
+        <Separator orientation="vertical" size="4" />
+        <Box asChild flexGrow="1" overflow="auto">
+          <main>{children}</main>
         </Box>
-        <Box
-          overflow="auto"
-          style={{
-            background: 'var(--color-panel-solid)',
-            borderLeft: '1px solid var(--gray-a4)',
-          }}
-        />
-      </Grid>
+        <Separator orientation="vertical" size="4" />
+        <Box width="320px" flexShrink="0" overflow="auto" />
+      </Flex>
     </Flex>
   );
 }

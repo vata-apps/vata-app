@@ -1,9 +1,7 @@
-import './people-sidebar.css';
-
 import { type ReactNode, useMemo, useState } from 'react';
 import { Link, useParams } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Flex, Skeleton, Text } from '@radix-ui/themes';
+import { Avatar, Button, Card, Flex, Skeleton, Text } from '@radix-ui/themes';
 
 import { EntityListPanel, type EntityListSortOption } from './entity-list-panel';
 import { Icon } from '$components/icon';
@@ -147,21 +145,32 @@ function PersonRow({ person, treeId, selected, displayMode }: PersonRowProps): J
   })();
 
   return (
-    <Link
-      to="/tree/$treeId/individual/$individualId"
-      params={{ treeId, individualId: person.id }}
-      className="person-row"
-      aria-current={selected ? 'page' : undefined}
-    >
-      <span className="person-row__avatar" aria-hidden="true">
-        {initialsOf(name)}
-      </span>
-      <span className="person-row__text">
-        <span className="person-row__name">{displayName}</span>
-        <span className="person-row__meta">{lifespanOf(person)}</span>
-      </span>
-      <Icon name="chevron-right" size={14} className="person-row__chev" />
-    </Link>
+    <Card asChild size="1" variant={selected ? 'surface' : 'ghost'}>
+      <Link
+        to="/tree/$treeId/individual/$individualId"
+        params={{ treeId, individualId: person.id }}
+        aria-current={selected ? 'page' : undefined}
+      >
+        <Flex align="center" gap="2">
+          <Avatar
+            size="1"
+            radius="full"
+            variant="soft"
+            color={selected ? 'indigo' : 'gray'}
+            fallback={initialsOf(name)}
+          />
+          <Flex direction="column" flexGrow="1" minWidth="0">
+            <Text size="2" weight="medium" truncate>
+              {displayName}
+            </Text>
+            <Text size="1" color="gray" truncate>
+              {lifespanOf(person)}
+            </Text>
+          </Flex>
+          <Icon name="chevron-right" size={14} />
+        </Flex>
+      </Link>
+    </Card>
   );
 }
 
@@ -171,7 +180,9 @@ function PeopleListSkeleton(): JSX.Element {
     <Flex direction="column" gap="1" p="2" aria-hidden="true">
       {Array.from({ length: SKELETON_ROW_COUNT }, (_, index) => (
         <Flex key={index} align="center" gap="3" px="2" py="2">
-          <Skeleton width="30px" height="30px" style={{ borderRadius: '9999px' }} />
+          <Skeleton>
+            <Avatar size="1" radius="full" fallback="" />
+          </Skeleton>
           <Flex direction="column" gap="1" flexGrow="1">
             <Skeleton width="60%" height="12px" />
             <Skeleton width="35%" height="10px" />
@@ -191,17 +202,13 @@ function PeopleListMessage({
   icon?: boolean;
 }): JSX.Element {
   return (
-    <Flex
-      direction="column"
-      align="center"
-      justify="center"
-      gap="2"
-      px="5"
-      py="8"
-      style={{ textAlign: 'center' }}
-    >
-      {icon && <Icon name="user" size={24} style={{ color: 'var(--gray-8)' }} />}
-      <Text size="2" color="gray">
+    <Flex direction="column" align="center" justify="center" gap="2" px="5" py="8">
+      {icon && (
+        <Text color="gray" asChild>
+          <Icon name="user" size={24} />
+        </Text>
+      )}
+      <Text size="2" color="gray" align="center">
         {children}
       </Text>
     </Flex>

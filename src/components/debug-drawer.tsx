@@ -5,6 +5,7 @@ import {
   Badge,
   Box,
   Code,
+  Dialog,
   Flex,
   Heading,
   IconButton,
@@ -314,7 +315,7 @@ function BuildTab(): JSX.Element {
   );
 }
 
-export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Element | null {
+export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Element {
   const { t } = useTranslation('common');
   const [systemData, setSystemData] = useState<SystemDebugData | null>(null);
   const [treeData, setTreeData] = useState<TreeDebugData | null>(null);
@@ -367,68 +368,33 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
     void loadAll();
   }, [open, t]);
 
-  if (!open) return null;
-
   return (
-    <>
-      <Box
-        aria-hidden="true"
-        onClick={() => onOpenChange(false)}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'var(--black-a6)',
-          zIndex: 1000,
-        }}
-      />
-      <Box
-        role="dialog"
-        aria-modal="true"
-        aria-label={t('debug.panelAriaLabel')}
-        style={{
-          position: 'fixed',
-          right: 0,
-          top: 0,
-          bottom: 0,
-          width: '720px',
-          maxWidth: '90vw',
-          zIndex: 1001,
-          background: 'var(--color-background)',
-          borderLeft: '1px solid var(--gray-a6)',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <Flex
-          align="center"
-          justify="between"
-          px="4"
-          py="3"
-          style={{ borderBottom: '1px solid var(--gray-a5)', flexShrink: 0 }}
-        >
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Content maxWidth="720px" aria-label={t('debug.panelAriaLabel')}>
+        <Flex align="center" justify="between" mb="3">
           <Flex align="center" gap="2">
             <Icon name="bug" size={16} />
-            <Heading size="3">{t('debug.title')}</Heading>
+            <Dialog.Title size="3" mb="0">
+              {t('debug.title')}
+            </Dialog.Title>
             <Badge color="orange" size="1">
               {t('debug.badgeDev')}
             </Badge>
           </Flex>
-          <IconButton
-            variant="ghost"
-            color="gray"
-            size="2"
-            onClick={() => onOpenChange(false)}
-            aria-label={t('debug.closePanelAriaLabel')}
-          >
-            <Icon name="x" size={16} />
-          </IconButton>
+          <Dialog.Close>
+            <IconButton
+              variant="ghost"
+              color="gray"
+              size="2"
+              aria-label={t('debug.closePanelAriaLabel')}
+            >
+              <Icon name="x" size={16} />
+            </IconButton>
+          </Dialog.Close>
         </Flex>
 
-        <Tabs.Root
-          defaultValue="system"
-          style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
-        >
-          <Tabs.List style={{ flexShrink: 0 }}>
+        <Tabs.Root defaultValue="system">
+          <Tabs.List>
             <Tabs.Trigger value="system">{t('debug.tabs.systemDb')}</Tabs.Trigger>
             <Tabs.Trigger value="tree">{t('debug.tabs.treeDb')}</Tabs.Trigger>
             <Tabs.Trigger value="i18n">{t('debug.tabs.i18n')}</Tabs.Trigger>
@@ -436,38 +402,36 @@ export function DebugDrawer({ open, onOpenChange }: DebugDrawerProps): JSX.Eleme
             <Tabs.Trigger value="build">{t('debug.tabs.build')}</Tabs.Trigger>
           </Tabs.List>
 
-          <Box style={{ flex: 1, overflow: 'auto' }}>
-            <Box p="4">
-              {loading ? (
-                <Flex align="center" gap="2" py="4">
-                  <Spinner />
-                  <Text size="2" color="gray">
-                    {t('debug.loading')}
-                  </Text>
-                </Flex>
-              ) : (
-                <>
-                  <Tabs.Content value="system">
-                    <SystemDbTab data={systemData} />
-                  </Tabs.Content>
-                  <Tabs.Content value="tree">
-                    <TreeDbTab data={treeData} error={treeError} />
-                  </Tabs.Content>
-                  <Tabs.Content value="i18n">
-                    <I18nTab />
-                  </Tabs.Content>
-                  <Tabs.Content value="theme">
-                    <ThemeTab />
-                  </Tabs.Content>
-                  <Tabs.Content value="build">
-                    <BuildTab />
-                  </Tabs.Content>
-                </>
-              )}
-            </Box>
+          <Box pt="4">
+            {loading ? (
+              <Flex align="center" gap="2" py="4">
+                <Spinner />
+                <Text size="2" color="gray">
+                  {t('debug.loading')}
+                </Text>
+              </Flex>
+            ) : (
+              <>
+                <Tabs.Content value="system">
+                  <SystemDbTab data={systemData} />
+                </Tabs.Content>
+                <Tabs.Content value="tree">
+                  <TreeDbTab data={treeData} error={treeError} />
+                </Tabs.Content>
+                <Tabs.Content value="i18n">
+                  <I18nTab />
+                </Tabs.Content>
+                <Tabs.Content value="theme">
+                  <ThemeTab />
+                </Tabs.Content>
+                <Tabs.Content value="build">
+                  <BuildTab />
+                </Tabs.Content>
+              </>
+            )}
           </Box>
         </Tabs.Root>
-      </Box>
-    </>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }
