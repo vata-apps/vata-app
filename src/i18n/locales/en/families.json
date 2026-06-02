@@ -1,19 +1,12 @@
 {
   "heading": "Family {{familyId}}",
-  "sidebar": {
-    "newButton": "New",
-    "sortLabel": "Sort by",
-    "sort": {
-      "husbandSurnameAsc": "Husband surname (A → Z)",
-      "husbandSurnameDesc": "Husband surname (Z → A)",
-      "wifeSurnameAsc": "Wife surname (A → Z)",
-      "wifeSurnameDesc": "Wife surname (Z → A)",
-      "childrenDesc": "Most children",
-      "childrenAsc": "Fewest children"
+  "table": {
+    "columns": {
+      "husband": "Husband",
+      "wife": "Wife",
+      "children": "Children"
     },
     "empty": "No families yet",
-    "unknownSpouse": "Unknown",
-    "childrenCount_one": "{{count}} child",
-    "childrenCount_other": "{{count}} children"
+    "unknownSpouse": "Unknown"
   }
 }

@@ -1,15 +1,16 @@
 {
   "heading": "Individu {{individualId}}",
-  "sidebar": {
-    "newButton": "Nouveau",
-    "sortLabel": "Trier par",
-    "sort": {
-      "surnameAsc": "Nom (A → Z)",
-      "surnameDesc": "Nom (Z → A)",
-      "givenAsc": "Prénom (A → Z)",
-      "givenDesc": "Prénom (Z → A)",
-      "birthAsc": "Naissance (croissant)",
-      "birthDesc": "Naissance (décroissant)"
+  "table": {
+    "columns": {
+      "name": "Nom",
+      "sex": "Sexe",
+      "birth": "Naissance",
+      "death": "Décès"
+    },
+    "sex": {
+      "M": "Homme",
+      "F": "Femme",
+      "U": "Inconnu"
     },
     "empty": "Aucune personne",
     "unknownName": "Sans nom"

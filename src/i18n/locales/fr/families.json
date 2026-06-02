@@ -1,19 +1,12 @@
 {
   "heading": "Famille {{familyId}}",
-  "sidebar": {
-    "newButton": "Nouveau",
-    "sortLabel": "Trier par",
-    "sort": {
-      "husbandSurnameAsc": "Nom du mari (A → Z)",
-      "husbandSurnameDesc": "Nom du mari (Z → A)",
-      "wifeSurnameAsc": "Nom de l'épouse (A → Z)",
-      "wifeSurnameDesc": "Nom de l'épouse (Z → A)",
-      "childrenDesc": "Plus d'enfants",
-      "childrenAsc": "Moins d'enfants"
+  "table": {
+    "columns": {
+      "husband": "Mari",
+      "wife": "Épouse",
+      "children": "Enfants"
     },
     "empty": "Aucune famille",
-    "unknownSpouse": "Inconnu(e)",
-    "childrenCount_one": "{{count}} enfant",
-    "childrenCount_other": "{{count}} enfants"
+    "unknownSpouse": "Inconnu(e)"
   }
 }

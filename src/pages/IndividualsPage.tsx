@@ -1,21 +1,131 @@
-import { Link } from '@tanstack/react-router';
+import { useMemo } from 'react';
+import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Heading } from '@radix-ui/themes';
+import { Avatar, Box, Flex, Link } from '@radix-ui/themes';
+
+import { EntityTable, type EntityTableColumn } from '$components/entity-table';
+import { useIndividuals } from '$hooks/useIndividuals';
+import { formatName } from '$db-tree/names';
+import type { IndividualWithDetails, Name } from '$types/database';
 
 interface IndividualsPageProps {
   treeId: string;
 }
 
+/** Year of an event, read from its normalized `YYYY-MM-DD` sort date. */
+function eventYear(event: { dateSort: string | null } | null): string | null {
+  return event?.dateSort ? event.dateSort.slice(0, 4) : null;
+}
+
+/**
+ * Avatar initials for a name — the first given-name letter and the first
+ * surname letter, uppercased; falling back to the nickname, then `?`.
+ */
+function initialsOf(name: Name | null): string {
+  if (!name) return '?';
+  const given = name.givenNames?.trim().split(/\s+/)[0]?.charAt(0) ?? '';
+  const surname = name.surname?.trim().charAt(0) ?? '';
+  const initials = (given + surname).toUpperCase();
+  if (initials) return initials;
+  const nickname = name.nickname?.trim().charAt(0);
+  return nickname ? nickname.toUpperCase() : '?';
+}
+
+/** Sort people by sortable surname key, unknown names last. */
+function sortPeople(people: IndividualWithDetails[]): IndividualWithDetails[] {
+  return people
+    .map((person) => ({ person, key: formatName(person.primaryName).sortable }))
+    .sort((a, b) => {
+      if (!a.key && !b.key) return 0;
+      if (!a.key) return 1;
+      if (!b.key) return -1;
+      return a.key.localeCompare(b.key);
+    })
+    .map((decorated) => decorated.person);
+}
+
+/**
+ * The People section page — the full-width table of every person in the
+ * open tree. A row click opens that individual's detail route.
+ */
 export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('individuals');
+  const { t: tCommon } = useTranslation('common');
+  const navigate = useNavigate();
+  const { data, isLoading, isError } = useIndividuals();
+
+  const rows = useMemo(() => (data ? sortPeople(data) : []), [data]);
+
+  const columns = useMemo<EntityTableColumn<IndividualWithDetails>[]>(
+    () => [
+      {
+        key: 'name',
+        header: t('table.columns.name'),
+        rowHeader: true,
+        cell: (person) => {
+          const name = person.primaryName;
+          const display = name ? formatName(name).surnameFirst : t('table.unknownName');
+          return (
+            <Flex align="center" gap="2">
+              <Avatar
+                size="1"
+                radius="full"
+                variant="soft"
+                color="gray"
+                fallback={initialsOf(name)}
+              />
+              <Link asChild onClick={(event) => event.stopPropagation()}>
+                <RouterLink
+                  to="/tree/$treeId/individual/$individualId"
+                  params={{ treeId, individualId: person.id }}
+                >
+                  {display}
+                </RouterLink>
+              </Link>
+            </Flex>
+          );
+        },
+      },
+      {
+        key: 'sex',
+        header: t('table.columns.sex'),
+        width: '100px',
+        cell: (person) => t(`table.sex.${person.gender}`),
+      },
+      {
+        key: 'birth',
+        header: t('table.columns.birth'),
+        width: '120px',
+        cell: (person) => eventYear(person.birthEvent) ?? '—',
+      },
+      {
+        key: 'death',
+        header: t('table.columns.death'),
+        width: '120px',
+        cell: (person) => (person.isLiving ? '—' : (eventYear(person.deathEvent) ?? '—')),
+      },
+    ],
+    [t, treeId]
+  );
+
   return (
-    <Box p="5">
-      <Button asChild variant="ghost" color="gray" size="1">
-        <Link to="/tree/$treeId" params={{ treeId }}>
-          {t('nav.back')}
-        </Link>
-      </Button>
-      <Heading mt="2">{t('nav.individuals')}</Heading>
+    <Box p="4">
+      <EntityTable
+        label={tCommon('nav.individuals')}
+        columns={columns}
+        rows={rows}
+        getRowKey={(person) => person.id}
+        onRowClick={(person) =>
+          navigate({
+            to: '/tree/$treeId/individual/$individualId',
+            params: { treeId, individualId: person.id },
+          })
+        }
+        isLoading={isLoading}
+        isError={isError}
+        errorMessage={tCommon('errors.loadFailed')}
+        emptyMessage={t('table.empty')}
+      />
     </Box>
   );
 }

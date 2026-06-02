@@ -1,11 +1,11 @@
 {
   "heading": "Événement {{eventId}}",
-  "sidebar": {
-    "newButton": "Nouveau",
-    "sortLabel": "Trier par",
-    "sort": {
-      "dateAsc": "Date (plus ancienne d'abord)",
-      "dateDesc": "Date (plus récente d'abord)"
+  "table": {
+    "columns": {
+      "type": "Type",
+      "date": "Date",
+      "principals": "Principaux",
+      "place": "Lieu"
     },
     "empty": "Aucun événement",
     "unknownPrincipal": "Inconnu(e)",
