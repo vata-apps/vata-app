@@ -82,7 +82,9 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
         key: 'sex',
         header: t('table.columns.sex'),
         width: '100px',
-        cell: (person) => t(`table.sex.${person.gender}`),
+        // gender is constrained to M/F/U by the schema and every write path;
+        // the U fallback guards only against legacy/dirty data.
+        cell: (person) => t(`table.sex.${person.gender}`, { defaultValue: t('table.sex.U') }),
       },
       {
         key: 'birth',
