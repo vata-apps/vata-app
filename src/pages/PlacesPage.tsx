@@ -5,15 +5,11 @@ import { Box, Link } from '@radix-ui/themes';
 
 import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import { usePlaces } from '$hooks/usePlaces';
+import { sortByKey } from '$lib/sortByKey';
 import type { Place } from '$types/database';
 
 interface PlacesPageProps {
   treeId: string;
-}
-
-/** Sort places by name, ascending. */
-function sortPlaces(places: Place[]): Place[] {
-  return [...places].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
@@ -26,7 +22,7 @@ export function PlacesPage({ treeId }: PlacesPageProps): JSX.Element {
   const navigate = useNavigate();
   const { data, isLoading, isError } = usePlaces();
 
-  const rows = useMemo(() => (data ? sortPlaces(data) : []), [data]);
+  const rows = useMemo(() => (data ? sortByKey(data, (place) => place.name) : []), [data]);
 
   const nameById = useMemo<Map<string, string>>(
     () => (data ? new Map(data.map((place) => [place.id, place.name])) : new Map()),

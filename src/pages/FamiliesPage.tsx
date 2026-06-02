@@ -5,27 +5,12 @@ import { Box, Link } from '@radix-ui/themes';
 
 import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import { useFamilies } from '$hooks/useFamilies';
+import { sortByKey } from '$lib/sortByKey';
 import { formatName } from '$db-tree/names';
 import type { FamilyWithMembers, Name } from '$types/database';
 
 interface FamiliesPageProps {
   treeId: string;
-}
-
-/** Sort families by the husband's sortable surname key, unknown last. */
-function sortFamilies(families: FamilyWithMembers[]): FamilyWithMembers[] {
-  return families
-    .map((family) => ({
-      family,
-      key: family.husband ? formatName(family.husband.primaryName).sortable || null : null,
-    }))
-    .sort((a, b) => {
-      if (a.key === null && b.key === null) return 0;
-      if (a.key === null) return 1;
-      if (b.key === null) return -1;
-      return a.key.localeCompare(b.key);
-    })
-    .map((decorated) => decorated.family);
 }
 
 /**
@@ -38,7 +23,15 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useFamilies();
 
-  const rows = useMemo(() => (data ? sortFamilies(data) : []), [data]);
+  const rows = useMemo(
+    () =>
+      data
+        ? sortByKey(data, (family) =>
+            family.husband ? formatName(family.husband.primaryName).sortable || null : null
+          )
+        : [],
+    [data]
+  );
 
   const columns = useMemo<EntityTableColumn<FamilyWithMembers>[]>(() => {
     const unknownSpouse = t('table.unknownSpouse');

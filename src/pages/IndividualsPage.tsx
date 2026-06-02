@@ -5,6 +5,7 @@ import { Avatar, Box, Flex, Link } from '@radix-ui/themes';
 
 import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import { useIndividuals } from '$hooks/useIndividuals';
+import { sortByKey } from '$lib/sortByKey';
 import { formatName } from '$db-tree/names';
 import type { IndividualWithDetails, Name } from '$types/database';
 
@@ -31,19 +32,6 @@ function initialsOf(name: Name | null): string {
   return nickname ? nickname.toUpperCase() : '?';
 }
 
-/** Sort people by sortable surname key, unknown names last. */
-function sortPeople(people: IndividualWithDetails[]): IndividualWithDetails[] {
-  return people
-    .map((person) => ({ person, key: formatName(person.primaryName).sortable }))
-    .sort((a, b) => {
-      if (!a.key && !b.key) return 0;
-      if (!a.key) return 1;
-      if (!b.key) return -1;
-      return a.key.localeCompare(b.key);
-    })
-    .map((decorated) => decorated.person);
-}
-
 /**
  * The People section page — the full-width table of every person in the
  * open tree. A row click opens that individual's detail route.
@@ -54,7 +42,11 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useIndividuals();
 
-  const rows = useMemo(() => (data ? sortPeople(data) : []), [data]);
+  const rows = useMemo(
+    () =>
+      data ? sortByKey(data, (person) => formatName(person.primaryName).sortable || null) : [],
+    [data]
+  );
 
   const columns = useMemo<EntityTableColumn<IndividualWithDetails>[]>(
     () => [

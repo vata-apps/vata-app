@@ -6,21 +6,12 @@ import { Box, Link } from '@radix-ui/themes';
 import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import { useEvents } from '$hooks/useEvents';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
+import { sortByKey } from '$lib/sortByKey';
 import { formatName } from '$db-tree/names';
 import type { EventListEntry, EventPrincipal, Name } from '$types/database';
 
 interface EventsPageProps {
   treeId: string;
-}
-
-/** Sort events by their normalized sort date, ascending, unknown dates last. */
-function sortEvents(events: EventListEntry[]): EventListEntry[] {
-  return [...events].sort((a, b) => {
-    if (a.dateSort === null && b.dateSort === null) return 0;
-    if (a.dateSort === null) return 1;
-    if (b.dateSort === null) return -1;
-    return a.dateSort.localeCompare(b.dateSort);
-  });
 }
 
 /** A single principal name, falling back to the unknown label. */
@@ -51,7 +42,7 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
   const navigate = useNavigate();
   const { data, isLoading, isError } = useEvents();
 
-  const rows = useMemo(() => (data ? sortEvents(data) : []), [data]);
+  const rows = useMemo(() => (data ? sortByKey(data, (event) => event.dateSort) : []), [data]);
 
   const columns = useMemo<EntityTableColumn<EventListEntry>[]>(() => {
     const unknownPrincipal = t('table.unknownPrincipal');
