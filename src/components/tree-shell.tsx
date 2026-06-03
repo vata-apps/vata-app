@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Box, Flex, IconButton, Separator } from '@radix-ui/themes';
+import { Box, Flex, IconButton } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
 import { Icon } from '$components/icon';
@@ -47,7 +47,6 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
           </PreferencesPopover>
         </header>
       </Flex>
-      <Separator size="4" />
       <Box asChild flexGrow="1" minHeight="0" overflow="auto">
         <main>{children}</main>
       </Box>
