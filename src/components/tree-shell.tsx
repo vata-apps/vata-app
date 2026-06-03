@@ -37,7 +37,7 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
   const { t } = useTranslation('common');
   return (
     <Flex direction="column" height="100vh" overflow="hidden">
-      <Box asChild flexShrink="0" px="4">
+      <Box asChild flexShrink="0" px="4" py="2">
         <header>
           <TreeNav
             trailing={
