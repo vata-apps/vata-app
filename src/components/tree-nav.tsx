@@ -11,9 +11,9 @@ import { NAV_SECTIONS, getTreeIdFromPath, resolveNavSection } from '$lib/nav-sec
  * and persists across every page of an open tree.
  *
  * Each item is a Radix `Button` wrapping a router `Link`. The section in
- * view gets a soft-accent button (including on that section's detail
+ * view gets a solid-accent button (including on that section's detail
  * routes — an individual detail highlights People); the rest use the
- * gray `surface` variant.
+ * gray `soft` variant.
  *
  * Reads the active tree and section from the current route; renders
  * nothing when used outside the in-tree context.
@@ -37,7 +37,7 @@ export function TreeNav(): JSX.Element | null {
               key={section.id}
               asChild
               size="2"
-              variant={isActive ? 'soft' : 'surface'}
+              variant={isActive ? 'solid' : 'soft'}
               color={isActive ? undefined : 'gray'}
             >
               <Link

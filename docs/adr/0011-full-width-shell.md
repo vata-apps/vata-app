@@ -16,7 +16,7 @@ The shell provides **only a persistent header and a full-width page body**. The 
 - **Pages render full-width by default.** A page that needs its own panels (a list rail, a contextual detail pane) builds them inside its own body, when the need is real — not by inheriting an always-present shared scaffold.
 - **The entity lists move into their pages as full-width tables.** People, Families, Events, and Places each render a Radix `Table` directly in the page body. A row click opens that entity's detail route. The four `*Sidebar` components and the shared `EntityListPanel` are deleted; a new `EntityTable` organism carries the column-driven table, loading/empty/error states, and row navigation shared by all four.
 - **Tables are read-only this pass.** No toolbar, no count badge, no "New" action, no sort control — each table has a single fixed default sort (People by surname, Families by husband surname, Events by date oldest-first, Places by name). The sort UI and the disabled "New" affordance the sidebars carried are dropped, to be reintroduced per-page when each section's real design lands.
-- **The top nav drops the `ghost` variant.** Section buttons use `variant="soft"` (accent) when active and `variant="surface"` (gray) when not, so every item carries visible chrome instead of being invisible until hover.
+- **The top nav drops the `ghost` variant.** Section buttons use `variant="solid"` (accent) when active and `variant="soft"` (gray) when not, so every item carries visible chrome instead of being invisible until hover.
 
 ## Why
 
