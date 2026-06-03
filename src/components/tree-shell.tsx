@@ -44,7 +44,7 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
               <PreferencesPopover side="bottom">
                 <IconButton
                   size="2"
-                  variant="ghost"
+                  variant="soft"
                   color="gray"
                   aria-label={t('preferences.title')}
                 >
