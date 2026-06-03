@@ -37,16 +37,24 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
   const { t } = useTranslation('common');
   return (
     <Flex direction="column" height="100vh" overflow="hidden">
-      <Flex asChild align="center" justify="between" flexShrink="0" height="56px" px="5">
+      <Box asChild flexShrink="0" px="4">
         <header>
-          <TreeNav />
-          <PreferencesPopover side="bottom">
-            <IconButton size="2" variant="ghost" color="gray" aria-label={t('preferences.title')}>
-              <Icon name="settings" size={16} />
-            </IconButton>
-          </PreferencesPopover>
+          <TreeNav
+            trailing={
+              <PreferencesPopover side="bottom">
+                <IconButton
+                  size="2"
+                  variant="ghost"
+                  color="gray"
+                  aria-label={t('preferences.title')}
+                >
+                  <Icon name="settings" size={16} />
+                </IconButton>
+              </PreferencesPopover>
+            }
+          />
         </header>
-      </Flex>
+      </Box>
       <Box asChild flexGrow="1" minHeight="0" overflow="auto">
         <main>{children}</main>
       </Box>
