@@ -1,11 +1,9 @@
 {
   "heading": "Place {{placeId}}",
-  "sidebar": {
-    "newButton": "New",
-    "sortLabel": "Sort by",
-    "sort": {
-      "nameAsc": "Name (A → Z)",
-      "nameDesc": "Name (Z → A)"
+  "table": {
+    "columns": {
+      "name": "Name",
+      "parent": "Parent"
     },
     "empty": "No places yet"
   }

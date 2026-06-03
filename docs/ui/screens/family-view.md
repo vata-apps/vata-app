@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Display and manage a family unit — spouses (husband/wife), children, and family events (marriage, divorce, etc.). Uses the three-panel module layout (sidebar / center / aside).
+Display and manage a family unit — spouses (husband/wife), children, and family events (marriage, divorce, etc.). It renders full-width and owns its own panels.
 
 ## Domain rules
 

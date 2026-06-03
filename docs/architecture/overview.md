@@ -37,7 +37,7 @@ graph TD
 
 - **Pages**: Full application screens (Home, TreeView, IndividualView, FamilyView, etc.)
 - **Components**: Application organisms composed from Radix Themes primitives (`tree-shell.tsx`, `tree-nav.tsx`, `preferences-popover.tsx`, etc.)
-- **Shell**: The in-tree shell (`TreeShell`) wraps every route under `/tree/$treeId/...` with a persistent navigation header and a fixed three-column layout.
+- **Shell**: The in-tree shell (`TreeShell`) wraps every route under `/tree/$treeId/...` with a persistent navigation header above a full-width page body; pages own any panels they need (see [ADR-011](../adr/0011-full-width-shell.md)).
 - **Form windows**: Standalone native Tauri windows for create/edit flows (e.g. Create Person, Edit Person, Import GEDCOM). These open separately from the main shell and contain only the form content — no header, no side panels.
 
 **Technologies**: React 18, TanStack Router, Radix Themes, react-i18next.

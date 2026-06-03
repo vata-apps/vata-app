@@ -1,4 +1,5 @@
-import { Button, Flex } from '@radix-ui/themes';
+import { type ReactNode } from 'react';
+import { Flex, TabNav } from '@radix-ui/themes';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -6,18 +7,33 @@ import { Icon } from '$components/icon';
 import { NAV_SECTIONS, getTreeIdFromPath, resolveNavSection } from '$lib/nav-sections';
 
 /**
+ * Props accepted by {@link TreeNav}.
+ */
+export interface TreeNavProps {
+  /**
+   * Right-aligned content rendered at the trailing end of the tab bar,
+   * pushed away from the section links (e.g. the Settings button). Shares
+   * the bar's underline track.
+   */
+  trailing?: ReactNode;
+}
+
+/**
  * The in-tree navigation bar — one item per top-level section
- * (Home, People, Families, Events, Places). It sits in the shell header
- * and persists across every page of an open tree.
+ * (Home, People, Families, Events, Places), with an optional trailing
+ * action pinned to the right. It sits in the shell header and persists
+ * across every page of an open tree.
  *
- * Each item is a Radix `Button` wrapping a router `Link`. The section in
- * view gets a soft-accent button (including on that section's detail
- * routes — an individual detail highlights People); the rest are ghost.
+ * Each section is a Radix `TabNav.Link` wrapping a router `Link`. The
+ * section in view is marked `active` (including on that section's detail
+ * routes — an individual detail highlights People), which draws the
+ * underline indicator; section-active state is driven by
+ * `resolveNavSection`.
  *
  * Reads the active tree and section from the current route; renders
  * nothing when used outside the in-tree context.
  */
-export function TreeNav(): JSX.Element | null {
+export function TreeNav({ trailing }: TreeNavProps): JSX.Element | null {
   const { t } = useTranslation('common');
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const treeId = getTreeIdFromPath(pathname);
@@ -26,35 +42,32 @@ export function TreeNav(): JSX.Element | null {
   if (treeId === null) return null;
 
   return (
-    <Flex asChild align="center" gap="1">
-      <nav aria-label={t('nav.ariaLabel')}>
-        {NAV_SECTIONS.map((section) => {
-          const label = t(section.labelKey);
-          const isActive = section.id === activeSection;
-          return (
-            <Button
-              key={section.id}
-              asChild
-              size="2"
-              variant={isActive ? 'soft' : 'ghost'}
-              color={isActive ? undefined : 'gray'}
+    <TabNav.Root aria-label={t('nav.ariaLabel')}>
+      {NAV_SECTIONS.map((section) => {
+        const isActive = section.id === activeSection;
+        return (
+          <TabNav.Link key={section.id} asChild active={isActive}>
+            <Link
+              to={section.to}
+              params={{ treeId }}
+              // Without `exact`, TanStack's fuzzy matcher marks the Home link
+              // active on every in-tree route (its path is a prefix of them
+              // all); section-active state is driven by resolveNavSection.
+              activeOptions={{ exact: true }}
             >
-              <Link
-                to={section.to}
-                params={{ treeId }}
-                // Without `exact`, TanStack's fuzzy matcher marks the Home link
-                // active on every in-tree route (its path is a prefix of them
-                // all); section-active state is driven by resolveNavSection.
-                activeOptions={{ exact: true }}
-                aria-current={isActive ? 'page' : undefined}
-              >
+              <Flex align="center" gap="2">
                 <Icon name={section.icon} size={16} />
-                {label}
-              </Link>
-            </Button>
-          );
-        })}
-      </nav>
-    </Flex>
+                {t(section.labelKey)}
+              </Flex>
+            </Link>
+          </TabNav.Link>
+        );
+      })}
+      {trailing !== undefined && (
+        <Flex align="center" ml="auto">
+          {trailing}
+        </Flex>
+      )}
+    </TabNav.Root>
   );
 }

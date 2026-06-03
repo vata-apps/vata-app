@@ -1,15 +1,16 @@
 {
   "heading": "Individual {{individualId}}",
-  "sidebar": {
-    "newButton": "New",
-    "sortLabel": "Sort by",
-    "sort": {
-      "surnameAsc": "Surname (A → Z)",
-      "surnameDesc": "Surname (Z → A)",
-      "givenAsc": "Given name (A → Z)",
-      "givenDesc": "Given name (Z → A)",
-      "birthAsc": "Birth (oldest first)",
-      "birthDesc": "Birth (newest first)"
+  "table": {
+    "columns": {
+      "name": "Name",
+      "sex": "Sex",
+      "birth": "Birth",
+      "death": "Death"
+    },
+    "sex": {
+      "M": "Male",
+      "F": "Female",
+      "U": "Unknown"
     },
     "empty": "No people yet",
     "unknownName": "Unknown"

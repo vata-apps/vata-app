@@ -21,6 +21,8 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-007: UI Foundation](./adr/0007-adopt-radix-themes.md) — Radix Themes, dropping Tailwind + the wrapper layer
 - [ADR-008: Autonomous Agent Execution](./adr/0008-autonomous-agent-execution.md) — Sandcastle on GitHub Actions, label-triggered, Sonnet default
 - [ADR-009: Agent Addresses PR Review Feedback](./adr/0009-agent-review-feedback.md) — review-triggered agent loop on agent PRs
+- [ADR-010: Pure Radix Themes](./adr/0010-pure-radix-themes.md) — Drop brand palette, custom fonts, motion, and scoped CSS (supersedes parts of ADR-007)
+- [ADR-011: Full-Width In-Tree Shell](./adr/0011-full-width-shell.md) — Pages own their panels; removes the three-column scaffold and four entity sidebars
 
 ## Architecture
 

@@ -34,11 +34,11 @@ Adaptable interface, resizable panels, light/dark theme.
 
 Although desktop-first, the interface adapts to window size. The two thresholds are a deliberate decision:
 
-| Range                  | Layout behavior                                                                                              |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Compact (< 1024px)     | Collapsed sidebar (icons only); detail panel as overlay or standalone window; menus collapse into dropdowns. |
-| Standard (1024–1440px) | Expanded sidebar; centered main content; optional detail panel.                                              |
-| Wide (> 1440px)        | Expanded sidebar; wide main content; detail panel always visible.                                            |
+| Range                  | Layout behavior                                                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Compact (< 1024px)     | Icon-only nav buttons; any page-owned panel collapses to an overlay or standalone window; menus collapse into dropdowns. |
+| Standard (1024–1440px) | Full-label nav; full-width page body; any page-owned panel inline.                                                       |
+| Wide (> 1440px)        | Full-label nav; wide page body; page-owned panels inline.                                                                |
 
 ## Accessibility
 

@@ -1,11 +1,9 @@
 {
   "heading": "Lieu {{placeId}}",
-  "sidebar": {
-    "newButton": "Nouveau",
-    "sortLabel": "Trier par",
-    "sort": {
-      "nameAsc": "Nom A → Z",
-      "nameDesc": "Nom Z → A"
+  "table": {
+    "columns": {
+      "name": "Nom",
+      "parent": "Parent"
     },
     "empty": "Aucun lieu"
   }

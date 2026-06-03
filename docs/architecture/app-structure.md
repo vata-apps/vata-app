@@ -6,7 +6,7 @@
 
 ## Mental Model
 
-Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Final Cut. A genealogical tree is a **project file** (a `.db` SQLite database, in a directory chosen by the user). The picker is a **transit screen**, not a destination — equivalent to a workspace launcher or "File > Open Recent". Once a tree is open, the entire app belongs to that one tree: routes, navigation, sidebars, command palette, native menu items all reflect a single context.
+Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Final Cut. A genealogical tree is a **project file** (a `.db` SQLite database, in a directory chosen by the user). The picker is a **transit screen**, not a destination — equivalent to a workspace launcher or "File > Open Recent". Once a tree is open, the entire app belongs to that one tree: routes, navigation, command palette, native menu items all reflect a single context.
 
 **Single tree at a time.** No tabs, no multi-window. Closing returns to the picker so the user can pick another.
 
