@@ -18,9 +18,10 @@ export interface TreeShellProps {
  * The in-tree application shell — the persistent frame around every page
  * under an open tree.
  *
- * A persistent 56px header carries the {@link TreeNav} navigation bar on
- * the left and a Settings button (opening the {@link PreferencesPopover})
- * on the right, above a single full-width body that holds the routed page.
+ * A persistent header carries the {@link TreeNav} tab bar, with a Settings
+ * button (opening the {@link PreferencesPopover}) pinned to its right, above
+ * a single full-width body that holds the routed page. No separator divides
+ * the header from the body.
  *
  * The shell provides no fixed side panels: pages render full-width by
  * default and build any panels they need inside their own body. See

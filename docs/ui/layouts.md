@@ -17,7 +17,7 @@ The two layouts are the visual expression of the **two app contexts** (outside p
 
 `TreeShell` (`src/components/tree-shell.tsx`) frames every route under `/tree/$treeId/...`:
 
-- A persistent **header** carrying `TreeNav` — the navigation bar for the tree's sections (Home, People, Families, Events, Places). Each section is an icon-and-label `Button`: the section in view uses `variant="solid"` in the accent color, the others `variant="soft"` in gray. A Settings button on the right opens the preferences popover. The header does not remount as the user moves between sections.
+- A persistent **header** carrying `TreeNav` — a Radix `TabNav` for the tree's sections (Home, People, Families, Events, Places). Each section is an icon-and-label underline tab; the section in view draws the accent underline. The Settings button is pinned to the right of the same bar (a trailing slot), so the underline track spans the full header width. The header does not remount as the user moves between sections, and no separator divides it from the body.
 - A **full-width body** holding the routed page. The page owns the full width; there is no shared left or right panel.
 
 **Pages render full-width by default.** The shell provides only the header and a full-width body — no fixed side panels. A page that needs its own panels (a list rail, a contextual detail pane) builds them inside its own body when the need is real, rather than inheriting an always-present shared scaffold. The entity sections (People, Families, Events, Places) render their list as a full-width `Table` directly in the page body, and a row click opens that entity's detail route.

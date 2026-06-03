@@ -16,7 +16,7 @@ The shell provides **only a persistent header and a full-width page body**. The 
 - **Pages render full-width by default.** A page that needs its own panels (a list rail, a contextual detail pane) builds them inside its own body, when the need is real — not by inheriting an always-present shared scaffold.
 - **The entity lists move into their pages as full-width tables.** People, Families, Events, and Places each render a Radix `Table` directly in the page body. A row click opens that entity's detail route. The four `*Sidebar` components and the shared `EntityListPanel` are deleted; a new `EntityTable` organism carries the column-driven table, loading/empty/error states, and row navigation shared by all four.
 - **Tables are read-only this pass.** No toolbar, no count badge, no "New" action, no sort control — each table has a single fixed default sort (People by surname, Families by husband surname, Events by date oldest-first, Places by name). The sort UI and the disabled "New" affordance the sidebars carried are dropped, to be reintroduced per-page when each section's real design lands.
-- **The top nav drops the `ghost` variant.** Section buttons use `variant="solid"` (accent) when active and `variant="soft"` (gray) when not, so every item carries visible chrome instead of being invisible until hover.
+- **The top nav is a Radix `TabNav`.** Each section is an underline tab (`TabNav.Link`), the section in view drawing the accent underline; the Settings action is pinned to the right of the same bar via a trailing slot, so the underline track spans the full header width. This replaces the earlier `ghost`-variant button row, which left inactive items invisible until hover.
 
 ## Why
 
@@ -28,11 +28,11 @@ The shell provides **only a persistent header and a full-width page body**. The 
 
 - **Keep the three-column shell, fill the panels later**: rejected — it preserves dead space and stub pages indefinitely, the exact state ADR-010 flagged for removal.
 - **Move the lists into the page but keep the narrow card list (no table)**: rejected — a 332px card list stretched to full width reads as sparse; a table uses the horizontal space and is the right primitive for a scannable entity list.
-- **Switch the top nav to `TabNav`**: rejected — the underline tab-bar look was not wanted for the primary navigation; the button-row look is kept, only the `ghost` variant is dropped.
+- **Keep the top nav as a button row** (`soft` active / `surface` or `soft` inactive, dropping only `ghost`): tried, then replaced by `TabNav` — the underline tab bar reads more clearly as primary navigation and lets the Settings action share the bar's full-width track.
 
 ## Consequences
 
-**Positive**: full-width pages; no permanently-empty panel; the entity lists become real, scannable tables; one shared `EntityTable` organism replaces four sidebars plus `EntityListPanel`; the nav reads as a set of controls rather than near-invisible ghost text.
+**Positive**: full-width pages; no permanently-empty panel; the entity lists become real, scannable tables; one shared `EntityTable` organism replaces four sidebars plus `EntityListPanel`; the nav reads as a clear underline tab bar rather than near-invisible ghost text.
 
 **Negative / Trade-offs**: the persistent always-visible section list (and its selected-row highlight while on a detail route) is gone — a section's list and an entity's detail no longer sit side by side; sort controls and the count badge are lost until reintroduced per page; the detail routes remain stubs (owned by the person-overview work), so a row click currently lands on a placeholder.
 
