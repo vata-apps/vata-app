@@ -13,7 +13,7 @@ A pure-`@radix-ui/themes` proof of concept (the `/home-radix` and person-overvie
 
 Every styling decision is made by Radix Themes. The app uses **direct Radix Themes components only**, with no hand-authored visual CSS anywhere.
 
-- **No custom CSS.** `app.css` reduces to `@import '@radix-ui/themes/styles.css'` plus a 4-line root reset (`html, body, #root { height: 100% }`, `body { margin: 0 }`) — the one sanctioned exception, because Radix cannot size `html`/`body`. Every other `.css` file is deleted.
+- **No custom CSS.** `app.css` reduces to `@import '@radix-ui/themes/styles.css'` plus a 4-line root reset (`html, body, #root { height: 100% }`, `body { margin: 0 }`) — the one sanctioned exception, because Radix cannot size `html`/`body`. Every other `.css` file is deleted. Additional `app.css` rules are allowed only as explicit, documented carve-outs (see [Carve-outs](#carve-outs)) for capabilities Radix exposes no prop for.
 - **No brand palette.** Radix defaults — **indigo accent, default gray**. The custom oklch scales are removed; no `accentColor`/`grayColor` override.
 - **No custom fonts.** The Geist/Fraunces/Geist Mono `@font-face` blocks and font-family overrides are removed; all three roles fall to Radix's built-in **system stacks**. Serif (Fraunces) headings are gone.
 - **No custom motion.** All `transition`/`transform`/`@keyframes` and `prefers-reduced-motion` handling are deleted. Only Radix components' own built-in interaction states remain.
@@ -25,6 +25,7 @@ Every styling decision is made by Radix Themes. The app uses **direct Radix Them
 
 - **The Lucide icon registry (`src/components/icon.tsx`) is kept** — icon governance, not styling, exactly as ADR-007 framed it. `@radix-ui/react-icons` is not adopted.
 - **The four entity sidebars** are purified on a best-effort, low-investment basis only; they are scheduled for removal when the new entity page lands.
+- **Clickable table rows** (`.entity-table__row--clickable` in `app.css`) — `cursor: pointer` plus a `var(--gray-a3)` hover tint applied by `EntityTable` to rows that have an `onRowClick`. Radix `Table.Row` exposes no clickable/hover affordance through props, so a navigable row cannot signal its interactivity in pure Radix. This is the one capability gap where "re-express, don't delete" would mean shipping an actionable row with no pointer or hover feedback — a usability regression, not a lost flourish. The rule is scoped to the one class, draws only from the Radix gray scale (no custom color), and adds no motion. The hover tint targets the row's `th`/`td` (not the `<tr>`) because Radix paints cell, not row, backgrounds. New `app.css` rules still require an ADR amendment like this one.
 
 ## Why
 
