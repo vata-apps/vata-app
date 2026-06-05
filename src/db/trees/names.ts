@@ -461,3 +461,18 @@ export function formatName(name: Name | null): NameDisplay {
 export function formatNameSimple(name: Name | null): string {
   return formatName(name).short;
 }
+
+/**
+ * Whether any of `names` matches a free-text search `query`. Each name is
+ * tested as `"<given names> <surname>"`, case-insensitively, with a substring
+ * match. The `query` is expected to be already lower-cased and trimmed by the
+ * caller (filtering loops lower-case it once before iterating).
+ *
+ * Shared by the People and Families list filters so both search names the same
+ * way.
+ */
+export function nameMatchesQuery(names: Name[], query: string): boolean {
+  return names.some((name) =>
+    `${name.givenNames ?? ''} ${name.surname ?? ''}`.toLowerCase().includes(query)
+  );
+}

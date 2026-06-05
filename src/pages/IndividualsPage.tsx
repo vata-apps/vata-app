@@ -12,7 +12,7 @@ import {
 } from '$components/individuals-filters';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { useIndividuals } from '$hooks/useIndividuals';
-import { formatName } from '$db-tree/names';
+import { formatName, nameMatchesQuery } from '$db-tree/names';
 import type { EventWithDetails, Gender, IndividualWithDetails } from '$types/database';
 
 interface IndividualsPageProps {
@@ -75,12 +75,7 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
       if (filters.sex !== 'all' && person.gender !== filters.sex) return false;
       if (filters.status === 'living' && !person.isLiving) return false;
       if (filters.status === 'deceased' && person.isLiving) return false;
-      if (query) {
-        const match = person.names.some((name) =>
-          `${name.givenNames ?? ''} ${name.surname ?? ''}`.toLowerCase().includes(query)
-        );
-        if (!match) return false;
-      }
+      if (query && !nameMatchesQuery(person.names, query)) return false;
       return true;
     });
   }, [data, filters.sex, filters.status, debouncedName]);

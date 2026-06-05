@@ -7,12 +7,13 @@ import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import {
   DEFAULT_FAMILY_FILTERS,
   FamiliesFilters,
+  type FamilyFilters,
   hasActiveFilters,
 } from '$components/families-filters';
 import { Icon } from '$components/icon';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { useFamilies } from '$hooks/useFamilies';
-import { formatName } from '$db-tree/names';
+import { formatName, nameMatchesQuery } from '$db-tree/names';
 import type { FamilyWithMembers, IndividualWithDetails } from '$types/database';
 
 interface FamiliesPageProps {
@@ -31,10 +32,7 @@ const COLUMN_WIDTH = {
 
 /** Whether any of the spouse's names matches the (lower-cased) query. */
 function spouseMatches(spouse: IndividualWithDetails | null, query: string): boolean {
-  if (!spouse) return false;
-  return spouse.names.some((name) =>
-    `${name.givenNames ?? ''} ${name.surname ?? ''}`.toLowerCase().includes(query)
-  );
+  return spouse !== null && nameMatchesQuery(spouse.names, query);
 }
 
 /**
@@ -58,10 +56,16 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
     return (data ?? []).filter((family) => {
       const hasHusband = family.husband !== null;
       const hasWife = family.wife !== null;
-      if (filters.spouses === 'both' && !(hasHusband && hasWife)) return false;
-      if (filters.spouses === 'missingHusband' && !(!hasHusband && hasWife)) return false;
-      if (filters.spouses === 'missingWife' && !(hasHusband && !hasWife)) return false;
-      if (filters.spouses === 'none' && (hasHusband || hasWife)) return false;
+      // Positive predicate per option — reads as the plain definition of each
+      // choice, avoiding the double-negation of an "if X and not X" chain.
+      const spouseOk: Record<FamilyFilters['spouses'], boolean> = {
+        all: true,
+        both: hasHusband && hasWife,
+        missingHusband: !hasHusband && hasWife,
+        missingWife: hasHusband && !hasWife,
+        none: !hasHusband && !hasWife,
+      };
+      if (!spouseOk[filters.spouses]) return false;
 
       const hasChildren = family.children.length > 0;
       if (filters.children === 'with' && !hasChildren) return false;
