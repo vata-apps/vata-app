@@ -1,0 +1,19 @@
+src/i18n/locales/fr/families.json
+  s_f9406fe10e21ed::t_0913b284547abf 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "e81fdb64ab58cd0d70154894f3ae3d44c0fb109c",
+  "prompts": {},
+  "sessions": {
+    "s_f9406fe10e21ed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c64bae45-5933-410e-9b04-23252acc6649",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
