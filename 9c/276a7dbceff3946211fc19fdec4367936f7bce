@@ -1,0 +1,33 @@
+src/i18n/locales/en/families.json
+  s_f9406fe10e21ed::t_4704a6657cb7e9 3-25,28-31,35-36
+src/components/individuals-filters.tsx
+  s_f9406fe10e21ed::t_9257717d8e1f25 58
+  s_f9406fe10e21ed::t_b4254beb84cedb 67
+  s_f9406fe10e21ed::t_a1c070118dbf5d 51
+src/i18n/locales/en/common.json
+  s_f9406fe10e21ed::t_d79e5b5256a8ed 5-8
+src/i18n/locales/fr/families.json
+  s_f9406fe10e21ed::t_72f784a0ba292d 3-25,28-31,35-36
+src/i18n/locales/fr/common.json
+  s_f9406fe10e21ed::t_2a17ac5ef280d4 5-8
+src/components/families-filters.tsx
+  s_f9406fe10e21ed::t_cf6b65ead99f00 1-130
+src/pages/FamiliesPage.tsx
+  s_f9406fe10e21ed::t_831e07b37a4183 1,4,7-13,16,22-39,50-64,66-78,80-81,83-86,88-94,99,103-111,114-125,130,132,134-136,140-174
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "9c276a7dbceff3946211fc19fdec4367936f7bce",
+  "prompts": {},
+  "sessions": {
+    "s_f9406fe10e21ed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c64bae45-5933-410e-9b04-23252acc6649",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
