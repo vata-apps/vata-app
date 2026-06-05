@@ -113,7 +113,9 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
         header: t('table.columns.wife'),
         width: COLUMN_WIDTH.name,
         cell: (family) =>
-          family.wife?.primaryName ? formatName(family.wife.primaryName).surnameFirst : '—',
+          family.wife?.primaryName
+            ? formatName(family.wife.primaryName).surnameFirst
+            : t('table.unknownName'),
         sortValue: (family) => formatName(family.wife?.primaryName ?? null).sortable || null,
       },
       {
