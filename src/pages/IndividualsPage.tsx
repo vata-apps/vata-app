@@ -90,6 +90,9 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
       {
         key: 'gender',
         header: '',
+        // The header is icon-column-empty; name it for assistive tech since
+        // this column stands in for the removed "Sex" text column.
+        headerLabel: t('table.columns.sex'),
         width: COLUMN_WIDTH.gender,
         // gender is constrained to M/F/U by the schema; the icon carries the
         // sex (the dedicated Sex column was removed), so it is announced.

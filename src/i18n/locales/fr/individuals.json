@@ -23,6 +23,7 @@
   },
   "table": {
     "columns": {
+      "sex": "Sexe",
       "surname": "Nom",
       "firstName": "Prénom",
       "birthDate": "Date de naissance",

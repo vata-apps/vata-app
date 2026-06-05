@@ -8,8 +8,16 @@ import { sortByKey } from '$lib/sortByKey';
 export interface EntityTableColumn<T> {
   /** Stable key for the column (used as the React key). */
   key: string;
-  /** Translated, user-facing column header. */
+  /** Translated, user-facing column header. May be empty for an icon-only
+   * column — in that case set {@link headerLabel} so the column header still
+   * has an accessible name. */
   header: string;
+  /**
+   * Accessible name for the column header, applied as its `aria-label`. Set
+   * this only when {@link header} is visually empty (an icon-only column);
+   * columns with visible header text are named by that text.
+   */
+  headerLabel?: string;
   /** Renders the cell content for one row. */
   cell: (item: T) => ReactNode;
   /**
@@ -200,6 +208,7 @@ export function EntityTable<T>({
               <Table.ColumnHeaderCell
                 key={column.key}
                 width={column.width}
+                aria-label={column.headerLabel}
                 aria-sort={ariaSort(column, sort)}
               >
                 {column.sortValue ? (
