@@ -1,11 +1,35 @@
 {
   "heading": "Individual {{individualId}}",
+  "page": {
+    "addPerson": "Add person"
+  },
+  "filters": {
+    "title": "Filters",
+    "clear": "Clear",
+    "name": {
+      "label": "Name",
+      "placeholder": "Search by name"
+    },
+    "sex": {
+      "label": "Sex",
+      "all": "All"
+    },
+    "status": {
+      "label": "Status",
+      "all": "All",
+      "living": "Living",
+      "deceased": "Deceased"
+    }
+  },
   "table": {
     "columns": {
-      "name": "Name",
       "sex": "Sex",
-      "birth": "Birth",
-      "death": "Death"
+      "surname": "Surname",
+      "firstName": "First name",
+      "birthDate": "Birth date",
+      "birthPlace": "Birth place",
+      "deathDate": "Death date",
+      "deathPlace": "Death place"
     },
     "sex": {
       "M": "Male",
@@ -13,6 +37,7 @@
       "U": "Unknown"
     },
     "empty": "No people yet",
+    "noMatches": "No people match your filters",
     "unknownName": "Unknown"
   }
 }
