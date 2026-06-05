@@ -21,12 +21,11 @@ interface FamiliesPageProps {
 }
 
 /**
- * Column widths keyed by the kind of data each column holds, so columns of
- * the same type (the four spouse-name columns) stay visually uniform
- * regardless of their individual contents.
+ * Column widths keyed by the kind of data each column holds, so the two
+ * spouse-name columns stay visually uniform regardless of their contents.
  */
 const COLUMN_WIDTH = {
-  name: '200px',
+  name: '280px',
   children: '120px',
 } as const;
 
@@ -81,8 +80,8 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
   const columns = useMemo<EntityTableColumn<FamilyWithMembers>[]>(
     () => [
       {
-        key: 'husbandSurname',
-        header: t('table.columns.husbandSurname'),
+        key: 'husband',
+        header: t('table.columns.husband'),
         rowHeader: true,
         width: COLUMN_WIDTH.name,
         // A keyboard-focusable link (styled as plain text) so the list is
@@ -100,7 +99,9 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
               to="/tree/$treeId/family/$familyId"
               params={{ treeId, familyId: family.id }}
             >
-              {family.husband?.primaryName?.surname?.trim() || t('table.unknownName')}
+              {family.husband
+                ? formatName(family.husband.primaryName).surnameFirst
+                : t('table.unknownName')}
             </RouterLink>
           </Link>
         ),
@@ -108,25 +109,11 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
         sortValue: (family) => formatName(family.husband?.primaryName ?? null).sortable || null,
       },
       {
-        key: 'husbandFirstName',
-        header: t('table.columns.husbandFirstName'),
+        key: 'wife',
+        header: t('table.columns.wife'),
         width: COLUMN_WIDTH.name,
-        cell: (family) => family.husband?.primaryName?.givenNames?.trim() || '—',
-        sortValue: (family) => family.husband?.primaryName?.givenNames?.trim() || null,
-      },
-      {
-        key: 'wifeSurname',
-        header: t('table.columns.wifeSurname'),
-        width: COLUMN_WIDTH.name,
-        cell: (family) => family.wife?.primaryName?.surname?.trim() || '—',
+        cell: (family) => (family.wife ? formatName(family.wife.primaryName).surnameFirst : '—'),
         sortValue: (family) => formatName(family.wife?.primaryName ?? null).sortable || null,
-      },
-      {
-        key: 'wifeFirstName',
-        header: t('table.columns.wifeFirstName'),
-        width: COLUMN_WIDTH.name,
-        cell: (family) => family.wife?.primaryName?.givenNames?.trim() || '—',
-        sortValue: (family) => family.wife?.primaryName?.givenNames?.trim() || null,
       },
       {
         key: 'children',
@@ -172,7 +159,7 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
             isError={isError}
             errorMessage={tCommon('errors.loadFailed')}
             emptyMessage={hasActiveFilters(filters) ? t('table.noMatches') : t('table.empty')}
-            defaultSort={{ columnKey: 'husbandSurname', direction: 'asc' }}
+            defaultSort={{ columnKey: 'husband', direction: 'asc' }}
           />
         </Grid>
       </Flex>

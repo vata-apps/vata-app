@@ -25,10 +25,8 @@
   },
   "table": {
     "columns": {
-      "husbandSurname": "Nom du mari",
-      "husbandFirstName": "Prénom du mari",
-      "wifeSurname": "Nom de l'épouse",
-      "wifeFirstName": "Prénom de l'épouse",
+      "husband": "Mari",
+      "wife": "Épouse",
       "children": "Enfants"
     },
     "empty": "Aucune famille",

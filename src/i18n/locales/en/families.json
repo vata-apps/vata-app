@@ -25,10 +25,8 @@
   },
   "table": {
     "columns": {
-      "husbandSurname": "Husband surname",
-      "husbandFirstName": "Husband first name",
-      "wifeSurname": "Wife surname",
-      "wifeFirstName": "Wife first name",
+      "husband": "Husband",
+      "wife": "Wife",
       "children": "Children"
     },
     "empty": "No families yet",
