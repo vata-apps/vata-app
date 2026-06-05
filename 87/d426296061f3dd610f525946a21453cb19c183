@@ -1,0 +1,27 @@
+src/db/trees/names.ts
+  s_f9406fe10e21ed::t_0630bd934a2fc3 464-478
+src/pages/FamiliesPage.tsx
+  s_f9406fe10e21ed::t_ede0254b8dd1f9 16,35
+  s_f9406fe10e21ed::t_e0ebe999d4ef59 61
+  s_f9406fe10e21ed::t_d8bf6c4094c8c3 10
+  s_f9406fe10e21ed::t_0696116a38f444 59-60,62-68
+src/pages/IndividualsPage.tsx
+  s_f9406fe10e21ed::t_f8aedb248cc0d3 15
+  s_f9406fe10e21ed::t_fa643a76136e21 78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "87d426296061f3dd610f525946a21453cb19c183",
+  "prompts": {},
+  "sessions": {
+    "s_f9406fe10e21ed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c64bae45-5933-410e-9b04-23252acc6649",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
