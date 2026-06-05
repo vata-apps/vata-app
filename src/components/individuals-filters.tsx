@@ -48,13 +48,14 @@ export interface IndividualsFiltersProps {
  */
 export function IndividualsFilters({ value, onChange }: IndividualsFiltersProps): JSX.Element {
   const { t } = useTranslation('individuals');
+  const { t: tCommon } = useTranslation('common');
   const active = hasActiveFilters(value);
 
   return (
     <Card>
       <Flex direction="column" gap="4">
         <Flex align="center" justify="between">
-          <Heading size="3">{t('filters.title')}</Heading>
+          <Heading size="3">{tCommon('filters.title')}</Heading>
           {active && (
             <Button
               variant="ghost"
@@ -63,7 +64,7 @@ export function IndividualsFilters({ value, onChange }: IndividualsFiltersProps)
               onClick={() => onChange(DEFAULT_INDIVIDUAL_FILTERS)}
             >
               <Icon name="x" />
-              {t('filters.clear')}
+              {tCommon('filters.clear')}
             </Button>
           )}
         </Flex>

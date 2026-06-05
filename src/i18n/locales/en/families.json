@@ -1,12 +1,38 @@
 {
   "heading": "Family {{familyId}}",
+  "page": {
+    "addFamily": "Add family"
+  },
+  "filters": {
+    "name": {
+      "label": "Name",
+      "placeholder": "Search by spouse name"
+    },
+    "spouses": {
+      "label": "Spouses",
+      "all": "All",
+      "both": "Both spouses",
+      "missingHusband": "Missing husband",
+      "missingWife": "Missing wife",
+      "none": "No spouses"
+    },
+    "children": {
+      "label": "Children",
+      "all": "All",
+      "with": "With children",
+      "without": "Childless"
+    }
+  },
   "table": {
     "columns": {
-      "husband": "Husband",
-      "wife": "Wife",
+      "husbandSurname": "Husband surname",
+      "husbandFirstName": "Husband first name",
+      "wifeSurname": "Wife surname",
+      "wifeFirstName": "Wife first name",
       "children": "Children"
     },
     "empty": "No families yet",
-    "unknownSpouse": "Unknown"
+    "noMatches": "No families match your filters",
+    "unknownName": "Unknown"
   }
 }
