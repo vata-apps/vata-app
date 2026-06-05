@@ -1,0 +1,19 @@
+src/pages/FamiliesPage.tsx
+  s_f9406fe10e21ed::t_6143080563601c 116-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "e0b499262745772bc436ae6fc0abcc84685063ab",
+  "prompts": {},
+  "sessions": {
+    "s_f9406fe10e21ed": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c64bae45-5933-410e-9b04-23252acc6649",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
