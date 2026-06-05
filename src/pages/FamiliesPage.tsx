@@ -99,7 +99,7 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
               to="/tree/$treeId/family/$familyId"
               params={{ treeId, familyId: family.id }}
             >
-              {family.husband
+              {family.husband?.primaryName
                 ? formatName(family.husband.primaryName).surnameFirst
                 : t('table.unknownName')}
             </RouterLink>
@@ -112,7 +112,8 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
         key: 'wife',
         header: t('table.columns.wife'),
         width: COLUMN_WIDTH.name,
-        cell: (family) => (family.wife ? formatName(family.wife.primaryName).surnameFirst : '—'),
+        cell: (family) =>
+          family.wife?.primaryName ? formatName(family.wife.primaryName).surnameFirst : '—',
         sortValue: (family) => formatName(family.wife?.primaryName ?? null).sortable || null,
       },
       {
