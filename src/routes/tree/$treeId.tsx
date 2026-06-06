@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
@@ -19,6 +19,7 @@ export const Route = createFileRoute('/tree/$treeId')({
     const { t } = useTranslation(['common', 'trees']);
     const { treeId } = Route.useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [dbReady, setDbReady] = useState(false);
     const [dbError, setDbError] = useState(false);
     const [debugOpen, setDebugOpen] = useState(false);
@@ -71,11 +72,16 @@ export const Route = createFileRoute('/tree/$treeId')({
       };
     }, [tree]);
 
+    // Entity query keys (individuals, families, events, places, …) are not
+    // tree-scoped, so the cache from one tree would be served for the next.
+    // Vata is single-tree-at-a-time: when the open tree closes, its cached
+    // data is void — clear it so the next tree fetches fresh.
     useEffect(() => {
       return () => {
         void closeTreeDb();
+        queryClient.clear();
       };
-    }, []);
+    }, [queryClient]);
 
     useEffect(() => {
       let unlisten: UnlistenFn | undefined;
