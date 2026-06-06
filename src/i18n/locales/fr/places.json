@@ -1,10 +1,25 @@
 {
   "heading": "Lieu {{placeId}}",
+  "page": {
+    "addPlace": "Ajouter un lieu"
+  },
+  "filters": {
+    "name": {
+      "label": "Nom",
+      "placeholder": "Rechercher par nom"
+    },
+    "type": {
+      "label": "Type",
+      "all": "Tous"
+    }
+  },
   "table": {
     "columns": {
       "name": "Nom",
+      "type": "Type",
       "parent": "Parent"
     },
-    "empty": "Aucun lieu"
+    "empty": "Aucun lieu",
+    "noMatches": "Aucun lieu ne correspond aux filtres"
   }
 }

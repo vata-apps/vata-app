@@ -1,5 +1,18 @@
 {
   "heading": "Événement {{eventId}}",
+  "page": {
+    "addEvent": "Ajouter un événement"
+  },
+  "filters": {
+    "type": {
+      "label": "Type",
+      "all": "Tous"
+    },
+    "place": {
+      "label": "Lieu",
+      "all": "Tous"
+    }
+  },
   "table": {
     "columns": {
       "type": "Type",
@@ -8,6 +21,7 @@
       "place": "Lieu"
     },
     "empty": "Aucun événement",
+    "noMatches": "Aucun événement ne correspond aux filtres",
     "unknownPrincipal": "Inconnu(e)",
     "dateUnknown": "Date inconnue"
   },
