@@ -382,12 +382,10 @@ async function getOrCreatePlace(fullName: string, ctx: ImportContext): Promise<s
     return id;
   }
 
-  // Create new place
-  const parts = fullName.split(',').map((p) => p.trim());
-  const name = parts[0] || fullName;
-
+  // Create new place. The PLAC value is stored verbatim as both name and
+  // full_name — no hierarchy decomposition happens on import.
   const result = await db.execute('INSERT INTO places (name, full_name) VALUES ($1, $2)', [
-    name,
+    fullName,
     fullName,
   ]);
   if (result.lastInsertId === undefined) {
