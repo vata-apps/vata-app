@@ -1,10 +1,25 @@
 {
   "heading": "Place {{placeId}}",
+  "page": {
+    "addPlace": "Add place"
+  },
+  "filters": {
+    "name": {
+      "label": "Name",
+      "placeholder": "Search by name"
+    },
+    "type": {
+      "label": "Type",
+      "all": "All"
+    }
+  },
   "table": {
     "columns": {
       "name": "Name",
+      "type": "Type",
       "parent": "Parent"
     },
-    "empty": "No places yet"
+    "empty": "No places yet",
+    "noMatches": "No places match your filters"
   }
 }
