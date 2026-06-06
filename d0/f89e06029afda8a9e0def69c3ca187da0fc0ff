@@ -1,0 +1,39 @@
+src/pages/EventsPage.tsx
+  s_8255b33bd1a35a::t_0a6ea2be31dcc4 51-69
+  s_8255b33bd1a35a::t_459ee61939c78d 1,4,7-13,23-31,80-83,92-93,101-111,121-124,126-132,138,143,151-152,158,165-193,195-203
+  s_8255b33bd1a35a::t_5cadd291f1e0ef 84-87,89-91,94-95,98-100
+src/pages/PlacesPage.tsx
+  s_8255b33bd1a35a::t_51f98b951c8991 1,4,7-14,16-17,24-32,42,44-45,47,53-85,92-95,97-103,109-118,124-125,128,133-156,158-167
+src/lib/placeTypeLabel.ts
+  s_8255b33bd1a35a::t_ed7259ebd5ccff 1-14
+src/hooks/usePlaceTypes.ts
+  s_8255b33bd1a35a::t_73655243329fdd 1-11
+src/i18n/locales/en/events.json
+  s_8255b33bd1a35a::t_c88fc782c3dd8b 3-15,24
+src/components/events-filters.tsx
+  s_8255b33bd1a35a::t_ce23f3fc92b1a0 1-56,58-122
+src/i18n/locales/fr/events.json
+  s_8255b33bd1a35a::t_9644f2c42334ea 3-15,24
+src/i18n/locales/fr/places.json
+  s_8255b33bd1a35a::t_2e416bd945068f 3-15,19,22-23
+src/components/places-filters.tsx
+  s_8255b33bd1a35a::t_6aa7603c4aa528 1-115
+src/i18n/locales/en/places.json
+  s_8255b33bd1a35a::t_e3996b7fe19707 3-15,19,22-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "d0f89e06029afda8a9e0def69c3ca187da0fc0ff",
+  "prompts": {},
+  "sessions": {
+    "s_8255b33bd1a35a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8d36d4cb-8f60-4cfa-abea-ddb6076d397c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
