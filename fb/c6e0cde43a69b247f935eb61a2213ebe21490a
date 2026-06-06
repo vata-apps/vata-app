@@ -1,0 +1,21 @@
+src/lib/gedcom/importer.ts
+  s_f26236e6a67759::t_a2a789ca7e50e4 385-386,388
+docs/references/gedcom-551-mapping.md
+  s_f26236e6a67759::t_41a1d2ba45428b 50,54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "fbc6e0cde43a69b247f935eb61a2213ebe21490a",
+  "prompts": {},
+  "sessions": {
+    "s_f26236e6a67759": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fd8e270c-ad83-4aa4-b97a-b6e7bdf3d28a",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
