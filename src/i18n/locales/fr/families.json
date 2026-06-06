@@ -1,12 +1,36 @@
 {
   "heading": "Famille {{familyId}}",
+  "page": {
+    "addFamily": "Ajouter une famille"
+  },
+  "filters": {
+    "name": {
+      "label": "Nom",
+      "placeholder": "Rechercher par nom d'époux"
+    },
+    "spouses": {
+      "label": "Époux",
+      "all": "Tous",
+      "both": "Les deux époux",
+      "missingHusband": "Mari manquant",
+      "missingWife": "Épouse manquante",
+      "none": "Aucun époux"
+    },
+    "children": {
+      "label": "Enfants",
+      "all": "Tous",
+      "with": "Avec enfants",
+      "without": "Sans enfant"
+    }
+  },
   "table": {
     "columns": {
-      "husband": "Mari",
+      "husband": "Époux",
       "wife": "Épouse",
       "children": "Enfants"
     },
     "empty": "Aucune famille",
-    "unknownSpouse": "Inconnu(e)"
+    "noMatches": "Aucune famille ne correspond aux filtres",
+    "unknownName": "Inconnu(e)"
   }
 }

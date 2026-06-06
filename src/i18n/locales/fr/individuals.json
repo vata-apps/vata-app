@@ -4,8 +4,6 @@
     "addPerson": "Ajouter une personne"
   },
   "filters": {
-    "title": "Filtres",
-    "clear": "Effacer",
     "name": {
       "label": "Nom",
       "placeholder": "Rechercher par nom"
