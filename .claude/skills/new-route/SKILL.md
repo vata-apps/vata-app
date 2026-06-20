@@ -39,114 +39,33 @@ For nested routes with a dynamic ID (e.g., `/tree/$treeId/entity/$entityId`):
 
 ## 2. Page Component
 
-Location: `src/pages/<Entity>Page.tsx`
+Location: `src/pages/<Entity>Page.tsx`. **Copy the shape of an existing page** — `src/pages/IndividualsPage.tsx` is the canonical example. Invariants:
 
-```typescript
-import React, { useRef, useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '$/lib/query-keys';
-
-interface EntityPageProps {
-  treeId: string;
-}
-
-export function EntityPage({ treeId }: EntityPageProps): JSX.Element {
-  const [modalOpen, setModalOpen] = useState(false);
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const queryClient = useQueryClient();
-
-  // React Query hooks for data
-  // const { data, isLoading, isError } = useEntities();
-
-  // Mutation for create/update/delete
-  // const { mutate, isPending } = useMutation({ ... });
-
-  return (
-    <div>
-      <h2>Entities</h2>
-      {/* List, search, create button */}
-    </div>
-  );
-}
-```
+- Receives `{ treeId }` (list page) or `{ treeId, entityId }` (detail page); returns `JSX.Element`.
+- Built from Radix Themes primitives (`Box`, `Flex`, `Heading`, `Button`, …) — never raw HTML tags for layout.
+- All user-facing text via `useTranslation()` — never hardcode strings (project i18n rule).
+- Data via TanStack Query hooks in `src/hooks/use<Entity>.ts`; handle `isLoading` / `isError`.
 
 ## 3. Conventions
 
-### Imports — Use path aliases
+Path aliases, the query-key factory, `staleTime`, and naming are cross-cutting rules owned by [typescript-standards](../typescript-standards/SKILL.md) — follow it (the checklist below chains to it). Route/page-specific notes only:
 
-```typescript
-import { something } from '$/pages/SomePage'; // src/pages/
-import { useHook } from '$hooks/useHook'; // src/hooks/
-import { dbFunction } from '$db-tree/entity'; // src/db/trees/
-import { queryKeys } from '$/lib/query-keys'; // src/lib/
-import type { Entity } from '$types'; // src/types/
-```
+### Modal dialogs (create/edit forms)
 
-### React Query pattern
+Modals are standalone organism components in `src/components/trees/` (e.g. `new-tree-modal.tsx`), built on Radix Themes **`Dialog`** (`Dialog.Root` / `Dialog.Content` / `Dialog.Title`) — which provides focus trap, Escape handling, and ARIA out of the box. The page composes one via `open` / `onOpenChange` props. **Never hand-roll** `role="dialog"`, Escape listeners, or focus management.
 
-- Use `queryKeys` factory from `$/lib/query-keys` (add entries if needed)
-- Invalidate queries on mutation success: `queryClient.invalidateQueries({ queryKey: queryKeys.entities })`
-- Custom hooks go in `src/hooks/use<Entity>.ts`
+### Error handling
 
-### Modal dialogs (required for create/edit forms)
-
-Every modal **must** have:
-
-- `role="dialog"`
-- `aria-modal="true"`
-- `aria-labelledby` pointing to a heading inside the dialog
-- Escape key handler to close
-- Focus management (auto-focus first input on open)
-
-```typescript
-useEffect(() => {
-  if (modalOpen) {
-    titleInputRef.current?.focus();
-  }
-}, [modalOpen]);
-
-useEffect(() => {
-  function handleEscape(e: KeyboardEvent) {
-    if (e.key === 'Escape') setModalOpen(false);
-  }
-  if (modalOpen) document.addEventListener('keydown', handleEscape);
-  return () => document.removeEventListener('keydown', handleEscape);
-}, [modalOpen]);
-```
-
-### React lists
-
-When returning a Fragment from `.map()`, always use `<React.Fragment key={...}>`, never `<>`.
-
-### Error handling pattern
-
-```typescript
-const { mutate, isPending } = useMutation({
-  mutationFn: (input: CreateEntityInput) => createEntity(input),
-  onSuccess: () => {
-    void queryClient.invalidateQueries({ queryKey: queryKeys.entities });
-    setModalOpen(false);
-    setForm(EMPTY_FORM);
-    setSubmitError(null);
-  },
-  onError: (err: unknown) => {
-    const message = err instanceof Error ? err.message : 'An unexpected error occurred.';
-    setSubmitError(message);
-  },
-});
-```
+Surface `isError` from queries in the UI, and show mutation errors via an i18n message (never a hardcoded English string). See `IndividualsPage.tsx` for the pattern.
 
 ## Checklist
 
 Before finishing:
 
 - [ ] Route file uses `createFileRoute()` with correct path
-- [ ] Page component receives `treeId` prop
+- [ ] Page component receives `treeId` (and `entityId` for detail views)
 - [ ] `routeTree.gen.ts` was NOT edited
-- [ ] Path aliases used (not relative paths from outside `src/db/`)
-- [ ] Modal has `role="dialog"`, `aria-modal`, `aria-labelledby`, Escape handler
-- [ ] `.map()` uses `<React.Fragment key={}>` not `<>`
+- [ ] Page uses Radix Themes primitives + `useTranslation()` (no raw HTML layout, no hardcoded strings)
+- [ ] Modal is a Radix `Dialog` organism composed via `open` / `onOpenChange` (no hand-rolled a11y)
 - [ ] Query key added to `$/lib/query-keys` if new entity
-- [ ] Debug UI guarded with `import.meta.env.DEV`
 - [ ] Also apply the [typescript-standards](../typescript-standards/SKILL.md) checklist

@@ -119,7 +119,7 @@ When creating a new entity's database layer in `src/db/trees/`, follow this stru
 ```typescript
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
-import type { Entity, CreateEntityInput, UpdateEntityInput } from '$/types/database';
+import type { Entity, CreateEntityInput, UpdateEntityInput } from '$types/database';
 ```
 
 **2. Raw type** (snake_case, matching DB columns)

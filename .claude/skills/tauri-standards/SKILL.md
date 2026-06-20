@@ -27,6 +27,8 @@ Check these files for the canonical source of truth:
 
 The Rust backend is **intentionally thin**. It serves as a bridge for native capabilities only. Business logic belongs in the TypeScript layer (`src/`), not in Rust.
 
+The standing exceptions already in `lib.rs` are the native app menu (`build_app_menu`) and its React-shell coupling (the `set_close_tree_enabled` command + emitted menu events). When touching the menu, keep the Rust builder and the React mount-time sync in step.
+
 ---
 
 ## 2. Tauri v2 Capabilities
@@ -35,21 +37,9 @@ Capabilities are defined in `src-tauri/capabilities/`. Each capability file gran
 
 - **Principle of least privilege**: Only grant the permissions actually needed.
 - **Format**: JSON files in `src-tauri/capabilities/`. Each file has `identifier`, `windows`, and `permissions` fields.
-- **Scoping**: Use `allow-*` permissions for specific operations, not blanket `allow-all`.
+- **Scoping**: grant specific `allow-*` permissions, never blanket `allow-all`.
 
-```json
-// ✅ GOOD — scoped permissions
-{
-  "identifier": "main-window",
-  "windows": ["main"],
-  "permissions": [
-    "sql:allow-execute",
-    "sql:allow-select",
-    "fs:allow-read-text-file",
-    "dialog:allow-open"
-  ]
-}
-```
+The project has a **single** capability file — `src-tauri/capabilities/default.json`. Read it for the canonical, current permission set rather than trusting an inline example here (an example drifts; the file does not).
 
 ---
 
@@ -109,6 +99,6 @@ try {
 
 ## 7. Common Mistakes to Avoid
 
-- **Never grant `$HOME/**` filesystem scope**: This gives the app access to the entire home directory. Only scope to `$APPDATA`, `$DOCUMENT`, and `$DOWNLOAD` as needed.
-- **Only request permissions for plugins actively imported in source code**: If a plugin (e.g., `store`) is registered in `lib.rs` but never imported in TypeScript, remove its permissions from capabilities.
+- **Never grant whole-home filesystem scope** (`$HOME` and below): scope only to `$APPDATA`, `$DOCUMENT`, and `$DOWNLOAD` as needed.
+- **Only request permissions for plugins actually used from TypeScript**: e.g. `tauri_plugin_store` is registered in `lib.rs` but has no TS import today — a real cleanup candidate. Drop unused plugins' permissions (and ideally the registration itself).
 - **Audit permissions when removing features**: If you remove code that used a plugin, also remove the corresponding capability permissions.

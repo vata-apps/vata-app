@@ -16,10 +16,14 @@ Apply this skill when writing or reviewing any GEDCOM-related code or documentat
 
 ---
 
-## 1. External Libraries
+## 1. Parsing & Date Libraries
 
-- **`gedcom-parser`**: All parsing, serialization, and validation. Check `package.json` for the current package. Never write custom GEDCOM parsing logic.
-- **`gedcom-date`**: All date parsing, formatting, and sort-date generation. Check `package.json` for the current package. Never write custom GEDCOM date parsing.
+Two **in-app modules** own all GEDCOM parsing and date logic — never write custom parsing or date handling:
+
+- **`@vata-apps/gedcom-parser`** (`src/gedcom-parser/`): parsing, serialization, validation, BOM stripping, CONC/CONT continuation, and name-part splitting (given/surname/prefix/suffix).
+- **`@vata-apps/gedcom-date`** (`src/gedcom-date/`): date parsing, formatting, sort-date generation.
+
+These are local source resolved via path alias (see [ADR-004](../../../docs/adr/0004-gedcom-libraries.md)), **not** npm packages — don't look for them in `package.json`.
 
 ---
 
@@ -48,6 +52,7 @@ Never import families before all individuals are created.
 
 - Maintain a `placeCache: Map<string, string>` to avoid creating duplicate places
 - Check cache first, then database, then create a new place
+- Store the `PLAC` value **verbatim** as both `name` and `full_name` with `parent_id` null — no hierarchy split on import; dedupe on `full_name`
 
 ### Error Reporting
 
@@ -166,11 +171,9 @@ For a concise review checklist, see [checklist.md](checklist.md).
 
 ## 10. Common Mistakes to Avoid
 
-- **Strip BOM (`\uFEFF`) before any string checks on GEDCOM content**: Files from Windows editors often include a UTF-8 BOM. Strip it before checking `isGedcom()` or validating.
-- **Parse name suffix separately from given names**: The suffix after `/SURNAME/` (e.g., "Jr.") must be returned as a separate field, not appended to `givenNames`.
-- **Support ALL GEDCOM 5.5.1 individual event and attribute tags**: See §5 for the complete list. Missing tags cause silent data loss on import.
 - **Skip families with zero linked members in privacy export**: When `includePrivate` is false, families whose members are all excluded (living) must be skipped entirely.
+- **Don't re-implement parser concerns in import code**: BOM stripping, CONC/CONT, and name-part splitting all live in `@vata-apps/gedcom-parser` (§1) — consume its output, never redo it.
 
 ---
 
-For the full GEDCOM-to-Vata mapping, see [docs/references/gedcom-551-mapping.md](../../docs/references/gedcom-551-mapping.md).
+For the full GEDCOM-to-Vata mapping, see [docs/references/gedcom-551-mapping.md](../../../docs/references/gedcom-551-mapping.md).
