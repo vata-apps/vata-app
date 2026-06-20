@@ -1,19 +1,36 @@
 {
   "heading": "Famille {{familyId}}",
-  "sidebar": {
-    "newButton": "Nouveau",
-    "sortLabel": "Trier par",
-    "sort": {
-      "husbandSurnameAsc": "Nom du mari (A → Z)",
-      "husbandSurnameDesc": "Nom du mari (Z → A)",
-      "wifeSurnameAsc": "Nom de l'épouse (A → Z)",
-      "wifeSurnameDesc": "Nom de l'épouse (Z → A)",
-      "childrenDesc": "Plus d'enfants",
-      "childrenAsc": "Moins d'enfants"
+  "page": {
+    "addFamily": "Ajouter une famille"
+  },
+  "filters": {
+    "name": {
+      "label": "Nom",
+      "placeholder": "Rechercher par nom d'époux"
+    },
+    "spouses": {
+      "label": "Époux",
+      "all": "Tous",
+      "both": "Les deux époux",
+      "missingHusband": "Mari manquant",
+      "missingWife": "Épouse manquante",
+      "none": "Aucun époux"
+    },
+    "children": {
+      "label": "Enfants",
+      "all": "Tous",
+      "with": "Avec enfants",
+      "without": "Sans enfant"
+    }
+  },
+  "table": {
+    "columns": {
+      "husband": "Époux",
+      "wife": "Épouse",
+      "children": "Enfants"
     },
     "empty": "Aucune famille",
-    "unknownSpouse": "Inconnu(e)",
-    "childrenCount_one": "{{count}} enfant",
-    "childrenCount_other": "{{count}} enfants"
+    "noMatches": "Aucune famille ne correspond aux filtres",
+    "unknownName": "Inconnu(e)"
   }
 }

@@ -1,12 +1,25 @@
 {
   "heading": "Place {{placeId}}",
-  "sidebar": {
-    "newButton": "New",
-    "sortLabel": "Sort by",
-    "sort": {
-      "nameAsc": "Name (A → Z)",
-      "nameDesc": "Name (Z → A)"
+  "page": {
+    "addPlace": "Add place"
+  },
+  "filters": {
+    "name": {
+      "label": "Name",
+      "placeholder": "Search by name"
     },
-    "empty": "No places yet"
+    "type": {
+      "label": "Type",
+      "all": "All"
+    }
+  },
+  "table": {
+    "columns": {
+      "name": "Name",
+      "type": "Type",
+      "parent": "Parent"
+    },
+    "empty": "No places yet",
+    "noMatches": "No places match your filters"
   }
 }

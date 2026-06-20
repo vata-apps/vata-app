@@ -1,13 +1,27 @@
 {
   "heading": "Event {{eventId}}",
-  "sidebar": {
-    "newButton": "New",
-    "sortLabel": "Sort by",
-    "sort": {
-      "dateAsc": "Date (oldest first)",
-      "dateDesc": "Date (newest first)"
+  "page": {
+    "addEvent": "Add event"
+  },
+  "filters": {
+    "type": {
+      "label": "Type",
+      "all": "All"
+    },
+    "place": {
+      "label": "Place",
+      "all": "All"
+    }
+  },
+  "table": {
+    "columns": {
+      "type": "Type",
+      "date": "Date",
+      "principals": "Principals",
+      "place": "Place"
     },
     "empty": "No events yet",
+    "noMatches": "No events match your filters",
     "unknownPrincipal": "Unknown",
     "dateUnknown": "Date unknown"
   },

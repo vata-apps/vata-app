@@ -1,4 +1,43 @@
 {
+  "heading": "Individu {{individualId}}",
+  "page": {
+    "addPerson": "Ajouter une personne"
+  },
+  "filters": {
+    "name": {
+      "label": "Nom",
+      "placeholder": "Rechercher par nom"
+    },
+    "sex": {
+      "label": "Sexe",
+      "all": "Tous"
+    },
+    "status": {
+      "label": "Statut",
+      "all": "Tous",
+      "living": "Vivant",
+      "deceased": "Décédé"
+    }
+  },
+  "table": {
+    "columns": {
+      "sex": "Sexe",
+      "surname": "Nom",
+      "firstName": "Prénom",
+      "birthDate": "Date de naissance",
+      "birthPlace": "Lieu de naissance",
+      "deathDate": "Date de décès",
+      "deathPlace": "Lieu de décès"
+    },
+    "sex": {
+      "M": "Homme",
+      "F": "Femme",
+      "U": "Inconnu"
+    },
+    "empty": "Aucune personne",
+    "noMatches": "Aucune personne ne correspond aux filtres",
+    "unknownName": "Sans nom"
+  },
   "sidebar": {
     "newButton": "Nouveau",
     "sortLabel": "Trier par",

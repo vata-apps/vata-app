@@ -25,7 +25,6 @@
     "delete": "Delete",
     "individuals": "Individuals",
     "families": "Families",
-    "generations": "Generations",
     "createdAt": "Created",
     "lastAccessedAt": "Last opened"
   },

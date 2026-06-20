@@ -1,13 +1,27 @@
 {
   "heading": "Événement {{eventId}}",
-  "sidebar": {
-    "newButton": "Nouveau",
-    "sortLabel": "Trier par",
-    "sort": {
-      "dateAsc": "Date (plus ancienne d'abord)",
-      "dateDesc": "Date (plus récente d'abord)"
+  "page": {
+    "addEvent": "Ajouter un événement"
+  },
+  "filters": {
+    "type": {
+      "label": "Type",
+      "all": "Tous"
+    },
+    "place": {
+      "label": "Lieu",
+      "all": "Tous"
+    }
+  },
+  "table": {
+    "columns": {
+      "type": "Type",
+      "date": "Date",
+      "principals": "Principaux",
+      "place": "Lieu"
     },
     "empty": "Aucun événement",
+    "noMatches": "Aucun événement ne correspond aux filtres",
     "unknownPrincipal": "Inconnu(e)",
     "dateUnknown": "Date inconnue"
   },

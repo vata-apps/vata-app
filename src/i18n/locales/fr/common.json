@@ -2,6 +2,10 @@
   "app": {
     "title": "Vata"
   },
+  "filters": {
+    "title": "Filtres",
+    "clear": "Effacer"
+  },
   "nav": {
     "home": "Accueil",
     "individuals": "Personnes",

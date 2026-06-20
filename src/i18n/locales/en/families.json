@@ -1,19 +1,36 @@
 {
   "heading": "Family {{familyId}}",
-  "sidebar": {
-    "newButton": "New",
-    "sortLabel": "Sort by",
-    "sort": {
-      "husbandSurnameAsc": "Husband surname (A → Z)",
-      "husbandSurnameDesc": "Husband surname (Z → A)",
-      "wifeSurnameAsc": "Wife surname (A → Z)",
-      "wifeSurnameDesc": "Wife surname (Z → A)",
-      "childrenDesc": "Most children",
-      "childrenAsc": "Fewest children"
+  "page": {
+    "addFamily": "Add family"
+  },
+  "filters": {
+    "name": {
+      "label": "Name",
+      "placeholder": "Search by spouse name"
+    },
+    "spouses": {
+      "label": "Spouses",
+      "all": "All",
+      "both": "Both spouses",
+      "missingHusband": "Missing husband",
+      "missingWife": "Missing wife",
+      "none": "No spouses"
+    },
+    "children": {
+      "label": "Children",
+      "all": "All",
+      "with": "With children",
+      "without": "Childless"
+    }
+  },
+  "table": {
+    "columns": {
+      "husband": "Husband",
+      "wife": "Wife",
+      "children": "Children"
     },
     "empty": "No families yet",
-    "unknownSpouse": "Unknown",
-    "childrenCount_one": "{{count}} child",
-    "childrenCount_other": "{{count}} children"
+    "noMatches": "No families match your filters",
+    "unknownName": "Unknown"
   }
 }

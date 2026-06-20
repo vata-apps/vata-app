@@ -5,8 +5,8 @@ Use this checklist when reviewing GEDCOM-related code or documentation.
 ## General
 
 - [ ] GEDCOM version is 5.5.1 only
-- [ ] Parsing done via `gedcom-parser` (no custom parsing)
-- [ ] Date parsing done via `gedcom-date` (no custom date logic)
+- [ ] Parsing done via `@vata-apps/gedcom-parser` (no custom parsing)
+- [ ] Date parsing done via `@vata-apps/gedcom-date` (no custom date logic)
 
 ## Import
 
@@ -31,8 +31,7 @@ Use this checklist when reviewing GEDCOM-related code or documentation.
 
 - [ ] Gender values: `M`, `F`, or `U` only
 - [ ] Family member roles: `husband`, `wife`, `child` only
-- [ ] Name tags mapped correctly (GIVN, SURN, NPFX, NSFX, NICK, TYPE, SPFX)
-- [ ] SPFX merged into surname field
+- [ ] Name tags (GIVN, SURN, NPFX, NSFX, NICK, TYPE, SPFX) mapped per the gedcom-551-mapping doc
 
 ## Event Types
 

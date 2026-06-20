@@ -8,8 +8,8 @@ function RootErrorComponent({ error }: ErrorComponentProps): JSX.Element {
     <Flex direction="column" align="start" gap="3" p="6">
       <Heading size="6">{t('errors.generic')}</Heading>
       {import.meta.env.DEV && (
-        <Code variant="soft" size="2" style={{ whiteSpace: 'pre-wrap' }}>
-          {error.message}
+        <Code variant="soft" size="2" asChild>
+          <pre>{error.message}</pre>
         </Code>
       )}
       <Button onClick={() => window.location.reload()}>{t('errors.reload')}</Button>

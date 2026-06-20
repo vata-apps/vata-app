@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Display all information about a person — identity and names, life events, families (parents, spouses, children), notes. The most complex module; uses the three-panel layout (sidebar / center / aside).
+Display all information about a person — identity and names, life events, families (parents, spouses, children), notes. The most complex module; it renders full-width and owns its own panels (its layout is defined by the forthcoming person-overview work).
 
 ## Domain rules
 

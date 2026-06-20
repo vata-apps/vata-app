@@ -48,7 +48,7 @@ gh api graphql -f query='
 
 Substitute `<query>` with each search term. Stop once you have 5–10 candidates across all queries — don't enumerate the entire backlog. Repo (`vata-apps/vata-app`) is hardcoded for this project; that's fine because this skill lives in the Vata repo.
 
-If the GraphQL call fails with an auth error, surface it and tell the user to run `gh auth refresh -s read:org`.
+If the GraphQL call fails with an auth error, surface it and tell the user to run `gh auth refresh -s read:org,project` (the "create new" path delegates to `capture-idea`, which needs `project`).
 
 ### 3. Present candidates
 
@@ -80,7 +80,7 @@ Tell the user in one sentence which issue is linked, e.g. _"Linked to #42 — wi
 
 ## Phase B — Inject the magic word (PR creation)
 
-Run this whenever you're about to call `gh pr create` (directly, via `/commit-push-pr`, or any other path).
+Run this whenever you're about to call `gh pr create` (directly, via `/commit-push-pr`, or any other path) — **after** the mandatory Pre-PR Review (`/simplify` + `/review`) that CLAUDE.md requires, immediately before the PR is opened.
 
 ### 1. Read the link
 

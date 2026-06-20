@@ -145,12 +145,7 @@ export function EditTreeModal({
             <Flex direction="column" gap="1">
               <Text as="label" htmlFor={nameId} size="2" weight="medium">
                 {t('editTree.nameLabel')}{' '}
-                <Text
-                  size="2"
-                  weight="regular"
-                  aria-hidden="true"
-                  style={{ color: 'var(--accent-11)' }}
-                >
+                <Text size="2" weight="regular" aria-hidden="true" color="indigo">
                   {t('editTree.nameRequired')}
                 </Text>
               </Text>
@@ -216,16 +211,10 @@ export function EditTreeModal({
 function SummaryStat({ label, value }: { label: ReactNode; value: ReactNode }): JSX.Element {
   return (
     <Flex direction="column" gap="1">
-      <Text
-        size="1"
-        weight="medium"
-        style={{ textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray-a10)' }}
-      >
+      <Text size="1" weight="medium" color="gray">
         {label}
       </Text>
-      <Text size="2" style={{ fontVariantNumeric: 'tabular-nums' }}>
-        {value}
-      </Text>
+      <Text size="2">{value}</Text>
     </Flex>
   );
 }

@@ -32,8 +32,9 @@ function useResolvedAppearance(): 'light' | 'dark' {
  * appearance to the persisted theme preference. Mounted once, at the React
  * root (see `main.tsx`).
  *
- * Uses Radix Themes defaults for accent, gray, radius, and panel background —
- * no custom tokens.
+ * Per ADR-010 the theme carries no brand overrides: color, gray, radius, and
+ * fonts all fall to Radix Themes defaults (indigo accent, system stacks). Only
+ * `appearance` is set.
  */
 export function AppTheme({ children }: { children: ReactNode }): JSX.Element {
   const appearance = useResolvedAppearance();

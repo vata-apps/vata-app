@@ -1,20 +1,5 @@
 @import '@radix-ui/themes/styles.css';
 
-/* ============================================================
-   pigeon-maps — prevent sub-pixel gaps between tiles caused by
-   floating-point scale transforms. Each tile is 256 × 256 px;
-   stretching to 257 × 257 fills the hairline seams.
-   ============================================================ */
-
-.places-panel-map .pigeon-tiles img {
-  width: 257px !important;
-  height: 257px !important;
-}
-
-/* ============================================================
-   Base — the desktop shell fills the viewport.
-   ============================================================ */
-
 html,
 body,
 #root {
@@ -23,4 +8,18 @@ body,
 
 body {
   margin: 0;
+}
+
+/*
+ * Clickable entity-table rows: pointer affordance and a hover tint drawn
+ * from the Radix gray scale (no custom palette). Applied by EntityTable only
+ * when an `onRowClick` handler is present.
+ */
+tr.entity-table__row--clickable {
+  cursor: pointer;
+}
+
+tr.entity-table__row--clickable:hover th,
+tr.entity-table__row--clickable:hover td {
+  background-color: var(--gray-a3);
 }

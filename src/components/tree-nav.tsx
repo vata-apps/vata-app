@@ -1,5 +1,5 @@
-import './tree-nav.css';
-
+import { type ReactNode } from 'react';
+import { Flex, TabNav } from '@radix-ui/themes';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -7,18 +7,33 @@ import { Icon } from '$components/icon';
 import { NAV_SECTIONS, getTreeIdFromPath, resolveNavSection } from '$lib/nav-sections';
 
 /**
+ * Props accepted by {@link TreeNav}.
+ */
+export interface TreeNavProps {
+  /**
+   * Right-aligned content rendered at the trailing end of the tab bar,
+   * pushed away from the section links (e.g. the Settings button). Shares
+   * the bar's underline track.
+   */
+  trailing?: ReactNode;
+}
+
+/**
  * The in-tree navigation bar — one item per top-level section
- * (Home, People, Families, Events, Places). It sits in the shell header
- * and persists across every page of an open tree.
+ * (Home, People, Families, Events, Places), with an optional trailing
+ * action pinned to the right. It sits in the shell header and persists
+ * across every page of an open tree.
  *
- * Each item is a fixed-height icon-and-label control. The section in view
- * gets a soft-accent pill, including on that section's detail routes (an
- * individual detail highlights People).
+ * Each section is a Radix `TabNav.Link` wrapping a router `Link`. The
+ * section in view is marked `active` (including on that section's detail
+ * routes — an individual detail highlights People), which draws the
+ * underline indicator; section-active state is driven by
+ * `resolveNavSection`.
  *
  * Reads the active tree and section from the current route; renders
  * nothing when used outside the in-tree context.
  */
-export function TreeNav(): JSX.Element | null {
+export function TreeNav({ trailing }: TreeNavProps): JSX.Element | null {
   const { t } = useTranslation('common');
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const treeId = getTreeIdFromPath(pathname);
@@ -27,51 +42,32 @@ export function TreeNav(): JSX.Element | null {
   if (treeId === null) return null;
 
   return (
-    <nav aria-label={t('nav.ariaLabel')}>
-      <ul className="tree-nav-list">
-        {NAV_SECTIONS.map((section) => {
-          const label = t(section.labelKey);
-          const isActive = section.id === activeSection;
-          return (
-            <li key={section.id}>
-              <Link
-                to={section.to}
-                params={{ treeId }}
-                className="tree-nav-item"
-                // Without `exact`, TanStack's fuzzy matcher marks the Home link
-                // active on every in-tree route (its path is a prefix of them
-                // all); section-active state is driven by resolveNavSection.
-                activeOptions={{ exact: true }}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <Icon name={section.icon} size={16} />
-                {label}
-              </Link>
-            </li>
-          );
-        })}
-        {/* TEMPORARY: dev-only links to pure-Radix Person Overview experiments. Remove before PR. */}
-        {import.meta.env.DEV && (
-          <li>
-            <Link to="/tree/$treeId/individual-radix" params={{ treeId }} className="tree-nav-item">
-              <Icon name="sparkles" size={16} />
-              Radix overview
-            </Link>
-          </li>
-        )}
-        {import.meta.env.DEV && (
-          <li>
+    <TabNav.Root aria-label={t('nav.ariaLabel')}>
+      {NAV_SECTIONS.map((section) => {
+        const isActive = section.id === activeSection;
+        return (
+          <TabNav.Link key={section.id} asChild active={isActive}>
             <Link
-              to="/tree/$treeId/individual-radix-empty"
+              to={section.to}
               params={{ treeId }}
-              className="tree-nav-item"
+              // Without `exact`, TanStack's fuzzy matcher marks the Home link
+              // active on every in-tree route (its path is a prefix of them
+              // all); section-active state is driven by resolveNavSection.
+              activeOptions={{ exact: true }}
             >
-              <Icon name="circle" size={16} />
-              Empty overview
+              <Flex align="center" gap="2">
+                <Icon name={section.icon} size={16} />
+                {t(section.labelKey)}
+              </Flex>
             </Link>
-          </li>
-        )}
-      </ul>
-    </nav>
+          </TabNav.Link>
+        );
+      })}
+      {trailing !== undefined && (
+        <Flex align="center" ml="auto">
+          {trailing}
+        </Flex>
+      )}
+    </TabNav.Root>
   );
 }

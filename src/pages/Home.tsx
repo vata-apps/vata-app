@@ -2,10 +2,23 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Flex, Grid, Heading, Text } from '@radix-ui/themes';
+import {
+  Badge,
+  Box,
+  Button,
+  Card,
+  Container,
+  DataList,
+  Flex,
+  Grid,
+  Heading,
+  IconButton,
+  SegmentedControl,
+  Separator,
+  Text,
+} from '@radix-ui/themes';
 
 import packageJson from '../../package.json';
-import { AppStatusBar } from '$components/app-status-bar';
 import { Icon } from '$components/icon';
 import { PreferencesPopover } from '$components/preferences-popover';
 import { DeleteTreeModal } from '$components/trees/delete-tree-modal';
@@ -13,9 +26,6 @@ import { DownloadTreeModal } from '$components/trees/download-tree-modal';
 import { EditTreeModal } from '$components/trees/edit-tree-modal';
 import { ImportGedcomModal } from '$components/trees/import-gedcom-modal';
 import { NewTreeModal } from '$components/trees/new-tree-modal';
-import { TreeCard, type TreeCardLabels } from '$components/trees/tree-card';
-import { TreeCardCta } from '$components/trees/tree-card-cta';
-import { TreeSectionDivider } from '$components/trees/tree-section-divider';
 import { getAllTrees } from '$db-system/trees';
 import { TreeManager } from '$managers/TreeManager';
 import { formatIsoDate } from '$lib/format';
@@ -46,6 +56,13 @@ function sortTrees(trees: Tree[], key: SortKey): Tree[] {
   return copy;
 }
 
+/**
+ * Home page (the trees picker). A pure-`@radix-ui/themes` build per ADR-010:
+ * the trees grid, cards, sort control, and metadata render via stock `Grid`,
+ * `Card`, `SegmentedControl`, `Badge`, and `DataList` with no custom CSS,
+ * gradients, or motion. The curated `Icon` registry is kept for action
+ * affordances.
+ */
 export function HomePage(): JSX.Element {
   const { t } = useTranslation(['common', 'trees']);
   const navigate = useNavigate();
@@ -81,19 +98,7 @@ export function HomePage(): JSX.Element {
 
   const sortedTrees = useMemo<Tree[]>(() => (trees ? sortTrees(trees, sort) : []), [trees, sort]);
 
-  const cardLabels: TreeCardLabels = {
-    open: t('trees:card.open'),
-    export: t('trees:card.export'),
-    edit: t('trees:card.edit'),
-    delete: t('trees:card.delete'),
-    individuals: t('trees:card.individuals'),
-    families: t('trees:card.families'),
-    generations: t('trees:card.generations'),
-    createdAt: t('trees:card.createdAt'),
-    lastAccessedAt: t('trees:card.lastAccessedAt'),
-  };
-
-  const sortOptions = [
+  const sortOptions: Array<{ value: SortKey; label: string }> = [
     { value: 'recent', label: t('trees:home.sortRecent') },
     { value: 'name', label: t('trees:home.sortName') },
     { value: 'size', label: t('trees:home.sortSize') },
@@ -109,88 +114,16 @@ export function HomePage(): JSX.Element {
     }
   };
 
-  const treesContent = ((): JSX.Element => {
-    if (error) return <Text color="gray">{t('common:errors.loadFailed')}</Text>;
-    if (isLoading) return <Text color="gray">{t('trees:loading')}</Text>;
-    return (
-      <>
-        <Box style={{ marginTop: 'clamp(48px, 7vw, 76px)', marginBottom: 22 }}>
-          <TreeSectionDivider
-            label={t('trees:home.sectionLabel')}
-            count={sortedTrees.length}
-            sortOptions={sortOptions}
-            sortValue={sort}
-            onSortChange={(next) => setSort(next as SortKey)}
-            sortAriaLabel={t('trees:home.sortAriaLabel')}
-          />
-        </Box>
-
-        <Grid columns={{ initial: '1', sm: '2', lg: '3' }} gap="5">
-          {sortedTrees.map((tree) => (
-            <TreeCard
-              key={tree.id}
-              name={tree.name}
-              description={tree.description ?? undefined}
-              stats={{
-                individuals: tree.individualCount,
-                families: tree.familyCount,
-              }}
-              meta={{
-                createdAt: formatIsoDate(tree.createdAt),
-                lastAccessedAt: formatIsoDate(tree.lastOpenedAt),
-              }}
-              labels={cardLabels}
-              onOpen={() => void handleOpen(tree.id)}
-              onExport={() => setExportingTree(tree)}
-              onEdit={() => setEditingTree(tree)}
-              onDelete={() => setDeletingTree(tree)}
-            />
-          ))}
-          <TreeCardCta
-            title={t('trees:cta.title')}
-            subtitle={t('trees:cta.subtitle')}
-            onClick={() => setNewTreeOpen(true)}
-          />
-        </Grid>
-      </>
-    );
-  })();
-
   return (
     <Flex direction="column" height="100vh">
-      <Box
-        flexGrow="1"
-        overflow="auto"
-        style={{
-          backgroundImage:
-            'radial-gradient(800px 500px at 8% 0%, var(--accent-a2), transparent 70%), ' +
-            'radial-gradient(600px 400px at 100% 100%, var(--accent-a1), transparent 70%)',
-        }}
-      >
-        <Box
-          style={{
-            maxWidth: 1480,
-            marginInline: 'auto',
-            paddingInline: 'clamp(28px, 6vw, 88px)',
-            paddingTop: 'clamp(48px, 8vw, 96px)',
-            paddingBottom: 56,
-          }}
-        >
-          <Box style={{ marginBottom: 'clamp(32px, 5vw, 56px)' }}>
-            <Heading
-              as="h1"
-              weight="regular"
-              style={{
-                fontSize: 'clamp(40px, 6vw, 80px)',
-                lineHeight: 1.04,
-                letterSpacing: '-0.035em',
-                textWrap: 'balance',
-              }}
-            >
-              {t('trees:home.title')}{' '}
-              <span style={{ color: 'var(--accent-10)' }}>{t('trees:home.titleAccent')}</span>
+      <Box flexGrow="1" overflow="auto">
+        <Container size="4" px="5" py="9">
+          {/* Hero */}
+          <Box mb="9">
+            <Heading as="h1" size="9" weight="regular">
+              {t('trees:home.title')} <Text color="indigo">{t('trees:home.titleAccent')}</Text>
             </Heading>
-            <Flex align="center" gap="3" mt="6" wrap="wrap">
+            <Flex align="center" gap="3" mt="5" wrap="wrap">
               <Button size="3" onClick={() => setNewTreeOpen(true)}>
                 <Icon name="plus" size={16} />
                 {t('trees:home.heroNew')}
@@ -202,31 +135,186 @@ export function HomePage(): JSX.Element {
             </Flex>
           </Box>
 
-          {treesContent}
-        </Box>
+          {/* Section header */}
+          <Flex align="center" gap="3" mb="5">
+            <Text size="2" color="gray">
+              {t('trees:home.sectionLabel')}
+            </Text>
+            <Badge variant="soft" radius="full" size="1">
+              {sortedTrees.length}
+            </Badge>
+            <Box flexGrow="1">
+              <Separator size="4" />
+            </Box>
+            <SegmentedControl.Root
+              size="1"
+              value={sort}
+              onValueChange={(next) => setSort(next as SortKey)}
+              aria-label={t('trees:home.sortAriaLabel')}
+            >
+              {sortOptions.map((option) => (
+                <SegmentedControl.Item key={option.value} value={option.value}>
+                  {option.label}
+                </SegmentedControl.Item>
+              ))}
+            </SegmentedControl.Root>
+          </Flex>
+
+          {/* Trees grid */}
+          {error && <Text color="gray">{t('common:errors.loadFailed')}</Text>}
+          {!error && isLoading && <Text color="gray">{t('trees:loading')}</Text>}
+          {!error && !isLoading && (
+            <Grid columns={{ initial: '1', sm: '2', lg: '3' }} gap="5">
+              {sortedTrees.map((tree) => (
+                <Card key={tree.id} size="3">
+                  <Flex direction="column" gap="4" height="100%">
+                    <Box>
+                      <Heading as="h2" size="6" weight="regular" truncate>
+                        {tree.name}
+                      </Heading>
+                      {tree.description && (
+                        <Text as="p" size="2" color="gray" mt="2">
+                          {tree.description}
+                        </Text>
+                      )}
+                    </Box>
+
+                    <Flex gap="6">
+                      <Flex direction="column">
+                        <Text size="7" weight="bold">
+                          {tree.individualCount}
+                        </Text>
+                        <Text size="1" color="gray">
+                          {t('trees:card.individuals')}
+                        </Text>
+                      </Flex>
+                      <Flex direction="column">
+                        <Text size="7" weight="bold">
+                          {tree.familyCount}
+                        </Text>
+                        <Text size="1" color="gray">
+                          {t('trees:card.families')}
+                        </Text>
+                      </Flex>
+                    </Flex>
+
+                    <Box>
+                      <Separator size="4" mb="3" />
+                      <DataList.Root size="1" orientation="horizontal">
+                        <DataList.Item>
+                          <DataList.Label minWidth="88px">
+                            {t('trees:card.createdAt')}
+                          </DataList.Label>
+                          <DataList.Value>{formatIsoDate(tree.createdAt)}</DataList.Value>
+                        </DataList.Item>
+                        <DataList.Item>
+                          <DataList.Label minWidth="88px">
+                            {t('trees:card.lastAccessedAt')}
+                          </DataList.Label>
+                          <DataList.Value>{formatIsoDate(tree.lastOpenedAt)}</DataList.Value>
+                        </DataList.Item>
+                      </DataList.Root>
+                    </Box>
+
+                    <Flex align="center" gap="3" mt="auto">
+                      <Box flexGrow="1" asChild>
+                        <Button variant="soft" size="3" onClick={() => void handleOpen(tree.id)}>
+                          <Icon name="folder-open" size={16} />
+                          {t('trees:card.open')}
+                          <Icon name="arrow-right" size={16} />
+                        </Button>
+                      </Box>
+                      <IconButton
+                        variant="ghost"
+                        size="3"
+                        color="gray"
+                        aria-label={t('trees:card.export')}
+                        onClick={() => setExportingTree(tree)}
+                      >
+                        <Icon name="download" size={16} />
+                      </IconButton>
+                      <IconButton
+                        variant="ghost"
+                        size="3"
+                        color="gray"
+                        aria-label={t('trees:card.edit')}
+                        onClick={() => setEditingTree(tree)}
+                      >
+                        <Icon name="pencil" size={16} />
+                      </IconButton>
+                      <IconButton
+                        variant="ghost"
+                        size="3"
+                        color="gray"
+                        aria-label={t('trees:card.delete')}
+                        onClick={() => setDeletingTree(tree)}
+                      >
+                        <Icon name="trash" size={16} />
+                      </IconButton>
+                    </Flex>
+                  </Flex>
+                </Card>
+              ))}
+
+              {/* Add-a-tree CTA tile */}
+              <Card size="3" asChild>
+                <button type="button" onClick={() => setNewTreeOpen(true)}>
+                  <Flex
+                    direction="column"
+                    align="center"
+                    justify="center"
+                    gap="3"
+                    height="100%"
+                    minHeight="240px"
+                  >
+                    <Icon name="plus" size={28} />
+                    <Flex direction="column" align="center" gap="1">
+                      <Text size="2" weight="medium">
+                        {t('trees:cta.title')}
+                      </Text>
+                      <Text size="1" color="gray">
+                        {t('trees:cta.subtitle')}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </button>
+              </Card>
+            </Grid>
+          )}
+        </Container>
       </Box>
 
-      <AppStatusBar
-        brandLabel={t('common:app.title')}
-        version={packageJson.version}
-        debug={
-          import.meta.env.DEV
-            ? {
-                label: t('common:statusBar.debug'),
-                shortcut: '⌘D',
-                onClick: () => setDebugOpen((prev) => !prev),
-              }
-            : undefined
-        }
-        preferencesTrigger={
-          <PreferencesPopover>
-            <Button variant="soft" size="2" color="gray">
-              <Icon name="settings" size={16} />
-              {t('common:statusBar.preferences')}
-            </Button>
-          </PreferencesPopover>
-        }
-      />
+      {/* Status bar */}
+      <Separator size="4" />
+      <Flex align="center" gap="3" flexShrink="0" px="4" py="2">
+        <Text size="1" color="gray">
+          {t('common:app.title')}
+        </Text>
+        <Text size="1" color="gray" aria-hidden>
+          ·
+        </Text>
+        <Text size="1" color="gray">
+          v {packageJson.version}
+        </Text>
+        <Box flexGrow="1" />
+        {import.meta.env.DEV && (
+          <Button
+            variant="ghost"
+            size="2"
+            color="gray"
+            onClick={() => setDebugOpen((prev) => !prev)}
+          >
+            <Icon name="bug" size={16} />
+            {t('common:statusBar.debug')}
+          </Button>
+        )}
+        <PreferencesPopover>
+          <Button variant="soft" size="2" color="gray">
+            <Icon name="settings" size={16} />
+            {t('common:statusBar.preferences')}
+          </Button>
+        </PreferencesPopover>
+      </Flex>
 
       <NewTreeModal open={newTreeOpen} onOpenChange={setNewTreeOpen} />
       <ImportGedcomModal open={importOpen} onOpenChange={setImportOpen} />

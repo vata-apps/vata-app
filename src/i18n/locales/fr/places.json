@@ -1,12 +1,25 @@
 {
   "heading": "Lieu {{placeId}}",
-  "sidebar": {
-    "newButton": "Nouveau",
-    "sortLabel": "Trier par",
-    "sort": {
-      "nameAsc": "Nom A → Z",
-      "nameDesc": "Nom Z → A"
+  "page": {
+    "addPlace": "Ajouter un lieu"
+  },
+  "filters": {
+    "name": {
+      "label": "Nom",
+      "placeholder": "Rechercher par nom"
     },
-    "empty": "Aucun lieu"
+    "type": {
+      "label": "Type",
+      "all": "Tous"
+    }
+  },
+  "table": {
+    "columns": {
+      "name": "Nom",
+      "type": "Type",
+      "parent": "Parent"
+    },
+    "empty": "Aucun lieu",
+    "noMatches": "Aucun lieu ne correspond aux filtres"
   }
 }

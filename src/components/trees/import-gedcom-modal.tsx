@@ -18,6 +18,7 @@ import {
 
 import { Dropzone } from '$components/dropzone';
 import { Icon } from '$components/icon';
+import { StatCell } from '$components/trees/stat-cell';
 import { GedcomManager, type ImportResult, type ScanResult } from '$managers/GedcomManager';
 import { formatBytes } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
@@ -368,22 +369,7 @@ function ScanGrid({ scan }: { scan: ScanResult }): JSX.Element {
     <Card>
       <Grid columns="4" gap="3">
         {items.map((item, idx) => (
-          <Flex key={idx} direction="column" gap="1">
-            <Text size="5" weight="bold" style={{ fontVariantNumeric: 'tabular-nums' }}>
-              {item.value}
-            </Text>
-            <Text
-              size="1"
-              weight="medium"
-              style={{
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-                color: 'var(--gray-a10)',
-              }}
-            >
-              {item.label}
-            </Text>
-          </Flex>
+          <StatCell key={idx} value={item.value} label={item.label} />
         ))}
       </Grid>
     </Card>
@@ -397,32 +383,24 @@ function ScanGrid({ scan }: { scan: ScanResult }): JSX.Element {
  */
 function WarningList({ warnings, label }: { warnings: string[]; label: string }): JSX.Element {
   return (
-    <Box
-      asChild
-      style={{
-        border: '1px solid var(--amber-a5)',
-        background: 'var(--amber-a2)',
-        borderRadius: 'var(--radius-3)',
-        padding: 'var(--space-3)',
-      }}
-    >
-      <details>
-        <summary style={{ cursor: 'pointer' }}>
-          <Text size="2" weight="medium" color="amber">
-            {label}
-          </Text>
-        </summary>
-        <ul style={{ margin: 'var(--space-2) 0 0', paddingLeft: 'var(--space-5)' }}>
-          {warnings.map((message, idx) => (
-            <li key={idx}>
-              <Text size="2" color="gray">
+    <Callout.Root color="amber">
+      <Box asChild>
+        <details>
+          <summary>
+            <Text size="2" weight="medium">
+              {label}
+            </Text>
+          </summary>
+          <Flex direction="column" gap="1" mt="2" pl="4">
+            {warnings.map((message, idx) => (
+              <Text key={idx} size="2">
                 {message}
               </Text>
-            </li>
-          ))}
-        </ul>
-      </details>
-    </Box>
+            ))}
+          </Flex>
+        </details>
+      </Box>
+    </Callout.Root>
   );
 }
 
@@ -433,28 +411,18 @@ function WarningList({ warnings, label }: { warnings: string[]; label: string })
  */
 function ErrorList({ errors, label }: { errors: string[]; label: string }): JSX.Element {
   return (
-    <Box
-      role="alert"
-      style={{
-        border: '1px solid var(--red-a5)',
-        background: 'var(--red-a2)',
-        borderRadius: 'var(--radius-3)',
-        padding: 'var(--space-3)',
-      }}
-    >
-      <Text size="2" weight="medium" color="red">
-        {label}
-      </Text>
-      <ul style={{ margin: 'var(--space-2) 0 0', paddingLeft: 'var(--space-5)' }}>
+    <Callout.Root color="red" role="alert">
+      <Flex direction="column" gap="1">
+        <Text size="2" weight="medium">
+          {label}
+        </Text>
         {errors.map((message, idx) => (
-          <li key={idx}>
-            <Text size="2" color="gray">
-              {message}
-            </Text>
-          </li>
+          <Text key={idx} size="2">
+            {message}
+          </Text>
         ))}
-      </ul>
-    </Box>
+      </Flex>
+    </Callout.Root>
   );
 }
 
