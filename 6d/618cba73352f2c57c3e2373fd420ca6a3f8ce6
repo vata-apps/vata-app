@@ -1,0 +1,51 @@
+.claude/skills/typescript-standards/SKILL.md
+  s_1e5a3864d1a7a0::t_c521db525bf1c9 117
+.claude/skills/testing-standards/SKILL.md
+  s_1e5a3864d1a7a0::t_ce50722c136a79 24
+  s_1e5a3864d1a7a0::t_3d0bbd3b4b538d 27
+  s_1e5a3864d1a7a0::t_d0ed968786afb2 43
+  s_1e5a3864d1a7a0::t_0196853906e5ae 29
+  s_1e5a3864d1a7a0::t_faa12518b155db 14
+.claude/skills/tauri-standards/SKILL.md
+  s_1e5a3864d1a7a0::t_2e18523455cc2c 102
+  s_1e5a3864d1a7a0::t_76c1014e0b39c8 40-42
+  s_1e5a3864d1a7a0::t_412f5e1c9e11e8 103
+  s_1e5a3864d1a7a0::t_2c6e2534ecd571 30-31
+.claude/skills/link-task/SKILL.md
+  s_1e5a3864d1a7a0::t_eb385f304a7671 83
+  s_1e5a3864d1a7a0::t_11ee86d260ffd3 51
+.claude/skills/gedcom-standards/checklist.md
+  s_1e5a3864d1a7a0::t_1b590c07a8622b 34
+  s_1e5a3864d1a7a0::t_0e6770881b6c7d 8-9
+.claude/skills/sqlite-standards/SKILL.md
+  s_1e5a3864d1a7a0::t_c63857654028b0 122
+.claude/skills/design-system-standards/SKILL.md
+  s_1e5a3864d1a7a0::t_7cbf327834a597 20,22,24-29
+  s_1e5a3864d1a7a0::t_8aa1cb12c62181 18
+  s_1e5a3864d1a7a0::t_5e5bebc0cdb53b 8
+.claude/skills/new-route/SKILL.md
+  s_1e5a3864d1a7a0::t_d52fc1dc07e9a9 42,44-47
+  s_1e5a3864d1a7a0::t_f1598e5645f4ca 51
+  s_1e5a3864d1a7a0::t_0725a21d5c50d0 53,55,57,59
+  s_1e5a3864d1a7a0::t_252eaf451bd6a9 66,68-69
+.claude/skills/gedcom-standards/SKILL.md
+  s_1e5a3864d1a7a0::t_909fbff771bc96 19,21-26
+  s_1e5a3864d1a7a0::t_f35eb1481afaad 55
+  s_1e5a3864d1a7a0::t_f049a32e24f534 175
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "6d618cba73352f2c57c3e2373fd420ca6a3f8ce6",
+  "prompts": {},
+  "sessions": {
+    "s_1e5a3864d1a7a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "11655342-fe9f-4903-848d-71d00a5f86d2",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
