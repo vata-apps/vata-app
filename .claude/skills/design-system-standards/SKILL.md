@@ -5,7 +5,7 @@ description: Conventions for vata-app's UI — when to reuse a Radix Themes comp
 
 # Design System Standards — Vata
 
-Vata's UI is **Radix Themes** (`@radix-ui/themes`), consumed directly at call sites — no `src/components/ui/` wrapper layer. Current source of truth: [ADR-010](../../docs/adr/0010-pure-radix-themes.md) (pure Radix Themes — no brand overrides, no custom CSS). ADR-007 is the earlier decision it supersedes in part.
+Vata's UI is **Radix Themes** (`@radix-ui/themes`), consumed directly at call sites — no `src/components/ui/` wrapper layer. Current source of truth: [ADR-010](../../../docs/adr/0010-pure-radix-themes.md) (pure Radix Themes — no brand overrides, no custom CSS). ADR-007 is the earlier decision it supersedes in part.
 
 ## Decision tree
 

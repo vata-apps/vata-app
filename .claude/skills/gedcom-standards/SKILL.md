@@ -23,7 +23,7 @@ Two **in-app modules** own all GEDCOM parsing and date logic — never write cus
 - **`@vata-apps/gedcom-parser`** (`src/gedcom-parser/`): parsing, serialization, validation, BOM stripping, CONC/CONT continuation, and name-part splitting (given/surname/prefix/suffix).
 - **`@vata-apps/gedcom-date`** (`src/gedcom-date/`): date parsing, formatting, sort-date generation.
 
-These are local source resolved via path alias (see [ADR-004](../../docs/adr/0004-gedcom-libraries.md)), **not** npm packages — don't look for them in `package.json`.
+These are local source resolved via path alias (see [ADR-004](../../../docs/adr/0004-gedcom-libraries.md)), **not** npm packages — don't look for them in `package.json`.
 
 ---
 
@@ -176,4 +176,4 @@ For a concise review checklist, see [checklist.md](checklist.md).
 
 ---
 
-For the full GEDCOM-to-Vata mapping, see [docs/references/gedcom-551-mapping.md](../../docs/references/gedcom-551-mapping.md).
+For the full GEDCOM-to-Vata mapping, see [docs/references/gedcom-551-mapping.md](../../../docs/references/gedcom-551-mapping.md).
