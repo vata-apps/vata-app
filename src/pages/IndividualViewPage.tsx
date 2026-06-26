@@ -1,41 +1,58 @@
-import { Box, Flex, Grid } from '@radix-ui/themes';
+import { Box, Flex, Grid, Text } from '@radix-ui/themes';
+import { getRouteApi } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
-import { IdentityHeader } from '$components/person-overview/identity-header';
-import { LifeSpine } from '$components/person-overview/life-spine';
-import { personOverview } from '$components/person-overview/overview-mock';
-import { PlacesLivedPanel } from '$components/person-overview/places-lived-panel';
-import { ProfileAside } from '$components/person-overview/profile-aside';
-import { RecordRail } from '$components/person-overview/record-rail';
+import { IdentityHeader, OverviewTabs } from '$components/person-overview-radix/identity-header';
+import { LifeSpine } from '$components/person-overview-radix/life-spine';
+import { RecordRail } from '$components/person-overview-radix/record-rail';
+import { usePersonOverview } from '$hooks/usePersonOverview';
+
+const routeApi = getRouteApi('/tree/$treeId/individual/$individualId');
 
 /**
- * The Person Overview — a full-width chronology of one individual: an
- * identity header, a record rail beside a life-spine timeline, a places-lived
- * map, and a right column of completion, media, and research panels.
+ * The Person Overview for one individual: the pure-Radix identity header,
+ * section tabs, a parents/names/media rail, and a life-events spine — all
+ * driven by live tree data via {@link usePersonOverview}.
  *
- * This is a static design replication of the "Person Overview — Chronology"
- * mockup; its content comes from {@link personOverview} rather than the live
- * tree database.
+ * The research-notes aside, suggestions, and places map from the design
+ * prototype are intentionally omitted: those panels have no data model yet.
  */
 export function IndividualViewPage(): JSX.Element {
-  const { person, figures, parents, marriage, milestones, places, completion, media, suggestions } =
-    personOverview;
+  const { t } = useTranslation('individuals');
+  const { individualId } = routeApi.useParams();
+  const { data, isLoading } = usePersonOverview(individualId);
+
+  if (isLoading) {
+    return (
+      <Flex p="6" justify="center">
+        <Text color="gray">{t('overview.loading')}</Text>
+      </Flex>
+    );
+  }
+
+  if (!data) {
+    return (
+      <Flex p="6" justify="center">
+        <Text color="gray">{t('overview.notFound')}</Text>
+      </Flex>
+    );
+  }
 
   return (
-    <Box p="6">
-      <Flex direction="column" gap="6">
-        <IdentityHeader person={person} />
-
-        <Grid columns={{ initial: '1', md: 'minmax(0, 1fr) 320px' }} gap="5" align="start">
-          <Flex direction="column" gap="5">
-            <Grid columns={{ initial: '1', sm: '285px minmax(0, 1fr)' }} gap="5" align="start">
-              <RecordRail figures={figures} parents={parents} marriage={marriage} />
-              <LifeSpine milestones={milestones} />
-            </Grid>
-            <PlacesLivedPanel region={places.region} pins={places.pins} legend={places.legend} />
-          </Flex>
-
-          <ProfileAside completion={completion} media={media} suggestions={suggestions} />
-        </Grid>
+    <Box p="4">
+      <Flex direction="column" gap="4">
+        <IdentityHeader person={data.person} />
+        <Flex direction="column" gap="4">
+          <OverviewTabs />
+          <Grid
+            columns={{ initial: '1', sm: 'minmax(0, 1fr) minmax(0, 2fr)' }}
+            gap="4"
+            align="start"
+          >
+            <RecordRail parents={data.parents} names={data.names} media={data.media} />
+            <LifeSpine milestones={data.milestones} />
+          </Grid>
+        </Flex>
       </Flex>
     </Box>
   );

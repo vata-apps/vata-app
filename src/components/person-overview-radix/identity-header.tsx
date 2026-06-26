@@ -18,21 +18,23 @@ function sexIcon(sex: string): IconName {
  * monogram uses `Avatar`'s fallback. The section tabs are a separate
  * {@link OverviewTabs}.
  */
+/** Join a (possibly partial) date and place into one label, or `null` when neither is recorded. */
+function vitalLabel(date: string, place: string): string | null {
+  return [date, place].filter(Boolean).join(', ') || null;
+}
+
 export function IdentityHeader({ person }: { person: OverviewPerson }): JSX.Element {
   const { t } = useTranslation('individuals');
 
+  const bornLabel = vitalLabel(person.birthDate, person.birthPlace);
+  const diedLabel = vitalLabel(person.deathDate, person.deathPlace);
+
+  // The sex glyph is always shown; the born/died segments only appear when the
+  // event is recorded, so people without a death event don't show a stray icon.
   const segments: Array<{ key: string; icon: IconName; label?: string }> = [
     { key: 'sex', icon: sexIcon(person.sex) },
-    {
-      key: 'born',
-      icon: 'baby',
-      label: t('overview.vital.event', { date: person.birthDate, place: person.birthPlace }),
-    },
-    {
-      key: 'died',
-      icon: 'cross',
-      label: t('overview.vital.event', { date: person.deathDate, place: person.deathPlace }),
-    },
+    ...(bornLabel ? [{ key: 'born', icon: 'baby' as IconName, label: bornLabel }] : []),
+    ...(diedLabel ? [{ key: 'died', icon: 'cross' as IconName, label: diedLabel }] : []),
   ];
 
   return (

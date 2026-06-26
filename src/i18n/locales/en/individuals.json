@@ -53,6 +53,8 @@
     "unknownName": "Unknown"
   },
   "overview": {
+    "loading": "Loading…",
+    "notFound": "Individual not found",
     "tabs": {
       "overview": "Overview",
       "pedigree": "Pedigree",
@@ -69,7 +71,6 @@
       "otherNames_other": "{{count}} other names"
     },
     "vital": {
-      "event": "{{date}}, {{place}}",
       "sex": "Sex"
     },
     "figures": {
@@ -95,6 +96,11 @@
       "types": {
         "birth": "Birth",
         "married": "Married",
+        "adopted": "Adopted",
+        "aka": "Also known as",
+        "immigrant": "Immigrant",
+        "religious": "Religious",
+        "other": "Other",
         "nickname": "Nickname"
       }
     },

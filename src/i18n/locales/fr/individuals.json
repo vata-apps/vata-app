@@ -53,6 +53,8 @@
     "unknownName": "Sans nom"
   },
   "overview": {
+    "loading": "Chargement…",
+    "notFound": "Individu introuvable",
     "tabs": {
       "overview": "Aperçu",
       "pedigree": "Ascendance",
@@ -69,7 +71,6 @@
       "otherNames_other": "{{count}} autres noms"
     },
     "vital": {
-      "event": "{{date}}, {{place}}",
       "sex": "Sexe"
     },
     "figures": {
@@ -95,6 +96,11 @@
       "types": {
         "birth": "Naissance",
         "married": "Mariage",
+        "adopted": "Adoption",
+        "aka": "Aussi connu sous",
+        "immigrant": "Immigrant",
+        "religious": "Religieux",
+        "other": "Autre",
         "nickname": "Surnom"
       }
     },
