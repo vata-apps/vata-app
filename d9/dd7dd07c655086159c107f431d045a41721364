@@ -1,0 +1,38 @@
+src/i18n/locales/fr/individuals.json
+  s_540af90671bf6b::t_617c2a1bf79b81 99-103
+  s_540af90671bf6b::t_e3a771e21b84e7 56-57
+src/components/person-overview-radix/identity-header.tsx
+  s_540af90671bf6b::t_310c96e76decb2 21-25,29-33,36-37
+src/hooks/usePersonOverview.ts
+  s_540af90671bf6b::t_2601bb73bedd3d 1-17
+src/db/trees/person-overview.ts
+  s_540af90671bf6b::t_c348c7bfbd40da 1-64,66-177
+  s_540af90671bf6b::t_8fb5399158c7bc 65
+src/pages/IndividualViewPage.tsx
+  s_540af90671bf6b::t_f687c35fb96576 1-3,5-10,13-15,17-18,21-23,25-31,33-39,41-55
+src/components/person-overview-radix/build-overview.test.ts
+  s_540af90671bf6b::t_281aa4f749779b 1-210
+src/lib/query-keys.ts
+  s_540af90671bf6b::t_6cea8137cff4b4 25
+src/components/person-overview-radix/build-overview.ts
+  s_540af90671bf6b::t_8966c5255de0cb 1-140
+src/i18n/locales/en/individuals.json
+  s_540af90671bf6b::t_94caf3cb339749 56-57
+  s_540af90671bf6b::t_22b70a8a27720d 99-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "d9dd7dd07c655086159c107f431d045a41721364",
+  "prompts": {},
+  "sessions": {
+    "s_540af90671bf6b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e524fae5-dcf7-4879-9369-00476b74376e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
