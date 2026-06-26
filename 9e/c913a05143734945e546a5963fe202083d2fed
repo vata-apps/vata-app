@@ -1,0 +1,26 @@
+src/components/icon.tsx
+  s_540af90671bf6b::t_fd38bbef2ed81c 4
+  s_540af90671bf6b::t_eebd1971118371 55,59
+  s_540af90671bf6b::t_0197b636e8d646 57
+  s_540af90671bf6b::t_25debc5defa61a 24,26
+  s_540af90671bf6b::t_06708c0e2c4953 12
+  s_540af90671bf6b::t_033ea939cd2a53 49
+  s_540af90671bf6b::t_228c587645edab 69,71
+  s_540af90671bf6b::t_426460a3c8bba7 10,14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.13",
+  "base_commit_sha": "9ec913a05143734945e546a5963fe202083d2fed",
+  "prompts": {},
+  "sessions": {
+    "s_540af90671bf6b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e524fae5-dcf7-4879-9369-00476b74376e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
