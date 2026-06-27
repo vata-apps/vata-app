@@ -1,0 +1,44 @@
+src/components/person-overview-radix/record-rail.tsx
+  s_540af90671bf6b::t_66cf976373c31f 17,25,28,35
+  s_540af90671bf6b::t_2b4a75ebad2278 36-38
+  s_540af90671bf6b::t_4307b9b0e9a180 39-41,55,63,76,79,81
+src/components/person-overview-radix/life-spine.tsx
+  s_540af90671bf6b::t_72d08849cfc56f 94,98-112,114-120,124-130
+  s_540af90671bf6b::t_e07af5e557c6e3 19-25
+  s_540af90671bf6b::t_19bdfd0673f9bd 61
+  s_540af90671bf6b::t_cd8bd170afc3fd 146
+  s_540af90671bf6b::t_a0788bd7c4966f 168
+  s_540af90671bf6b::t_4c943fb48fb26f 2
+src/components/person-overview-radix/person-ref.tsx
+  s_540af90671bf6b::t_628ceee0bf6c1e 83
+  s_540af90671bf6b::t_42ed03d3da46fb 45-46,49,54-57
+  s_540af90671bf6b::t_a602c39b18b61a 2,10-11
+src/pages/IndividualOverviewRadixPage.tsx
+  s_540af90671bf6b::t_c8e12ad0e0b9e0 44,46
+  s_540af90671bf6b::t_7523331f145463 27
+  s_540af90671bf6b::t_eb8e32126af0a0 2
+  s_540af90671bf6b::t_f9414dc712d191 11-12
+src/pages/IndividualViewPage.tsx
+  s_540af90671bf6b::t_ea6aa3891dd89c 56-61,64
+src/pages/IndividualOverviewEmptyPage.tsx
+  s_540af90671bf6b::t_869078ff5c996f 40,42
+  s_540af90671bf6b::t_0e098c302170b2 23
+  s_540af90671bf6b::t_d61e4178d6bffa 2
+  s_540af90671bf6b::t_fc054c2bb8c339 11-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "c23c184475ab539abf65be6ae66db333594b95b9",
+  "prompts": {},
+  "sessions": {
+    "s_540af90671bf6b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e524fae5-dcf7-4879-9369-00476b74376e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
