@@ -48,16 +48,12 @@ function ParentsPanel({
             show a muted label + an "Add" button instead of a PersonRef. */}
         <Flex direction="column">
           <ParentSlot
-            role="father"
-            label={t('overview.parents.father')}
             missingLabel={t('overview.parents.missingFather')}
             person={parents.father}
             treeId={treeId}
           />
           <Separator size="4" my="3" />
           <ParentSlot
-            role="mother"
-            label={t('overview.parents.mother')}
             missingLabel={t('overview.parents.missingMother')}
             person={parents.mother}
             treeId={treeId}
@@ -69,8 +65,6 @@ function ParentsPanel({
 }
 
 interface ParentSlotProps {
-  role: 'father' | 'mother';
-  label: string;
   missingLabel: string;
   person?: PersonRefData;
   treeId: string;
@@ -82,7 +76,7 @@ function ParentSlot({ missingLabel, person, treeId }: ParentSlotProps): JSX.Elem
   }
   return (
     <Flex align="center" gap="2">
-      <Icon name="user" size={14} style={{ color: 'var(--gray-7)' }} />
+      <Icon name="user" size={14} color="var(--gray-7)" />
       <Text size="2" color="gray">
         {missingLabel}
       </Text>

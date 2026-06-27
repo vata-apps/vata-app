@@ -45,7 +45,7 @@ function MetaSegment({ segment }: { segment: MetaSegmentData }): JSX.Element | n
     return (
       <Flex align="center" gap="1">
         {/* Icon sits next to text that carries the meaning → decorative. */}
-        <Icon name={segment.icon} size={14} style={{ color: 'var(--gray-9)' }} />
+        <Icon name={segment.icon} size={14} color="var(--gray-9)" />
         <Text size="2" color="gray">
           {segment.label}
         </Text>
@@ -58,7 +58,7 @@ function MetaSegment({ segment }: { segment: MetaSegmentData }): JSX.Element | n
       <Icon
         name={segment.icon}
         size={14}
-        style={{ color: 'var(--gray-9)' }}
+        color="var(--gray-9)"
         aria-hidden={false}
         aria-label={t(`overview.vital.${segment.key}`)}
       />

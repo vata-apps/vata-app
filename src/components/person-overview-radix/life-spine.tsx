@@ -75,7 +75,7 @@ export function LifeSpine({
 function MissingMilestone({ label }: { label: string }): JSX.Element {
   return (
     <Flex align="center" gap="2">
-      <Icon name="circle" size={14} style={{ color: 'var(--gray-7)' }} />
+      <Icon name="circle" size={14} color="var(--gray-7)" />
       <Text size="2" color="gray">
         {label}
       </Text>
@@ -134,7 +134,7 @@ function Milestone({
         {milestone.spouse && <SpouseInline spouse={milestone.spouse} treeId={treeId} />}
         <Flex flexGrow="1" />
         <Flex align="center" gap="1" flexShrink="0">
-          <Icon name="map-pin" size={14} style={{ color: 'var(--gray-9)' }} />
+          <Icon name="map-pin" size={14} color="var(--gray-9)" />
           <Text size="2" color="gray">
             {milestone.place}
           </Text>
