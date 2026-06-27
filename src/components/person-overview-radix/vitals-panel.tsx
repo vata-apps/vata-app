@@ -1,7 +1,7 @@
 import { Badge, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
-import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
+import { PlaceLink } from './entity-links';
 import type { OverviewVital } from './build-overview';
 
 interface VitalsPanelProps {
@@ -10,10 +10,9 @@ interface VitalsPanelProps {
 }
 
 /**
- * The Vitals panel: the person's birth, baptism, death and burial, each with
- * its date, a linked place, and a "sourced" badge when the event carries a
- * citation. Only recorded vitals are shown — an inline "add" affordance waits
- * on editing support.
+ * The Vitals panel: the person's birth and death, each with its date, a linked
+ * place, and a "sourced" badge when the event carries a citation. Only recorded
+ * vitals are shown — an inline "add" affordance waits on editing support.
  */
 export function VitalsPanel({ vitals, treeId }: VitalsPanelProps): JSX.Element {
   const { t } = useTranslation('individuals');
@@ -59,15 +58,11 @@ function VitalRow({ vital, treeId }: { vital: OverviewVital; treeId: string }): 
       <Flex align="baseline" gap="2" wrap="wrap">
         {vital.date && <Text size="2">{vital.date}</Text>}
         {vital.placeId && vital.placeName && (
-          <Link
-            to="/tree/$treeId/place/$placeId"
-            params={{ treeId, placeId: vital.placeId }}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
+          <PlaceLink treeId={treeId} placeId={vital.placeId}>
             <Text size="2" color="gray">
               {vital.placeName}
             </Text>
-          </Link>
+          </PlaceLink>
         )}
         {!vital.date && !vital.placeName && (
           <Text size="2" color="gray">

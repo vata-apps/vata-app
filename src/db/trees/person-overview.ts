@@ -94,11 +94,17 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
   const individual = await getIndividualById(individualId);
   if (!individual) return null;
 
-  const names = await getNamesByIndividualId(individualId);
+  // These four lookups only depend on the individual id, so fetch them at once.
+  const [names, allEvents, parentFamilies, spouseFamilies] = await Promise.all([
+    getNamesByIndividualId(individualId),
+    getEventTimelineForIndividual(individualId),
+    getParentFamilies(individualId),
+    getSpouseFamilies(individualId),
+  ]);
+
   const primaryName = names.find((name) => name.isPrimary) ?? names[0] ?? null;
 
   // The person's own events — those where they are a `principal` participant.
-  const allEvents = await getEventTimelineForIndividual(individualId);
   const events = allEvents.filter((event) =>
     event.participants.some(
       (participant) => participant.role === 'principal' && participant.individualId === individualId
@@ -108,7 +114,6 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
   const deathEvent = events.find((event) => event.eventType.tag === 'DEAT') ?? null;
 
   // Parents — the husband/wife of the first family the person is a child of.
-  const parentFamilies = await getParentFamilies(individualId);
   let fatherId: string | null = null;
   let motherId: string | null = null;
   if (parentFamilies[0]) {
@@ -119,7 +124,6 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
 
   // Marriages — every family where the person is a spouse, with the other
   // spouse and the children.
-  const spouseFamilies = await getSpouseFamilies(individualId);
   const marriagesRaw: { familyId: string; spouseId: string | null; childIds: string[] }[] = [];
   const marriageEvents: (EventWithDetails | null)[] = [];
   for (const family of spouseFamilies) {
@@ -148,8 +152,10 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
   ];
   const uniqueRelatedIds = [...new Set(relatedIds)];
 
-  const relatedNames = await getPrimaryNamesForIndividuals(uniqueRelatedIds);
-  const relatedBirthDeath = await getBirthDeathEventsForIndividuals(uniqueRelatedIds);
+  const [relatedNames, relatedBirthDeath] = await Promise.all([
+    getPrimaryNamesForIndividuals(uniqueRelatedIds),
+    getBirthDeathEventsForIndividuals(uniqueRelatedIds),
+  ]);
 
   const nameById = new Map(relatedNames.map((name) => [name.individualId, name]));
   const birthYearById = new Map<string, number>();

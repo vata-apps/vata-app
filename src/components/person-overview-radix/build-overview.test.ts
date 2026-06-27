@@ -122,9 +122,6 @@ describe('buildPersonOverview', () => {
     expect(person.birthPlace).toBe('Longueuil');
     expect(person.deathDate).toBe('before 1955');
     expect(person.deathPlace).toBe('Montréal');
-    expect(person.birthYear).toBe(1890);
-    expect(person.deathYear).toBe(1955);
-    expect(person.age).toBe(65);
   });
 
   it('maps the gender glyph for male and unknown', () => {

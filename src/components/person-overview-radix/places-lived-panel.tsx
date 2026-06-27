@@ -1,8 +1,8 @@
 import { Badge, Card, Flex, Heading, Text } from '@radix-ui/themes';
-import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { eventTypeLabel } from '$lib/eventTypeLabel';
+import { PlaceLink } from './entity-links';
 import type { OverviewPlaceLived } from './build-overview';
 
 interface PlacesLivedPanelProps {
@@ -37,12 +37,7 @@ export function PlacesLivedPanel({ places, treeId }: PlacesLivedPanelProps): JSX
         ) : (
           <Flex gap="3" wrap="wrap">
             {places.map((place) => (
-              <Link
-                key={place.id}
-                to="/tree/$treeId/place/$placeId"
-                params={{ treeId, placeId: place.id }}
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
+              <PlaceLink key={place.id} treeId={treeId} placeId={place.id}>
                 <Card>
                   <Flex direction="column" gap="1">
                     <Text size="2" weight="medium">
@@ -53,7 +48,7 @@ export function PlacesLivedPanel({ places, treeId }: PlacesLivedPanelProps): JSX
                     </Text>
                   </Flex>
                 </Card>
-              </Link>
+              </PlaceLink>
             ))}
           </Flex>
         )}

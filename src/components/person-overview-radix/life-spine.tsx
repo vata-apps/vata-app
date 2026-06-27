@@ -1,10 +1,10 @@
 import { Avatar, Badge, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
-import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
+import { IndividualLink } from './entity-links';
 import type { OverviewMilestone, PersonRefData } from './overview-types';
 import { Icon } from '../icon';
-import { PersonRef } from './person-ref';
+import { formatLifeDates, PersonRef } from './person-ref';
 
 /**
  * The life events — a person's key vital events (birth, marriages, death) in
@@ -83,23 +83,11 @@ function MissingMilestone({ label }: { label: string }): JSX.Element {
   );
 }
 
-function formatLifeDates(person: PersonRefData): string {
-  if (person.bornYear !== undefined && person.deathYear !== undefined)
-    return `b. ${person.bornYear} – ${person.deathYear}`;
-  if (person.bornYear !== undefined) return `b. ${person.bornYear}`;
-  if (person.deathYear !== undefined) return `d. ${person.deathYear}`;
-  return '';
-}
-
 function SpouseInline({ spouse, treeId }: { spouse: PersonRefData; treeId: string }): JSX.Element {
   const dates = formatLifeDates(spouse);
 
   return (
-    <Link
-      to="/tree/$treeId/individual/$individualId"
-      params={{ treeId, individualId: spouse.id }}
-      style={{ textDecoration: 'none', color: 'inherit' }}
-    >
+    <IndividualLink treeId={treeId} individualId={spouse.id}>
       <Flex align="center" gap="2" flexShrink="0">
         <Avatar
           src={spouse.imageUrl}
@@ -117,7 +105,7 @@ function SpouseInline({ spouse, treeId }: { spouse: PersonRefData; treeId: strin
           </Text>
         )}
       </Flex>
-    </Link>
+    </IndividualLink>
   );
 }
 

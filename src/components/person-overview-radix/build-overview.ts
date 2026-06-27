@@ -99,12 +99,6 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
     birthPlace: birthEvent?.place?.name ?? '',
     deathDate: deathEvent?.dateOriginal ?? '',
     deathPlace: deathEvent?.place?.name ?? '',
-    birthYear: birthYear ?? 0,
-    deathYear: deathYear ?? 0,
-    age: birthYear !== null && deathYear !== null ? deathYear - birthYear : 0,
-    // Not derived here — the Radix identity header does not render it.
-    generations: 0,
-    mediaCount: 0,
     otherNamesCount: Math.max(names.length - 1, 0),
   };
 
@@ -121,12 +115,12 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
   };
 
   // Vital events with their sourcing state; only those actually recorded show.
-  const vitalSpecs: { kind: OverviewVital['kind']; tags: string[] }[] = [
-    { kind: 'born', tags: ['BIRT'] },
-    { kind: 'died', tags: ['DEAT'] },
+  const vitalSpecs: { kind: OverviewVital['kind']; tag: string }[] = [
+    { kind: 'born', tag: 'BIRT' },
+    { kind: 'died', tag: 'DEAT' },
   ];
   const vitals: OverviewVital[] = vitalSpecs.flatMap((spec) => {
-    const event = events.find((candidate) => spec.tags.includes(candidate.eventType.tag ?? ''));
+    const event = events.find((candidate) => candidate.eventType.tag === spec.tag);
     if (!event) return [];
     return [
       {

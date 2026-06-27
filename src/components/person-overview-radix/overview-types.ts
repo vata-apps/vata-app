@@ -13,11 +13,6 @@ export interface OverviewPerson {
   imageUrl?: string;
   /** Sex glyph (♀ / ♂). */
   sex: string;
-  generations: number;
-  birthYear: number;
-  deathYear: number;
-  age: number;
-  mediaCount: number;
   /** Display-ready birth date, possibly imprecise (e.g. "14 Aug 1890"). */
   birthDate: string;
   /** Birthplace shown in the header summary. */
@@ -65,7 +60,7 @@ export interface PersonRefData {
   deathYear?: number;
 }
 
-export type MilestoneKind = 'born' | 'marriage' | 'death';
+type MilestoneKind = 'born' | 'marriage' | 'death';
 
 export interface OverviewMilestone {
   id: string;

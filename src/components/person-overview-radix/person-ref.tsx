@@ -1,6 +1,6 @@
 import { Avatar, Flex, Text } from '@radix-ui/themes';
-import { Link } from '@tanstack/react-router';
 
+import { IndividualLink } from './entity-links';
 import type { PersonRefData } from './overview-types';
 
 type PersonRefVariant = 'normal' | 'subtle';
@@ -21,7 +21,7 @@ interface PersonRefProps {
 }
 
 /** Formats the life dates as "b. 1855 – 1921", "b. 1855", "d. 1921", or "". */
-function formatLifeDates(person: PersonRefData): string {
+export function formatLifeDates(person: PersonRefData): string {
   const { bornYear, deathYear } = person;
   if (bornYear !== undefined && deathYear !== undefined) return `b. ${bornYear} – ${deathYear}`;
   if (bornYear !== undefined) return `b. ${bornYear}`;
@@ -51,11 +51,7 @@ export function PersonRef({ person, treeId, variant = 'normal' }: PersonRefProps
   const dates = formatLifeDates(person);
 
   return (
-    <Link
-      to="/tree/$treeId/individual/$individualId"
-      params={{ treeId, individualId: person.id }}
-      style={{ textDecoration: 'none', color: 'inherit' }}
-    >
+    <IndividualLink treeId={treeId} individualId={person.id}>
       <Flex align="center" gap={subtle ? '2' : '3'}>
         <Avatar
           src={person.imageUrl}
@@ -80,6 +76,6 @@ export function PersonRef({ person, treeId, variant = 'normal' }: PersonRefProps
           )}
         </Flex>
       </Flex>
-    </Link>
+    </IndividualLink>
   );
 }
