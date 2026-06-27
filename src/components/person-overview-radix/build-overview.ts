@@ -82,6 +82,7 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
   const person: OverviewPerson = {
     initials: initialsOf(primaryName),
     name: formatName(primaryName).full,
+    id: individual.id,
     sex: sexGlyph(individual.gender),
     birthDate: birthEvent?.dateOriginal ?? '',
     birthPlace: birthEvent?.place?.name ?? '',

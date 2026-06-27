@@ -21,6 +21,8 @@ import marieGarneauRegistry from '$/assets/person-overview/registry-marie-levesq
 export interface OverviewPerson {
   initials: string;
   name: string;
+  /** Formatted entity id (e.g. "I-0003"), shown in the metadata strip. */
+  id?: string;
   /** Profile photo URL; falls back to {@link initials} when absent. */
   imageUrl?: string;
   /** Sex glyph (♀ / ♂). */
