@@ -55,9 +55,11 @@ export function IndividualViewPage(): JSX.Element {
               <VitalsPanel vitals={data.vitals} treeId={treeId} />
               <RecordRail parents={data.parents} names={data.names} media={data.media} />
             </Flex>
-            <LifeSpine milestones={data.milestones} />
+            <Flex direction="column" gap="4">
+              <LifeSpine milestones={data.milestones} />
+              <PlacesLivedPanel places={data.placesLived} treeId={treeId} />
+            </Flex>
           </Grid>
-          <PlacesLivedPanel places={data.placesLived} treeId={treeId} />
         </Flex>
       </Flex>
     </Box>
