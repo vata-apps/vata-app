@@ -1,0 +1,21 @@
+src/components/person-overview-radix/build-overview.test.ts
+  s_540af90671bf6b::t_545d3ad199942a 246,257
+src/components/person-overview-radix/build-overview.ts
+  s_540af90671bf6b::t_a946804b395065 21,23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "00d8fbcad6313362db5dcee112c76216cf4a7e2a",
+  "prompts": {},
+  "sessions": {
+    "s_540af90671bf6b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e524fae5-dcf7-4879-9369-00476b74376e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
