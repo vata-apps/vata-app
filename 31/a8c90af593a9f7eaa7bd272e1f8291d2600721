@@ -1,0 +1,44 @@
+src/i18n/locales/en/individuals.json
+  s_540af90671bf6b::t_524d91e20810fc 76-79
+src/components/person-overview-radix/build-overview.test.ts
+  s_540af90671bf6b::t_65d15ce3b3bfc6 100
+  s_540af90671bf6b::t_0670519c80f3d5 42
+  s_540af90671bf6b::t_356f2e4ad09e83 211-241
+  s_540af90671bf6b::t_eeeac51a8e2951 56,63,66,72
+src/pages/IndividualViewPage.tsx
+  s_540af90671bf6b::t_90e33d38049b42 56
+  s_540af90671bf6b::t_3058265bdbe848 7
+  s_540af90671bf6b::t_1f62b56414d71a 23
+src/i18n/locales/fr/individuals.json
+  s_540af90671bf6b::t_3811d51e82a544 76-79
+src/db/trees/person-overview.ts
+  s_540af90671bf6b::t_741e16564dccee 94-102
+  s_540af90671bf6b::t_833496c6265d18 182
+  s_540af90671bf6b::t_51db61d8ab269d 6
+  s_540af90671bf6b::t_8aaba079ef8818 51-52
+src/components/person-overview-radix/build-overview.ts
+  s_540af90671bf6b::t_b2c54798626e78 155-178
+  s_540af90671bf6b::t_f9c82a6821d761 1,13-20,31
+  s_540af90671bf6b::t_2ec451997a4646 67-75,77
+  s_540af90671bf6b::t_58215d66314f1e 76
+  s_540af90671bf6b::t_4810e54a60f34e 179-180
+  s_540af90671bf6b::t_dc746bdf0a8140 183
+src/components/person-overview-radix/places-lived-panel.tsx
+  s_540af90671bf6b::t_6f9eab3a631b59 1-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "31a8c90af593a9f7eaa7bd272e1f8291d2600721",
+  "prompts": {},
+  "sessions": {
+    "s_540af90671bf6b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e524fae5-dcf7-4879-9369-00476b74376e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
