@@ -1,11 +1,14 @@
-import type { Event, EventWithDetails, Individual, Name } from '$types/database';
+import type {
+  Event,
+  EventTimelineEntry,
+  EventWithDetails,
+  Individual,
+  Name,
+} from '$types/database';
 import { getIndividualById } from './individuals';
 import { getNamesByIndividualId, getPrimaryNamesForIndividuals } from './names';
-import {
-  getBirthDeathEventsForIndividuals,
-  getEventsByIndividualIdWithDetails,
-  getFamilyEventByType,
-} from './events';
+import { getBirthDeathEventsForIndividuals, getFamilyEventByType } from './events';
+import { getEventTimelineForIndividual } from './event-timeline';
 import { getFamilyMembers, getParentFamilies, getSpouseFamilies } from './families';
 
 // =============================================================================
@@ -48,8 +51,11 @@ export interface PersonOverviewData {
   primaryName: Name | null;
   birthEvent: EventWithDetails | null;
   deathEvent: EventWithDetails | null;
-  /** The person's own (principal) events, e.g. for places lived and vitals. */
-  events: EventWithDetails[];
+  /**
+   * The person's own (principal) events, enriched with citation presence —
+   * used for places lived and the sourced vitals.
+   */
+  events: EventTimelineEntry[];
   father: RelatedPerson | null;
   mother: RelatedPerson | null;
   marriages: MarriageRecord[];
@@ -92,7 +98,7 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
   const primaryName = names.find((name) => name.isPrimary) ?? names[0] ?? null;
 
   // The person's own events — those where they are a `principal` participant.
-  const allEvents = await getEventsByIndividualIdWithDetails(individualId);
+  const allEvents = await getEventTimelineForIndividual(individualId);
   const events = allEvents.filter((event) =>
     event.participants.some(
       (participant) => participant.role === 'principal' && participant.individualId === individualId

@@ -7,6 +7,7 @@ import { LifeSpine } from '$components/person-overview-radix/life-spine';
 import { PlacesLivedPanel } from '$components/person-overview-radix/places-lived-panel';
 import { RecordRail } from '$components/person-overview-radix/record-rail';
 import { StatsRow } from '$components/person-overview-radix/stats-row';
+import { VitalsPanel } from '$components/person-overview-radix/vitals-panel';
 import { usePersonOverview } from '$hooks/usePersonOverview';
 import { usePersonStats } from '$hooks/usePersonStats';
 
@@ -54,7 +55,10 @@ export function IndividualViewPage(): JSX.Element {
             gap="4"
             align="start"
           >
-            <RecordRail parents={data.parents} names={data.names} media={data.media} />
+            <Flex direction="column" gap="4">
+              <VitalsPanel vitals={data.vitals} treeId={treeId} />
+              <RecordRail parents={data.parents} names={data.names} media={data.media} />
+            </Flex>
             <LifeSpine milestones={data.milestones} />
           </Grid>
           <PlacesLivedPanel places={data.placesLived} treeId={treeId} />

@@ -18,6 +18,16 @@ export interface OverviewPlaceLived {
   contexts: EventType[];
 }
 
+/** A vital event (birth, baptism, death, burial) with its sourcing state. */
+export interface OverviewVital {
+  kind: 'born' | 'baptism' | 'died' | 'buried';
+  date: string;
+  placeId?: string;
+  placeName?: string;
+  /** Whether the event carries at least one source citation. */
+  sourced: boolean;
+}
+
 /**
  * The slice of the Person Overview view-model that the Radix components render
  * from live tree data. Research notes, suggestions and the places map are
@@ -27,6 +37,7 @@ export interface PersonOverviewView {
   person: OverviewPerson;
   names: OverviewName[];
   parents: OverviewParents;
+  vitals: OverviewVital[];
   milestones: OverviewMilestone[];
   placesLived: OverviewPlaceLived[];
   media: OverviewMediaTile[];
@@ -109,6 +120,27 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
     mother: mother ? toPersonRef(mother) : undefined,
   };
 
+  // Vital events with their sourcing state; only those actually recorded show.
+  const vitalSpecs: { kind: OverviewVital['kind']; tags: string[] }[] = [
+    { kind: 'born', tags: ['BIRT'] },
+    { kind: 'baptism', tags: ['BAPM', 'CHR'] },
+    { kind: 'died', tags: ['DEAT'] },
+    { kind: 'buried', tags: ['BURI'] },
+  ];
+  const vitals: OverviewVital[] = vitalSpecs.flatMap((spec) => {
+    const event = events.find((candidate) => spec.tags.includes(candidate.eventType.tag ?? ''));
+    if (!event) return [];
+    return [
+      {
+        kind: spec.kind,
+        date: event.dateOriginal ?? '',
+        placeId: event.place?.id,
+        placeName: event.place?.name,
+        sourced: event.hasCitations,
+      },
+    ];
+  });
+
   const bornMilestone: OverviewMilestone | null = birthEvent
     ? {
         id: birthEvent.id,
@@ -181,5 +213,5 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
 
   // Media is individual-agnostic in the schema (files attach to sources), so
   // there is nothing to show per person yet.
-  return { person, names: viewNames, parents, milestones, placesLived, media: [] };
+  return { person, names: viewNames, parents, vitals, milestones, placesLived, media: [] };
 }

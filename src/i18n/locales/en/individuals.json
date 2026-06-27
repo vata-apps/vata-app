@@ -83,6 +83,15 @@
       "generationsUp": "Generations ↑",
       "generationsDown": "Generations ↓"
     },
+    "vitals": {
+      "title": "Vitals",
+      "born": "Born",
+      "baptism": "Baptism",
+      "died": "Died",
+      "buried": "Buried",
+      "sourced": "Sourced",
+      "empty": "No vital events recorded yet"
+    },
     "figures": {
       "events": "events",
       "relations": "relations",
