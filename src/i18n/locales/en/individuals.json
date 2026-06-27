@@ -80,9 +80,7 @@
     "vitals": {
       "title": "Vitals",
       "born": "Born",
-      "baptism": "Baptism",
       "died": "Died",
-      "buried": "Buried",
       "sourced": "Sourced",
       "empty": "No vital events recorded yet"
     },

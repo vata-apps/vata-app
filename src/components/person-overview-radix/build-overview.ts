@@ -18,9 +18,9 @@ export interface OverviewPlaceLived {
   contexts: EventType[];
 }
 
-/** A vital event (birth, baptism, death, burial) with its sourcing state. */
+/** A vital event (birth, death) with its sourcing state. */
 export interface OverviewVital {
-  kind: 'born' | 'baptism' | 'died' | 'buried';
+  kind: 'born' | 'died';
   date: string;
   placeId?: string;
   placeName?: string;
@@ -123,9 +123,7 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
   // Vital events with their sourcing state; only those actually recorded show.
   const vitalSpecs: { kind: OverviewVital['kind']; tags: string[] }[] = [
     { kind: 'born', tags: ['BIRT'] },
-    { kind: 'baptism', tags: ['BAPM', 'CHR'] },
     { kind: 'died', tags: ['DEAT'] },
-    { kind: 'buried', tags: ['BURI'] },
   ];
   const vitals: OverviewVital[] = vitalSpecs.flatMap((spec) => {
     const event = events.find((candidate) => spec.tags.includes(candidate.eventType.tag ?? ''));

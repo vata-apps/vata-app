@@ -80,9 +80,7 @@
     "vitals": {
       "title": "État civil",
       "born": "Naissance",
-      "baptism": "Baptême",
       "died": "Décès",
-      "buried": "Inhumation",
       "sourced": "Sourcé",
       "empty": "Aucun événement d'état civil enregistré"
     },

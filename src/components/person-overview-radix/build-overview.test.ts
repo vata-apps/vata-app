@@ -243,7 +243,7 @@ describe('buildPersonOverview', () => {
     expect(buildPersonOverview(baseData()).placesLived).toEqual([]);
   });
 
-  it('derives vitals for birth, baptism, death and burial with their sourcing', () => {
+  it('derives vitals for birth and death with their sourcing, ignoring other events', () => {
     const { vitals } = buildPersonOverview({
       ...baseData(),
       events: [
@@ -254,14 +254,13 @@ describe('buildPersonOverview', () => {
       ],
     });
 
-    expect(vitals.map((vital) => vital.kind)).toEqual(['born', 'baptism', 'died', 'buried']);
+    expect(vitals.map((vital) => vital.kind)).toEqual(['born', 'died']);
     expect(vitals.find((vital) => vital.kind === 'born')).toMatchObject({
       date: '1890',
       placeName: 'Longueuil',
       sourced: true,
     });
     expect(vitals.find((vital) => vital.kind === 'died')?.sourced).toBe(false);
-    expect(vitals.find((vital) => vital.kind === 'buried')?.sourced).toBe(true);
   });
 
   it('omits vitals for events that are not recorded', () => {
