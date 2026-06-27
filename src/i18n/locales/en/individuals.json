@@ -77,12 +77,6 @@
       "title": "Places lived",
       "empty": "No places recorded yet"
     },
-    "stats": {
-      "events": "Events",
-      "relations": "Relations",
-      "generationsUp": "Generations ↑",
-      "generationsDown": "Generations ↓"
-    },
     "vitals": {
       "title": "Vitals",
       "born": "Born",

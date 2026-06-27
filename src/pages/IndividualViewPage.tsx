@@ -6,10 +6,8 @@ import { IdentityHeader, OverviewTabs } from '$components/person-overview-radix/
 import { LifeSpine } from '$components/person-overview-radix/life-spine';
 import { PlacesLivedPanel } from '$components/person-overview-radix/places-lived-panel';
 import { RecordRail } from '$components/person-overview-radix/record-rail';
-import { StatsRow } from '$components/person-overview-radix/stats-row';
 import { VitalsPanel } from '$components/person-overview-radix/vitals-panel';
 import { usePersonOverview } from '$hooks/usePersonOverview';
-import { usePersonStats } from '$hooks/usePersonStats';
 
 const routeApi = getRouteApi('/tree/$treeId/individual/$individualId');
 
@@ -25,7 +23,6 @@ export function IndividualViewPage(): JSX.Element {
   const { t } = useTranslation('individuals');
   const { treeId, individualId } = routeApi.useParams();
   const { data, isLoading } = usePersonOverview(individualId);
-  const { data: stats } = usePersonStats(individualId);
 
   if (isLoading) {
     return (
@@ -49,7 +46,6 @@ export function IndividualViewPage(): JSX.Element {
         <IdentityHeader person={data.person} />
         <Flex direction="column" gap="4">
           <OverviewTabs />
-          {stats && <StatsRow stats={stats} />}
           <Grid
             columns={{ initial: '1', sm: 'minmax(0, 1fr) minmax(0, 2fr)' }}
             gap="4"

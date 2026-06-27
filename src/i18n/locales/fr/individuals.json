@@ -77,12 +77,6 @@
       "title": "Lieux de vie",
       "empty": "Aucun lieu enregistré"
     },
-    "stats": {
-      "events": "Événements",
-      "relations": "Relations",
-      "generationsUp": "Générations ↑",
-      "generationsDown": "Générations ↓"
-    },
     "vitals": {
       "title": "État civil",
       "born": "Naissance",
