@@ -1,0 +1,25 @@
+src/components/person-overview-radix/life-spine.tsx
+  s_540af90671bf6b::t_4f69a618b6b81b 78
+  s_540af90671bf6b::t_a0bc9a0f1b9c0a 137
+src/components/person-overview-radix/identity-header.tsx
+  s_540af90671bf6b::t_d1d95a3661a115 61
+  s_540af90671bf6b::t_70daf5fd46dabb 48
+src/components/person-overview-radix/record-rail.tsx
+  s_540af90671bf6b::t_23023ebb5cf08d 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "7135ce43b29ead515a886c8f8173381ebb528c20",
+  "prompts": {},
+  "sessions": {
+    "s_540af90671bf6b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e524fae5-dcf7-4879-9369-00476b74376e",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
