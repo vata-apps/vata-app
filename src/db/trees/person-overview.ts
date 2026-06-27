@@ -3,8 +3,8 @@ import { getIndividualById } from './individuals';
 import { getNamesByIndividualId, getPrimaryNamesForIndividuals } from './names';
 import {
   getBirthDeathEventsForIndividuals,
+  getEventsByIndividualIdWithDetails,
   getFamilyEventByType,
-  getIndividualEventByType,
 } from './events';
 import { getFamilyMembers, getParentFamilies, getSpouseFamilies } from './families';
 
@@ -48,6 +48,8 @@ export interface PersonOverviewData {
   primaryName: Name | null;
   birthEvent: EventWithDetails | null;
   deathEvent: EventWithDetails | null;
+  /** The person's own (principal) events, e.g. for places lived and vitals. */
+  events: EventWithDetails[];
   father: RelatedPerson | null;
   mother: RelatedPerson | null;
   marriages: MarriageRecord[];
@@ -89,8 +91,15 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
   const names = await getNamesByIndividualId(individualId);
   const primaryName = names.find((name) => name.isPrimary) ?? names[0] ?? null;
 
-  const birthEvent = await getIndividualEventByType(individualId, 'BIRT');
-  const deathEvent = await getIndividualEventByType(individualId, 'DEAT');
+  // The person's own events — those where they are a `principal` participant.
+  const allEvents = await getEventsByIndividualIdWithDetails(individualId);
+  const events = allEvents.filter((event) =>
+    event.participants.some(
+      (participant) => participant.role === 'principal' && participant.individualId === individualId
+    )
+  );
+  const birthEvent = events.find((event) => event.eventType.tag === 'BIRT') ?? null;
+  const deathEvent = events.find((event) => event.eventType.tag === 'DEAT') ?? null;
 
   // Parents — the husband/wife of the first family the person is a child of.
   const parentFamilies = await getParentFamilies(individualId);
@@ -170,6 +179,7 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
     primaryName,
     birthEvent,
     deathEvent,
+    events,
     father: fatherId ? toRelated(fatherId) : null,
     mother: motherId ? toRelated(motherId) : null,
     marriages,

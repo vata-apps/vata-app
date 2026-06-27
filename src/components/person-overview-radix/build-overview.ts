@@ -1,4 +1,4 @@
-import type { Gender, Name } from '$types/database';
+import type { EventType, EventWithDetails, Gender, Name } from '$types/database';
 import { formatName } from '$db-tree/names';
 import { extractYear, type PersonOverviewData, type RelatedPerson } from '$db-tree/person-overview';
 import type {
@@ -10,6 +10,14 @@ import type {
   PersonRefData,
 } from './overview-mock';
 
+/** A distinct place tied to the person, with the event types that occurred there. */
+export interface OverviewPlaceLived {
+  id: string;
+  name: string;
+  /** Event types recorded at this place — resolved to labels by the component. */
+  contexts: EventType[];
+}
+
 /**
  * The slice of the Person Overview view-model that the Radix components render
  * from live tree data. Research notes, suggestions and the places map are
@@ -20,6 +28,7 @@ export interface PersonOverviewView {
   names: OverviewName[];
   parents: OverviewParents;
   milestones: OverviewMilestone[];
+  placesLived: OverviewPlaceLived[];
   media: OverviewMediaTile[];
 }
 
@@ -55,8 +64,17 @@ function toPersonRef(related: RelatedPerson): PersonRefData {
  * types and milestone titles are emitted as keys for the components to resolve.
  */
 export function buildPersonOverview(data: PersonOverviewData): PersonOverviewView {
-  const { individual, names, primaryName, birthEvent, deathEvent, father, mother, marriages } =
-    data;
+  const {
+    individual,
+    names,
+    primaryName,
+    birthEvent,
+    deathEvent,
+    events,
+    father,
+    mother,
+    marriages,
+  } = data;
 
   const birthYear = extractYear(birthEvent);
   const deathYear = extractYear(deathEvent);
@@ -134,7 +152,33 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
     ...(deathMilestone ? [deathMilestone] : []),
   ];
 
+  // Distinct places across the person's own events and their marriages, each
+  // annotated with the event types that occurred there.
+  const placeSources: EventWithDetails[] = [
+    ...events,
+    ...marriages
+      .map((marriage) => marriage.marriageEvent)
+      .filter((e): e is EventWithDetails => e !== null),
+  ];
+  const placesById = new Map<string, OverviewPlaceLived>();
+  for (const event of placeSources) {
+    if (!event.place) continue;
+    const entry = placesById.get(event.place.id);
+    if (entry) {
+      if (!entry.contexts.some((context) => context.id === event.eventType.id)) {
+        entry.contexts.push(event.eventType);
+      }
+    } else {
+      placesById.set(event.place.id, {
+        id: event.place.id,
+        name: event.place.name,
+        contexts: [event.eventType],
+      });
+    }
+  }
+  const placesLived = [...placesById.values()];
+
   // Media is individual-agnostic in the schema (files attach to sources), so
   // there is nothing to show per person yet.
-  return { person, names: viewNames, parents, milestones, media: [] };
+  return { person, names: viewNames, parents, milestones, placesLived, media: [] };
 }

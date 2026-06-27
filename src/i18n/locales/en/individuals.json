@@ -73,6 +73,10 @@
     "vital": {
       "sex": "Sex"
     },
+    "placesLived": {
+      "title": "Places lived",
+      "empty": "No places recorded yet"
+    },
     "figures": {
       "events": "events",
       "relations": "relations",

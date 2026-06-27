@@ -39,7 +39,7 @@ function makeName(overrides: Partial<Name> = {}): Name {
 
 function makePlace(name: string): Place {
   return {
-    id: 'P-0001',
+    id: `P-${name}`,
     name,
     fullName: name,
     placeTypeId: null,
@@ -53,23 +53,23 @@ function makePlace(name: string): Place {
 }
 
 function makeEvent(
-  tag: 'BIRT' | 'DEAT' | 'MARR',
+  tag: string,
   dateOriginal: string,
   dateSort: string,
   placeName: string | null
 ): EventWithDetails {
   return {
     id: `E-${tag}`,
-    eventTypeId: '1',
+    eventTypeId: tag,
     dateOriginal,
     dateSort,
-    placeId: placeName ? 'P-0001' : null,
+    placeId: placeName ? `P-${placeName}` : null,
     description: null,
     notes: null,
     createdAt: '',
     updatedAt: '',
     eventType: {
-      id: '1',
+      id: tag,
       tag,
       category: tag === 'MARR' ? 'family' : 'individual',
       isSystem: true,
@@ -97,6 +97,7 @@ function baseData(): PersonOverviewData {
     primaryName: makeName(),
     birthEvent: null,
     deathEvent: null,
+    events: [],
     father: null,
     mother: null,
     marriages: [],
@@ -206,5 +207,36 @@ describe('buildPersonOverview', () => {
 
   it('returns empty media — files are not individual-scoped yet', () => {
     expect(buildPersonOverview(baseData()).media).toEqual([]);
+  });
+
+  it('collects distinct places from events and marriages, deduping contexts per place', () => {
+    const { placesLived } = buildPersonOverview({
+      ...baseData(),
+      events: [
+        makeEvent('BIRT', '1890', '1890', 'Longueuil'),
+        makeEvent('RESI', '1920', '1920', 'Longueuil'),
+        makeEvent('DEAT', '1955', '1955', 'Montréal'),
+      ],
+      marriages: [
+        {
+          familyId: 'F-0001',
+          spouse: null,
+          marriageEvent: makeEvent('MARR', '1910', '1910', 'Saint-Lambert'),
+          children: [],
+        },
+      ],
+    });
+
+    expect(placesLived.map((place) => place.name).sort()).toEqual([
+      'Longueuil',
+      'Montréal',
+      'Saint-Lambert',
+    ]);
+    const longueuil = placesLived.find((place) => place.name === 'Longueuil')!;
+    expect(longueuil.contexts.map((context) => context.tag)).toEqual(['BIRT', 'RESI']);
+  });
+
+  it('returns no places when there are no placed events', () => {
+    expect(buildPersonOverview(baseData()).placesLived).toEqual([]);
   });
 });

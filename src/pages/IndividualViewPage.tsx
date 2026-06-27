@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { IdentityHeader, OverviewTabs } from '$components/person-overview-radix/identity-header';
 import { LifeSpine } from '$components/person-overview-radix/life-spine';
+import { PlacesLivedPanel } from '$components/person-overview-radix/places-lived-panel';
 import { RecordRail } from '$components/person-overview-radix/record-rail';
 import { usePersonOverview } from '$hooks/usePersonOverview';
 
@@ -19,7 +20,7 @@ const routeApi = getRouteApi('/tree/$treeId/individual/$individualId');
  */
 export function IndividualViewPage(): JSX.Element {
   const { t } = useTranslation('individuals');
-  const { individualId } = routeApi.useParams();
+  const { treeId, individualId } = routeApi.useParams();
   const { data, isLoading } = usePersonOverview(individualId);
 
   if (isLoading) {
@@ -52,6 +53,7 @@ export function IndividualViewPage(): JSX.Element {
             <RecordRail parents={data.parents} names={data.names} media={data.media} />
             <LifeSpine milestones={data.milestones} />
           </Grid>
+          <PlacesLivedPanel places={data.placesLived} treeId={treeId} />
         </Flex>
       </Flex>
     </Box>
