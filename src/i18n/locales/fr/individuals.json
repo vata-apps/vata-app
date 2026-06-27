@@ -77,6 +77,12 @@
       "title": "Lieux de vie",
       "empty": "Aucun lieu enregistré"
     },
+    "stats": {
+      "events": "Événements",
+      "relations": "Relations",
+      "generationsUp": "Générations ↑",
+      "generationsDown": "Générations ↓"
+    },
     "figures": {
       "events": "événements",
       "relations": "relations",

@@ -77,6 +77,12 @@
       "title": "Places lived",
       "empty": "No places recorded yet"
     },
+    "stats": {
+      "events": "Events",
+      "relations": "Relations",
+      "generationsUp": "Generations ↑",
+      "generationsDown": "Generations ↓"
+    },
     "figures": {
       "events": "events",
       "relations": "relations",
