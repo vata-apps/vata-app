@@ -1,7 +1,7 @@
 import { Avatar, Flex, Text } from '@radix-ui/themes';
 import { Link } from '@tanstack/react-router';
 
-import type { PersonRefData } from './overview-mock';
+import type { PersonRefData } from './overview-types';
 
 type PersonRefVariant = 'normal' | 'subtle';
 

@@ -8,7 +8,7 @@ import type {
   OverviewParents,
   OverviewPerson,
   PersonRefData,
-} from './overview-mock';
+} from './overview-types';
 
 /** A distinct place tied to the person, with the event types that occurred there. */
 export interface OverviewPlaceLived {

@@ -6,7 +6,7 @@ import type {
   OverviewName,
   OverviewParents,
   PersonRefData,
-} from './overview-mock';
+} from './overview-types';
 import { Icon } from '../icon';
 import { PersonRef } from './person-ref';
 

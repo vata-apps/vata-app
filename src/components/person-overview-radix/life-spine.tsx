@@ -2,7 +2,7 @@ import { Avatar, Badge, Card, Flex, Heading, Separator, Text } from '@radix-ui/t
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-import type { OverviewMilestone, PersonRefData } from './overview-mock';
+import type { OverviewMilestone, PersonRefData } from './overview-types';
 import { Icon } from '../icon';
 import { PersonRef } from './person-ref';
 

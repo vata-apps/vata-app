@@ -2,7 +2,7 @@ import { Avatar, Badge, Code, Flex, Heading, TabNav, Text } from '@radix-ui/them
 import { useTranslation } from 'react-i18next';
 
 import { Icon, type IconName } from '../icon';
-import type { OverviewPerson } from './overview-mock';
+import type { OverviewPerson } from './overview-types';
 
 /** Maps the sex glyph to its icon; falls back to a neutral person icon. */
 function sexIcon(sex: string): IconName {

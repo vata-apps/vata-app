@@ -13,8 +13,7 @@ interface PlacesLivedPanelProps {
 /**
  * The full-width Places lived panel: the distinct places tied to the person's
  * events, each a chip linking to that Place and annotated with the event types
- * recorded there. A map surface is deferred until places carry coordinates —
- * the engine already exists in {@link PlacesPanel} for the demo data.
+ * recorded there. A map surface is deferred until places carry coordinates.
  */
 export function PlacesLivedPanel({ places, treeId }: PlacesLivedPanelProps): JSX.Element {
   const { t } = useTranslation('individuals');
