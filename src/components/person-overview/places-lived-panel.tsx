@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { PlaceLink } from './entity-links';
-import type { OverviewPlaceLived } from './build-overview';
+import type { OverviewPlaceLived } from './overview-types';
 
 interface PlacesLivedPanelProps {
   places: OverviewPlaceLived[];

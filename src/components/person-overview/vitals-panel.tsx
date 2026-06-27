@@ -2,7 +2,7 @@ import { Badge, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
 import { PlaceLink } from './entity-links';
-import type { OverviewVital } from './build-overview';
+import type { OverviewVital } from './overview-types';
 
 interface VitalsPanelProps {
   vitals: OverviewVital[];

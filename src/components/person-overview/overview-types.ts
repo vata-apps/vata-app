@@ -1,6 +1,8 @@
+import type { EventType, Gender } from '$types/database';
+
 /**
- * View-model types for the pure-Radix Person Overview. These shapes are what
- * {@link buildPersonOverview} produces from live tree data and what the Radix
+ * View-model types for the Person Overview. These shapes are what
+ * {@link buildPersonOverview} produces from live tree data and what the
  * components (identity header, record rail, life spine, …) consume.
  */
 
@@ -11,8 +13,8 @@ export interface OverviewPerson {
   id?: string;
   /** Profile photo URL; falls back to {@link initials} when absent. */
   imageUrl?: string;
-  /** Sex glyph (♀ / ♂). */
-  sex: string;
+  /** Recorded sex, mapped to an icon by the identity header. */
+  sex: Gender;
   /** Display-ready birth date, possibly imprecise (e.g. "14 Aug 1890"). */
   birthDate: string;
   /** Birthplace shown in the header summary. */
@@ -74,16 +76,25 @@ export interface OverviewMilestone {
   sortYear: number;
   kind: MilestoneKind;
   place: string;
-  detail: string;
   /** The spouse, for `marriage` milestones. */
   spouse?: PersonRefData;
   children?: PersonRefData[];
 }
 
-export interface OverviewMediaTile {
+/** A vital event (birth, death) with its sourcing state. */
+export interface OverviewVital {
+  kind: 'born' | 'died';
+  date: string;
+  placeId?: string;
+  placeName?: string;
+  /** Whether the event carries at least one source citation. */
+  sourced: boolean;
+}
+
+/** A distinct place tied to the person, with the event types that occurred there. */
+export interface OverviewPlaceLived {
   id: string;
-  /** Thumbnail image URL. */
-  imageUrl: string;
-  /** Caption key resolved through `overview.media.captions.*`. */
-  caption: string;
+  name: string;
+  /** Event types recorded at this place — resolved to labels by the component. */
+  contexts: EventType[];
 }

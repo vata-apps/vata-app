@@ -38,20 +38,6 @@
     "noMatches": "No people match your filters",
     "unknownName": "Unknown"
   },
-  "sidebar": {
-    "newButton": "New",
-    "sortLabel": "Sort by",
-    "sort": {
-      "surnameAsc": "Surname (A → Z)",
-      "surnameDesc": "Surname (Z → A)",
-      "givenAsc": "Given name (A → Z)",
-      "givenDesc": "Given name (Z → A)",
-      "birthAsc": "Birth (oldest first)",
-      "birthDesc": "Birth (newest first)"
-    },
-    "empty": "No people yet",
-    "unknownName": "Unknown"
-  },
   "overview": {
     "loading": "Loading…",
     "notFound": "Individual not found",
@@ -63,10 +49,7 @@
       "sources": "Sources",
       "notes": "Notes"
     },
-    "ancestorPill": "Direct ancestor · {{count}} gen",
     "lifespan": {
-      "aged": "aged {{age}}",
-      "media": "{{count}} media",
       "otherNames_one": "{{count}} other name",
       "otherNames_other": "{{count}} other names"
     },
@@ -84,25 +67,13 @@
       "sourced": "Sourced",
       "empty": "No vital events recorded yet"
     },
-    "figures": {
-      "events": "events",
-      "relations": "relations",
-      "sources": "sources",
-      "media": "media"
-    },
     "parents": {
       "title": "Parents",
-      "edit": "Edit",
-      "father": "Father",
-      "mother": "Mother",
       "missingFather": "Father unknown",
-      "missingMother": "Mother unknown",
-      "addFather": "Add father",
-      "addMother": "Add mother"
+      "missingMother": "Mother unknown"
     },
     "names": {
       "title": "Names",
-      "edit": "Edit",
       "primary": "Primary",
       "types": {
         "birth": "Birth",
@@ -115,68 +86,18 @@
         "nickname": "Nickname"
       }
     },
-    "quickActions": {
-      "title": "Quick actions",
-      "addEvent": "Add event",
-      "addSource": "Add source",
-      "addMedia": "Add media",
-      "addNote": "Add note"
-    },
     "milestone": {
       "title": "Life events",
-      "viewAll": "View all",
       "born": "Born",
       "marriage": "Married",
       "death": "Died",
       "children": "Children",
       "missingBorn": "Birth not recorded",
-      "missingDeath": "Death not recorded",
-      "addBorn": "Add birth",
-      "addDeath": "Add death"
-    },
-    "editAction": "Edit",
-    "deleteAction": "Delete",
-    "places": {
-      "title": "Places lived",
-      "subtitle": "{{count}} places · {{region}}",
-      "manage": "Manage places",
-      "showAll": "Show all places"
-    },
-    "completion": {
-      "title": "Profile completion",
-      "footer": "{{done}} of {{total}} complete",
-      "items": {
-        "birthDatePlace": "Birth date and place",
-        "birthSource": "Birth source",
-        "marriageDatePlace": "Marriage date and place",
-        "marriageSource": "Marriage source",
-        "deathDatePlace": "Death date and place",
-        "deathSource": "Death source"
-      }
+      "missingDeath": "Death not recorded"
     },
     "media": {
       "title": "Media",
-      "viewAll": "View all",
-      "empty": "No media yet",
-      "captions": {
-        "profile": "Profile picture",
-        "wedding": "Wedding photo",
-        "register": "Parish register"
-      }
-    },
-    "researchNotes": {
-      "title": "Research notes",
-      "empty": "No research notes yet",
-      "showAll": "Show all",
-      "more": "{{count}} more notes",
-      "markDone": "Mark as done",
-      "delete": "Delete"
-    },
-    "suggestions": {
-      "title": "Suggestions",
-      "empty": "No suggestions yet",
-      "showAll": "Show all",
-      "more": "{{count}} more"
+      "empty": "No media yet"
     }
   }
 }

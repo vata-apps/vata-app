@@ -38,20 +38,6 @@
     "noMatches": "Aucune personne ne correspond aux filtres",
     "unknownName": "Sans nom"
   },
-  "sidebar": {
-    "newButton": "Nouveau",
-    "sortLabel": "Trier par",
-    "sort": {
-      "surnameAsc": "Nom (A → Z)",
-      "surnameDesc": "Nom (Z → A)",
-      "givenAsc": "Prénom (A → Z)",
-      "givenDesc": "Prénom (Z → A)",
-      "birthAsc": "Naissance (croissant)",
-      "birthDesc": "Naissance (décroissant)"
-    },
-    "empty": "Aucune personne",
-    "unknownName": "Sans nom"
-  },
   "overview": {
     "loading": "Chargement…",
     "notFound": "Individu introuvable",
@@ -63,10 +49,7 @@
       "sources": "Sources",
       "notes": "Notes"
     },
-    "ancestorPill": "Ancêtre direct · {{count}} gén",
     "lifespan": {
-      "aged": "{{age}} ans",
-      "media": "{{count}} médias",
       "otherNames_one": "{{count}} autre nom",
       "otherNames_other": "{{count}} autres noms"
     },
@@ -84,25 +67,13 @@
       "sourced": "Sourcé",
       "empty": "Aucun événement d'état civil enregistré"
     },
-    "figures": {
-      "events": "événements",
-      "relations": "relations",
-      "sources": "sources",
-      "media": "médias"
-    },
     "parents": {
       "title": "Parents",
-      "edit": "Modifier",
-      "father": "Père",
-      "mother": "Mère",
       "missingFather": "Père inconnu",
-      "missingMother": "Mère inconnue",
-      "addFather": "Ajouter le père",
-      "addMother": "Ajouter la mère"
+      "missingMother": "Mère inconnue"
     },
     "names": {
       "title": "Noms",
-      "edit": "Modifier",
       "primary": "Principal",
       "types": {
         "birth": "Naissance",
@@ -115,68 +86,18 @@
         "nickname": "Surnom"
       }
     },
-    "quickActions": {
-      "title": "Actions rapides",
-      "addEvent": "Ajouter un événement",
-      "addSource": "Ajouter une source",
-      "addMedia": "Ajouter un média",
-      "addNote": "Ajouter une note"
-    },
     "milestone": {
       "title": "Événements de vie",
-      "viewAll": "Tout voir",
       "born": "Naissance",
       "marriage": "Mariage",
       "death": "Décès",
       "children": "Enfants",
       "missingBorn": "Naissance non enregistrée",
-      "missingDeath": "Décès non enregistré",
-      "addBorn": "Ajouter la naissance",
-      "addDeath": "Ajouter le décès"
-    },
-    "editAction": "Modifier",
-    "deleteAction": "Supprimer",
-    "places": {
-      "showAll": "Voir tous les lieux",
-      "title": "Lieux habités",
-      "subtitle": "{{count}} lieux · {{region}}",
-      "manage": "Gérer les lieux"
-    },
-    "completion": {
-      "title": "Complétude du profil",
-      "footer": "{{done}} sur {{total}} complétés",
-      "items": {
-        "birthDatePlace": "Date et lieu de naissance",
-        "birthSource": "Source de naissance",
-        "marriageDatePlace": "Date et lieu de mariage",
-        "marriageSource": "Source de mariage",
-        "deathDatePlace": "Date et lieu de décès",
-        "deathSource": "Source de décès"
-      }
+      "missingDeath": "Décès non enregistré"
     },
     "media": {
       "title": "Médias",
-      "viewAll": "Tout voir",
-      "empty": "Aucun média pour le moment",
-      "captions": {
-        "profile": "Photo de profil",
-        "wedding": "Photo de mariage",
-        "register": "Registre paroissial"
-      }
-    },
-    "researchNotes": {
-      "title": "Notes de recherche",
-      "empty": "Aucune note de recherche",
-      "showAll": "Tout afficher",
-      "more": "{{count}} autres notes",
-      "markDone": "Marquer comme fait",
-      "delete": "Supprimer"
-    },
-    "suggestions": {
-      "title": "Suggestions",
-      "empty": "Aucune suggestion pour le moment",
-      "showAll": "Tout afficher",
-      "more": "{{count}} autre(s)"
+      "empty": "Aucun média pour le moment"
     }
   }
 }

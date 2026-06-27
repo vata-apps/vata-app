@@ -76,9 +76,6 @@ export function getTreeIdFromPath(pathname: string): string | null {
 export function isFullWidthDetailRoute(pathname: string): boolean {
   if (getTreeIdFromPath(pathname) === null) return false;
   const segments = segmentsOf(pathname);
-  // TEMPORARY: treat the pure-Radix overview experiments as full-width too.
-  if (segments[2] === 'individual-radix') return true;
-  if (segments[2] === 'individual-radix-empty') return true;
   return segments[2] === 'individual' && segments[3] !== undefined;
 }
 

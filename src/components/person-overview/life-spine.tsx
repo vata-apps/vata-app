@@ -9,9 +9,7 @@ import { formatLifeDates, PersonRef } from './person-ref';
 /**
  * The life events — a person's key vital events (birth, marriages, death) in
  * one card, each a separator-divided row led by its (possibly imprecise) date
- * in a subtle gray `Badge`. Pure `@radix-ui/themes`: the PoC's custom timeline
- * rail and milestone glyph circles are dropped, as Radix has no primitive for
- * them.
+ * in a subtle gray `Badge`.
  *
  * Born and death slots are always rendered — a blank state row with an "Add"
  * button appears when the event is not yet recorded.
@@ -25,8 +23,8 @@ export function LifeSpine({
 }): JSX.Element {
   const { t } = useTranslation('individuals');
 
-  const hasBorn = milestones.some((m) => m.kind === 'born');
-  const hasDeath = milestones.some((m) => m.kind === 'death');
+  const born = milestones.find((m) => m.kind === 'born');
+  const death = milestones.find((m) => m.kind === 'death');
 
   // Ordered list: born slot first, recorded milestones in the middle (excluding
   // born/death which have fixed positions), death slot last.
@@ -35,15 +33,11 @@ export function LifeSpine({
     | { type: 'missing'; kind: 'born' | 'death' };
 
   const rows: Row[] = [
-    hasBorn
-      ? { type: 'milestone', milestone: milestones.find((m) => m.kind === 'born')! }
-      : { type: 'missing', kind: 'born' },
+    born ? { type: 'milestone', milestone: born } : { type: 'missing', kind: 'born' },
     ...milestones
       .filter((m) => m.kind !== 'born' && m.kind !== 'death')
       .map((m): Row => ({ type: 'milestone', milestone: m })),
-    hasDeath
-      ? { type: 'milestone', milestone: milestones.find((m) => m.kind === 'death')! }
-      : { type: 'missing', kind: 'death' },
+    death ? { type: 'milestone', milestone: death } : { type: 'missing', kind: 'death' },
   ];
 
   return (

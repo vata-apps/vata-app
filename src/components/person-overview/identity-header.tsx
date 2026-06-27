@@ -1,15 +1,12 @@
 import { Avatar, Badge, Code, Flex, Heading, TabNav, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
+import type { Gender } from '$types/database';
 import { Icon, type IconName } from '../icon';
 import type { OverviewPerson } from './overview-types';
 
-/** Maps the sex glyph to its icon; falls back to a neutral person icon. */
-function sexIcon(sex: string): IconName {
-  if (sex === '♀') return 'venus';
-  if (sex === '♂') return 'mars';
-  return 'user';
-}
+/** Maps a recorded sex to its summary icon, with a neutral fallback. */
+const SEX_ICON: Record<Gender, IconName> = { M: 'mars', F: 'venus', U: 'user' };
 
 /**
  * The identity band — a monogram avatar, the person's name, and an icon-led
@@ -76,7 +73,7 @@ export function IdentityHeader({ person }: { person: OverviewPerson }): JSX.Elem
   // The sex glyph is always shown; the born/died segments only appear when the
   // event is recorded, so people without a death event don't show a stray icon.
   const segments: MetaSegmentData[] = [
-    { key: 'sex', icon: sexIcon(person.sex) },
+    { key: 'sex', icon: SEX_ICON[person.sex] },
     ...(person.id ? [{ key: 'id', text: person.id }] : []),
     ...(bornLabel ? [{ key: 'born', icon: 'baby' as IconName, label: bornLabel }] : []),
     ...(diedLabel ? [{ key: 'died', icon: 'cross' as IconName, label: diedLabel }] : []),

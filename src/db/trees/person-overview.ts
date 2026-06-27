@@ -113,21 +113,30 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
   const birthEvent = events.find((event) => event.eventType.tag === 'BIRT') ?? null;
   const deathEvent = events.find((event) => event.eventType.tag === 'DEAT') ?? null;
 
+  // The parent family's members and each spouse family's members + marriage
+  // event are independent lookups, so resolve them all concurrently rather than
+  // one family after another.
+  const parentFamily = parentFamilies[0] ?? null;
+  const [parentMembers, spouseFamilyDetails] = await Promise.all([
+    parentFamily ? getFamilyMembers(parentFamily.id) : Promise.resolve(null),
+    Promise.all(
+      spouseFamilies.map(async (family) => {
+        const [members, marriageEvent] = await Promise.all([
+          getFamilyMembers(family.id),
+          getFamilyEventByType(family.id, 'MARR'),
+        ]);
+        return { family, members, marriageEvent };
+      })
+    ),
+  ]);
+
   // Parents — the husband/wife of the first family the person is a child of.
-  let fatherId: string | null = null;
-  let motherId: string | null = null;
-  if (parentFamilies[0]) {
-    const members = await getFamilyMembers(parentFamilies[0].id);
-    fatherId = members.find((member) => member.role === 'husband')?.individualId ?? null;
-    motherId = members.find((member) => member.role === 'wife')?.individualId ?? null;
-  }
+  const fatherId = parentMembers?.find((member) => member.role === 'husband')?.individualId ?? null;
+  const motherId = parentMembers?.find((member) => member.role === 'wife')?.individualId ?? null;
 
   // Marriages — every family where the person is a spouse, with the other
   // spouse and the children.
-  const marriagesRaw: { familyId: string; spouseId: string | null; childIds: string[] }[] = [];
-  const marriageEvents: (EventWithDetails | null)[] = [];
-  for (const family of spouseFamilies) {
-    const members = await getFamilyMembers(family.id);
+  const marriagesRaw = spouseFamilyDetails.map(({ family, members }) => {
     const spouseId =
       members.find(
         (member) =>
@@ -137,9 +146,9 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
     const childIds = members
       .filter((member) => member.role === 'child')
       .map((member) => member.individualId);
-    marriagesRaw.push({ familyId: family.id, spouseId, childIds });
-    marriageEvents.push(await getFamilyEventByType(family.id, 'MARR'));
-  }
+    return { familyId: family.id, spouseId, childIds };
+  });
+  const marriageEvents = spouseFamilyDetails.map(({ marriageEvent }) => marriageEvent);
 
   // Batch-resolve names and birth/death years for every related individual.
   const relatedIds = [

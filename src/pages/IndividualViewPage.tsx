@@ -2,22 +2,22 @@ import { Box, Flex, Grid, Text } from '@radix-ui/themes';
 import { getRouteApi } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-import { IdentityHeader, OverviewTabs } from '$components/person-overview-radix/identity-header';
-import { LifeSpine } from '$components/person-overview-radix/life-spine';
-import { PlacesLivedPanel } from '$components/person-overview-radix/places-lived-panel';
-import { RecordRail } from '$components/person-overview-radix/record-rail';
-import { VitalsPanel } from '$components/person-overview-radix/vitals-panel';
+import { IdentityHeader, OverviewTabs } from '$components/person-overview/identity-header';
+import { LifeSpine } from '$components/person-overview/life-spine';
+import { PlacesLivedPanel } from '$components/person-overview/places-lived-panel';
+import { RecordRail } from '$components/person-overview/record-rail';
+import { VitalsPanel } from '$components/person-overview/vitals-panel';
 import { usePersonOverview } from '$hooks/usePersonOverview';
 
 const routeApi = getRouteApi('/tree/$treeId/individual/$individualId');
 
 /**
- * The Person Overview for one individual: the pure-Radix identity header,
- * section tabs, a parents/names/media rail, and a life-events spine — all
- * driven by live tree data via {@link usePersonOverview}.
+ * The Person Overview for one individual: the identity header, section tabs, a
+ * parents/names/media rail, and a life-events spine — all driven by live tree
+ * data via {@link usePersonOverview}.
  *
- * The research-notes aside, suggestions, and places map from the design
- * prototype are intentionally omitted: those panels have no data model yet.
+ * The research-notes aside, suggestions, and places map are intentionally
+ * omitted: those panels have no data model yet.
  */
 export function IndividualViewPage(): JSX.Element {
   const { t } = useTranslation('individuals');
@@ -53,12 +53,7 @@ export function IndividualViewPage(): JSX.Element {
           >
             <Flex direction="column" gap="4">
               <VitalsPanel vitals={data.vitals} treeId={treeId} />
-              <RecordRail
-                parents={data.parents}
-                names={data.names}
-                media={data.media}
-                treeId={treeId}
-              />
+              <RecordRail parents={data.parents} names={data.names} treeId={treeId} />
             </Flex>
             <Flex direction="column" gap="4">
               <LifeSpine milestones={data.milestones} treeId={treeId} />

@@ -117,19 +117,19 @@ describe('buildPersonOverview', () => {
 
     expect(person.name).toBe('Marie Garneau');
     expect(person.initials).toBe('MG');
-    expect(person.sex).toBe('♀');
+    expect(person.sex).toBe('F');
     expect(person.birthDate).toBe('14 Aug 1890');
     expect(person.birthPlace).toBe('Longueuil');
     expect(person.deathDate).toBe('before 1955');
     expect(person.deathPlace).toBe('Montréal');
   });
 
-  it('maps the gender glyph for male and unknown', () => {
+  it('passes the recorded sex through for male and unknown', () => {
     expect(buildPersonOverview({ ...baseData(), individual: makeIndividual('M') }).person.sex).toBe(
-      '♂'
+      'M'
     );
     expect(buildPersonOverview({ ...baseData(), individual: makeIndividual('U') }).person.sex).toBe(
-      ''
+      'U'
     );
   });
 
@@ -203,10 +203,6 @@ describe('buildPersonOverview', () => {
   it('omits the born/death milestones when those events are missing', () => {
     const { milestones } = buildPersonOverview(baseData());
     expect(milestones).toEqual([]);
-  });
-
-  it('returns empty media — files are not individual-scoped yet', () => {
-    expect(buildPersonOverview(baseData()).media).toEqual([]);
   });
 
   it('collects distinct places from events and marriages, deduping contexts per place', () => {

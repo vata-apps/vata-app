@@ -1,37 +1,20 @@
-import type { EventType, EventWithDetails, Gender, Name } from '$types/database';
+import type { EventWithDetails, Name } from '$types/database';
 import { formatName } from '$db-tree/names';
 import { extractYear, type PersonOverviewData, type RelatedPerson } from '$db-tree/person-overview';
 import type {
-  OverviewMediaTile,
   OverviewMilestone,
   OverviewName,
   OverviewParents,
   OverviewPerson,
+  OverviewPlaceLived,
+  OverviewVital,
   PersonRefData,
 } from './overview-types';
 
-/** A distinct place tied to the person, with the event types that occurred there. */
-export interface OverviewPlaceLived {
-  id: string;
-  name: string;
-  /** Event types recorded at this place — resolved to labels by the component. */
-  contexts: EventType[];
-}
-
-/** A vital event (birth, death) with its sourcing state. */
-export interface OverviewVital {
-  kind: 'born' | 'died';
-  date: string;
-  placeId?: string;
-  placeName?: string;
-  /** Whether the event carries at least one source citation. */
-  sourced: boolean;
-}
-
 /**
- * The slice of the Person Overview view-model that the Radix components render
- * from live tree data. Research notes, suggestions and the places map are
- * excluded — they have no data model yet, so the page omits those panels.
+ * The slice of the Person Overview view-model that the components render from
+ * live tree data. Research notes, suggestions and the places map are excluded —
+ * they have no data model yet, so the page omits those panels.
  */
 export interface PersonOverviewView {
   person: OverviewPerson;
@@ -40,14 +23,6 @@ export interface PersonOverviewView {
   vitals: OverviewVital[];
   milestones: OverviewMilestone[];
   placesLived: OverviewPlaceLived[];
-  media: OverviewMediaTile[];
-}
-
-/** Map a database gender to the sex glyph the identity header expects. */
-function sexGlyph(gender: Gender): string {
-  if (gender === 'F') return '♀';
-  if (gender === 'M') return '♂';
-  return '';
 }
 
 /** Two-letter monogram from a primary name, falling back to `?`. */
@@ -71,8 +46,8 @@ function toPersonRef(related: RelatedPerson): PersonRefData {
 
 /**
  * Shape the pre-joined {@link PersonOverviewData} into the view-model consumed
- * by the Radix Person Overview components. Pure: no i18n, no fetching — name
- * types and milestone titles are emitted as keys for the components to resolve.
+ * by the Person Overview components. Pure: no i18n, no fetching — name types and
+ * milestone titles are emitted as keys for the components to resolve.
  */
 export function buildPersonOverview(data: PersonOverviewData): PersonOverviewView {
   const {
@@ -94,7 +69,7 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
     initials: initialsOf(primaryName),
     name: formatName(primaryName).full,
     id: individual.id,
-    sex: sexGlyph(individual.gender),
+    sex: individual.gender,
     birthDate: birthEvent?.dateOriginal ?? '',
     birthPlace: birthEvent?.place?.name ?? '',
     deathDate: deathEvent?.dateOriginal ?? '',
@@ -140,7 +115,6 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
         date: birthEvent.dateOriginal ?? '',
         sortYear: birthYear ?? 0,
         place: birthEvent.place?.name ?? '',
-        detail: '',
       }
     : null;
 
@@ -151,7 +125,6 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
         date: deathEvent.dateOriginal ?? '',
         sortYear: deathYear ?? 0,
         place: deathEvent.place?.name ?? '',
-        detail: '',
       }
     : null;
 
@@ -164,7 +137,6 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
         date: event?.dateOriginal ?? '',
         sortYear: extractYear(event) ?? 0,
         place: event?.place?.name ?? '',
-        detail: '',
         spouse: marriage.spouse ? toPersonRef(marriage.spouse) : undefined,
         children: marriage.children.map(toPersonRef),
       };
@@ -203,7 +175,5 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
   }
   const placesLived = [...placesById.values()];
 
-  // Media is individual-agnostic in the schema (files attach to sources), so
-  // there is nothing to show per person yet.
-  return { person, names: viewNames, parents, vitals, milestones, placesLived, media: [] };
+  return { person, names: viewNames, parents, vitals, milestones, placesLived };
 }
