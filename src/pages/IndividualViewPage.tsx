@@ -53,10 +53,15 @@ export function IndividualViewPage(): JSX.Element {
           >
             <Flex direction="column" gap="4">
               <VitalsPanel vitals={data.vitals} treeId={treeId} />
-              <RecordRail parents={data.parents} names={data.names} media={data.media} />
+              <RecordRail
+                parents={data.parents}
+                names={data.names}
+                media={data.media}
+                treeId={treeId}
+              />
             </Flex>
             <Flex direction="column" gap="4">
-              <LifeSpine milestones={data.milestones} />
+              <LifeSpine milestones={data.milestones} treeId={treeId} />
               <PlacesLivedPanel places={data.placesLived} treeId={treeId} />
             </Flex>
           </Grid>

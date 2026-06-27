@@ -1,4 +1,5 @@
 import { Avatar, Flex, Text } from '@radix-ui/themes';
+import { Link } from '@tanstack/react-router';
 
 import type { PersonRefData } from './overview-mock';
 
@@ -6,6 +7,8 @@ type PersonRefVariant = 'normal' | 'subtle';
 
 interface PersonRefProps {
   person: PersonRefData;
+  /** Tree whose individual route the reference links into. */
+  treeId: string;
   /**
    * Visual weight of the same chrome-less avatar + name + life-dates layout.
    * `normal` — a solid avatar with the dates stacked under the name, for
@@ -15,8 +18,6 @@ interface PersonRefProps {
    *   their host.
    */
   variant?: PersonRefVariant;
-  /** Invoked with the person's id when the reference is activated. */
-  onSelect?: (id: string) => void;
 }
 
 /** Formats the life dates as "b. 1855 – 1921", "b. 1855", "d. 1921", or "". */
@@ -41,23 +42,19 @@ function formatLifeDates(person: PersonRefData): string {
  * Neither draws a box: rows sit flat inside their host card (separator-divided,
  * like the Life events list) rather than nesting a card within a card.
  *
+ * Activating the reference navigates to that person's individual page.
+ *
  * Pure `@radix-ui/themes`.
  */
-export function PersonRef({ person, variant = 'normal', onSelect }: PersonRefProps): JSX.Element {
+export function PersonRef({ person, treeId, variant = 'normal' }: PersonRefProps): JSX.Element {
   const subtle = variant === 'subtle';
   const dates = formatLifeDates(person);
 
   return (
-    <button
-      type="button"
-      onClick={() => onSelect?.(person.id)}
-      style={{
-        cursor: 'pointer',
-        background: 'none',
-        border: 'none',
-        padding: 0,
-        textAlign: 'left',
-      }}
+    <Link
+      to="/tree/$treeId/individual/$individualId"
+      params={{ treeId, individualId: person.id }}
+      style={{ textDecoration: 'none', color: 'inherit' }}
     >
       <Flex align="center" gap={subtle ? '2' : '3'}>
         <Avatar
@@ -83,6 +80,6 @@ export function PersonRef({ person, variant = 'normal', onSelect }: PersonRefPro
           )}
         </Flex>
       </Flex>
-    </button>
+    </Link>
   );
 }

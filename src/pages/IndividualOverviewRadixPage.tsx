@@ -1,4 +1,5 @@
 import { Box, Flex, Grid } from '@radix-ui/themes';
+import { getRouteApi } from '@tanstack/react-router';
 
 import { IdentityHeader, OverviewTabs } from '$components/person-overview-radix/identity-header';
 import { LifeSpine } from '$components/person-overview-radix/life-spine';
@@ -6,6 +7,8 @@ import { personOverview } from '$components/person-overview-radix/overview-mock'
 import { PlacesPanel } from '$components/person-overview-radix/places-panel';
 import { ProfileAside } from '$components/person-overview-radix/profile-aside';
 import { RecordRail } from '$components/person-overview-radix/record-rail';
+
+const routeApi = getRouteApi('/tree/$treeId/individual-radix');
 
 /**
  * A pure-`@radix-ui/themes` rebuild of the Person Overview, used to test how
@@ -21,6 +24,7 @@ import { RecordRail } from '$components/person-overview-radix/record-rail';
  * live tree database.
  */
 export function IndividualOverviewRadixPage(): JSX.Element {
+  const { treeId } = routeApi.useParams();
   const { person, parents, names, media, milestones, places, researchNotes, suggestions } =
     personOverview;
 
@@ -37,9 +41,9 @@ export function IndividualOverviewRadixPage(): JSX.Element {
               gap="4"
               align="start"
             >
-              <RecordRail parents={parents} names={names} media={media} />
+              <RecordRail parents={parents} names={names} media={media} treeId={treeId} />
               <Flex direction="column" gap="4">
-                <LifeSpine milestones={milestones} />
+                <LifeSpine milestones={milestones} treeId={treeId} />
                 <PlacesPanel legend={places.legend} />
               </Flex>
             </Grid>

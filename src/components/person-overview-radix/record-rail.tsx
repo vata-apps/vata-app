@@ -14,6 +14,7 @@ interface RecordRailProps {
   parents: OverviewParents;
   names: OverviewName[];
   media: OverviewMediaTile[];
+  treeId: string;
 }
 
 /**
@@ -21,17 +22,23 @@ interface RecordRailProps {
  * panel. Pure `@radix-ui/themes`: `PersonRef` for parents, flat rows for names,
  * and a thumbnail grid (or empty state) for media.
  */
-export function RecordRail({ parents, names, media }: RecordRailProps): JSX.Element {
+export function RecordRail({ parents, names, media, treeId }: RecordRailProps): JSX.Element {
   return (
     <Flex direction="column" gap="4">
-      <ParentsPanel parents={parents} />
+      <ParentsPanel parents={parents} treeId={treeId} />
       <NamesPanel names={names} />
       <MediaPanel media={media} />
     </Flex>
   );
 }
 
-function ParentsPanel({ parents }: { parents: OverviewParents }): JSX.Element {
+function ParentsPanel({
+  parents,
+  treeId,
+}: {
+  parents: OverviewParents;
+  treeId: string;
+}): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
     <Card>
@@ -45,6 +52,7 @@ function ParentsPanel({ parents }: { parents: OverviewParents }): JSX.Element {
             label={t('overview.parents.father')}
             missingLabel={t('overview.parents.missingFather')}
             person={parents.father}
+            treeId={treeId}
           />
           <Separator size="4" my="3" />
           <ParentSlot
@@ -52,6 +60,7 @@ function ParentsPanel({ parents }: { parents: OverviewParents }): JSX.Element {
             label={t('overview.parents.mother')}
             missingLabel={t('overview.parents.missingMother')}
             person={parents.mother}
+            treeId={treeId}
           />
         </Flex>
       </Flex>
@@ -64,11 +73,12 @@ interface ParentSlotProps {
   label: string;
   missingLabel: string;
   person?: PersonRefData;
+  treeId: string;
 }
 
-function ParentSlot({ missingLabel, person }: ParentSlotProps): JSX.Element {
+function ParentSlot({ missingLabel, person, treeId }: ParentSlotProps): JSX.Element {
   if (person) {
-    return <PersonRef person={person} />;
+    return <PersonRef person={person} treeId={treeId} />;
   }
   return (
     <Flex align="center" gap="2">

@@ -1,4 +1,5 @@
 import { Avatar, Badge, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
+import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import type { OverviewMilestone, PersonRefData } from './overview-mock';
@@ -15,7 +16,13 @@ import { PersonRef } from './person-ref';
  * Born and death slots are always rendered — a blank state row with an "Add"
  * button appears when the event is not yet recorded.
  */
-export function LifeSpine({ milestones }: { milestones: OverviewMilestone[] }): JSX.Element {
+export function LifeSpine({
+  milestones,
+  treeId,
+}: {
+  milestones: OverviewMilestone[];
+  treeId: string;
+}): JSX.Element {
   const { t } = useTranslation('individuals');
 
   const hasBorn = milestones.some((m) => m.kind === 'born');
@@ -51,7 +58,7 @@ export function LifeSpine({ milestones }: { milestones: OverviewMilestone[] }): 
             >
               {i > 0 && <Separator size="4" my="3" />}
               {row.type === 'milestone' ? (
-                <Milestone milestone={row.milestone} />
+                <Milestone milestone={row.milestone} treeId={treeId} />
               ) : (
                 <MissingMilestone
                   label={t(`overview.milestone.missing${row.kind === 'born' ? 'Born' : 'Death'}`)}
@@ -84,31 +91,43 @@ function formatLifeDates(person: PersonRefData): string {
   return '';
 }
 
-function SpouseInline({ spouse }: { spouse: PersonRefData }): JSX.Element {
+function SpouseInline({ spouse, treeId }: { spouse: PersonRefData; treeId: string }): JSX.Element {
   const dates = formatLifeDates(spouse);
 
   return (
-    <Flex align="center" gap="2" flexShrink="0">
-      <Avatar
-        src={spouse.imageUrl}
-        radius="full"
-        size="1"
-        variant="soft"
-        fallback={spouse.initials}
-      />
-      <Text size="2" weight="medium">
-        {spouse.name}
-      </Text>
-      {dates && (
-        <Text size="1" color="gray">
-          {dates}
+    <Link
+      to="/tree/$treeId/individual/$individualId"
+      params={{ treeId, individualId: spouse.id }}
+      style={{ textDecoration: 'none', color: 'inherit' }}
+    >
+      <Flex align="center" gap="2" flexShrink="0">
+        <Avatar
+          src={spouse.imageUrl}
+          radius="full"
+          size="1"
+          variant="soft"
+          fallback={spouse.initials}
+        />
+        <Text size="2" weight="medium">
+          {spouse.name}
         </Text>
-      )}
-    </Flex>
+        {dates && (
+          <Text size="1" color="gray">
+            {dates}
+          </Text>
+        )}
+      </Flex>
+    </Link>
   );
 }
 
-function Milestone({ milestone }: { milestone: OverviewMilestone }): JSX.Element {
+function Milestone({
+  milestone,
+  treeId,
+}: {
+  milestone: OverviewMilestone;
+  treeId: string;
+}): JSX.Element {
   const { t } = useTranslation('individuals');
 
   const title = t(`overview.milestone.${milestone.kind}`);
@@ -124,7 +143,7 @@ function Milestone({ milestone }: { milestone: OverviewMilestone }): JSX.Element
         <Text size="3" weight="medium">
           {title}
         </Text>
-        {milestone.spouse && <SpouseInline spouse={milestone.spouse} />}
+        {milestone.spouse && <SpouseInline spouse={milestone.spouse} treeId={treeId} />}
         <Flex flexGrow="1" />
         <Flex align="center" gap="1" flexShrink="0">
           <Icon name="map-pin" size={14} style={{ color: 'var(--gray-9)' }} />
@@ -146,7 +165,7 @@ function Milestone({ milestone }: { milestone: OverviewMilestone }): JSX.Element
             </Text>
             <Flex gap="3" wrap="wrap">
               {children.map((child) => (
-                <PersonRef key={child.id} person={child} variant="subtle" />
+                <PersonRef key={child.id} person={child} variant="subtle" treeId={treeId} />
               ))}
             </Flex>
           </Flex>
