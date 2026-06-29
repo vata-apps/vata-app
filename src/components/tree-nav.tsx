@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Flex, Tooltip } from '@radix-ui/themes';
+import { Flex, IconButton, Tooltip } from '@radix-ui/themes';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -24,12 +24,14 @@ export interface TreeNavProps {
  * to the bottom. It sits on the left of the shell and persists across every
  * page of an open tree.
  *
- * Each section is a router `Link` styled as a rail item (no tab metaphor).
- * The icon carries no text label, so the link takes an `aria-label` for its
+ * Each section is a Radix `IconButton` wrapping a router `Link` — a `soft`
+ * pill in the accent color for the active section and gray for the rest, so
+ * the tint, hover, focus ring, and square shape all come from the theme. The
+ * icon carries no text label, so the link takes an `aria-label` for its
  * accessible name and a right-side `Tooltip` for sighted users. The section
  * in view is marked active (including on that section's detail routes — an
- * individual detail highlights People), which tints the item; section-active
- * state is driven by `resolveNavSection`.
+ * individual detail highlights People); section-active state is driven by
+ * `resolveNavSection`.
  *
  * Reads the active tree and section from the current route; renders nothing
  * when used outside the in-tree context.
@@ -46,40 +48,39 @@ export function TreeNav({ footer }: TreeNavProps): JSX.Element | null {
     <Flex
       asChild
       direction="column"
+      align="center"
       gap="2"
       px="2"
       py="3"
       width="56px"
       flexShrink="0"
-      className="tree-rail"
     >
       <nav aria-label={t('nav.ariaLabel')}>
-        <Flex direction="column" gap="1" flexGrow="1">
+        <Flex direction="column" align="center" gap="1" flexGrow="1">
           {NAV_SECTIONS.map((section) => {
             const isActive = section.id === activeSection;
             const label = t(section.labelKey);
             return (
               <Tooltip key={section.id} content={label} side="right">
-                <Link
-                  to={section.to}
-                  params={{ treeId }}
-                  // Without `exact`, TanStack's fuzzy matcher marks the Home link
-                  // active on every in-tree route (its path is a prefix of them
-                  // all); section-active state is driven by resolveNavSection.
-                  activeOptions={{ exact: true }}
-                  aria-label={label}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={
-                    isActive ? 'tree-rail__item tree-rail__item--active' : 'tree-rail__item'
-                  }
-                >
-                  <Icon name={section.icon} size={20} />
-                </Link>
+                <IconButton asChild size="2" variant="soft" color={isActive ? undefined : 'gray'}>
+                  <Link
+                    to={section.to}
+                    params={{ treeId }}
+                    // Without `exact`, TanStack's fuzzy matcher marks the Home link
+                    // active on every in-tree route (its path is a prefix of them
+                    // all); section-active state is driven by resolveNavSection.
+                    activeOptions={{ exact: true }}
+                    aria-label={label}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <Icon name={section.icon} size={16} />
+                  </Link>
+                </IconButton>
               </Tooltip>
             );
           })}
         </Flex>
-        {footer !== undefined && <Flex justify="center">{footer}</Flex>}
+        {footer}
       </nav>
     </Flex>
   );
