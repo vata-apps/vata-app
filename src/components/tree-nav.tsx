@@ -52,7 +52,7 @@ export function TreeNav({ footer }: TreeNavProps): JSX.Element | null {
       gap="2"
       px="2"
       py="3"
-      width="56px"
+      width="64px"
       flexShrink="0"
     >
       <nav aria-label={t('nav.ariaLabel')}>
@@ -62,7 +62,7 @@ export function TreeNav({ footer }: TreeNavProps): JSX.Element | null {
             const label = t(section.labelKey);
             return (
               <Tooltip key={section.id} content={label} side="right">
-                <IconButton asChild size="2" variant="soft" color={isActive ? undefined : 'gray'}>
+                <IconButton asChild size="3" variant="soft" color={isActive ? undefined : 'gray'}>
                   <Link
                     to={section.to}
                     params={{ treeId }}
@@ -73,7 +73,7 @@ export function TreeNav({ footer }: TreeNavProps): JSX.Element | null {
                     aria-label={label}
                     aria-current={isActive ? 'page' : undefined}
                   >
-                    <Icon name={section.icon} size={16} />
+                    <Icon name={section.icon} size={20} />
                   </Link>
                 </IconButton>
               </Tooltip>

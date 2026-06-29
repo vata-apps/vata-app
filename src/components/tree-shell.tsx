@@ -40,8 +40,8 @@ export function TreeShell({ children }: TreeShellProps): JSX.Element {
       <TreeNav
         footer={
           <PreferencesPopover side="right">
-            <IconButton size="2" variant="soft" color="gray" aria-label={t('preferences.title')}>
-              <Icon name="settings" size={16} />
+            <IconButton size="3" variant="soft" color="gray" aria-label={t('preferences.title')}>
+              <Icon name="settings" size={20} />
             </IconButton>
           </PreferencesPopover>
         }
