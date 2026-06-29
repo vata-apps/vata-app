@@ -1,0 +1,23 @@
+src/components/tree-nav.tsx
+  s_09e11e6973b019::t_bfa458aa40c26f 65
+  s_09e11e6973b019::t_d01ea4f5dfd5c7 2,30,33-34,51,59,66-73
+  s_09e11e6973b019::t_d8eb1a4f6fb479 77-78,83
+  s_09e11e6973b019::t_fb0c94942d8266 74-76
+  s_09e11e6973b019::t_0cff4fcdcb2041 27-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "c41e0b7974114494dd81a93d4f48685bea70798e",
+  "prompts": {},
+  "sessions": {
+    "s_09e11e6973b019": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5f088651-9360-4f6d-9fe9-87d781fd63b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
