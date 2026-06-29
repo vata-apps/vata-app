@@ -1,0 +1,25 @@
+src/components/tree-shell.tsx
+  s_09e11e6973b019::t_c425c2ee76c789 21-23,39-48
+src/components/tree-nav.tsx
+  s_09e11e6973b019::t_3237b1ef00ca7c 2,14-15,17,21-25,27-30,32-33,35,44-74,76-78
+src/components/preferences-popover.tsx
+  s_09e11e6973b019::t_d2153649a10c32 24,26
+src/styles/app.css
+  s_09e11e6973b019::t_2748a491d62269 26-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.3",
+  "base_commit_sha": "7f159bcfff318a5c31e18604779bbd472ff0b678",
+  "prompts": {},
+  "sessions": {
+    "s_09e11e6973b019": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5f088651-9360-4f6d-9fe9-87d781fd63b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
