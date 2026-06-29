@@ -21,9 +21,9 @@ export interface PreferencesPopoverProps {
   /**
    * Which side of the trigger the panel opens on. Use `'top'` for a
    * trigger pinned to the bottom of the screen, `'bottom'` for one in a
-   * header. Defaults to `'top'`.
+   * header, and `'right'` for one in a left-edge rail. Defaults to `'top'`.
    */
-  side?: 'top' | 'bottom';
+  side?: 'top' | 'bottom' | 'right';
 }
 
 /**

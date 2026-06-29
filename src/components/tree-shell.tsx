@@ -18,10 +18,9 @@ export interface TreeShellProps {
  * The in-tree application shell — the persistent frame around every page
  * under an open tree.
  *
- * A persistent header carries the {@link TreeNav} tab bar, with a Settings
- * button (opening the {@link PreferencesPopover}) pinned to its right, above
- * a single full-width body that holds the routed page. No separator divides
- * the header from the body.
+ * A narrow {@link TreeNav} rail runs down the left edge, with a Settings
+ * button (opening the {@link PreferencesPopover}) pinned to its bottom,
+ * beside a single full-width body that holds the routed page.
  *
  * The shell provides no fixed side panels: pages render full-width by
  * default and build any panels they need inside their own body. See
@@ -37,25 +36,16 @@ export interface TreeShellProps {
 export function TreeShell({ children }: TreeShellProps): JSX.Element {
   const { t } = useTranslation('common');
   return (
-    <Flex direction="column" height="100vh" overflow="hidden">
-      <Box asChild flexShrink="0" px="4" py="2">
-        <header>
-          <TreeNav
-            trailing={
-              <PreferencesPopover side="bottom">
-                <IconButton
-                  size="2"
-                  variant="soft"
-                  color="gray"
-                  aria-label={t('preferences.title')}
-                >
-                  <Icon name="settings" size={16} />
-                </IconButton>
-              </PreferencesPopover>
-            }
-          />
-        </header>
-      </Box>
+    <Flex direction="row" height="100vh" overflow="hidden">
+      <TreeNav
+        footer={
+          <PreferencesPopover side="right">
+            <IconButton size="2" variant="soft" color="gray" aria-label={t('preferences.title')}>
+              <Icon name="settings" size={16} />
+            </IconButton>
+          </PreferencesPopover>
+        }
+      />
       <Box asChild flexGrow="1" minHeight="0" overflow="auto">
         <main>{children}</main>
       </Box>
