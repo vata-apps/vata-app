@@ -25,9 +25,9 @@ tr.entity-table__row--clickable:hover td {
 }
 
 /*
- * In-tree navigation rail (TreeNav): a narrow vertical bar of section
- * links, each an icon stacked over its label. Colors are drawn from the
- * Radix gray/accent scales — no custom palette.
+ * In-tree navigation rail (TreeNav): a narrow, icon-only vertical bar of
+ * section links (labels live in tooltips). Colors are drawn from the Radix
+ * gray/accent scales — no custom palette.
  */
 .tree-rail {
   border-right: 1px solid var(--gray-a3);
@@ -35,11 +35,9 @@ tr.entity-table__row--clickable:hover td {
 
 .tree-rail__item {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-1);
-  padding: var(--space-2) var(--space-1);
+  aspect-ratio: 1;
   border-radius: var(--radius-3);
   color: var(--gray-a11);
   text-decoration: none;
@@ -63,10 +61,4 @@ tr.entity-table__row--clickable:hover td {
 .tree-rail__item:focus-visible {
   outline: 2px solid var(--focus-8);
   outline-offset: -2px;
-}
-
-.tree-rail__label {
-  font-size: var(--font-size-1);
-  line-height: var(--line-height-1);
-  white-space: nowrap;
 }
