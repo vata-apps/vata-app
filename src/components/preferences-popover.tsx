@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Flex, Heading, Popover, SegmentedControl, Text } from '@radix-ui/themes';
+import { Flex, Heading, Popover, SegmentedControl, Text, Tooltip } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
 import { SUPPORTED_LANGUAGES, type SupportedLanguage } from '$/i18n/config';
@@ -20,10 +20,16 @@ export interface PreferencesPopoverProps {
   children: ReactNode;
   /**
    * Which side of the trigger the panel opens on. Use `'top'` for a
-   * trigger pinned to the bottom of the screen, `'bottom'` for one in a
-   * header, and `'right'` for one in a left-edge rail. Defaults to `'top'`.
+   * trigger pinned to the bottom of the screen and `'right'` for one in a
+   * left-edge rail. Defaults to `'top'`.
    */
-  side?: 'top' | 'bottom' | 'right';
+  side?: 'top' | 'right';
+  /**
+   * Optional label shown in a right-side tooltip on the trigger — for an
+   * icon-only trigger whose meaning isn't otherwise visible. Wraps the
+   * trigger so both the hover tooltip and the click-to-open popover work.
+   */
+  tooltip?: string;
 }
 
 /**
@@ -45,6 +51,7 @@ export interface PreferencesPopoverProps {
 export function PreferencesPopover({
   children,
   side = 'top',
+  tooltip,
 }: PreferencesPopoverProps): JSX.Element {
   const { t, i18n } = useTranslation('common');
   const theme = useAppStore((state) => state.theme);
@@ -52,9 +59,19 @@ export function PreferencesPopover({
 
   const language = normalizeLanguage(i18n.language);
 
+  // Tooltip must wrap the trigger (not the reverse), or its trigger props win
+  // over the popover's and the panel stops opening on click.
+  const trigger = <Popover.Trigger>{children}</Popover.Trigger>;
+
   return (
     <Popover.Root>
-      <Popover.Trigger>{children}</Popover.Trigger>
+      {tooltip === undefined ? (
+        trigger
+      ) : (
+        <Tooltip content={tooltip} side="right">
+          {trigger}
+        </Tooltip>
+      )}
       <Popover.Content side={side} align="end" width="280px">
         <Heading size="3" mb="3">
           {t('preferences.title')}

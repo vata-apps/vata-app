@@ -1,9 +1,6 @@
 import { type ReactNode } from 'react';
-import { Box, Flex, IconButton } from '@radix-ui/themes';
-import { useTranslation } from 'react-i18next';
+import { Box, Flex } from '@radix-ui/themes';
 
-import { Icon } from '$components/icon';
-import { PreferencesPopover } from '$components/preferences-popover';
 import { TreeNav } from './tree-nav';
 
 /**
@@ -18,9 +15,9 @@ export interface TreeShellProps {
  * The in-tree application shell — the persistent frame around every page
  * under an open tree.
  *
- * A narrow {@link TreeNav} rail runs down the left edge, with a Settings
- * button (opening the {@link PreferencesPopover}) pinned to its bottom,
- * beside a single full-width body that holds the routed page.
+ * A narrow {@link TreeNav} rail (carrying the section links and the Settings
+ * control) runs down the left edge, beside a single full-width body that
+ * holds the routed page.
  *
  * The shell provides no fixed side panels: pages render full-width by
  * default and build any panels they need inside their own body. See
@@ -34,19 +31,13 @@ export interface TreeShellProps {
  * </TreeShell>
  */
 export function TreeShell({ children }: TreeShellProps): JSX.Element {
-  const { t } = useTranslation('common');
   return (
     <Flex direction="row" height="100vh" overflow="hidden">
-      <TreeNav
-        footer={
-          <PreferencesPopover side="right">
-            <IconButton size="3" variant="soft" color="gray" aria-label={t('preferences.title')}>
-              <Icon name="settings" size={20} />
-            </IconButton>
-          </PreferencesPopover>
-        }
-      />
-      <Box asChild flexGrow="1" minHeight="0" overflow="auto">
+      <TreeNav />
+      {/* minWidth="0" lets the body shrink below its content's min-content
+          width on the row's main axis, so wide content scrolls inside <main>
+          instead of overflowing past the rail. */}
+      <Box asChild flexGrow="1" minWidth="0" minHeight="0" overflow="auto">
         <main>{children}</main>
       </Box>
     </Flex>
