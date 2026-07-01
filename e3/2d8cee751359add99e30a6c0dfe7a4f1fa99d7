@@ -1,0 +1,19 @@
+src/components/preferences-popover.tsx
+  s_09e11e6973b019::t_daa227a624ccb0 28-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.6",
+  "base_commit_sha": "e32d8cee751359add99e30a6c0dfe7a4f1fa99d7",
+  "prompts": {},
+  "sessions": {
+    "s_09e11e6973b019": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5f088651-9360-4f6d-9fe9-87d781fd63b8",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
