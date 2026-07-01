@@ -25,9 +25,11 @@ export interface PreferencesPopoverProps {
    */
   side?: 'top' | 'right';
   /**
-   * Optional label shown in a right-side tooltip on the trigger — for an
-   * icon-only trigger whose meaning isn't otherwise visible. Wraps the
-   * trigger so both the hover tooltip and the click-to-open popover work.
+   * Optional label shown in a tooltip on the trigger — for an icon-only
+   * trigger whose meaning isn't otherwise visible. Wraps the trigger so both
+   * the hover tooltip and the click-to-open popover work. The tooltip always
+   * opens to the right of the trigger, independent of `side` (it targets a
+   * left-edge rail trigger); the two directions are separate axes by design.
    */
   tooltip?: string;
 }
