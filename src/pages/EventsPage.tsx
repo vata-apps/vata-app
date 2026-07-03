@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Flex, Grid, Heading, Link } from '@radix-ui/themes';
+import { Box, Button, Flex, Grid, Heading } from '@radix-ui/themes';
 
 import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import {
@@ -12,6 +12,7 @@ import {
 } from '$components/events-filters';
 import { Icon } from '$components/icon';
 import { useEvents } from '$hooks/useEvents';
+import { eventDateColumn, eventPlaceColumn, eventTypeColumn } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { formatName } from '$db-tree/names';
 import type { EventListEntry, EventPrincipal, Name } from '$types/database';
@@ -19,15 +20,6 @@ import type { EventListEntry, EventPrincipal, Name } from '$types/database';
 interface EventsPageProps {
   treeId: string;
 }
-
-/**
- * Column widths keyed by the kind of data each column holds, so columns of
- * the same type stay visually uniform regardless of their contents.
- */
-const COLUMN_WIDTH = {
-  type: '200px',
-  date: '160px',
-} as const;
 
 /** A single principal name, falling back to the unknown label. */
 function nameText(name: Name | null, unknownLabel: string): string {
@@ -112,38 +104,11 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
 
   const columns = useMemo<EntityTableColumn<EventListEntry>[]>(() => {
     const unknownPrincipal = t('table.unknownPrincipal');
-    const dateUnknown = t('table.dateUnknown');
     return [
-      {
-        key: 'type',
-        header: t('table.columns.type'),
-        rowHeader: true,
-        width: COLUMN_WIDTH.type,
-        // A keyboard-focusable link (styled as plain text — no color/underline)
-        // so the list is navigable without a pointer; the whole row is also
-        // clickable via `onRowClick`, so the link stops propagation.
-        cell: (event) => (
-          <Link
-            asChild
-            color="gray"
-            highContrast
-            underline="none"
-            onClick={(domEvent) => domEvent.stopPropagation()}
-          >
-            <RouterLink to="/tree/$treeId/event/$eventId" params={{ treeId, eventId: event.id }}>
-              {eventTypeLabel(event.eventType, t)}
-            </RouterLink>
-          </Link>
-        ),
-        sortValue: (event) => eventTypeLabel(event.eventType, t) || null,
-      },
-      {
-        key: 'date',
-        header: t('table.columns.date'),
-        width: COLUMN_WIDTH.date,
-        cell: (event) =>
-          event.dateOriginal ?? (event.dateSort ? event.dateSort.slice(0, 4) : dateUnknown),
-      },
+      eventTypeColumn(treeId, t),
+      // The list arrives chronological from the manager, so the Date column
+      // stays unsortable to preserve that natural order.
+      eventDateColumn(t),
       {
         key: 'principals',
         header: t('table.columns.principals'),
@@ -151,12 +116,7 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
         sortValue: (event) =>
           event.principals.length === 0 ? null : principalsText(event.principals, unknownPrincipal),
       },
-      {
-        key: 'place',
-        header: t('table.columns.place'),
-        cell: (event) => event.place?.name ?? '—',
-        sortValue: (event) => event.place?.name ?? null,
-      },
+      eventPlaceColumn(t),
     ];
   }, [t, treeId]);
 
