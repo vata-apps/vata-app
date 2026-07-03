@@ -37,5 +37,13 @@
     "BURI": "Inhumation",
     "RESI": "Résidence",
     "OCCU": "Occupation"
+  },
+  "roles": {
+    "principal": "Principal",
+    "witness": "Témoin",
+    "officiant": "Officiant",
+    "godparent": "Parrain/Marraine",
+    "informant": "Informateur",
+    "other": "Autre"
   }
 }
