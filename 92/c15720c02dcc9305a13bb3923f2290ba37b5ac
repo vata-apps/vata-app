@@ -1,0 +1,31 @@
+src/db/seed/harry-potter-demo.ts
+  s_c4353ca5f2ecac::t_6a433281a25057 96,104
+  s_c4353ca5f2ecac::t_b72f05192f4421 127,135
+  s_c4353ca5f2ecac::t_2da2fab13a6c84 2
+  s_c4353ca5f2ecac::t_db3acabc3f975c 260
+  s_c4353ca5f2ecac::t_e992ef53fd2e1b 367
+  s_c4353ca5f2ecac::t_349cd051562951 318
+  s_c4353ca5f2ecac::t_2e134d24e1c533 420
+  s_c4353ca5f2ecac::t_a76ff52cd7ec79 429-431,434-438
+  s_c4353ca5f2ecac::t_7657bafd2f0499 232,236,238,240
+  s_c4353ca5f2ecac::t_ab78ea56720eee 422-428,432-433
+  s_c4353ca5f2ecac::t_25d0bd3a4c469c 138-145
+  s_c4353ca5f2ecac::t_65bc3a48a3f446 136-137
+  s_c4353ca5f2ecac::t_df9324508150d2 421
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "92c15720c02dcc9305a13bb3923f2290ba37b5ac",
+  "prompts": {},
+  "sessions": {
+    "s_c4353ca5f2ecac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ce4b265-c844-4082-8d0a-9578b9305cd3",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
