@@ -1,0 +1,20 @@
+src/db/trees/events.ts
+  s_fdca236ee5b35d::t_161eee8c2aaf99 432-434,439-451
+  s_fdca236ee5b35d::t_407a997b16fd97 391-394,399-411
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "22ef159e61de84797790b59e95770023e4943e17",
+  "prompts": {},
+  "sessions": {
+    "s_fdca236ee5b35d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6ce2b2a-0f35-4815-a6ee-c88f8f216f39",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
