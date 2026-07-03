@@ -388,22 +388,27 @@ export async function getEventsByIndividualId(individualId: string): Promise<Eve
 }
 
 /**
- * Get all events for an individual with full details
+ * Get all events for an individual with full details.
+ * Uses a constant number of SQL queries regardless of event count
+ * (via {@link assembleEventsWithDetails}). `DISTINCT` collapses the duplicate
+ * rows an individual with several participant roles on one event would produce.
  */
 export async function getEventsByIndividualIdWithDetails(
   individualId: string
 ): Promise<EventWithDetails[]> {
-  const events = await getEventsByIndividualId(individualId);
-  const results: EventWithDetails[] = [];
-
-  for (const event of events) {
-    const details = await getEventWithDetails(event.id);
-    if (details) {
-      results.push(details);
-    }
-  }
-
-  return results;
+  const db = await getTreeDb();
+  const dbId = parseEntityId(individualId);
+  const rows = await db.select<RawEventWithType[]>(
+    `SELECT DISTINCT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+            et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+     FROM events e
+     INNER JOIN event_types et ON et.id = e.event_type_id
+     INNER JOIN event_participants ep ON ep.event_id = e.id
+     WHERE ep.individual_id = $1
+     ORDER BY e.date_sort, e.id`,
+    [dbId]
+  );
+  return assembleEventsWithDetails(rows);
 }
 
 /**
@@ -424,22 +429,26 @@ export async function getEventsByFamilyId(familyId: string): Promise<Event[]> {
 }
 
 /**
- * Get all events for a family with full details
+ * Get all events for a family with full details.
+ * Uses a constant number of SQL queries regardless of event count
+ * (via {@link assembleEventsWithDetails}).
  */
 export async function getEventsByFamilyIdWithDetails(
   familyId: string
 ): Promise<EventWithDetails[]> {
-  const events = await getEventsByFamilyId(familyId);
-  const results: EventWithDetails[] = [];
-
-  for (const event of events) {
-    const details = await getEventWithDetails(event.id);
-    if (details) {
-      results.push(details);
-    }
-  }
-
-  return results;
+  const db = await getTreeDb();
+  const dbId = parseEntityId(familyId);
+  const rows = await db.select<RawEventWithType[]>(
+    `SELECT DISTINCT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+            et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+     FROM events e
+     INNER JOIN event_types et ON et.id = e.event_type_id
+     INNER JOIN event_participants ep ON ep.event_id = e.id
+     WHERE ep.family_id = $1
+     ORDER BY e.date_sort, e.id`,
+    [dbId]
+  );
+  return assembleEventsWithDetails(rows);
 }
 
 /**
