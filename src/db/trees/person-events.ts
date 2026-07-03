@@ -93,8 +93,9 @@ export async function getPersonEvents(individualId: string): Promise<PersonEvent
     ),
   ]);
 
-  const entries: PersonEventEntry[] = [];
-  const seen = new Set<string>();
+  // Index entries by event id so a spouse-family event can reconcile with one
+  // that direct participation already added (an event can be both).
+  const entriesById = new Map<string, PersonEventEntry>();
 
   // Direct-participant events: principal role → `principal`, any other → `secondary`.
   for (const event of ownEvents) {
@@ -103,13 +104,12 @@ export async function getPersonEvents(individualId: string): Promise<PersonEvent
       .map((participant) => participant.role);
     if (roles.length === 0) continue; // defensive: the join guarantees a match
     const isPrincipal = roles.includes('principal');
-    entries.push({
+    entriesById.set(event.id, {
       ...event,
       scope: isPrincipal ? 'principal' : 'secondary',
       role: isPrincipal ? 'principal' : roles[0],
       counterpartyName: null,
     });
-    seen.add(event.id);
   }
 
   // Batch-resolve every spouse's primary name in one lookup.
@@ -122,12 +122,23 @@ export async function getPersonEvents(individualId: string): Promise<PersonEvent
   for (const { events, spouseId } of families) {
     const counterpartyName = spouseId ? (nameById.get(spouseId) ?? null) : null;
     for (const event of events) {
-      if (seen.has(event.id)) continue;
-      entries.push({ ...event, scope: 'union', role: null, counterpartyName });
-      seen.add(event.id);
+      const existing = entriesById.get(event.id);
+      if (existing) {
+        // A family-linked event is a union for this person regardless of any
+        // incidental participant role, so promote a `secondary` classification
+        // (and carry the spouse). A `principal` classification is left as-is.
+        if (existing.scope === 'secondary') {
+          existing.scope = 'union';
+          existing.role = null;
+          existing.counterpartyName = counterpartyName;
+        }
+        continue;
+      }
+      entriesById.set(event.id, { ...event, scope: 'union', role: null, counterpartyName });
     }
   }
 
+  const entries = [...entriesById.values()];
   entries.sort(byDateAscUndatedLast);
   return entries;
 }

@@ -136,4 +136,34 @@ describe('getPersonEvents', () => {
     expect(result.map((entry) => entry.id)).toEqual([birthId, marriageId, undatedId]);
     expect(result.map((entry) => entry.scope)).toEqual(['principal', 'union', 'secondary']);
   });
+
+  it('classifies a union event as `union` even when the person is also a direct participant on it', async () => {
+    const harry = await createIndividual({ gender: 'M' });
+    const ginny = await createIndividual({ gender: 'F' });
+    await createName({
+      individualId: ginny,
+      givenNames: 'Ginny',
+      surname: 'Weasley',
+      isPrimary: true,
+    });
+
+    const familyId = await createFamily({});
+    await addFamilyMember({ familyId, individualId: harry, role: 'husband' });
+    await addFamilyMember({ familyId, individualId: ginny, role: 'wife' });
+
+    const marriage = await getEventTypeByTag('MARR');
+    const eventId = await createEvent({ eventTypeId: marriage!.id, dateOriginal: 'ABT 2002' });
+    // The event is attached to the family AND lists the person directly in a
+    // non-principal role — it must still count as their union, not secondary.
+    await addEventParticipant({ eventId, familyId, role: 'principal' });
+    await addEventParticipant({ eventId, individualId: harry, role: 'witness' });
+
+    const result = await getPersonEvents(harry);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe(eventId);
+    expect(result[0].scope).toBe('union');
+    expect(result[0].role).toBeNull();
+    expect(result[0].counterpartyName).toBe('Ginny Weasley');
+  });
 });

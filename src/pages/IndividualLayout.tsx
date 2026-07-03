@@ -18,12 +18,22 @@ interface IndividualLayoutProps {
  */
 export function IndividualLayout({ treeId, individualId }: IndividualLayoutProps): JSX.Element {
   const { t } = useTranslation('individuals');
-  const { data, isLoading } = usePersonOverview(individualId);
+  const { t: tCommon } = useTranslation('common');
+  const { data, isLoading, isError } = usePersonOverview(individualId);
 
   if (isLoading) {
     return (
       <Flex p="6" justify="center">
         <Text color="gray">{t('overview.loading')}</Text>
+      </Flex>
+    );
+  }
+
+  // A query failure must not masquerade as "not found" — surface a load error.
+  if (isError) {
+    return (
+      <Flex p="6" justify="center">
+        <Text color="gray">{tCommon('errors.loadFailed')}</Text>
       </Flex>
     );
   }
