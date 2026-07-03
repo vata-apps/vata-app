@@ -1,4 +1,5 @@
 import type Database from '@tauri-apps/plugin-sql';
+import type { ParticipantRole } from '$types/database';
 import { openTreeDb, closeTreeDb } from '../connection';
 import { createTree, updateTreeStats } from '../system/trees';
 import { createIndividual } from '../trees/individuals';
@@ -92,7 +93,7 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
     dateOriginal: string,
     dateSort: string,
     placeId?: string
-  ): Promise<void> {
+  ): Promise<string> {
     const eventId = await createEvent({
       eventTypeId: birtType!.id,
       dateOriginal,
@@ -100,6 +101,7 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
       placeId,
     });
     await addEventParticipant({ eventId, individualId, role: 'principal' });
+    return eventId;
   }
 
   async function addDeath(
@@ -122,7 +124,7 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
     dateOriginal?: string,
     dateSort?: string,
     placeId?: string
-  ): Promise<void> {
+  ): Promise<string> {
     const eventId = await createEvent({
       eventTypeId: marrType!.id,
       dateOriginal,
@@ -130,6 +132,17 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
       placeId,
     });
     await addEventParticipant({ eventId, familyId, role: 'principal' });
+    return eventId;
+  }
+
+  async function addParticipants(
+    eventId: string,
+    individualIds: string[],
+    role: ParticipantRole
+  ): Promise<void> {
+    for (const individualId of individualIds) {
+      await addEventParticipant({ eventId, individualId, role });
+    }
   }
 
   // =========================================================================
@@ -216,15 +229,15 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   // Lily Evans — 30 Jan 1960
   await addBirth(lily, '30 JAN 1960', '1960-01-30');
   // Harry Potter — 31 Jul 1980, Godric's Hollow
-  await addBirth(harry, '31 JUL 1980', '1980-07-31', godricsHollow);
+  const harryBirth = await addBirth(harry, '31 JUL 1980', '1980-07-31', godricsHollow);
   // Ginny Weasley — 11 Aug 1981, The Burrow
   await addBirth(ginny, '11 AUG 1981', '1981-08-11', burrow);
   // James Sirius — ABT 2004
-  await addBirth(jamesSirius, 'ABT 2004', '2004');
+  const jamesSiriusBirth = await addBirth(jamesSirius, 'ABT 2004', '2004');
   // Albus Severus — ABT 2006
-  await addBirth(albusSeverus, 'ABT 2006', '2006');
+  const albusSeverusBirth = await addBirth(albusSeverus, 'ABT 2006', '2006');
   // Lily Luna — ABT 2008
-  await addBirth(lilyLuna, 'ABT 2008', '2008');
+  const lilyLunaBirth = await addBirth(lilyLuna, 'ABT 2008', '2008');
   // Petunia — ABT 1959
   await addBirth(petunia, 'ABT 1959', '1959');
   // Dudley — 23 Jun 1980
@@ -244,7 +257,7 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   // George — 1 Apr 1978
   await addBirth(george, '1 APR 1978', '1978-04-01');
   // Ron — 1 Mar 1980
-  await addBirth(ron, '1 MAR 1980', '1980-03-01', burrow);
+  const ronBirth = await addBirth(ron, '1 MAR 1980', '1980-03-01', burrow);
   // Hermione — 19 Sep 1979
   await addBirth(hermione, '19 SEP 1979', '1979-09-19');
   // Victoire — 2 May 2000
@@ -302,7 +315,7 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   await addFamilyMember({ familyId: f3, individualId: james, role: 'husband' });
   await addFamilyMember({ familyId: f3, individualId: lily, role: 'wife' });
   await addFamilyMember({ familyId: f3, individualId: harry, role: 'child', pedigree: 'birth' });
-  await addMarriage(f3, 'ABT 1978', '1978', godricsHollow);
+  const jamesLilyMarriage = await addMarriage(f3, 'ABT 1978', '1978', godricsHollow);
 
   // F4: Vernon + Petunia → Dudley
   const f4 = await createFamily({});
@@ -351,7 +364,7 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
     role: 'child',
     pedigree: 'birth',
   });
-  await addMarriage(f6, 'ABT 2002', '2002');
+  const harryGinnyMarriage = await addMarriage(f6, 'ABT 2002', '2002');
 
   // F7: Bill + Fleur → Victoire, Dominique, Louis
   const f7 = await createFamily({});
@@ -404,7 +417,25 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   await addFamilyMember({ familyId: f10, individualId: hermione, role: 'wife' });
   await addFamilyMember({ familyId: f10, individualId: rose, role: 'child', pedigree: 'birth' });
   await addFamilyMember({ familyId: f10, individualId: hugo, role: 'child', pedigree: 'birth' });
-  await addMarriage(f10, 'ABT 2003', '2003');
+  const ronHermioneMarriage = await addMarriage(f10, 'ABT 2003', '2003');
+
+  // =========================================================================
+  // Secondary participants — people present at an event without being its
+  // principal, so the person Events tab has non-principal, non-union entries
+  // to show (witnesses, informants, …).
+  // =========================================================================
+
+  // Marriage witnesses
+  await addParticipants(jamesLilyMarriage, [arthur, molly], 'witness');
+  await addParticipants(harryGinnyMarriage, [ron, hermione], 'witness');
+  await addParticipants(ronHermioneMarriage, [harry, ginny], 'witness');
+
+  // Parents present at a birth, recorded as the informant
+  await addParticipants(harryBirth, [james, lily], 'informant');
+  await addParticipants(ronBirth, [arthur, molly], 'informant');
+  await addParticipants(jamesSiriusBirth, [harry, ginny], 'informant');
+  await addParticipants(albusSeverusBirth, [harry, ginny], 'informant');
+  await addParticipants(lilyLunaBirth, [harry, ginny], 'informant');
 
   // =========================================================================
   // Update tree stats & close
