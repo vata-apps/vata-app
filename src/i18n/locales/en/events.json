@@ -37,5 +37,13 @@
     "BURI": "Burial",
     "RESI": "Residence",
     "OCCU": "Occupation"
+  },
+  "roles": {
+    "principal": "Principal",
+    "witness": "Witness",
+    "officiant": "Officiant",
+    "godparent": "Godparent",
+    "informant": "Informant",
+    "other": "Other"
   }
 }

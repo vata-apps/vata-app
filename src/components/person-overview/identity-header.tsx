@@ -1,4 +1,5 @@
 import { Avatar, Badge, Code, Flex, Heading, TabNav, Text } from '@radix-ui/themes';
+import { Link, useMatchRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import type { Gender } from '$types/database';
@@ -115,27 +116,60 @@ export function IdentityHeader({ person }: { person: OverviewPerson }): JSX.Elem
   );
 }
 
-const OVERVIEW_TABS = ['overview', 'pedigree', 'events', 'relations', 'sources', 'notes'] as const;
+/**
+ * The section tabs, in display order. A `to` marks a routed tab (its active
+ * state comes from the router); tabs without one are visible but inert — their
+ * content lands in later work, so the screen advertises its full shape without
+ * dead navigation. Promoting an inert tab to routed is a one-line change here.
+ */
+const OVERVIEW_TABS = [
+  { id: 'overview', to: '/tree/$treeId/individual/$individualId' },
+  { id: 'pedigree' },
+  { id: 'events', to: '/tree/$treeId/individual/$individualId/events' },
+  { id: 'relations' },
+  { id: 'sources' },
+  { id: 'notes' },
+] as const;
 
 /**
- * The section tab bar. Only **Overview** is implemented and active; the other
- * tabs are visible but inert (their content lands in later work), so the screen
- * advertises its full shape without dead navigation.
+ * The section tab bar. Routed tabs are real destinations whose active state the
+ * router resolves independently (so adding another routed tab never mis-marks a
+ * sibling); inert tabs render as disabled-looking links.
  */
-export function OverviewTabs(): JSX.Element {
+export function OverviewTabs({
+  treeId,
+  individualId,
+}: {
+  treeId: string;
+  individualId: string;
+}): JSX.Element {
   const { t } = useTranslation('individuals');
+  const matchRoute = useMatchRoute();
+
   return (
     <TabNav.Root>
-      {OVERVIEW_TABS.map((tab) => (
-        <TabNav.Link
-          key={tab}
-          href="#"
-          active={tab === 'overview'}
-          onClick={(event) => event.preventDefault()}
-        >
-          {t(`overview.tabs.${tab}`)}
-        </TabNav.Link>
-      ))}
+      {OVERVIEW_TABS.map((tab) => {
+        const label = t(`overview.tabs.${tab.id}`);
+        if (!('to' in tab)) {
+          return (
+            <TabNav.Link key={tab.id} href="#" onClick={(event) => event.preventDefault()}>
+              {label}
+            </TabNav.Link>
+          );
+        }
+        // `fuzzy: false` → exact match, so the Overview (index) tab is not
+        // marked active on a nested tab like `/events`.
+        const active = Boolean(
+          matchRoute({ to: tab.to, params: { treeId, individualId }, fuzzy: false })
+        );
+        return (
+          <TabNav.Link key={tab.id} asChild active={active}>
+            <Link to={tab.to} params={{ treeId, individualId }}>
+              {label}
+            </Link>
+          </TabNav.Link>
+        );
+      })}
     </TabNav.Root>
   );
 }

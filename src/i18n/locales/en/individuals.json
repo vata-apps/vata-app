@@ -99,5 +99,16 @@
       "title": "Media",
       "empty": "No media yet"
     }
+  },
+  "events": {
+    "scope": {
+      "principal": "Principal",
+      "personal": "Personal",
+      "all": "All roles"
+    },
+    "columns": {
+      "details": "Details"
+    },
+    "empty": "No events recorded yet"
   }
 }

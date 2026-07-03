@@ -23,4 +23,5 @@ export const queryKeys = {
   files: (sourceId: string) => ['files', sourceId] as const,
   eventTimeline: (individualId: string) => ['eventTimeline', individualId] as const,
   personOverview: (individualId: string) => ['personOverview', individualId] as const,
+  personEvents: (individualId: string) => ['personEvents', individualId] as const,
 };
