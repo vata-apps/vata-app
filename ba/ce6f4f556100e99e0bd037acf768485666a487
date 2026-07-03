@@ -1,0 +1,22 @@
+src/pages/EventsPage.tsx
+  s_fdca236ee5b35d::t_f47bf489cd324b 108-111,119
+  s_fdca236ee5b35d::t_398802ec446a13 2,4,15
+src/lib/event-columns.tsx
+  s_fdca236ee5b35d::t_f283f43699ca2a 1-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "bace6f4f556100e99e0bd037acf768485666a487",
+  "prompts": {},
+  "sessions": {
+    "s_fdca236ee5b35d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6ce2b2a-0f35-4815-a6ee-c88f8f216f39",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
