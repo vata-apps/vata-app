@@ -1,0 +1,55 @@
+src/routes/tree/$treeId/individual/$individualId/events.tsx
+  s_fdca236ee5b35d::t_950a1b68a7bdeb 1-9
+src/pages/IndividualOverviewPage.tsx
+  s_fdca236ee5b35d::t_4a3b94645656e2 25-31
+  s_fdca236ee5b35d::t_a7fca5ea01b99e 1
+  s_fdca236ee5b35d::t_aaa616e5c31e95 2-24,32-45
+src/pages/IndividualLayout.tsx
+  s_fdca236ee5b35d::t_191b4a3a7a59e5 1-50
+src/i18n/locales/fr/events.json
+  s_fdca236ee5b35d::t_20b6158391a8d5 40-47
+src/lib/query-keys.ts
+  s_fdca236ee5b35d::t_20960bb8fa141b 26
+src/db/trees/person-events.test.ts
+  s_fdca236ee5b35d::t_388a19f7a912f0 1-139
+src/hooks/usePersonEvents.ts
+  s_fdca236ee5b35d::t_2315be078991c0 1-14
+src/i18n/locales/en/events.json
+  s_fdca236ee5b35d::t_23f1aa15e9946c 40-47
+src/routes/tree/$treeId/individual/$individualId/index.tsx
+  s_fdca236ee5b35d::t_fcf1906c38d9b2 1-9
+src/db/trees/person-events.ts
+  s_fdca236ee5b35d::t_0f9053d842865f 1,3
+  s_fdca236ee5b35d::t_a99426990bf584 2,4-51,79-85,90,94-133
+  s_fdca236ee5b35d::t_6674ff5a42476e 52-78,86-89,91-93
+src/components/person-overview/identity-header.tsx
+  s_fdca236ee5b35d::t_c3f03148560bd7 160-164
+  s_fdca236ee5b35d::t_8a5dc8048a0d4e 2
+  s_fdca236ee5b35d::t_2d6c823824013e 119-132,135-137,147,152-153,155-156,166-169
+  s_fdca236ee5b35d::t_47a45e44ef116f 139-145,148,151,154,157-159,165,170-172
+src/i18n/locales/en/individuals.json
+  s_fdca236ee5b35d::t_b7a4e3f1e06cbe 102-112
+src/routes/tree/$treeId/individual/$individualId.tsx
+  s_fdca236ee5b35d::t_148d0c676e68a7 2,5-8
+src/pages/PersonEventsPage.tsx
+  s_fdca236ee5b35d::t_d74f437ded91c5 1,3,5-8,10-51,62,66-76,78-79,81-121
+  s_fdca236ee5b35d::t_2f90b1afacbdea 2,4,9,52-61,63-65,77,80
+src/i18n/locales/fr/individuals.json
+  s_fdca236ee5b35d::t_638c37ad14ef6d 102-112
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "d87b013fd7df03dc5793a41b17c6233cd60d4686",
+  "prompts": {},
+  "sessions": {
+    "s_fdca236ee5b35d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6ce2b2a-0f35-4815-a6ee-c88f8f216f39",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
