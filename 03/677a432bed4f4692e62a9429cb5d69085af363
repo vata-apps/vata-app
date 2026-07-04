@@ -1,0 +1,19 @@
+src/db/seed/harry-potter-demo.ts
+  s_e63c2ac0b8c33c::t_380eba08b8d645 39-41,45-46,51-52,57-58,63-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "03677a432bed4f4692e62a9429cb5d69085af363",
+  "prompts": {},
+  "sessions": {
+    "s_e63c2ac0b8c33c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9bfd3697-b23a-43a5-96c4-64510cf02899",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
