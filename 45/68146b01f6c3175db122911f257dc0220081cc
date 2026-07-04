@@ -1,0 +1,39 @@
+src/i18n/locales/fr/individuals.json
+  s_bcb6b2d83443d9::t_9f191a8843e5bd 145-150
+src/i18n/locales/en/individuals.json
+  s_bcb6b2d83443d9::t_6322ad1d60ebea 145-150
+src/pages/PersonNotesPage.tsx
+  s_bcb6b2d83443d9::t_ac632e2fcb1c8d 1-2,5-8,10
+  s_bcb6b2d83443d9::t_6e1f7ab5b02971 3-4,9
+src/routes/tree/$treeId/individual/$individualId/notes.tsx
+  s_bcb6b2d83443d9::t_7fe16179201a2d 1-6
+src/pages/PersonSourcesPage.tsx
+  s_bcb6b2d83443d9::t_107ce1e1bd3f05 1-2,5-8,10
+  s_bcb6b2d83443d9::t_81ef7aec805297 3-4,9
+src/components/centered-message.tsx
+  s_bcb6b2d83443d9::t_118bd8928d1bdf 1-11
+src/pages/IndividualLayout.tsx
+  s_bcb6b2d83443d9::t_639a2c827dcb77 26,31,35
+  s_bcb6b2d83443d9::t_3fdd512ea47db4 1,5
+src/routes/tree/$treeId/individual/$individualId/sources.tsx
+  s_bcb6b2d83443d9::t_43cccfb952eb30 1-6
+src/components/person-overview/identity-header.tsx
+  s_bcb6b2d83443d9::t_8d8801a1b88489 120-125
+  s_bcb6b2d83443d9::t_fa2bc7e891b739 132-133
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "4568146b01f6c3175db122911f257dc0220081cc",
+  "prompts": {},
+  "sessions": {
+    "s_bcb6b2d83443d9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "090f8e26-c2fd-4b7a-8c51-f2c13bfce6a0",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
