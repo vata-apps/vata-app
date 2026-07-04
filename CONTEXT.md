@@ -28,6 +28,14 @@ _Avoid_: Lineage, Relationship type
 A dated, placed occurrence recorded in a tree — birth, death, burial, marriage, divorce, census.
 _Avoid_: Fact, Milestone, Attribute
 
+**Participant**:
+An Individual or a Family taking part in an Event, each in one Role. An event has one or more.
+_Avoid_: Attendee, Actor
+
+**Role**:
+The capacity in which a Participant takes part in an Event — **principal** (the subject the event records), **witness**, **officiant**, **godparent**, **informant** (who reported it), or **other**. A person's own Events tab shows their events grouped by how they relate: as a principal, as a spouse in a union event, or in a secondary role in someone else's event.
+_Avoid_: Part, Function
+
 **Place**:
 A hierarchical location attached to an event.
 _Avoid_: Location, Address

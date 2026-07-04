@@ -1,7 +1,8 @@
-import type { EventWithDetails, Family, ParticipantRole } from '$types/database';
+import type { EventPrincipal, EventWithDetails, Family, ParticipantRole } from '$types/database';
 import { getEventsByIndividualIdWithDetails, getEventsByFamilyIdWithDetails } from './events';
 import { getSpouseFamilies, getSpousesForFamilies } from './families';
 import { getPrimaryNamesForIndividuals, formatNameSimple } from './names';
+import { resolvePrincipalsForEvents } from './event-principals';
 
 // =============================================================================
 // Person events view-model
@@ -26,12 +27,15 @@ export type PersonEventScope = 'principal' | 'union' | 'secondary';
  * An event as shown on a person's Events tab: the full event details plus how
  * the person relates to it. `role` carries the participant role for `secondary`
  * events; `counterpartyName` carries the spouse's display name for `union`
- * events. Both are `null` when not applicable.
+ * events. Both are `null` when not applicable. `principals` carries the event's
+ * own principal(s) for `secondary` events (who the record is actually about);
+ * it is empty for `principal` and `union` events.
  */
 export interface PersonEventEntry extends EventWithDetails {
   scope: PersonEventScope;
   role: ParticipantRole | null;
   counterpartyName: string | null;
+  principals: EventPrincipal[];
 }
 
 /**
@@ -109,6 +113,7 @@ export async function getPersonEvents(individualId: string): Promise<PersonEvent
       scope: isPrincipal ? 'principal' : 'secondary',
       role: isPrincipal ? 'principal' : roles[0],
       counterpartyName: null,
+      principals: [],
     });
   }
 
@@ -134,11 +139,26 @@ export async function getPersonEvents(individualId: string): Promise<PersonEvent
         }
         continue;
       }
-      entriesById.set(event.id, { ...event, scope: 'union', role: null, counterpartyName });
+      entriesById.set(event.id, {
+        ...event,
+        scope: 'union',
+        role: null,
+        counterpartyName,
+        principals: [],
+      });
     }
   }
 
   const entries = [...entriesById.values()];
+
+  // Resolve the event's own principal(s) only for secondary entries — that's
+  // the missing context on a "witness"/"informant" row (whose event is this?).
+  const secondaryEntries = entries.filter((entry) => entry.scope === 'secondary');
+  const principalsByEventId = await resolvePrincipalsForEvents(secondaryEntries);
+  for (const entry of secondaryEntries) {
+    entry.principals = principalsByEventId.get(entry.id) ?? [];
+  }
+
   entries.sort(byDateAscUndatedLast);
   return entries;
 }

@@ -7,6 +7,7 @@ import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import { Icon } from '$components/icon';
 import { usePersonEvents } from '$hooks/usePersonEvents';
 import { eventDateColumn, eventPlaceColumn, eventTypeColumn } from '$lib/event-columns';
+import { principalsText } from '$lib/principals-text';
 import type { PersonEventEntry } from '$db-tree/person-events';
 
 interface PersonEventsPageProps {
@@ -49,13 +50,18 @@ export function PersonEventsPage({ treeId, individualId }: PersonEventsPageProps
   );
 
   const columns = useMemo<EntityTableColumn<PersonEventEntry>[]>(() => {
+    const unknownPrincipal = t('table.unknownPrincipal');
+
     // The `details` column carries the person's relationship to the event: the
-    // spouse for a union, the role for a secondary participation, nothing for a
-    // principal event. `detailText` is the sortable/plain form; the cell wraps
-    // the role in a Badge and shows an em dash for a spouse-less union.
+    // spouse for a union, the role plus the event's own principal(s) for a
+    // secondary participation (whose event is this?), nothing for a principal
+    // event. `detailText` is the sortable/plain form; the cell wraps the role
+    // in a Badge and shows an em dash for a spouse-less union.
     const detailText = (event: PersonEventEntry): string | null => {
       if (event.scope === 'union') return event.counterpartyName;
-      if (event.scope === 'secondary' && event.role) return t(`roles.${event.role}`);
+      if (event.scope === 'secondary' && event.role) {
+        return `${t(`roles.${event.role}`)} ${principalsText(event.principals, unknownPrincipal)}`;
+      }
       return null;
     };
 
@@ -69,9 +75,12 @@ export function PersonEventsPage({ treeId, individualId }: PersonEventsPageProps
         cell: (event) => {
           if (event.scope === 'secondary' && event.role) {
             return (
-              <Badge variant="soft" color="gray" radius="full">
-                {t(`roles.${event.role}`)}
-              </Badge>
+              <Flex gap="2" align="center">
+                <Badge variant="soft" color="gray" radius="full">
+                  {t(`roles.${event.role}`)}
+                </Badge>
+                {principalsText(event.principals, unknownPrincipal)}
+              </Flex>
             );
           }
           if (event.scope === 'union') return event.counterpartyName ?? '—';

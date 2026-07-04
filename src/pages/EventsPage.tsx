@@ -14,29 +14,11 @@ import { Icon } from '$components/icon';
 import { useEvents } from '$hooks/useEvents';
 import { eventDateColumn, eventPlaceColumn, eventTypeColumn } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
-import { formatName } from '$db-tree/names';
-import type { EventListEntry, EventPrincipal, Name } from '$types/database';
+import { principalsText } from '$lib/principals-text';
+import type { EventListEntry } from '$types/database';
 
 interface EventsPageProps {
   treeId: string;
-}
-
-/** A single principal name, falling back to the unknown label. */
-function nameText(name: Name | null, unknownLabel: string): string {
-  if (!name) return unknownLabel;
-  return formatName(name).full || unknownLabel;
-}
-
-/** Comma-joined principal names for an event row, spouses paired with `&`. */
-function principalsText(principals: EventPrincipal[], unknownLabel: string): string {
-  if (principals.length === 0) return unknownLabel;
-  return principals
-    .map((principal) =>
-      principal.kind === 'individual'
-        ? nameText(principal.name, unknownLabel)
-        : `${nameText(principal.husband, unknownLabel)} & ${nameText(principal.wife, unknownLabel)}`
-    )
-    .join(', ');
 }
 
 /**

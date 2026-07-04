@@ -97,6 +97,77 @@ describe('getPersonEvents', () => {
     expect(result[0].counterpartyName).toBeNull();
   });
 
+  it('resolves the individual principal on a `secondary` event', async () => {
+    const harry = await createIndividual({ gender: 'M' });
+    const lily = await createIndividual({ gender: 'F' });
+    await createName({
+      individualId: lily,
+      givenNames: 'Lily',
+      surname: 'Potter',
+      isPrimary: true,
+    });
+
+    const birth = await getEventTypeByTag('BIRT');
+    const eventId = await createEvent({ eventTypeId: birth!.id });
+    await addEventParticipant({ eventId, individualId: lily, role: 'principal' });
+    await addEventParticipant({ eventId, individualId: harry, role: 'informant' });
+
+    const result = await getPersonEvents(harry);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].principals).toHaveLength(1);
+    const principal = result[0].principals[0];
+    expect(principal.kind).toBe('individual');
+    if (principal.kind === 'individual') {
+      expect(principal.name?.givenNames).toBe('Lily');
+    }
+  });
+
+  it('resolves the family principal (both spouses) on a `secondary` event', async () => {
+    const harry = await createIndividual({ gender: 'M' });
+    const ron = await createIndividual({ gender: 'M' });
+    const hermione = await createIndividual({ gender: 'F' });
+    await createName({ individualId: ron, givenNames: 'Ron', surname: 'Weasley', isPrimary: true });
+    await createName({
+      individualId: hermione,
+      givenNames: 'Hermione',
+      surname: 'Granger',
+      isPrimary: true,
+    });
+
+    const familyId = await createFamily({});
+    await addFamilyMember({ familyId, individualId: ron, role: 'husband' });
+    await addFamilyMember({ familyId, individualId: hermione, role: 'wife' });
+
+    const marriage = await getEventTypeByTag('MARR');
+    const eventId = await createEvent({ eventTypeId: marriage!.id, dateOriginal: 'ABT 2003' });
+    await addEventParticipant({ eventId, familyId, role: 'principal' });
+    await addEventParticipant({ eventId, individualId: harry, role: 'witness' });
+
+    const result = await getPersonEvents(harry);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].scope).toBe('secondary');
+    expect(result[0].principals).toHaveLength(1);
+    const principal = result[0].principals[0];
+    expect(principal.kind).toBe('family');
+    if (principal.kind === 'family') {
+      expect(principal.husband?.givenNames).toBe('Ron');
+      expect(principal.wife?.givenNames).toBe('Hermione');
+    }
+  });
+
+  it('returns an empty principals array for `principal` and `union` scoped events', async () => {
+    const harry = await createIndividual({ gender: 'M' });
+    const birth = await getEventTypeByTag('BIRT');
+    const eventId = await createEvent({ eventTypeId: birth!.id });
+    await addEventParticipant({ eventId, individualId: harry, role: 'principal' });
+
+    const result = await getPersonEvents(harry);
+
+    expect(result[0].principals).toEqual([]);
+  });
+
   it('merges all scopes chronologically, with undated events last', async () => {
     const harry = await createIndividual({ gender: 'M' });
     const ginny = await createIndividual({ gender: 'F' });

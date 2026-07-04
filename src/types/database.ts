@@ -534,20 +534,21 @@ export interface CreateSourceFileInput {
 }
 
 // =============================================================================
-// Event List (sidebar view)
+// Event List (tree-wide view)
 // =============================================================================
 
 /**
- * The resolved principal for an event row in the sidebar.
- * Individual events have one name; family events have two spouse slots.
+ * The resolved principal for an event, shared by the tree-wide Events list and
+ * a person's Events tab. Individual events have one name; family events have
+ * two spouse slots.
  */
 export type EventPrincipal =
   | { kind: 'individual'; name: Name | null }
   | { kind: 'family'; husband: Name | null; wife: Name | null };
 
 /**
- * An event enriched with resolved principal name(s) for sidebar display.
- * Extends EventWithDetails — the sidebar only needs to add the resolved
+ * An event enriched with resolved principal name(s) for the tree-wide Events
+ * list. Extends EventWithDetails — the list only needs to add the resolved
  * principals array; the rest of the event data is unchanged.
  */
 export interface EventListEntry extends EventWithDetails {
