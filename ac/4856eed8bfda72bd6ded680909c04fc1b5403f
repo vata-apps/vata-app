@@ -1,0 +1,67 @@
+package.json
+  s_1de880d0071dc6::t_59394da8557f4c 53,58,76
+src/components/person-overview/places-panel.test.tsx
+  s_1de880d0071dc6::t_2d52170cbdaf41 2-65,67-75
+  s_1de880d0071dc6::t_c98812810fbabb 1
+  s_1de880d0071dc6::t_855d6695cdf521 66
+  s_1de880d0071dc6::t_ea58fb1569164b 76
+src/i18n/locales/en/individuals.json
+  s_1de880d0071dc6::t_e499aa061adc80 60
+src/components/map/places-map.tsx
+  s_1de880d0071dc6::t_3c494cb333631c 37-43
+  s_1de880d0071dc6::t_094c3297f91d64 72-73,82
+  s_1de880d0071dc6::t_2e303b2dfc2ecf 71,85-89
+  s_1de880d0071dc6::t_fdb5b69648f66c 68
+  s_1de880d0071dc6::t_a6f91a1aa9a733 3
+  s_1de880d0071dc6::t_5a159f119cf514 18-19
+  s_1de880d0071dc6::t_d1937a80d1e963 1-2,4-17,20-36,44,48-57,59-67,69-70,74-81,83-84,90-95
+  s_1de880d0071dc6::t_00248e88261d3f 45-47,58
+src-tauri/tauri.conf.json
+  s_1de880d0071dc6::t_c0b4b17c4d62dd 27
+src/i18n/locales/fr/individuals.json
+  s_1de880d0071dc6::t_43b6e8baec3932 60
+src/pages/IndividualOverviewPage.tsx
+  s_1de880d0071dc6::t_1b8d3400fc20ef 16
+  s_1de880d0071dc6::t_32ce2dae9b8a2c 4
+  s_1de880d0071dc6::t_797d28b972d87b 41
+  s_1de880d0071dc6::t_5ed412e0558b2b 19-20
+src/components/person-overview/places-panel.tsx
+  s_1de880d0071dc6::t_7d106d891c2056 2,6,10,15-19,21-26,28,30,49,60-63
+  s_1de880d0071dc6::t_a8f870fc9cc79e 31-33
+  s_1de880d0071dc6::t_ec6b7bd9cd19e4 48
+  s_1de880d0071dc6::t_d55aebbb7b1081 50-51
+  s_1de880d0071dc6::t_e113ce5fb25ecd 34
+src/components/person-overview/overview-types.ts
+  s_1de880d0071dc6::t_8c679370aeeed1 100-101
+src/components/person-overview/build-overview.ts
+  s_1de880d0071dc6::t_13eccd89c2a3a6 16-17
+  s_1de880d0071dc6::t_c41c69df9dde72 173-174
+docs/adr/0012-leaflet-carto-maps.md
+  s_1de880d0071dc6::t_3db4754232e6d8 8
+  s_1de880d0071dc6::t_341b09d56e449b 1-7,9-16
+src/components/person-overview/build-overview.test.ts
+  s_1de880d0071dc6::t_dbc0bc05029125 83
+  s_1de880d0071dc6::t_e90fd3c5bf881c 40-42
+  s_1de880d0071dc6::t_e7eb9d3b1d58a0 242-247,249-260
+  s_1de880d0071dc6::t_50b42b70983c54 63
+  s_1de880d0071dc6::t_0d0f5e1fbc9b9d 49-50,62
+  s_1de880d0071dc6::t_d7273cb48b4863 248
+pnpm-lock.yaml
+  s_1de880d0071dc6::t_a1f886729aae92 41-43,56-58,87-89,1650-1656,2013-2015,2019-2021,3078-3080,3410-3416,5450-5455,5759-5760,5763-5766,7052-7053,7440-7446
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "ac4856eed8bfda72bd6ded680909c04fc1b5403f",
+  "prompts": {},
+  "sessions": {
+    "s_1de880d0071dc6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45906abe-110e-40d3-aff4-d47871454689",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
