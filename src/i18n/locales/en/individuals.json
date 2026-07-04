@@ -142,5 +142,11 @@
       "maternal": "Maternal"
     },
     "via": "via {{name}}"
+  },
+  "sources": {
+    "comingSoon": "Sources are not available yet."
+  },
+  "notes": {
+    "comingSoon": "Notes are not available yet."
   }
 }

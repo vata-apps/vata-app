@@ -117,18 +117,20 @@ export function IdentityHeader({ person }: { person: OverviewPerson }): JSX.Elem
 }
 
 /**
- * The section tabs, in display order. A `to` marks a routed tab (its active
- * state comes from the router); tabs without one are visible but inert — their
- * content lands in later work, so the screen advertises its full shape without
- * dead navigation. Promoting an inert tab to routed is a one-line change here.
+ * The section tabs, in display order. A `to` marks a routed tab — either real
+ * content, or a stub page (e.g. `PersonSourcesPage`) once the URL is decided
+ * but the feature isn't built. Tabs without one are visible but inert — their
+ * destination isn't decided yet (e.g. Pedigree) — so the screen advertises its
+ * full shape without dead navigation. Promoting an inert tab to routed is a
+ * one-line change here.
  */
 const OVERVIEW_TABS = [
   { id: 'overview', to: '/tree/$treeId/individual/$individualId' },
   { id: 'pedigree' },
   { id: 'events', to: '/tree/$treeId/individual/$individualId/events' },
   { id: 'relations', to: '/tree/$treeId/individual/$individualId/relations' },
-  { id: 'sources' },
-  { id: 'notes' },
+  { id: 'sources', to: '/tree/$treeId/individual/$individualId/sources' },
+  { id: 'notes', to: '/tree/$treeId/individual/$individualId/notes' },
 ] as const;
 
 /**

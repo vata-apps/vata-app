@@ -1,7 +1,8 @@
-import { Box, Flex, Text } from '@radix-ui/themes';
+import { Box, Flex } from '@radix-ui/themes';
 import { Outlet } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
+import { CenteredMessage } from '$components/centered-message';
 import { IdentityHeader, OverviewTabs } from '$components/person-overview/identity-header';
 import { usePersonOverview } from '$hooks/usePersonOverview';
 
@@ -22,28 +23,16 @@ export function IndividualLayout({ treeId, individualId }: IndividualLayoutProps
   const { data, isLoading, isError } = usePersonOverview(individualId);
 
   if (isLoading) {
-    return (
-      <Flex p="6" justify="center">
-        <Text color="gray">{t('overview.loading')}</Text>
-      </Flex>
-    );
+    return <CenteredMessage>{t('overview.loading')}</CenteredMessage>;
   }
 
   // A query failure must not masquerade as "not found" — surface a load error.
   if (isError) {
-    return (
-      <Flex p="6" justify="center">
-        <Text color="gray">{tCommon('errors.loadFailed')}</Text>
-      </Flex>
-    );
+    return <CenteredMessage>{tCommon('errors.loadFailed')}</CenteredMessage>;
   }
 
   if (!data) {
-    return (
-      <Flex p="6" justify="center">
-        <Text color="gray">{t('overview.notFound')}</Text>
-      </Flex>
-    );
+    return <CenteredMessage>{t('overview.notFound')}</CenteredMessage>;
   }
 
   return (
