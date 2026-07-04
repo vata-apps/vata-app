@@ -36,21 +36,32 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   await openTreeDb(treePath);
 
   // --- Places ---
+  // Coordinates use the real-world locations associated with each fictional
+  // place (filming location or canon-inspired village), since these places
+  // don't exist in reality.
   const godricsHollow = await createPlace({
     name: "Godric's Hollow",
     fullName: "Godric's Hollow, West Country, England",
+    latitude: 51.41384, // Lacock, Wiltshire (filming location)
+    longitude: -2.12087,
   });
   const burrow = await createPlace({
     name: 'The Burrow',
     fullName: 'The Burrow, Ottery St Catchpole, Devon, England',
+    latitude: 50.75126, // Ottery St Mary, Devon (basis for Ottery St Catchpole)
+    longitude: -3.27838,
   });
   const privetDrive = await createPlace({
     name: '4 Privet Drive',
     fullName: '4 Privet Drive, Little Whinging, Surrey, England',
+    latitude: 51.41076, // Martins Heron, Bracknell (filming location)
+    longitude: -0.72212,
   });
   const hogwarts = await createPlace({
     name: 'Hogwarts',
     fullName: 'Hogwarts School of Witchcraft and Wizardry, Scotland',
+    latitude: 56.870925, // Glenfinnan, Scottish Highlands (filming location)
+    longitude: -5.444431,
   });
 
   // --- Resolve event types ---
