@@ -1,0 +1,65 @@
+src/components/person-overview/identity-header.tsx
+  s_201b425f2e8a0b::t_28f98d4f15ac0e 129
+src/lib/query-keys.ts
+  s_201b425f2e8a0b::t_2f63dbda5bb826 27
+src/components/person-relations/relations-types.ts
+  s_201b425f2e8a0b::t_58b62c7ff75d05 1-22,25-33
+  s_201b425f2e8a0b::t_cf4f3c3d6ce607 23-24
+src/pages/PersonRelationsPage.tsx
+  s_201b425f2e8a0b::t_ffef0368bf42cb 1-35,40-133
+  s_201b425f2e8a0b::t_4ce329bd48fa8a 36-39
+src/components/person-relations/build-relations.ts
+  s_201b425f2e8a0b::t_6d4a41085b3d3e 1-4,13-27,33-45,50-54,57-59,61-64,73-80,89-92,94-103
+  s_201b425f2e8a0b::t_0719b2a0038086 60,65-72,81,88,93
+  s_201b425f2e8a0b::t_7ee7e26aa44ffb 46-49,55-56
+  s_201b425f2e8a0b::t_d64994e74bc868 82-87
+  s_201b425f2e8a0b::t_1a031363eec9a1 5-12
+  s_201b425f2e8a0b::t_65dcbd653d8292 28-32
+CONTEXT.md
+  s_201b425f2e8a0b::t_d4e510864ce0b8 27-37
+  s_201b425f2e8a0b::t_4f28d83bfd77a0 84
+src/db/trees/person-relations.ts
+  s_201b425f2e8a0b::t_2547f19f316759 89-100
+  s_201b425f2e8a0b::t_7629fff3188303 1
+  s_201b425f2e8a0b::t_06702cc1eff648 133,144-148
+  s_201b425f2e8a0b::t_4ce329bd48fa8a 173-175
+  s_201b425f2e8a0b::t_5ddfde531815f8 2-56,72-88,101-132,134-135,143,149-172,176-212
+  s_201b425f2e8a0b::t_d64994e74bc868 69,136-142
+  s_201b425f2e8a0b::t_79f7266696ae09 57-68,70-71
+src/components/person-relations/build-relations.test.ts
+  s_201b425f2e8a0b::t_709479a24056dc 67-73,82
+  s_201b425f2e8a0b::t_e7823d7aaab176 154-155,157
+  s_201b425f2e8a0b::t_5261d0768f5402 1
+  s_201b425f2e8a0b::t_f7b91eb39ef047 141
+  s_201b425f2e8a0b::t_46d5f51dd324d7 174-176
+  s_201b425f2e8a0b::t_ad48e643dc887d 2-60,66,74-81,83-88,92-104,106-127,131-140,142-150,152-153,156,158-173,177-182
+  s_201b425f2e8a0b::t_f3178b98bfd6b6 61-65
+  s_201b425f2e8a0b::t_4ce329bd48fa8a 89-91
+  s_201b425f2e8a0b::t_cdf927a4ad2dd8 151
+  s_201b425f2e8a0b::t_25897d535ff4fd 105
+  s_201b425f2e8a0b::t_12f253258ab474 128-130
+src/hooks/usePersonRelations.ts
+  s_201b425f2e8a0b::t_11790735204b1d 1-12
+src/i18n/locales/en/individuals.json
+  s_201b425f2e8a0b::t_3cc84448e0e44a 113-144
+src/routes/tree/$treeId/individual/$individualId/relations.tsx
+  s_201b425f2e8a0b::t_377476794a9bbb 1-9
+src/i18n/locales/fr/individuals.json
+  s_201b425f2e8a0b::t_3dca4c30864b74 113-144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5c1b0cf1efae27cb95a2669ecfa507be7d93684f",
+  "prompts": {},
+  "sessions": {
+    "s_201b425f2e8a0b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "270dc21a-f911-4815-9054-1edfed01332b",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
