@@ -24,6 +24,17 @@ _Avoid_: Marriage, Couple, Union, Household
 The nature of a parent–child link within a family: biological, adopted, foster, or sealing.
 _Avoid_: Lineage, Relationship type
 
+**Sibling**:
+Two Individuals who share at least one parent Family. **Sibling** names the concept in domain
+language and code; the user-facing UI resolves it to a sex-specific label — **Brother** / **Sister**
+/ **Half-brother** / **Half-sister** — falling back to **Sibling** when sex is unrecorded (same
+per-layer naming pattern as **Individual** / **Person**). A **full sibling** shares the same parent
+Family record; a **half-sibling** shares exactly one parent across two different Family records
+(**paternal** or **maternal**, depending on which parent is shared). Not stored directly — derived
+from Family membership. Pedigree does not affect the classification: an adopted child in a Family is
+a full sibling to its other children.
+_Avoid_: Relative (too broad — see Relationships)
+
 **Event**:
 A dated, placed occurrence recorded in a tree — birth, death, burial, marriage, divorce, census.
 _Avoid_: Fact, Milestone, Attribute
@@ -70,6 +81,7 @@ _Avoid_: Export file, Backup
 - An **Individual** has one or more **Names** (exactly one is primary).
 - A **Family** links an optional husband **Individual**, an optional wife **Individual**, and zero or more child **Individuals**.
 - A **Pedigree** qualifies each parent–child link inside a **Family**.
+- Two Individuals are **Siblings** when they share at least one parent Family — full if the same Family, half if via two different Families of a shared parent.
 - An **Event** has an optional **Place** and one or more participants — each participant is an **Individual** or a **Family** in a role (principal, witness, officiant, …).
 - A **Citation** belongs to exactly one **Source**.
 - A **Citation** can be attached to many entities — an **Individual**, a **Family**, an **Event**, a **Place**, or a **Name**. A **Source** is never attached directly; it is reached only through a **Citation**.

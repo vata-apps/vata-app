@@ -110,5 +110,37 @@
       "details": "Details"
     },
     "empty": "No events recorded yet"
+  },
+  "relations": {
+    "table": {
+      "columns": {
+        "name": "Name",
+        "relation": "Relation",
+        "born": "Born",
+        "died": "Died"
+      },
+      "empty": "No relations recorded yet"
+    },
+    "labels": {
+      "father": "Father",
+      "mother": "Mother",
+      "brother": "Brother",
+      "sister": "Sister",
+      "sibling": "Sibling",
+      "halfBrother": "Half-brother",
+      "halfSister": "Half-sister",
+      "halfSibling": "Half-sibling",
+      "husband": "Husband",
+      "wife": "Wife",
+      "spouse": "Spouse",
+      "son": "Son",
+      "daughter": "Daughter",
+      "child": "Child"
+    },
+    "side": {
+      "paternal": "Paternal",
+      "maternal": "Maternal"
+    },
+    "via": "via {{name}}"
   }
 }

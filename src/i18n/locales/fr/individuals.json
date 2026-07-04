@@ -110,5 +110,37 @@
       "details": "Détails"
     },
     "empty": "Aucun événement enregistré"
+  },
+  "relations": {
+    "table": {
+      "columns": {
+        "name": "Nom",
+        "relation": "Relation",
+        "born": "Naissance",
+        "died": "Décès"
+      },
+      "empty": "Aucune relation enregistrée"
+    },
+    "labels": {
+      "father": "Père",
+      "mother": "Mère",
+      "brother": "Frère",
+      "sister": "Sœur",
+      "sibling": "Fratrie",
+      "halfBrother": "Demi-frère",
+      "halfSister": "Demi-sœur",
+      "halfSibling": "Demi-fratrie",
+      "husband": "Mari",
+      "wife": "Épouse",
+      "spouse": "Conjoint",
+      "son": "Fils",
+      "daughter": "Fille",
+      "child": "Enfant"
+    },
+    "side": {
+      "paternal": "Paternel",
+      "maternal": "Maternel"
+    },
+    "via": "via {{name}}"
   }
 }

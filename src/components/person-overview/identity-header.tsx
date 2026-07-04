@@ -126,7 +126,7 @@ const OVERVIEW_TABS = [
   { id: 'overview', to: '/tree/$treeId/individual/$individualId' },
   { id: 'pedigree' },
   { id: 'events', to: '/tree/$treeId/individual/$individualId/events' },
-  { id: 'relations' },
+  { id: 'relations', to: '/tree/$treeId/individual/$individualId/relations' },
   { id: 'sources' },
   { id: 'notes' },
 ] as const;
