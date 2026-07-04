@@ -37,15 +37,17 @@ function makeName(overrides: Partial<Name> = {}): Name {
   };
 }
 
-function makePlace(name: string): Place {
+type Coords = { latitude: number; longitude: number } | null;
+
+function makePlace(name: string, coords: Coords = null): Place {
   return {
     id: `P-${name}`,
     name,
     fullName: name,
     placeTypeId: null,
     parentId: null,
-    latitude: null,
-    longitude: null,
+    latitude: coords?.latitude ?? null,
+    longitude: coords?.longitude ?? null,
     notes: null,
     createdAt: '',
     updatedAt: '',
@@ -57,7 +59,8 @@ function makeEvent(
   dateOriginal: string,
   dateSort: string,
   placeName: string | null,
-  hasCitations = false
+  hasCitations = false,
+  placeCoords: Coords = null
 ): EventTimelineEntry {
   return {
     id: `E-${tag}`,
@@ -77,7 +80,7 @@ function makeEvent(
       customName: null,
       sortOrder: 0,
     },
-    place: placeName ? makePlace(placeName) : null,
+    place: placeName ? makePlace(placeName, placeCoords) : null,
     participants: [],
     thumbnails: [],
     hasCitations,
@@ -234,6 +237,25 @@ describe('buildPersonOverview', () => {
 
   it('returns no places when there are no placed events', () => {
     expect(buildPersonOverview(baseData()).placesLived).toEqual([]);
+  });
+
+  it('propagates place coordinates, and null for ungeocoded places', () => {
+    const { placesLived } = buildPersonOverview({
+      ...baseData(),
+      events: [
+        makeEvent('BIRT', '1890', '1890', 'Longueuil', false, {
+          latitude: 45.53,
+          longitude: -73.5,
+        }),
+        makeEvent('DEAT', '1955', '1955', 'Montréal'),
+      ],
+    });
+
+    const longueuil = placesLived.find((place) => place.name === 'Longueuil')!;
+    expect(longueuil).toMatchObject({ latitude: 45.53, longitude: -73.5 });
+
+    const montreal = placesLived.find((place) => place.name === 'Montréal')!;
+    expect(montreal).toMatchObject({ latitude: null, longitude: null });
   });
 
   it('derives vitals for birth and death with their sourcing, ignoring other events', () => {

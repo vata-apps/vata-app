@@ -13,8 +13,8 @@ import type {
 
 /**
  * The slice of the Person Overview view-model that the components render from
- * live tree data. Research notes, suggestions and the places map are excluded —
- * they have no data model yet, so the page omits those panels.
+ * live tree data. Research notes and suggestions are excluded — they have no
+ * data model yet, so the page omits those panels.
  */
 export interface PersonOverviewView {
   person: OverviewPerson;
@@ -170,6 +170,8 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
         id: event.place.id,
         name: event.place.name,
         contexts: [event.eventType],
+        latitude: event.place.latitude,
+        longitude: event.place.longitude,
       });
     }
   }

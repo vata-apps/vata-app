@@ -1,7 +1,7 @@
 import { Flex, Grid } from '@radix-ui/themes';
 
 import { LifeSpine } from '$components/person-overview/life-spine';
-import { PlacesLivedPanel } from '$components/person-overview/places-lived-panel';
+import { PlacesPanel } from '$components/person-overview/places-panel';
 import { RecordRail } from '$components/person-overview/record-rail';
 import { VitalsPanel } from '$components/person-overview/vitals-panel';
 import { usePersonOverview } from '$hooks/usePersonOverview';
@@ -13,11 +13,11 @@ interface IndividualOverviewPageProps {
 
 /**
  * The Overview tab body: a parents/names/media rail beside a life-events spine
- * and places-lived panel, all driven by live tree data via
+ * and places panel, all driven by live tree data via
  * {@link usePersonOverview}. The identity header and tabs live in the layout.
  *
- * The research-notes aside, suggestions, and places map are intentionally
- * omitted: those panels have no data model yet.
+ * The research-notes aside and suggestions are intentionally omitted: those
+ * panels have no data model yet.
  */
 export function IndividualOverviewPage({
   treeId,
@@ -38,7 +38,7 @@ export function IndividualOverviewPage({
       </Flex>
       <Flex direction="column" gap="4">
         <LifeSpine milestones={data.milestones} treeId={treeId} />
-        <PlacesLivedPanel places={data.placesLived} treeId={treeId} />
+        <PlacesPanel places={data.placesLived} treeId={treeId} />
       </Flex>
     </Grid>
   );

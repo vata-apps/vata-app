@@ -97,4 +97,6 @@ export interface OverviewPlaceLived {
   name: string;
   /** Event types recorded at this place — resolved to labels by the component. */
   contexts: EventType[];
+  latitude: number | null;
+  longitude: number | null;
 }
