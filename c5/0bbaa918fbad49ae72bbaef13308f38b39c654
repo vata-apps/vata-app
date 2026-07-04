@@ -1,0 +1,46 @@
+src/db/trees/person-events.test.ts
+  s_c464a78e7eb6eb::t_e12054b20d60d7 100-106,108-170
+  s_c464a78e7eb6eb::t_a8463e7a54ba2c 107
+src/pages/EventsPage.tsx
+  s_c464a78e7eb6eb::t_ca7a6fc5148ee2 17-18
+src/pages/PersonEventsPage.tsx
+  s_c464a78e7eb6eb::t_2e35ae4d56c485 10
+  s_c464a78e7eb6eb::t_3e5bfc04f9d057 53-54,56-59,62-64,78-83
+src/db/trees/person-events.ts
+  s_c464a78e7eb6eb::t_24cb0edd37d027 1,5
+  s_c464a78e7eb6eb::t_757cf62c33b11e 142-148,153-156,160-161
+  s_c464a78e7eb6eb::t_a8fff3651d0832 157-159
+  s_c464a78e7eb6eb::t_c94ccf034de8e6 30-32,38
+  s_c464a78e7eb6eb::t_766106640f2738 116
+src/lib/principals-text.test.ts
+  s_c464a78e7eb6eb::t_98009e5ae7a9ae 1-47,49-68
+  s_c464a78e7eb6eb::t_b686063c9361a8 48
+CONTEXT.md
+  s_c464a78e7eb6eb::t_4711093396dfa2 31-38
+src/types/database.ts
+  s_c464a78e7eb6eb::t_aa9f5bf7fa4c75 537,541-543,550-551
+src/managers/EventManager.ts
+  s_c464a78e7eb6eb::t_53a3e1b214dc06 2-3,14-18
+src/lib/principals-text.ts
+  s_c464a78e7eb6eb::t_d9d742881cb8b4 7
+  s_c464a78e7eb6eb::t_18705fdb3253d5 1-6,8-20
+src/db/trees/event-principals.ts
+  s_c464a78e7eb6eb::t_85150431da0291 1-23,28-74
+  s_c464a78e7eb6eb::t_cf1c60a2e1c2e8 24-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "c50bbaa918fbad49ae72bbaef13308f38b39c654",
+  "prompts": {},
+  "sessions": {
+    "s_c464a78e7eb6eb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "79e997eb-92bb-40c3-8243-58c653204aff",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
