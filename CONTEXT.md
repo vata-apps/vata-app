@@ -21,8 +21,19 @@ The union record linking an optional husband, an optional wife, and zero or more
 _Avoid_: Marriage, Couple, Union, Household
 
 **Pedigree**:
-The nature of a parent–child link within a family: biological, adopted, foster, or sealing.
+The nature of a parent–child link within a family: biological, adopted, foster, or sealing
+(GEDCOM `PEDI`). This is the _only_ meaning of "Pedigree" in code, DB schema, and types. The
+user-facing **Pedigree** / **Ascendance** tab on the Person screen is an unrelated concept — an
+**Ancestors** chart — and is named `ancestors` in code to keep this term unambiguous.
 _Avoid_: Lineage, Relationship type
+
+**Ancestors**:
+The transitive closure of an Individual's parent links — parents, grandparents, and so on up a
+single chosen lineage (the first parent Family at each step). Not stored directly; derived by
+walking Family membership upward. Rendered as the **Pedigree** / **Ascendance** chart tab, but
+named **Ancestors** in code (route, DB query, components) so it never collides with the
+link-type **Pedigree** above (same per-layer naming pattern as **Individual** / **Person**).
+_Avoid_: Pedigree (in code — reserved for the link type), Lineage, Descent
 
 **Sibling**:
 Two Individuals who share at least one parent Family. **Sibling** names the concept in domain
@@ -100,3 +111,4 @@ _Avoid_: Export file, Backup
 - "Marriage" was used for both the **Family** union record and the marriage **Event** — resolved: the **Family** is the union, the **Event** is the dated ceremony.
 - "Source" vs "Citation" — the **Source** is the document itself; a **Citation** is a specific reference into it (page, quality). Distinct records: one **Source** has many **Citations**.
 - "Person" / "Individual" — the same concept, named per layer by deliberate decision: **Individual** in code, DB schema, types, and GEDCOM (`INDI`, the `individuals` table); **Person** / **People** on user-facing UI surfaces. A button reading "People" above an `individuals` table is correct, not drift.
+- "Pedigree" — overloaded, resolved by layer: in code/DB/GEDCOM it means only the **parent–child link type** (`PEDI`: birth/adopted/foster/sealing/step); the Person screen's **Pedigree** / **Ascendance** tab is the **Ancestors** chart and is named `ancestors` in code. A component named `ancestors.ts` behind a tab labelled "Pedigree" is correct, not drift.

@@ -8,7 +8,7 @@ import {
   getParentFamilies,
   getSpouseFamilies,
 } from './families';
-import { extractYear, type RelatedPerson } from './person-overview';
+import { buildYearMaps, extractYear, type RelatedPerson } from './person-overview';
 
 // =============================================================================
 // Domain bundle types
@@ -173,18 +173,7 @@ export async function getPersonRelations(individualId: string): Promise<PersonRe
   const genderById = new Map(
     relatedIndividuals.map((individual) => [individual.id, individual.gender])
   );
-  const birthYearById = new Map<string, number>();
-  const deathYearById = new Map<string, number>();
-  for (const event of relatedBirthDeath) {
-    const principal = event.participants.find(
-      (participant) => participant.role === 'principal' && participant.individualId !== null
-    );
-    if (!principal?.individualId) continue;
-    const year = extractYear(event);
-    if (year === null) continue;
-    const target = event.eventType.tag === 'DEAT' ? deathYearById : birthYearById;
-    if (!target.has(principal.individualId)) target.set(principal.individualId, year);
-  }
+  const { birthYearById, deathYearById } = buildYearMaps(relatedBirthDeath);
 
   const toRelated = (id: string): RelatedPersonWithGender => ({
     id,

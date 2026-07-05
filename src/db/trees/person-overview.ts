@@ -78,6 +78,31 @@ export function extractYear(event: Pick<Event, 'dateSort' | 'dateOriginal'> | nu
   return null;
 }
 
+/**
+ * Batch-resolve a set of birth/death events to per-individual year maps — the
+ * first birth and first death found win per individual. Shared by every
+ * aggregate that reduces a related individual to a {@link RelatedPerson}'s
+ * `birthYear`/`deathYear` (the Overview, Relations, and Ancestors queries).
+ */
+export function buildYearMaps(events: EventWithDetails[]): {
+  birthYearById: Map<string, number>;
+  deathYearById: Map<string, number>;
+} {
+  const birthYearById = new Map<string, number>();
+  const deathYearById = new Map<string, number>();
+  for (const event of events) {
+    const principal = event.participants.find(
+      (participant) => participant.role === 'principal' && participant.individualId !== null
+    );
+    if (!principal?.individualId) continue;
+    const year = extractYear(event);
+    if (year === null) continue;
+    const target = event.eventType.tag === 'DEAT' ? deathYearById : birthYearById;
+    if (!target.has(principal.individualId)) target.set(principal.individualId, year);
+  }
+  return { birthYearById, deathYearById };
+}
+
 // =============================================================================
 // Aggregate query
 // =============================================================================
@@ -167,18 +192,7 @@ export async function getPersonOverview(individualId: string): Promise<PersonOve
   ]);
 
   const nameById = new Map(relatedNames.map((name) => [name.individualId, name]));
-  const birthYearById = new Map<string, number>();
-  const deathYearById = new Map<string, number>();
-  for (const event of relatedBirthDeath) {
-    const principal = event.participants.find(
-      (participant) => participant.role === 'principal' && participant.individualId !== null
-    );
-    if (!principal?.individualId) continue;
-    const year = extractYear(event);
-    if (year === null) continue;
-    const target = event.eventType.tag === 'DEAT' ? deathYearById : birthYearById;
-    if (!target.has(principal.individualId)) target.set(principal.individualId, year);
-  }
+  const { birthYearById, deathYearById } = buildYearMaps(relatedBirthDeath);
 
   const toRelated = (id: string): RelatedPerson => ({
     id,

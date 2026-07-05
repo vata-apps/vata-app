@@ -43,7 +43,7 @@
     "notFound": "Individu introuvable",
     "tabs": {
       "overview": "Aperçu",
-      "pedigree": "Ascendance",
+      "ancestors": "Ascendance",
       "events": "Événements",
       "relations": "Relations",
       "sources": "Sources",
@@ -99,6 +99,10 @@
       "title": "Médias",
       "empty": "Aucun média pour le moment"
     }
+  },
+  "ancestors": {
+    "chartLabel": "Arbre généalogique",
+    "unknown": "Inconnu"
   },
   "events": {
     "scope": {

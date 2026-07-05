@@ -117,16 +117,15 @@ export function IdentityHeader({ person }: { person: OverviewPerson }): JSX.Elem
 }
 
 /**
- * The section tabs, in display order. A `to` marks a routed tab — either real
- * content, or a stub page (e.g. `PersonSourcesPage`) once the URL is decided
- * but the feature isn't built. Tabs without one are visible but inert — their
- * destination isn't decided yet (e.g. Pedigree) — so the screen advertises its
- * full shape without dead navigation. Promoting an inert tab to routed is a
- * one-line change here.
+ * The section tabs, in display order. Every tab is routed — some to real
+ * content, some to a stub page (e.g. `PersonSourcesPage`) for a feature not
+ * yet built. The `ancestors` id renders the "Pedigree" / "Ascendance" label
+ * (see `overview.tabs.ancestors`) — named `ancestors` in code so the word
+ * "Pedigree" stays reserved for the parent–child link type; see `CONTEXT.md`.
  */
 const OVERVIEW_TABS = [
   { id: 'overview', to: '/tree/$treeId/individual/$individualId' },
-  { id: 'pedigree' },
+  { id: 'ancestors', to: '/tree/$treeId/individual/$individualId/ancestors' },
   { id: 'events', to: '/tree/$treeId/individual/$individualId/events' },
   { id: 'relations', to: '/tree/$treeId/individual/$individualId/relations' },
   { id: 'sources', to: '/tree/$treeId/individual/$individualId/sources' },
@@ -134,9 +133,9 @@ const OVERVIEW_TABS = [
 ] as const;
 
 /**
- * The section tab bar. Routed tabs are real destinations whose active state the
- * router resolves independently (so adding another routed tab never mis-marks a
- * sibling); inert tabs render as disabled-looking links.
+ * The section tab bar. Every tab is a real destination whose active state the
+ * router resolves independently, so adding another tab never mis-marks a
+ * sibling.
  */
 export function OverviewTabs({
   treeId,
@@ -152,13 +151,6 @@ export function OverviewTabs({
     <TabNav.Root>
       {OVERVIEW_TABS.map((tab) => {
         const label = t(`overview.tabs.${tab.id}`);
-        if (!('to' in tab)) {
-          return (
-            <TabNav.Link key={tab.id} href="#" onClick={(event) => event.preventDefault()}>
-              {label}
-            </TabNav.Link>
-          );
-        }
         // `fuzzy: false` → exact match, so the Overview (index) tab is not
         // marked active on a nested tab like `/events`.
         const active = Boolean(

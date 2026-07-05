@@ -43,7 +43,7 @@
     "notFound": "Individual not found",
     "tabs": {
       "overview": "Overview",
-      "pedigree": "Pedigree",
+      "ancestors": "Pedigree",
       "events": "Events",
       "relations": "Relations",
       "sources": "Sources",
@@ -99,6 +99,10 @@
       "title": "Media",
       "empty": "No media yet"
     }
+  },
+  "ancestors": {
+    "chartLabel": "Pedigree chart",
+    "unknown": "Unknown"
   },
   "events": {
     "scope": {

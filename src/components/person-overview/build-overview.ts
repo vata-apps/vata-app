@@ -1,6 +1,6 @@
-import type { EventWithDetails, Name } from '$types/database';
+import type { EventWithDetails } from '$types/database';
 import { formatName } from '$db-tree/names';
-import { extractYear, type PersonOverviewData, type RelatedPerson } from '$db-tree/person-overview';
+import { extractYear, type PersonOverviewData } from '$db-tree/person-overview';
 import type {
   OverviewMilestone,
   OverviewName,
@@ -8,8 +8,8 @@ import type {
   OverviewPerson,
   OverviewPlaceLived,
   OverviewVital,
-  PersonRefData,
 } from './overview-types';
+import { initialsOf, toPersonRef } from './to-person-ref';
 
 /**
  * The slice of the Person Overview view-model that the components render from
@@ -23,25 +23,6 @@ export interface PersonOverviewView {
   vitals: OverviewVital[];
   milestones: OverviewMilestone[];
   placesLived: OverviewPlaceLived[];
-}
-
-/** Two-letter monogram from a primary name, falling back to `?`. */
-function initialsOf(name: Name | null): string {
-  const first = name?.givenNames?.trim()?.[0] ?? '';
-  const last = name?.surname?.trim()?.[0] ?? '';
-  const initials = `${first}${last}`.toUpperCase();
-  return initials || '?';
-}
-
-/** A related person (parent, spouse, child) reduced to a `PersonRef` shape. */
-function toPersonRef(related: RelatedPerson): PersonRefData {
-  return {
-    id: related.id,
-    initials: initialsOf(related.primaryName),
-    name: formatName(related.primaryName).full,
-    bornYear: related.birthYear ?? undefined,
-    deathYear: related.deathYear ?? undefined,
-  };
 }
 
 /**
