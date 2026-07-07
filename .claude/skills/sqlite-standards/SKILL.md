@@ -54,7 +54,7 @@ Execute PRAGMAs **before** any transaction. They do not persist across connectio
 
 - **Never use `SELECT *`**. List columns explicitly.
 - **Always use parameterized queries** with `$1`, `$2`, etc. Never concatenate or interpolate user input into SQL.
-- **Multi-statement writes**: Always wrap in `BEGIN TRANSACTION` / `COMMIT` / `ROLLBACK`; on failure, execute `ROLLBACK` before rethrowing.
+- **Do not use `BEGIN TRANSACTION` / `COMMIT` / `ROLLBACK`, or `SAVEPOINT` / `RELEASE` / `ROLLBACK TO`, across separate `execute()`/`select()` calls.** `@tauri-apps/plugin-sql` checks a connection out of an internal pool per call and returns it afterward — sequential awaited calls from the same JS function are **not** guaranteed to land on the same physical connection. A concurrent query anywhere else in the app (e.g. a background `useQuery` refetch) can be interleaved between two of your calls and land on the connection that holds your open transaction/savepoint, breaking it with errors like `cannot rollback - no transaction is active` or `no such savepoint`. This is a confirmed, unresolved limitation of the plugin, not a bug in app code — see [tauri-apps/plugins-workspace#886](https://github.com/tauri-apps/plugins-workspace/issues/886). Multi-statement writes (e.g. `createEventWithParticipant`, `IndividualManager.create`/`update`) must instead run as independent, individually-committed statements — accept the loss of cross-statement atomicity rather than reach for a JS-level transaction wrapper. If a feature genuinely requires atomicity across several writes, the only reliable fix is a custom Rust-side Tauri command that holds a real `sqlx` transaction in app state across calls (see the linked issue for a community example) — that is a `src-tauri` change, not something fixable from the TS DB layer.
 - **Upserts**: Prefer `INSERT OR IGNORE` or `INSERT OR REPLACE` when appropriate instead of check-then-insert.
 - **Complex queries**: Use `EXPLAIN QUERY PLAN` to verify index usage.
 - **N+1 avoidance**: Prefer a single query with `JOIN` over multiple sequential queries.
@@ -95,7 +95,7 @@ Execute PRAGMAs **before** any transaction. They do not persist across connectio
 
 ## 7. Common Mistakes to Avoid
 
-- **Multi-step writes must use transactions**: Even convenience functions like `createEventWithParticipant` that call two DB functions must wrap both in `BEGIN`/`COMMIT`/`ROLLBACK`.
+- **Don't wrap multi-statement writes in `BEGIN`/`COMMIT` or `SAVEPOINT`/`RELEASE`**: `@tauri-apps/plugin-sql`'s per-call connection pooling makes both unreliable (see §3) — convenience functions like `createEventWithParticipant` run their statements independently instead.
 - **Test databases must enable `PRAGMA foreign_keys = ON`**: In-memory test databases do not inherit PRAGMAs. Always execute `PRAGMA foreign_keys = ON` after creating the test DB, before running the schema.
 - **Escape LIKE wildcards in user input**: Characters `%`, `_`, and `\` must be escaped with `\` and the query must include `ESCAPE '\'`.
 - **Always pass radix to `parseInt`**: Use `parseInt(id, 10)`, never `parseInt(id)`.

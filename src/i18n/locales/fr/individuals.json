@@ -152,5 +152,68 @@
   },
   "notes": {
     "comingSoon": "Les notes ne sont pas encore disponibles."
+  },
+  "personEditor": {
+    "createTitle": "Ajouter une personne",
+    "editTitle": "Modifier la personne",
+    "editButtonAria": "Modifier la personne",
+    "sections": {
+      "names": "Noms",
+      "otherNames": "Autres noms",
+      "lifeEvents": "Événements de vie",
+      "lifeEventsHint": "Dates seulement — les lieux seront ajoutés une fois le sélecteur de lieu disponible.",
+      "relations": "Relations",
+      "notes": "Notes"
+    },
+    "fields": {
+      "givenNames": "Prénoms",
+      "surname": "Nom de famille",
+      "prefix": "Préfixe",
+      "suffix": "Suffixe",
+      "nickname": "Surnom"
+    },
+    "sex": {
+      "label": "Sexe"
+    },
+    "status": {
+      "label": "Statut",
+      "deceased": "Décédé"
+    },
+    "otherNames": {
+      "addButton": "Ajouter un nom",
+      "removeAria": "Retirer ce nom"
+    },
+    "lifeEvents": {
+      "datePlaceholder": "ex. 30 janv. 1960, vers 1960",
+      "dateHint": "Accepte les dates approximatives — « vers 1960 », « avant 1962 »",
+      "placeSoon": "Lieu — bientôt",
+      "addButton": "Ajouter un événement",
+      "removeAria": "Retirer cet événement"
+    },
+    "relationsPreview": {
+      "badge": "Étape ultérieure",
+      "note": "Parents, conjoint et enfants arriveront dans une prochaine mise à jour.",
+      "addFather": "Ajouter le père",
+      "addMother": "Ajouter la mère",
+      "family": "Famille",
+      "addSpouse": "Ajouter un conjoint",
+      "addChild": "Ajouter un enfant",
+      "addFamily": "Ajouter une autre famille"
+    },
+    "notes": {
+      "label": "Notes"
+    },
+    "actions": {
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saveNew": "Enregistrer la personne"
+    },
+    "errorGeneric": "Une erreur est survenue. Veuillez réessayer.",
+    "unsavedChanges": {
+      "title": "Abandonner les modifications non enregistrées?",
+      "description": "Des modifications n'ont pas été enregistrées. Si vous fermez maintenant, elles seront perdues.",
+      "discard": "Abandonner les modifications",
+      "keepEditing": "Continuer l'édition"
+    }
   }
 }

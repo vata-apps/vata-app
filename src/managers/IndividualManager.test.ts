@@ -1,8 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createTreeInMemoryDb } from '$/test/sqlite-memory';
 import { createIndividual } from '$db-tree/individuals';
-import { createName } from '$db-tree/names';
-import { createEvent, addEventParticipant, getEventTypeByTag } from '$db-tree/events';
+import { createName, getNamesByIndividualId } from '$db-tree/names';
+import {
+  createEvent,
+  addEventParticipant,
+  getEventTypeByTag,
+  getEventsByIndividualIdWithDetails,
+} from '$db-tree/events';
 import { IndividualManager } from './IndividualManager';
 
 const db = createTreeInMemoryDb();
@@ -198,5 +203,216 @@ describe('IndividualManager.getById', () => {
 
     expect(principal?.birthEvent?.dateOriginal).toBe('1900-01-01');
     expect(witness?.birthEvent).toBeNull();
+  });
+});
+
+/** Add a principal event of the given tag to an individual; returns the event id. */
+async function createPrincipalEventFor(
+  individualId: string,
+  tag: string,
+  date: string
+): Promise<string> {
+  const eventType = await getEventTypeByTag(tag);
+  if (!eventType) throw new Error(`${tag} event type missing from test DB`);
+  const eventId = await createEvent({ eventTypeId: eventType.id, dateOriginal: date });
+  await addEventParticipant({ eventId, individualId, role: 'principal' });
+  return eventId;
+}
+
+describe('IndividualManager.create', () => {
+  it('creates the primary name with prefix, suffix and nickname', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: {
+        prefix: 'Dr.',
+        givenNames: 'Lily',
+        surname: 'Potter',
+        suffix: 'Jr.',
+        nickname: 'Lils',
+      },
+    });
+
+    const names = await getNamesByIndividualId(id);
+    expect(names).toHaveLength(1);
+    expect(names[0]).toMatchObject({
+      isPrimary: true,
+      prefix: 'Dr.',
+      givenNames: 'Lily',
+      surname: 'Potter',
+      suffix: 'Jr.',
+      nickname: 'Lils',
+    });
+  });
+
+  it('creates alternate names alongside the primary name', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily', surname: 'Potter' },
+      alternateNames: [{ type: 'birth', givenNames: 'Lily', surname: 'Evans' }],
+    });
+
+    const names = await getNamesByIndividualId(id);
+    expect(names).toHaveLength(2);
+    const alternate = names.find((n) => !n.isPrimary);
+    expect(alternate).toMatchObject({ type: 'birth', givenNames: 'Lily', surname: 'Evans' });
+  });
+
+  it('creates life events of arbitrary types with a date', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily' },
+      events: [
+        { tag: 'BIRT', dateOriginal: '30 Jan 1960' },
+        { tag: 'CHR', dateOriginal: '1 Mar 1960' },
+      ],
+    });
+
+    const events = await getEventsByIndividualIdWithDetails(id);
+    expect(events).toHaveLength(2);
+    const birth = events.find((e) => e.eventType.tag === 'BIRT');
+    expect(birth?.dateOriginal).toBe('30 Jan 1960');
+    expect(birth?.dateSort).toBe('1960-01-30');
+    expect(events.find((e) => e.eventType.tag === 'CHR')?.dateOriginal).toBe('1 Mar 1960');
+  });
+
+  it('derives a sortable dateSort from an approximate date', async () => {
+    const id = await IndividualManager.create({
+      gender: 'U',
+      events: [{ tag: 'BIRT', dateOriginal: 'abt 1960' }],
+    });
+
+    const [event] = await getEventsByIndividualIdWithDetails(id);
+    expect(event.dateOriginal).toBe('abt 1960');
+    expect(event.dateSort).toBe('1960-01-01');
+  });
+
+  it('skips event rows with no date', async () => {
+    const id = await IndividualManager.create({
+      gender: 'U',
+      events: [{ tag: 'BIRT', dateOriginal: '' }],
+    });
+
+    const events = await getEventsByIndividualIdWithDetails(id);
+    expect(events).toHaveLength(0);
+  });
+});
+
+describe('IndividualManager.update', () => {
+  it('updates the primary name in place', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily', surname: 'Evans' },
+    });
+
+    await IndividualManager.update(id, {
+      primaryName: { givenNames: 'Lily', surname: 'Potter' },
+    });
+
+    const names = await getNamesByIndividualId(id);
+    expect(names).toHaveLength(1);
+    expect(names[0]).toMatchObject({ isPrimary: true, surname: 'Potter' });
+  });
+
+  it('creates a primary name on update when none exists yet', async () => {
+    const id = await createIndividual({ gender: 'U' });
+
+    await IndividualManager.update(id, { primaryName: { givenNames: 'Newly', surname: 'Named' } });
+
+    const names = await getNamesByIndividualId(id);
+    expect(names).toHaveLength(1);
+    expect(names[0]).toMatchObject({ isPrimary: true, givenNames: 'Newly', surname: 'Named' });
+  });
+
+  it('adds, updates and removes alternate names in one call', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily', surname: 'Potter' },
+      alternateNames: [
+        { type: 'birth', givenNames: 'Lily', surname: 'Evans' },
+        { type: 'aka', givenNames: 'Lils' },
+      ],
+    });
+    const [toKeep, toRemove] = (await getNamesByIndividualId(id)).filter((n) => !n.isPrimary);
+
+    await IndividualManager.update(id, {
+      alternateNames: [
+        { id: toKeep.id, type: 'birth', givenNames: 'Lily', surname: 'Evans-updated' },
+        { type: 'married', givenNames: 'Lily', surname: 'Potter' },
+      ],
+    });
+
+    const names = (await getNamesByIndividualId(id)).filter((n) => !n.isPrimary);
+    expect(names).toHaveLength(2);
+    expect(names.find((n) => n.id === toKeep.id)?.surname).toBe('Evans-updated');
+    expect(names.some((n) => n.id === toRemove.id)).toBe(false);
+    expect(names.some((n) => n.type === 'married' && n.surname === 'Potter')).toBe(true);
+  });
+
+  it('adds, updates and removes life events in one call, leaving secondary participations untouched', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily' },
+      events: [{ tag: 'BIRT', dateOriginal: '1960-01-30' }],
+    });
+    const [birthEvent] = await getEventsByIndividualIdWithDetails(id);
+
+    // A christening this person merely witnesses (secondary role) must survive
+    // an update even when it's not in the submitted event list.
+    const witnessedEventId = await createPrincipalEventFor(
+      await IndividualManager.create({ gender: 'U' }),
+      'CHR',
+      '1900-01-01'
+    );
+    await addEventParticipant({ eventId: witnessedEventId, individualId: id, role: 'witness' });
+
+    await IndividualManager.update(id, {
+      events: [
+        { id: birthEvent.id, tag: 'BIRT', dateOriginal: '1960-01-31' },
+        { tag: 'CHR', dateOriginal: '1960-03-01' },
+      ],
+    });
+
+    const events = await getEventsByIndividualIdWithDetails(id);
+    const principalEvents = events.filter((e) =>
+      e.participants.some((p) => p.role === 'principal' && p.individualId === id)
+    );
+    expect(principalEvents).toHaveLength(2);
+    expect(principalEvents.find((e) => e.eventType.tag === 'BIRT')?.dateOriginal).toBe(
+      '1960-01-31'
+    );
+    expect(principalEvents.find((e) => e.eventType.tag === 'CHR')?.dateOriginal).toBe('1960-03-01');
+    // The witnessed event must still exist, untouched by the diff.
+    expect(events.some((e) => e.id === witnessedEventId)).toBe(true);
+  });
+
+  it('removes a life event omitted from the submitted list', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily' },
+      events: [{ tag: 'BIRT', dateOriginal: '1960-01-30' }],
+    });
+
+    await IndividualManager.update(id, { events: [] });
+
+    const events = await getEventsByIndividualIdWithDetails(id);
+    expect(events).toHaveLength(0);
+  });
+
+  it('removes a life event whose id is kept but whose date is cleared', async () => {
+    // The Person editor always resubmits Birth/Death rows by id, even when
+    // the user clears the date — clearing is how the user removes them.
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily' },
+      events: [{ tag: 'BIRT', dateOriginal: '1960-01-30' }],
+    });
+    const [birthEvent] = await getEventsByIndividualIdWithDetails(id);
+
+    await IndividualManager.update(id, {
+      events: [{ id: birthEvent.id, tag: 'BIRT', dateOriginal: '' }],
+    });
+
+    const events = await getEventsByIndividualIdWithDetails(id);
+    expect(events).toHaveLength(0);
   });
 });

@@ -152,5 +152,68 @@
   },
   "notes": {
     "comingSoon": "Notes are not available yet."
+  },
+  "personEditor": {
+    "createTitle": "Add person",
+    "editTitle": "Edit person",
+    "editButtonAria": "Edit person",
+    "sections": {
+      "names": "Names",
+      "otherNames": "Other names",
+      "lifeEvents": "Life events",
+      "lifeEventsHint": "Dates only — places will be added once a place picker exists.",
+      "relations": "Relations",
+      "notes": "Notes"
+    },
+    "fields": {
+      "givenNames": "Given names",
+      "surname": "Surname",
+      "prefix": "Prefix",
+      "suffix": "Suffix",
+      "nickname": "Nickname"
+    },
+    "sex": {
+      "label": "Sex"
+    },
+    "status": {
+      "label": "Status",
+      "deceased": "Deceased"
+    },
+    "otherNames": {
+      "addButton": "Add name",
+      "removeAria": "Remove this name"
+    },
+    "lifeEvents": {
+      "datePlaceholder": "e.g. 30 Jan 1960, abt 1960",
+      "dateHint": "Accepts approximate dates — “abt 1960”, “bef 1962”",
+      "placeSoon": "Place — soon",
+      "addButton": "Add event",
+      "removeAria": "Remove this event"
+    },
+    "relationsPreview": {
+      "badge": "Later stage",
+      "note": "Parents, spouse and children arrive in a future update.",
+      "addFather": "Add father",
+      "addMother": "Add mother",
+      "family": "Family",
+      "addSpouse": "Add spouse",
+      "addChild": "Add child",
+      "addFamily": "Add another family"
+    },
+    "notes": {
+      "label": "Notes"
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "saveNew": "Save person"
+    },
+    "errorGeneric": "Something went wrong. Please try again.",
+    "unsavedChanges": {
+      "title": "Discard unsaved changes?",
+      "description": "You have unsaved changes. If you close now, they will be lost.",
+      "discard": "Discard changes",
+      "keepEditing": "Keep editing"
+    }
   }
 }

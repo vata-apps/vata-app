@@ -5,6 +5,7 @@ import { Box, Button, Flex, Grid, Heading, Link } from '@radix-ui/themes';
 
 import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import { Icon, type IconName } from '$components/icon';
+import { PersonEditorDialog } from '$components/individuals/person-editor-dialog';
 import {
   DEFAULT_INDIVIDUAL_FILTERS,
   hasActiveFilters,
@@ -65,6 +66,7 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
 
   const [filters, setFilters] = useState(DEFAULT_INDIVIDUAL_FILTERS);
   const debouncedName = useDebouncedValue(filters.name, 200);
+  const [createOpen, setCreateOpen] = useState(false);
 
   // Filter the already-loaded list client-side over the same fields the
   // backend can express: every name, sex, and living status (all AND-ed).
@@ -171,7 +173,7 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
               {tCommon('nav.individuals')}
             </Heading>
           </Flex>
-          <Button disabled>
+          <Button onClick={() => setCreateOpen(true)}>
             <Icon name="plus" />
             {t('page.addPerson')}
           </Button>
@@ -198,6 +200,18 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
           />
         </Grid>
       </Flex>
+
+      <PersonEditorDialog
+        mode="create"
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onSaved={(individualId) =>
+          navigate({
+            to: '/tree/$treeId/individual/$individualId',
+            params: { treeId, individualId },
+          })
+        }
+      />
     </Box>
   );
 }

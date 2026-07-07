@@ -18,8 +18,24 @@ const TRANSLATIONS: Record<string, string> = {
   'types.DIV': 'Divorce',
   'types.CENS': 'Census',
   'types.EMIG': 'Emigration',
+  'types.IMMI': 'Immigration',
   'types.DEAT': 'Death',
   'types.BURI': 'Burial',
+  'types.CREM': 'Cremation',
+  'types.ADOP': 'Adoption',
+  'types.BARM': 'Bar Mitzvah',
+  'types.BASM': 'Bas Mitzvah',
+  'types.FCOM': 'First Communion',
+  'types.ORDN': 'Ordination',
+  'types.NATU': 'Naturalization',
+  'types.PROB': 'Probate',
+  'types.WILL': 'Will',
+  'types.GRAD': 'Graduation',
+  'types.RETI': 'Retirement',
+  'types.RESI': 'Residence',
+  'types.OCCU': 'Occupation',
+  'types.EDUC': 'Education',
+  'types.RELI': 'Religion',
 };
 
 function t(key: string): string {
@@ -38,14 +54,33 @@ describe('eventTypeLabel', () => {
     expect(eventTypeLabel(makeSystemType('CONF'), t)).toBe('Confirmation');
   });
 
+  it('returns the translated label for every individual event tag', () => {
+    expect(eventTypeLabel(makeSystemType('IMMI'), t)).toBe('Immigration');
+    expect(eventTypeLabel(makeSystemType('CREM'), t)).toBe('Cremation');
+    expect(eventTypeLabel(makeSystemType('ADOP'), t)).toBe('Adoption');
+    expect(eventTypeLabel(makeSystemType('BARM'), t)).toBe('Bar Mitzvah');
+    expect(eventTypeLabel(makeSystemType('BASM'), t)).toBe('Bas Mitzvah');
+    expect(eventTypeLabel(makeSystemType('FCOM'), t)).toBe('First Communion');
+    expect(eventTypeLabel(makeSystemType('ORDN'), t)).toBe('Ordination');
+    expect(eventTypeLabel(makeSystemType('NATU'), t)).toBe('Naturalization');
+    expect(eventTypeLabel(makeSystemType('PROB'), t)).toBe('Probate');
+    expect(eventTypeLabel(makeSystemType('WILL'), t)).toBe('Will');
+    expect(eventTypeLabel(makeSystemType('GRAD'), t)).toBe('Graduation');
+    expect(eventTypeLabel(makeSystemType('RETI'), t)).toBe('Retirement');
+    expect(eventTypeLabel(makeSystemType('RESI'), t)).toBe('Residence');
+    expect(eventTypeLabel(makeSystemType('OCCU'), t)).toBe('Occupation');
+    expect(eventTypeLabel(makeSystemType('EDUC'), t)).toBe('Education');
+    expect(eventTypeLabel(makeSystemType('RELI'), t)).toBe('Religion');
+  });
+
   it('BAPM and CHR both return the Baptism label', () => {
     expect(eventTypeLabel(makeSystemType('BAPM'), t)).toBe('Baptism');
     expect(eventTypeLabel(makeSystemType('CHR'), t)).toBe('Baptism');
   });
 
   it('falls back to the tag itself for a system tag without a translation key', () => {
-    expect(eventTypeLabel(makeSystemType('CREM'), t)).toBe('CREM');
-    expect(eventTypeLabel(makeSystemType('ADOP'), t)).toBe('ADOP');
+    expect(eventTypeLabel(makeSystemType('TITL'), t)).toBe('TITL');
+    expect(eventTypeLabel(makeSystemType('CAST'), t)).toBe('CAST');
   });
 
   it('returns customName verbatim for a custom (non-system) type', () => {

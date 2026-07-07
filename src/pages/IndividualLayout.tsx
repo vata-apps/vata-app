@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Box, Flex } from '@radix-ui/themes';
 import { Outlet } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { CenteredMessage } from '$components/centered-message';
+import { PersonEditorDialog } from '$components/individuals/person-editor-dialog';
 import { IdentityHeader, OverviewTabs } from '$components/person-overview/identity-header';
 import { usePersonOverview } from '$hooks/usePersonOverview';
 
@@ -21,6 +23,7 @@ export function IndividualLayout({ treeId, individualId }: IndividualLayoutProps
   const { t } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');
   const { data, isLoading, isError } = usePersonOverview(individualId);
+  const [editOpen, setEditOpen] = useState(false);
 
   if (isLoading) {
     return <CenteredMessage>{t('overview.loading')}</CenteredMessage>;
@@ -38,12 +41,19 @@ export function IndividualLayout({ treeId, individualId }: IndividualLayoutProps
   return (
     <Box p="4">
       <Flex direction="column" gap="4">
-        <IdentityHeader person={data.person} />
+        <IdentityHeader person={data.person} onEdit={() => setEditOpen(true)} />
         <Flex direction="column" gap="4">
           <OverviewTabs treeId={treeId} individualId={individualId} />
           <Outlet />
         </Flex>
       </Flex>
+
+      <PersonEditorDialog
+        mode="edit"
+        individualId={individualId}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+      />
     </Box>
   );
 }

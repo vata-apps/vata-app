@@ -1,4 +1,4 @@
-import { Avatar, Badge, Code, Flex, Heading, TabNav, Text } from '@radix-ui/themes';
+import { Avatar, Badge, Code, Flex, Heading, IconButton, TabNav, Text } from '@radix-ui/themes';
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -65,7 +65,13 @@ function MetaSegment({ segment }: { segment: MetaSegmentData }): JSX.Element | n
   return null;
 }
 
-export function IdentityHeader({ person }: { person: OverviewPerson }): JSX.Element {
+export function IdentityHeader({
+  person,
+  onEdit,
+}: {
+  person: OverviewPerson;
+  onEdit: () => void;
+}): JSX.Element {
   const { t } = useTranslation('individuals');
 
   const bornLabel = vitalLabel(person.birthDate, person.birthPlace);
@@ -81,37 +87,48 @@ export function IdentityHeader({ person }: { person: OverviewPerson }): JSX.Elem
   ];
 
   return (
-    <Flex align="center" gap="3">
-      <Avatar
-        src={person.imageUrl}
-        size="4"
-        radius="full"
-        variant="soft"
-        fallback={person.initials}
-      />
+    <Flex align="center" justify="between" gap="3">
+      <Flex align="center" gap="3">
+        <Avatar
+          src={person.imageUrl}
+          size="4"
+          radius="full"
+          variant="soft"
+          fallback={person.initials}
+        />
 
-      <Flex direction="column" gap="1">
-        <Flex align="center" gap="3" wrap="wrap">
-          <Heading size="6">{person.name}</Heading>
-          {person.otherNamesCount > 0 && (
-            <Badge variant="soft" color="gray" radius="full">
-              {t('overview.lifespan.otherNames', { count: person.otherNamesCount })}
-            </Badge>
-          )}
-        </Flex>
-        <Flex align="center" gap="2" wrap="wrap">
-          {segments.map((segment, i) => (
-            <Flex key={segment.key} align="center" gap="2">
-              {i > 0 && (
-                <Text size="1" color="gray">
-                  ·
-                </Text>
-              )}
-              <MetaSegment segment={segment} />
-            </Flex>
-          ))}
+        <Flex direction="column" gap="1">
+          <Flex align="center" gap="3" wrap="wrap">
+            <Heading size="6">{person.name}</Heading>
+            {person.otherNamesCount > 0 && (
+              <Badge variant="soft" color="gray" radius="full">
+                {t('overview.lifespan.otherNames', { count: person.otherNamesCount })}
+              </Badge>
+            )}
+          </Flex>
+          <Flex align="center" gap="2" wrap="wrap">
+            {segments.map((segment, i) => (
+              <Flex key={segment.key} align="center" gap="2">
+                {i > 0 && (
+                  <Text size="1" color="gray">
+                    ·
+                  </Text>
+                )}
+                <MetaSegment segment={segment} />
+              </Flex>
+            ))}
+          </Flex>
         </Flex>
       </Flex>
+
+      <IconButton
+        variant="ghost"
+        color="gray"
+        aria-label={t('personEditor.editButtonAria')}
+        onClick={onEdit}
+      >
+        <Icon name="pencil" />
+      </IconButton>
     </Flex>
   );
 }

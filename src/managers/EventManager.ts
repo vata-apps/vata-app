@@ -1,6 +1,6 @@
-import { getAllEventsWithDetails } from '$db-tree/events';
+import { getAllEventsWithDetails, getEventTypes } from '$db-tree/events';
 import { resolvePrincipalsForEvents } from '$db-tree/event-principals';
-import type { EventListEntry } from '$types/database';
+import type { EventCategory, EventListEntry, EventType } from '$types/database';
 
 export class EventManager {
   /**
@@ -16,5 +16,10 @@ export class EventManager {
       ...event,
       principals: principalsByEventId.get(event.id) ?? [],
     }));
+  }
+
+  /** Get all event types, optionally filtered by category. */
+  static async getEventTypes(category?: EventCategory): Promise<EventType[]> {
+    return getEventTypes(category);
   }
 }

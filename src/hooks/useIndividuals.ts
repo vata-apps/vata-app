@@ -9,9 +9,10 @@ export function useIndividuals() {
   });
 }
 
-export function useIndividual(id: string) {
+export function useIndividual(id: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: queryKeys.individual(id),
     queryFn: () => IndividualManager.getById(id),
+    enabled: options?.enabled ?? true,
   });
 }

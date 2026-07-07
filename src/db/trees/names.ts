@@ -203,37 +203,31 @@ export async function createName(input: CreateNameInput): Promise<string> {
   const individualDbId = parseEntityId(input.individualId);
 
   if (input.isPrimary) {
-    await db.execute('BEGIN TRANSACTION');
-    try {
-      await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [
+    // Not wrapped in a transaction/savepoint — @tauri-apps/plugin-sql pools
+    // connections per execute() call, so BEGIN/SAVEPOINT across calls isn't
+    // reliable (see IndividualManager.create's doc comment for details).
+    await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [individualDbId]);
+
+    const result = await db.execute(
+      `INSERT INTO names (individual_id, type, prefix, given_names, surname, suffix, nickname, is_primary)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
         individualDbId,
-      ]);
+        input.type ?? 'birth',
+        input.prefix ?? null,
+        input.givenNames ?? null,
+        input.surname ?? null,
+        input.suffix ?? null,
+        input.nickname ?? null,
+        1,
+      ]
+    );
 
-      const result = await db.execute(
-        `INSERT INTO names (individual_id, type, prefix, given_names, surname, suffix, nickname, is_primary)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        [
-          individualDbId,
-          input.type ?? 'birth',
-          input.prefix ?? null,
-          input.givenNames ?? null,
-          input.surname ?? null,
-          input.suffix ?? null,
-          input.nickname ?? null,
-          1,
-        ]
-      );
-
-      if (result.lastInsertId === undefined) {
-        throw new Error('Failed to create name: no lastInsertId returned');
-      }
-
-      await db.execute('COMMIT');
-      return String(result.lastInsertId);
-    } catch (error) {
-      await db.execute('ROLLBACK');
-      throw error;
+    if (result.lastInsertId === undefined) {
+      throw new Error('Failed to create name: no lastInsertId returned');
     }
+
+    return String(result.lastInsertId);
   }
 
   const result = await db.execute(
@@ -312,17 +306,11 @@ export async function updateName(id: string, input: UpdateNameInput): Promise<vo
     const existingName = await getNameById(id);
     if (existingName) {
       const individualDbId = parseEntityId(existingName.individualId);
-      await db.execute('BEGIN TRANSACTION');
-      try {
-        await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [
-          individualDbId,
-        ]);
-        await db.execute(`UPDATE names SET ${sets.join(', ')} WHERE id = $${paramIndex}`, params);
-        await db.execute('COMMIT');
-      } catch (error) {
-        await db.execute('ROLLBACK');
-        throw error;
-      }
+      // Not wrapped in a transaction/savepoint — see the note in createName above.
+      await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [
+        individualDbId,
+      ]);
+      await db.execute(`UPDATE names SET ${sets.join(', ')} WHERE id = $${paramIndex}`, params);
       return;
     }
   }
@@ -347,24 +335,14 @@ export async function setPrimaryName(individualId: string, nameId: string): Prom
   const individualDbId = parseEntityId(individualId);
   const nameDbId = parseInt(nameId, 10);
 
-  // Begin transaction
-  await db.execute('BEGIN TRANSACTION');
+  // Not wrapped in a transaction/savepoint — see the note in createName above.
+  // Unset all primary names for this individual
+  await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [individualDbId]);
 
-  try {
-    // Unset all primary names for this individual
-    await db.execute('UPDATE names SET is_primary = 0 WHERE individual_id = $1', [individualDbId]);
-
-    // Set the specified name as primary
-    await db.execute(
-      "UPDATE names SET is_primary = 1, updated_at = datetime('now') WHERE id = $1",
-      [nameDbId]
-    );
-
-    await db.execute('COMMIT');
-  } catch (error) {
-    await db.execute('ROLLBACK');
-    throw error;
-  }
+  // Set the specified name as primary
+  await db.execute("UPDATE names SET is_primary = 1, updated_at = datetime('now') WHERE id = $1", [
+    nameDbId,
+  ]);
 }
 
 /**

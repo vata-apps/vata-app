@@ -14,10 +14,10 @@ import {
   type GedcomName,
   type GedcomEvent,
 } from '@vata-apps/gedcom-parser';
-import { parse, toSortDate } from '@vata-apps/gedcom-date';
 import { getTreeDb } from '$/db/connection';
 import type { Gender } from '$types/database';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { tryParseSortDate } from '$/lib/dateSort';
 import type Database from '@tauri-apps/plugin-sql';
 
 export interface ImportStats {
@@ -104,19 +104,6 @@ export async function importGedcom(content: string): Promise<ImportStats> {
 /**
  * Load event types into cache for fast lookup.
  */
-/**
- * Try to derive a `date_sort` value from a raw GEDCOM date string.
- * Returns `null` when the date is absent, unparseable, or has no
- * usable point — callers always store the original string in
- * `date_original` regardless.
- */
-function tryParseSortDate(date: string | undefined): string | null {
-  if (!date) return null;
-  const parsed = parse(date);
-  if (parsed.success && parsed.date) return toSortDate(parsed.date);
-  return null;
-}
-
 async function loadEventTypeCache(ctx: ImportContext): Promise<void> {
   const { db, eventTypeCache } = ctx;
 

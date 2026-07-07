@@ -626,22 +626,12 @@ export async function createEventWithParticipant(
   eventInput: CreateEventInput,
   participantInput: Omit<CreateEventParticipantInput, 'eventId'>
 ): Promise<{ eventId: string; participantId: string }> {
-  const db = await getTreeDb();
-
-  await db.execute('BEGIN TRANSACTION');
-  try {
-    const eventId = await createEvent(eventInput);
-    const participantId = await addEventParticipant({
-      ...participantInput,
-      eventId,
-    });
-
-    await db.execute('COMMIT');
-    return { eventId, participantId };
-  } catch (error) {
-    await db.execute('ROLLBACK');
-    throw error;
-  }
+  // Not wrapped in a transaction/savepoint — @tauri-apps/plugin-sql pools
+  // connections per execute() call, so BEGIN/SAVEPOINT across calls isn't
+  // reliable (see IndividualManager.create's doc comment for details).
+  const eventId = await createEvent(eventInput);
+  const participantId = await addEventParticipant({ ...participantInput, eventId });
+  return { eventId, participantId };
 }
 
 /**

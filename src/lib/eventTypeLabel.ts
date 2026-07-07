@@ -1,5 +1,8 @@
 import type { EventType } from '$types/database';
 
+/** The i18next `t` shape this file needs — enough to resolve a key in another namespace via `{ ns }`. */
+export type TranslateFn = (key: string, options?: { ns?: string }) => string;
+
 /**
  * System tags whose translations live in the `events` namespace.
  * BAPM and CHR intentionally share the same key (both render as Baptism/Baptême).
@@ -13,10 +16,24 @@ const KNOWN_TAG_KEYS: Record<string, string> = {
   DIV: 'types.DIV',
   CENS: 'types.CENS',
   EMIG: 'types.EMIG',
+  IMMI: 'types.IMMI',
   DEAT: 'types.DEAT',
   BURI: 'types.BURI',
+  CREM: 'types.CREM',
+  ADOP: 'types.ADOP',
+  BARM: 'types.BARM',
+  BASM: 'types.BASM',
+  FCOM: 'types.FCOM',
+  ORDN: 'types.ORDN',
+  NATU: 'types.NATU',
+  PROB: 'types.PROB',
+  WILL: 'types.WILL',
+  GRAD: 'types.GRAD',
+  RETI: 'types.RETI',
   RESI: 'types.RESI',
   OCCU: 'types.OCCU',
+  EDUC: 'types.EDUC',
+  RELI: 'types.RELI',
 };
 
 /**
@@ -26,10 +43,7 @@ const KNOWN_TAG_KEYS: Record<string, string> = {
  * - System tag with a known translation key → returns `t('events:types.<TAG>')`.
  * - System tag without a known key → returns the tag itself as a fallback.
  */
-export function eventTypeLabel(
-  type: EventType,
-  t: (key: string, options?: { ns?: string }) => string
-): string {
+export function eventTypeLabel(type: EventType, t: TranslateFn): string {
   if (!type.isSystem || type.tag === null) {
     return type.customName ?? type.tag ?? '';
   }
