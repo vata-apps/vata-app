@@ -1,0 +1,129 @@
+src/pages/IndividualsPage.tsx
+  s_0d0a43c568b1d7::t_199f7d31b07422 8
+  s_0d0a43c568b1d7::t_9db7ec9fa05640 69
+  s_0d0a43c568b1d7::t_8d5f60377d1b86 176,203-210,212-214
+  s_0d0a43c568b1d7::t_316238e6a52d5a 211
+src/lib/gedcom/importer.ts
+  s_0d0a43c568b1d7::t_97eafa45befb52 20
+src/managers/IndividualManager.ts
+  s_0d0a43c568b1d7::t_0d763cdcefff9d 26
+  s_1c5bcfd9f6f897::t_8c42815317c873 117-121,128,135,141
+  s_0d0a43c568b1d7::t_ee16760671f23d 142,144,150
+  s_0d0a43c568b1d7::t_85bf2839f3cfd2 136-139,147
+  s_0d0a43c568b1d7::t_0c634c162db2a0 319,329,335,342,344,349,356
+  s_0d0a43c568b1d7::t_41b0d37ebc2e70 1
+  s_0d0a43c568b1d7::t_b8c62834d9839d 12,19,22-23,28,36,40-62,64-84,122-127,129-134,140,143,145-146,148-149,151-153
+  s_0d0a43c568b1d7::t_28ef889a4379a8 229-237,241,243-244,247-250
+  s_0d0a43c568b1d7::t_3ca073fd1a60d6 228,246
+  s_0d0a43c568b1d7::t_51be7fb3e59142 320-327,330-334,336-341,343,345-348,350-355
+  s_0d0a43c568b1d7::t_d88ddd66c2f5e0 85-116
+src/managers/IndividualManager.test.ts
+  s_0d0a43c568b1d7::t_7df60bf402df84 265-266,273,275
+  s_1c5bcfd9f6f897::t_4ab58e737b5eb4 400-417
+  s_0d0a43c568b1d7::t_86808cdcb261bc 286
+  s_0d0a43c568b1d7::t_8b64bfb06e1153 208-230,232-264,267-271,287-399,418
+  s_0d0a43c568b1d7::t_b4992c9357c509 4-10
+  s_0d0a43c568b1d7::t_fd961522bb3a00 272,274,276-285
+  s_0d0a43c568b1d7::t_80520b68e2af67 231
+src/i18n/locales/fr/individuals.json
+  s_0d0a43c568b1d7::t_d8aabd7828f105 155-217
+.claude/skills/sqlite-standards/SKILL.md
+  s_0d0a43c568b1d7::t_b8a8d91faebb96 57
+  s_0d0a43c568b1d7::t_aacef44cb263b7 98
+src/lib/eventTypeLabel.ts
+  s_0d0a43c568b1d7::t_5030f22e6f2345 3-5,46
+  s_1c5bcfd9f6f897::t_e0ff422cbdcae9 19,22-32,35-36
+src/components/person-overview/identity-header.tsx
+  s_0d0a43c568b1d7::t_5525b1bff9f66b 68-74
+  s_0d0a43c568b1d7::t_d452a1b2c9773b 123-131
+  s_0d0a43c568b1d7::t_7c359993fc81b2 1
+  s_0d0a43c568b1d7::t_e0e28ebcc0953b 90-98,100-120
+src/hooks/useIndividuals.ts
+  s_0d0a43c568b1d7::t_ae94c4ef455d52 12,16
+src/i18n/locales/en/events.json
+  s_1c5bcfd9f6f897::t_79d2a6fc89ae11 53
+  s_1c5bcfd9f6f897::t_5ddb40891d02f0 36,39-49,51-52
+src/managers/EventManager.ts
+  s_0d0a43c568b1d7::t_91855f677ed1bd 1,3,20-23
+  s_0d0a43c568b1d7::t_e7dd21862b87e8 24
+src/hooks/usePersonEvents.ts
+  s_0d0a43c568b1d7::t_78a0e548f94b8c 9,13
+src/i18n/locales/fr/events.json
+  s_1c5bcfd9f6f897::t_336b38a38985e5 53
+  s_1c5bcfd9f6f897::t_9cfe7c9e2848ed 36,39-49,51-52
+src/test/setup.ts
+  s_0d0a43c568b1d7::t_ed9ca2108473c1 3-12
+src/db/trees/events.ts
+  s_0d0a43c568b1d7::t_2d7cffa2c55324 629-634
+src/db/trees/names.ts
+  s_0d0a43c568b1d7::t_0bbcd8ea0d764b 206-214,216-224,226-227,229-230
+  s_0d0a43c568b1d7::t_46875a0033ad83 309-313
+  s_0d0a43c568b1d7::t_ca1f10775cae82 338-340,342-345
+src/lib/dateSort.ts
+  s_0d0a43c568b1d7::t_ad29a9bf10069c 1-14
+src/lib/eventTypeLabel.test.ts
+  s_1c5bcfd9f6f897::t_002d6fe7a6ead6 38
+  s_1c5bcfd9f6f897::t_29cd1f1e1d7a2b 57-72,74-75,82-83
+  s_1c5bcfd9f6f897::t_b434e31d361905 21,24-37
+  s_1c5bcfd9f6f897::t_ce15f096fe1e61 73
+src/i18n/locales/en/individuals.json
+  s_0d0a43c568b1d7::t_c3970396f4961e 155-217
+src/components/individuals/person-editor-dialog.test.tsx
+  s_0d0a43c568b1d7::t_d296818900daca 26,53-57
+  s_0d0a43c568b1d7::t_f1f6f61c208854 28-43
+  s_0d0a43c568b1d7::t_e2a53e7cd87c9b 1-25,27,44-52,58-86,88-155
+  s_0d0a43c568b1d7::t_5dcdbe3418d1a5 87
+src/pages/IndividualLayout.tsx
+  s_0d0a43c568b1d7::t_e9e6cb48b61dfe 1,7
+  s_0d0a43c568b1d7::t_1ca097af6874eb 26,44,50-56
+src/components/individuals/person-editor-dialog.tsx
+  s_1c5bcfd9f6f897::t_4db369efbc52de 672-680,682-683
+  s_0d0a43c568b1d7::t_e0d7c53d7fa85b 237
+  s_0d0a43c568b1d7::t_a170ac9f8ba129 239-246
+  s_0d0a43c568b1d7::t_b7c2d8ed80f4bd 85-93
+  s_0d0a43c568b1d7::t_c3ca99a8c4c483 147
+  s_0d0a43c568b1d7::t_0f6a96f19378f6 31
+  s_0d0a43c568b1d7::t_935ccad9713967 73-84,94,96-97,101,112,118,144
+  s_0d0a43c568b1d7::t_ca0e6a2b6c8015 26
+  s_0d0a43c568b1d7::t_2612179ff66ae6 541-553
+  s_0d0a43c568b1d7::t_7ff56e012018c7 425,429,438,442,453,457,466,470,479,483
+  s_0d0a43c568b1d7::t_08a7eeb1a4d770 560,564,577,581
+  s_0d0a43c568b1d7::t_84f86b1eb96355 498
+  s_0d0a43c568b1d7::t_697b500cf5d452 641-653
+  s_0d0a43c568b1d7::t_f1a60f62979439 204-213
+  s_0d0a43c568b1d7::t_a5a13663b3df4c 404-407
+  s_0d0a43c568b1d7::t_3952eff51dfefe 608
+  s_0d0a43c568b1d7::t_151edfedf0d320 338,352,356,360,368,373-376
+  s_0d0a43c568b1d7::t_95afeb30224661 382,665
+  s_0d0a43c568b1d7::t_633e5e75c9eba2 1
+  s_0d0a43c568b1d7::t_688393c8f2ecc3 2-25,27-30,32-72,95,98-100,102-111,113-117,119-143,145-146,148-203,214-236,238,248-259,261-267,269-337,339-351,353-355,357-359,361-367,369-372,377-381,383-403,408-424,426-428,430-437,439-441,443-452,454-456,458-465,467-469,471-478,480-482,484-497,499-540,554-559,561-563,565-576,578-580,582-607,609-640,654-664,666-671,681,684-784
+  s_0d0a43c568b1d7::t_a8536b2203fc76 247,260,268
+src/hooks/useEvents.ts
+  s_0d0a43c568b1d7::t_2d55ce6b575665 14,18
+  s_0d0a43c568b1d7::t_2145a8b3636564 4,12-13,15-17
+  s_0d0a43c568b1d7::t_15ecdb55b5fc0a 19-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "5c97c91ebf0b7fa87dfc6f295e6ba8d6edd0b929",
+  "prompts": {},
+  "sessions": {
+    "s_0d0a43c568b1d7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "54e6db3e-15f3-4f97-8422-ec7e42469547",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    },
+    "s_1c5bcfd9f6f897": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e24f41fd-4822-4319-b55d-a6ae4ca9cb9c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
