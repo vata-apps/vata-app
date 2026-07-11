@@ -1,0 +1,139 @@
+src/i18n/locales/fr/individuals.json
+  s_17daeb2bed9a4e::t_98ab5b553db427 193,200-204,206
+  s_07e7662ed107d6::t_236020a238a499 196-197
+  s_17daeb2bed9a4e::t_cbc275d20807e9 207
+  s_17daeb2bed9a4e::t_b44659a98e2e66 205
+src/hooks/useIndividuals.ts
+  s_17daeb2bed9a4e::t_8ee9880e08e460 5,9
+  s_17daeb2bed9a4e::t_20fda75d9d707a 20-28
+src/components/individuals/person-picker.tsx
+  s_17daeb2bed9a4e::t_178b61cf9165b1 5,18,23-29
+  s_17daeb2bed9a4e::t_2230ad736f64c2 60,63-66,74-84,139-153
+  s_17daeb2bed9a4e::t_9343fa10dff510 6,13
+  s_07e7662ed107d6::t_ccc018131c45d8 20-22
+  s_07e7662ed107d6::t_121f0efee2996f 73
+  s_07e7662ed107d6::t_7f307e9a21e448 109,111-138
+  s_17daeb2bed9a4e::t_b60bc3ac5b0ee8 1-2,4,8,11-12,14-17,19,30-59,69-71,86-108,154-159,161-164,169-176
+  s_17daeb2bed9a4e::t_097c56809a21e4 10
+  s_07e7662ed107d6::t_67173ddaf512d6 9
+  s_07e7662ed107d6::t_a143062fc8cff6 72
+  s_17daeb2bed9a4e::t_c0e39fe7da6083 3,7
+  s_07e7662ed107d6::t_38c42775aff461 85
+  s_17daeb2bed9a4e::t_56bfc1301f3f1c 61-62,67-68
+  s_07e7662ed107d6::t_1012bf00937d85 110
+  s_17daeb2bed9a4e::t_4eeef60d09ffad 160,165-168
+src/hooks/useFamilies.ts
+  s_17daeb2bed9a4e::t_922371aaf69d19 18-35
+src/components/individuals/person-editor-dialog.tsx
+  s_07e7662ed107d6::t_8217c0d78ac365 1064-1065,1067-1070,1072-1093
+  s_17daeb2bed9a4e::t_4bb5915046e0dd 533-539,545-554
+  s_07e7662ed107d6::t_5451e8e2990a8d 376,394,401-408
+  s_17daeb2bed9a4e::t_8ae4fc2c8cbc29 140-143,156-161,163-166,171-188,191-194
+  s_17daeb2bed9a4e::t_11e8d59c06216a 6
+  s_07e7662ed107d6::t_672f051a96869f 326-327
+  s_17daeb2bed9a4e::t_37b1ec1d5a4175 339-342
+  s_17daeb2bed9a4e::t_50cbdf3b287add 334-338,343-359,361,396-399,409-415
+  s_07e7662ed107d6::t_dd3f4943fb730d 266,416-466
+  s_17daeb2bed9a4e::t_15080ef38ff9d3 678-679,682-683,694-704,706-708,711-717
+  s_07e7662ed107d6::t_557224e0f9b5d2 941
+  s_07e7662ed107d6::t_ad7703208cabac 1031-1043,1045-1046,1049-1051,1053,1055-1056,1102
+  s_17daeb2bed9a4e::t_dcd2a5847b2588 676-677,680-681,684-693,705,709-710
+  s_07e7662ed107d6::t_43727d4169a6dd 162
+  s_17daeb2bed9a4e::t_ba0390403f8ef6 81
+  s_17daeb2bed9a4e::t_b3f3c7d6405708 25,30-32,34,36-43,46
+  s_17daeb2bed9a4e::t_83687d98322cd3 934,1026-1027,1029,1044,1047-1048,1052,1063,1066,1071,1096-1101,1103-1105,1107
+  s_07e7662ed107d6::t_a6850fd6ff0168 332
+  s_17daeb2bed9a4e::t_0c7f372dec9ed9 319-325,328-330
+  s_07e7662ed107d6::t_0e84bc2e443e04 360,362-375,377-382,384-393,395
+  s_17daeb2bed9a4e::t_d6a9b05c8327f2 400
+  s_17daeb2bed9a4e::t_711173c55e1ea3 236-238,242-265
+  s_07e7662ed107d6::t_1697b8dac11a22 1057-1062
+  s_07e7662ed107d6::t_c048c2b5cdfb90 765
+  s_17daeb2bed9a4e::t_034ffa83da63c1 475,477-479,492,494-497
+  s_07e7662ed107d6::t_7cc02dd60b5211 654-664
+  s_17daeb2bed9a4e::t_ed09203bad1eb8 76-80,82,86-95,107-109
+  s_07e7662ed107d6::t_1fe046d7e779f4 955-962
+  s_07e7662ed107d6::t_2747d2e4c4b6cc 926-927
+  s_07e7662ed107d6::t_7e54c97dc01402 167
+  s_07e7662ed107d6::t_6b6a435aab9340 45
+  s_17daeb2bed9a4e::t_e3aab7aca8879a 526-531
+  s_07e7662ed107d6::t_c939ad3eeeb72b 733-737
+  s_07e7662ed107d6::t_c07e3df914c55f 83-85
+  s_07e7662ed107d6::t_718de193af7f20 1001-1012,1019-1020
+  s_07e7662ed107d6::t_982ec7cac5a070 1094-1095
+  s_07e7662ed107d6::t_3bb0556ecc87b3 1013-1015,1017
+  s_17daeb2bed9a4e::t_9e11ba03ebfe81 558,560,566-573,575-576,579-582,587-591
+  s_07e7662ed107d6::t_4e53b3e305fdb4 331,333
+  s_17daeb2bed9a4e::t_3474663980d2ac 383
+  s_07e7662ed107d6::t_dca08b55e8bfcb 954
+  s_07e7662ed107d6::t_7d1fa3cf67a859 33,267,493,928-933,935-940,942
+src/components/individuals/person-editor-dialog.test.tsx
+  s_07e7662ed107d6::t_f4eabc19e7844e 161-175
+  s_17daeb2bed9a4e::t_a331797ccfdca6 98-101
+  s_17daeb2bed9a4e::t_86c7609fbb0772 176-224,226-236,240-252,254-262,265-267
+  s_17daeb2bed9a4e::t_43f76f2d092395 225,237-239,253
+  s_17daeb2bed9a4e::t_f2c392ea4e7cde 102
+  s_17daeb2bed9a4e::t_aeeceb9d7a8d30 12,22-28,35
+  s_17daeb2bed9a4e::t_f2b8163d95b517 13
+src/managers/FamilyManager.test.ts
+  s_17daeb2bed9a4e::t_ce10fbf23519b9 3-5
+  s_17daeb2bed9a4e::t_d30f86067a066b 162-287,289-343
+  s_17daeb2bed9a4e::t_cc624413e37e39 288
+src/managers/IndividualManager.ts
+  s_17daeb2bed9a4e::t_a7b3f4bcbc67eb 8
+  s_17daeb2bed9a4e::t_79667302560488 366-377
+src/managers/FamilyManager.ts
+  s_17daeb2bed9a4e::t_274719feeed0dc 12-14,25,29-48,65
+  s_17daeb2bed9a4e::t_70ae28edd01656 269-304,307-310,312-321,323-339,349,365,368-371,379-380,446-447
+  s_17daeb2bed9a4e::t_1c10296e95722f 109-111,118-119,126
+  s_17daeb2bed9a4e::t_30be2a9a47fb8a 340-348,350-358,364,366-367,372-378,381-429,433-445
+  s_17daeb2bed9a4e::t_7ee0551ee4e54d 305-306,311,322
+  s_17daeb2bed9a4e::t_e3aab7aca8879a 359-363,430-432
+  s_17daeb2bed9a4e::t_8e43a3408f3a97 22,49-64
+  s_17daeb2bed9a4e::t_e8d5fe6e58f880 66
+src/managers/IndividualManager.test.ts
+  s_17daeb2bed9a4e::t_035a928d9683e8 419-441
+src/components/individuals/person-display.ts
+  s_07e7662ed107d6::t_5987789374a595 6-23,27,29-32,56
+  s_07e7662ed107d6::t_10a28190612c9b 1-5,24-26,28,33-55
+src/components/individuals/person-picker.test.tsx
+  s_17daeb2bed9a4e::t_d788e29b5ae1c7 10
+  s_17daeb2bed9a4e::t_302ccdc8990281 149,152,154-170
+  s_17daeb2bed9a4e::t_a4b263b5d093d3 1-9,11-14,16,22-54,57-62,69-71,112-148,150-151,153,171-173
+  s_17daeb2bed9a4e::t_1534309cf3e73c 55-56
+  s_17daeb2bed9a4e::t_f481620060961b 63-68,72-86,99-111
+  s_07e7662ed107d6::t_d08e0cc25c383b 87-98
+  s_07e7662ed107d6::t_994d96fc826f98 15,17-21
+src/i18n/locales/en/individuals.json
+  s_17daeb2bed9a4e::t_74ed5a312e71de 193,200-204,206
+  s_17daeb2bed9a4e::t_6d44f9adbb822f 207
+  s_17daeb2bed9a4e::t_33b46858178c7b 205
+  s_07e7662ed107d6::t_32ef51d3443470 196-197
+src/lib/query-keys.ts
+  s_17daeb2bed9a4e::t_91a0fa76a01284 30-31
+  s_17daeb2bed9a4e::t_fc5eefa02e7108 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "8aa4b65f271c77392e95185513be8509a2245ac7",
+  "prompts": {},
+  "sessions": {
+    "s_07e7662ed107d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "384d0b34-085f-417f-9807-fadc005a3e11",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    },
+    "s_17daeb2bed9a4e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cabde91d-0c22-4da8-8d44-14e64b5fd323",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
