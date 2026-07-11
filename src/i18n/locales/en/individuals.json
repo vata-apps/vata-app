@@ -190,15 +190,21 @@
       "addButton": "Add event",
       "removeAria": "Remove this event"
     },
-    "relationsPreview": {
-      "badge": "Later stage",
-      "note": "Parents, spouse and children arrive in a future update.",
+    "relations": {
       "addFather": "Add father",
       "addMother": "Add mother",
-      "family": "Family",
+      "spouse": "Spouse",
+      "children": "Children",
       "addSpouse": "Add spouse",
       "addChild": "Add child",
-      "addFamily": "Add another family"
+      "addFamily": "Add another family",
+      "removeAria": "Remove this relation"
+    },
+    "picker": {
+      "searchPlaceholder": "Search by name…",
+      "moreHidden": "+{{count}} more — refine your search",
+      "noMatches": "No matches",
+      "createNew": "Create \"{{name}}\""
     },
     "notes": {
       "label": "Notes"

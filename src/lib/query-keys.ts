@@ -6,6 +6,7 @@ export const queryKeys = {
   treeFiles: ['debug', 'treeFiles'] as const,
   individuals: ['individuals'] as const,
   individual: (id: string) => ['individuals', id] as const,
+  individualSearch: (query: string) => ['individuals', 'search', query] as const,
   families: ['families'] as const,
   family: (id: string) => ['families', id] as const,
   events: ['events'] as const,
@@ -26,4 +27,6 @@ export const queryKeys = {
   personEvents: (individualId: string) => ['personEvents', individualId] as const,
   personRelations: (individualId: string) => ['personRelations', individualId] as const,
   ancestors: (individualId: string) => ['ancestors', individualId] as const,
+  parentFamily: (individualId: string) => ['parentFamily', individualId] as const,
+  spouseFamilies: (individualId: string) => ['spouseFamilies', individualId] as const,
 };

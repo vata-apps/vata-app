@@ -416,3 +416,26 @@ describe('IndividualManager.update', () => {
     expect(events).toHaveLength(0);
   });
 });
+
+describe('IndividualManager.search', () => {
+  it('returns an empty array for a blank query', async () => {
+    await IndividualManager.create({ name: { givenNames: 'John', surname: 'Doe' } });
+    expect(await IndividualManager.search('   ')).toEqual([]);
+  });
+
+  it('returns name-enriched matches for given names or surname', async () => {
+    const johnId = await IndividualManager.create({ name: { givenNames: 'John', surname: 'Doe' } });
+    await IndividualManager.create({ name: { givenNames: 'Jane', surname: 'Smith' } });
+
+    const results = await IndividualManager.search('John');
+
+    expect(results).toHaveLength(1);
+    expect(results[0].id).toBe(johnId);
+    expect(results[0].primaryName?.surname).toBe('Doe');
+  });
+
+  it('returns no matches for a name nobody has', async () => {
+    await IndividualManager.create({ name: { givenNames: 'John', surname: 'Doe' } });
+    expect(await IndividualManager.search('Nonexistent')).toEqual([]);
+  });
+});

@@ -5,6 +5,7 @@ import {
   getAllIndividuals,
   getIndividualById,
   getIndividualsByIds,
+  searchIndividuals,
   updateIndividual,
 } from '$db-tree/individuals';
 import {
@@ -361,5 +362,17 @@ export class IndividualManager {
    */
   static async delete(id: string): Promise<void> {
     await deleteIndividual(id);
+  }
+
+  /**
+   * Search individuals by name, enriched with details for display (e.g. the
+   * Person editor's relation picker). Returns an empty list for a blank
+   * query instead of matching everyone.
+   */
+  static async search(query: string): Promise<IndividualWithDetails[]> {
+    const trimmed = query.trim();
+    if (!trimmed) return [];
+    const matches = await searchIndividuals(trimmed);
+    return IndividualManager.getByIds(matches.map((m) => m.id));
   }
 }

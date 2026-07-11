@@ -9,6 +9,9 @@ import {
   getFamilyMembers,
   addFamilyMember,
   removeFamilyMember,
+  removeFamilyMemberById,
+  getParentFamilies,
+  getSpouseFamilies,
 } from '$db-tree/families';
 import { getAllMarriageEvents, getFamilyEventByType } from '$db-tree/events';
 import { IndividualManager } from './IndividualManager';
@@ -16,10 +19,50 @@ import type {
   CreateFamilyInput,
   EventWithDetails,
   UpdateFamilyInput,
+  FamilyRole,
   FamilyWithMembers,
   IndividualWithDetails,
+  Gender,
   Pedigree,
 } from '$types/database';
+
+/** A relation slot filled by an existing individual, or a brand-new one to create on save. */
+export interface RelationPersonInput {
+  id?: string;
+  createNew?: { givenNames?: string; surname?: string; gender?: Gender };
+}
+
+export interface FamilyRelationInput {
+  /** Existing family id — omit for a family introduced in this edit session. */
+  id?: string;
+  /** `null` clears the spouse slot; `undefined` leaves it untouched. */
+  spouse?: RelationPersonInput | null;
+  /** Full desired-state list — children not represented here are unlinked. */
+  children: RelationPersonInput[];
+}
+
+export interface PersonRelationsInput {
+  /** `null` removes the father link; `undefined` leaves it untouched. */
+  father?: RelationPersonInput | null;
+  mother?: RelationPersonInput | null;
+  families?: FamilyRelationInput[];
+}
+
+/**
+ * Replace whichever individual currently holds `role` in `familyId` with
+ * `individualId` — or clear the slot when `individualId` is `null`. Shared by
+ * every place that reassigns a single husband/wife slot (`setParent`,
+ * `removeParent`, and parent-relation reconciliation in `saveRelations`).
+ */
+async function replaceRoleMember(
+  familyId: string,
+  role: FamilyRole,
+  individualId: string | null
+): Promise<void> {
+  const existing = (await getFamilyMembers(familyId)).find((m) => m.role === role);
+  if (existing) await removeFamilyMemberById(existing.id);
+  if (individualId) await addFamilyMember({ familyId, individualId, role });
+}
 
 export class FamilyManager {
   /**
@@ -63,19 +106,24 @@ export class FamilyManager {
 
   /**
    * Get a family with enriched members (full individual details) and marriage event.
+   * Batches member lookups through `IndividualManager.getByIds` (one query
+   * regardless of family size) rather than fetching each member one at a
+   * time — the same pattern `getAll` uses.
    */
   static async getById(id: string): Promise<FamilyWithMembers | null> {
     const family = await getFamilyById(id);
     if (!family) return null;
 
     const members = await getFamilyMembers(id);
+    const individuals = await IndividualManager.getByIds(members.map((m) => m.individualId));
+    const individualById = new Map(individuals.map((individual) => [individual.id, individual]));
 
     let husband: IndividualWithDetails | null = null;
     let wife: IndividualWithDetails | null = null;
     const children: IndividualWithDetails[] = [];
 
     for (const member of members) {
-      const enriched = await IndividualManager.getById(member.individualId);
+      const enriched = individualById.get(member.individualId);
       if (!enriched) continue;
 
       switch (member.role) {
@@ -217,5 +265,184 @@ export class FamilyManager {
    */
   static async removeChild(familyId: string, individualId: string): Promise<void> {
     await removeFamilyMember(familyId, individualId);
+  }
+
+  /**
+   * Get the family in which the individual is a child, enriched with members.
+   * Assumes a single parent family per individual, matching the read-side
+   * Relations tab (see `getPersonRelations`).
+   */
+  static async getParentFamily(individualId: string): Promise<FamilyWithMembers | null> {
+    const families = await getParentFamilies(individualId);
+    if (families.length === 0) return null;
+    return FamilyManager.getById(families[0].id);
+  }
+
+  /**
+   * Get every family in which the individual is a spouse (husband or wife),
+   * enriched with members.
+   */
+  static async getSpouseFamiliesWithMembers(individualId: string): Promise<FamilyWithMembers[]> {
+    const families = await getSpouseFamilies(individualId);
+    const enriched = await Promise.all(families.map((family) => FamilyManager.getById(family.id)));
+    return enriched.filter((family): family is FamilyWithMembers => family !== null);
+  }
+
+  /**
+   * Set (or replace) an individual's father or mother, creating their parent
+   * family on first use. `role` maps to the schema's `husband`/`wife` slot —
+   * see the sqlite-standards note: family-member role is a positional slot,
+   * independent of the parent's own `gender` field.
+   */
+  static async setParent(
+    individualId: string,
+    role: 'father' | 'mother',
+    parentId: string
+  ): Promise<void> {
+    const memberRole = role === 'father' ? 'husband' : 'wife';
+    const families = await getParentFamilies(individualId);
+
+    let familyId = families[0]?.id;
+    if (!familyId) {
+      familyId = await createFamily({});
+      await addFamilyMember({ familyId, individualId, role: 'child' });
+    }
+
+    await replaceRoleMember(familyId, memberRole, parentId);
+  }
+
+  /**
+   * Remove an individual's father or mother link, if a parent family exists.
+   */
+  static async removeParent(individualId: string, role: 'father' | 'mother'): Promise<void> {
+    const memberRole = role === 'father' ? 'husband' : 'wife';
+    const families = await getParentFamilies(individualId);
+    if (families.length === 0) return;
+
+    await replaceRoleMember(families[0].id, memberRole, null);
+  }
+
+  /**
+   * Reconcile an individual's full relations against `input`: father, mother,
+   * and every spouse family with its children. Each `RelationPersonInput`
+   * without an `id` is materialized via {@link IndividualManager.create}
+   * first, so "create new person" picks in the Person editor resolve to a
+   * real individual before being linked.
+   *
+   * Not wrapped in a DB transaction — see the note on
+   * {@link IndividualManager.create}. Each write commits on its own.
+   */
+  static async saveRelations(
+    individualId: string,
+    individualGender: Gender,
+    input: PersonRelationsInput
+  ): Promise<void> {
+    if (input.father !== undefined || input.mother !== undefined) {
+      let parentFamilyId = (await getParentFamilies(individualId))[0]?.id;
+
+      async function ensureParentFamilyId(): Promise<string> {
+        if (parentFamilyId) return parentFamilyId;
+        parentFamilyId = await createFamily({});
+        await addFamilyMember({ familyId: parentFamilyId, individualId, role: 'child' });
+        return parentFamilyId;
+      }
+
+      async function applyParent(
+        memberRole: 'husband' | 'wife',
+        value: RelationPersonInput | null | undefined
+      ): Promise<void> {
+        if (value === undefined) return;
+        if (value === null) {
+          if (parentFamilyId) await replaceRoleMember(parentFamilyId, memberRole, null);
+          return;
+        }
+        await replaceRoleMember(
+          await ensureParentFamilyId(),
+          memberRole,
+          await resolvePersonId(value)
+        );
+      }
+
+      await applyParent('husband', input.father);
+      await applyParent('wife', input.mother);
+    }
+
+    if (!input.families) return;
+
+    // The edited person's own slot in a *new* spouse family is guessed from
+    // their gender (defaulting to husband when unknown) — unlike
+    // `setParent`'s `role`, there is no explicit caller-supplied slot here,
+    // and getting it right matters: their own future children resolve
+    // father/mother from this same husband/wife slot (see `setParent`).
+    const individualRole: FamilyRole = individualGender === 'F' ? 'wife' : 'husband';
+    const spouseRole: FamilyRole = individualRole === 'husband' ? 'wife' : 'husband';
+
+    for (const familyInput of input.families) {
+      await saveSpouseFamily(individualId, individualRole, spouseRole, familyInput);
+    }
+  }
+}
+
+/** Create a brand-new individual for a "create new person" pick, or reuse an existing id. */
+async function resolvePersonId(ref: RelationPersonInput): Promise<string> {
+  if (ref.id) return ref.id;
+  return IndividualManager.create({
+    gender: ref.createNew?.gender,
+    name: { givenNames: ref.createNew?.givenNames, surname: ref.createNew?.surname },
+  });
+}
+
+/**
+ * Reconcile one spouse-family row: create it if new and non-empty, replace
+ * the spouse slot, and reconcile children to the exact desired set. Fetches
+ * the family's members once and reuses that single result for both the
+ * spouse-slot lookup and the existing-children diff.
+ */
+async function saveSpouseFamily(
+  individualId: string,
+  individualRole: FamilyRole,
+  spouseRole: FamilyRole,
+  familyInput: FamilyRelationInput
+): Promise<void> {
+  const hasContent = familyInput.spouse || familyInput.children.length > 0;
+  if (!familyInput.id && !hasContent) return;
+
+  let familyId = familyInput.id;
+  if (!familyId) {
+    familyId = await createFamily({});
+    await addFamilyMember({ familyId, individualId, role: individualRole });
+  }
+
+  const existingMembers = await getFamilyMembers(familyId);
+
+  if (familyInput.spouse !== undefined) {
+    const existingSpouse = existingMembers.find((m) => m.role === spouseRole);
+    if (existingSpouse) await removeFamilyMemberById(existingSpouse.id);
+    if (familyInput.spouse) {
+      await addFamilyMember({
+        familyId,
+        individualId: await resolvePersonId(familyInput.spouse),
+        role: spouseRole,
+      });
+    }
+  }
+
+  const existingChildIds = existingMembers
+    .filter((m) => m.role === 'child')
+    .map((m) => m.individualId);
+  const desiredChildIds = new Set<string>();
+  for (const child of familyInput.children) {
+    desiredChildIds.add(await resolvePersonId(child));
+  }
+
+  for (const childId of existingChildIds) {
+    if (!desiredChildIds.has(childId)) {
+      await FamilyManager.removeChild(familyId, childId);
+    }
+  }
+  for (const childId of desiredChildIds) {
+    if (!existingChildIds.includes(childId)) {
+      await FamilyManager.addChild(familyId, childId);
+    }
   }
 }

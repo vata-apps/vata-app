@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createTreeInMemoryDb } from '$/test/sqlite-memory';
-import { createIndividual } from '$db-tree/individuals';
-import { createName } from '$db-tree/names';
-import { createFamily, addFamilyMember } from '$db-tree/families';
+import { createIndividual, getIndividualById } from '$db-tree/individuals';
+import { createName, getPrimaryName } from '$db-tree/names';
+import { createFamily, addFamilyMember, getFamilyMembers } from '$db-tree/families';
 import { addEventParticipant, createEvent, getEventTypeByTag } from '$db-tree/events';
 import { FamilyManager } from './FamilyManager';
 
@@ -157,5 +157,187 @@ describe('FamilyManager.getAll', () => {
     expect(f2?.husband?.id).toBe(h2);
     expect(f2?.wife).toBeNull();
     expect(f2?.marriageEvent).toBeNull();
+  });
+});
+
+describe('FamilyManager.setParent / removeParent', () => {
+  it('creates a parent family and links the father on first use', async () => {
+    const childId = await createNamedIndividual('Kid', 'Doe');
+    const fatherId = await createNamedIndividual('Dad', 'Doe', 'M');
+
+    await FamilyManager.setParent(childId, 'father', fatherId);
+
+    const family = await FamilyManager.getParentFamily(childId);
+    expect(family?.husband?.id).toBe(fatherId);
+    expect(family?.wife).toBeNull();
+  });
+
+  it('adds a mother to the same parent family already holding a father', async () => {
+    const childId = await createNamedIndividual('Kid', 'Doe');
+    const fatherId = await createNamedIndividual('Dad', 'Doe', 'M');
+    const motherId = await createNamedIndividual('Mom', 'Doe', 'F');
+
+    await FamilyManager.setParent(childId, 'father', fatherId);
+    await FamilyManager.setParent(childId, 'mother', motherId);
+
+    const families = await FamilyManager.getAll();
+    expect(families).toHaveLength(1);
+    const family = await FamilyManager.getParentFamily(childId);
+    expect(family?.husband?.id).toBe(fatherId);
+    expect(family?.wife?.id).toBe(motherId);
+  });
+
+  it('replaces an existing father instead of adding a second one', async () => {
+    const childId = await createNamedIndividual('Kid', 'Doe');
+    const oldFatherId = await createNamedIndividual('Old Dad', 'Doe', 'M');
+    const newFatherId = await createNamedIndividual('New Dad', 'Doe', 'M');
+
+    await FamilyManager.setParent(childId, 'father', oldFatherId);
+    await FamilyManager.setParent(childId, 'father', newFatherId);
+
+    const family = await FamilyManager.getParentFamily(childId);
+    expect(family?.husband?.id).toBe(newFatherId);
+    const members = await getFamilyMembers(family?.id ?? '');
+    expect(members.filter((m) => m.role === 'husband')).toHaveLength(1);
+  });
+
+  it('removes the father link without deleting the family or the mother link', async () => {
+    const childId = await createNamedIndividual('Kid', 'Doe');
+    const fatherId = await createNamedIndividual('Dad', 'Doe', 'M');
+    const motherId = await createNamedIndividual('Mom', 'Doe', 'F');
+    await FamilyManager.setParent(childId, 'father', fatherId);
+    await FamilyManager.setParent(childId, 'mother', motherId);
+
+    await FamilyManager.removeParent(childId, 'father');
+
+    const family = await FamilyManager.getParentFamily(childId);
+    expect(family?.husband).toBeNull();
+    expect(family?.wife?.id).toBe(motherId);
+  });
+
+  it('is a no-op when the individual has no parent family yet', async () => {
+    const childId = await createNamedIndividual('Kid', 'Doe');
+    await expect(FamilyManager.removeParent(childId, 'father')).resolves.toBeUndefined();
+    expect(await FamilyManager.getParentFamily(childId)).toBeNull();
+  });
+});
+
+describe('FamilyManager.getSpouseFamiliesWithMembers', () => {
+  it('returns every family where the individual is husband or wife', async () => {
+    const personId = await createNamedIndividual('Person', 'Doe', 'M');
+    const spouse1 = await createNamedIndividual('Spouse1', 'Doe', 'F');
+    const spouse2 = await createNamedIndividual('Spouse2', 'Doe', 'F');
+    const family1 = await createFamily({});
+    const family2 = await createFamily({});
+    await addFamilyMember({ familyId: family1, individualId: personId, role: 'husband' });
+    await addFamilyMember({ familyId: family1, individualId: spouse1, role: 'wife' });
+    await addFamilyMember({ familyId: family2, individualId: personId, role: 'husband' });
+    await addFamilyMember({ familyId: family2, individualId: spouse2, role: 'wife' });
+
+    const families = await FamilyManager.getSpouseFamiliesWithMembers(personId);
+
+    expect(families).toHaveLength(2);
+    expect(families.map((f) => f.wife?.id).sort()).toEqual([spouse1, spouse2].sort());
+  });
+
+  it('returns an empty array when the individual has no spouse family', async () => {
+    const personId = await createNamedIndividual('Person', 'Doe');
+    expect(await FamilyManager.getSpouseFamiliesWithMembers(personId)).toEqual([]);
+  });
+});
+
+describe('FamilyManager.saveRelations', () => {
+  it('sets father and mother, materializing a "create new" father inline', async () => {
+    const childId = await createNamedIndividual('Kid', 'Doe');
+    const motherId = await createNamedIndividual('Mom', 'Doe', 'F');
+
+    await FamilyManager.saveRelations(childId, 'U', {
+      father: { createNew: { givenNames: 'New', surname: 'Dad', gender: 'M' } },
+      mother: { id: motherId },
+    });
+
+    const family = await FamilyManager.getParentFamily(childId);
+    expect(family?.wife?.id).toBe(motherId);
+    expect(family?.husband?.primaryName?.givenNames).toBe('New');
+    const createdFather = await getIndividualById(family?.husband?.id ?? '');
+    expect(createdFather?.gender).toBe('M');
+  });
+
+  it('removes mother when father/mother is explicitly null', async () => {
+    const childId = await createNamedIndividual('Kid', 'Doe');
+    const motherId = await createNamedIndividual('Mom', 'Doe', 'F');
+    await FamilyManager.setParent(childId, 'mother', motherId);
+
+    await FamilyManager.saveRelations(childId, 'U', { mother: null });
+
+    const family = await FamilyManager.getParentFamily(childId);
+    expect(family?.wife).toBeNull();
+  });
+
+  it('leaves father/mother untouched when undefined', async () => {
+    const childId = await createNamedIndividual('Kid', 'Doe');
+    const fatherId = await createNamedIndividual('Dad', 'Doe', 'M');
+    await FamilyManager.setParent(childId, 'father', fatherId);
+
+    await FamilyManager.saveRelations(childId, 'U', {});
+
+    const family = await FamilyManager.getParentFamily(childId);
+    expect(family?.husband?.id).toBe(fatherId);
+  });
+
+  it("creates a new spouse family placing husband/wife by the edited person's gender", async () => {
+    const personId = await createNamedIndividual('Person', 'Doe', 'F');
+    const spouseId = await createNamedIndividual('Spouse', 'Doe', 'M');
+
+    await FamilyManager.saveRelations(personId, 'F', {
+      families: [{ spouse: { id: spouseId }, children: [] }],
+    });
+
+    const families = await FamilyManager.getSpouseFamiliesWithMembers(personId);
+    expect(families).toHaveLength(1);
+    expect(families[0].wife?.id).toBe(personId);
+    expect(families[0].husband?.id).toBe(spouseId);
+  });
+
+  it('does not create a family for an empty, untouched "add another family" row', async () => {
+    const personId = await createNamedIndividual('Person', 'Doe', 'M');
+
+    await FamilyManager.saveRelations(personId, 'M', {
+      families: [{ spouse: undefined, children: [] }],
+    });
+
+    expect(await FamilyManager.getSpouseFamiliesWithMembers(personId)).toEqual([]);
+  });
+
+  it('replaces the spouse and reconciles children in an existing family', async () => {
+    const personId = await createNamedIndividual('Person', 'Doe', 'M');
+    const oldSpouseId = await createNamedIndividual('Old Spouse', 'Doe', 'F');
+    const newSpouseId = await createNamedIndividual('New Spouse', 'Doe', 'F');
+    const keptChildId = await createNamedIndividual('Kept Child', 'Doe');
+    const droppedChildId = await createNamedIndividual('Dropped Child', 'Doe');
+    const familyId = await createFamily({});
+    await addFamilyMember({ familyId, individualId: personId, role: 'husband' });
+    await addFamilyMember({ familyId, individualId: oldSpouseId, role: 'wife' });
+    await addFamilyMember({ familyId, individualId: keptChildId, role: 'child' });
+    await addFamilyMember({ familyId, individualId: droppedChildId, role: 'child' });
+
+    await FamilyManager.saveRelations(personId, 'M', {
+      families: [
+        {
+          id: familyId,
+          spouse: { id: newSpouseId },
+          children: [{ id: keptChildId }, { createNew: { givenNames: 'New', surname: 'Kid' } }],
+        },
+      ],
+    });
+
+    const family = await FamilyManager.getById(familyId);
+    expect(family?.wife?.id).toBe(newSpouseId);
+    const childIds = family?.children.map((c) => c.id) ?? [];
+    expect(childIds).toContain(keptChildId);
+    expect(childIds).not.toContain(droppedChildId);
+    expect(childIds).toHaveLength(2);
+    const newChildId = childIds.find((id) => id !== keptChildId);
+    expect((await getPrimaryName(newChildId ?? ''))?.givenNames).toBe('New');
   });
 });

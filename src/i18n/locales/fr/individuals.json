@@ -190,15 +190,21 @@
       "addButton": "Ajouter un événement",
       "removeAria": "Retirer cet événement"
     },
-    "relationsPreview": {
-      "badge": "Étape ultérieure",
-      "note": "Parents, conjoint et enfants arriveront dans une prochaine mise à jour.",
+    "relations": {
       "addFather": "Ajouter le père",
       "addMother": "Ajouter la mère",
-      "family": "Famille",
+      "spouse": "Conjoint",
+      "children": "Enfants",
       "addSpouse": "Ajouter un conjoint",
       "addChild": "Ajouter un enfant",
-      "addFamily": "Ajouter une autre famille"
+      "addFamily": "Ajouter une autre famille",
+      "removeAria": "Retirer cette relation"
+    },
+    "picker": {
+      "searchPlaceholder": "Rechercher par nom…",
+      "moreHidden": "+{{count}} de plus — affinez votre recherche",
+      "noMatches": "Aucun résultat",
+      "createNew": "Créer « {{name}} »"
     },
     "notes": {
       "label": "Notes"
