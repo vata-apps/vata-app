@@ -1,0 +1,33 @@
+.sandcastle/prompts/address-review.md
+  s_27bb43d326fecf::t_a2a52e57c31882 25,48
+docs/architecture/tech-stack.md
+  s_27bb43d326fecf::t_5c224da7ac4b35 40
+.claude/skills/link-task/SKILL.md
+  s_27bb43d326fecf::t_9b57ce4bc7acd3 83
+AGENTS.md
+  s_27bb43d326fecf::t_48b67e8672908d 1
+.sandcastle/prompts/default.md
+  s_27bb43d326fecf::t_44c458a79453de 13,29,36
+docs/api/database-layer.md
+  s_27bb43d326fecf::t_4e3f23f83f8ef5 46
+docs/architecture/testing-strategy.md
+  s_27bb43d326fecf::t_89d5382ab712a7 26
+.claude/skills/typescript-standards/SKILL.md
+  s_27bb43d326fecf::t_1bed03c3551b35 117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "fc4d4774fbeba1ad70b4a0bd291e70f5c525b26a",
+  "prompts": {},
+  "sessions": {
+    "s_27bb43d326fecf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0a7ade666ffefZll1oATED0Pzn",
+        "model": "big-pickle"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
