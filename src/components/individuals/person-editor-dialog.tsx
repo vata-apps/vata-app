@@ -567,25 +567,21 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
       await FamilyManager.saveRelations(savedId, form.gender, buildRelationsPayload(form));
       return savedId;
     },
-    onSuccess: async (savedId) => {
-      const invalidations = [
-        queryClient.invalidateQueries({ queryKey: queryKeys.individuals }),
-        queryClient.invalidateQueries({ queryKey: queryKeys.families }),
-      ];
-      if (mode === 'edit') {
-        invalidations.push(
-          queryClient.invalidateQueries({ queryKey: queryKeys.individual(savedId) }),
-          queryClient.invalidateQueries({ queryKey: queryKeys.personOverview(savedId) }),
-          queryClient.invalidateQueries({ queryKey: queryKeys.personEvents(savedId) }),
-          queryClient.invalidateQueries({ queryKey: queryKeys.personRelations(savedId) }),
-          queryClient.invalidateQueries({ queryKey: queryKeys.ancestors(savedId) }),
-          queryClient.invalidateQueries({ queryKey: queryKeys.parentFamily(savedId) }),
-          queryClient.invalidateQueries({ queryKey: queryKeys.spouseFamilies(savedId) })
-        );
-      }
-      await Promise.all(invalidations);
+    onSuccess: (savedId) => {
       onSaved?.(savedId);
       onOpenChange(false);
+
+      queryClient.invalidateQueries({ queryKey: queryKeys.individuals });
+      queryClient.invalidateQueries({ queryKey: queryKeys.families });
+      if (mode === 'edit') {
+        queryClient.invalidateQueries({ queryKey: queryKeys.individual(savedId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.personOverview(savedId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.personEvents(savedId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.personRelations(savedId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.ancestors(savedId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.parentFamily(savedId) });
+        queryClient.invalidateQueries({ queryKey: queryKeys.spouseFamilies(savedId) });
+      }
     },
     onError: (err) => {
       // Raw DB/Tauri errors are not translated — log them, surface a
