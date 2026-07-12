@@ -1,1 +1,11 @@
-pnpm lint-staged
+pnpm lint-staged || exit 1
+pnpm tsc --noEmit || exit 1
+
+# SQL guard: SELECT * and interpolation checks on staged DB-layer files
+"$(git rev-parse --show-toplevel)/.githooks/sql-guard.sh" \
+  $(git diff --cached --name-only -- 'src/db/**' '*.sql') || exit 1
+
+# cargo check only when Rust or tauri config changed
+if git diff --cached --name-only | grep -qE '\.rs$|tauri\.conf\.json'; then
+  ( cd src-tauri && cargo check ) || exit 1
+fi
