@@ -1,0 +1,34 @@
+.opencode/skills/typescript-standards/SKILL.md
+  s_27bb43d326fecf::t_0ebe5195d47348 117
+.husky/pre-commit
+  s_27bb43d326fecf::t_c96921ef4c5e6d 5
+.opencode/agents/docs-consistency.md
+  s_27bb43d326fecf::t_75804fa42e6ba4 8
+.githooks/sql-guard.sh
+  s_27bb43d326fecf::t_e89e26c0bc3d6d 30
+  s_27bb43d326fecf::t_844a8632d8acc3 41
+.opencode/agents/execute-issue.md
+  s_27bb43d326fecf::t_fd2c27b9261e51 84
+  s_27bb43d326fecf::t_259a37337cf0c3 121
+  s_27bb43d326fecf::t_b14cd0ada9cd2f 94
+docs/api/database-layer.md
+  s_27bb43d326fecf::t_7dd4dc984060fc 46
+docs/architecture/testing-strategy.md
+  s_27bb43d326fecf::t_f46125b7ab19aa 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "3231a648c4caea213ddd0029a1f26c003e361f0b",
+  "prompts": {},
+  "sessions": {
+    "s_27bb43d326fecf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0a7ade666ffefZll1oATED0Pzn",
+        "model": "big-pickle"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
