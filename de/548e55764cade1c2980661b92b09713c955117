@@ -1,0 +1,19 @@
+src/components/individuals/person-editor-dialog.tsx
+  s_899603012567bd::t_20a5334e940276 570,573-584
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "de548e55764cade1c2980661b92b09713c955117",
+  "prompts": {},
+  "sessions": {
+    "s_899603012567bd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0a8502977ffesihPcOBTGPh6E5",
+        "model": "deepseek-v4-pro"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
