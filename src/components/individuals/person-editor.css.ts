@@ -31,7 +31,7 @@ export const modal = style({
   fontFamily: vars.font.sans,
   color: vars.color.text,
   width: 'calc(100vw - 44px)',
-  maxWidth: 1040,
+  maxWidth: 1180,
   background: vars.color.panel,
   border: `1px solid ${vars.color.borderStrong}`,
   borderRadius: 14,
@@ -54,8 +54,9 @@ export const headAvatar = style({
   width: 38,
   height: 38,
   borderRadius: 10,
-  background: vars.color.accentSoft,
-  color: vars.color.accent,
+  background: vars.color.subtle,
+  border: `1px solid ${vars.color.borderStrong}`,
+  color: vars.color.muted,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -63,16 +64,55 @@ export const headAvatar = style({
   fontSize: 13,
   flex: '0 0 auto',
 });
-export const headTitle = style({ fontSize: 15, fontWeight: 650 });
-/** The lineage signature: the person's name in Fraunces italic. */
+/** Title + person name on one line, read as a breadcrumb (`Add person / Jane Doe`). */
+export const headCrumb = style({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: 8,
+  minWidth: 0,
+});
+export const headTitle = style({
+  fontSize: 15,
+  fontWeight: 650,
+  margin: 0,
+  whiteSpace: 'nowrap',
+  flex: '0 0 auto',
+});
+/** Breadcrumb separator between the title and the person name. */
+export const headSep = style({ fontSize: 14, color: vars.color.faint, flex: '0 0 auto' });
+/** The lineage signature: the person's name in Fraunces italic, truncated if long. */
 export const headSub = style({
   fontFamily: vars.font.serif,
   fontStyle: 'italic',
   fontSize: 15,
   color: vars.color.muted,
+  minWidth: 0,
+  flex: '0 1 auto',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 });
 export const grow = style({ flex: 1 });
-export const mbody = style({ flex: 1, minHeight: 0, overflow: 'auto', padding: '14px 18px 18px' });
+export const mbody = style({
+  flex: 1,
+  minHeight: 0,
+  overflow: 'auto',
+  padding: '14px 18px 18px',
+  // Local for now (first VE screen); promote to the design layer when a second
+  // VE screen needs a styled scroll container instead of copying this block.
+  selectors: {
+    '&::-webkit-scrollbar': { width: 14, height: 14 },
+    '&::-webkit-scrollbar-track': { background: 'transparent' },
+    // Warm, inset thumb (transparent border + padding-box clip) that sits on the theme.
+    '&::-webkit-scrollbar-thumb': {
+      background: vars.color.faint,
+      borderRadius: 999,
+      border: '4px solid transparent',
+      backgroundClip: 'padding-box',
+    },
+    '&::-webkit-scrollbar-thumb:hover': { background: vars.color.muted },
+  },
+});
 export const mfoot = style({
   display: 'flex',
   alignItems: 'center',
@@ -105,7 +145,7 @@ export const cols = style({
   display: 'grid',
   gap: 14,
   alignItems: 'start',
-  gridTemplateColumns: '1.5fr 1fr',
+  gridTemplateColumns: '1.35fr 1fr',
   '@media': { 'screen and (max-width: 900px)': { gridTemplateColumns: '1fr' } },
 });
 export const col = style({ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 });
@@ -116,17 +156,18 @@ export const ecard = style({
   padding: '14px 15px',
 });
 export const familyCard = style({
-  background: vars.color.panel2,
   border: `1px solid ${vars.color.border}`,
   borderRadius: 10,
   padding: '12px 13px',
   marginTop: 4,
 });
+/** The first family sits below the Parents rows and wants a clearer break from them. */
+export const familyCardFirst = style({ marginTop: 16 });
 export const sectitle = style({
   fontSize: 11,
   letterSpacing: '.09em',
   textTransform: 'uppercase',
-  color: vars.color.faint,
+  color: vars.color.muted,
   fontWeight: 650,
   display: 'flex',
   alignItems: 'center',
@@ -136,16 +177,15 @@ export const sectitle = style({
 export const subhead = style({
   fontSize: 11.5,
   fontWeight: 650,
-  color: vars.color.muted,
+  color: vars.color.text,
   margin: '0 0 8px',
 });
 export const subheadMt = style({ marginTop: 14 });
-export const hint = style({ fontSize: 11.5, color: vars.color.faint, margin: '-2px 0 4px' });
 
 /* ---- controls ------------------------------------------------------- */
 
 export const field = style({ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 });
-export const fieldLabel = style({ fontSize: 11.5, fontWeight: 600, color: vars.color.muted });
+export const fieldLabel = style({ fontSize: 11.5, fontWeight: 600, color: vars.color.text });
 export const input = style({
   height: 34,
   border: `1px solid ${vars.color.borderStrong}`,
@@ -161,6 +201,8 @@ export const input = style({
     '&:hover': { borderColor: vars.color.faint },
     '&::placeholder': { color: vars.color.faint },
     '&:focus-visible': { ...focusRing, outlineOffset: 1, borderColor: vars.color.accent },
+    '&:disabled': { opacity: 0.55, cursor: 'not-allowed' },
+    '&:disabled:hover': { borderColor: vars.color.borderStrong },
   },
 });
 export const textarea = style([
@@ -168,7 +210,6 @@ export const textarea = style([
   { height: 'auto', minHeight: 62, padding: '8px 10px', lineHeight: 1.45, resize: 'vertical' },
 ]);
 export const tnum = style({ fontVariantNumeric: 'tabular-nums' });
-export const wDate = style({ maxWidth: 150 });
 export const fgridC2 = style({ display: 'grid', gap: '10px 12px', gridTemplateColumns: '1fr 1fr' });
 export const fgridC3 = style({
   display: 'grid',
@@ -178,19 +219,25 @@ export const fgridC3 = style({
 export const stack = style({ display: 'flex', flexDirection: 'column', gap: 8 });
 /** The prefix/suffix/nickname grid, spaced below the given/surname grid. */
 export const fgrid3Gap = style([fgridC3, { marginTop: 10 }]);
-/** The death-date field revealed under the Deceased toggle. */
-export const deathField = style({ marginTop: 8 });
+/**
+ * The Deceased toggle and the always-present Death row. A top hairline sets them
+ * apart from the events above while keeping the rows flush-left with Birth (no
+ * indentation); the toggle sits directly over the Death row it gates.
+ */
+export const deathGroup = style({
+  marginTop: 12,
+  paddingTop: 12,
+  borderTop: `1px solid ${vars.color.border}`,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 10,
+});
 /** The "Add another family" action, spaced below the last family. */
 export const familyActions = style({ marginTop: 12 });
-
-export const rrow = style({
-  display: 'grid',
-  gridTemplateColumns: '88px minmax(0,1fr)',
-  gap: 10,
-  alignItems: 'center',
-  padding: '3px 0',
-});
-export const rl = style({ fontSize: 12, color: vars.color.muted });
+/** Header of a family card: a label and the remove control. */
+export const familyHead = style({ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 });
+/** Same type ramp as {@link subhead}; the flex header owns the spacing, so drop its margin. */
+export const familyTitle = style([subhead, { margin: 0 }]);
 
 export const seg = style({
   display: 'inline-flex',
@@ -249,7 +296,7 @@ export const switchThumb = style({
   transition: 'left .15s',
   selectors: { [`${switchRoot}[data-checked] &`]: { left: 18 } },
 });
-export const statusrow = style({ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12 });
+export const statusrow = style({ display: 'flex', alignItems: 'center', gap: 10 });
 export const switchLabel = style({ fontSize: 13, fontWeight: 600 });
 
 export const iconbtn = style({
@@ -396,12 +443,13 @@ export const selectItem = style({
 /* ---- life events ---------------------------------------------------- */
 
 export const eventlist = style({ display: 'flex', flexDirection: 'column', gap: 8 });
-export const eventrow = style({
-  display: 'grid',
-  gridTemplateColumns: '148px 150px 1fr 30px',
-  gap: 8,
-  alignItems: 'center',
-  maxWidth: 560,
+const eventrowBase = { display: 'grid', gap: 8, alignItems: 'center' } as const;
+/** Dates are short, places are long — keep the date compact, let the place take the rest. */
+export const eventrow = style({ ...eventrowBase, gridTemplateColumns: '148px 190px 1fr' });
+/** Added events: same fields, plus a trailing column for the remove control. */
+export const eventrowRemovable = style({
+  ...eventrowBase,
+  gridTemplateColumns: '148px 190px 1fr 30px',
 });
 /** Read-only event-type cell (type is chosen when the event is added). */
 export const eventType = style({
@@ -414,16 +462,6 @@ export const eventType = style({
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-});
-export const eplace = style({
-  fontSize: 12,
-  color: vars.color.faint,
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 6,
-  justifySelf: 'start',
-  whiteSpace: 'nowrap',
-  opacity: 0.7,
 });
 export const addWrap = style({ marginTop: 10 });
 export const typegrid = style({
@@ -466,7 +504,7 @@ export const relrow2 = style({
   alignItems: 'start',
   padding: '4px 0',
 });
-export const relLabel = style({ fontSize: 12, color: vars.color.muted, paddingTop: 12 });
+export const relLabel = style({ fontSize: 12, color: vars.color.text, paddingTop: 12 });
 export const childstack = style({ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 });
 export const relslot = style({
   minHeight: 44,
@@ -481,7 +519,6 @@ export const relslot = style({
   fontSize: 12.5,
   fontWeight: 600,
   cursor: 'pointer',
-  maxWidth: 300,
   width: '100%',
   fontFamily: 'inherit',
   selectors: {
@@ -499,7 +536,7 @@ export const pfield = style({
   alignItems: 'center',
   gap: 9,
   padding: '4px 6px 4px 10px',
-  maxWidth: 300,
+  width: '100%',
 });
 export const pfieldAvatar = style({
   width: 26,

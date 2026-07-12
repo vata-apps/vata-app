@@ -159,10 +159,8 @@
     "editButtonAria": "Modifier la personne",
     "sections": {
       "names": "Noms",
-      "primaryName": "Nom principal",
       "otherNames": "Autres noms",
       "lifeEvents": "Événements de vie",
-      "lifeEventsHint": "Dates seulement — les lieux seront ajoutés une fois le sélecteur de lieu disponible.",
       "relations": "Relations",
       "notes": "Notes"
     },
@@ -185,9 +183,8 @@
       "removeAria": "Retirer ce nom"
     },
     "lifeEvents": {
-      "datePlaceholder": "ex. 30 janv. 1960, vers 1960",
-      "dateHint": "Accepte les dates approximatives — « vers 1960 », « avant 1962 »",
-      "placeSoon": "Lieu — bientôt",
+      "datePlaceholder": "Date",
+      "place": "Lieu",
       "addButton": "Ajouter un événement",
       "removeAria": "Retirer cet événement"
     },
@@ -198,9 +195,11 @@
       "addMother": "Ajouter la mère",
       "spouse": "Conjoint",
       "children": "Enfants",
+      "familyLabel": "Famille",
       "addSpouse": "Ajouter un conjoint",
       "addChild": "Ajouter un enfant",
       "addFamily": "Ajouter une autre famille",
+      "removeFamilyAria": "Retirer cette famille",
       "removeAria": "Retirer cette relation"
     },
     "picker": {

@@ -103,7 +103,7 @@ const dark = {
     subtle: 'oklch(0.255 0.025 44)',
     border: 'oklch(1 0 0 / 0.08)',
     borderStrong: 'oklch(1 0 0 / 0.14)',
-    text: 'oklch(0.965 0.018 82)', // sand-100
+    text: 'oklch(0.90 0.022 80)', // sand-200 — softened off-white (pure white reads too harsh on the dark panels)
     muted: 'oklch(0.78 0.042 70)', // sand-400
     faint: 'oklch(0.62 0.035 60)',
     accent: 'oklch(0.62 0.125 34)', // clay-500

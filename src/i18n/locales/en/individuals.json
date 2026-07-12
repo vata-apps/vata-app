@@ -159,10 +159,8 @@
     "editButtonAria": "Edit person",
     "sections": {
       "names": "Names",
-      "primaryName": "Primary name",
       "otherNames": "Other names",
       "lifeEvents": "Life events",
-      "lifeEventsHint": "Dates only — places will be added once a place picker exists.",
       "relations": "Relations",
       "notes": "Notes"
     },
@@ -185,9 +183,8 @@
       "removeAria": "Remove this name"
     },
     "lifeEvents": {
-      "datePlaceholder": "e.g. 30 Jan 1960, abt 1960",
-      "dateHint": "Accepts approximate dates — “abt 1960”, “bef 1962”",
-      "placeSoon": "Place — soon",
+      "datePlaceholder": "Date",
+      "place": "Place",
       "addButton": "Add event",
       "removeAria": "Remove this event"
     },
@@ -198,9 +195,11 @@
       "addMother": "Add mother",
       "spouse": "Spouse",
       "children": "Children",
+      "familyLabel": "Family",
       "addSpouse": "Add spouse",
       "addChild": "Add child",
       "addFamily": "Add another family",
+      "removeFamilyAria": "Remove this family",
       "removeAria": "Remove this relation"
     },
     "picker": {

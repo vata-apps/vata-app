@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -148,9 +148,9 @@ describe('PersonEditorDialog', () => {
     await user.click(screen.getByRole('button', { name: 'Add event' }));
     await user.click(await screen.findByRole('button', { name: 'Baptism' }));
 
-    expect(screen.getByText('Baptism')).toBeInTheDocument();
-    const dateInputs = screen.getAllByPlaceholderText('e.g. 30 Jan 1960, abt 1960');
-    const newRowDateInput = dateInputs[dateInputs.length - 1];
+    // The new row's own date field (Death is always present as the last row).
+    const baptismRow = screen.getByText('Baptism').parentElement as HTMLElement;
+    const newRowDateInput = within(baptismRow).getByPlaceholderText('Date');
     await user.type(newRowDateInput, '1 Mar 1960');
     expect(newRowDateInput).toHaveValue('1 Mar 1960');
 
@@ -158,19 +158,24 @@ describe('PersonEditorDialog', () => {
     expect(screen.queryByText('Baptism')).not.toBeInTheDocument();
   });
 
-  it('reveals the death date field only when marked deceased', async () => {
+  it('keeps birth and death present, enabling the death date only when deceased', async () => {
     const user = userEvent.setup();
     renderDialog({ mode: 'create' });
 
-    // Living by default: only the birth event has a date field.
-    expect(screen.getAllByPlaceholderText('e.g. 30 Jan 1960, abt 1960')).toHaveLength(1);
+    // Birth and Death date fields are both always shown.
+    const dateInputs = screen.getAllByPlaceholderText('Date');
+    expect(dateInputs).toHaveLength(2);
+    const deathDate = dateInputs[1];
+
+    // Living by default: the death date is disabled.
+    expect(deathDate).toBeDisabled();
 
     await user.click(screen.getByRole('switch'));
-    expect(screen.getAllByPlaceholderText('e.g. 30 Jan 1960, abt 1960')).toHaveLength(2);
+    expect(deathDate).toBeEnabled();
 
-    // Marking living again hides the death date field.
+    // Marking living again disables the death date.
     await user.click(screen.getByRole('switch'));
-    expect(screen.getAllByPlaceholderText('e.g. 30 Jan 1960, abt 1960')).toHaveLength(1);
+    expect(deathDate).toBeDisabled();
   });
 
   it('picks an existing father via the relation picker, then removes him', async () => {
@@ -265,5 +270,19 @@ describe('PersonEditorDialog', () => {
     expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(1);
     await user.click(screen.getByRole('button', { name: 'Add another family' }));
     expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(2);
+  });
+
+  it('removes a family from the form', async () => {
+    const user = userEvent.setup();
+    renderDialog({ mode: 'create' });
+
+    await user.click(screen.getByRole('button', { name: 'Add another family' }));
+    expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(2);
+
+    const removeButtons = screen.getAllByRole('button', { name: 'Remove this family' });
+    expect(removeButtons).toHaveLength(2);
+    await user.click(removeButtons[0]);
+
+    expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(1);
   });
 });
