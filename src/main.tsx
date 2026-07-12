@@ -1,4 +1,6 @@
 import './styles/app.css';
+import '$/design/theme.css';
+import '$/design/fonts';
 import './i18n/config';
 import React from 'react';
 import ReactDOM from 'react-dom/client';

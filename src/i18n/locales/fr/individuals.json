@@ -159,6 +159,7 @@
     "editButtonAria": "Modifier la personne",
     "sections": {
       "names": "Noms",
+      "primaryName": "Nom principal",
       "otherNames": "Autres noms",
       "lifeEvents": "Événements de vie",
       "lifeEventsHint": "Dates seulement — les lieux seront ajoutés une fois le sélecteur de lieu disponible.",
@@ -191,6 +192,8 @@
       "removeAria": "Retirer cet événement"
     },
     "relations": {
+      "fatherLabel": "Père",
+      "motherLabel": "Mère",
       "addFather": "Ajouter le père",
       "addMother": "Ajouter la mère",
       "spouse": "Conjoint",
@@ -210,6 +213,7 @@
       "label": "Notes"
     },
     "actions": {
+      "close": "Fermer",
       "cancel": "Annuler",
       "save": "Enregistrer",
       "saveNew": "Enregistrer la personne"
@@ -219,7 +223,8 @@
       "title": "Abandonner les modifications non enregistrées?",
       "description": "Des modifications n'ont pas été enregistrées. Si vous fermez maintenant, elles seront perdues.",
       "discard": "Abandonner les modifications",
-      "keepEditing": "Continuer l'édition"
+      "keepEditing": "Continuer l'édition",
+      "indicator": "Modifications non enregistrées"
     }
   }
 }

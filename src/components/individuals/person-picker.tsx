@@ -1,6 +1,6 @@
-import { type ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Avatar, Box, Button, Flex, Popover, Text, TextField } from '@radix-ui/themes';
+import { Popover } from '@base-ui/react/popover';
 
 import { Icon } from '$components/icon';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
@@ -8,6 +8,7 @@ import { useIndividualSearch, useIndividuals } from '$hooks/useIndividuals';
 import { formatNameSimple } from '$db-tree/names';
 import { formatLifeYears, initialsFromDisplayName, personDisplayFields } from './person-display';
 import type { Gender, IndividualWithDetails } from '$types/database';
+import * as s from './person-editor.css';
 
 const MAX_RESULTS = 8;
 const SEARCH_DEBOUNCE_MS = 200;
@@ -30,27 +31,28 @@ function splitDisplayName(name: string): { givenNames?: string; surname?: string
 }
 
 export interface PersonPickerProps {
-  /** The trigger element wrapped by `Popover.Trigger` (typically a dashed "+ Add …" button). */
-  children: ReactNode;
+  /** Text for the dashed "+ Add …" trigger the picker renders when empty. */
+  label: string;
   onSelect: (selection: PersonPickerSelection) => void;
   /** Individual ids to hide from search results (e.g. the person being edited, or people already picked elsewhere in this form). */
   excludeIds?: string[];
   /** Gender to seed a newly-created person with (e.g. 'M' for a father slot); left unset defaults to unknown. */
   newPersonGender?: Gender;
+  disabled?: boolean;
 }
 
 /**
  * Search-existing-or-create-new person combobox, used by the Person editor's
- * Relations card to fill a father/mother/spouse/child slot. Composes
- * `Popover` + `TextField` + a plain button list (Radix Themes has no
- * combobox primitive) — see design-system-standards for why this stays a
- * composition rather than a new visual atom.
+ * Relations card to fill a father/mother/spouse/child slot. Base UI `Popover`
+ * over a plain search input and button list (no combobox atom needed), styled
+ * from the warm-earth tokens.
  */
 export function PersonPicker({
-  children,
+  label,
   onSelect,
   excludeIds,
   newPersonGender,
+  disabled,
 }: PersonPickerProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const [open, setOpen] = useState(false);
@@ -96,65 +98,53 @@ export function PersonPicker({
 
   return (
     <Popover.Root open={open} onOpenChange={handleOpenChange}>
-      <Popover.Trigger>{children}</Popover.Trigger>
-      <Popover.Content width="280px">
-        <Flex direction="column" gap="2">
-          <TextField.Root
-            autoFocus
-            placeholder={t('personEditor.picker.searchPlaceholder')}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <Flex direction="column" gap="1">
-            {results.map((person) => {
-              const dates = formatLifeYears(person.bornYear, person.deathYear);
-              return (
-                <Button
-                  key={person.id}
-                  type="button"
-                  variant="ghost"
-                  color="gray"
-                  onClick={() => pick(person)}
-                >
-                  <Flex align="center" gap="2" width="100%">
-                    <span aria-hidden="true">
-                      <Avatar
-                        size="2"
-                        radius="full"
-                        fallback={initialsFromDisplayName(person.displayName)}
-                      />
+      <Popover.Trigger className={s.relslot} disabled={disabled}>
+        <Icon name="plus" size={14} />
+        {label}
+      </Popover.Trigger>
+      <Popover.Portal>
+        <Popover.Positioner sideOffset={6} align="start">
+          <Popover.Popup className={s.pickerPopup}>
+            <input
+              className={s.input}
+              autoFocus
+              placeholder={t('personEditor.picker.searchPlaceholder')}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <div className={s.pickerList}>
+              {results.map((person) => {
+                const dates = formatLifeYears(person.bornYear, person.deathYear);
+                return (
+                  <button
+                    key={person.id}
+                    type="button"
+                    className={s.pickerItem}
+                    onClick={() => pick(person)}
+                  >
+                    <span className={s.pfieldAvatar} aria-hidden="true">
+                      {initialsFromDisplayName(person.displayName)}
                     </span>
-                    <Flex direction="column" align="start" overflow="hidden">
-                      <Text truncate>{person.displayName}</Text>
-                      {dates && (
-                        <Text size="1" color="gray">
-                          {dates}
-                        </Text>
-                      )}
-                    </Flex>
-                  </Flex>
-                </Button>
-              );
-            })}
-            {hiddenCount > 0 && (
-              <Box py="1">
-                <Text size="1" color="gray">
+                    <span className={s.pfieldBody}>
+                      <span className={s.pfieldName}>{person.displayName}</span>
+                      {dates && <span className={s.pfieldDates}>{dates}</span>}
+                    </span>
+                  </button>
+                );
+              })}
+              {hiddenCount > 0 && (
+                <div className={s.pickerMeta}>
                   {t('personEditor.picker.moreHidden', { count: hiddenCount })}
-                </Text>
-              </Box>
-            )}
-            {noMatches && (
-              <Box py="1">
-                <Text size="1" color="gray">
-                  {t('personEditor.picker.noMatches')}
-                </Text>
-              </Box>
-            )}
+                </div>
+              )}
+              {noMatches && (
+                <div className={s.pickerMeta}>{t('personEditor.picker.noMatches')}</div>
+              )}
+            </div>
             {isTyping && (
-              <Button
+              <button
                 type="button"
-                variant="soft"
-                color="gray"
+                className={s.pickerCreate}
                 onClick={() =>
                   pick({
                     createNew: { ...splitDisplayName(trimmedQuery), gender: newPersonGender },
@@ -162,15 +152,13 @@ export function PersonPicker({
                   })
                 }
               >
-                <Flex align="center" gap="2" width="100%">
-                  <Icon name="plus" />
-                  <Text truncate>{t('personEditor.picker.createNew', { name: trimmedQuery })}</Text>
-                </Flex>
-              </Button>
+                <Icon name="plus" size={14} />
+                {t('personEditor.picker.createNew', { name: trimmedQuery })}
+              </button>
             )}
-          </Flex>
-        </Flex>
-      </Popover.Content>
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
     </Popover.Root>
   );
 }

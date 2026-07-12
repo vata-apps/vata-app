@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -19,6 +20,7 @@ export default defineConfig({
       routesDirectory: 'src/routes',
       generatedRouteTree: 'src/routeTree.gen.ts',
     }),
+    vanillaExtractPlugin(),
     react(),
   ],
   resolve: {

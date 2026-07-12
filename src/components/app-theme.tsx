@@ -38,5 +38,13 @@ function useResolvedAppearance(): 'light' | 'dark' {
  */
 export function AppTheme({ children }: { children: ReactNode }): JSX.Element {
   const appearance = useResolvedAppearance();
+
+  // Bridge the resolved appearance to the Vanilla Extract tokens (ADR-0014):
+  // `data-theme` drives `src/design/theme.css.ts` so Base UI + VE surfaces stay
+  // in sync with Radix during the migration.
+  useEffect(() => {
+    document.documentElement.dataset.theme = appearance;
+  }, [appearance]);
+
   return <Theme appearance={appearance}>{children}</Theme>;
 }

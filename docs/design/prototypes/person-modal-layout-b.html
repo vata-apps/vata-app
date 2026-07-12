@@ -1,0 +1,351 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Person modal — Layout B, staged</title>
+<!--
+  Recovered from Claude artifact 05a400f8-e55f-4483-b54a-9bd3a6db1ce2 (updated 2026-07-05).
+  Chosen visual direction for the Person editor: Layout B (Wide + dense rail), staged delivery.
+  This is the design source of truth for the Base UI + Vanilla Extract migration — the :root
+  custom properties below become the Vanilla Extract theme; the component styles become the
+  styled Base UI components. Standalone: open directly in a browser.
+-->
+<style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style>
+<style>
+  :root{
+    --ground:#fbfbfc; --panel:#ffffff; --panel-2:#f7f7f9; --subtle:#f0f0f3;
+    --border:#e5e5ea; --border-strong:#d6d6de;
+    --text:#1b1d22; --muted:#63666e; --faint:#8b8e97;
+    --accent:#3e63dd; --accent-hover:#3a5bca; --accent-soft:#ecf0fe; --accent-border:#c6d1f6;
+    --success:#2b9a66; --warn:#b8860b; --danger:#d93b3b;
+    --scrim:rgba(11,11,15,.55);
+    --shadow-sm:0 1px 2px rgba(20,22,30,.06);
+    --shadow-lg:0 1px 2px rgba(20,22,30,.06), 0 26px 60px -18px rgba(20,22,30,.4);
+    --radius:10px; --radius-sm:7px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --ground:#0e0e10; --panel:#161719; --panel-2:#1b1c1f; --subtle:#202124;
+    --border:#2a2b2f; --border-strong:#3a3b41; --text:#ecedf0; --muted:#a5a9b2; --faint:#71757e;
+    --accent:#6a83ef; --accent-hover:#7d93f1; --accent-soft:#1d2233; --accent-border:#323a5d;
+    --success:#40b27f; --warn:#e0b44a; --danger:#f06a6a; --scrim:rgba(0,0,0,.66);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+    --shadow-lg:0 1px 2px rgba(0,0,0,.5), 0 28px 64px -18px rgba(0,0,0,.82);
+  }}
+  :root[data-theme="dark"]{
+    --ground:#0e0e10; --panel:#161719; --panel-2:#1b1c1f; --subtle:#202124;
+    --border:#2a2b2f; --border-strong:#3a3b41; --text:#ecedf0; --muted:#a5a9b2; --faint:#71757e;
+    --accent:#6a83ef; --accent-hover:#7d93f1; --accent-soft:#1d2233; --accent-border:#323a5d;
+    --success:#40b27f; --warn:#e0b44a; --danger:#f06a6a; --scrim:rgba(0,0,0,.66);
+    --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+    --shadow-lg:0 1px 2px rgba(0,0,0,.5), 0 28px 64px -18px rgba(0,0,0,.82);
+  }
+  :root[data-theme="light"]{
+    --ground:#fbfbfc; --panel:#ffffff; --panel-2:#f7f7f9; --subtle:#f0f0f3;
+    --border:#e5e5ea; --border-strong:#d6d6de; --text:#1b1d22; --muted:#63666e; --faint:#8b8e97;
+    --accent:#3e63dd; --accent-hover:#3a5bca; --accent-soft:#ecf0fe; --accent-border:#c6d1f6;
+    --success:#2b9a66; --warn:#b8860b; --danger:#d93b3b; --scrim:rgba(11,11,15,.55);
+    --shadow-sm:0 1px 2px rgba(20,22,30,.06);
+    --shadow-lg:0 1px 2px rgba(20,22,30,.06), 0 26px 60px -18px rgba(20,22,30,.4);
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--text);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  h1,h3,p{margin:0}
+  input,button,textarea{font-family:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 24px 72px}
+
+  .masthead{padding-bottom:16px;border-bottom:1px solid var(--border)}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .masthead h1{font-size:25px;font-weight:680;letter-spacing:-.02em;margin-top:8px}
+  .masthead p{color:var(--muted);max-width:70ch;margin-top:7px}
+  .kbd{font-family:var(--mono);font-size:11px;background:var(--subtle);border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:1px 5px;color:var(--muted)}
+  .masthead p b{color:var(--text)}
+
+  .stages{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+  .stage-card{border:1px solid var(--border);border-radius:12px;padding:14px 15px;background:var(--panel)}
+  .stage-card .sh{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+  .stage-card .pill{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:99px}
+  .pill.v1{background:color-mix(in srgb,var(--success) 15%,transparent);color:var(--success)}
+  .pill.next{background:var(--subtle);color:var(--muted)}
+  .stage-card h3{font-size:13px;font-weight:660}
+  .stage-card ul{margin:0;padding-left:16px;color:var(--muted);font-size:12.5px;display:flex;flex-direction:column;gap:3px}
+  @media (max-width:720px){.stages{grid-template-columns:1fr}}
+
+  .launch{margin-top:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .bigopen{height:44px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:14px;font-weight:650;cursor:pointer;padding:0 20px;display:inline-flex;align-items:center;gap:9px}
+  .bigopen:hover{background:var(--accent-hover)}
+  .launch .lh{font-size:12.5px;color:var(--faint)}
+
+  /* controls */
+  .field{display:flex;flex-direction:column;gap:5px;min-width:0}
+  label.fl{font-size:11.5px;font-weight:600;color:var(--muted)}
+  .input{height:34px;border:1px solid var(--border-strong);background:var(--panel);color:var(--text);border-radius:var(--radius-sm);padding:0 10px;font-size:13.5px;width:100%;box-shadow:inset 0 1px 1px rgba(0,0,0,.03)}
+  .input:hover{border-color:var(--faint)}.input::placeholder{color:var(--faint)}
+  textarea.input{height:auto;min-height:62px;padding:8px 10px;line-height:1.45;resize:vertical}
+  .tnum{font-variant-numeric:tabular-nums}
+  .w-date{max-width:150px}
+  .fgrid{display:grid;gap:10px 12px}.fgrid.c2{grid-template-columns:1fr 1fr}.fgrid.c3{grid-template-columns:1fr 1fr 1fr}
+  .seg{display:inline-flex;background:var(--subtle);border-radius:8px;padding:3px;gap:2px;width:max-content}
+  .seg span{padding:6px 13px;border-radius:6px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer}
+  .seg span.on{background:var(--panel);color:var(--text);box-shadow:var(--shadow-sm)}
+  .switchrow{display:flex;align-items:center;gap:10px}
+  .switch{width:38px;height:22px;border-radius:99px;background:var(--border-strong);position:relative;flex:0 0 auto;cursor:pointer}
+  .switch.on{background:var(--accent)}
+  .switch::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:left .15s}
+  .switch.on::after{left:18px}
+  @media (prefers-reduced-motion:reduce){.switch::after{transition:none}}
+  .switch-label{font-size:13px;font-weight:600}
+  .iconbtn{width:30px;height:30px;border-radius:6px;border:1px solid transparent;background:transparent;color:var(--faint);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
+  .iconbtn:hover{background:var(--subtle);color:var(--danger)}
+  .addbtn{align-self:flex-start;background:transparent;border:1px dashed var(--border-strong);color:var(--muted);border-radius:var(--radius-sm);height:32px;padding:0 12px;font-size:12.5px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+  .addbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn{height:34px;border-radius:var(--radius-sm);padding:0 16px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;display:inline-flex;align-items:center;gap:8px}
+  .btn.solid{background:var(--accent);color:#fff}.btn.solid:hover{background:var(--accent-hover)}
+  .btn.ghost{background:transparent;color:var(--muted)}.btn.ghost:hover{color:var(--text)}
+  .altrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 128px 30px;gap:8px;align-items:center}
+  .selbox{height:34px;border:1px solid var(--border-strong);background:var(--panel);border-radius:var(--radius-sm);display:flex;align-items:center;gap:6px;padding:0 10px;font-size:12.5px;color:var(--text);cursor:pointer;white-space:nowrap}
+  .selbox::after{content:"▾";margin-left:auto;font-size:9px;color:var(--faint)}
+  .pfield{height:34px;border:1px solid var(--border-strong);background:var(--panel);border-radius:var(--radius-sm);display:flex;align-items:center;gap:9px;padding:0 6px 0 10px;max-width:300px}
+  .pfield .av{width:22px;height:22px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .pfield .pn{flex:1;font-size:13px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .subhead{font-size:11.5px;font-weight:650;color:var(--muted);margin:0 0 8px}.subhead.mt{margin-top:14px}
+  .sectitle{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:650;display:flex;align-items:center;margin-bottom:12px}
+  .stack{display:flex;flex-direction:column;gap:8px}
+  .rrow{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;align-items:center;padding:3px 0}
+  .rrow > .rl{font-size:12px;color:var(--muted)}.rrow .input{max-width:270px}.rrow .input.w-date{max-width:150px}
+  .statusrow{display:flex;align-items:center;gap:10px}.statusrow .rl{font-size:12px;color:var(--muted);width:88px}
+
+  .eventlist{display:flex;flex-direction:column;gap:8px}
+  .eventrow{display:grid;grid-template-columns:148px 150px 1fr 30px;gap:8px;align-items:center;max-width:560px}
+  .eplace{font-size:12px;color:var(--faint);display:inline-flex;align-items:center;gap:6px;justify-self:start;white-space:nowrap;opacity:.7}
+  .eplace .soon{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:var(--faint);border:1px solid var(--border);border-radius:99px;padding:1px 5px}
+  .addwrap{margin-top:2px}
+  .typegrid{display:none;margin-top:9px;grid-template-columns:repeat(3,1fr);gap:6px;max-width:430px;border:1px solid var(--border);background:var(--panel-2);border-radius:10px;padding:8px}
+  .typegrid.open{display:grid}
+  .typegrid button{border:1px solid var(--border);background:var(--panel);border-radius:7px;padding:8px 9px;font-size:12.5px;cursor:pointer;color:var(--text);text-align:left}
+  .typegrid button:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+
+  .relrow2{display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:start;padding:4px 0}
+  .relrow2 > .rl{font-size:12px;color:var(--muted);padding-top:8px}
+  .relanchor{position:relative;min-width:0}
+  .relslot{height:34px;border:1px dashed var(--border-strong);background:transparent;color:var(--faint);border-radius:var(--radius-sm);display:inline-flex;align-items:center;gap:8px;padding:0 12px;font-size:12.5px;font-weight:600;cursor:pointer;max-width:300px;width:100%}
+  .relslot:hover{border-color:var(--accent);color:var(--accent)}
+  .childstack{display:flex;flex-direction:column;gap:8px;min-width:0}
+  .picker{display:none;margin-top:8px;border:1px solid var(--border-strong);border-radius:11px;background:var(--panel-2);padding:9px;max-width:320px;box-shadow:var(--shadow-sm)}
+  .picker.open{display:block}
+  .picker .ppsearch{margin-bottom:8px;background:var(--panel)}
+  .pplist{display:flex;flex-direction:column;gap:2px;max-height:172px;overflow:auto}
+  .ppitem{display:flex;align-items:center;gap:9px;border:0;background:transparent;text-align:left;padding:7px 8px;border-radius:7px;cursor:pointer;color:var(--text);font-size:13px;width:100%}
+  .ppitem:hover{background:var(--subtle)}
+  .ppitem .av{width:24px;height:24px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .ppitem .nm{flex:1;font-weight:550}.ppitem .yr{font-size:11px;color:var(--faint)}
+  .ppcreate{margin-top:6px;width:100%;border:0;border-top:1px solid var(--border);background:transparent;color:var(--accent);font-weight:650;font-size:12.5px;padding:9px 8px 3px;cursor:pointer;text-align:left;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+  /* staged / disabled */
+  .later-badge{font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent);border-radius:99px;padding:2px 8px;font-weight:700;margin-left:8px}
+  .later-note{font-size:11.5px;color:var(--faint);margin:-4px 0 10px}
+  .modal:not(.preview) .later-body{opacity:.5;pointer-events:none;filter:grayscale(.2)}
+  .modal.preview .later-only{display:none}
+
+  .mbody-pad{padding:14px 18px 18px}
+  .demohint{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:8px;padding:8px 12px;margin-bottom:14px}
+  .demohint b{color:var(--accent)}
+  .previewbtn{margin-left:auto;border:1px solid var(--border-strong);background:var(--panel);color:var(--muted);border-radius:7px;height:28px;padding:0 11px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .previewbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .modal.preview .previewbtn{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-border)}
+  .cols{display:grid;gap:14px;align-items:start;grid-template-columns:1.5fr 1fr}
+  .col{display:flex;flex-direction:column;gap:14px;min-width:0}
+  .ecard{background:var(--panel);border:1px solid var(--border);border-radius:11px;padding:14px 15px}
+
+  .overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:32px 22px 22px;background:var(--scrim)}
+  .overlay.open{display:flex;animation:ov .16s ease}
+  @keyframes ov{from{opacity:0}to{opacity:1}}
+  @media (prefers-reduced-motion:reduce){.overlay.open{animation:none}}
+  .modal{width:100%;max-width:1040px;background:var(--panel);border:1px solid var(--border-strong);border-radius:14px;box-shadow:var(--shadow-lg);display:none;flex-direction:column;overflow:hidden;max-height:calc(100vh - 54px)}
+  .modal.show{display:flex}
+  .mhead{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);flex:0 0 auto}
+  .mhead .avatar{width:38px;height:38px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:0 0 auto}
+  .mhead .t{font-size:15px;font-weight:650}.mhead .s{font-size:12px;color:var(--faint)}
+  .mhead .grow{flex:1}
+  .mbody{flex:1;min-height:0;overflow:auto}
+  .mfoot{display:flex;align-items:center;gap:12px;padding:11px 18px;border-top:1px solid var(--border);flex:0 0 auto;background:color-mix(in srgb,var(--panel) 92%,transparent)}
+  .dirty{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--warn);font-weight:600}
+  .dirty::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--warn)}
+  .mfoot .grow{flex:1}
+  @media (max-width:900px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4-4"/></symbol>
+</svg>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="eyebrow">Vata · Person editor · Layout B · staged</div>
+    <h1>The person modal, and what ships when</h1>
+    <p>Chosen direction: <b>Layout B (Wide + dense rail)</b>, delivered in stages — but the full UI is present from day one, with not-yet-built parts shown <b>disabled</b>. Open the editor and toggle <b>Preview later-stage</b> to see relations live.</p>
+  </div>
+
+  <div class="stages">
+    <div class="stage-card"><div class="sh"><span class="pill v1">v1 · active</span></div><h3>Identity, names, events, notes</h3>
+      <ul><li>Primary name + other names</li><li>Sex &amp; living status</li><li>Life events (birth, death, +typed events)</li><li>Notes</li></ul></div>
+    <div class="stage-card"><div class="sh"><span class="pill next">v1.1 · disabled</span></div><h3>Relations</h3>
+      <ul><li>Parents, spouse, children</li><li>Person search / create</li><li>Family (union) mutations</li></ul></div>
+    <div class="stage-card"><div class="sh"><span class="pill next">v1.2 · disabled</span></div><h3>Places</h3>
+      <ul><li>Place on each event</li><li>Needs a Place picker first</li></ul></div>
+  </div>
+
+  <div class="launch">
+    <button class="bigopen" id="openbtn">▶ Open the person editor</button>
+    <span class="lh">Real modal · <span class="kbd">Esc</span> to close</span>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="modal" id="modal">
+    <div class="mhead"><div class="avatar">LP</div><div><div class="t">Edit person</div><div class="s">Lily J. Potter</div></div><span class="grow"></span><button class="iconbtn mx">✕</button></div>
+    <div class="mbody mbody-pad">
+      <div class="demohint">
+        <span><b>v1 preview.</b> Try <b>＋ Add event</b>. Relations &amp; places are shown disabled (later stages).</span>
+        <button class="previewbtn" id="previewbtn">Preview later-stage ▸</button>
+      </div>
+      <div class="cols">
+        <div class="col">
+          <div class="ecard"><span class="sectitle">Names</span>
+            <div class="subhead">Primary name</div>
+            <div class="fgrid c2"><div class="field"><label class="fl">Given names</label><input class="input" value="Lily J."></div><div class="field"><label class="fl">Surname</label><input class="input" value="Potter"></div></div>
+            <div style="height:10px"></div>
+            <div class="fgrid c3"><div class="field"><label class="fl">Prefix</label><input class="input" placeholder="—"></div><div class="field"><label class="fl">Suffix</label><input class="input" placeholder="—"></div><div class="field"><label class="fl">Nickname</label><input class="input" placeholder="—"></div></div>
+            <div class="subhead mt">Other names</div>
+            <div class="stack"><div class="altrow" style="max-width:none"><input class="input" value="Lily"><input class="input" value="Evans"><div class="selbox">Birth name</div><button class="iconbtn">✕</button></div><button class="addbtn">＋ Add name</button></div>
+          </div>
+
+          <div class="ecard"><span class="sectitle">Life events</span>
+            <div class="eventlist">
+              <div class="eventrow"><div class="selbox etype">Birth</div><input class="input tnum w-date" value="30 Jan 1960"><span class="eplace">＋ place <span class="soon">soon</span></span><button class="iconbtn erm">✕</button></div>
+              <div class="eventrow"><div class="selbox etype">Baptism</div><input class="input tnum w-date" value="1 Mar 1960"><span class="eplace">＋ place <span class="soon">soon</span></span><button class="iconbtn erm">✕</button></div>
+              <div class="eventrow"><div class="selbox etype">Death</div><input class="input tnum w-date" value="31 Oct 1981"><span class="eplace">＋ place <span class="soon">soon</span></span><button class="iconbtn erm">✕</button></div>
+              <div class="addwrap"><button class="addbtn addevent">＋ Add event</button><div class="typegrid"></div></div>
+            </div>
+            <div class="statusrow" style="margin-top:12px"><span class="rl">Status</span><span class="switch"></span><span class="switch-label">Deceased</span></div>
+          </div>
+
+          <div class="ecard"><span class="sectitle">Notes</span><textarea class="input" style="min-height:78px">Muggle-born witch; protected her son.</textarea></div>
+        </div>
+
+        <div class="col">
+          <div class="ecard"><span class="sectitle">Attributes</span>
+            <div class="rrow"><span class="rl">Sex</span><div class="seg"><span class="on">Female</span><span>Male</span><span>Unknown</span></div></div>
+          </div>
+
+          <div class="ecard"><span class="sectitle">Relations <span class="later-badge">later stage</span></span>
+            <div class="later-note later-only">Shown for the layout — parents, spouse &amp; children arrive in v1.1.</div>
+            <div class="later-body">
+              <div class="subhead">Parents</div>
+              <div class="relrow2"><span class="rl">Father</span><div class="anchor relanchor" data-role="Father" data-add="＋ Add father"><button class="relslot" type="button">＋ Add father</button></div></div>
+              <div class="relrow2"><span class="rl">Mother</span><div class="anchor relanchor" data-role="Mother" data-add="＋ Add mother"><button class="relslot" type="button">＋ Add mother</button></div></div>
+              <div class="subhead mt">Family</div>
+              <div class="relrow2"><span class="rl">Spouse</span><div class="anchor relanchor" data-role="Spouse" data-add="＋ Add spouse"><div class="pfield"><span class="av">JP</span><span class="pn">James Potter</span><button class="iconbtn relrm">✕</button></div></div></div>
+              <div class="relrow2"><span class="rl">Children</span><div class="childstack">
+                <div class="anchor relanchor" data-role="Child" data-add="＋ Add child"><div class="pfield"><span class="av">HP</span><span class="pn">Harry Potter</span><button class="iconbtn relrm">✕</button></div></div>
+                <div class="anchor relanchor" data-role="Child" data-add="＋ Add child"><button class="relslot" type="button">＋ Add child</button></div>
+              </div></div>
+              <div class="famhost"><button class="addbtn addfamily" style="margin-top:12px">＋ Add another family</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mfoot"><span class="dirty">Unsaved changes</span><span class="grow"></span><button class="btn ghost mx">Cancel</button><button class="btn solid">Save</button></div>
+  </div>
+</div>
+
+<script>
+  var EVENT_TYPES=['Baptism','Christening','Burial','Cremation','Residence','Occupation','Education','Immigration','Census','Marriage','Religion','Other'];
+  var PEOPLE=[
+    {n:'James Potter',av:'JP',y:'b. 1960'},{n:'Fleamont Potter',av:'FP',y:'b. 1901'},
+    {n:'Euphemia Potter',av:'EP',y:'b. 1905'},{n:'Harry Potter',av:'HP',y:'b. 1980'},
+    {n:'Petunia Evans',av:'PE',y:'b. 1958'},{n:'Severus Snape',av:'SS',y:'b. 1960'}
+  ];
+  var overlay=document.getElementById('overlay'), modal=document.getElementById('modal');
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function initials(s){return (s.trim().split(/\s+/).slice(0,2).map(function(w){return w[0]||'';}).join('')||'?').toUpperCase();}
+
+  function open(){ overlay.classList.add('open'); modal.classList.add('show'); document.body.style.overflow='hidden'; }
+  function close(){ overlay.classList.remove('open'); modal.classList.remove('show'); document.body.style.overflow=''; }
+
+  document.querySelector('.typegrid').innerHTML=EVENT_TYPES.map(function(t){return '<button type="button">'+t+'</button>';}).join('');
+
+  function addEventRow(list,type){
+    var row=document.createElement('div'); row.className='eventrow';
+    row.innerHTML='<div class="selbox etype">'+esc(type)+'</div><input class="input tnum w-date" placeholder="date…"><span class="eplace">＋ place <span class="soon">soon</span></span><button class="iconbtn erm" aria-label="Remove">✕</button>';
+    list.insertBefore(row, list.querySelector('.addwrap')); row.querySelector('input').focus();
+  }
+  function buildPicker(){
+    var p=document.createElement('div'); p.className='picker open';
+    p.innerHTML='<input class="input ppsearch" placeholder="Search people…">'
+      +'<div class="pplist">'+PEOPLE.map(function(x){return '<button class="ppitem" type="button" data-name="'+esc(x.n)+'" data-av="'+x.av+'"><span class="av">'+x.av+'</span><span class="nm">'+esc(x.n)+'</span><span class="yr">'+x.y+'</span></button>';}).join('')+'</div>'
+      +'<button class="ppcreate" type="button">＋ Create new person <span class="ppq">…</span></button>';
+    return p;
+  }
+  function contentOf(a){ return a.querySelector(':scope > .relslot, :scope > .pfield'); }
+  function fillSlot(a,name,av){
+    var p=a.querySelector(':scope > .picker'); if(p) p.remove();
+    var pf=document.createElement('div'); pf.className='pfield';
+    pf.innerHTML='<span class="av">'+esc(av)+'</span><span class="pn">'+esc(name)+'</span><button class="iconbtn relrm" aria-label="Remove">✕</button>';
+    a.replaceChild(pf, contentOf(a));
+  }
+  function emptySlot(a){ var b=document.createElement('button'); b.type='button'; b.className='relslot'; b.textContent=a.dataset.add; a.replaceChild(b, contentOf(a)); }
+  function openPicker(a){ closeAll(a); var p=a.querySelector(':scope > .picker'); if(p){ p.classList.toggle('open'); return; } p=buildPicker(); a.appendChild(p); var s=p.querySelector('.ppsearch'); if(s) s.focus(); }
+  function addFamily(btn){
+    var fam=document.createElement('div');
+    fam.innerHTML='<div class="subhead mt">Family</div>'
+      +'<div class="relrow2"><span class="rl">Spouse</span><div class="anchor relanchor" data-role="Spouse" data-add="＋ Add spouse"><button class="relslot" type="button">＋ Add spouse</button></div></div>'
+      +'<div class="relrow2"><span class="rl">Children</span><div class="childstack"><div class="anchor relanchor" data-role="Child" data-add="＋ Add child"><button class="relslot" type="button">＋ Add child</button></div></div></div>';
+    while(fam.firstChild){ btn.parentElement.insertBefore(fam.firstChild, btn); }
+  }
+  function closeAll(except){
+    document.querySelectorAll('.picker').forEach(function(p){ if(except&&except.contains(p)) return; if(p.classList.contains('open')) p.classList.remove('open'); else p.remove(); });
+    document.querySelectorAll('.typegrid.open').forEach(function(g){ g.classList.remove('open'); });
+  }
+
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    if(t.closest('#openbtn')){ open(); return; }
+    if(t.closest('.mx')){ close(); return; }
+    if(t===overlay){ close(); return; }
+    if(!overlay.classList.contains('open')) return;
+    if(t.closest('#previewbtn')){ var pb=t.closest('#previewbtn'); modal.classList.toggle('preview'); pb.textContent=modal.classList.contains('preview')?'◂ Back to v1 view':'Preview later-stage ▸'; return; }
+    var ae=t.closest('.addevent'); if(ae){ var g=ae.parentElement.querySelector('.typegrid'); var was=g.classList.contains('open'); closeAll(); if(!was) g.classList.add('open'); return; }
+    var tb=t.closest('.typegrid button'); if(tb){ addEventRow(tb.closest('.eventlist'), tb.textContent); tb.closest('.typegrid').classList.remove('open'); return; }
+    if(t.closest('.erm')){ t.closest('.eventrow').remove(); return; }
+    if(t.closest('.relslot')){ openPicker(t.closest('.relanchor')); return; }
+    var it=t.closest('.ppitem'); if(it){ fillSlot(it.closest('.relanchor'), it.dataset.name, it.dataset.av); return; }
+    var cr=t.closest('.ppcreate'); if(cr){ var a=cr.closest('.relanchor'); var q=(a.querySelector('.ppsearch').value||'').trim(); fillSlot(a, q||'New person', initials(q||'New person')); return; }
+    if(t.closest('.relrm')){ emptySlot(t.closest('.relanchor')); return; }
+    if(t.closest('.addfamily')){ addFamily(t.closest('.addfamily')); return; }
+    if(t.closest('.picker')||t.closest('.typegrid')) return;
+    closeAll();
+  });
+  document.addEventListener('input',function(e){
+    if(e.target.classList.contains('ppsearch')){
+      var q=e.target.value.toLowerCase(), pop=e.target.closest('.picker');
+      pop.querySelectorAll('.ppitem').forEach(function(it){ it.style.display = it.dataset.name.toLowerCase().indexOf(q)>=0?'':'none'; });
+      var qq=pop.querySelector('.ppq'); if(qq) qq.textContent = e.target.value ? ('“'+e.target.value+'”') : '…';
+    }
+  });
+  document.addEventListener('keydown', function(e){
+    if(!overlay.classList.contains('open')) return;
+    if(e.key==='Escape'){ if(document.querySelector('.picker.open, .typegrid.open')){ closeAll(); } else { close(); } }
+  });
+</script>
+
+</body>
+</html>

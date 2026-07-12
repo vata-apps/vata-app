@@ -159,6 +159,7 @@
     "editButtonAria": "Edit person",
     "sections": {
       "names": "Names",
+      "primaryName": "Primary name",
       "otherNames": "Other names",
       "lifeEvents": "Life events",
       "lifeEventsHint": "Dates only — places will be added once a place picker exists.",
@@ -191,6 +192,8 @@
       "removeAria": "Remove this event"
     },
     "relations": {
+      "fatherLabel": "Father",
+      "motherLabel": "Mother",
       "addFather": "Add father",
       "addMother": "Add mother",
       "spouse": "Spouse",
@@ -210,6 +213,7 @@
       "label": "Notes"
     },
     "actions": {
+      "close": "Close",
       "cancel": "Cancel",
       "save": "Save",
       "saveNew": "Save person"
@@ -219,7 +223,8 @@
       "title": "Discard unsaved changes?",
       "description": "You have unsaved changes. If you close now, they will be lost.",
       "discard": "Discard changes",
-      "keepEditing": "Keep editing"
+      "keepEditing": "Keep editing",
+      "indicator": "Unsaved changes"
     }
   }
 }

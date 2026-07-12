@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relations tab — table mockup</title>
+<!--
+  Recovered from Claude artifact dc8b254d-1d95-4adc-b53c-e062f7f1bd36 (updated 2026-07-04).
+  Direction for the Relations tab: reuse EntityTable — a single flat, column-sortable list
+  (like every other page), NOT bespoke grouped rows. Default sort = hidden family rank
+  (Parents → Siblings → Half-siblings → Spouses → Children), shown by the arrow on "Name".
+-->
+<style>
+  :root {
+    --gray-1: #fcfcfc; --gray-2: #f9f9f9; --gray-3: #f0f0f0; --gray-4: #e8e8e8;
+    --gray-5: #e0e0e0; --gray-6: #d9d9d9; --gray-7: #cecece; --gray-8: #bbbbbb;
+    --gray-9: #8d8d8d; --gray-10: #838383; --gray-11: #646464; --gray-12: #202020;
+    --indigo-3: #e1e6fb; --indigo-9: #3e63dd; --indigo-11: #3a5bc7;
+    --card-bg: #ffffff;
+    --page-bg: var(--gray-1);
+    --radius: 8px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --gray-1: #111111; --gray-2: #191919; --gray-3: #222222; --gray-4: #2a2a2a;
+      --gray-5: #313131; --gray-6: #3a3a3a; --gray-7: #484848; --gray-8: #606060;
+      --gray-9: #6e6e6e; --gray-10: #7b7b7b; --gray-11: #b4b4b4; --gray-12: #eeeeee;
+      --indigo-3: #1f2c4d; --indigo-9: #5472e4; --indigo-11: #9eb1f7;
+      --card-bg: #191919;
+      --page-bg: var(--gray-1);
+    }
+  }
+  :root[data-theme="dark"] {
+    --gray-1: #111111; --gray-2: #191919; --gray-3: #222222; --gray-4: #2a2a2a;
+    --gray-5: #313131; --gray-6: #3a3a3a; --gray-7: #484848; --gray-8: #606060;
+    --gray-9: #6e6e6e; --gray-10: #7b7b7b; --gray-11: #b4b4b4; --gray-12: #eeeeee;
+    --indigo-3: #1f2c4d; --indigo-9: #5472e4; --indigo-11: #9eb1f7;
+    --card-bg: #191919;
+    --page-bg: var(--gray-1);
+  }
+  :root[data-theme="light"] {
+    --gray-1: #fcfcfc; --gray-2: #f9f9f9; --gray-3: #f0f0f0; --gray-4: #e8e8e8;
+    --gray-5: #e0e0e0; --gray-6: #d9d9d9; --gray-7: #cecece; --gray-8: #bbbbbb;
+    --gray-9: #8d8d8d; --gray-10: #838383; --gray-11: #646464; --gray-12: #202020;
+    --indigo-3: #e1e6fb; --indigo-9: #3e63dd; --indigo-11: #3a5bc7;
+    --card-bg: #ffffff;
+    --page-bg: var(--gray-1);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--gray-12);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+    padding: 32px 20px 64px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+
+  .annot {
+    border: 1px dashed var(--gray-7);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--gray-11);
+    margin-bottom: 24px;
+  }
+  .annot b { color: var(--gray-12); }
+
+  .table-card {
+    background: var(--card-bg);
+    border: 1px solid var(--gray-5);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .scroller { overflow-x: auto; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: var(--gray-10);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--gray-5);
+    white-space: nowrap;
+  }
+  thead th.sortable { cursor: pointer; user-select: none; }
+  thead th .arrow { display: inline-block; margin-left: 4px; color: var(--indigo-11); }
+  tbody td { padding: 11px 16px; border-bottom: 1px solid var(--gray-4); vertical-align: middle; line-height: 1.5; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--gray-2); }
+
+  .name { font-weight: 500; }
+  .badge {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    color: var(--indigo-11);
+    background: var(--indigo-3);
+    border-radius: 999px;
+    padding: 2px 7px;
+    margin-left: 6px;
+  }
+  .via { color: var(--gray-10); font-size: 12px; margin-top: 4px; }
+  .nums { font-variant-numeric: tabular-nums; color: var(--gray-11); white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="annot">
+    <b>Option 1 — <code>EntityTable</code> réutilisé, mockup v3.</b> Focal person : Thomas Hayes.
+    Plus d'en-têtes de groupe : une seule liste plate, triable par colonne (comme toutes les autres
+    pages de l'app). Tri par défaut = rang familial caché (Parents → Siblings → Half-siblings →
+    Spouses → Children), indiqué ici par la flèche sur "Name". Cliquer "Born"/"Died" re-trie
+    normalement, comme n'importe quelle autre <code>EntityTable</code>.
+  </div>
+
+  <div class="table-card">
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th class="sortable">Name <span class="arrow">↑</span></th>
+            <th>Relation</th>
+            <th class="sortable">Born</th>
+            <th class="sortable">Died</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">Robert Hayes</td><td>Father</td><td class="nums">1930</td><td class="nums">1995</td></tr>
+          <tr><td class="name">Susan Doyle</td><td>Mother</td><td class="nums">1935</td><td class="nums">2010</td></tr>
+
+          <tr><td class="name">Margaret Hayes</td><td>Sister</td><td class="nums">1958</td><td class="nums">—</td></tr>
+          <tr><td class="name">David Hayes</td><td>Brother</td><td class="nums">1960</td><td class="nums">—</td></tr>
+          <tr><td class="name">Helen Hayes</td><td>Sister</td><td class="nums">1965</td><td class="nums">—</td></tr>
+
+          <tr>
+            <td class="name">James Hayes</td>
+            <td>Half-brother<span class="badge">Paternal</span><div class="via">via Robert Hayes &amp; Eleanor Finch</div></td>
+            <td class="nums">1954</td><td class="nums">—</td>
+          </tr>
+          <tr>
+            <td class="name">Anne Cole</td>
+            <td>Half-sister<span class="badge">Maternal</span><div class="via">via Susan Doyle &amp; William Cole</div></td>
+            <td class="nums">1975</td><td class="nums">—</td>
+          </tr>
+          <tr>
+            <td class="name">Peter Cole</td>
+            <td>Half-brother<span class="badge">Maternal</span><div class="via">via Susan Doyle &amp; William Cole</div></td>
+            <td class="nums">1978</td><td class="nums">—</td>
+          </tr>
+
+          <tr><td class="name">Linda Marsh</td><td>Wife</td><td class="nums">1964</td><td class="nums">—</td></tr>
+          <tr><td class="name">Carol Reyes</td><td>Wife</td><td class="nums">1970</td><td class="nums">—</td></tr>
+
+          <tr><td class="name">Oliver Hayes</td><td>Son<div class="via">via Linda Marsh</div></td><td class="nums">1990</td><td class="nums">—</td></tr>
+          <tr><td class="name">Grace Hayes</td><td>Daughter<div class="via">via Linda Marsh</div></td><td class="nums">1993</td><td class="nums">—</td></tr>
+          <tr><td class="name">Ethan Hayes</td><td>Son<div class="via">via Carol Reyes</div></td><td class="nums">2003</td><td class="nums">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
