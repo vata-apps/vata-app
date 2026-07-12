@@ -285,4 +285,31 @@ describe('PersonEditorDialog', () => {
 
     expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(1);
   });
+
+  it('confirms before removing a family that has children', async () => {
+    const user = userEvent.setup();
+    renderDialog({ mode: 'create' });
+
+    // Give the family a child so removing it would detach someone.
+    await user.click(screen.getByRole('button', { name: 'Add child' }));
+    await user.type(screen.getByPlaceholderText('Search by name…'), 'New Kid');
+    await user.click(screen.getByRole('button', { name: 'Create "New Kid"' }));
+    expect(screen.getByText('New Kid')).toBeInTheDocument();
+
+    // Removing now asks for confirmation rather than dropping the family immediately.
+    await user.click(screen.getByRole('button', { name: 'Remove this family' }));
+    expect(screen.getByText('Remove this family?')).toBeInTheDocument();
+    expect(screen.getByText('New Kid')).toBeInTheDocument();
+
+    // Keeping the family dismisses the dialog and leaves the row intact.
+    await user.click(screen.getByRole('button', { name: 'Keep family' }));
+    expect(screen.queryByText('Remove this family?')).not.toBeInTheDocument();
+    expect(screen.getByText('New Kid')).toBeInTheDocument();
+
+    // Confirming removes the family for good.
+    await user.click(screen.getByRole('button', { name: 'Remove this family' }));
+    await user.click(screen.getByRole('button', { name: 'Remove family' }));
+    expect(screen.queryByText('Remove this family?')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Add spouse' })).not.toBeInTheDocument();
+  });
 });

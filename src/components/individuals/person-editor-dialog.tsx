@@ -499,6 +499,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
   const [hydrated, setHydrated] = useState(false);
   const [addEventMenuOpen, setAddEventMenuOpen] = useState(false);
   const [confirmDiscardOpen, setConfirmDiscardOpen] = useState(false);
+  const [confirmRemoveFamilyKey, setConfirmRemoveFamilyKey] = useState<string | null>(null);
   const initialSnapshotRef = useRef('');
 
   useEffect(() => {
@@ -716,6 +717,20 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
 
   function removeFamily(key: string): void {
     setForm((prev) => ({ ...prev, families: prev.families.filter((row) => row.key !== key) }));
+  }
+
+  // Removing a family with children detaches those children — confirm first.
+  function requestRemoveFamily(row: FamilyRelationRow): void {
+    if (row.children.length > 0) {
+      setConfirmRemoveFamilyKey(row.key);
+      return;
+    }
+    removeFamily(row.key);
+  }
+
+  function confirmRemoveFamily(): void {
+    if (confirmRemoveFamilyKey) removeFamily(confirmRemoveFamilyKey);
+    setConfirmRemoveFamilyKey(null);
   }
 
   const eventTypesByTag = new Map(
@@ -1056,7 +1071,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                                 className={s.iconbtn}
                                 disabled={mutation.isPending}
                                 aria-label={t('personEditor.relations.removeFamilyAria')}
-                                onClick={() => removeFamily(row.key)}
+                                onClick={() => requestRemoveFamily(row)}
                               >
                                 <Icon name="x" size={16} />
                               </button>
@@ -1173,6 +1188,41 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
               </button>
               <button type="button" className={s.btnDanger} onClick={reallyClose}>
                 {t('personEditor.unsavedChanges.discard')}
+              </button>
+            </div>
+          </Dialog.Popup>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      <Dialog.Root
+        open={confirmRemoveFamilyKey !== null}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) setConfirmRemoveFamilyKey(null);
+        }}
+      >
+        <Dialog.Portal>
+          <Dialog.Backdrop className={s.alertBackdrop} />
+          <Dialog.Popup className={s.alertPopup}>
+            <Dialog.Title className={s.alertTitle}>
+              {t('personEditor.removeFamilyConfirm.title')}
+            </Dialog.Title>
+            <Dialog.Description className={s.alertDesc}>
+              {t('personEditor.removeFamilyConfirm.description', {
+                count:
+                  form.families.find((row) => row.key === confirmRemoveFamilyKey)?.children
+                    .length ?? 0,
+              })}
+            </Dialog.Description>
+            <div className={s.alertActions}>
+              <button
+                type="button"
+                className={s.btnGhost}
+                onClick={() => setConfirmRemoveFamilyKey(null)}
+              >
+                {t('personEditor.removeFamilyConfirm.keepFamily')}
+              </button>
+              <button type="button" className={s.btnDanger} onClick={confirmRemoveFamily}>
+                {t('personEditor.removeFamilyConfirm.confirm')}
               </button>
             </div>
           </Dialog.Popup>

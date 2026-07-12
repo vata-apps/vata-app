@@ -224,6 +224,13 @@
       "discard": "Discard changes",
       "keepEditing": "Keep editing",
       "indicator": "Unsaved changes"
+    },
+    "removeFamilyConfirm": {
+      "title": "Remove this family?",
+      "description_one": "This family has {{count}} child. Removing the family will unlink them; the person stays in your tree.",
+      "description_other": "This family has {{count}} children. Removing the family will unlink them; the people stay in your tree.",
+      "confirm": "Remove family",
+      "keepFamily": "Keep family"
     }
   }
 }

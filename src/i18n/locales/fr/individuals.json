@@ -224,6 +224,13 @@
       "discard": "Abandonner les modifications",
       "keepEditing": "Continuer l'édition",
       "indicator": "Modifications non enregistrées"
+    },
+    "removeFamilyConfirm": {
+      "title": "Retirer cette famille?",
+      "description_one": "Cette famille compte {{count}} enfant. Retirer la famille le dissociera; la personne demeure dans votre arbre.",
+      "description_other": "Cette famille compte {{count}} enfants. Retirer la famille les dissociera; les personnes demeurent dans votre arbre.",
+      "confirm": "Retirer la famille",
+      "keepFamily": "Conserver la famille"
     }
   }
 }
