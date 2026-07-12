@@ -1,0 +1,40 @@
+.husky/pre-commit
+  s_27bb43d326fecf::t_db45d3abf6a8ab 1-11
+.opencode/agents/design-system-expert.md
+  s_27bb43d326fecf::t_5b4a1d33b38d8f 4-8
+  s_27bb43d326fecf::t_86ce8bdedd55a7 71
+  s_27bb43d326fecf::t_ad9be3bb1d0257 24
+.opencode/commands/execute-issue.md
+  s_27bb43d326fecf::t_491f870e46d0e5 1-21
+opencode.json
+  s_27bb43d326fecf::t_454b9cd5075845 1-17
+.opencode/agents/code-reviewer.md
+  s_27bb43d326fecf::t_58055337952539 22-27
+  s_27bb43d326fecf::t_8b4165fb987b57 4-7
+.githooks/sql-guard.sh
+  s_27bb43d326fecf::t_a14769235b1c26 2-62
+.opencode/agents/execute-issue.md
+  s_27bb43d326fecf::t_f6de53367c7101 1-165
+.opencode/agents/test-writer.md
+  s_27bb43d326fecf::t_7ed2953256f562 26
+  s_27bb43d326fecf::t_42572923c5a665 7-10
+  s_27bb43d326fecf::t_4cd612bfcd4ea3 4-6
+.opencode/agents/docs-consistency.md
+  s_27bb43d326fecf::t_e6f8dd9dbe7404 4-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "0f59e97b1089fcd896af000ca6c43cd9706e9cb3",
+  "prompts": {},
+  "sessions": {
+    "s_27bb43d326fecf": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0a7ade666ffefZll1oATED0Pzn",
+        "model": "big-pickle"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
