@@ -950,6 +950,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                                 className={s.switchRoot}
                                 checked={!form.isLiving}
                                 disabled={mutation.isPending}
+                                aria-label={t('personEditor.status.deceased')}
                                 onCheckedChange={(checked) => setDeceased(checked)}
                               >
                                 <Switch.Thumb className={s.switchThumb} />

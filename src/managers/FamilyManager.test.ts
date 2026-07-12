@@ -340,4 +340,35 @@ describe('FamilyManager.saveRelations', () => {
     const newChildId = childIds.find((id) => id !== keptChildId);
     expect((await getPrimaryName(newChildId ?? ''))?.givenNames).toBe('New');
   });
+
+  it('deletes spouse families dropped from the list while keeping listed and new ones', async () => {
+    const personId = await createNamedIndividual('Person', 'Doe', 'M');
+    const keptSpouseId = await createNamedIndividual('Kept', 'Doe', 'F');
+    const removedSpouseId = await createNamedIndividual('Removed', 'Doe', 'F');
+    const newSpouseId = await createNamedIndividual('New', 'Doe', 'F');
+
+    const keptFamilyId = await createFamily({});
+    await addFamilyMember({ familyId: keptFamilyId, individualId: personId, role: 'husband' });
+    await addFamilyMember({ familyId: keptFamilyId, individualId: keptSpouseId, role: 'wife' });
+    const removedFamilyId = await createFamily({});
+    await addFamilyMember({ familyId: removedFamilyId, individualId: personId, role: 'husband' });
+    await addFamilyMember({
+      familyId: removedFamilyId,
+      individualId: removedSpouseId,
+      role: 'wife',
+    });
+
+    // The editor lists the kept family and one newly added family; the second
+    // pre-existing family is absent because the user removed it.
+    await FamilyManager.saveRelations(personId, 'M', {
+      families: [
+        { id: keptFamilyId, spouse: { id: keptSpouseId }, children: [] },
+        { spouse: { id: newSpouseId }, children: [] },
+      ],
+    });
+
+    const families = await FamilyManager.getSpouseFamiliesWithMembers(personId);
+    expect(families.map((f) => f.wife?.id).sort()).toEqual([keptSpouseId, newSpouseId].sort());
+    expect(await FamilyManager.getById(removedFamilyId)).toBeNull();
+  });
 });

@@ -525,6 +525,8 @@ export const relslot = style({
     '&:hover': { borderColor: vars.color.accent, color: vars.color.accent },
     '&:focus-visible': focusRing,
     '&:disabled': { cursor: 'default', opacity: 0.6 },
+    // Keep the resting look while disabled — no accent hover on a dead control.
+    '&:disabled:hover': { borderColor: vars.color.borderStrong, color: vars.color.faint },
   },
 });
 export const pfield = style({

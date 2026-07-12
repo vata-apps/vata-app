@@ -377,8 +377,21 @@ export class FamilyManager {
     const individualRole: FamilyRole = individualGender === 'F' ? 'wife' : 'husband';
     const spouseRole: FamilyRole = individualRole === 'husband' ? 'wife' : 'husband';
 
+    // Snapshot pre-existing spouse families before the loop can create new ones,
+    // so removal reconciliation only targets unions the caller dropped.
+    const priorSpouseFamilyIds = (await getSpouseFamilies(individualId)).map((family) => family.id);
+    const keptFamilyIds = new Set(
+      input.families.map((family) => family.id).filter((id): id is string => id !== undefined)
+    );
+
     for (const familyInput of input.families) {
       await saveSpouseFamily(individualId, individualRole, spouseRole, familyInput);
+    }
+
+    // A pre-existing spouse family no longer listed was removed in the editor:
+    // delete the union (cascades to its member links; the individuals remain).
+    for (const familyId of priorSpouseFamilyIds) {
+      if (!keptFamilyIds.has(familyId)) await deleteFamily(familyId);
     }
   }
 }
