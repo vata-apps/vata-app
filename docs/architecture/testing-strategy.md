@@ -23,7 +23,7 @@ A good test survives a complete internal refactoring as long as the observable b
 
 Vitest is pinned to v2 for compatibility with Vite 5. The test configuration lives in `vitest.config.ts` (separate from `vite.config.ts` to avoid version conflicts).
 
-Test commands (`pnpm test`, `pnpm test:coverage`, `cargo test`) are listed in `CLAUDE.md`.
+Test commands (`pnpm test`, `pnpm test:coverage`, `cargo test`) are listed in `AGENTS.md`.
 
 ---
 
