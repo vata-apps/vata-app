@@ -27,7 +27,7 @@ for FILE_PATH in "$@"; do
   esac
   [ $is_db_file -eq 0 ] && continue
 
-  CONTENT=$(cat "$FILE_PATH" 2>/dev/null)
+  CONTENT=$(git show :"$FILE_PATH" 2>/dev/null || cat "$FILE_PATH" 2>/dev/null)
   [ -z "$CONTENT" ] && continue
 
   # --- HARD BLOCK: SELECT * ---
@@ -38,7 +38,7 @@ for FILE_PATH in "$@"; do
   fi
 
   # --- WARNING: SQL inside a template literal with ${...} interpolation ---
-  if echo "$CONTENT" | grep -qE '`[^`]*(SELECT|INSERT|UPDATE|DELETE)[^`]*[$][{]'; then
+  if echo "$CONTENT" | grep -qiE '`[^`]*(SELECT|INSERT|UPDATE|DELETE)[^`]*[$][{]'; then
     WARNINGS="${WARNINGS}[WARNING] SQL string interpolation detected in ${FILE_PATH} — use parameterized queries (\$1, \$2) instead of template literals.\n"
     WARNINGS="${WARNINGS}  Example: db.execute('SELECT id FROM trees WHERE id = \$1', [id])\n\n"
   fi

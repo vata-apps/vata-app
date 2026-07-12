@@ -81,7 +81,7 @@ Before pushing:
 
 1. Run tests: `pnpm vitest run` for the affected modules. Stop if tests fail and you cannot fix them in one attempt — report the failure.
 2. Run `pnpm tsc --noEmit` — must pass with zero errors.
-3. Lint: `pnpm eslint <changed-files>` — must pass with zero warnings.
+3. Lint: `pnpm eslint --max-warnings 0 <changed-files>` — must pass with zero warnings.
 
 These are also enforced by the pre-commit hook, but running them now avoids a failed commit.
 
@@ -91,7 +91,7 @@ Invoke **code-reviewer** on the diff. Give it the list of changed files (`git di
 
 ### Step 8: Simplify
 
-Run the simplify skill: load `.opencode/skills/` (or relevant skill entry) and apply its findings to your changes. Remove dead code, clarify naming, collapse redundancy.
+Run the `simplify` skill (loaded from the user's global skills at `~/.agents/skills/simplify/`) and apply its findings to your changes. Remove dead code, clarify naming, collapse redundancy. If the skill is not available, apply these principles manually: remove unused exports, collapse duplicated logic, clarify unclear names.
 
 ### Step 9: Commit and push
 
@@ -118,7 +118,7 @@ Print this template to stdout, filled in:
 ### Acceptance Criteria
 - [x] Criterion 1
 - [x] Criterion 2
-- [ ] Criterion 3 (manque X)
+- [ ] Criterion 3 (missing X)
 
 ### Branch
 feat/issue-<N> pushed

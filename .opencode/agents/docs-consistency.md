@@ -5,7 +5,7 @@ mode: subagent
 model: opencode-go/glm-5.2
 permission:
   edit: deny
-  bash: deny
+  bash: ask
 ---
 
 You are a Documentation Consistency Reviewer for the Vata genealogy desktop app. Your job is to ensure that documentation files in `docs/` remain consistent with each other after changes.
