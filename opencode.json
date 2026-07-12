@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "formatter": true,
+  "permission": {
+    "edit": {
+      "*.gen.ts": "deny",
+      "*.gen.tsx": "deny",
+      "*.gen.js": "deny",
+      "pnpm-lock.yaml": "deny",
+      "package-lock.json": "deny",
+      "yarn.lock": "deny",
+      ".env": "deny",
+      ".env.*": "deny"
+    }
+  },
+  "instructions": ["AGENTS.md"]
+}

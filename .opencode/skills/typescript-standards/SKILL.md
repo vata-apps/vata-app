@@ -114,4 +114,4 @@ const store = useAppStore();
 - **Use union types for entity ID prefixes**: Use `EntityPrefix` (`'I' | 'F' | 'E' | 'P' | 'S' | 'R'`) from `src/lib/entityId.ts`, not bare `string`.
 - **Wrap `navigator.clipboard` calls in try/catch**: The Clipboard API may not be available in all contexts (e.g., non-secure origins, Tauri webview restrictions).
 - **Async `useEffect` must use a mounted flag or `AbortController`**: Prevent state updates after unmount by checking a `mounted` flag before calling `setState`.
-- **Shared pitfalls live in CLAUDE.md**: the React.Fragment `key` rule, the `import.meta.env.DEV` debug-UI guard, and the no-unused-exports rule are in CLAUDE.md "Common Pitfalls" — not repeated here.
+- **Shared pitfalls live in AGENTS.md**: the React.Fragment `key` rule, the `import.meta.env.DEV` debug-UI guard, and the no-unused-exports rule are in AGENTS.md "Pitfalls" — not repeated here.

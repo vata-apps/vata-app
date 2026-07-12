@@ -10,7 +10,7 @@ GitHub issue #{{ISSUE_NUMBER}}: **{{ISSUE_TITLE}}**
 
 # How to work
 
-Read `CLAUDE.md` at the repo root **before doing anything**. It defines all project conventions — architecture, path aliases, i18n, DB rules, scope discipline, conventional commits, the "bug fixes — root cause first" rule. Treat its content as binding; do not restate or override it.
+Read `AGENTS.md` at the repo root **before doing anything**. It defines all project conventions — architecture, path aliases, i18n, DB rules, scope discipline, conventional commits, the "bug fixes — root cause first" rule. Treat its content as binding; do not restate or override it.
 
 Then plan briefly and implement the change described in the issue body.
 
@@ -26,14 +26,14 @@ This runs `pnpm lint`, `pnpm format:check`, `pnpm build`, and `pnpm vitest run` 
 
 # Environment-specific constraints
 
-These are particular to this CI run and are **not** in `CLAUDE.md`:
+These are particular to this CI run and are **not** in `AGENTS.md`:
 
 - The Tauri desktop app cannot be launched here (no display server). `pnpm tauri:dev` / `pnpm tauri:build` are unavailable. UI verification is performed manually by the maintainer after you finish.
 - Do not modify anything under `.sandcastle/` or `.github/workflows/agent-run.yml` unless the issue is explicitly about the agent workflow itself.
 
 # Commit before completing
 
-You **must commit your changes** with `git add` + `git commit` before signaling completion. Sandcastle collects commits from the branch — uncommitted edits are lost. Make one or more commits with conventional commit messages (`feat:`, `fix:`, `refactor:`, …) as described in `CLAUDE.md`. After committing, confirm `git status` shows a clean working tree.
+You **must commit your changes** with `git add` + `git commit` before signaling completion. Sandcastle collects commits from the branch — uncommitted edits are lost. Make one or more commits with conventional commit messages (`feat:`, `fix:`, `refactor:`, …) as described in `AGENTS.md`. After committing, confirm `git status` shows a clean working tree.
 
 # Pull request title and description
 

@@ -22,7 +22,7 @@ Each block below is one review comment, with its `id`, location, the diff hunk i
 
 # How to work
 
-Read `CLAUDE.md` at the repo root **before doing anything** — it defines all project conventions (architecture, i18n, DB rules, scope discipline, conventional commits). Treat its content as binding; do not restate or override it.
+Read `AGENTS.md` at the repo root **before doing anything** — it defines all project conventions (architecture, i18n, DB rules, scope discipline, conventional commits). Treat its content as binding; do not restate or override it.
 
 The PR's branch is checked out — the code you previously wrote is in front of you. Use `git diff main...HEAD` to see what the PR currently contains.
 
@@ -45,7 +45,7 @@ This runs `pnpm lint`, `pnpm format:check`, `pnpm build`, and `pnpm vitest run` 
 
 # Environment-specific constraints
 
-These are particular to this CI run and are **not** in `CLAUDE.md`:
+These are particular to this CI run and are **not** in `AGENTS.md`:
 
 - The Tauri desktop app cannot be launched here (no display server). `pnpm tauri:dev` / `pnpm tauri:build` are unavailable. UI verification is performed manually by the maintainer.
 - Do not modify anything under `.sandcastle/` or `.github/workflows/` unless the review explicitly asks for it.
