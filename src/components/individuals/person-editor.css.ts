@@ -3,6 +3,10 @@
  * Base UI supplies behavior; these styles supply the warm-earth look over the
  * `src/design/theme.css.ts` token contract. Shared by `person-editor-dialog.tsx`
  * and `person-picker.tsx`.
+ *
+ * Generic controls (Button, TextField, Select, SegmentedControl, Switch, Dialog,
+ * Popover) now live in `src/components/ui/`; this file keeps only the
+ * layout/feature-specific atoms that have no behavior to encapsulate.
  */
 import { style } from '@vanilla-extract/css';
 
@@ -15,27 +19,9 @@ const focusRing = {
 
 /* ---- dialog chrome -------------------------------------------------- */
 
-export const backdrop = style({
-  position: 'fixed',
-  inset: 0,
-  zIndex: 100,
-  background: vars.color.scrim,
-});
-
 export const modal = style({
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  zIndex: 101,
-  fontFamily: vars.font.sans,
-  color: vars.color.text,
   width: 'calc(100vw - 44px)',
   maxWidth: 1180,
-  background: vars.color.panel,
-  border: `1px solid ${vars.color.borderStrong}`,
-  borderRadius: 14,
-  boxShadow: vars.shadow.lg,
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
@@ -186,29 +172,6 @@ export const subheadMt = style({ marginTop: 14 });
 
 export const field = style({ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 });
 export const fieldLabel = style({ fontSize: 11.5, fontWeight: 600, color: vars.color.text });
-export const input = style({
-  height: 34,
-  border: `1px solid ${vars.color.borderStrong}`,
-  background: vars.color.panel,
-  color: vars.color.text,
-  borderRadius: vars.radius.sm,
-  padding: '0 10px',
-  fontSize: 13.5,
-  width: '100%',
-  boxShadow: 'inset 0 1px 1px rgba(0,0,0,.03)',
-  fontFamily: 'inherit',
-  selectors: {
-    '&:hover': { borderColor: vars.color.faint },
-    '&::placeholder': { color: vars.color.faint },
-    '&:focus-visible': { ...focusRing, outlineOffset: 1, borderColor: vars.color.accent },
-    '&:disabled': { opacity: 0.55, cursor: 'not-allowed' },
-    '&:disabled:hover': { borderColor: vars.color.borderStrong },
-  },
-});
-export const textarea = style([
-  input,
-  { height: 'auto', minHeight: 62, padding: '8px 10px', lineHeight: 1.45, resize: 'vertical' },
-]);
 export const tnum = style({ fontVariantNumeric: 'tabular-nums' });
 export const fgridC2 = style({ display: 'grid', gap: '10px 12px', gridTemplateColumns: '1fr 1fr' });
 export const fgridC3 = style({
@@ -239,214 +202,14 @@ export const familyHead = style({ display: 'flex', alignItems: 'center', gap: 8,
 /** Same type ramp as {@link subhead}; the flex header owns the spacing, so drop its margin. */
 export const familyTitle = style([subhead, { margin: 0 }]);
 
-export const seg = style({
-  display: 'inline-flex',
-  background: vars.color.subtle,
-  borderRadius: 8,
-  padding: 3,
-  gap: 2,
-  width: 'max-content',
-});
-export const segItem = style({
-  padding: '6px 13px',
-  borderRadius: 6,
-  fontSize: 12.5,
-  fontWeight: 600,
-  color: vars.color.muted,
-  cursor: 'pointer',
-  border: 'none',
-  background: 'transparent',
-  fontFamily: 'inherit',
-  selectors: {
-    '&:disabled': { cursor: 'default', opacity: 0.6 },
-    '&:focus-visible': focusRing,
-  },
-});
-export const segItemOn = style({
-  background: vars.color.panel,
-  color: vars.color.text,
-  boxShadow: vars.shadow.sm,
-});
-
-export const switchRoot = style({
-  width: 38,
-  height: 22,
-  borderRadius: 99,
-  background: vars.color.borderStrong,
-  position: 'relative',
-  flex: '0 0 auto',
-  cursor: 'pointer',
-  border: 'none',
-  padding: 0,
-  selectors: {
-    '&[data-checked]': { background: vars.color.accent },
-    '&:focus-visible': focusRing,
-    '&:disabled': { cursor: 'default', opacity: 0.6 },
-  },
-});
-export const switchThumb = style({
-  position: 'absolute',
-  top: 2,
-  left: 2,
-  width: 18,
-  height: 18,
-  borderRadius: '50%',
-  background: '#fff',
-  boxShadow: vars.shadow.sm,
-  transition: 'left .15s',
-  selectors: { [`${switchRoot}[data-checked] &`]: { left: 18 } },
-});
 export const statusrow = style({ display: 'flex', alignItems: 'center', gap: 10 });
 export const switchLabel = style({ fontSize: 13, fontWeight: 600 });
-
-export const iconbtn = style({
-  width: 30,
-  height: 30,
-  borderRadius: 6,
-  border: '1px solid transparent',
-  background: 'transparent',
-  color: vars.color.faint,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flex: '0 0 auto',
-  selectors: {
-    '&:hover': { background: vars.color.subtle, color: vars.color.danger },
-    '&:focus-visible': focusRing,
-    '&:disabled': { cursor: 'default', opacity: 0.5 },
-  },
-});
-export const addbtn = style({
-  alignSelf: 'flex-start',
-  background: 'transparent',
-  border: `1px dashed ${vars.color.borderStrong}`,
-  color: vars.color.muted,
-  borderRadius: vars.radius.sm,
-  height: 32,
-  padding: '0 12px',
-  fontSize: 12.5,
-  fontWeight: 600,
-  cursor: 'pointer',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 7,
-  fontFamily: 'inherit',
-  selectors: {
-    '&:hover': { borderColor: vars.color.accent, color: vars.color.accent },
-    '&:focus-visible': focusRing,
-    '&:disabled': { cursor: 'default', opacity: 0.6 },
-  },
-});
-
-const btnBase = style({
-  height: 34,
-  borderRadius: vars.radius.sm,
-  padding: '0 16px',
-  fontSize: 13,
-  fontWeight: 600,
-  cursor: 'pointer',
-  border: '1px solid transparent',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: 8,
-  fontFamily: 'inherit',
-  selectors: {
-    '&:focus-visible': focusRing,
-    '&:disabled': { cursor: 'default', opacity: 0.6 },
-  },
-});
-export const btnSolid = style([
-  btnBase,
-  {
-    background: vars.color.accent,
-    color: vars.color.accentText,
-    selectors: { '&:hover:not(:disabled)': { background: vars.color.accentHover } },
-  },
-]);
-export const btnGhost = style([
-  btnBase,
-  {
-    background: 'transparent',
-    color: vars.color.muted,
-    selectors: { '&:hover:not(:disabled)': { color: vars.color.text } },
-  },
-]);
-export const btnDanger = style([
-  btnBase,
-  {
-    background: vars.color.danger,
-    color: vars.color.accentText,
-    selectors: { '&:hover:not(:disabled)': { filter: 'brightness(0.94)' } },
-  },
-]);
 
 export const altrow = style({
   display: 'grid',
   gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr) 128px 30px',
   gap: 8,
   alignItems: 'center',
-});
-
-/* ---- Base UI Select ------------------------------------------------- */
-
-export const selbox = style({
-  height: 34,
-  border: `1px solid ${vars.color.borderStrong}`,
-  background: vars.color.panel,
-  borderRadius: vars.radius.sm,
-  display: 'flex',
-  alignItems: 'center',
-  gap: 6,
-  padding: '0 10px',
-  fontSize: 12.5,
-  color: vars.color.text,
-  cursor: 'pointer',
-  whiteSpace: 'nowrap',
-  fontFamily: 'inherit',
-  width: '100%',
-  selectors: {
-    '&:hover': { borderColor: vars.color.faint },
-    '&:focus-visible': focusRing,
-    '&:disabled': { cursor: 'default', opacity: 0.6 },
-  },
-});
-export const selboxCaret = style({ marginLeft: 'auto', fontSize: 9, color: vars.color.faint });
-/**
- * Z-index for the Base UI positioner wrappers (Popover + Select). Floating UI
- * sets `will-change: transform` inline on these, which creates a stacking
- * context with `z-index: auto` — so any z-index on the popup inside is
- * trapped and the dialog (z 101) wins. Giving the positioner itself a z-index
- * above the dialog lifts the whole context. 105 sits below the discard
- * AlertDialog (110/111) so the confirm prompt still covers the pickers.
- */
-export const positionerZ = style({ zIndex: 105 });
-
-export const selectPopup = style({
-  background: vars.color.panel2,
-  border: `1px solid ${vars.color.borderStrong}`,
-  borderRadius: 11,
-  boxShadow: vars.shadow.lg,
-  padding: 6,
-  minWidth: 160,
-  maxHeight: 260,
-  overflow: 'auto',
-});
-export const selectItem = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '7px 9px',
-  borderRadius: 7,
-  fontSize: 13,
-  color: vars.color.text,
-  cursor: 'pointer',
-  userSelect: 'none',
-  outline: 'none',
-  selectors: {
-    '&[data-highlighted]': { background: vars.color.subtle },
-    '&[data-selected]': { color: vars.color.accent, fontWeight: 600 },
-  },
 });
 
 /* ---- life events ---------------------------------------------------- */

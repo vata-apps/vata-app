@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Popover } from '@base-ui/react/popover';
 
+import { Popover } from '$components/ui/popover';
+import { TextField } from '$components/ui/text-field';
 import { Icon } from '$components/icon';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { useIndividualSearch, useIndividuals } from '$hooks/useIndividuals';
@@ -103,15 +104,9 @@ export function PersonPicker({
         {label}
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Positioner
-          sideOffset={6}
-          align="start"
-          positionMethod="fixed"
-          className={s.positionerZ}
-        >
+        <Popover.Positioner sideOffset={6} align="start" positionMethod="fixed">
           <Popover.Popup className={s.pickerPopup}>
-            <input
-              className={s.input}
+            <TextField
               autoFocus
               placeholder={t('personEditor.picker.searchPlaceholder')}
               value={query}

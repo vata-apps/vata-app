@@ -54,8 +54,49 @@ export const vars = createGlobalThemeContract(
     radius: { base: null, sm: null },
     shadow: { sm: null, lg: null },
     font: { sans: null, serif: null, mono: null },
+    /**
+     * Spacing scale, Tailwind-style: each step is a multiple of 4px.
+     * Only steps currently consumed by the product are declared — gaps are
+     * intentional and signal unfinished scale territory.
+     */
+    space: {
+      '0.5': null,
+      '0.75': null,
+      '1.5': null,
+      '1.75': null,
+      '2': null,
+      '2.25': null,
+      '2.5': null,
+      '2.75': null,
+      '3': null,
+      '3.25': null,
+      '3.5': null,
+      '4': null,
+      '4.5': null,
+      '5': null,
+    },
+    /**
+     * Type scale as size/line-height pairs. Steps are keyed by the consumed
+     * font size in px; the pair keeps font-size and line-height together at
+     * the token layer so components never compose them ad hoc.
+     */
+    text: {
+      '12.5': { fontSize: null, lineHeight: null },
+      '13': { fontSize: null, lineHeight: null },
+      '13.5': { fontSize: null, lineHeight: null },
+      '15': { fontSize: null, lineHeight: null },
+      '16': { fontSize: null, lineHeight: null },
+    },
   },
-  (_value, path) => `vata-${path.join('-')}`
+  (_value, path) =>
+    `vata-${path
+      .map((segment) =>
+        // CSS custom property identifiers cannot contain a leading digit or a
+        // period; escape them so numeric token steps (e.g. space.0.5) remain
+        // valid variables.
+        segment.replace(/\.|^\d/g, (match) => (match === '.' ? '_' : `_${match}`))
+      )
+      .join('-')}`
 );
 
 const font = {
@@ -93,6 +134,29 @@ const light = {
     lg: '0 12px 28px oklch(0.2 0.02 50 / 0.12), 0 4px 10px oklch(0.2 0.02 50 / 0.08)',
   },
   font,
+  space: {
+    '0.5': '2px',
+    '0.75': '3px',
+    '1.5': '6px',
+    '1.75': '7px',
+    '2': '8px',
+    '2.25': '9px',
+    '2.5': '10px',
+    '2.75': '11px',
+    '3': '12px',
+    '3.25': '13px',
+    '3.5': '14px',
+    '4': '16px',
+    '4.5': '18px',
+    '5': '20px',
+  },
+  text: {
+    '12.5': { fontSize: '12.5px', lineHeight: '1.4' },
+    '13': { fontSize: '13px', lineHeight: '1.45' },
+    '13.5': { fontSize: '13.5px', lineHeight: '1.45' },
+    '15': { fontSize: '15px', lineHeight: '1.5' },
+    '16': { fontSize: '16px', lineHeight: '1.5' },
+  },
 };
 
 const dark = {
@@ -122,6 +186,29 @@ const dark = {
     lg: '0 12px 28px oklch(0 0 0 / 0.55), 0 4px 10px oklch(0 0 0 / 0.4)',
   },
   font,
+  space: {
+    '0.5': '2px',
+    '0.75': '3px',
+    '1.5': '6px',
+    '1.75': '7px',
+    '2': '8px',
+    '2.25': '9px',
+    '2.5': '10px',
+    '2.75': '11px',
+    '3': '12px',
+    '3.25': '13px',
+    '3.5': '14px',
+    '4': '16px',
+    '4.5': '18px',
+    '5': '20px',
+  },
+  text: {
+    '12.5': { fontSize: '12.5px', lineHeight: '1.4' },
+    '13': { fontSize: '13px', lineHeight: '1.45' },
+    '13.5': { fontSize: '13.5px', lineHeight: '1.45' },
+    '15': { fontSize: '15px', lineHeight: '1.5' },
+    '16': { fontSize: '16px', lineHeight: '1.5' },
+  },
 };
 
 globalStyle(':root', { vars: assignVars(vars, light) });
