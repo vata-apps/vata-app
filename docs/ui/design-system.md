@@ -16,7 +16,7 @@ There is **no `src/components/ui/` directory**. Internal components under [`src/
 
 ### 1. Clarity
 
-Clearly hierarchized information, readable typography, generous spacing.
+Clear visual hierarchy, readable typography, generous spacing.
 
 ### 2. Efficiency
 
