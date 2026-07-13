@@ -506,6 +506,8 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
     if (!open) {
       setHydrated(false);
       setAddEventMenuOpen(false);
+      setConfirmDiscardOpen(false);
+      setConfirmRemoveFamilyKey(null);
       return;
     }
     if (mode === 'create') {

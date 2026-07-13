@@ -148,7 +148,7 @@ Do NOT run `gh pr create`. Do NOT comment on the issue. Do NOT close anything. T
 ## Rules
 
 - English only in all artifacts, code, commits, and the report.
-- Never edit `*.gen.ts`, `*.gen.tsx`, lockfiles, or `.env` (blocked by permission.ed config too).
+- Never edit `*.gen.ts`, `*.gen.tsx`, lockfiles, or `.env` (blocked by permission.edit config too).
 - One worktree per issue — never work in the main repo working tree.
 - If you cannot complete an acceptance criterion, note it honestly in the report rather than fudging.
 - Co-locate tests with source, follow the testing-standards skill.
