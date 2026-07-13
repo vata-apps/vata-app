@@ -1,0 +1,45 @@
+docs/README.md
+  s_88485b9077f6df::t_8f1448df00bf4c 22,24
+docs/adr/0009-agent-review-feedback.md
+  s_88485b9077f6df::t_99f760206071e1 3-4,58,62,86
+docs/dev-tools/agent-workflow.md
+  s_88485b9077f6df::t_416dab75a6ef8b 82
+  s_88485b9077f6df::t_679baf8480d753 3
+  s_88485b9077f6df::t_6e7c810b1b3f95 24
+  s_88485b9077f6df::t_cdb8b6ca64a099 101,104
+  s_88485b9077f6df::t_a709da2c71c95a 30,33,36,51,76,78
+.github/workflows/agent-run.yml
+  s_88485b9077f6df::t_db326c38c96cab 58
+  s_88485b9077f6df::t_ea29b2f85a6d3c 57
+  s_88485b9077f6df::t_1292c428525350 59-61
+.sandcastle/shared.ts
+  s_88485b9077f6df::t_99f760206071e1 8-9,34-37
+docs/adr/0015-migration-to-opencode-go.md
+  s_88485b9077f6df::t_865fd0cf6fa700 1-115
+.sandcastle/run.ts
+  s_88485b9077f6df::t_99f760206071e1 2,6-8,31-32,44,99
+docs/adr/0008-autonomous-agent-execution.md
+  s_88485b9077f6df::t_99f760206071e1 3-4
+.github/workflows/agent-address-review.yml
+  s_88485b9077f6df::t_b348e535aed656 97
+  s_88485b9077f6df::t_39448b415d4146 96
+  s_88485b9077f6df::t_416f11cc0c2d7d 98-100
+.sandcastle/address-review.ts
+  s_88485b9077f6df::t_99f760206071e1 2,6-8,41-42,54,105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "2ce1ec18af3223b4e533e608f85452542b5f461b",
+  "prompts": {},
+  "sessions": {
+    "s_88485b9077f6df": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0a4b18662ffeMJU6AL217Izfbg",
+        "model": "glm-5.2"
+      },
+      "human_author": null
+    }
+  }
+}
