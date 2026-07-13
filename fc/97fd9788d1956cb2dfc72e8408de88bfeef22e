@@ -1,0 +1,24 @@
+AGENTS.md
+  s_0b0aa687973b03::t_591130db25dcb6 6
+docs/ui/design-system.md
+  s_0b0aa687973b03::t_83963a6405446c 7
+  s_0b0aa687973b03::t_7b437dfdb7f184 3,5,9,11-13
+docs/adr/0015-ui-primitive-layer.md
+  s_0b0aa687973b03::t_8c95f3e411b88d 1-90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "fc97fd9788d1956cb2dfc72e8408de88bfeef22e",
+  "prompts": {},
+  "sessions": {
+    "s_0b0aa687973b03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1a934ad3-58ba-4878-835d-3c2a13877b1b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
