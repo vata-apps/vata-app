@@ -1,0 +1,21 @@
+package.json
+  s_1976163ceb85a3::t_a5a98b4527a5c7 74
+pnpm-lock.yaml
+  s_1976163ceb85a3::t_2a1f9729d7d3fc 82-83,183-184,3920
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "20484c4dbddf1848a6c67088fc3f4297e296febc",
+  "prompts": {},
+  "sessions": {
+    "s_1976163ceb85a3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eeb9037a-445d-4af9-b8dc-3544a12eb2d2",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
