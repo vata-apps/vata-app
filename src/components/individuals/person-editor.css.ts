@@ -412,6 +412,16 @@ export const selbox = style({
   },
 });
 export const selboxCaret = style({ marginLeft: 'auto', fontSize: 9, color: vars.color.faint });
+/**
+ * Z-index for the Base UI positioner wrappers (Popover + Select). Floating UI
+ * sets `will-change: transform` inline on these, which creates a stacking
+ * context with `z-index: auto` — so any z-index on the popup inside is
+ * trapped and the dialog (z 101) wins. Giving the positioner itself a z-index
+ * above the dialog lifts the whole context. 105 sits below the discard
+ * AlertDialog (110/111) so the confirm prompt still covers the pickers.
+ */
+export const positionerZ = style({ zIndex: 105 });
+
 export const selectPopup = style({
   background: vars.color.panel2,
   border: `1px solid ${vars.color.borderStrong}`,
@@ -421,7 +431,6 @@ export const selectPopup = style({
   minWidth: 160,
   maxHeight: 260,
   overflow: 'auto',
-  zIndex: 200,
 });
 export const selectItem = style({
   display: 'flex',
@@ -573,7 +582,6 @@ export const pickerPopup = style({
   boxShadow: vars.shadow.lg,
   padding: 9,
   width: 288,
-  zIndex: 200,
 });
 export const pickerList = style({
   display: 'flex',

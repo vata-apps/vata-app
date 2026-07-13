@@ -342,7 +342,7 @@ function NameTypeSelect({
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Positioner sideOffset={4}>
+        <Select.Positioner sideOffset={4} positionMethod="fixed" className={s.positionerZ}>
           <Select.Popup className={s.selectPopup}>
             {NAME_TYPES.map((nt) => (
               <Select.Item key={nt} value={nt} className={s.selectItem}>

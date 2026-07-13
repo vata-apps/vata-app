@@ -103,7 +103,12 @@ export function PersonPicker({
         {label}
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Positioner sideOffset={6} align="start">
+        <Popover.Positioner
+          sideOffset={6}
+          align="start"
+          positionMethod="fixed"
+          className={s.positionerZ}
+        >
           <Popover.Popup className={s.pickerPopup}>
             <input
               className={s.input}
