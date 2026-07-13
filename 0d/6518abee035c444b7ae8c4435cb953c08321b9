@@ -1,0 +1,22 @@
+src/managers/IndividualManager.test.ts
+  s_59b9af6ff89b8b::t_b4fe2eeac5d349 367-382
+  s_59b9af6ff89b8b::t_ccfc215a2f9c25 260-275
+src/managers/IndividualManager.ts
+  s_59b9af6ff89b8b::t_a27eba80b4b2b6 86-91,97,105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "0d6518abee035c444b7ae8c4435cb953c08321b9",
+  "prompts": {},
+  "sessions": {
+    "s_59b9af6ff89b8b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0a729662affeqmMQ72XXpNCCDq",
+        "model": "big-pickle"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
