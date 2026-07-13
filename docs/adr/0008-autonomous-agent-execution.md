@@ -1,5 +1,7 @@
 # ADR-008: Autonomous Agent Execution via Sandcastle on GitHub Actions
 
+> **Superseded by [ADR-015](./0015-migration-to-opencode-go.md)** for the LLM provider and model choice (migrated from Anthropic API to OpenCode Go). All architectural decisions — label lifecycle, `noSandbox()`, `vata-agent` App, `pnpm verify` quality gate, iteration caps, PR creation — remain valid.
+
 **Status**: Accepted
 **Date**: 2026-05-20
 

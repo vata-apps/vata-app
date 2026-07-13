@@ -93,8 +93,15 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Claude Code CLI
-        run: npm install -g @anthropic-ai/claude-code
+      - name: Install OpenCode CLI
+        run: npm install -g opencode-ai@1.17.18
+
+      - name: Configure OpenCode Go auth
+        env:
+          OPENCODE_GO_API_KEY: ${{ secrets.OPENCODE_GO_API_KEY }}
+        run: |
+          mkdir -p ~/.local/share/opencode
+          printf '{"opencode-go":{"type":"api","key":"%s"}}' "$OPENCODE_GO_API_KEY" > ~/.local/share/opencode/auth.json
 
       - name: Configure git identity
         env:
@@ -119,16 +126,16 @@ jobs:
               exit 1 ;;
           esac
 
-      - name: Detect Opus opt-in
+      - name: Detect escalation opt-in
         id: model
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
         run: |
-          if gh issue view "$ISSUE_NUMBER" --json labels --jq '.labels[].name' | grep -qx 'agent:use-opus'; then
-            echo "use_opus=true" >> "$GITHUB_OUTPUT"
+          if gh issue view "$ISSUE_NUMBER" --json labels --jq '.labels[].name' | grep -qx 'agent:escalate'; then
+            echo "escalate=true" >> "$GITHUB_OUTPUT"
           else
-            echo "use_opus=false" >> "$GITHUB_OUTPUT"
+            echo "escalate=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare PR branch
@@ -159,8 +166,7 @@ jobs:
       - name: Run agent
         id: agent
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          USE_OPUS: ${{ steps.model.outputs.use_opus }}
+          ESCALATE: ${{ steps.model.outputs.escalate }}
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
         run: pnpm exec tsx .sandcastle/address-review.ts
 

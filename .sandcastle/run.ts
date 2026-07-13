@@ -1,11 +1,11 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { claudeCode, createWorktree } from '@ai-hero/sandcastle';
+import { createWorktree, opencode } from '@ai-hero/sandcastle';
 import { noSandbox } from '@ai-hero/sandcastle/sandboxes/no-sandbox';
 import {
   extractTag,
-  logCost,
-  MODEL_OPUS,
-  MODEL_SONNET,
+  logUsage,
+  MODEL_DEFAULT,
+  MODEL_ESCALATE,
   required,
   verify,
   writeGithubOutput,
@@ -28,8 +28,8 @@ const issue = JSON.parse(readFileSync(issueDataPath, 'utf-8')) as {
   url: string;
 };
 
-const useOpus = process.env.USE_OPUS === 'true';
-const model = useOpus ? MODEL_OPUS : MODEL_SONNET;
+const escalate = process.env.ESCALATE === 'true';
+const model = escalate ? MODEL_ESCALATE : MODEL_DEFAULT;
 const branch = `agent/issue-${issueNumber}`;
 
 console.log(`Issue: #${issueNumber} — ${issue.title}`);
@@ -41,7 +41,7 @@ const wt = await createWorktree({
 });
 
 const result = await wt.run({
-  agent: claudeCode(model),
+  agent: opencode(model),
   sandbox: noSandbox(),
   promptFile: '.sandcastle/prompts/default.md',
   promptArgs: {
@@ -96,7 +96,7 @@ if (prDescription) {
 
 const verifyPassed = commits > 0 ? verify(wt.worktreePath) : false;
 
-logCost(model, result.iterations);
+logUsage(model, result.iterations);
 
 writeGithubOutput({
   branch: result.branch,

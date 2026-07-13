@@ -1,5 +1,7 @@
 # ADR-009: Agent Addresses PR Review Feedback
 
+> **Partially superseded by [ADR-015](./0015-migration-to-opencode-go.md)** for the LLM provider and model choice. The review-feedback architecture — trigger, identification, outcome signalling, concurrency — remains valid.
+
 **Status**: Accepted
 **Date**: 2026-05-22
 
@@ -53,11 +55,11 @@ Three outcomes, mirroring ADR-008:
 
 ### Model
 
-The model tier is inherited from the original issue's `agent:use-opus` label — a task judged Opus-grade stays Opus-grade for its review iterations. There is no new opt-in mechanism; to escalate, add `agent:use-opus` to the issue before submitting the review.
+The model tier is inherited from the original issue's `agent:escalate` label — a task judged escalation-grade stays escalation-grade for its review iterations. There is no new opt-in mechanism; to escalate, add `agent:escalate` to the issue before submitting the review.
 
 ### Cost controls
 
-Identical to `agent-run.yml`: `maxIterations: 5`, `idleTimeoutSeconds: 600`, `timeout-minutes: 45`. The Anthropic API key and monthly spend limit are shared — issue runs and review runs draw from one budget.
+Identical to `agent-run.yml`: `maxIterations: 5`, `idleTimeoutSeconds: 600`, `timeout-minutes: 45`. The OpenCode Go subscription budget is shared — issue runs and review runs draw from one pool.
 
 ### Concurrency
 
@@ -81,7 +83,7 @@ The two flows share genuine utilities (`required`, `writeGithubOutput`, `extract
 - **`commented` reviews also trigger** — rejected: it collapses the discuss/dispatch distinction. "Comment" must stay free of cost and side effects.
 - **Auto-resolving review threads** — rejected for v1: auto-resolution risks marking poorly-addressed feedback "resolved". Resolution stays the maintainer's verification gesture.
 - **Scoping by branch name** — rejected as the _primary_ gate: branch names are spoofable, PR authorship is not. The branch name is still used, but only to extract the issue number.
-- **A per-review Opus opt-in** (a label on the PR, a magic string in the review body) — rejected: inheriting the issue's `agent:use-opus` needs no extra gesture and ties the model tier to the task's established difficulty.
+- **A per-review escalation opt-in** (a label on the PR, a magic string in the review body) — rejected: inheriting the issue's `agent:escalate` needs no extra gesture and ties the model tier to the task's established difficulty.
 
 ## Consequences
 
