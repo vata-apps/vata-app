@@ -5,6 +5,6 @@ pnpm tsc --noEmit || exit 1
 git diff --cached --name-only -z -- 'src/db/**' '*.sql' | xargs -0 "$(git rev-parse --show-toplevel)/.githooks/sql-guard.sh" || exit 1
 
 # cargo check only when Rust or tauri config changed
-if git diff --cached --name-only | grep -qE '\.rs$|tauri\.conf\.json'; then
+if git diff --cached --name-only | grep -qE '\.rs$|tauri\.conf\.json$|(^|/)Cargo\.(toml|lock)$'; then
   ( cd src-tauri && cargo check ) || exit 1
 fi

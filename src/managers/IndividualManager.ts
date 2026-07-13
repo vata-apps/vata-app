@@ -83,13 +83,18 @@ function filterPrincipalEvents(
   );
 }
 
-/** Create or update the alternate names in `input` against `existing`, deleting any existing row not represented. */
+/** A row with neither given names nor surname is treated as absent: never created, never kept, never updated. This is how an alternate name is removed from the editor — clearing both fields. */
+function hasNameContent(name: AlternateNameInput): boolean {
+  return Boolean(name.givenNames?.trim() || name.surname?.trim());
+}
+
+/** Create or update the alternate names in `input` against `existing`, deleting any existing row not represented. Rows with neither given names nor surname are skipped entirely (never created, never used to keep an existing row alive). */
 async function saveAlternateNames(
   individualId: string,
   input: AlternateNameInput[],
   existing: Name[]
 ): Promise<void> {
-  const keptIds = new Set(input.filter((n) => n.id).map((n) => n.id));
+  const keptIds = new Set(input.filter((n) => n.id && hasNameContent(n)).map((n) => n.id));
   for (const name of existing) {
     if (!keptIds.has(name.id)) {
       await deleteName(name.id);
@@ -97,6 +102,7 @@ async function saveAlternateNames(
   }
 
   for (const name of input) {
+    if (!hasNameContent(name)) continue;
     const { type, prefix, givenNames, surname, suffix, nickname } = name;
     if (name.id) {
       await updateName(name.id, { type, prefix, givenNames, surname, suffix, nickname });

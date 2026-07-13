@@ -161,7 +161,6 @@
       "names": "Names",
       "otherNames": "Other names",
       "lifeEvents": "Life events",
-      "lifeEventsHint": "Dates only — places will be added once a place picker exists.",
       "relations": "Relations",
       "notes": "Notes"
     },
@@ -184,20 +183,23 @@
       "removeAria": "Remove this name"
     },
     "lifeEvents": {
-      "datePlaceholder": "e.g. 30 Jan 1960, abt 1960",
-      "dateHint": "Accepts approximate dates — “abt 1960”, “bef 1962”",
-      "placeSoon": "Place — soon",
+      "datePlaceholder": "Date",
+      "place": "Place",
       "addButton": "Add event",
       "removeAria": "Remove this event"
     },
     "relations": {
+      "fatherLabel": "Father",
+      "motherLabel": "Mother",
       "addFather": "Add father",
       "addMother": "Add mother",
       "spouse": "Spouse",
       "children": "Children",
+      "familyLabel": "Family",
       "addSpouse": "Add spouse",
       "addChild": "Add child",
       "addFamily": "Add another family",
+      "removeFamilyAria": "Remove this family",
       "removeAria": "Remove this relation"
     },
     "picker": {
@@ -210,6 +212,7 @@
       "label": "Notes"
     },
     "actions": {
+      "close": "Close",
       "cancel": "Cancel",
       "save": "Save",
       "saveNew": "Save person"
@@ -219,7 +222,15 @@
       "title": "Discard unsaved changes?",
       "description": "You have unsaved changes. If you close now, they will be lost.",
       "discard": "Discard changes",
-      "keepEditing": "Keep editing"
+      "keepEditing": "Keep editing",
+      "indicator": "Unsaved changes"
+    },
+    "removeFamilyConfirm": {
+      "title": "Remove this family?",
+      "description_one": "This family has {{count}} child. Removing the family will unlink them; the person stays in your tree.",
+      "description_other": "This family has {{count}} children. Removing the family will unlink them; the people stay in your tree.",
+      "confirm": "Remove family",
+      "keepFamily": "Keep family"
     }
   }
 }

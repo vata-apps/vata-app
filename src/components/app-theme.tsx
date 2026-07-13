@@ -1,5 +1,5 @@
 import { Theme } from '@radix-ui/themes';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
 
 import { useAppStore } from '$/store/app-store';
 
@@ -38,5 +38,15 @@ function useResolvedAppearance(): 'light' | 'dark' {
  */
 export function AppTheme({ children }: { children: ReactNode }): JSX.Element {
   const appearance = useResolvedAppearance();
+
+  // Bridge the resolved appearance to the Vanilla Extract tokens (ADR-0014):
+  // `data-theme` drives `src/design/theme.css.ts` so Base UI + VE surfaces stay
+  // in sync with Radix during the migration. useLayoutEffect (not useEffect) so
+  // the attribute lands before first paint — no wrong-theme flash on launch when
+  // the chosen theme differs from the OS.
+  useLayoutEffect(() => {
+    document.documentElement.dataset.theme = appearance;
+  }, [appearance]);
+
   return <Theme appearance={appearance}>{children}</Theme>;
 }

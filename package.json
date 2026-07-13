@@ -40,6 +40,10 @@
     "prepare": "husky && git config core.hooksPath .husky"
   },
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "@fontsource/fraunces": "^5.2.9",
+    "@fontsource/geist-mono": "^5.2.8",
+    "@fontsource/geist-sans": "^5.2.5",
     "@radix-ui/themes": "^3.3.0",
     "@tanstack/react-query": "^5.0.0",
     "@tanstack/react-router": "^1.0.0",
@@ -48,6 +52,7 @@
     "@tauri-apps/plugin-fs": "^2.0.0",
     "@tauri-apps/plugin-sql": "^2.0.0",
     "@tauri-apps/plugin-store": "^2.0.0",
+    "@vanilla-extract/css": "^1.21.1",
     "d3-hierarchy": "^3.1.2",
     "i18next": "^26.0.3",
     "i18next-browser-languagedetector": "^8.2.1",
@@ -81,6 +86,7 @@
     "@types/react-dom": "^18.3.1",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
+    "@vanilla-extract/vite-plugin": "^5.2.4",
     "@vitejs/plugin-react": "^4.3.1",
     "@vitest/coverage-v8": "^3.2.4",
     "better-sqlite3": "^12.6.2",

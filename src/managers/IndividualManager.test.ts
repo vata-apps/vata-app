@@ -257,6 +257,22 @@ describe('IndividualManager.create', () => {
     expect(alternate).toMatchObject({ type: 'birth', givenNames: 'Lily', surname: 'Evans' });
   });
 
+  it('skips alternate name rows where both given and surname are blank', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily', surname: 'Potter' },
+      alternateNames: [
+        { type: 'birth', givenNames: 'Lily', surname: 'Evans' },
+        { type: 'aka', givenNames: '', surname: '' },
+      ],
+    });
+
+    const names = await getNamesByIndividualId(id);
+    expect(names).toHaveLength(2);
+    const alternate = names.find((n) => !n.isPrimary);
+    expect(alternate).toMatchObject({ type: 'birth', givenNames: 'Lily', surname: 'Evans' });
+  });
+
   it('creates life events of arbitrary types with a date', async () => {
     const id = await IndividualManager.create({
       gender: 'F',
@@ -346,6 +362,40 @@ describe('IndividualManager.update', () => {
     expect(names.find((n) => n.id === toKeep.id)?.surname).toBe('Evans-updated');
     expect(names.some((n) => n.id === toRemove.id)).toBe(false);
     expect(names.some((n) => n.type === 'married' && n.surname === 'Potter')).toBe(true);
+  });
+
+  it('keeps an alternate name when only givenNames is cleared but surname remains', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily', surname: 'Potter' },
+      alternateNames: [{ type: 'birth', givenNames: 'Lily', surname: 'Evans' }],
+    });
+    const [alternate] = (await getNamesByIndividualId(id)).filter((n) => !n.isPrimary);
+
+    await IndividualManager.update(id, {
+      alternateNames: [{ id: alternate.id, type: 'birth', givenNames: '', surname: 'Evans' }],
+    });
+
+    const names = (await getNamesByIndividualId(id)).filter((n) => !n.isPrimary);
+    expect(names).toHaveLength(1);
+    expect(names[0]).toMatchObject({ type: 'birth', surname: 'Evans' });
+    expect(names[0].givenNames ?? '').toBe('');
+  });
+
+  it('removes an alternate name whose id is kept but whose given and surname are cleared', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily', surname: 'Potter' },
+      alternateNames: [{ type: 'birth', givenNames: 'Lily', surname: 'Evans' }],
+    });
+    const [alternate] = (await getNamesByIndividualId(id)).filter((n) => !n.isPrimary);
+
+    await IndividualManager.update(id, {
+      alternateNames: [{ id: alternate.id, type: 'birth', givenNames: '', surname: '' }],
+    });
+
+    const names = await getNamesByIndividualId(id);
+    expect(names.filter((n) => !n.isPrimary)).toHaveLength(0);
   });
 
   it('adds, updates and removes life events in one call, leaving secondary participations untouched', async () => {
