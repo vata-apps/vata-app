@@ -1,6 +1,6 @@
 # Agent Workflow
 
-Operational guide for the autonomous-execution workflows. For the design rationale, label schema, cost bounds, and trade-offs, read [ADR-008](../adr/0008-autonomous-agent-execution.md) (issue → PR) and [ADR-009](../adr/0009-agent-review-feedback.md) (addressing review feedback) first — this page does not restate them.
+Operational guide for the autonomous-execution workflows. For the design rationale, label schema, cost bounds, and trade-offs, read [ADR-008](../adr/0008-autonomous-agent-execution.md) (issue → PR), [ADR-009](../adr/0009-agent-review-feedback.md) (addressing review feedback), and [ADR-015](../adr/0015-migration-to-opencode-go.md) (provider migration) first — this page does not restate them.
 
 ## When to use it
 
@@ -21,19 +21,19 @@ Do **not** use it for:
 Full schema and transition rules are in [ADR-008 → Label-based outcome tracking](../adr/0008-autonomous-agent-execution.md#label-based-outcome-tracking). Day-to-day usage:
 
 - You add **`agent:ready`** to trigger a run.
-- Optionally add **`agent:use-opus`** alongside to escalate to Opus 4.7 for this run.
+- Optionally add **`agent:escalate`** alongside to use Qwen3.7 Max instead of the default Kimi K2.7 Code.
 - The workflow swaps labels to reflect outcome: **`agent:running`** → **`agent:success`** / **`agent:partial`** / **`agent:failed`**.
 
 ## End-to-end flow
 
 ```
-[you write PRD with Opus]
+[you write PRD with Claude Pro/Max]
         │
         ▼
-[you label agent:ready (+ agent:use-opus if needed)]
+[you label agent:ready (+ agent:escalate if needed)]
         │
         ▼  (GitHub Actions: issues.labeled)
-[workflow runs sandcastle; agent iterates with `pnpm verify` as quality gate]
+[workflow runs sandcastle with opencode(); agent iterates with `pnpm verify` as quality gate]
         │
         ├─ success → PR opened, label agent:success
         ├─ partial → PR opened as draft, label agent:partial
@@ -48,7 +48,7 @@ Full schema and transition rules are in [ADR-008 → Label-based outcome trackin
 1. Open the issue. Read the comment the workflow posted.
 2. Decide:
    - **Bad PRD** — edit the issue body to clarify scope, acceptance criteria, or anti-scope. Save.
-   - **Sonnet too weak for this task** — add `agent:use-opus`.
+   - **Kimi too weak for this task** — add `agent:escalate`.
    - **Both** — do both.
 3. Remove the previous outcome label (`agent:failed` / `agent:partial`).
 4. Add `agent:ready`. The workflow re-runs.
@@ -73,13 +73,13 @@ Notes:
 
 - Only **"Request changes"** triggers it. "Comment" reviews are discussion only — use them to leave notes without dispatching the agent. "Approve" does nothing (the PR is ready).
 - An empty "Request changes" review (no body, no line comments) is treated as a misclick — the workflow posts a comment and runs nothing.
-- The model follows the original issue: if the issue carries `agent:use-opus`, the review run uses Opus too.
+- The model follows the original issue: if the issue carries `agent:escalate`, the review run uses Qwen3.7 Max too.
 - A review the agent disagrees with entirely is a valid outcome — it makes no commits and explains each skip in the thread replies.
-- Each review run spends tokens, like an issue run. The monthly spend limit covers both.
+- Each review run draws from the same OpenCode Go subscription budget as issue runs.
 
 ## What stays manual
 
-- Writing the PRD (Opus / `to-prd` / `grill-with-docs`)
+- Writing the PRD (Claude Pro/Max / `to-prd` / `grill-with-docs`)
 - Setting the initial label `agent:ready`
 - Reviewing the PR — code _and_ UI in `pnpm tauri:dev`
 - Resolving review threads after the agent addresses them
@@ -98,10 +98,10 @@ The workflow's job is the boring middle: read, execute, check, package as a PR. 
    gh label create "agent:success"   --color "0E8A16" --description "Agent succeeded, PR opened"
    gh label create "agent:partial"   --color "D93F0B" --description "Agent ran out of iterations but CI green — review needed"
    gh label create "agent:failed"    --color "B60205" --description "Agent failed, see issue comment for details"
-   gh label create "agent:use-opus"  --color "5319E7" --description "Use Opus 4.7 instead of Sonnet for this run"
+   gh label create "agent:escalate"  --color "5319E7" --description "Use Qwen3.7 Max instead of Kimi K2.7 Code for this run"
    ```
 
-2. Create a dedicated Anthropic API key (`vata-sandcastle-prod`) with a $100/month spend limit in the Anthropic Console. Store as repo secret `ANTHROPIC_API_KEY`.
+2. Store the OpenCode Go API key as repo secret `OPENCODE_GO_API_KEY`. Retrieve it from [opencode.ai/auth](https://opencode.ai/auth) → API keys.
 3. Create a GitHub App (`vata-agent`) on the org with **Contents: Read and write**, **Pull requests: Read and write**, **Issues: Read and write** (webhook disabled). Install it on this repo. The workflow mints a token from it instead of `GITHUB_TOKEN` so the agent's PR triggers `ci.yml`, and instead of a PAT so all activity is attributed to `vata-agent[bot]` rather than a person. Store as repo secrets:
    - `AGENT_APP_CLIENT_ID` — the App's Client ID (App settings → General → About)
    - `AGENT_APP_PRIVATE_KEY` — the full contents of the App's generated `.pem` private key
