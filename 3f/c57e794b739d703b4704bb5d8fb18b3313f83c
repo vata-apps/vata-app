@@ -1,0 +1,30 @@
+src/components/individuals/person-editor.css.ts
+  s_e59255ba2d83f4::t_fcc2bbd62279f6 528-529
+src/managers/FamilyManager.test.ts
+  s_e59255ba2d83f4::t_b910a1d389b005 343-369
+  s_e59255ba2d83f4::t_ab0db653b3419f 370-373
+src/components/app-theme.tsx
+  s_e59255ba2d83f4::t_2ae2aabe42efcc 2
+  s_e59255ba2d83f4::t_1e584de32bece9 44-47
+src/managers/FamilyManager.ts
+  s_e59255ba2d83f4::t_4278cace1782e9 380-386,390-394
+  s_e59255ba2d83f4::t_26d7b13261c796 395
+src/components/individuals/person-editor-dialog.tsx
+  s_e59255ba2d83f4::t_00d8888129a779 953
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "3fc57e794b739d703b4704bb5d8fb18b3313f83c",
+  "prompts": {},
+  "sessions": {
+    "s_e59255ba2d83f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "31dba806-1b38-4aaf-830c-8d32f7942a7c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}

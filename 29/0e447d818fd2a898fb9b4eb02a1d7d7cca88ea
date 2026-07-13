@@ -1,0 +1,28 @@
+src/components/individuals/person-editor-dialog.tsx
+  s_ec5219f511003e::t_afbac6a5becd50 1196-1230
+  s_ec5219f511003e::t_61f3ff56aa5ab8 502
+  s_ec5219f511003e::t_b42a4382e6618e 722-735
+  s_ec5219f511003e::t_d977c07af5d193 1074
+src/i18n/locales/en/individuals.json
+  s_ec5219f511003e::t_a541e702154521 227-233
+src/components/individuals/person-editor-dialog.test.tsx
+  s_ec5219f511003e::t_a98e6116109350 288-314
+src/i18n/locales/fr/individuals.json
+  s_ec5219f511003e::t_945e0440bb7b54 227-233
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "290e447d818fd2a898fb9b4eb02a1d7d7cca88ea",
+  "prompts": {},
+  "sessions": {
+    "s_ec5219f511003e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ec134f0-870d-43e4-8492-426160942d28",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
