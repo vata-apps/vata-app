@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Box, Button, Flex, Grid, Heading } from '@radix-ui/themes';
 
@@ -48,7 +47,6 @@ function toSortedOptions(
 export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
   const { t } = useTranslation('events');
   const { t: tCommon } = useTranslation('common');
-  const navigate = useNavigate();
   const { data, isLoading, isError } = useEvents();
 
   const [filters, setFilters] = useState(DEFAULT_EVENT_FILTERS);
@@ -130,12 +128,6 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
             columns={columns}
             rows={visibleRows}
             getRowKey={(event) => event.id}
-            onRowClick={(event) =>
-              navigate({
-                to: '/tree/$treeId/event/$eventId',
-                params: { treeId, eventId: event.id },
-              })
-            }
             isLoading={isLoading}
             isError={isError}
             errorMessage={tCommon('errors.loadFailed')}

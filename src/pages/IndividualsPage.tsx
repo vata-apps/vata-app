@@ -1,20 +1,23 @@
 import { useMemo, useState } from 'react';
 import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Flex, Grid, Heading, Link } from '@radix-ui/themes';
 
-import { EntityTable, type EntityTableColumn } from '$components/entity-table';
+import { EntityTable, rowLink, type EntityTableColumn } from '$components/entity-table';
 import { Icon, type IconName } from '$components/icon';
 import { PersonEditorDialog } from '$components/individuals/person-editor-dialog';
 import {
   DEFAULT_INDIVIDUAL_FILTERS,
   hasActiveFilters,
-  IndividualsFilters,
+  IndividualsFilterToolbar,
 } from '$components/individuals-filters';
+import { Button } from '$components/ui/button';
+import { Typography } from '$components/ui/typography';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { useIndividuals } from '$hooks/useIndividuals';
 import { formatName, nameMatchesQuery } from '$db-tree/names';
 import type { EventWithDetails, Gender, IndividualWithDetails } from '$types/database';
+
+import * as styles from './IndividualsPage.css';
 
 interface IndividualsPageProps {
   treeId: string;
@@ -62,7 +65,7 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');
   const navigate = useNavigate();
-  const { data, isLoading, isError } = useIndividuals();
+  const { data, isLoading, isError, refetch } = useIndividuals();
 
   const [filters, setFilters] = useState(DEFAULT_INDIVIDUAL_FILTERS);
   const debouncedName = useDebouncedValue(filters.name, 200);
@@ -106,24 +109,17 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
         header: t('table.columns.surname'),
         rowHeader: true,
         width: COLUMN_WIDTH.name,
-        // A keyboard-focusable link (styled as plain text — no color/underline)
-        // so the list is navigable without a pointer; the whole row is also
-        // clickable via `onRowClick`, so the link stops propagation.
+        // A real router link makes the row keyboard-focusable and gives
+        // native Enter / ⌘-click behavior; the table derives the full-row
+        // click from this same link.
         cell: (person) => (
-          <Link
-            asChild
-            color="gray"
-            highContrast
-            underline="none"
-            onClick={(domEvent) => domEvent.stopPropagation()}
+          <RouterLink
+            to="/tree/$treeId/individual/$individualId"
+            params={{ treeId, individualId: person.id }}
+            className={rowLink}
           >
-            <RouterLink
-              to="/tree/$treeId/individual/$individualId"
-              params={{ treeId, individualId: person.id }}
-            >
-              {person.primaryName?.surname?.trim() || t('table.unknownName')}
-            </RouterLink>
-          </Link>
+            {person.primaryName?.surname?.trim() || t('table.unknownName')}
+          </RouterLink>
         ),
         // Sort by "Surname, Given" so same-surname people fall in given-name order.
         sortValue: (person) => formatName(person.primaryName).sortable || null,
@@ -163,55 +159,64 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
     [t, treeId]
   );
 
-  return (
-    <Box p="4">
-      <Flex direction="column" gap="4">
-        <Flex align="center" justify="between" pt="2" pb="3">
-          <Flex align="center" gap="3">
-            <Icon name="user" size={28} />
-            <Heading size="7" trim="both">
-              {tCommon('nav.individuals')}
-            </Heading>
-          </Flex>
-          <Button onClick={() => setCreateOpen(true)}>
-            <Icon name="plus" />
-            {t('page.addPerson')}
-          </Button>
-        </Flex>
+  const filtered = hasActiveFilters(filters);
 
-        <Grid columns="280px 1fr" gap="4" align="start">
-          <IndividualsFilters value={filters} onChange={setFilters} />
-          <EntityTable
-            label={tCommon('nav.individuals')}
-            columns={columns}
-            rows={visibleRows}
-            getRowKey={(person) => person.id}
-            onRowClick={(person) =>
-              navigate({
-                to: '/tree/$treeId/individual/$individualId',
-                params: { treeId, individualId: person.id },
-              })
-            }
-            isLoading={isLoading}
-            isError={isError}
-            errorMessage={tCommon('errors.loadFailed')}
-            emptyMessage={hasActiveFilters(filters) ? t('table.noMatches') : t('table.empty')}
-            defaultSort={{ columnKey: 'surname', direction: 'asc' }}
-          />
-        </Grid>
-      </Flex>
+  return (
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.title}>
+          <Icon name="user" size={28} />
+          <Typography as="h1" size="16" weight="650">
+            {tCommon('nav.individuals')}
+          </Typography>
+        </div>
+        <Button onClick={() => setCreateOpen(true)}>
+          <Icon name="plus" />
+          {t('page.addPerson')}
+        </Button>
+      </header>
+
+      <div className={styles.toolbar}>
+        <IndividualsFilterToolbar value={filters} onChange={setFilters} />
+      </div>
+
+      <div className={styles.tableWrapper}>
+        <EntityTable
+          label={tCommon('nav.individuals')}
+          columns={columns}
+          rows={visibleRows}
+          getRowKey={(person) => person.id}
+          isLoading={isLoading}
+          isError={isError}
+          errorMessage={tCommon('errors.loadFailed')}
+          emptyMessage={t('table.empty')}
+          emptyAction={{
+            label: t('page.addPerson'),
+            onClick: () => setCreateOpen(true),
+          }}
+          noMatchesMessage={t('table.noMatches')}
+          noMatchesAction={{
+            label: tCommon('filters.clear'),
+            onClick: () => setFilters(DEFAULT_INDIVIDUAL_FILTERS),
+          }}
+          isFiltered={filtered}
+          defaultSort={{ columnKey: 'surname', direction: 'asc' }}
+        />
+      </div>
 
       <PersonEditorDialog
         mode="create"
         open={createOpen}
         onOpenChange={setCreateOpen}
-        onSaved={(individualId) =>
+        onSaved={(individualId) => {
+          setCreateOpen(false);
+          void refetch();
           navigate({
             to: '/tree/$treeId/individual/$individualId',
             params: { treeId, individualId },
-          })
-        }
+          });
+        }}
       />
-    </Box>
+    </div>
   );
 }

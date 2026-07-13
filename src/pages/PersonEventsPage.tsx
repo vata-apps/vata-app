@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Badge, Button, Flex, SegmentedControl } from '@radix-ui/themes';
 
@@ -39,7 +38,6 @@ export function PersonEventsPage({ treeId, individualId }: PersonEventsPageProps
   const { t } = useTranslation('events');
   const { t: tPerson } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');
-  const navigate = useNavigate();
   const { data, isLoading, isError } = usePersonEvents(individualId);
 
   const [level, setLevel] = useState<ScopeLevel>(DEFAULT_LEVEL);
@@ -117,9 +115,6 @@ export function PersonEventsPage({ treeId, individualId }: PersonEventsPageProps
         columns={columns}
         rows={visibleRows}
         getRowKey={(event) => event.id}
-        onRowClick={(event) =>
-          navigate({ to: '/tree/$treeId/event/$eventId', params: { treeId, eventId: event.id } })
-        }
         isLoading={isLoading}
         isError={isError}
         errorMessage={tCommon('errors.loadFailed')}

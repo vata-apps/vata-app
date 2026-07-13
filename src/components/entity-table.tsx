@@ -1,59 +1,15 @@
-import { type ReactNode, useMemo, useState } from 'react';
-import { Button, Flex, Skeleton, Table, Text } from '@radix-ui/themes';
+import { type ReactNode } from 'react';
 
-import { Icon } from '$components/icon';
-import { sortByKey } from '$lib/sortByKey';
+import { Button } from '$components/ui/button';
+import { Skeleton } from '$components/ui/skeleton';
+import { Table, type TableColumn, type TableSort } from '$components/ui/table';
 
-/** A single column of an {@link EntityTable}. */
-export interface EntityTableColumn<T> {
-  /** Stable key for the column (used as the React key). */
-  key: string;
-  /** Translated, user-facing column header. May be empty for an icon-only
-   * column — in that case set {@link headerLabel} so the column header still
-   * has an accessible name. */
-  header: string;
-  /**
-   * Accessible name for the column header, applied as its `aria-label`. Set
-   * this only when {@link header} is visually empty (an icon-only column);
-   * columns with visible header text are named by that text.
-   */
-  headerLabel?: string;
-  /** Renders the cell content for one row. */
-  cell: (item: T) => ReactNode;
-  /**
-   * When true, the column is rendered as the row's `RowHeaderCell` — the
-   * primary, scannable column (e.g. the entity name). Exactly one column
-   * per table should set this.
-   */
-  rowHeader?: boolean;
-  /** Optional fixed column width (a Radix dimension string, e.g. `"120px"`). */
-  width?: string;
-  /**
-   * When set, the column becomes sortable: clicking its header sorts by this
-   * key. The accessor decouples sort order from display (e.g. a date cell
-   * shows `"19 APR 1942"` but sorts by its `YYYY-MM-DD` key). Strings are
-   * compared locale-aware, numbers numerically; return `null` for items with
-   * no value so they sort last in either direction.
-   */
-  sortValue?: (item: T) => string | number | null;
-}
+import * as styles from './entity-table.css';
 
-/** The active sort: which column, and which direction. */
-export interface EntityTableSort {
-  /** `key` of the sorted column. */
-  columnKey: string;
-  direction: 'asc' | 'desc';
-}
+export type EntityTableColumn<T> = TableColumn<T>;
+export type EntityTableSort = TableSort;
 
-/** The `aria-sort` value for a header cell: `undefined` for unsortable columns. */
-function ariaSort<T>(
-  column: EntityTableColumn<T>,
-  sort: EntityTableSort | undefined
-): 'ascending' | 'descending' | 'none' | undefined {
-  if (!column.sortValue) return undefined;
-  if (sort?.columnKey !== column.key) return 'none';
-  return sort.direction === 'asc' ? 'ascending' : 'descending';
-}
+export { rowLink } from './entity-table.css';
 
 /** Props accepted by {@link EntityTable}. */
 export interface EntityTableProps<T> {
@@ -61,181 +17,135 @@ export interface EntityTableProps<T> {
   label: string;
   /** Column definitions, in display order. */
   columns: EntityTableColumn<T>[];
-  /** The rows to render (already sorted by the caller). */
+  /** The rows to render (already sorted by the table when a sort is active). */
   rows: T[];
   /** Stable React key for a row. */
   getRowKey: (item: T) => string;
-  /** Called when a row is activated (whole-row click). */
-  onRowClick?: (item: T) => void;
   /** Whether the underlying query is loading. */
   isLoading: boolean;
   /** Whether the underlying query errored. */
   isError: boolean;
   /** Translated message shown in the error state. */
   errorMessage: string;
-  /** Translated message shown when there are no rows. */
+  /** Translated message shown when the tree has no rows and no filters are active. */
   emptyMessage: string;
+  /**
+   * Optional action rendered with the empty message (e.g. "Add the first
+   * person").
+   */
+  emptyAction?: { label: string; onClick: () => void };
+  /**
+   * Translated message shown when filters are active but matched nothing.
+   * When omitted, {@link emptyMessage} is used in both empty states.
+   */
+  noMatchesMessage?: string;
+  /**
+   * Optional action rendered with the no-matches message (e.g. "Clear filters").
+   */
+  noMatchesAction?: { label: string; onClick: () => void };
+  /**
+   * Whether the current view is filtered. Drives the choice between
+   * {@link emptyMessage} and {@link noMatchesMessage}.
+   */
+  isFiltered?: boolean;
   /** Number of placeholder rows shown while loading. */
   skeletonRows?: number;
   /**
    * Initial sort. The column must declare a `sortValue`. When omitted, rows
    * render in the order given and no header shows a sort indicator until the
-   * user clicks one. Sorting is managed internally from here on.
+   * user clicks one. Sorting is managed internally by {@link Table}.
    */
   defaultSort?: EntityTableSort;
 }
 
 const DEFAULT_SKELETON_ROWS = 8;
 
-/** A full-width state row (loading / empty / error) spanning every column. */
-function StateRow({ span, children }: { span: number; children: ReactNode }): JSX.Element {
+/** A single state row (loading / empty / error) spanning every column. */
+function StateRow({
+  span,
+  title,
+  body,
+  action,
+}: {
+  span: number;
+  title: string;
+  body?: string;
+  action?: { label: string; onClick: () => void };
+}): JSX.Element {
   return (
-    <Table.Row>
-      <Table.Cell colSpan={span}>
-        <Flex align="center" justify="center" py="6">
-          <Text size="2" color="gray" align="center">
-            {children}
-          </Text>
-        </Flex>
-      </Table.Cell>
-    </Table.Row>
+    <tr>
+      <td colSpan={span} className={styles.stateCell}>
+        <p className={styles.stateTitle}>{title}</p>
+        {body && <p className={styles.stateBody}>{body}</p>}
+        {action && (
+          <div className={styles.stateActions}>
+            <Button onClick={action.onClick}>{action.label}</Button>
+          </div>
+        )}
+      </td>
+    </tr>
   );
 }
 
 /**
- * The reusable full-width entity table for an in-tree section page: a
- * column header row, a column-driven body, and built-in loading, empty,
- * and error states. Replaces the per-section sidebars and their shared
- * `EntityListPanel`.
+ * The reusable full-width entity table for an in-tree section page. Rewired
+ * on top of {@link Table}: the primitive owns table mechanics (semantics,
+ * density, sticky header, sort indicators, row activation), while this
+ * organism owns the application concerns (column config, sort accessors,
+ * and the loading/error/empty states).
  *
- * It is entity-agnostic by composition — each column supplies its own
- * `cell` renderer and the table never inspects row shape, so People,
- * Families, Events, and Places render their own cells through the same
- * frame. The primary column (`rowHeader: true`) should render a router
- * `Link` for keyboard access; `onRowClick` makes the whole row navigable
- * for pointer users.
- *
- * @example
- * <EntityTable
- *   label={t('nav.individuals')}
- *   columns={columns}
- *   rows={rows}
- *   getRowKey={(p) => p.id}
- *   onRowClick={(p) => navigate({ to: detailRoute, params: { id: p.id } })}
- *   isLoading={isLoading}
- *   isError={isError}
- *   errorMessage={t('errors.loadFailed')}
- *   emptyMessage={t('table.empty')}
- * />
+ * Row activation is declarative: the primary column should render a router
+ * `Link`. The whole row becomes clickable by following that link, without
+ * `onRowClick` leaking into the API.
  */
 export function EntityTable<T>({
   label,
   columns,
   rows,
   getRowKey,
-  onRowClick,
   isLoading,
   isError,
   errorMessage,
   emptyMessage,
+  emptyAction,
+  noMatchesMessage,
+  noMatchesAction,
+  isFiltered,
   skeletonRows = DEFAULT_SKELETON_ROWS,
   defaultSort,
 }: EntityTableProps<T>): JSX.Element {
   const span = columns.length;
 
-  const [sort, setSort] = useState<EntityTableSort | undefined>(defaultSort);
+  let bodyContent: ReactNode;
 
-  const sortedRows = useMemo(() => {
-    if (!sort) return rows;
-    const sortValue = columns.find((candidate) => candidate.key === sort.columnKey)?.sortValue;
-    if (!sortValue) return rows;
-    return sortByKey(rows, sortValue, sort.direction);
-  }, [rows, columns, sort]);
-
-  // Same column → flip direction; new column → start ascending.
-  const toggleSort = (columnKey: string): void =>
-    setSort((current) =>
-      current?.columnKey === columnKey
-        ? { columnKey, direction: current.direction === 'asc' ? 'desc' : 'asc' }
-        : { columnKey, direction: 'asc' }
-    );
-
-  const body: ReactNode = ((): ReactNode => {
-    if (isLoading) {
-      return Array.from({ length: skeletonRows }, (_, rowIndex) => (
-        <Table.Row key={rowIndex} aria-hidden="true">
-          {columns.map((column) => {
-            const cell = (
-              <Skeleton>
-                <Text size="2">—</Text>
-              </Skeleton>
-            );
-            return column.rowHeader ? (
-              <Table.RowHeaderCell key={column.key}>{cell}</Table.RowHeaderCell>
-            ) : (
-              <Table.Cell key={column.key}>{cell}</Table.Cell>
-            );
-          })}
-        </Table.Row>
-      ));
-    }
-    if (isError) return <StateRow span={span}>{errorMessage}</StateRow>;
-    if (sortedRows.length === 0) return <StateRow span={span}>{emptyMessage}</StateRow>;
-    return sortedRows.map((item) => (
-      <Table.Row
-        key={getRowKey(item)}
-        className={onRowClick ? 'entity-table__row--clickable' : undefined}
-        onClick={onRowClick ? () => onRowClick(item) : undefined}
-      >
-        {columns.map((column) =>
-          column.rowHeader ? (
-            <Table.RowHeaderCell key={column.key}>{column.cell(item)}</Table.RowHeaderCell>
-          ) : (
-            <Table.Cell key={column.key}>{column.cell(item)}</Table.Cell>
-          )
-        )}
-      </Table.Row>
+  if (isLoading) {
+    bodyContent = Array.from({ length: skeletonRows }, (_, rowIndex) => (
+      <tr key={rowIndex} aria-hidden="true">
+        {columns.map((column) => (
+          <td key={column.key} className={styles.stateCell}>
+            <Skeleton style={{ width: '80%' }} />
+          </td>
+        ))}
+      </tr>
     ));
-  })();
+  } else if (isError) {
+    bodyContent = <StateRow span={span} title={errorMessage} />;
+  } else if (rows.length === 0) {
+    if (isFiltered && noMatchesMessage) {
+      bodyContent = <StateRow span={span} title={noMatchesMessage} action={noMatchesAction} />;
+    } else {
+      bodyContent = <StateRow span={span} title={emptyMessage} action={emptyAction} />;
+    }
+  }
 
   return (
-    <Table.Root variant="surface" size="2" aria-label={label}>
-      <Table.Header>
-        <Table.Row>
-          {columns.map((column) => {
-            const active = sort?.columnKey === column.key;
-            return (
-              <Table.ColumnHeaderCell
-                key={column.key}
-                width={column.width}
-                aria-label={column.headerLabel}
-                aria-sort={ariaSort(column, sort)}
-              >
-                {column.sortValue ? (
-                  <Button
-                    variant="ghost"
-                    color="gray"
-                    highContrast
-                    size="2"
-                    onClick={() => toggleSort(column.key)}
-                  >
-                    {column.header}
-                    {active && (
-                      <Icon
-                        name={sort.direction === 'asc' ? 'chevron-up' : 'chevron-down'}
-                        size={14}
-                      />
-                    )}
-                  </Button>
-                ) : (
-                  column.header
-                )}
-              </Table.ColumnHeaderCell>
-            );
-          })}
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>{body}</Table.Body>
-    </Table.Root>
+    <Table
+      label={label}
+      columns={columns}
+      rows={rows}
+      getRowKey={getRowKey}
+      defaultSort={defaultSort}
+      bodyContent={bodyContent}
+    />
   );
 }
