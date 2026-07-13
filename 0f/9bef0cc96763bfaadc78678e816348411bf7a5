@@ -1,0 +1,76 @@
+src/design/theme.css.ts
+  s_8b6f36303cf486::t_b41a171e662aee 217-218,249-250
+  s_8b6f36303cf486::t_39b085d06879eb 138-146
+  s_8b6f36303cf486::t_44e1cd41ad8f72 85-94
+  s_8b6f36303cf486::t_47dc6c68e212d7 73-84
+  s_8b6f36303cf486::t_115b9f87e3569f 17-32
+  s_8b6f36303cf486::t_100446423f7c7e 163-188
+  s_8b6f36303cf486::t_7f7cf61eda76f2 216,248
+  s_8b6f36303cf486::t_7b454b58812dd6 155-162
+src/design/primitive-layer.ts
+  s_8b6f36303cf486::t_dd68ebc9fb8ef7 2,4,9-16,18,24-28
+  s_8b6f36303cf486::t_1fbebf237ff842 1,3,5-8,17,19-23,29
+src/components/ui/dialog.tsx
+  s_8b6f36303cf486::t_04521d67c5a15a 9-13,21-32,35-38
+  s_8b6f36303cf486::t_b373ae42e9f6d6 39-40
+src/components/ui/button.css.ts
+  s_8b6f36303cf486::t_816dc5767384bb 2-3
+  s_8b6f36303cf486::t_3489513f18e581 10-11,14,32,35,41-42,48-49,55-56,70
+src/components/ui/segmented-control.tsx
+  s_8b6f36303cf486::t_a0455a5ce2d610 40-41,49-54
+  s_8b6f36303cf486::t_65c6d27dad5fb5 94-96
+src/components/ui/switch.css.ts
+  s_8b6f36303cf486::t_8288d6c064a23e 9
+  s_8b6f36303cf486::t_7fb9042d739c93 8,11,28
+src/components/ui/dialog.css.ts
+  s_8b6f36303cf486::t_148dffec7ce9b8 7-9,13,17-21,24-25,34-45,48-49
+  s_8b6f36303cf486::t_80d4d4dc794db3 5-6,11,16,22-23,26-30,33,46-47,50-54
+src/components/ui/popover.tsx
+  s_8b6f36303cf486::t_f36f03e761fafb 4-7
+src/components/individuals/person-editor.css.ts
+  s_8b6f36303cf486::t_158b88f839cc22 336-337
+  s_8b6f36303cf486::t_a10fccaba8cc8b 403-406
+  s_8b6f36303cf486::t_8ced16a437b9f4 13
+src/components/ui/icon-button.css.ts
+  s_8b6f36303cf486::t_19bed85550982c 10
+  s_8b6f36303cf486::t_0b5ebd81b94978 9,12
+src/components/ui/text-field.css.ts
+  s_8b6f36303cf486::t_d0d63eee474f99 30
+  s_8b6f36303cf486::t_968c5b53416d04 9-10,13-29,31-34,37,40-41,47
+src/components/ui/segmented-control.css.ts
+  s_8b6f36303cf486::t_98c40ab1015b63 10,13
+  s_8b6f36303cf486::t_26855940946e9e 11,23,38,42,46
+src/components/ui/select.css.ts
+  s_8b6f36303cf486::t_46cf464d174869 8,11-12,14,37,43,54,58-59
+  s_8b6f36303cf486::t_b36ecee159bace 9
+src/components/individuals/person-editor-dialog.tsx
+  s_8b6f36303cf486::t_b780339d471967 1155-1156,1182-1183
+src/components/ui/typography.css.ts
+  s_8b6f36303cf486::t_26b5e5ab9ffbac 10,14,16,19,22-23,26-27,30-31,34-35,38,41-46,49-54,57-59
+src/components/ui/button.tsx
+  s_8b6f36303cf486::t_189630bd6f2c23 8
+  s_8b6f36303cf486::t_03cf72505e71db 2
+src/components/ui/popover.css.ts
+  s_8b6f36303cf486::t_3a7112a7d03a3d 8,11-12,14
+  s_8b6f36303cf486::t_084c648a926ef5 5-6
+src/components/ui/segmented-control.test.tsx
+  s_8b6f36303cf486::t_c1de0ea2cdb4d1 1,14-20
+  s_8b6f36303cf486::t_f16e1bdf2953a0 69-103
+  s_8b6f36303cf486::t_5c316925bdb46d 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "0f9bef0cc96763bfaadc78678e816348411bf7a5",
+  "prompts": {},
+  "sessions": {
+    "s_8b6f36303cf486": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "30a4ef38-f422-483d-85b9-032ca0938d32",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
