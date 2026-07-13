@@ -1,112 +1,74 @@
 /**
  * SegmentedControl primitive — a single-choice pill control.
  *
- * Encapsulates radio-group semantics, roving tabindex, and keyboard navigation
- * (arrow keys, Home/End). Use it when the user must choose one of a small
+ * Base UI's RadioGroup supplies the radio-group semantics: roving tabindex and
+ * arrow-key navigation that moves focus and selection together, wrapping at
+ * both ends (ADR-0014 — Base UI owns the expensive generic behavior, we own
+ * the look). Arrow keys are the whole navigation surface; the ARIA radiogroup
+ * pattern has no Home/End. Use it when the user must choose one of a small
  * number of related options, such as a sex selector.
+ *
+ * Each segment renders as a native `<button>` so `disabled` is the real
+ * attribute rather than an ARIA approximation.
+ *
+ * Generic over the value union, so a caller holding `Gender` gets `Gender`
+ * back from `onValueChange` — no cast — and an option outside the union is a
+ * compile error.
  *
  * Drive tests by `radiogroup` and the option labels; assert on `aria-checked`
  * to verify selection.
  */
-import * as React from 'react';
+import { Radio } from '@base-ui/react/radio';
+import { RadioGroup } from '@base-ui/react/radio-group';
 
 import * as styles from './segmented-control.css';
 
-export interface SegmentedControlOption {
-  value: string;
+export interface SegmentedControlOption<T extends string> {
+  value: T;
   label: string;
 }
 
-export interface SegmentedControlProps {
+export interface SegmentedControlProps<T extends string> {
   /** Human-readable label for the group (required for accessibility). */
   'aria-label': string;
   /** Currently selected value. */
-  value: string;
+  value: T;
   /** Called when the user selects a different value. */
-  onValueChange: (value: string) => void;
+  onValueChange: (value: T) => void;
   /** Options to render as segments. */
-  options: SegmentedControlOption[];
+  options: ReadonlyArray<SegmentedControlOption<T>>;
   /** Whether the whole control is disabled. */
   disabled?: boolean;
 }
 
-export function SegmentedControl({
+export function SegmentedControl<T extends string>({
   'aria-label': ariaLabel,
   value,
   onValueChange,
   options,
   disabled = false,
-}: SegmentedControlProps): JSX.Element {
-  const itemRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
-
-  const activeIndex = Math.max(
-    0,
-    options.findIndex((o) => o.value === value)
-  );
-
-  function selectIndex(index: number): void {
-    const next = options[index];
-    if (!next) return;
-    // The radiogroup pattern moves focus with the selection. Without this the
-    // roving tabindex strands focus on the previously selected segment, so
-    // arrow keys would keep stepping from it and never reach the far options.
-    itemRefs.current[index]?.focus();
-    if (next.value !== value) {
-      onValueChange(next.value);
-    }
-  }
-
-  function handleKeyDown(event: React.KeyboardEvent, index: number): void {
-    if (disabled) return;
-    let nextIndex = index;
-    switch (event.key) {
-      case 'ArrowLeft':
-      case 'ArrowUp':
-        nextIndex = index > 0 ? index - 1 : options.length - 1;
-        event.preventDefault();
-        break;
-      case 'ArrowRight':
-      case 'ArrowDown':
-        nextIndex = index < options.length - 1 ? index + 1 : 0;
-        event.preventDefault();
-        break;
-      case 'Home':
-        nextIndex = 0;
-        event.preventDefault();
-        break;
-      case 'End':
-        nextIndex = options.length - 1;
-        event.preventDefault();
-        break;
-      default:
-        return;
-    }
-    selectIndex(nextIndex);
-  }
-
+}: SegmentedControlProps<T>): JSX.Element {
   return (
-    <div className={styles.track} role="radiogroup" aria-label={ariaLabel}>
-      {options.map((option, index) => {
-        const checked = option.value === value;
-        return (
-          <button
-            key={option.value}
-            ref={(el) => {
-              itemRefs.current[index] = el;
-            }}
-            type="button"
-            role="radio"
-            aria-checked={checked}
-            tabIndex={index === activeIndex ? 0 : -1}
-            disabled={disabled}
-            className={styles.item({ active: checked })}
-            onClick={() => selectIndex(index)}
-            onKeyDown={(event) => handleKeyDown(event, index)}
-          >
-            {option.label}
-          </button>
-        );
-      })}
-    </div>
+    <RadioGroup
+      className={styles.track}
+      aria-label={ariaLabel}
+      value={value}
+      disabled={disabled}
+      // Truncates the arity: Base UI passes an eventDetails second argument
+      // that this primitive's `(value: T) => void` contract does not promise.
+      onValueChange={(next) => onValueChange(next)}
+    >
+      {options.map((option) => (
+        <Radio.Root
+          key={option.value}
+          value={option.value}
+          nativeButton
+          render={<button />}
+          className={styles.item}
+        >
+          {option.label}
+        </Radio.Root>
+      ))}
+    </RadioGroup>
   );
 }

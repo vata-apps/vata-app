@@ -83,15 +83,14 @@ describe('SegmentedControl', () => {
     expect(screen.getByRole('radio', { name: 'Unknown' })).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByRole('radio', { name: 'Unknown' })).toHaveFocus();
 
-    // ArrowRight wraps past the end, and Home jumps back to the first option.
+    // Past the last option, selection wraps back to the first.
     await user.keyboard('{ArrowRight}');
     expect(screen.getByRole('radio', { name: 'Female' })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('radio', { name: 'Female' })).toHaveFocus();
 
-    await user.keyboard('{End}');
+    // ArrowLeft walks the other way, wrapping to the last option.
+    await user.keyboard('{ArrowLeft}');
     expect(screen.getByRole('radio', { name: 'Unknown' })).toHaveAttribute('aria-checked', 'true');
-
-    await user.keyboard('{Home}');
-    expect(screen.getByRole('radio', { name: 'Female' })).toHaveAttribute('aria-checked', 'true');
   });
 
   it('keeps the selected option as the single tab stop', () => {

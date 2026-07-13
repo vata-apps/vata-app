@@ -993,9 +993,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                         <SegmentedControl
                           aria-label={t('personEditor.sex.label')}
                           value={form.gender}
-                          onValueChange={(value) =>
-                            setForm((prev) => ({ ...prev, gender: value as Gender }))
-                          }
+                          onValueChange={(value) => setForm((prev) => ({ ...prev, gender: value }))}
                           disabled={mutation.isPending}
                           options={SEX_VALUES.map((value) => ({
                             value,
