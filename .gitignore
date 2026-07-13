@@ -35,5 +35,8 @@ src/routeTree.gen.ts
 .superpowers/
 docs/superpowers/
 
+# TypeScript incremental build info (composite projects emit it even with --noEmit)
+*.tsbuildinfo
+
 # macOS
 .DS_Store
