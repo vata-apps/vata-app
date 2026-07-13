@@ -1,0 +1,67 @@
+src/components/individuals/person-editor.css.ts
+  s_e59255ba2d83f4::t_58693700ec7a98 148
+  s_e59255ba2d83f4::t_065523d72fe195 180
+  s_e59255ba2d83f4::t_76ffbe0f0f545d 447-448,452
+  s_e59255ba2d83f4::t_af57038d485148 299
+  s_e59255ba2d83f4::t_e6ceff0dbf89ec 108,113
+  s_e59255ba2d83f4::t_e4dda6cb81120b 101-102
+  s_e59255ba2d83f4::t_a7efec22f32428 539
+  s_e59255ba2d83f4::t_6a607a66ea9cc7 223-225,228-230
+  s_e59255ba2d83f4::t_44d7807432692a 67-83,89-93
+  s_e59255ba2d83f4::t_50067b4a74d940 446,449-451
+  s_e59255ba2d83f4::t_4d41923077518a 164-165
+  s_e59255ba2d83f4::t_e0398ecbbb1bd0 58
+  s_e59255ba2d83f4::t_3175c18adad45c 188
+  s_e59255ba2d83f4::t_d00eaf22b9ef6b 96-100,103-107,109-112,114-115
+  s_e59255ba2d83f4::t_ce26b32311261f 204-205
+  s_e59255ba2d83f4::t_f67b5a7aa0fe3c 170
+  s_e59255ba2d83f4::t_1f403e919676e4 239-240
+  s_e59255ba2d83f4::t_3c4bae83cfa99f 507
+  s_e59255ba2d83f4::t_6b6fd2e10ec55d 34
+  s_e59255ba2d83f4::t_05ec9f6f9e84c6 222,226-227,231-232,235-238
+  s_e59255ba2d83f4::t_5adeec2581c208 57,59
+src/i18n/locales/en/individuals.json
+  s_e59255ba2d83f4::t_50ca00bec02732 187,198,202
+  s_e59255ba2d83f4::t_487a2645393072 186
+src/i18n/locales/fr/individuals.json
+  s_e59255ba2d83f4::t_48b130264fc52a 186
+  s_e59255ba2d83f4::t_d7b684a5c3bc40 187,198,202
+src/components/individuals/person-editor-dialog.test.tsx
+  s_e59255ba2d83f4::t_f2a01497615210 274-287
+  s_e59255ba2d83f4::t_ef38af09e1e4e2 2
+  s_e59255ba2d83f4::t_ce2b7480950497 166
+  s_e59255ba2d83f4::t_2dae7edb3f65d7 153
+  s_e59255ba2d83f4::t_d93fdafb086fa7 151-152,161,165,167-171,174,176,178
+src/styles/app.css
+  s_e59255ba2d83f4::t_571e35f2d237de 3-15
+src/components/individuals/person-editor-dialog.tsx
+  s_e59255ba2d83f4::t_2d9db3a51afb4c 1048-1062
+  s_e59255ba2d83f4::t_e648330d202e27 429
+  s_e59255ba2d83f4::t_2c04d50ab29b77 987-1004
+  s_e59255ba2d83f4::t_89ba7f6ed2b6b7 438,449
+  s_e59255ba2d83f4::t_47f113dd124b48 443
+  s_e59255ba2d83f4::t_6a4798cce28abb 946-960,964
+  s_e59255ba2d83f4::t_bc6dfc21c3849f 1041-1047
+  s_e59255ba2d83f4::t_86c1dff5fdc148 1138-1149
+  s_e59255ba2d83f4::t_a46b0abcc33335 717-720
+  s_e59255ba2d83f4::t_75856c9d4c7d6e 440,450
+  s_e59255ba2d83f4::t_866e55477fbb81 756,758-765
+src/design/theme.css.ts
+  s_e59255ba2d83f4::t_775b96813486d2 106
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "8127bdd346bdd10208a43561023a8fe994f1b2dc",
+  "prompts": {},
+  "sessions": {
+    "s_e59255ba2d83f4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "31dba806-1b38-4aaf-830c-8d32f7942a7c",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}

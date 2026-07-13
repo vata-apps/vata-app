@@ -1,0 +1,27 @@
+.githooks/sql-guard.sh
+  s_6c2918f7c45479::t_a4839a2da72fd9 17-22,29
+  s_6c2918f7c45479::t_87d86469bdeddc 8-9
+  s_6c2918f7c45479::t_6bc9f82a3b225b 16
+src/components/individuals/person-editor-dialog.tsx
+  s_6c2918f7c45479::t_b2757fcec87e29 509-510
+.opencode/agents/execute-issue.md
+  s_6c2918f7c45479::t_6579fa68d7827c 151
+.husky/pre-commit
+  s_6c2918f7c45479::t_d6797893f1a065 8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "8098038d7c9cdfbe3a19aa2d479858827a04d399",
+  "prompts": {},
+  "sessions": {
+    "s_6c2918f7c45479": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0a71a9f31ffeXRSh08InyVa3wd",
+        "model": "glm-5.2"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}

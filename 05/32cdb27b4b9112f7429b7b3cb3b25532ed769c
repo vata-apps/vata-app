@@ -1,0 +1,24 @@
+src/components/individuals/person-editor-dialog.tsx
+  s_977a65164e1f0b::t_077a08266df7af 345
+src/components/individuals/person-picker.tsx
+  s_977a65164e1f0b::t_392be9e5dec52c 106
+  s_977a65164e1f0b::t_4b166b71e1be79 107-109
+src/components/individuals/person-editor.css.ts
+  s_977a65164e1f0b::t_4bcb1857658ce8 415-424
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.12",
+  "base_commit_sha": "0532cdb27b4b9112f7429b7b3cb3b25532ed769c",
+  "prompts": {},
+  "sessions": {
+    "s_977a65164e1f0b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0a7d78bd7ffefjRvxTdcALX9Ec",
+        "model": "glm-5.2"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
