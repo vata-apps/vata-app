@@ -1,0 +1,24 @@
+tsconfig.node.json
+  s_1976163ceb85a3::t_1d27820a29b7f3 5-6
+  s_1976163ceb85a3::t_3d9f1bd2519d9c 12
+.gitignore
+  s_1976163ceb85a3::t_be69d52f97bd68 38-40
+package.json
+  s_1976163ceb85a3::t_f1e72d384d5768 36-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "1c2487c5c3e501329d99f7d0374b15194aa7d126",
+  "prompts": {},
+  "sessions": {
+    "s_1976163ceb85a3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eeb9037a-445d-4af9-b8dc-3544a12eb2d2",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
