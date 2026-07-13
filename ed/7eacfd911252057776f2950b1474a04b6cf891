@@ -1,0 +1,30 @@
+src/components/ui/segmented-control.css.ts
+  s_8b6f36303cf486::t_f2e4379fdb2e58 5-7,9,21-36,38-39
+src/components/individuals/person-editor-dialog.tsx
+  s_8b6f36303cf486::t_988f483d706d23 996
+src/components/ui/segmented-control.test.tsx
+  s_8b6f36303cf486::t_23ff5433b78185 86,89,91-92
+src/components/ui/segmented-control.tsx
+  s_8b6f36303cf486::t_1f364cb52bd556 11-13,21-22,52-56,60-65,67-72
+  s_8b6f36303cf486::t_9b21434b4e5308 4-8
+  s_8b6f36303cf486::t_cbbd52fda49a8d 66
+  s_8b6f36303cf486::t_e84034021a04e4 26-27,31,35,37,39,44,50
+  s_8b6f36303cf486::t_73af777c11d26e 14-17
+  s_8b6f36303cf486::t_a3c7df9cfff330 57-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "ed7eacfd911252057776f2950b1474a04b6cf891",
+  "prompts": {},
+  "sessions": {
+    "s_8b6f36303cf486": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "30a4ef38-f422-483d-85b9-032ca0938d32",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
