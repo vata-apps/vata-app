@@ -6,16 +6,11 @@
  * `recipe()` beside the styles they select (ADR-0015).
  */
 import { recipe } from '@vanilla-extract/recipes';
-import { style } from '@vanilla-extract/css';
 
-import { vars } from '$/design/theme.css';
+import { primitive, primitiveStyle } from '$/design/primitive-layer';
+import { focusRing, vars } from '$/design/theme.css';
 
-const focusRing = {
-  outline: `2px solid ${vars.color.accent}`,
-  outlineOffset: 2,
-};
-
-export const track = style({
+export const track = primitiveStyle({
   display: 'inline-flex',
   background: vars.color.subtle,
   borderRadius: 8,
@@ -25,7 +20,7 @@ export const track = style({
 });
 
 export const item = recipe({
-  base: {
+  base: primitive({
     padding: `${vars.space['1.5']} ${vars.space['3.25']}`,
     borderRadius: 6,
     fontSize: vars.text['12.5'].fontSize,
@@ -40,15 +35,15 @@ export const item = recipe({
       '&:disabled': { cursor: 'default', opacity: 0.6 },
       '&:focus-visible': focusRing,
     },
-  },
+  }),
   variants: {
     active: {
       false: {},
-      true: {
+      true: primitive({
         background: vars.color.panel,
         color: vars.color.text,
         boxShadow: vars.shadow.sm,
-      },
+      }),
     },
   },
   defaultVariants: {

@@ -7,55 +7,56 @@
  */
 import { recipe } from '@vanilla-extract/recipes';
 
+import { primitive } from '$/design/primitive-layer';
 import { vars } from '$/design/theme.css';
 
 export const typography = recipe({
-  base: {
+  base: primitive({
     margin: 0,
-  },
+  }),
   variants: {
     size: {
-      '12.5': {
+      '12.5': primitive({
         fontSize: vars.text['12.5'].fontSize,
         lineHeight: vars.text['12.5'].lineHeight,
-      },
-      '13': {
+      }),
+      '13': primitive({
         fontSize: vars.text['13'].fontSize,
         lineHeight: vars.text['13'].lineHeight,
-      },
-      '13.5': {
+      }),
+      '13.5': primitive({
         fontSize: vars.text['13.5'].fontSize,
         lineHeight: vars.text['13.5'].lineHeight,
-      },
-      '15': {
+      }),
+      '15': primitive({
         fontSize: vars.text['15'].fontSize,
         lineHeight: vars.text['15'].lineHeight,
-      },
-      '16': {
+      }),
+      '16': primitive({
         fontSize: vars.text['16'].fontSize,
         lineHeight: vars.text['16'].lineHeight,
-      },
+      }),
     },
     weight: {
-      '400': { fontWeight: 400 },
-      '500': { fontWeight: 500 },
-      '550': { fontWeight: 550 },
-      '600': { fontWeight: 600 },
-      '650': { fontWeight: 650 },
-      '700': { fontWeight: 700 },
+      '400': primitive({ fontWeight: 400 }),
+      '500': primitive({ fontWeight: 500 }),
+      '550': primitive({ fontWeight: 550 }),
+      '600': primitive({ fontWeight: 600 }),
+      '650': primitive({ fontWeight: 650 }),
+      '700': primitive({ fontWeight: 700 }),
     },
     tone: {
-      text: { color: vars.color.text },
-      muted: { color: vars.color.muted },
-      faint: { color: vars.color.faint },
-      accent: { color: vars.color.accent },
-      danger: { color: vars.color.danger },
-      warn: { color: vars.color.warn },
+      text: primitive({ color: vars.color.text }),
+      muted: primitive({ color: vars.color.muted }),
+      faint: primitive({ color: vars.color.faint }),
+      accent: primitive({ color: vars.color.accent }),
+      danger: primitive({ color: vars.color.danger }),
+      warn: primitive({ color: vars.color.warn }),
     },
     family: {
-      sans: { fontFamily: vars.font.sans },
-      serif: { fontFamily: vars.font.serif },
-      mono: { fontFamily: vars.font.mono },
+      sans: primitive({ fontFamily: vars.font.sans }),
+      serif: primitive({ fontFamily: vars.font.serif }),
+      mono: primitive({ fontFamily: vars.font.mono }),
     },
   },
   defaultVariants: {

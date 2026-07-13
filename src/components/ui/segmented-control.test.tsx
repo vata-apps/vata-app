@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,6 +10,14 @@ const OPTIONS = [
   { value: 'M', label: 'Male' },
   { value: 'U', label: 'Unknown' },
 ];
+
+/** Mirrors how a form drives the control: value comes back down as a prop. */
+function ControlledSegmentedControl({ initial = 'F' }: { initial?: string }): JSX.Element {
+  const [value, setValue] = useState(initial);
+  return (
+    <SegmentedControl aria-label="Sex" value={value} onValueChange={setValue} options={OPTIONS} />
+  );
+}
 
 describe('SegmentedControl', () => {
   it('selects an option when clicked', async () => {
@@ -56,5 +65,40 @@ describe('SegmentedControl', () => {
 
     await user.click(radio);
     expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it('walks every option with the arrow keys, moving focus with the selection', async () => {
+    const user = userEvent.setup();
+    render(<ControlledSegmentedControl />);
+
+    await user.tab();
+    expect(screen.getByRole('radio', { name: 'Female' })).toHaveFocus();
+
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('radio', { name: 'Male' })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('radio', { name: 'Male' })).toHaveFocus();
+
+    // The far option is only reachable if focus followed the first step.
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('radio', { name: 'Unknown' })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('radio', { name: 'Unknown' })).toHaveFocus();
+
+    // ArrowRight wraps past the end, and Home jumps back to the first option.
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByRole('radio', { name: 'Female' })).toHaveAttribute('aria-checked', 'true');
+
+    await user.keyboard('{End}');
+    expect(screen.getByRole('radio', { name: 'Unknown' })).toHaveAttribute('aria-checked', 'true');
+
+    await user.keyboard('{Home}');
+    expect(screen.getByRole('radio', { name: 'Female' })).toHaveAttribute('aria-checked', 'true');
+  });
+
+  it('keeps the selected option as the single tab stop', () => {
+    render(<ControlledSegmentedControl initial="M" />);
+
+    expect(screen.getByRole('radio', { name: 'Male' })).toHaveAttribute('tabindex', '0');
+    expect(screen.getByRole('radio', { name: 'Female' })).toHaveAttribute('tabindex', '-1');
+    expect(screen.getByRole('radio', { name: 'Unknown' })).toHaveAttribute('tabindex', '-1');
   });
 });

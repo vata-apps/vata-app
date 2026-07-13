@@ -6,6 +6,11 @@
  * shell styles. Width, padding, and internal layout are left to the caller so
  * the primitive works for both large modals and small confirmation dialogs.
  *
+ * Pass `layer="alert"` to both `Backdrop` and `Popup` when the dialog is a
+ * confirmation opened from an already-open dialog: it stacks above that
+ * dialog and above any select/popover floating inside it. The default,
+ * `layer="dialog"`, is the right choice for a top-level modal.
+ *
  * Drive tests by `dialog` / `alertdialog` roles and the title/description text.
  */
 import * as React from 'react';
@@ -13,12 +18,26 @@ import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 
 import * as styles from './dialog.css';
 
-function Backdrop({ className = '', ...props }: React.ComponentProps<typeof BaseDialog.Backdrop>) {
-  return <BaseDialog.Backdrop className={`${styles.backdrop} ${className}`.trim()} {...props} />;
+/** Stacking level; see the module JSDoc. */
+export type DialogLayer = 'dialog' | 'alert';
+
+type BackdropProps = React.ComponentProps<typeof BaseDialog.Backdrop> & { layer?: DialogLayer };
+
+function Backdrop({ className = '', layer = 'dialog', ...props }: BackdropProps) {
+  return (
+    <BaseDialog.Backdrop
+      className={`${styles.backdrop({ layer })} ${className}`.trim()}
+      {...props}
+    />
+  );
 }
 
-function Popup({ className = '', ...props }: React.ComponentProps<typeof BaseDialog.Popup>) {
-  return <BaseDialog.Popup className={`${styles.popup} ${className}`.trim()} {...props} />;
+type PopupProps = React.ComponentProps<typeof BaseDialog.Popup> & { layer?: DialogLayer };
+
+function Popup({ className = '', layer = 'dialog', ...props }: PopupProps) {
+  return (
+    <BaseDialog.Popup className={`${styles.popup({ layer })} ${className}`.trim()} {...props} />
+  );
 }
 
 export const Dialog = {

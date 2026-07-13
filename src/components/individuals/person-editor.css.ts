@@ -10,12 +10,7 @@
  */
 import { style } from '@vanilla-extract/css';
 
-import { vars } from '$/design/theme.css';
-
-const focusRing = {
-  outline: `2px solid ${vars.color.accent}`,
-  outlineOffset: 2,
-};
+import { focusRing, vars } from '$/design/theme.css';
 
 /* ---- dialog chrome -------------------------------------------------- */
 
@@ -338,14 +333,8 @@ export const pfieldDates = style({ fontSize: 11, color: vars.color.faint });
 
 /* ---- Person picker (Base UI Popover) -------------------------------- */
 
-export const pickerPopup = style({
-  background: vars.color.panel,
-  border: `1px solid ${vars.color.borderStrong}`,
-  borderRadius: 11,
-  boxShadow: vars.shadow.lg,
-  padding: 9,
-  width: 288,
-});
+/** The Popover primitive owns the popup shell; the picker only fixes its width. */
+export const pickerPopup = style({ width: 288 });
 export const pickerList = style({
   display: 'flex',
   flexDirection: 'column',
@@ -411,25 +400,14 @@ export const callout = style({
 
 /* ---- discard AlertDialog ------------------------------------------- */
 
-export const alertBackdrop = style({
-  position: 'fixed',
-  inset: 0,
-  zIndex: 110,
-  background: vars.color.scrim,
-});
+/**
+ * The Dialog primitive owns the shell and the stacking level (`layer="alert"`);
+ * the confirmations only size and pad themselves.
+ */
 export const alertPopup = style({
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  zIndex: 111,
-  fontFamily: vars.font.sans,
   width: 'calc(100vw - 44px)',
   maxWidth: 440,
-  background: vars.color.panel,
-  border: `1px solid ${vars.color.borderStrong}`,
   borderRadius: 12,
-  boxShadow: vars.shadow.lg,
   padding: 20,
 });
 export const alertTitle = style({

@@ -1152,8 +1152,8 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
 
       <Dialog.Root open={confirmDiscardOpen} onOpenChange={setConfirmDiscardOpen}>
         <Dialog.Portal>
-          <Dialog.Backdrop className={s.alertBackdrop} />
-          <Dialog.Popup className={s.alertPopup}>
+          <Dialog.Backdrop layer="alert" />
+          <Dialog.Popup layer="alert" className={s.alertPopup}>
             <Dialog.Title className={s.alertTitle}>
               {t('personEditor.unsavedChanges.title')}
             </Dialog.Title>
@@ -1179,8 +1179,8 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
         }}
       >
         <Dialog.Portal>
-          <Dialog.Backdrop className={s.alertBackdrop} />
-          <Dialog.Popup className={s.alertPopup}>
+          <Dialog.Backdrop layer="alert" />
+          <Dialog.Popup layer="alert" className={s.alertPopup}>
             <Dialog.Title className={s.alertTitle}>
               {t('personEditor.removeFamilyConfirm.title')}
             </Dialog.Title>

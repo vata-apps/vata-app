@@ -37,6 +37,8 @@ export function SegmentedControl({
   options,
   disabled = false,
 }: SegmentedControlProps): JSX.Element {
+  const itemRefs = React.useRef<Array<HTMLButtonElement | null>>([]);
+
   const activeIndex = Math.max(
     0,
     options.findIndex((o) => o.value === value)
@@ -44,7 +46,12 @@ export function SegmentedControl({
 
   function selectIndex(index: number): void {
     const next = options[index];
-    if (next && next.value !== value) {
+    if (!next) return;
+    // The radiogroup pattern moves focus with the selection. Without this the
+    // roving tabindex strands focus on the previously selected segment, so
+    // arrow keys would keep stepping from it and never reach the far options.
+    itemRefs.current[index]?.focus();
+    if (next.value !== value) {
       onValueChange(next.value);
     }
   }
@@ -84,6 +91,9 @@ export function SegmentedControl({
         return (
           <button
             key={option.value}
+            ref={(el) => {
+              itemRefs.current[index] = el;
+            }}
             type="button"
             role="radio"
             aria-checked={checked}

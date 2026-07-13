@@ -14,7 +14,22 @@
  * (set from the resolved app appearance) and, as a fallback, via
  * `prefers-color-scheme` when no attribute is present.
  */
-import { assignVars, createGlobalThemeContract, globalStyle } from '@vanilla-extract/css';
+import {
+  assignVars,
+  createGlobalThemeContract,
+  globalLayer,
+  globalStyle,
+} from '@vanilla-extract/css';
+
+/**
+ * Cascade layer holding every `src/components/ui/` primitive's chrome.
+ *
+ * Layered declarations always lose to unlayered ones, whatever the source
+ * order. Feature stylesheets stay unlayered, so passing `className` to a
+ * primitive reliably overrides it instead of depending on which `.css.ts` the
+ * bundler happened to emit first.
+ */
+export const primitiveLayer = globalLayer('vata-primitives');
 
 export const vars = createGlobalThemeContract(
   {
@@ -55,7 +70,28 @@ export const vars = createGlobalThemeContract(
     shadow: { sm: null, lg: null },
     font: { sans: null, serif: null, mono: null },
     /**
-     * Spacing scale, Tailwind-style: each step is a multiple of 4px.
+     * Stacking order for portalled surfaces. Primitives read these; features
+     * never declare a raw z-index.
+     *
+     * The scale is flat, so it models exactly one level of nesting: a select
+     * or popover opened from a dialog floats above it, and a confirmation
+     * alert covers both. A popover opened from *inside* an alert would fall
+     * behind it — grow the scale into a per-depth model on the day a screen
+     * needs that, rather than pretending it already works.
+     *
+     * `popover` sits on the Floating UI positioner, not the popup: the
+     * positioner carries an inline `will-change: transform`, which creates a
+     * stacking context that traps any z-index set on the popup inside it.
+     */
+    zIndex: {
+      dialogBackdrop: null,
+      dialog: null,
+      popover: null,
+      alertBackdrop: null,
+      alert: null,
+    },
+    /**
+     * Spacing scale, Tailwind-style: step N is N × 4px.
      * Only steps currently consumed by the product are declared — gaps are
      * intentional and signal unfinished scale territory.
      */
@@ -99,6 +135,15 @@ export const vars = createGlobalThemeContract(
       .join('-')}`
 );
 
+/**
+ * The one focus ring. Spread it into a `:focus-visible` selector; every
+ * focusable control in the app wears the same one.
+ */
+export const focusRing = {
+  outline: `2px solid ${vars.color.accent}`,
+  outlineOffset: 2,
+} as const;
+
 const font = {
   sans: '"Geist Sans", ui-sans-serif, system-ui, sans-serif',
   serif: '"Fraunces", ui-serif, Georgia, serif',
@@ -106,6 +151,40 @@ const font = {
 };
 
 const radius = { base: '0.625rem', sm: '0.4375rem' };
+
+const zIndex = {
+  dialogBackdrop: '100',
+  dialog: '101',
+  popover: '105',
+  alertBackdrop: '110',
+  alert: '111',
+};
+
+/** Geometry, not identity: the scales are the same in both appearances. */
+const space = {
+  '0.5': '2px',
+  '0.75': '3px',
+  '1.5': '6px',
+  '1.75': '7px',
+  '2': '8px',
+  '2.25': '9px',
+  '2.5': '10px',
+  '2.75': '11px',
+  '3': '12px',
+  '3.25': '13px',
+  '3.5': '14px',
+  '4': '16px',
+  '4.5': '18px',
+  '5': '20px',
+};
+
+const text = {
+  '12.5': { fontSize: '12.5px', lineHeight: '1.4' },
+  '13': { fontSize: '13px', lineHeight: '1.45' },
+  '13.5': { fontSize: '13.5px', lineHeight: '1.45' },
+  '15': { fontSize: '15px', lineHeight: '1.5' },
+  '16': { fontSize: '16px', lineHeight: '1.5' },
+};
 
 const light = {
   color: {
@@ -134,29 +213,9 @@ const light = {
     lg: '0 12px 28px oklch(0.2 0.02 50 / 0.12), 0 4px 10px oklch(0.2 0.02 50 / 0.08)',
   },
   font,
-  space: {
-    '0.5': '2px',
-    '0.75': '3px',
-    '1.5': '6px',
-    '1.75': '7px',
-    '2': '8px',
-    '2.25': '9px',
-    '2.5': '10px',
-    '2.75': '11px',
-    '3': '12px',
-    '3.25': '13px',
-    '3.5': '14px',
-    '4': '16px',
-    '4.5': '18px',
-    '5': '20px',
-  },
-  text: {
-    '12.5': { fontSize: '12.5px', lineHeight: '1.4' },
-    '13': { fontSize: '13px', lineHeight: '1.45' },
-    '13.5': { fontSize: '13.5px', lineHeight: '1.45' },
-    '15': { fontSize: '15px', lineHeight: '1.5' },
-    '16': { fontSize: '16px', lineHeight: '1.5' },
-  },
+  zIndex,
+  space,
+  text,
 };
 
 const dark = {
@@ -186,29 +245,9 @@ const dark = {
     lg: '0 12px 28px oklch(0 0 0 / 0.55), 0 4px 10px oklch(0 0 0 / 0.4)',
   },
   font,
-  space: {
-    '0.5': '2px',
-    '0.75': '3px',
-    '1.5': '6px',
-    '1.75': '7px',
-    '2': '8px',
-    '2.25': '9px',
-    '2.5': '10px',
-    '2.75': '11px',
-    '3': '12px',
-    '3.25': '13px',
-    '3.5': '14px',
-    '4': '16px',
-    '4.5': '18px',
-    '5': '20px',
-  },
-  text: {
-    '12.5': { fontSize: '12.5px', lineHeight: '1.4' },
-    '13': { fontSize: '13px', lineHeight: '1.45' },
-    '13.5': { fontSize: '13.5px', lineHeight: '1.45' },
-    '15': { fontSize: '15px', lineHeight: '1.5' },
-    '16': { fontSize: '16px', lineHeight: '1.5' },
-  },
+  zIndex,
+  space,
+  text,
 };
 
 globalStyle(':root', { vars: assignVars(vars, light) });

@@ -1,9 +1,10 @@
 /**
  * Popover primitive — a styled Base UI `Popover` assembly.
  *
- * Exposes the same parts as Base UI (`Root`, `Trigger`, `Portal`, `Positioner`,
- * `Popup`, `Arrow`, `Close`) with warm-earth popup shell styles and the
- * correct positioner z-index for floating inside dialogs.
+ * Exposes `Root`, `Trigger`, `Portal`, `Positioner`, and `Popup` with
+ * warm-earth popup shell styles and the correct positioner z-index for
+ * floating inside dialogs. Base UI's other parts (`Arrow`, `Close`, …) are not
+ * re-exported yet — add them here, styled, when a screen needs one.
  *
  * Drive tests by the trigger button and the popup contents; assert that
  * opening/closing reveals or hides the expected options.

@@ -1,21 +1,17 @@
 /**
- * Button primitive styles. Three action variants lifted from the Person editor:
- * solid (primary), ghost (secondary), danger (destructive).
+ * Button primitive styles. Four variants lifted from the Person editor:
+ * solid (primary), ghost (secondary), danger (destructive), dashed (add-row).
  *
  * Variants are declared with `recipe()` so the variant map lives beside the
  * styles it selects (ADR-0015).
  */
 import { recipe } from '@vanilla-extract/recipes';
 
-import { vars } from '$/design/theme.css';
-
-const focusRing = {
-  outline: `2px solid ${vars.color.accent}`,
-  outlineOffset: 2,
-};
+import { primitive } from '$/design/primitive-layer';
+import { focusRing, vars } from '$/design/theme.css';
 
 export const button = recipe({
-  base: {
+  base: primitive({
     height: 34,
     borderRadius: vars.radius.sm,
     padding: `0 ${vars.space['4']}`,
@@ -33,31 +29,31 @@ export const button = recipe({
       '&:focus-visible': focusRing,
       '&:disabled': { cursor: 'default', opacity: 0.6 },
     },
-  },
+  }),
   variants: {
     variant: {
-      solid: {
+      solid: primitive({
         background: vars.color.accent,
         color: vars.color.accentText,
         selectors: {
           '&:hover:not(:disabled)': { background: vars.color.accentHover },
         },
-      },
-      ghost: {
+      }),
+      ghost: primitive({
         background: 'transparent',
         color: vars.color.muted,
         selectors: {
           '&:hover:not(:disabled)': { color: vars.color.text },
         },
-      },
-      danger: {
+      }),
+      danger: primitive({
         background: vars.color.danger,
         color: vars.color.accentText,
         selectors: {
           '&:hover:not(:disabled)': { filter: 'brightness(0.94)' },
         },
-      },
-      dashed: {
+      }),
+      dashed: primitive({
         alignSelf: 'flex-start',
         background: 'transparent',
         border: `1px dashed ${vars.color.borderStrong}`,
@@ -71,7 +67,7 @@ export const button = recipe({
             color: vars.color.accent,
           },
         },
-      },
+      }),
     },
   },
   defaultVariants: {

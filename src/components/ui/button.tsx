@@ -1,10 +1,11 @@
 /**
- * Button primitive — a styled `<button>` with three action variants.
+ * Button primitive — a styled `<button>` with four variants.
  *
  * Use `variant` to choose the visual weight:
  * - `solid` (default): primary actions like "Save".
  * - `ghost`: secondary actions like "Cancel".
  * - `danger`: destructive confirmations like "Discard" or "Delete".
+ * - `dashed`: the "add another row" affordance inside a form section.
  *
  * The component forwards refs and native button attributes; disabled and
  * focus states are handled by the stylesheet.

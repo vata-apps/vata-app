@@ -6,16 +6,10 @@
  * so the control reads as destructive/negative without taking up the width of
  * a text button.
  */
-import { style } from '@vanilla-extract/css';
+import { primitiveStyle } from '$/design/primitive-layer';
+import { focusRing, vars } from '$/design/theme.css';
 
-import { vars } from '$/design/theme.css';
-
-const focusRing = {
-  outline: `2px solid ${vars.color.accent}`,
-  outlineOffset: 2,
-};
-
-export const iconButton = style({
+export const iconButton = primitiveStyle({
   width: 30,
   height: 30,
   borderRadius: 6,

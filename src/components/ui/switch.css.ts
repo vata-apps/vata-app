@@ -5,16 +5,10 @@
  * The root fills with the accent color when checked; the thumb is a white
  * circle that slides horizontally.
  */
-import { style } from '@vanilla-extract/css';
+import { primitiveStyle } from '$/design/primitive-layer';
+import { focusRing, vars } from '$/design/theme.css';
 
-import { vars } from '$/design/theme.css';
-
-const focusRing = {
-  outline: `2px solid ${vars.color.accent}`,
-  outlineOffset: 2,
-};
-
-export const root = style({
+export const root = primitiveStyle({
   width: 38,
   height: 22,
   borderRadius: 99,
@@ -31,7 +25,7 @@ export const root = style({
   },
 });
 
-export const thumb = style({
+export const thumb = primitiveStyle({
   position: 'absolute',
   top: vars.space['0.5'],
   left: vars.space['0.5'],
