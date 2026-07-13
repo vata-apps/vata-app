@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Dialog } from '@base-ui/react/dialog';
-import { Select } from '@base-ui/react/select';
-import { Switch } from '@base-ui/react/switch';
 
+import { Button } from '$components/ui/button';
+import { Dialog } from '$components/ui/dialog';
+import { Select } from '$components/ui/select';
+import { SegmentedControl } from '$components/ui/segmented-control';
+import { Switch } from '$components/ui/switch';
+import { TextField } from '$components/ui/text-field';
 import { Icon } from '$components/icon';
 import { useEventTypes } from '$hooks/useEvents';
 import { useParentFamily, useSpouseFamilies } from '$hooks/useFamilies';
@@ -335,17 +338,17 @@ function NameTypeSelect({
         if (next !== null) onValueChange(next as NameType);
       }}
     >
-      <Select.Trigger className={s.selbox}>
+      <Select.Trigger>
         <Select.Value>{(v) => (v ? t(`overview.names.types.${v as NameType}`) : '')}</Select.Value>
-        <Select.Icon className={s.selboxCaret}>
+        <Select.Icon>
           <Icon name="chevron-down" size={12} />
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Positioner sideOffset={4} positionMethod="fixed" className={s.positionerZ}>
-          <Select.Popup className={s.selectPopup}>
+        <Select.Positioner sideOffset={4} positionMethod="fixed">
+          <Select.Popup>
             {NAME_TYPES.map((nt) => (
-              <Select.Item key={nt} value={nt} className={s.selectItem}>
+              <Select.Item key={nt} value={nt}>
                 <Select.ItemText>{t(`overview.names.types.${nt}`)}</Select.ItemText>
               </Select.Item>
             ))}
@@ -392,15 +395,14 @@ function RelationSlot({
           <span className={s.pfieldName}>{person.displayName}</span>
           {dates && <span className={s.pfieldDates}>{dates}</span>}
         </span>
-        <button
-          type="button"
-          className={s.iconbtn}
+        <Button
+          variant="icon"
           disabled={disabled}
           aria-label={t('personEditor.relations.removeAria')}
           onClick={onRemove}
         >
           <Icon name="x" size={16} />
-        </button>
+        </Button>
       </div>
     );
   }
@@ -439,24 +441,23 @@ function EventDateRow({
   return (
     <div className={onRemove ? s.eventrowRemovable : s.eventrow}>
       <span className={s.eventType}>{label}</span>
-      <input
-        className={`${s.input} ${s.tnum}`}
+      <TextField
+        className={s.tnum}
         placeholder={t('personEditor.lifeEvents.datePlaceholder')}
         value={dateOriginal}
         disabled={disabled}
         onChange={(e) => onChangeDate(e.target.value)}
       />
-      <input className={s.input} placeholder={placeLabel} aria-label={placeLabel} disabled />
+      <TextField placeholder={placeLabel} aria-label={placeLabel} disabled />
       {onRemove && (
-        <button
-          type="button"
-          className={s.iconbtn}
+        <Button
+          variant="icon"
           disabled={disabled}
           aria-label={t('personEditor.lifeEvents.removeAria')}
           onClick={onRemove}
         >
           <Icon name="x" size={16} />
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -475,7 +476,7 @@ export type PersonEditorDialogProps = {
  * list (dates only — a place picker lands later, see the Person editor PRD),
  * notes, and relations (parents, spouse families, children) via the
  * search-or-create {@link PersonPicker}. Styled from the warm-earth tokens
- * (ADR-0014).
+ * (ADR-0014), controls from `src/components/ui/` (ADR-0015).
  */
 export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element {
   const { open, onOpenChange, onSaved } = props;
@@ -760,8 +761,8 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
     <>
       <Dialog.Root open={open} onOpenChange={handleDialogOpenChange}>
         <Dialog.Portal>
-          <Dialog.Backdrop className={s.backdrop} />
-          <Dialog.Popup className={s.modal} aria-describedby={undefined}>
+          <Dialog.Backdrop />
+          <Dialog.Popup variant="panel" aria-describedby={undefined}>
             <div className={s.mhead}>
               <div className={s.headAvatar} aria-hidden="true">
                 {initialsFromDisplayName(subtitle)}
@@ -778,15 +779,14 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                 )}
               </div>
               <span className={s.grow} />
-              <button
-                type="button"
-                className={s.iconbtn}
+              <Button
+                variant="icon"
                 aria-label={t('personEditor.actions.close')}
                 disabled={mutation.isPending}
                 onClick={attemptClose}
               >
                 <Icon name="x" size={16} />
-              </button>
+              </Button>
             </div>
 
             <div className={s.mbody}>
@@ -804,8 +804,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                             <span className={s.fieldLabel}>
                               {t('personEditor.fields.givenNames')}
                             </span>
-                            <input
-                              className={s.input}
+                            <TextField
                               value={form.givenNames}
                               disabled={mutation.isPending}
                               onChange={(e) =>
@@ -815,8 +814,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                           </label>
                           <label className={s.field}>
                             <span className={s.fieldLabel}>{t('personEditor.fields.surname')}</span>
-                            <input
-                              className={s.input}
+                            <TextField
                               value={form.surname}
                               disabled={mutation.isPending}
                               onChange={(e) =>
@@ -828,8 +826,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                         <div className={s.fgrid3Gap}>
                           <label className={s.field}>
                             <span className={s.fieldLabel}>{t('personEditor.fields.prefix')}</span>
-                            <input
-                              className={s.input}
+                            <TextField
                               value={form.prefix}
                               disabled={mutation.isPending}
                               onChange={(e) =>
@@ -839,8 +836,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                           </label>
                           <label className={s.field}>
                             <span className={s.fieldLabel}>{t('personEditor.fields.suffix')}</span>
-                            <input
-                              className={s.input}
+                            <TextField
                               value={form.suffix}
                               disabled={mutation.isPending}
                               onChange={(e) =>
@@ -852,8 +848,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                             <span className={s.fieldLabel}>
                               {t('personEditor.fields.nickname')}
                             </span>
-                            <input
-                              className={s.input}
+                            <TextField
                               value={form.nickname}
                               disabled={mutation.isPending}
                               onChange={(e) =>
@@ -869,8 +864,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                         <div className={s.stack}>
                           {form.alternateNames.map((row) => (
                             <div key={row.key} className={s.altrow}>
-                              <input
-                                className={s.input}
+                              <TextField
                                 placeholder={t('personEditor.fields.givenNames')}
                                 value={row.givenNames}
                                 disabled={mutation.isPending}
@@ -878,8 +872,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                                   updateAltName(row.key, { givenNames: e.target.value })
                                 }
                               />
-                              <input
-                                className={s.input}
+                              <TextField
                                 placeholder={t('personEditor.fields.surname')}
                                 value={row.surname}
                                 disabled={mutation.isPending}
@@ -892,26 +885,20 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                                 disabled={mutation.isPending}
                                 onValueChange={(type) => updateAltName(row.key, { type })}
                               />
-                              <button
-                                type="button"
-                                className={s.iconbtn}
+                              <Button
+                                variant="icon"
                                 disabled={mutation.isPending}
                                 aria-label={t('personEditor.otherNames.removeAria')}
                                 onClick={() => removeAltName(row.key)}
                               >
                                 <Icon name="x" size={16} />
-                              </button>
+                              </Button>
                             </div>
                           ))}
-                          <button
-                            type="button"
-                            className={s.addbtn}
-                            disabled={mutation.isPending}
-                            onClick={addAltName}
-                          >
+                          <Button variant="add" disabled={mutation.isPending} onClick={addAltName}>
                             <Icon name="plus" size={14} />
                             {t('personEditor.otherNames.addButton')}
-                          </button>
+                          </Button>
                         </div>
                       </div>
 
@@ -931,15 +918,14 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                         </div>
 
                         <div className={s.addWrap}>
-                          <button
-                            type="button"
-                            className={s.addbtn}
+                          <Button
+                            variant="add"
                             disabled={mutation.isPending}
                             onClick={() => setAddEventMenuOpen((v) => !v)}
                           >
                             <Icon name="plus" size={14} />
                             {t('personEditor.lifeEvents.addButton')}
-                          </button>
+                          </Button>
                           {addEventMenuOpen && (
                             <div className={s.typegrid}>
                               {pickableEventTypes.map((et) => (
@@ -960,13 +946,12 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                           <div className={s.deathGroup}>
                             <div className={s.statusrow}>
                               <Switch.Root
-                                className={s.switchRoot}
                                 checked={!form.isLiving}
                                 disabled={mutation.isPending}
                                 aria-label={t('personEditor.status.deceased')}
                                 onCheckedChange={(checked) => setDeceased(checked)}
                               >
-                                <Switch.Thumb className={s.switchThumb} />
+                                <Switch.Thumb />
                               </Switch.Root>
                               <span className={s.switchLabel}>
                                 {t('personEditor.status.deceased')}
@@ -984,8 +969,8 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
 
                       <div className={s.ecard}>
                         <div className={s.sectitle}>{t('personEditor.sections.notes')}</div>
-                        <textarea
-                          className={s.textarea}
+                        <TextField
+                          multiline
                           aria-label={t('personEditor.sections.notes')}
                           value={form.notes}
                           disabled={mutation.isPending}
@@ -998,25 +983,20 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                     <div className={s.col}>
                       <div className={s.ecard}>
                         <div className={s.sectitle}>{t('personEditor.sex.label')}</div>
-                        <div
-                          className={s.seg}
-                          role="radiogroup"
+                        <SegmentedControl.Root
+                          value={form.gender}
+                          onValueChange={(value) =>
+                            setForm((prev) => ({ ...prev, gender: value as Gender }))
+                          }
                           aria-label={t('personEditor.sex.label')}
+                          disabled={mutation.isPending}
                         >
                           {SEX_VALUES.map((value) => (
-                            <button
-                              key={value}
-                              type="button"
-                              role="radio"
-                              aria-checked={form.gender === value}
-                              className={`${s.segItem} ${form.gender === value ? s.segItemOn : ''}`}
-                              disabled={mutation.isPending}
-                              onClick={() => setForm((prev) => ({ ...prev, gender: value }))}
-                            >
+                            <SegmentedControl.Item key={value} value={value}>
                               {t(`table.sex.${value}`)}
-                            </button>
+                            </SegmentedControl.Item>
                           ))}
-                        </div>
+                        </SegmentedControl.Root>
                       </div>
 
                       <div className={s.ecard}>
@@ -1064,15 +1044,14 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                                 {t('personEditor.relations.familyLabel')}
                               </span>
                               <span className={s.grow} />
-                              <button
-                                type="button"
-                                className={s.iconbtn}
+                              <Button
+                                variant="icon"
                                 disabled={mutation.isPending}
                                 aria-label={t('personEditor.relations.removeFamilyAria')}
                                 onClick={() => requestRemoveFamily(row)}
                               >
                                 <Icon name="x" size={16} />
-                              </button>
+                              </Button>
                             </div>
                             <div className={s.relrow2}>
                               <span className={s.relLabel}>
@@ -1115,15 +1094,10 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                         ))}
 
                         <div className={s.familyActions}>
-                          <button
-                            type="button"
-                            className={s.addbtn}
-                            disabled={mutation.isPending}
-                            onClick={addFamily}
-                          >
+                          <Button variant="add" disabled={mutation.isPending} onClick={addFamily}>
                             <Icon name="plus" size={14} />
                             {t('personEditor.relations.addFamily')}
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </div>
@@ -1139,24 +1113,18 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
             </div>
 
             <div className={s.mfoot}>
-              <button
+              <Button
                 type="submit"
                 form="person-editor-form"
-                className={s.btnSolid}
                 disabled={!showForm || mutation.isPending}
               >
                 {mode === 'create'
                   ? t('personEditor.actions.saveNew')
                   : t('personEditor.actions.save')}
-              </button>
-              <button
-                type="button"
-                className={s.btnGhost}
-                onClick={attemptClose}
-                disabled={mutation.isPending}
-              >
+              </Button>
+              <Button variant="ghost" onClick={attemptClose} disabled={mutation.isPending}>
                 {t('personEditor.actions.cancel')}
-              </button>
+              </Button>
               <span className={s.grow} />
               {isDirty && (
                 <span className={s.dirty}>{t('personEditor.unsavedChanges.indicator')}</span>
@@ -1168,8 +1136,8 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
 
       <Dialog.Root open={confirmDiscardOpen} onOpenChange={setConfirmDiscardOpen}>
         <Dialog.Portal>
-          <Dialog.Backdrop className={s.alertBackdrop} />
-          <Dialog.Popup className={s.alertPopup}>
+          <Dialog.Backdrop level="elevated" />
+          <Dialog.Popup variant="alert">
             <Dialog.Title className={s.alertTitle}>
               {t('personEditor.unsavedChanges.title')}
             </Dialog.Title>
@@ -1177,16 +1145,12 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
               {t('personEditor.unsavedChanges.description')}
             </Dialog.Description>
             <div className={s.alertActions}>
-              <button
-                type="button"
-                className={s.btnGhost}
-                onClick={() => setConfirmDiscardOpen(false)}
-              >
+              <Button variant="ghost" onClick={() => setConfirmDiscardOpen(false)}>
                 {t('personEditor.unsavedChanges.keepEditing')}
-              </button>
-              <button type="button" className={s.btnDanger} onClick={reallyClose}>
+              </Button>
+              <Button variant="danger" onClick={reallyClose}>
                 {t('personEditor.unsavedChanges.discard')}
-              </button>
+              </Button>
             </div>
           </Dialog.Popup>
         </Dialog.Portal>
@@ -1199,8 +1163,8 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
         }}
       >
         <Dialog.Portal>
-          <Dialog.Backdrop className={s.alertBackdrop} />
-          <Dialog.Popup className={s.alertPopup}>
+          <Dialog.Backdrop level="elevated" />
+          <Dialog.Popup variant="alert">
             <Dialog.Title className={s.alertTitle}>
               {t('personEditor.removeFamilyConfirm.title')}
             </Dialog.Title>
@@ -1212,16 +1176,12 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
               })}
             </Dialog.Description>
             <div className={s.alertActions}>
-              <button
-                type="button"
-                className={s.btnGhost}
-                onClick={() => setConfirmRemoveFamilyKey(null)}
-              >
+              <Button variant="ghost" onClick={() => setConfirmRemoveFamilyKey(null)}>
                 {t('personEditor.removeFamilyConfirm.keepFamily')}
-              </button>
-              <button type="button" className={s.btnDanger} onClick={confirmRemoveFamily}>
+              </Button>
+              <Button variant="danger" onClick={confirmRemoveFamily}>
                 {t('personEditor.removeFamilyConfirm.confirm')}
-              </button>
+              </Button>
             </div>
           </Dialog.Popup>
         </Dialog.Portal>

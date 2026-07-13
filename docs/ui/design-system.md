@@ -1,16 +1,28 @@
 # Design System
 
-The UI foundation is **Radix Themes** (`@radix-ui/themes`), consumed directly. Components are imported at call sites — `import { Button, Dialog, Flex } from '@radix-ui/themes'` — with no in-house wrapper layer. The decision and its rationale are in [ADR-007](../adr/0007-adopt-radix-themes.md).
+The UI foundation is **Base UI** (`@base-ui/react`) for headless behavior + **Vanilla Extract** (`@vanilla-extract/css`) for zero-runtime, typed styling. The decision and its rationale are in [ADR-0014](../adr/0014-headless-baseui-vanilla-extract.md).
 
-There is **no `src/components/ui/` directory**. Internal components under [`src/components/`](../../src/components/) are reserved for **application organisms** — components used across the app that compose Radix Themes and add applicative behavior (e.g. `tree-shell.tsx`, `tree-nav.tsx`, `app-status-bar.tsx`, `preferences-popover.tsx`, `dropzone.tsx`). Never a restyled atom or molecule.
+**Behavior layer.** Base UI supplies Dialog, Select, Switch, Popover, and similar interactive primitives — accessibility, focus management, ARIA, and keyboard behavior — with no imposed styling. Components are consumed through the shared primitive layer at `src/components/ui/` (see below), not imported directly at call sites.
 
-**Brand tokens** are set on the `<Theme>` provider in [`src/components/app-theme.tsx`](../../src/components/app-theme.tsx): `accentColor="brown"`, `grayColor="sand"`, `radius="medium"`. Light / dark / system appearance is bound to the persisted Zustand theme preference. The Geist font is kept via a `--default-font-family` override and self-hosted `@font-face` blocks; [`src/styles/app.css`](../../src/styles/app.css) is just the Radix Themes stylesheet import plus those font declarations.
+**Token layer.** `src/design/theme.css.ts` is the single source of visual truth: a typed contract of CSS custom properties (`vars.*`) covering color, radius, and font, plus static `space` and `text` token exports consumed by recipe variant maps. Light and dark schemes are both declared here. No hand-authored global CSS palette or escape-hatch `app.css`.
 
-**Customization ceiling is token-level.** Accent, gray, radius, and scaling are tuned on `<Theme>`; component anatomy (heights, padding, density) is Radix's and is not tuned per component. Genuinely bespoke surfaces (e.g. a future pedigree graph) use scoped local CSS, decided case by case.
+**Brand.** Warm-earth identity: terracotta accent, warm sand neutrals, moss/ink secondaries — all `oklch`. **Geist Sans** for UI and body, **Geist Mono** for data (dates, IDs), **Fraunces** italic for lineage moments (a person's name, the home hero, empty states). Fonts are self-hosted via `@fontsource/*`.
 
-**Icons** come from a curated Lucide registry at [`src/components/icon.tsx`](../../src/components/icon.tsx) — pages import from the registry, never from `lucide-react` directly. The registry is icon governance, not a styled wrapper.
+## Primitive layer — src/components/ui/
 
-**Source wins.** This document records design intent and decisions; it does not reproduce the tokens or component specs. When this document and the source disagree, the source is correct — open a PR to bring this file back in sync.
+Shared control primitives live here. A component earns a place in this directory by encapsulating behavior a consumer should never have to remember — not by being a styled alias. See [ADR-0015](../adr/0015-ui-primitive-layer.md) for the admission rule.
+
+Current primitives: `Button`, `TextField`, `Select`, `SegmentedControl`, `Switch`, `Dialog`, `Popover`, `Typography`. All export from `src/components/ui/index.ts`.
+
+**Layout is not here.** Flex / Grid / Stack belong in surface-local stylesheets where the specific spacing context lives.
+
+## Organisms — src/components/
+
+Components in `src/components/` that are not in `ui/` are **application organisms** — they compose primitives and add applicative behavior (routing, data-fetching, form state). Organisms never re-export primitives; primitives never import organisms.
+
+**Icons** come from a curated Lucide registry at [`src/components/icon.tsx`](../../src/components/icon.tsx) — pages import from the registry, never from `lucide-react` directly.
+
+**Source wins.** This document records design intent; it does not reproduce the tokens or component specs. When this document and the source disagree, the source is correct — open a PR to bring this file back in sync.
 
 ## Design Principles
 

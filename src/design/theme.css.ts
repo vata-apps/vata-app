@@ -134,3 +134,27 @@ globalStyle(':root:not([data-theme])', {
 
 globalStyle(':root[data-theme="light"]', { vars: assignVars(vars, light) });
 globalStyle(':root[data-theme="dark"]', { vars: assignVars(vars, dark) });
+
+/**
+ * Space scale — Tailwind 4px base unit, indexed by multiplier.
+ * Only the steps actually consumed by the primitive layer are declared;
+ * gaps in the scale are an honest signal that it is unfinished.
+ */
+export const space = {
+  2: '8px',
+  3: '12px',
+  4: '16px',
+} as const;
+
+/**
+ * Text scale — size / line-height pairs promoted from the hard-coded values
+ * in the Person editor stylesheet. Consumed by the Typography primitive and
+ * by any future component that needs to reference font-size as a token.
+ */
+export const text = {
+  xs: { size: '11px', lineHeight: '1' },
+  sm: { size: '12.5px', lineHeight: '1' },
+  base: { size: '13px', lineHeight: '1' },
+  md: { size: '13.5px', lineHeight: '1.45' },
+  lg: { size: '15px', lineHeight: '1.3' },
+} as const;
