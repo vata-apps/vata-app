@@ -364,6 +364,24 @@ describe('IndividualManager.update', () => {
     expect(names.some((n) => n.type === 'married' && n.surname === 'Potter')).toBe(true);
   });
 
+  it('keeps an alternate name when only givenNames is cleared but surname remains', async () => {
+    const id = await IndividualManager.create({
+      gender: 'F',
+      name: { givenNames: 'Lily', surname: 'Potter' },
+      alternateNames: [{ type: 'birth', givenNames: 'Lily', surname: 'Evans' }],
+    });
+    const [alternate] = (await getNamesByIndividualId(id)).filter((n) => !n.isPrimary);
+
+    await IndividualManager.update(id, {
+      alternateNames: [{ id: alternate.id, type: 'birth', givenNames: '', surname: 'Evans' }],
+    });
+
+    const names = (await getNamesByIndividualId(id)).filter((n) => !n.isPrimary);
+    expect(names).toHaveLength(1);
+    expect(names[0]).toMatchObject({ type: 'birth', surname: 'Evans' });
+    expect(names[0].givenNames ?? '').toBe('');
+  });
+
   it('removes an alternate name whose id is kept but whose given and surname are cleared', async () => {
     const id = await IndividualManager.create({
       gender: 'F',
