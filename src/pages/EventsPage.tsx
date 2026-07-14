@@ -1,20 +1,23 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Flex, Grid, Heading } from '@radix-ui/themes';
 
 import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import {
   DEFAULT_EVENT_FILTERS,
-  EventsFilters,
+  EventsFilterToolbar,
   type EventFilterOption,
   hasActiveFilters,
 } from '$components/events-filters';
 import { Icon } from '$components/icon';
+import { Button } from '$components/ui/button';
+import { Typography } from '$components/ui/typography';
 import { useEvents } from '$hooks/useEvents';
 import { eventDateColumn, eventPlaceColumn, eventTypeColumn } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { principalsText } from '$lib/principals-text';
 import type { EventListEntry } from '$types/database';
+
+import * as styles from './list-page.css';
 
 interface EventsPageProps {
   treeId: string;
@@ -100,41 +103,50 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
     ];
   }, [t, treeId]);
 
-  return (
-    <Box p="4">
-      <Flex direction="column" gap="4">
-        <Flex align="center" justify="between" pt="2" pb="3">
-          <Flex align="center" gap="3">
-            <Icon name="calendar" size={28} />
-            <Heading size="7" trim="both">
-              {tCommon('nav.events')}
-            </Heading>
-          </Flex>
-          <Button disabled>
-            <Icon name="plus" />
-            {t('page.addEvent')}
-          </Button>
-        </Flex>
+  const filtered = hasActiveFilters(filters);
 
-        <Grid columns="280px 1fr" gap="4" align="start">
-          <EventsFilters
-            value={filters}
-            onChange={setFilters}
-            types={typeOptions}
-            places={placeOptions}
-          />
-          <EntityTable
-            label={tCommon('nav.events')}
-            columns={columns}
-            rows={visibleRows}
-            getRowKey={(event) => event.id}
-            isLoading={isLoading}
-            isError={isError}
-            errorMessage={tCommon('errors.loadFailed')}
-            emptyMessage={hasActiveFilters(filters) ? t('table.noMatches') : t('table.empty')}
-          />
-        </Grid>
-      </Flex>
-    </Box>
+  return (
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.title}>
+          <Icon name="calendar" size={28} />
+          <Typography as="h1" size="16" weight="650">
+            {tCommon('nav.events')}
+          </Typography>
+        </div>
+        <Button disabled>
+          <Icon name="plus" />
+          {t('page.addEvent')}
+        </Button>
+      </header>
+
+      <div className={styles.toolbar}>
+        <EventsFilterToolbar
+          value={filters}
+          onChange={setFilters}
+          types={typeOptions}
+          places={placeOptions}
+        />
+      </div>
+
+      <div className={styles.tableWrapper}>
+        <EntityTable
+          label={tCommon('nav.events')}
+          columns={columns}
+          rows={visibleRows}
+          getRowKey={(event) => event.id}
+          isLoading={isLoading}
+          isError={isError}
+          errorMessage={tCommon('errors.loadFailed')}
+          emptyMessage={t('table.empty')}
+          noMatchesMessage={t('table.noMatches')}
+          noMatchesAction={{
+            label: tCommon('filters.clear'),
+            onClick: () => setFilters(DEFAULT_EVENT_FILTERS),
+          }}
+          isFiltered={filtered}
+        />
+      </div>
+    </div>
   );
 }

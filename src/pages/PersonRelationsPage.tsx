@@ -1,11 +1,14 @@
 import { useMemo } from 'react';
 import { Link as RouterLink } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Badge, Flex, Link, Text } from '@radix-ui/themes';
 
-import { EntityTable, type EntityTableColumn } from '$components/entity-table';
+import { EntityTable, rowLink, type EntityTableColumn } from '$components/entity-table';
+import { Badge } from '$components/ui/badge';
+import { Typography } from '$components/ui/typography';
 import type { RelationRow } from '$components/person-relations/relations-types';
 import { usePersonRelations } from '$hooks/usePersonRelations';
+
+import * as styles from './list-page.css';
 
 interface PersonRelationsPageProps {
   treeId: string;
@@ -19,27 +22,20 @@ function NameCell({ row, treeId }: { row: RelationRow; treeId: string }): JSX.El
   if (row.id === null) {
     const missingKey = row.relation === 'father' ? 'missingFather' : 'missingMother';
     return (
-      <Text color="gray" size="2">
+      <Typography tone="muted" size="13">
         {t(`overview.parents.${missingKey}`)}
-      </Text>
+      </Typography>
     );
   }
 
   return (
-    <Link
-      asChild
-      color="gray"
-      highContrast
-      underline="none"
-      onClick={(domEvent) => domEvent.stopPropagation()}
+    <RouterLink
+      to="/tree/$treeId/individual/$individualId"
+      params={{ treeId, individualId: row.id }}
+      className={rowLink}
     >
-      <RouterLink
-        to="/tree/$treeId/individual/$individualId"
-        params={{ treeId, individualId: row.id }}
-      >
-        {row.name}
-      </RouterLink>
-    </Link>
+      {row.name}
+    </RouterLink>
   );
 }
 
@@ -48,21 +44,23 @@ function RelationCell({ row }: { row: RelationRow }): JSX.Element {
   const { t } = useTranslation('individuals');
 
   return (
-    <Flex direction="column" gap="1">
-      <Flex align="center" gap="2">
-        <Text size="2">{t(`relations.labels.${row.relation}`)}</Text>
-        {row.side && (
-          <Badge variant="soft" color="indigo" radius="full">
-            {t(`relations.side.${row.side}`)}
-          </Badge>
-        )}
-      </Flex>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 4,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Typography size="13">{t(`relations.labels.${row.relation}`)}</Typography>
+        {row.side && <Badge>{t(`relations.side.${row.side}`)}</Badge>}
+      </div>
       {row.viaName && (
-        <Text size="1" color="gray">
+        <Typography tone="muted" size="12.5">
           {t('relations.via', { name: row.viaName })}
-        </Text>
+        </Typography>
       )}
-    </Flex>
+    </div>
   );
 }
 
@@ -111,15 +109,18 @@ export function PersonRelationsPage({
   );
 
   return (
-    <EntityTable
-      label={t('overview.tabs.relations')}
-      columns={columns}
-      rows={data ?? []}
-      getRowKey={(row) => row.id ?? row.relation}
-      isLoading={isLoading}
-      isError={isError}
-      errorMessage={tCommon('errors.loadFailed')}
-      emptyMessage={t('relations.table.empty')}
-    />
+    <div className={styles.tableWrapper}>
+      <EntityTable
+        label={t('overview.tabs.relations')}
+        columns={columns}
+        rows={data ?? []}
+        getRowKey={(row) => row.id ?? row.relation}
+        isLoading={isLoading}
+        isError={isError}
+        errorMessage={tCommon('errors.loadFailed')}
+        emptyMessage={t('relations.table.empty')}
+        defaultSort={{ columnKey: 'name', direction: 'asc' }}
+      />
+    </div>
   );
 }

@@ -1,21 +1,24 @@
 import { useMemo, useState } from 'react';
 import { Link as RouterLink } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Box, Button, Flex, Grid, Heading, Link } from '@radix-ui/themes';
 
-import { EntityTable, type EntityTableColumn } from '$components/entity-table';
+import { EntityTable, rowLink, type EntityTableColumn } from '$components/entity-table';
 import { Icon } from '$components/icon';
 import {
   DEFAULT_PLACE_FILTERS,
   hasActiveFilters,
-  PlacesFilters,
+  PlacesFilterToolbar,
   type PlaceTypeOption,
 } from '$components/places-filters';
+import { Button } from '$components/ui/button';
+import { Typography } from '$components/ui/typography';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { usePlaces } from '$hooks/usePlaces';
 import { usePlaceTypes } from '$hooks/usePlaceTypes';
 import { placeTypeLabel } from '$lib/placeTypeLabel';
 import type { Place } from '$types/database';
+
+import * as styles from './list-page.css';
 
 interface PlacesPageProps {
   treeId: string;
@@ -89,21 +92,17 @@ export function PlacesPage({ treeId }: PlacesPageProps): JSX.Element {
         header: t('table.columns.name'),
         rowHeader: true,
         width: COLUMN_WIDTH.name,
-        // A keyboard-focusable link (styled as plain text — no color/underline)
-        // so the list is navigable without a pointer; the whole row is also
-        // clickable via `onRowClick`, so the link stops propagation.
+        // A real router link makes the row keyboard-focusable and gives
+        // native Enter / ⌘-click behavior; the table derives the full-row
+        // click from this same link.
         cell: (place) => (
-          <Link
-            asChild
-            color="gray"
-            highContrast
-            underline="none"
-            onClick={(domEvent) => domEvent.stopPropagation()}
+          <RouterLink
+            to="/tree/$treeId/place/$placeId"
+            params={{ treeId, placeId: place.id }}
+            className={rowLink}
           >
-            <RouterLink to="/tree/$treeId/place/$placeId" params={{ treeId, placeId: place.id }}>
-              {place.name}
-            </RouterLink>
-          </Link>
+            {place.name}
+          </RouterLink>
         ),
         sortValue: (place) => place.name || null,
       },
@@ -127,37 +126,46 @@ export function PlacesPage({ treeId }: PlacesPageProps): JSX.Element {
     [t, treeId, nameById, typeLabelById]
   );
 
-  return (
-    <Box p="4">
-      <Flex direction="column" gap="4">
-        <Flex align="center" justify="between" pt="2" pb="3">
-          <Flex align="center" gap="3">
-            <Icon name="map-pin" size={28} />
-            <Heading size="7" trim="both">
-              {tCommon('nav.places')}
-            </Heading>
-          </Flex>
-          <Button disabled>
-            <Icon name="plus" />
-            {t('page.addPlace')}
-          </Button>
-        </Flex>
+  const filtered = hasActiveFilters(filters);
 
-        <Grid columns="280px 1fr" gap="4" align="start">
-          <PlacesFilters value={filters} onChange={setFilters} types={typeOptions} />
-          <EntityTable
-            label={tCommon('nav.places')}
-            columns={columns}
-            rows={visibleRows}
-            getRowKey={(place) => place.id}
-            isLoading={isLoading}
-            isError={isError}
-            errorMessage={tCommon('errors.loadFailed')}
-            emptyMessage={hasActiveFilters(filters) ? t('table.noMatches') : t('table.empty')}
-            defaultSort={{ columnKey: 'name', direction: 'asc' }}
-          />
-        </Grid>
-      </Flex>
-    </Box>
+  return (
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <div className={styles.title}>
+          <Icon name="map-pin" size={28} />
+          <Typography as="h1" size="16" weight="650">
+            {tCommon('nav.places')}
+          </Typography>
+        </div>
+        <Button disabled>
+          <Icon name="plus" />
+          {t('page.addPlace')}
+        </Button>
+      </header>
+
+      <div className={styles.toolbar}>
+        <PlacesFilterToolbar value={filters} onChange={setFilters} types={typeOptions} />
+      </div>
+
+      <div className={styles.tableWrapper}>
+        <EntityTable
+          label={tCommon('nav.places')}
+          columns={columns}
+          rows={visibleRows}
+          getRowKey={(place) => place.id}
+          isLoading={isLoading}
+          isError={isError}
+          errorMessage={tCommon('errors.loadFailed')}
+          emptyMessage={t('table.empty')}
+          noMatchesMessage={t('table.noMatches')}
+          noMatchesAction={{
+            label: tCommon('filters.clear'),
+            onClick: () => setFilters(DEFAULT_PLACE_FILTERS),
+          }}
+          isFiltered={filtered}
+          defaultSort={{ columnKey: 'name', direction: 'asc' }}
+        />
+      </div>
+    </div>
   );
 }
