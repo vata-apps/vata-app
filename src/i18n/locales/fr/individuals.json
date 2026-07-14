@@ -106,6 +106,7 @@
   },
   "events": {
     "scope": {
+      "label": "Portée",
       "principal": "Principal",
       "personal": "Personnel",
       "all": "Tous les rôles"

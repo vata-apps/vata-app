@@ -1,6 +1,8 @@
-import { Button, Card, Flex, Heading, Select, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
+import { Chip } from '$components/ui/chip';
+import { Select } from '$components/ui/select';
+import { Button } from '$components/ui/button';
 import { Icon } from '$components/icon';
 
 /** The set of filters applied to the Events list, all combined with AND. */
@@ -33,8 +35,8 @@ export interface EventFilterOption {
   label: string;
 }
 
-/** Props accepted by {@link EventsFilters}. */
-export interface EventsFiltersProps {
+/** Props accepted by {@link EventsFilterToolbar}. */
+export interface EventsFilterToolbarProps {
   /** The current filter values (the page owns this state). */
   value: EventFilters;
   /** Called with the next filter values on any control change. */
@@ -46,77 +48,119 @@ export interface EventsFiltersProps {
 }
 
 /**
- * The Events-list filter card. A controlled component: it renders an
- * event-type select and a place select — both populated from the values
- * actually present in the loaded events — and reports edits through
- * `onChange`. A Clear button appears only while at least one filter is active.
- *
- * Filtering itself happens in the page over the already-loaded list; this
- * component holds no state of its own.
+ * The Events-list filter toolbar. Replaces the permanent left sidebar with a
+ * compact horizontal bar above the table: an event-type select, a place select,
+ * and one dismissible chip per active filter. A Clear-all button appears only
+ * while at least one filter is active.
  */
-export function EventsFilters({ value, onChange, types, places }: EventsFiltersProps): JSX.Element {
+export function EventsFilterToolbar({
+  value,
+  onChange,
+  types,
+  places,
+}: EventsFilterToolbarProps): JSX.Element {
   const { t } = useTranslation('events');
   const { t: tCommon } = useTranslation('common');
   const active = hasActiveFilters(value);
 
+  const typeOption = types.find((option) => option.value === value.type);
+  const typeDisplay = typeOption?.label ?? t('filters.type.all');
+  const placeOption = places.find((option) => option.value === value.place);
+  const placeDisplay = placeOption?.label ?? t('filters.place.all');
+
+  const chips: JSX.Element[] = [];
+  if (value.type !== 'all') {
+    chips.push(
+      <Chip
+        key="type"
+        label={`${t('filters.type.label')}: ${typeDisplay}`}
+        onRemove={() => onChange({ ...value, type: 'all' })}
+      />
+    );
+  }
+  if (value.place !== 'all') {
+    chips.push(
+      <Chip
+        key="place"
+        label={`${t('filters.place.label')}: ${placeDisplay}`}
+        onRemove={() => onChange({ ...value, place: 'all' })}
+      />
+    );
+  }
+
   return (
-    <Card>
-      <Flex direction="column" gap="4">
-        <Flex align="center" justify="between">
-          <Heading size="3">{tCommon('filters.title')}</Heading>
-          {active && (
-            <Button
-              variant="ghost"
-              size="1"
-              color="gray"
-              onClick={() => onChange(DEFAULT_EVENT_FILTERS)}
-            >
-              <Icon name="x" />
-              {tCommon('filters.clear')}
-            </Button>
-          )}
-        </Flex>
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: '12px',
+      }}
+    >
+      <div style={{ width: 200 }}>
+        <Select.Root
+          value={value.type}
+          onValueChange={(next) => onChange({ ...value, type: next ?? 'all' })}
+        >
+          <Select.Trigger aria-label={t('filters.type.label')}>
+            <span>{typeDisplay}</span>
+            <Select.Icon>
+              <Icon name="chevron-down" size={12} />
+            </Select.Icon>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Positioner>
+              <Select.Popup>
+                <Select.Item value="all">{t('filters.type.all')}</Select.Item>
+                {types.map((option) => (
+                  <Select.Item key={option.value} value={option.value}>
+                    {option.label}
+                  </Select.Item>
+                ))}
+              </Select.Popup>
+            </Select.Positioner>
+          </Select.Portal>
+        </Select.Root>
+      </div>
 
-        <Flex direction="column" gap="1">
-          <Text size="1" color="gray">
-            {t('filters.type.label')}
-          </Text>
-          <Select.Root
-            value={value.type}
-            onValueChange={(next) => onChange({ ...value, type: next })}
-          >
-            <Select.Trigger />
-            <Select.Content>
-              <Select.Item value="all">{t('filters.type.all')}</Select.Item>
-              {types.map((option) => (
-                <Select.Item key={option.value} value={option.value}>
-                  {option.label}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
-        </Flex>
+      <div style={{ width: 200 }}>
+        <Select.Root
+          value={value.place}
+          onValueChange={(next) => onChange({ ...value, place: next ?? 'all' })}
+        >
+          <Select.Trigger aria-label={t('filters.place.label')}>
+            <span>{placeDisplay}</span>
+            <Select.Icon>
+              <Icon name="chevron-down" size={12} />
+            </Select.Icon>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Positioner>
+              <Select.Popup>
+                <Select.Item value="all">{t('filters.place.all')}</Select.Item>
+                {places.map((option) => (
+                  <Select.Item key={option.value} value={option.value}>
+                    {option.label}
+                  </Select.Item>
+                ))}
+              </Select.Popup>
+            </Select.Positioner>
+          </Select.Portal>
+        </Select.Root>
+      </div>
 
-        <Flex direction="column" gap="1">
-          <Text size="1" color="gray">
-            {t('filters.place.label')}
-          </Text>
-          <Select.Root
-            value={value.place}
-            onValueChange={(next) => onChange({ ...value, place: next })}
-          >
-            <Select.Trigger />
-            <Select.Content>
-              <Select.Item value="all">{t('filters.place.all')}</Select.Item>
-              {places.map((option) => (
-                <Select.Item key={option.value} value={option.value}>
-                  {option.label}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
-        </Flex>
-      </Flex>
-    </Card>
+      {chips.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
+          {chips}
+        </div>
+      )}
+
+      {active && (
+        <Button variant="ghost" onClick={() => onChange(DEFAULT_EVENT_FILTERS)}>
+          <Icon name="x" size={14} />
+          {tCommon('filters.clear')}
+        </Button>
+      )}
+    </div>
   );
 }

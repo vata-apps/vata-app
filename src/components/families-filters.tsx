@@ -1,6 +1,9 @@
-import { Button, Card, Flex, Heading, Select, Text, TextField } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
+import { Chip } from '$components/ui/chip';
+import { Select } from '$components/ui/select';
+import { TextField } from '$components/ui/text-field';
+import { Button } from '$components/ui/button';
 import { Icon } from '$components/icon';
 
 /** The set of filters applied to the Families list, all combined with AND. */
@@ -28,8 +31,8 @@ export function hasActiveFilters(filters: FamilyFilters): boolean {
   return filters.name.trim() !== '' || filters.spouses !== 'all' || filters.children !== 'all';
 }
 
-/** Props accepted by {@link FamiliesFilters}. */
-export interface FamiliesFiltersProps {
+/** Props accepted by {@link FamiliesFilterToolbar}. */
+export interface FamiliesFilterToolbarProps {
   /** The current filter values (the page owns this state). */
   value: FamilyFilters;
   /** Called with the next filter values on any control change. */
@@ -37,94 +40,144 @@ export interface FamiliesFiltersProps {
 }
 
 /**
- * The Families-list filter card. A controlled component: it renders a name
- * search (matched against both spouses' names), a spouse-completeness select,
- * and a has-children select, reporting edits through `onChange`. A Clear
- * button appears only while at least one filter is active.
- *
- * Filtering itself happens in the page over the already-loaded list; this
- * component holds no state of its own.
+ * The Families-list filter toolbar. Replaces the permanent left sidebar with a
+ * compact horizontal bar above the table: a debounced name search, a
+ * spouse-completeness select, a has-children select, and one dismissible chip
+ * per active filter. A Clear-all button appears only while at least one filter
+ * is active.
  */
-export function FamiliesFilters({ value, onChange }: FamiliesFiltersProps): JSX.Element {
+export function FamiliesFilterToolbar({
+  value,
+  onChange,
+}: FamiliesFilterToolbarProps): JSX.Element {
   const { t } = useTranslation('families');
   const { t: tCommon } = useTranslation('common');
   const active = hasActiveFilters(value);
 
+  const spousesDisplay =
+    value.spouses === 'all' ? t('filters.spouses.all') : t(`filters.spouses.${value.spouses}`);
+  const childrenDisplay =
+    value.children === 'all' ? t('filters.children.all') : t(`filters.children.${value.children}`);
+
+  const chips: JSX.Element[] = [];
+  if (value.name.trim()) {
+    chips.push(
+      <Chip
+        key="name"
+        label={`${t('filters.name.label')}: ${value.name.trim()}`}
+        onRemove={() => onChange({ ...value, name: '' })}
+      />
+    );
+  }
+  if (value.spouses !== 'all') {
+    chips.push(
+      <Chip
+        key="spouses"
+        label={`${t('filters.spouses.label')}: ${spousesDisplay}`}
+        onRemove={() => onChange({ ...value, spouses: 'all' })}
+      />
+    );
+  }
+  if (value.children !== 'all') {
+    chips.push(
+      <Chip
+        key="children"
+        label={`${t('filters.children.label')}: ${childrenDisplay}`}
+        onRemove={() => onChange({ ...value, children: 'all' })}
+      />
+    );
+  }
+
   return (
-    <Card>
-      <Flex direction="column" gap="4">
-        <Flex align="center" justify="between">
-          <Heading size="3">{tCommon('filters.title')}</Heading>
-          {active && (
-            <Button
-              variant="ghost"
-              size="1"
-              color="gray"
-              onClick={() => onChange(DEFAULT_FAMILY_FILTERS)}
-            >
-              <Icon name="x" />
-              {tCommon('filters.clear')}
-            </Button>
-          )}
-        </Flex>
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: '12px',
+      }}
+    >
+      <div style={{ position: 'relative', width: 260 }}>
+        <Icon
+          name="search"
+          size={16}
+          style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }}
+        />
+        <TextField
+          value={value.name}
+          placeholder={t('filters.name.placeholder')}
+          onChange={(event) => onChange({ ...value, name: event.target.value })}
+          style={{ paddingLeft: 34 }}
+          aria-label={t('filters.name.label')}
+        />
+      </div>
 
-        <Flex direction="column" gap="1">
-          <Text size="1" color="gray">
-            {t('filters.name.label')}
-          </Text>
-          <TextField.Root
-            value={value.name}
-            placeholder={t('filters.name.placeholder')}
-            onChange={(event) => onChange({ ...value, name: event.target.value })}
-          >
-            <TextField.Slot>
-              <Icon name="search" />
-            </TextField.Slot>
-          </TextField.Root>
-        </Flex>
+      <div style={{ width: 180 }}>
+        <Select.Root
+          value={value.spouses}
+          onValueChange={(next) =>
+            onChange({ ...value, spouses: (next ?? 'all') as FamilyFilters['spouses'] })
+          }
+        >
+          <Select.Trigger aria-label={t('filters.spouses.label')}>
+            <span>{spousesDisplay}</span>
+            <Select.Icon>
+              <Icon name="chevron-down" size={12} />
+            </Select.Icon>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Positioner>
+              <Select.Popup>
+                <Select.Item value="all">{t('filters.spouses.all')}</Select.Item>
+                <Select.Item value="both">{t('filters.spouses.both')}</Select.Item>
+                <Select.Item value="missingHusband">
+                  {t('filters.spouses.missingHusband')}
+                </Select.Item>
+                <Select.Item value="missingWife">{t('filters.spouses.missingWife')}</Select.Item>
+                <Select.Item value="none">{t('filters.spouses.none')}</Select.Item>
+              </Select.Popup>
+            </Select.Positioner>
+          </Select.Portal>
+        </Select.Root>
+      </div>
 
-        <Flex direction="column" gap="1">
-          <Text size="1" color="gray">
-            {t('filters.spouses.label')}
-          </Text>
-          <Select.Root
-            value={value.spouses}
-            onValueChange={(next) =>
-              onChange({ ...value, spouses: next as FamilyFilters['spouses'] })
-            }
-          >
-            <Select.Trigger />
-            <Select.Content>
-              <Select.Item value="all">{t('filters.spouses.all')}</Select.Item>
-              <Select.Item value="both">{t('filters.spouses.both')}</Select.Item>
-              <Select.Item value="missingHusband">
-                {t('filters.spouses.missingHusband')}
-              </Select.Item>
-              <Select.Item value="missingWife">{t('filters.spouses.missingWife')}</Select.Item>
-              <Select.Item value="none">{t('filters.spouses.none')}</Select.Item>
-            </Select.Content>
-          </Select.Root>
-        </Flex>
+      <div style={{ width: 160 }}>
+        <Select.Root
+          value={value.children}
+          onValueChange={(next) =>
+            onChange({ ...value, children: (next ?? 'all') as FamilyFilters['children'] })
+          }
+        >
+          <Select.Trigger aria-label={t('filters.children.label')}>
+            <span>{childrenDisplay}</span>
+            <Select.Icon>
+              <Icon name="chevron-down" size={12} />
+            </Select.Icon>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Positioner>
+              <Select.Popup>
+                <Select.Item value="all">{t('filters.children.all')}</Select.Item>
+                <Select.Item value="with">{t('filters.children.with')}</Select.Item>
+                <Select.Item value="without">{t('filters.children.without')}</Select.Item>
+              </Select.Popup>
+            </Select.Positioner>
+          </Select.Portal>
+        </Select.Root>
+      </div>
 
-        <Flex direction="column" gap="1">
-          <Text size="1" color="gray">
-            {t('filters.children.label')}
-          </Text>
-          <Select.Root
-            value={value.children}
-            onValueChange={(next) =>
-              onChange({ ...value, children: next as FamilyFilters['children'] })
-            }
-          >
-            <Select.Trigger />
-            <Select.Content>
-              <Select.Item value="all">{t('filters.children.all')}</Select.Item>
-              <Select.Item value="with">{t('filters.children.with')}</Select.Item>
-              <Select.Item value="without">{t('filters.children.without')}</Select.Item>
-            </Select.Content>
-          </Select.Root>
-        </Flex>
-      </Flex>
-    </Card>
+      {chips.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
+          {chips}
+        </div>
+      )}
+
+      {active && (
+        <Button variant="ghost" onClick={() => onChange(DEFAULT_FAMILY_FILTERS)}>
+          <Icon name="x" size={14} />
+          {tCommon('filters.clear')}
+        </Button>
+      )}
+    </div>
   );
 }

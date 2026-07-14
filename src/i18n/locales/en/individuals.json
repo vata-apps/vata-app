@@ -106,6 +106,7 @@
   },
   "events": {
     "scope": {
+      "label": "Scope",
       "principal": "Principal",
       "personal": "Personal",
       "all": "All roles"
