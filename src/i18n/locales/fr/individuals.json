@@ -17,7 +17,8 @@
       "all": "Tous",
       "living": "Vivant",
       "deceased": "Décédé"
-    }
+    },
+    "removeAria": "Retirer {{label}}"
   },
   "table": {
     "columns": {

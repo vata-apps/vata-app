@@ -60,28 +60,34 @@ export function IndividualsFilterToolbar({
 
   const chips: JSX.Element[] = [];
   if (value.name.trim()) {
+    const label = `${t('filters.name.label')}: ${value.name.trim()}`;
     chips.push(
       <Chip
         key="name"
-        label={`${t('filters.name.label')}: ${value.name.trim()}`}
+        label={label}
+        removeAriaLabel={t('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, name: '' })}
       />
     );
   }
   if (value.sex !== 'all') {
+    const label = `${t('filters.sex.label')}: ${sexDisplay}`;
     chips.push(
       <Chip
         key="sex"
-        label={`${t('filters.sex.label')}: ${sexDisplay}`}
+        label={label}
+        removeAriaLabel={t('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, sex: 'all' })}
       />
     );
   }
   if (value.status !== 'all') {
+    const label = `${t('filters.status.label')}: ${statusDisplay}`;
     chips.push(
       <Chip
         key="status"
-        label={`${t('filters.status.label')}: ${statusDisplay}`}
+        label={label}
+        removeAriaLabel={t('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, status: 'all' })}
       />
     );
