@@ -1,0 +1,29 @@
+src/i18n/locales/en/individuals.json
+  s_1a45343d111f49::t_c7fcb36731d521 20-21
+src/i18n/locales/fr/individuals.json
+  s_1a45343d111f49::t_a29dc9582b3efe 20-21
+src/components/ui/table.tsx
+  s_1a45343d111f49::t_74e6fe37877265 114-118,132-137
+  s_1a45343d111f49::t_461d2c1a3bec08 12-13
+src/components/individuals-filters.tsx
+  s_1a45343d111f49::t_9b0a2e4bce4f87 63,67-68,74,78-79,85,89-90
+src/components/ui/chip.tsx
+  s_1a45343d111f49::t_76d1cd2de02034 4-5
+  s_1a45343d111f49::t_743ccf89def594 11-13,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.13",
+  "base_commit_sha": "04bb292332e70af74706a25343db1461135fdd65",
+  "prompts": {},
+  "sessions": {
+    "s_1a45343d111f49": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_09f3ccb7cffeacT7rI73bRV9kn",
+        "model": "glm-5.2"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
