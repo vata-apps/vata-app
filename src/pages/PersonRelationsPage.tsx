@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
+import { Link as RouterLink } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Badge, Flex, Link, Text } from '@radix-ui/themes';
 
@@ -69,8 +69,8 @@ function RelationCell({ row }: { row: RelationRow }): JSX.Element {
 /**
  * The Relations tab of a person: every direct relation (parents, siblings,
  * half-siblings, spouses, children) in one sortable table. Read-only —
- * a row click opens that person's Overview; Father/Mother are fixed slots
- * that always render, even when unrecorded.
+ * rows with a recorded person link to that person's Overview; Father/Mother
+ * are fixed slots that always render, even when unrecorded.
  */
 export function PersonRelationsPage({
   treeId,
@@ -78,7 +78,6 @@ export function PersonRelationsPage({
 }: PersonRelationsPageProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');
-  const navigate = useNavigate();
   const { data, isLoading, isError } = usePersonRelations(individualId);
 
   const columns = useMemo<EntityTableColumn<RelationRow>[]>(
@@ -117,13 +116,6 @@ export function PersonRelationsPage({
       columns={columns}
       rows={data ?? []}
       getRowKey={(row) => row.id ?? row.relation}
-      onRowClick={(row) => {
-        if (!row.id) return;
-        navigate({
-          to: '/tree/$treeId/individual/$individualId',
-          params: { treeId, individualId: row.id },
-        });
-      }}
       isLoading={isLoading}
       isError={isError}
       errorMessage={tCommon('errors.loadFailed')}

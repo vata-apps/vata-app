@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
+import { Link as RouterLink } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Box, Button, Flex, Grid, Heading, Link } from '@radix-ui/themes';
 
@@ -37,7 +37,6 @@ const COLUMN_WIDTH = {
 export function PlacesPage({ treeId }: PlacesPageProps): JSX.Element {
   const { t } = useTranslation('places');
   const { t: tCommon } = useTranslation('common');
-  const navigate = useNavigate();
   const { data, isLoading, isError } = usePlaces();
   const { data: placeTypes } = usePlaceTypes();
 
@@ -151,12 +150,6 @@ export function PlacesPage({ treeId }: PlacesPageProps): JSX.Element {
             columns={columns}
             rows={visibleRows}
             getRowKey={(place) => place.id}
-            onRowClick={(place) =>
-              navigate({
-                to: '/tree/$treeId/place/$placeId',
-                params: { treeId, placeId: place.id },
-              })
-            }
             isLoading={isLoading}
             isError={isError}
             errorMessage={tCommon('errors.loadFailed')}

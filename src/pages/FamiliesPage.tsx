@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
+import { Link as RouterLink } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Box, Button, Flex, Grid, Heading, Link } from '@radix-ui/themes';
 
@@ -41,7 +41,6 @@ function spouseMatches(spouse: IndividualWithDetails | null, query: string): boo
 export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
   const { t } = useTranslation('families');
   const { t: tCommon } = useTranslation('common');
-  const navigate = useNavigate();
   const { data, isLoading, isError } = useFamilies();
 
   const [filters, setFilters] = useState(DEFAULT_FAMILY_FILTERS);
@@ -152,12 +151,6 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
             columns={columns}
             rows={visibleRows}
             getRowKey={(family) => family.id}
-            onRowClick={(family) =>
-              navigate({
-                to: '/tree/$treeId/family/$familyId',
-                params: { treeId, familyId: family.id },
-              })
-            }
             isLoading={isLoading}
             isError={isError}
             errorMessage={tCommon('errors.loadFailed')}

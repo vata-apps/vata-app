@@ -22,17 +22,3 @@ body,
 body {
   margin: 0;
 }
-
-/*
- * Clickable entity-table rows: pointer affordance and a hover tint drawn
- * from the Radix gray scale (no custom palette). Applied by EntityTable only
- * when an `onRowClick` handler is present.
- */
-tr.entity-table__row--clickable {
-  cursor: pointer;
-}
-
-tr.entity-table__row--clickable:hover th,
-tr.entity-table__row--clickable:hover td {
-  background-color: var(--gray-a3);
-}
