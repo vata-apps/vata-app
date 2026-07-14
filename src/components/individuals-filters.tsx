@@ -114,7 +114,9 @@ export function IndividualsFilterToolbar({
       <div style={{ width: 140 }}>
         <Select.Root
           value={value.sex}
-          onValueChange={(next) => onChange({ ...value, sex: next as IndividualFilters['sex'] })}
+          onValueChange={(next) =>
+            onChange({ ...value, sex: (next ?? 'all') as IndividualFilters['sex'] })
+          }
         >
           <Select.Trigger aria-label={t('filters.sex.label')}>
             <span>{sexDisplay}</span>
@@ -139,7 +141,7 @@ export function IndividualsFilterToolbar({
         <Select.Root
           value={value.status}
           onValueChange={(next) =>
-            onChange({ ...value, status: next as IndividualFilters['status'] })
+            onChange({ ...value, status: (next ?? 'all') as IndividualFilters['status'] })
           }
         >
           <Select.Trigger aria-label={t('filters.status.label')}>

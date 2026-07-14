@@ -17,7 +17,7 @@ import { useIndividuals } from '$hooks/useIndividuals';
 import { formatName, nameMatchesQuery } from '$db-tree/names';
 import type { EventWithDetails, Gender, IndividualWithDetails } from '$types/database';
 
-import * as styles from './IndividualsPage.css';
+import * as styles from './list-page.css';
 
 interface IndividualsPageProps {
   treeId: string;
