@@ -42,6 +42,10 @@ For each issue you find, decide:
 
 If a fix would break `pnpm verify` and you cannot get it green, revert the fix and flag the issue instead.
 
+## Protected paths — never modify
+
+Do **not** modify any file under `.github/workflows/**` or `.sandcastle/**`, even to fix a real defect. These are the CI configuration and the agent harness itself; changing them autonomously is out of scope, and your `vata-reviewer` identity cannot push workflow files (the push will be rejected). If you find a genuine defect in one of these paths, **flag it for the maintainer** in your `<review-findings>` output instead of fixing it — never commit a change to them.
+
 ## Quality gate
 
 After each fix, run:
