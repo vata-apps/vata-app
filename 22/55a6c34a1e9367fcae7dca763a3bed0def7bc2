@@ -1,0 +1,19 @@
+src/design/theme.css.ts
+  s_0ab5e359de89ac::t_cc56b27ad7bf52 255-260
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "2255a6c34a1e9367fcae7dca763a3bed0def7bc2",
+  "prompts": {},
+  "sessions": {
+    "s_0ab5e359de89ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "723a6aac-6d13-4412-8c0f-e1bb40c48556",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
