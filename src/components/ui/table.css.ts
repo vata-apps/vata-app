@@ -51,7 +51,7 @@ export const sortIndicator = primitiveStyle({
   opacity: 0,
   transition: 'opacity 100ms ease',
   selectors: {
-    '[data-sort-active="true"] &': { opacity: 1, color: vars.color.text },
+    '&[data-sort-active="true"]': { opacity: 1, color: vars.color.text },
     [`${sortButton}:hover &`]: { opacity: 1 },
     [`${sortButton}:focus-visible &`]: { opacity: 1 },
   },
@@ -61,7 +61,11 @@ export const row = primitiveStyle({
   borderBottom: `1px solid ${vars.color.border}`,
   selectors: {
     '&:last-child': { borderBottom: 'none' },
-    '&[data-row-link="true"]': { cursor: 'pointer' },
+    // Only rows that actually carry a link are pointer-cursored. A row whose
+    // primary cell renders plain text (e.g. an unrecorded parent slot) has no
+    // anchor, so it must read as non-navigable — matching that its click is a
+    // no-op.
+    '&[data-row-link="true"]:has(a)': { cursor: 'pointer' },
   },
 });
 
@@ -70,7 +74,7 @@ export const cell = primitiveStyle({
   textAlign: 'left',
   verticalAlign: 'middle',
   selectors: {
-    [`${row}[data-row-link="true"]:hover &`]: { background: vars.color.subtle },
+    [`${row}[data-row-link="true"]:has(a):hover &`]: { background: vars.color.subtle },
   },
 });
 
@@ -80,6 +84,6 @@ export const rowHeaderCell = primitiveStyle({
   verticalAlign: 'middle',
   fontWeight: 500,
   selectors: {
-    [`${row}[data-row-link="true"]:hover &`]: { background: vars.color.subtle },
+    [`${row}[data-row-link="true"]:has(a):hover &`]: { background: vars.color.subtle },
   },
 });
