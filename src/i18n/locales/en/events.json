@@ -6,11 +6,11 @@
   "filters": {
     "type": {
       "label": "Type",
-      "all": "All"
+      "all": "All types"
     },
     "place": {
       "label": "Place",
-      "all": "All"
+      "all": "All places"
     }
   },
   "table": {

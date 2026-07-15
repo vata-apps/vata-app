@@ -10,11 +10,11 @@
     },
     "sex": {
       "label": "Sex",
-      "all": "All"
+      "all": "All sexes"
     },
     "status": {
       "label": "Status",
-      "all": "All",
+      "all": "All statuses",
       "living": "Living",
       "deceased": "Deceased"
     }
