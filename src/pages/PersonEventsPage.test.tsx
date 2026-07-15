@@ -162,12 +162,12 @@ describe('PersonEventsPage', () => {
 
     const table = await screen.findByRole('table', { name: 'Events' });
     expect(within(table).getByRole('button', { name: 'Type' })).toBeInTheDocument();
-    expect(within(table).getByRole('button', { name: 'Date' })).toBeInTheDocument();
+    expect(within(table).getByRole('columnheader', { name: 'Date' })).toBeInTheDocument();
     expect(within(table).getByRole('button', { name: 'Place' })).toBeInTheDocument();
     expect(within(table).getByRole('button', { name: 'Details' })).toBeInTheDocument();
   });
 
-  it('sorts by date ascending by default', async () => {
+  it('preserves the chronological order by default', async () => {
     mockedGetPersonEvents.mockResolvedValue([
       personEvent({ id: 'E-1', dateSort: '1900-01-01', eventType: BIRTH_TYPE }),
       personEvent({ id: 'E-2', dateSort: '1950-06-15', eventType: MARRIAGE_TYPE }),

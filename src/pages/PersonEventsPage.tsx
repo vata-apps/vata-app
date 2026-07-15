@@ -41,6 +41,8 @@ export function PersonEventsPage({ treeId, individualId }: PersonEventsPageProps
 
   const [scope, setScope] = useState<PersonEventScope>(DEFAULT_PERSON_EVENT_SCOPE);
 
+  // The list arrives chronological from the manager; the Date column is not
+  // sortable, so that natural order is preserved.
   const visibleRows = useMemo(
     () => (data ?? []).filter((entry) => isVisibleAtLevel(entry, scope)),
     [data, scope]
@@ -64,7 +66,9 @@ export function PersonEventsPage({ treeId, individualId }: PersonEventsPageProps
 
     return [
       eventTypeColumn(treeId, t),
-      eventDateColumn(t, { sortable: true }),
+      // The list arrives chronological from the manager, so the Date column
+      // stays unsortable to preserve that natural order.
+      eventDateColumn(t),
       eventPlaceColumn(t),
       {
         key: 'details',
@@ -106,7 +110,6 @@ export function PersonEventsPage({ treeId, individualId }: PersonEventsPageProps
           isError={isError}
           errorMessage={tCommon('errors.loadFailed')}
           emptyMessage={tPerson('events.empty')}
-          defaultSort={{ columnKey: 'date', direction: 'asc' }}
         />
       </div>
     </div>

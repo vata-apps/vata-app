@@ -2,8 +2,6 @@ import { useTranslation } from 'react-i18next';
 
 import { Chip } from '$components/ui/chip';
 import { SegmentedControl } from '$components/ui/segmented-control';
-import { Button } from '$components/ui/button';
-import { Icon } from '$components/icon';
 
 /**
  * The graduated scope filter for a person's Events tab. Each level is
@@ -17,7 +15,7 @@ export type PersonEventScope = 'principal' | 'personal' | 'all';
 /** The default scope — shows principal events plus unions. */
 export const DEFAULT_PERSON_EVENT_SCOPE: PersonEventScope = 'personal';
 
-/** Whether the scope is currently narrowed away from the default. */
+/** Whether the scope is currently changed away from the default. */
 export function hasActiveScope(scope: PersonEventScope): boolean {
   return scope !== DEFAULT_PERSON_EVENT_SCOPE;
 }
@@ -32,8 +30,7 @@ export interface PersonEventsFilterToolbarProps {
 
 /**
  * The Person Events tab filter toolbar. Holds the cumulative scope control and
- * a dismissible chip when the scope is not at its default. A Clear-all button
- * appears only while the scope is narrowed.
+ * a dismissible chip when the scope is not at its default.
  */
 export function PersonEventsFilterToolbar({
   value,
@@ -68,18 +65,12 @@ export function PersonEventsFilterToolbar({
       />
 
       {active && (
-        <>
-          <Chip
-            key="scope"
-            label={scopeChipLabel}
-            removeAriaLabel={tCommon('filters.removeAria', { label: scopeChipLabel })}
-            onRemove={() => onChange(DEFAULT_PERSON_EVENT_SCOPE)}
-          />
-          <Button variant="ghost" onClick={() => onChange(DEFAULT_PERSON_EVENT_SCOPE)}>
-            <Icon name="x" size={14} />
-            {tCommon('filters.clear')}
-          </Button>
-        </>
+        <Chip
+          key="scope"
+          label={scopeChipLabel}
+          removeAriaLabel={tCommon('filters.removeAria', { label: scopeChipLabel })}
+          onRemove={() => onChange(DEFAULT_PERSON_EVENT_SCOPE)}
+        />
       )}
     </div>
   );
