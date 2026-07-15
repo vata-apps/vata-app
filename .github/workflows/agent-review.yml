@@ -15,10 +15,10 @@ jobs:
   # gets skipped here (in particular, the reviewer's own push) must never
   # enter the `review` job's concurrency group, or it would cancel a
   # legitimate in-flight review. See ADR-016, "Concurrency and cancellation".
+  # Runs on every PR now, not just agent-authored ones.
   triage:
     if: >-
       github.event.sender.login != 'vata-reviewer[bot]'
-      && github.event.pull_request.user.login == 'vata-agent[bot]'
       && github.event.pull_request.draft == false
       && github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
@@ -84,18 +84,26 @@ jobs:
           # so wire gh's credential helper into git for later push steps.
           gh auth setup-git
 
+      # Agent branches encode their issue in the name (agent/issue-N); for any
+      # other branch, fall back to the PR's own closing-issue link (the
+      # "Closes #N" convention from the link-task skill). No match just means
+      # no issue context — reviewed against CLAUDE.md and the diff alone.
       - name: Resolve issue number
         id: issue
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           case "$BRANCH" in
             agent/issue-*)
-              echo "number=${BRANCH#agent/issue-}" >> "$GITHUB_OUTPUT" ;;
+              NUMBER="${BRANCH#agent/issue-}" ;;
             *)
-              echo "::error::PR branch '$BRANCH' is not an agent/issue-* branch"
-              exit 1 ;;
+              NUMBER=$(gh pr view "$PR_NUMBER" --json closingIssuesReferences \
+                --jq '.closingIssuesReferences[0].number // empty') ;;
           esac
+          echo "number=$NUMBER" >> "$GITHUB_OUTPUT"
 
       - name: Fetch issue data
+        if: steps.issue.outputs.number != ''
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}

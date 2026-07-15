@@ -27,37 +27,47 @@ import {
 // keeping the token-heavy edit/verify loop on Sonnet cuts review cost while
 // keeping Opus's judgment on what to fix. Stage 2 is skipped entirely when
 // there is nothing to fix.
+//
+// Runs on every PR, not just agent-authored ones — the branch to review is
+// always the PR's actual head ref, never derived from the issue number. An
+// issue is only in the picture when one is linked (agent branches via naming
+// convention, human ones via "Closes #N"); either way it's optional context,
+// not a requirement.
 
-const issueNumber = required('ISSUE_NUMBER');
+const issueNumber = process.env.ISSUE_NUMBER || undefined;
 const prNumber = required('PR_NUMBER');
+const branch = required('BRANCH');
 const issueDataPath = process.env.ISSUE_DATA_PATH ?? '/tmp/issue.json';
 
-if (!existsSync(issueDataPath)) {
-  console.error(`Issue data file not found at ${issueDataPath}`);
+if (issueNumber && !existsSync(issueDataPath)) {
+  console.error(
+    `Issue #${issueNumber} was resolved but its data file is missing at ${issueDataPath}`
+  );
   process.exit(1);
 }
 
-const issue = JSON.parse(readFileSync(issueDataPath, 'utf-8')) as {
-  title: string;
-  body: string;
-  url: string;
-};
-
-const branch = `agent/issue-${issueNumber}`;
+const issue = issueNumber
+  ? (JSON.parse(readFileSync(issueDataPath, 'utf-8')) as {
+      title: string;
+      body: string;
+      url: string;
+    })
+  : undefined;
 
 console.log(`PR: #${prNumber} — reviewing ${branch}`);
-console.log(`Issue: #${issueNumber} — ${issue.title}`);
+console.log(issue ? `Issue: #${issueNumber} — ${issue.title}` : 'Issue: none linked');
 
 const wt = await createWorktree({
   branchStrategy: { type: 'branch', branch },
 });
 
+const issueContext = issue
+  ? `Implements GitHub issue **#${issueNumber}**.\n\n## Original issue (the spec)\n\n**${issue.title}**\n\n${issue.url}\n\n${issue.body}`
+  : 'No issue is linked to this PR — review it against `CLAUDE.md` conventions and general correctness only.';
+
 const promptArgs = {
-  ISSUE_NUMBER: issueNumber,
-  ISSUE_TITLE: issue.title,
-  ISSUE_BODY: issue.body,
-  ISSUE_URL: issue.url,
   PR_NUMBER: prNumber,
+  ISSUE_CONTEXT: issueContext,
 };
 
 let error = false;
