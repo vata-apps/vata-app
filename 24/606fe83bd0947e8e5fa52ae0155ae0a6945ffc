@@ -1,0 +1,19 @@
+.sandcastle/prompts/review.md
+  s_6d81a67fd90c27::t_edaa1a8fa65bda 45-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "24606fe83bd0947e8e5fa52ae0155ae0a6945ffc",
+  "prompts": {},
+  "sessions": {
+    "s_6d81a67fd90c27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aebff084-8712-47bb-9faf-1f0fe80c136b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
