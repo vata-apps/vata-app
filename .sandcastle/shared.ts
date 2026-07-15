@@ -31,6 +31,20 @@ export function extractTag(text: string, tag: string): string | null {
   return match ? match[1].trim() : null;
 }
 
+/**
+ * Whether a `<review-findings>` block's "Flagged for maintainer" section has
+ * actual content, as opposed to the prompt's literal "None" placeholder.
+ * Returns false (no flagged findings) if the section is missing entirely —
+ * the same conservative default as a missing findings block altogether.
+ */
+export function hasFlaggedFindings(findingsText: string | null): boolean {
+  if (!findingsText) return false;
+  const match = findingsText.match(/##\s*Flagged for maintainer\s*\n([\s\S]*?)(?:\n##\s|$)/i);
+  if (!match) return false;
+  const section = match[1].trim();
+  return section.length > 0 && !/^none\.?$/i.test(section);
+}
+
 export function logUsage(model: string, iterations: readonly IterationResult[]): void {
   console.log('\nRun usage');
   console.log(`  Model:      ${model}`);
@@ -68,27 +82,30 @@ export interface ReviewDecision {
  * | Case                                                      | Outcome  | Push |
  * |-----------------------------------------------------------|----------|------|
  * | Defects found + fixed, verify green                       | fixed    | yes  |
- * | Nothing to fix                                            | clean    | no   |
- * | Defects found but verify red, or iterations exhausted     | flagged  | no   |
- * | Run errored                                               | failed   | no   |
+ * | Nothing found, nothing to flag                             | clean    | no   |
+ * | Issues flagged (fixed and/or unfixed), or verify red,      | flagged  | yes if any fix is green |
+ * | or iterations exhausted                                    |          |      |
+ * | Run errored                                                | failed   | no   |
  */
 export function decideReviewOutcome(input: {
   error: boolean;
   commits: number;
   completed: boolean;
   verifyPassed: boolean;
+  hasFlaggedFindings: boolean;
 }): ReviewDecision {
   if (input.error) {
     return { outcome: 'failed', push: false, headerCategory: 'failed' };
   }
 
-  if (input.commits === 0 && input.completed) {
+  if (input.commits === 0 && !input.hasFlaggedFindings && input.completed) {
     return { outcome: 'clean', push: false, headerCategory: 'clean' };
   }
 
-  if (input.commits > 0 && input.verifyPassed && input.completed) {
+  if (input.commits > 0 && input.verifyPassed && input.completed && !input.hasFlaggedFindings) {
     return { outcome: 'fixed', push: true, headerCategory: 'fixed' };
   }
 
-  return { outcome: 'flagged', push: false, headerCategory: 'flagged' };
+  const push = input.commits > 0 && input.verifyPassed;
+  return { outcome: 'flagged', push, headerCategory: 'flagged' };
 }

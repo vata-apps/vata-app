@@ -11,12 +11,23 @@ permissions:
   issues: read
 
 jobs:
-  review:
+  # Lightweight gate, deliberately carrying no concurrency block: a run that
+  # gets skipped here (in particular, the reviewer's own push) must never
+  # enter the `review` job's concurrency group, or it would cancel a
+  # legitimate in-flight review. See ADR-016, "Concurrency and cancellation".
+  triage:
     if: >-
       github.event.sender.login != 'vata-reviewer[bot]'
       && github.event.pull_request.user.login == 'vata-agent[bot]'
       && github.event.pull_request.draft == false
       && github.event.pull_request.state == 'open'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: echo "proceed"
+
+  review:
+    needs: triage
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -116,29 +127,43 @@ jobs:
           REVIEW_FINDINGS_PATH: /tmp/review-findings.md
         run: pnpm exec tsx .sandcastle/review.ts
 
-      - name: Push fixes and post review comment
+      # Split from the comment step so a push failure (rejected, non-fast-
+      # forward) cannot abort the job before the maintainer is told anything.
+      - name: Push fixes
+        id: push
+        if: always() && steps.reviewer.outputs.push == 'true'
+        continue-on-error: true
+        run: git push origin "$BRANCH"
+
+      - name: Post review comment
         if: always()
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           OUTCOME: ${{ steps.reviewer.outputs.outcome }}
           PUSH: ${{ steps.reviewer.outputs.push }}
+          PUSH_OUTCOME: ${{ steps.push.outcome }}
           COMMITS: ${{ steps.reviewer.outputs.commits }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          if [ "$PUSH" = "true" ]; then
-            git push origin "$BRANCH"
+          if [ "$PUSH" = "true" ] && [ "$PUSH_OUTCOME" = "failure" ]; then
+            HEADER="⚠️ Found and fixed issues, but pushing the fix failed — see logs: ${RUN_URL}"
+          else
+            case "$OUTCOME" in
+              fixed)
+                HEADER="✅ Reviewed, pushed ${COMMITS} fix commit(s) — see below" ;;
+              clean)
+                HEADER="✅ Reviewed — no issues found" ;;
+              flagged)
+                if [ "$PUSH" = "true" ]; then
+                  HEADER="⚠️ Reviewed, pushed ${COMMITS} fix commit(s) — other issues need your judgment, see below"
+                else
+                  HEADER="⚠️ Found issues, couldn't safely fix — list for the maintainer"
+                fi
+                ;;
+              *)
+                HEADER="❌ Review failed — ${RUN_URL}" ;;
+            esac
           fi
-
-          case "$OUTCOME" in
-            fixed)
-              HEADER="✅ Reviewed, fixed ${COMMITS} issue(s), each fix linked to its SHA" ;;
-            clean)
-              HEADER="✅ Reviewed — no issues found" ;;
-            flagged)
-              HEADER="⚠️ Found issues, couldn't safely fix — list for the maintainer" ;;
-            *)
-              HEADER="❌ Review failed — ${RUN_URL}" ;;
-          esac
 
           {
             echo "$HEADER"

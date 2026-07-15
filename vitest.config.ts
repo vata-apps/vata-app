@@ -37,7 +37,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     include: ['src/**/*.{test,spec}.{ts,tsx}', '.sandcastle/**/*.test.ts'],
-    exclude: ['**/node_modules/**', '**/dist/**', '.worktrees/**'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.worktrees/**', '.sandcastle/worktrees/**'],
     coverage: {
       provider: 'v8',
       exclude: ['src/routeTree.gen.ts', 'src/main.tsx'],

@@ -19,7 +19,7 @@ Add a second GitHub App, `vata-reviewer`, and a workflow `agent-review.yml` that
 
 `on: pull_request` with types `[opened, synchronize, reopened, ready_for_review]`, scoped to `main`.
 
-A lightweight job-level `if:` gate proceeds only when all hold:
+The workflow is two jobs: a `triage` job carrying only the gate below, and a `review` job (`needs: triage`) that does the work. GitHub skips a `needs:` job by default when its dependency is skipped, so no extra condition is needed on `review` — but the split matters for concurrency (see below). The `triage` gate proceeds only when all hold:
 
 ```
 github.event.sender.login != 'vata-reviewer[bot]'
@@ -41,7 +41,7 @@ The reviewer authenticates and pushes under the **`vata-reviewer`** GitHub App, 
 
 ### Concurrency and cancellation
 
-Concurrency is scoped to the review job, grouped per PR, with `cancel-in-progress: true`. It is placed on the job (after triage) deliberately: workflow-level concurrency cancels the in-progress run before any job `if:` is evaluated, so a reviewer push (destined to be skipped) would cancel a legitimate review mid-comment. Job-level concurrency means only runs that pass triage enter the cancelling group.
+Concurrency (`cancel-in-progress: true`, grouped per PR) is declared on the **`review` job only**, never on `triage` and never at workflow level. This is deliberate: workflow- or triage-level concurrency would enter the cancelling group before the loop-break `if:` is evaluated, so a reviewer push (destined to be skipped) could cancel a legitimate review mid-comment. Because `review` only starts once `triage` has already passed, a reviewer's own push — which fails `triage` — never reaches the concurrency group at all; only genuine new commits (which pass `triage`) can cancel an in-flight review.
 
 ### Review scope and fix policy
 
@@ -67,16 +67,18 @@ The default model tier is the same as the author agent (`opencode-go/kimi-k2.7-c
 
 ### Outcome, push gate, and comment
 
-One comment per run, always posted, anchored to the reviewed state. The workflow computes the header; the agent supplies the findings body as a single `<review-findings>` block. Push happens only when commits were made **and** `pnpm verify` is green.
+One comment per run, always posted, anchored to the reviewed state. The workflow computes the header; the agent supplies the findings body as a single `<review-findings>` block. Posting the comment is a separate step from pushing, so a push failure (rejected, non-fast-forward) cannot swallow the comment — the maintainer is told what happened either way.
 
-The outcome is derived from a single pure function, the one testable seam:
+The outcome is derived from a single pure function, the one testable seam. It takes the run facts **and** whether the findings' "Flagged for maintainer" section is non-empty — `commits === 0` alone does not mean nothing was found; the reviewer may flag issues without fixing any of them, and that must not be reported as clean:
 
-| Case                                                  | Outcome   | Comment header                                                 | Push |
-| ----------------------------------------------------- | --------- | -------------------------------------------------------------- | ---- |
-| Defects found + fixed, verify green                   | `fixed`   | ✅ Reviewed, fixed N issue(s), each fix linked to its SHA      | Yes  |
-| Nothing to fix                                        | `clean`   | ✅ Reviewed — no issues found                                  | No   |
-| Defects found but verify red, or iterations exhausted | `flagged` | ⚠️ Found issues, couldn't safely fix — list for the maintainer | No   |
-| Run errored                                           | `failed`  | ❌ Review failed — link to logs                                | No   |
+| Case | Outcome | Push |
+| --- | --- | --- |
+| Defects found + fixed, verify green, nothing flagged, completed | `fixed` | Yes |
+| Nothing found and nothing flagged | `clean` | No |
+| Anything flagged, or verify red, or iterations exhausted | `flagged` | Yes if commits and verify are green, else no |
+| Run errored | `failed` | No |
+
+A `flagged` outcome still pushes when there are green, high-confidence fixes alongside the flagged items — withholding a correct fix just because something *else* needed judgment would waste real work. The comment header distinguishes "pushed fixes, other issues flagged" from "found issues, pushed nothing."
 
 ### Code structure
 

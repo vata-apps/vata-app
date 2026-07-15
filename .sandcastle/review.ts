@@ -4,6 +4,7 @@ import { noSandbox } from '@ai-hero/sandcastle/sandboxes/no-sandbox';
 import {
   decideReviewOutcome,
   extractTag,
+  hasFlaggedFindings,
   logUsage,
   MODEL_DEFAULT,
   MODEL_ESCALATE,
@@ -73,10 +74,11 @@ try {
   error = true;
 }
 
-const iterations = error || !result ? [] : result.iterations;
-const completed = error || !result ? false : result.completionSignal !== undefined;
-const commits = error || !result ? 0 : result.commits.length;
-const stdout = error || !result ? '' : result.stdout;
+const run = !error ? result : undefined;
+const iterations = run?.iterations ?? [];
+const completed = run?.completionSignal !== undefined;
+const commits = run?.commits.length ?? 0;
+const stdout = run?.stdout ?? '';
 
 console.log(`\nIterations: ${iterations.length}`);
 console.log(`Commits: ${commits}`);
@@ -94,10 +96,17 @@ if (findings) {
 }
 
 const verifyPassed = commits > 0 && !error ? verify(wt.worktreePath) : false;
+const flagged = hasFlaggedFindings(findings);
 
 logUsage(model, iterations);
 
-const decision = decideReviewOutcome({ error, commits, completed, verifyPassed });
+const decision = decideReviewOutcome({
+  error,
+  commits,
+  completed,
+  verifyPassed,
+  hasFlaggedFindings: flagged,
+});
 
 writeGithubOutput({
   branch: result?.branch ?? branch,
