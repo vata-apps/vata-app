@@ -22,7 +22,7 @@ Migrate the execution backend from the Anthropic API (via `claudeCode()`) to Ope
 
 ### Agent provider
 
-Replace `claudeCode(model)` with `opencode(model)` in `.sandcastle/run.ts` and `.sandcastle/address-review.ts`. Sandcastle's `opencode()` provider builds the command `opencode run --model <model> <prompt>` and lets the CLI handle auth, endpoint resolution, and streaming.
+Replace `claudeCode(model)` with `opencode(model)` in `.sandcastle/run.ts` and `.sandcastle/review.ts`. Sandcastle's `opencode()` provider builds the command `opencode run --model <model> <prompt>` and lets the CLI handle auth, endpoint resolution, and streaming.
 
 ### Models
 
@@ -64,7 +64,7 @@ Replace `logCost()` with `logUsage()`, which logs the model and iteration count 
 - `pnpm verify` as the quality gate, run between iterations and post-run
 - `maxIterations: 5`, `idleTimeoutSeconds: 600`, `timeout-minutes: 45`
 - PR creation by the workflow with `Closes #N` in the body
-- ADR-009's review-feedback flow (`agent-address-review.yml`) inherits the same changes
+- ADR-016's autonomous PR review flow (`agent-review.yml`) inherits the same changes
 
 ### Iteration and completion semantics
 
@@ -110,6 +110,6 @@ What is lost: live streaming display (cosmetic) and per-iteration token usage (c
 ## References
 
 - [ADR-008: Autonomous Agent Execution via Sandcastle on GitHub Actions](./0008-autonomous-agent-execution.md) — the foundation this migrates
-- [ADR-009: Agent Addresses PR Review Feedback](./0009-agent-review-feedback.md) — inherits the same migration
+- [ADR-016: Autonomous PR Review Agent](./0016-autonomous-pr-review.md) — inherits the same migration
 - [OpenCode Go documentation](https://opencode.ai/docs/go/) — models, limits, endpoints
 - [`@ai-hero/sandcastle`](https://github.com/mattpocock/sandcastle) — `opencode()` and `claudeCode()` agent providers

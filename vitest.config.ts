@@ -36,8 +36,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
-    include: ['src/**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['**/node_modules/**', '**/dist/**', '.worktrees/**'],
+    include: ['src/**/*.{test,spec}.{ts,tsx}', '.sandcastle/**/*.test.ts'],
+    exclude: ['**/node_modules/**', '**/dist/**', '.worktrees/**', '.sandcastle/worktrees/**'],
     coverage: {
       provider: 'v8',
       exclude: ['src/routeTree.gen.ts', 'src/main.tsx'],

@@ -1,6 +1,6 @@
 # Agent Workflow
 
-Operational guide for the autonomous-execution workflows. For the design rationale, label schema, cost bounds, and trade-offs, read [ADR-008](../adr/0008-autonomous-agent-execution.md) (issue → PR), [ADR-009](../adr/0009-agent-review-feedback.md) (addressing review feedback), and [ADR-015](../adr/0015-migration-to-opencode-go.md) (provider migration) first — this page does not restate them.
+Operational guide for the autonomous-execution workflows. For the design rationale, label schema, cost bounds, and trade-offs, read [ADR-008](../adr/0008-autonomous-agent-execution.md) (issue → PR), [ADR-016](../adr/0016-autonomous-pr-review.md) (autonomous PR review), and [ADR-015](../adr/0015-migration-to-opencode-go.md) (provider migration) first — this page does not restate them.
 
 ## When to use it
 
@@ -39,6 +39,14 @@ Full schema and transition rules are in [ADR-008 → Label-based outcome trackin
         ├─ partial → PR opened as draft, label agent:partial
         └─ failed  → no PR, comment on issue with log excerpt, label agent:failed
         │
+        ▼  (GitHub Actions: pull_request)
+[vata-reviewer[bot] reviews the open PR; fixes high-confidence issues; flags the rest]
+        │
+        ├─ fixed  → fixes pushed, comment summarising what was fixed and flagged
+        ├─ clean  → no issues found, comment confirming the review ran
+        ├─ flagged → no push, comment listing issues for you to judge
+        └─ failed → review run errored, comment linking to logs
+        │
         ▼
 [you review the PR, manually verify UI in pnpm tauri:dev, merge]
 ```
@@ -55,26 +63,28 @@ Full schema and transition rules are in [ADR-008 → Label-based outcome trackin
 
 The workflow does not auto-retry. Every run is intentional and paid for.
 
-## Addressing review feedback
+## Autonomous review
 
-When the agent's PR is close but needs adjustments, you don't have to hand-edit or re-run from scratch. Submit a **"Request changes"** review and the agent addresses your feedback on the same branch.
+Every open, non-draft agent PR is automatically reviewed by `vata-reviewer[bot]`. The reviewer reads the PR diff against the original issue spec and `AGENTS.md`, fixes high-confidence defects itself, and flags anything subjective or uncertain for you to judge.
 
 How it works:
 
-1. Review the agent's PR — leave line comments, write a review summary.
-2. Submit the review as **Request changes** (not "Comment", not "Approve").
-3. `agent-address-review.yml` fires. The agent gets your review body, your line comments, and the original issue, then works on the PR's branch.
-4. It pushes new commits and reports back:
-   - **Per-thread replies** — every line comment gets `Addressed in <sha> — …` or `Not addressed — <reason>`.
-   - **A summary comment** — the overall verdict plus the review-body feedback.
-5. Re-review. Resolve the threads you're satisfied with yourself — the agent never auto-resolves.
+1. `vata-agent[bot]` opens the PR.
+2. `agent-review.yml` fires on `pull_request` events (`opened`, `synchronize`, `reopened`, `ready_for_review`).
+3. `vata-reviewer[bot]` checks the diff, makes stacked commits for objectively-wrong issues, and emits a single `<review-findings>` block.
+4. It pushes the fixes only if `pnpm verify` stays green. A single PR comment explains the outcome:
+   - **fixed** — ✅ Reviewed, fixed N issue(s), each fix linked to its SHA
+   - **clean** — ✅ Reviewed — no issues found
+   - **flagged** — ⚠️ Found issues, couldn't safely fix — list for you to judge
+   - **failed** — ❌ Review failed — link to logs
 
 Notes:
 
-- Only **"Request changes"** triggers it. "Comment" reviews are discussion only — use them to leave notes without dispatching the agent. "Approve" does nothing (the PR is ready).
-- An empty "Request changes" review (no body, no line comments) is treated as a misclick — the workflow posts a comment and runs nothing.
-- The model follows the original issue: if the issue carries `agent:escalate`, the review run uses Qwen3.7 Max too.
-- A review the agent disagrees with entirely is a valid outcome — it makes no commits and explains each skip in the thread replies.
+- Draft PRs are skipped until marked ready for review.
+- The reviewer's own pushes are ignored (the sender is `vata-reviewer[bot]`), so there is no infinite review loop.
+- A newer commit cancels the in-flight review and restarts it on the fresh state.
+- The model follows the original issue: if the issue carries `agent:escalate`, the reviewer uses Qwen3.7 Max too.
+- The reviewer only runs on agent-authored PRs (`vata-agent[bot]`).
 - Each review run draws from the same OpenCode Go subscription budget as issue runs.
 
 ## What stays manual
@@ -105,9 +115,12 @@ The workflow's job is the boring middle: read, execute, check, package as a PR. 
 3. Create a GitHub App (`vata-agent`) on the org with **Contents: Read and write**, **Pull requests: Read and write**, **Issues: Read and write** (webhook disabled). Install it on this repo. The workflow mints a token from it instead of `GITHUB_TOKEN` so the agent's PR triggers `ci.yml`, and instead of a PAT so all activity is attributed to `vata-agent[bot]` rather than a person. Store as repo secrets:
    - `AGENT_APP_CLIENT_ID` — the App's Client ID (App settings → General → About)
    - `AGENT_APP_PRIVATE_KEY` — the full contents of the App's generated `.pem` private key
-4. Confirm `.sandcastle/run.ts` and `.sandcastle/prompts/default.md` are present (scaffolded during installation).
-5. Confirm `.github/workflows/agent-run.yml` is present (added during configuration).
-6. Dry-test on a small `Task`-type issue (rename, doc fix) before pointing it at anything substantive.
+4. Create a second GitHub App (`vata-reviewer`) on the org with **Contents: Read and write**, **Pull requests: Read and write** (webhook disabled). Install it on this repo. This App is the reviewer identity; its pushes are skipped by the review trigger, preventing infinite loops. Store as repo secrets:
+   - `REVIEWER_APP_CLIENT_ID` — the App's Client ID
+   - `REVIEWER_APP_PRIVATE_KEY` — the full contents of the App's generated `.pem` private key
+5. Confirm `.sandcastle/run.ts`, `.sandcastle/review.ts`, and the prompt files under `.sandcastle/prompts/` are present.
+6. Confirm `.github/workflows/agent-run.yml` and `.github/workflows/agent-review.yml` are present.
+7. Dry-test on a small `Task`-type issue (rename, doc fix) before pointing it at anything substantive.
 
 ## Limits and known issues
 
@@ -115,4 +128,5 @@ The workflow's job is the boring middle: read, execute, check, package as a PR. 
 - **Out-of-scope edits.** The agent may touch files outside the PRD's scope. Review the diff for unexpected churn before merging.
 - **Stuck `agent:running`.** If a job dies without cleanup (rare), the label may stay on. Remove it manually and re-label `agent:ready` to restart.
 - **Vendor lock on `@ai-hero/sandcastle`.** A future major version could require migrating the `.sandcastle/` scripts. Pin the version in `package.json` until a deliberate upgrade.
-- **`agent:ready` vs an in-flight review run.** Re-labelling an issue `agent:ready` while a review run is addressing its PR can discard that work — re-labelling means "start over from scratch". Don't do both at once.
+- **Reviewer cannot run until the `vata-reviewer` App and its secrets exist.** Until then, `agent-review.yml` will fail at the token-generation step.
+- **Review quality is model-bounded.** The reviewer shares the same model family as the author agent, so it has overlapping blind spots. Manual QA remains the final gate.
