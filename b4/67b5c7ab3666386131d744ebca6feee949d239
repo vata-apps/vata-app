@@ -1,0 +1,31 @@
+src/components/families-filters.tsx
+  s_28bc9352f199a7::t_85bd3109c7ecaf 131,160
+src/components/individuals-filters.tsx
+  s_28bc9352f199a7::t_85bd3109c7ecaf 130,156
+src/components/places-filters.tsx
+  s_28bc9352f199a7::t_85bd3109c7ecaf 123
+src/components/ui/select.css.ts
+  s_28bc9352f199a7::t_c3f7895da114d5 39-40
+src/components/individuals/person-editor-dialog.tsx
+  s_28bc9352f199a7::t_85bd3109c7ecaf 345
+src/components/events-filters.tsx
+  s_28bc9352f199a7::t_85bd3109c7ecaf 112,138
+src/components/ui/select.tsx
+  s_28bc9352f199a7::t_85bd3109c7ecaf 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "b467b5c7ab3666386131d744ebca6feee949d239",
+  "prompts": {},
+  "sessions": {
+    "s_28bc9352f199a7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fb67cd-3542-46a3-ba7a-ccfa98479f71",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
