@@ -73,6 +73,7 @@ const promptArgs = {
 let error = false;
 let analysis: WorktreeRunResult | undefined;
 let fix: WorktreeRunResult | undefined;
+let hadFixesToApply = false;
 
 try {
   // No install hook here: analysis is read-only (no pnpm verify, no build),
@@ -91,8 +92,9 @@ try {
   });
 
   const fixesToApply = extractTag(analysis.stdout, 'fixes-to-apply');
+  hadFixesToApply = hasFixesToApply(fixesToApply);
 
-  if (hasFixesToApply(fixesToApply)) {
+  if (hadFixesToApply) {
     fix = await wt.run({
       agent: claudeCode(MODEL_SONNET),
       sandbox: noSandbox(),
@@ -168,6 +170,7 @@ const decision = decideReviewOutcome({
   completed,
   verifyPassed,
   hasFlaggedFindings: flagged,
+  hadFixesToApply,
 });
 
 writeGithubOutput({

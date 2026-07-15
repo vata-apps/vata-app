@@ -148,6 +148,8 @@ jobs:
                 HEADER="✅ Reviewed, pushed ${COMMITS} fix commit(s) — see below" ;;
               clean)
                 HEADER="✅ Reviewed — no issues found" ;;
+              noted)
+                HEADER="ℹ️ Reviewed — no defects to fix, but see notes for your judgment" ;;
               flagged)
                 if [ "$PUSH" = "true" ]; then
                   HEADER="⚠️ Reviewed, pushed ${COMMITS} fix commit(s) — other issues need your judgment, see below"
