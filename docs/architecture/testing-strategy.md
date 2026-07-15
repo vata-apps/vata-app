@@ -2,7 +2,14 @@
 
 ## Philosophy
 
-**Test use cases, not implementation details.**
+**Default: write no tests.** Most changes ship with zero new tests — writing them proactively costs more in token/context budget than they return in value on this project. Write one only when:
+
+- The user explicitly asks for tests.
+- It's genuinely the fastest way to pin down a real, non-obvious regression.
+
+When in doubt, don't write it. Manual verification (reading the code, running the app, the Tauri MCP tools) is the default way to confirm a change works, not a test suite.
+
+**If a test is written, test use cases, not implementation details.**
 
 A test should answer: _"Does this feature work correctly from the caller's point of view?"_ — not _"Does this function call that other function with these exact arguments?"_
 
@@ -27,11 +34,13 @@ Test commands (`pnpm test`, `pnpm test:coverage`, `cargo test`) are defined in `
 
 ---
 
-## Test Layers
+## Test Layers (when a test is warranted)
+
+These layers apply only to the rare test that clears the bar above — they are not a checklist to work through by default.
 
 ### 1. Integration tests — DB layer (TypeScript)
 
-The most valuable tests in the project. They run the full DB function against a real in-memory SQLite instance (via `better-sqlite3`), using the actual schema.
+When warranted, these are the most valuable tests in the project. They run the full DB function against a real in-memory SQLite instance (via `better-sqlite3`), using the actual schema.
 
 **What they validate:** the data is correctly stored, retrieved, ordered, and mutated — end to end through the DB function, not through mock assertions.
 
@@ -98,24 +107,16 @@ When that happens, use inline `#[cfg(test)]` blocks for pure logic and `rusqlite
 
 ## What Not to Test
 
-| Situation                                  | Reason                                            |
-| ------------------------------------------ | ------------------------------------------------- |
-| Auto-generated files (`routeTree.gen.ts`)  | Not authored code                                 |
+| Situation                                     | Reason                                            |
+| --------------------------------------------- | ------------------------------------------------- |
+| Auto-generated files (`routeTree.gen.ts`)     | Not authored code                                 |
 | Trivial layout wrappers (shell pass-throughs) | No logic to break                                 |
-| Configuration objects (`queryKeys.ts`)     | Assertions would just repeat the definition       |
-| SQL string structure                       | Refactor the query freely; test the data returned |
-| Internal mock call counts                  | Tests the plumbing, not the outcome               |
+| Configuration objects (`queryKeys.ts`)        | Assertions would just repeat the definition       |
+| SQL string structure                          | Refactor the query freely; test the data returned |
+| Internal mock call counts                     | Tests the plumbing, not the outcome               |
 
 ---
 
-## Coverage Targets
+## No Coverage Targets
 
-| Layer               | Target                                 | Approach                                        |
-| ------------------- | -------------------------------------- | ----------------------------------------------- |
-| `src/db/**`         | All public functions                   | Integration tests — real SQLite in-memory       |
-| `src/managers/**`   | All business logic paths               | Integration tests                               |
-| `src/components/**` | Critical interactions and error states | RTL behavior tests                              |
-| `src/hooks/**`      | All custom hooks                       | Vitest + RTL                                    |
-| `src-tauri/src/**`  | All custom commands and DB functions   | Rust unit + integration tests (when they exist) |
-
-Coverage is a signal, not a goal. A 90% coverage score that mostly tests trivial code is worse than 60% coverage on the paths that actually matter.
+There are no per-layer coverage targets and no coverage tooling gate. A 90% coverage score that mostly tests trivial code is worse than a handful of tests on paths that actually matter — and worse still than tests added for code that was never going to break. Add a test only when it earns its place per the Philosophy section above.

@@ -109,8 +109,8 @@ When creating a new entity's database layer in `src/db/trees/`, follow this stru
 ### Files
 
 - `src/db/trees/<entity>.ts` — CRUD operations
-- `src/db/trees/<entity>.test.ts` — unit tests (in-memory SQLite)
 - Type definitions in `src/types/database.ts`
+- `src/db/trees/<entity>.test.ts` only if the user asks for tests — see `testing-standards`
 
 ### Required sections of `<entity>.ts`
 
@@ -218,9 +218,9 @@ export interface UpdateEntityInput {
 }
 ```
 
-### Test file
+### Test file (only if requested)
 
-Use `src/test/sqlite-memory.ts` helpers. See `src/db/trees/repositories.test.ts` for a working example. Tests cover: create, get by ID, get all, update, delete, and edge cases (not found, duplicate constraints).
+Not written by default — see `testing-standards`. If the user explicitly asks for tests here, use `src/test/sqlite-memory.ts` helpers (see `src/db/trees/repositories.test.ts` for a working example).
 
 ### Scaffolding checklist
 
@@ -231,7 +231,6 @@ Use `src/test/sqlite-memory.ts` helpers. See `src/db/trees/repositories.test.ts`
 - [ ] Entity ID prefix is correct and registered in `entityId.ts`
 - [ ] `created_at` / `updated_at` are included
 - [ ] Types added to `src/types/database.ts`
-- [ ] Test file created with memory DB
 
 ---
 

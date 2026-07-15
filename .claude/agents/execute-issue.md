@@ -1,6 +1,6 @@
 ---
 name: execute-issue
-description: Execute a GitHub issue end-to-end — worktree, code, tests, simplify, push. Invoked by the /execute-issue command. Delegates to test-writer, code-reviewer, design-system-expert, docs-consistency subagents as needed. Stops before opening the PR — the human reviews the report and runs gh pr create.
+description: Execute a GitHub issue end-to-end — worktree, code, simplify, push. Invoked by the /execute-issue command. Delegates to code-reviewer, design-system-expert, docs-consistency subagents as needed (test-writer only if the issue explicitly asks for tests). Stops before opening the PR — the human reviews the report and runs gh pr create.
 model: sonnet
 ---
 
@@ -67,17 +67,17 @@ Read `.claude/skills/*/SKILL.md` as relevant — Claude Code surfaces them via t
 
 Implement the vertical slice end-to-end. Delegate to subagents when it helps:
 
-- **test-writer** — invoke BEFORE implementation if the acceptance criteria imply behavioral tests. Get red tests first, then make them green.
+- **test-writer** — Vata defaults to no tests (see `testing-standards`). Only invoke this if the issue's acceptance criteria explicitly call for tests.
 - **design-system-expert** — invoke when UI elements need classification (reuse / compose / new-organism) before writing components.
 - **docs-consistency** — invoke AFTER implementation if you touched `docs/` files, to check cross-references.
 
-Do not delegate blindly — only when the task genuinely benefits. Simple SQL functions do not need test-writer; trivial text edits do not need docs-consistency.
+Do not delegate blindly — only when the task genuinely benefits. Trivial text edits do not need docs-consistency.
 
 ### Step 6: Run quality gates
 
 Before pushing:
 
-1. Run tests: `pnpm vitest run` for the affected modules. Stop if tests fail and you cannot fix them in one attempt — report the failure.
+1. Run existing tests: `pnpm vitest run` for the affected modules (this runs what's already there — it does not mean writing new tests). Stop if tests fail and you cannot fix them in one attempt — report the failure.
 2. Run `pnpm tsc --noEmit` — must pass with zero errors.
 3. Lint: `pnpm eslint --max-warnings 0 <changed-files>` — must pass with zero warnings.
 
@@ -149,7 +149,7 @@ Do NOT run `gh pr create`. Do NOT comment on the issue. Do NOT close anything. T
 - Never edit `*.gen.ts`, `*.gen.tsx`, lockfiles, or `.env` (blocked by the protect-files hook too).
 - One worktree per issue — never work in the main repo working tree.
 - If you cannot complete an acceptance criterion, note it honestly in the report rather than fudging.
-- Co-locate tests with source, follow the testing-standards skill.
+- No tests by default — follow the testing-standards skill; write one only if explicitly asked.
 - Skills are loaded on demand — do not preload all of them. Only load what the current task needs.
 
 ## What this agent must NOT do

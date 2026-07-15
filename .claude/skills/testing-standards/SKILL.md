@@ -1,46 +1,45 @@
 ---
 name: testing-standards
-description: What and why to test in vata-app — the test-by-layer policy, the behavior-not-implementation rule, and what to leave untested. Use when writing or reviewing a *.{test,spec}.{ts,tsx} or Rust test, or planning a feature's test coverage.
+description: Vata's minimal-tests-by-default policy — when a test is actually worth writing, and the behavior-not-implementation rule for the rare cases that qualify. Use when writing or reviewing a *.{test,spec}.{ts,tsx} or Rust test, or deciding whether a change needs a test at all.
 ---
 
 # Testing Standards
 
-This skill says **what to test and why** — not how to write a test.
+## Default: no tests
 
-## Why
+Most changes ship with **zero new tests**. Writing tests for their own sake burns a disproportionate amount of tokens and context relative to the value they add here. Do not write a test unless one of these applies:
 
-A test earns its place by catching a real regression. There are **no coverage thresholds**: 20 tests that catch bugs beat 100 that break on every refactor.
+- The user explicitly asks for tests.
+- A subagent's own checklist requires one (e.g. `test-writer` was invoked on purpose).
+- It is genuinely the fastest way to pin down a real, non-obvious regression — and even then, prefer one narrow test over a suite.
 
-Test **observable behavior, not implementation**. The check: if the implementation is rewritten but the behavior is unchanged, the test must still pass. Asserting on SQL strings, CSS classes, `data-testid`, or rendered HTML fails that check — it tests the wrong thing.
+When in doubt, don't write it. Manual verification (reading the code, running the app, using the Tauri MCP tools) is the default way to confirm a change works — see the `verify` skill.
 
-## TDD
+## If a test is written
 
-Tests are written **before** the implementation and committed with it (red → green). The `test-writer` agent writes the red tests.
+Test **observable behavior, not implementation**. The check: if the implementation is rewritten but the behavior is unchanged, the test must still pass. Asserting on SQL strings, CSS classes, `data-testid`, or rendered HTML fails that check.
 
-## What to test, per layer
+Co-locate with the source. `describe` names the feature; `it` states what the caller observes in plain English (no "should", English only).
 
-| Layer               | What to test                                                                          | Approach                                                                                                    |
-| ------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `src/db/**`         | Every public CRUD function — input/output behavior                                    | Integration test via `createInMemoryDb` / `createTreeInMemoryDb` (`$/test/sqlite-memory`), never mocked SQL |
-| `src/managers/**`   | Orchestration and end-to-end workflows                                                | Integration test, in-memory SQLite                                                                          |
-| `src/components/**` | **Application organism** behavior — interactions, conditional rendering, error states | Vitest + React Testing Library (jsdom)                                                                      |
-| `src/hooks/**`      | Data flow and state transitions                                                       | Vitest + RTL; mock the DB-access boundary and assert the hook calls it correctly                            |
-| `src/lib/**`        | Pure logic, edge cases, round-trips                                                   | Unit test, no mocks                                                                                         |
-| `src-tauri/src/**`  | Non-trivial command logic / data mapping — **none yet** (the backend is thin)         | Rust `#[cfg(test)]` unit tests, when logic earns it                                                         |
+| Layer               | Approach                                                                                                    |
+| ------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `src/db/**`         | Integration test via `createInMemoryDb` / `createTreeInMemoryDb` (`$/test/sqlite-memory`), never mocked SQL |
+| `src/managers/**`   | Integration test, in-memory SQLite                                                                          |
+| `src/components/**` | Vitest + React Testing Library (jsdom)                                                                      |
+| `src/hooks/**`      | Vitest + RTL; mock the DB-access boundary and assert the hook calls it correctly                            |
+| `src/lib/**`        | Unit test, no mocks                                                                                         |
+| `src-tauri/src/**`  | Rust `#[cfg(test)]` unit test — rare, the backend is thin                                                   |
 
-Co-locate every test with its source. `describe` names the feature; `it` states what the caller observes in plain English (no "should", English only).
+Test DBs must enforce foreign keys, or constraint violations silently pass in tests and fail in production. Go through `createInMemoryDb` / `createTreeInMemoryDb` (`src/test/sqlite-memory.ts`), which apply `PRAGMA foreign_keys = ON` — never instantiate a raw in-memory DB yourself.
 
 ## What NOT to test
 
-- **Raw Radix Themes components** — owned and tested upstream. Test only the organisms that compose them.
+- **Raw Radix Themes components** — owned and tested upstream.
 - Auto-generated files (`routeTree.gen.ts`).
 - Trivial wrappers with no logic.
 - Internal SQL string structure — assert the data returned, not the query.
 - Pure identity (e.g. a `query-keys` test whose assertion is `x === x`).
-
-## Correctness invariant
-
-Test DBs must enforce foreign keys, or constraint violations silently pass in tests and fail in production. You get this **for free** by going through `createInMemoryDb` / `createTreeInMemoryDb` (`src/test/sqlite-memory.ts`), which apply `PRAGMA foreign_keys = ON` — never instantiate a raw in-memory DB yourself.
+- Anything already covered by manual verification — don't duplicate it as a test just for the sake of having one.
 
 ## E2E
 

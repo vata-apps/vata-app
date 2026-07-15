@@ -10,7 +10,8 @@ UI: headless Base UI (`@base-ui/react`) + Vanilla Extract tokens (`src/design/th
 - **Scope**: do EXACTLY what was asked. No unrequested audits or scope creep. If asked for a multi-agent analysis, launch the agents immediately instead of exploring solo first.
 - **Before committing**: run `/simplify` and apply the real findings. Use conventional commit messages.
 - **English everywhere** (code, comments, docs, git). User-facing strings go through i18n (`useTranslation`) — never hardcode. Literals are fine in tests and DEV-only debug UI.
-- **Bug fixes**: reproduce with a failing test first. After one failed fix, switch to root-cause investigation (don't try a second variant blind).
+- **Tests**: write the strict minimum — most changes ship with none. Only add one when it's genuinely the fastest way to pin down a real regression, and only if the user asks or a subagent's own checklist requires it. Never write tests proactively for coverage.
+- **Bug fixes**: reproduce manually first. After one failed fix, switch to root-cause investigation (don't try a second variant blind).
 
 ## Architecture
 

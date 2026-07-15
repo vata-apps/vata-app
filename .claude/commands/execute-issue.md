@@ -14,8 +14,8 @@ The subagent will:
 1. Create a worktree `../vata-issue-<N>` from main
 2. Verify dependencies (unless --force)
 3. Fetch the issue spec
-4. Implement end-to-end, delegating to test-writer / code-reviewer / design-system-expert / docs-consistency as needed
-5. Run tests, tsc, eslint
+4. Implement end-to-end, delegating to code-reviewer / design-system-expert / docs-consistency as needed (test-writer only if the issue explicitly asks for tests)
+5. Run existing tests, tsc, eslint
 6. Apply /simplify
 7. Commit and push `feat/issue-<N>`
 8. Print a final report with acceptance-criteria checklist + PR template

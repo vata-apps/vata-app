@@ -13,7 +13,7 @@ For any UI element, take the first step that fits:
 
 1. **Reuse a Radix Themes component** — the default. Import it directly and pick its `variant` / `size` / `color` props.
 2. **Compose Radix Themes inline** — when the need is a layout of known components (a header is `Avatar` + `Heading` + a `Button` row in a `Flex`). Build it in the page, no new file. Layout uses Radix primitives (`Flex`, `Grid`, `Box`) and spacing props.
-3. **Add an internal application organism** in `src/components/` — only for a component used across the app that composes Radix Themes and adds applicative behaviour (the tree shell, navigation, a dropzone). Never a restyled atom or molecule: reaching for a "styled Button" means stop and use Radix's. A new organism ships in the same commit with JSDoc and a colocated `*.test.tsx`.
+3. **Add an internal application organism** in `src/components/` — only for a component used across the app that composes Radix Themes and adds applicative behaviour (the tree shell, navigation, a dropzone). Never a restyled atom or molecule: reaching for a "styled Button" means stop and use Radix's. A new organism ships in the same commit with JSDoc. No test file by default — see `testing-standards`.
 
 There is **no custom-CSS escape hatch**: ADR-010 bans scoped local CSS. If Radix Themes genuinely covers nothing (e.g. a pedigree graph), that is an ADR-010 amendment — raise it, don't add a `.css` file.
 

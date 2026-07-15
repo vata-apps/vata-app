@@ -52,7 +52,7 @@ Read `.claude/skills/design-system-standards/SKILL.md` fresh — it is your deci
 - **<ProposedComponent>** — composes <Radix Themes pieces>
   - Justification (genuine application organism, not a restyled component): <one sentence>
   - API sketch (user-facing labels as `t('...')`)
-  - Companion `src/components/<name>.test.tsx` required (per testing-standards)
+  - Test file only if the user asks for one (per testing-standards)
 
 ### Bespoke (scoped local CSS)
 - <description> — why nothing in Radix Themes covers it
