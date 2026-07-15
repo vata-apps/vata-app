@@ -61,28 +61,34 @@ export function FamiliesFilterToolbar({
 
   const chips: JSX.Element[] = [];
   if (value.name.trim()) {
+    const label = `${t('filters.name.label')}: ${value.name.trim()}`;
     chips.push(
       <Chip
         key="name"
-        label={`${t('filters.name.label')}: ${value.name.trim()}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, name: '' })}
       />
     );
   }
   if (value.spouses !== 'all') {
+    const label = `${t('filters.spouses.label')}: ${spousesDisplay}`;
     chips.push(
       <Chip
         key="spouses"
-        label={`${t('filters.spouses.label')}: ${spousesDisplay}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, spouses: 'all' })}
       />
     );
   }
   if (value.children !== 'all') {
+    const label = `${t('filters.children.label')}: ${childrenDisplay}`;
     chips.push(
       <Chip
         key="children"
-        label={`${t('filters.children.label')}: ${childrenDisplay}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, children: 'all' })}
       />
     );

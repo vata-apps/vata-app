@@ -66,19 +66,23 @@ export function PlacesFilterToolbar({
 
   const chips: JSX.Element[] = [];
   if (value.name.trim()) {
+    const label = `${t('filters.name.label')}: ${value.name.trim()}`;
     chips.push(
       <Chip
         key="name"
-        label={`${t('filters.name.label')}: ${value.name.trim()}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, name: '' })}
       />
     );
   }
   if (value.type !== 'all') {
+    const label = `${t('filters.type.label')}: ${typeDisplay}`;
     chips.push(
       <Chip
         key="type"
-        label={`${t('filters.type.label')}: ${typeDisplay}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, type: 'all' })}
       />
     );

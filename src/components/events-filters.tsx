@@ -70,19 +70,23 @@ export function EventsFilterToolbar({
 
   const chips: JSX.Element[] = [];
   if (value.type !== 'all') {
+    const label = `${t('filters.type.label')}: ${typeDisplay}`;
     chips.push(
       <Chip
         key="type"
-        label={`${t('filters.type.label')}: ${typeDisplay}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, type: 'all' })}
       />
     );
   }
   if (value.place !== 'all') {
+    const label = `${t('filters.place.label')}: ${placeDisplay}`;
     chips.push(
       <Chip
         key="place"
-        label={`${t('filters.place.label')}: ${placeDisplay}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, place: 'all' })}
       />
     );

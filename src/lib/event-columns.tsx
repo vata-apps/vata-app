@@ -1,6 +1,6 @@
 import { Link as RouterLink } from '@tanstack/react-router';
 
-import { EntityTableColumn, rowLink } from '$components/entity-table';
+import { rowLink, type EntityTableColumn } from '$components/entity-table';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import type { EventWithDetails } from '$types/database';
 

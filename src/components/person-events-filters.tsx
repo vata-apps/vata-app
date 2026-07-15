@@ -45,6 +45,8 @@ export function PersonEventsFilterToolbar({
 
   const scopeDisplay = t(`events.scope.${value}`);
 
+  const scopeChipLabel = `${t('events.scope.label')}: ${scopeDisplay}`;
+
   return (
     <div
       style={{
@@ -69,7 +71,8 @@ export function PersonEventsFilterToolbar({
         <>
           <Chip
             key="scope"
-            label={`${t('events.scope.label')}: ${scopeDisplay}`}
+            label={scopeChipLabel}
+            removeAriaLabel={tCommon('filters.removeAria', { label: scopeChipLabel })}
             onRemove={() => onChange(DEFAULT_PERSON_EVENT_SCOPE)}
           />
           <Button variant="ghost" onClick={() => onChange(DEFAULT_PERSON_EVENT_SCOPE)}>

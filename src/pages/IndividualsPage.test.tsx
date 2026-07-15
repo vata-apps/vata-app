@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -11,6 +11,7 @@ import {
   RouterProvider,
 } from '@tanstack/react-router';
 
+import i18n from '$/i18n/config';
 import { IndividualsPage } from './IndividualsPage';
 import { IndividualManager } from '$managers/IndividualManager';
 import type { IndividualWithDetails, Name } from '$types/database';
@@ -126,6 +127,10 @@ function firstName(row: HTMLElement): string {
 describe('IndividualsPage', () => {
   beforeEach(() => {
     mockedGetAll.mockReset();
+  });
+
+  afterEach(async () => {
+    await i18n.changeLanguage('en');
   });
 
   it('sorts by surname ascending by default', async () => {
@@ -281,6 +286,29 @@ describe('IndividualsPage', () => {
 
     const rowsAfter = await getBodyRows();
     expect(rowsAfter).toHaveLength(2);
+  });
+
+  it('labels the chip remove button with the active locale', async () => {
+    const user = userEvent.setup();
+    mockedGetAll.mockResolvedValue([
+      person({ id: 'I-1', gender: 'M', primaryName: { surname: 'Doe', givenNames: 'John' } }),
+    ]);
+
+    await i18n.changeLanguage('fr');
+    renderPage();
+    await screen.findByRole('table', { name: 'Personnes' });
+
+    await user.click(screen.getByRole('combobox', { name: 'Sexe' }));
+    const popup = await screen.findByRole('listbox');
+    await user.click(within(popup).getByRole('option', { name: 'Homme' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('Sexe: Homme')).toBeInTheDocument();
+    });
+
+    // The remove button's accessible name must follow the active locale, not
+    // the English fallback hardcoded in the Chip primitive.
+    expect(screen.getByRole('button', { name: 'Retirer Sexe: Homme' })).toBeInTheDocument();
   });
 
   it('clears all active filters with the Clear-all button', async () => {
