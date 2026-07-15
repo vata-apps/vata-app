@@ -119,7 +119,6 @@ export function PersonRelationsPage({
         isError={isError}
         errorMessage={tCommon('errors.loadFailed')}
         emptyMessage={t('relations.table.empty')}
-        defaultSort={{ columnKey: 'name', direction: 'asc' }}
       />
     </div>
   );

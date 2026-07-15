@@ -128,17 +128,20 @@ describe('PersonRelationsPage', () => {
     expect(within(table).getByRole('button', { name: 'Died' })).toBeInTheDocument();
   });
 
-  it('sorts by name ascending by default', async () => {
+  it('preserves the intrinsic relation order and does not alphabetize by default', async () => {
+    // The rows arrive in the domain order built upstream (parents first, then
+    // spouses, children, …) — the table must render them verbatim, not sorted
+    // by name, or a Mother would drift below her alphabetically-earlier child.
     mockedGetPersonRelations.mockResolvedValue([
-      relation({ id: 'I-3', name: 'Zoe Zebra', relation: 'daughter' }),
-      relation({ id: 'I-2', name: 'Anna Able', relation: 'wife' }),
+      relation({ id: 'I-2', name: 'Zoe Mother', relation: 'mother' }),
+      relation({ id: 'I-3', name: 'Anna Daughter', relation: 'daughter' }),
     ]);
 
     renderPage();
 
     const rows = await getBodyRows();
-    expect(within(rows[0]).getByRole('rowheader').textContent).toBe('Anna Able');
-    expect(within(rows[1]).getByRole('rowheader').textContent).toBe('Zoe Zebra');
+    expect(within(rows[0]).getByRole('rowheader').textContent).toBe('Zoe Mother');
+    expect(within(rows[1]).getByRole('rowheader').textContent).toBe('Anna Daughter');
   });
 
   it('links recorded relations to their overview', async () => {
