@@ -1,0 +1,151 @@
+.claude/commands/execute-issue.md
+  s_13b9dcf17ce4c3::t_732bf0bf784272 1-23
+.claude/skills/tauri-standards/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-104
+.claude/skills/gedcom-standards/checklist.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-53
+docs/adr/0015-migration-to-opencode-go.md
+  s_13b9dcf17ce4c3::t_181ca5c5695b3c 3-5
+.gitignore
+  s_13b9dcf17ce4c3::t_6077b4c4fe5d95 33
+.claude/skills/sqlite-standards/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-238
+.sandcastle/shared.ts
+  s_13b9dcf17ce4c3::t_fcef8eacffb842 8-9
+  s_13b9dcf17ce4c3::t_dabe4ddd5a26ca 62-67
+  s_13b9dcf17ce4c3::t_2a674d0db3094e 34-49,58-60,68-118
+  s_13b9dcf17ce4c3::t_5c47546e75e093 61
+.claude/skills/new-route/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-71
+.claude/skills/testing-standards/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-47
+docs/dev-tools/agent-workflow.md
+  s_13b9dcf17ce4c3::t_baa28e1e3852a5 3
+  s_13b9dcf17ce4c3::t_14184aa8f2e2b6 61
+  s_13b9dcf17ce4c3::t_16f85efd90a5c2 69,75-77,79,88
+  s_13b9dcf17ce4c3::t_dc406e341c20a9 44-47
+  s_13b9dcf17ce4c3::t_de72ca32848f8f 26
+  s_13b9dcf17ce4c3::t_d262375d475a3e 34,37
+  s_13b9dcf17ce4c3::t_3e38425b05b746 105,115
+  s_13b9dcf17ce4c3::t_6d240c9397de60 90
+  s_13b9dcf17ce4c3::t_8466c6f9299a2f 27
+.claude/skills/capture-idea/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-196
+.claude/skills/design-system-standards/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-37
+.claude/agents/test-writer.md
+  s_13b9dcf17ce4c3::t_98e445af10ff48 1-27,29-81,83-88
+  s_13b9dcf17ce4c3::t_a2007e27abf6f3 28
+  s_13b9dcf17ce4c3::t_06938f08e28913 82
+.claude/agents/execute-issue.md
+  s_13b9dcf17ce4c3::t_6f6c20a0db3098 1-163
+docs/api/database-layer.md
+  s_13b9dcf17ce4c3::t_32584bb39cf816 46
+.sandcastle/review.ts
+  s_13b9dcf17ce4c3::t_f7411c80dcc6ca 110-112,123-136,144
+  s_13b9dcf17ce4c3::t_af1cc9a9048b87 2,12
+  s_13b9dcf17ce4c3::t_379ad7d1ad1a1c 5,7,14
+  s_13b9dcf17ce4c3::t_431867999799db 68-71,93-97
+  s_13b9dcf17ce4c3::t_701a17f7cee18e 9,13,22-29,55-62,64-65,72-73,75-76,79,82-92,98-104,113-116,118-119,150-153,164,171
+.sandcastle/run.ts
+  s_13b9dcf17ce4c3::t_87a0c456bc8929 35
+  s_13b9dcf17ce4c3::t_b80bf79f9a1acc 4
+  s_13b9dcf17ce4c3::t_af14cd1117a319 23
+  s_13b9dcf17ce4c3::t_c88394eaa5b830 2
+.claude/skills/frontend-design/LICENSE.txt
+  s_13b9dcf17ce4c3::t_069208663342ce 1-177
+docs/architecture/tech-stack.md
+  s_13b9dcf17ce4c3::t_fc99b911983c5f 40
+.claude/hooks/end-of-run.sh
+  s_13b9dcf17ce4c3::t_6d5710c887843e 1-69
+.claude/agents/docs-consistency.md
+  s_13b9dcf17ce4c3::t_5b10f1639b85b6 1-110
+.claude/hooks/sql-guard.sh
+  s_13b9dcf17ce4c3::t_6d5710c887843e 1-58
+.claude/skills/sqlite-standards/checklist.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-42
+.claude/hooks/protect-files.sh
+  s_13b9dcf17ce4c3::t_6d5710c887843e 1-28
+.claude/settings.json
+  s_13b9dcf17ce4c3::t_6d5710c887843e 1-42
+.claude/skills/link-task/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-82,84-132
+  s_13b9dcf17ce4c3::t_25e0787eabf54a 83
+.claude/skills/frontend-design/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-55
+.sandcastle/prompts/review-fix.md
+  s_13b9dcf17ce4c3::t_be5bee07519516 1-22,24,26-27,40-46,48-51
+  s_13b9dcf17ce4c3::t_25cce6b3a8c0b6 23,25,28-39,47
+docs/adr/0018-two-stage-review.md
+  s_13b9dcf17ce4c3::t_cfbb0e4664ca7e 19,21
+  s_13b9dcf17ce4c3::t_2ce646c1e10472 16
+  s_13b9dcf17ce4c3::t_99b778f5945024 44,48,50
+  s_13b9dcf17ce4c3::t_a338780ccd6f01 8,10,34
+  s_13b9dcf17ce4c3::t_6a5629b78d85b4 17
+  s_13b9dcf17ce4c3::t_c87e2ffb862a22 36
+  s_13b9dcf17ce4c3::t_6b7c899d143402 1-7,9,11-15,18,20,22-28,30-33,35,37-43,45-47,49,51-56
+  s_13b9dcf17ce4c3::t_e4602432a0d42a 29
+.claude/agents/code-reviewer.md
+  s_13b9dcf17ce4c3::t_1b29bb9681cf12 1-68
+CLAUDE.md
+  s_13b9dcf17ce4c3::t_3367497a09637a 2-34
+  s_13b9dcf17ce4c3::t_0c7f2ba221c3dc 1
+docs/adr/0017-revert-to-claude-code.md
+  s_13b9dcf17ce4c3::t_b80bf79f9a1acc 22-25
+  s_13b9dcf17ce4c3::t_af784c82f25356 68,74-75
+  s_13b9dcf17ce4c3::t_5e411180ae3626 52
+  s_13b9dcf17ce4c3::t_c6199b04756686 59
+  s_13b9dcf17ce4c3::t_dd374359655d17 8
+  s_13b9dcf17ce4c3::t_827f002486a1a5 1-7,9,11-21,26-51,53-58,60-67,69-73,76-83
+  s_13b9dcf17ce4c3::t_fef2889a23791b 10
+docs/adr/0016-autonomous-pr-review.md
+  s_13b9dcf17ce4c3::t_a1b7f09898072c 4
+  s_13b9dcf17ce4c3::t_1988448c66e8e5 3
+  s_13b9dcf17ce4c3::t_b80bf79f9a1acc 76-81,83
+docs/README.md
+  s_13b9dcf17ce4c3::t_631c0b4f254efa 22,24,26
+  s_13b9dcf17ce4c3::t_faf636364e9a03 25,27
+.claude/agents/design-system-expert.md
+  s_13b9dcf17ce4c3::t_5b10f1639b85b6 1-76
+.claude/skills/typescript-standards/SKILL.md
+  s_13b9dcf17ce4c3::t_25e0787eabf54a 117
+  s_13b9dcf17ce4c3::t_069208663342ce 1-116
+.sandcastle/prompts/review-analyze.md
+  s_13b9dcf17ce4c3::t_2dbfe908d0f6b2 22,24,30,32,38,40,42-43,45,47,49,51,53-63,66,68-72,74,84,87,95
+.github/workflows/agent-review.yml
+  s_13b9dcf17ce4c3::t_d25077f4f67d60 72-73
+  s_13b9dcf17ce4c3::t_7cbb535f84c250 107
+docs/adr/0008-autonomous-agent-execution.md
+  s_13b9dcf17ce4c3::t_320ba31b84ad54 3
+.sandcastle/shared.test.ts
+  s_13b9dcf17ce4c3::t_3a0b3beac52029 166-180,183-185
+  s_13b9dcf17ce4c3::t_b23cb8284db00d 234-238
+  s_13b9dcf17ce4c3::t_fad76d5ae95711 181-182
+  s_13b9dcf17ce4c3::t_38fd51dd16c2c3 3,5,8
+  s_13b9dcf17ce4c3::t_1b3841ec6c467c 186-233,239-263
+  s_13b9dcf17ce4c3::t_a338780ccd6f01 2,4,6-7,9-10
+.github/workflows/agent-run.yml
+  s_13b9dcf17ce4c3::t_442f05dc06d396 97
+  s_13b9dcf17ce4c3::t_a0c2402f4639e1 57-58
+  s_13b9dcf17ce4c3::t_be4556fb878e7d 178
+.claude/skills/gedcom-standards/SKILL.md
+  s_13b9dcf17ce4c3::t_069208663342ce 1-179
+.sandcastle/prompts/default.md
+  s_13b9dcf17ce4c3::t_dfb8f1c66c4794 13,29,36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "757ad09a1cd590afadf1af5997e0965792bd2ed2",
+  "prompts": {},
+  "sessions": {
+    "s_13b9dcf17ce4c3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "418016ce-0e59-42f3-96c2-b75747adde99",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
