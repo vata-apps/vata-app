@@ -15,10 +15,13 @@ jobs:
   # gets skipped here (in particular, the reviewer's own push) must never
   # enter the `review` job's concurrency group, or it would cancel a
   # legitimate in-flight review. See ADR-016, "Concurrency and cancellation".
-  # Runs on every PR now, not just agent-authored ones.
+  # Runs on every PR now, not just agent-authored ones — but same-repo only:
+  # a fork PR's pull_request event gets no repo secrets and can't be pushed
+  # to, so it must be skipped cleanly here rather than fail later.
   triage:
     if: >-
       github.event.sender.login != 'vata-reviewer[bot]'
+      && github.event.pull_request.head.repo.full_name == github.repository
       && github.event.pull_request.draft == false
       && github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
