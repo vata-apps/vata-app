@@ -1,0 +1,23 @@
+docs/adr/0016-autonomous-pr-review.md
+  s_6d81a67fd90c27::t_d4c56befa8c1b6 1-135
+docs/adr/0009-agent-review-feedback.md
+  s_6d81a67fd90c27::t_75f9a0bf54a226 3-5,7
+docs/README.md
+  s_6d81a67fd90c27::t_d3830af6ad3b79 23,25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "5a3b445c37876242d8cfd2f316c2e7f52754a632",
+  "prompts": {},
+  "sessions": {
+    "s_6d81a67fd90c27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aebff084-8712-47bb-9faf-1f0fe80c136b",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
