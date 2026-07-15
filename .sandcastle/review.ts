@@ -1,13 +1,17 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { createWorktree, opencode, type WorktreeRunResult } from '@ai-hero/sandcastle';
+import { claudeCode, createWorktree, type WorktreeRunResult } from '@ai-hero/sandcastle';
 import { noSandbox } from '@ai-hero/sandcastle/sandboxes/no-sandbox';
 import {
+  buildFinalFindings,
   decideReviewOutcome,
+  extractSection,
   extractTag,
+  hasFixesToApply,
   hasFlaggedFindings,
   logUsage,
-  MODEL_DEFAULT,
-  MODEL_ESCALATE,
+  MODEL_OPUS,
+  MODEL_SONNET,
+  parseFixOutcomes,
   required,
   verify,
   writeGithubOutput,
@@ -15,7 +19,14 @@ import {
 
 // Entry point for the autonomous reviewer, invoked by
 // .github/workflows/agent-review.yml.
-// See docs/adr/0016-autonomous-pr-review.md.
+// See docs/adr/0016-autonomous-pr-review.md and docs/adr/0018-two-stage-review.md.
+//
+// Two stages on the same worktree: Opus analyzes the diff and decides what to
+// fix (read-only), then Sonnet implements exactly what Opus specified without
+// re-judging it. Opus costs several times more per token than Sonnet, so
+// keeping the token-heavy edit/verify loop on Sonnet cuts review cost while
+// keeping Opus's judgment on what to fix. Stage 2 is skipped entirely when
+// there is nothing to fix.
 
 const issueNumber = required('ISSUE_NUMBER');
 const prNumber = required('PR_NUMBER');
@@ -32,59 +43,97 @@ const issue = JSON.parse(readFileSync(issueDataPath, 'utf-8')) as {
   url: string;
 };
 
-const escalate = process.env.ESCALATE === 'true';
-const model = escalate ? MODEL_ESCALATE : MODEL_DEFAULT;
 const branch = `agent/issue-${issueNumber}`;
 
 console.log(`PR: #${prNumber} — reviewing ${branch}`);
 console.log(`Issue: #${issueNumber} — ${issue.title}`);
-console.log(`Model: ${model}`);
 
 const wt = await createWorktree({
   branchStrategy: { type: 'branch', branch },
 });
 
+const promptArgs = {
+  ISSUE_NUMBER: issueNumber,
+  ISSUE_TITLE: issue.title,
+  ISSUE_BODY: issue.body,
+  ISSUE_URL: issue.url,
+  PR_NUMBER: prNumber,
+};
+
 let error = false;
-let result: WorktreeRunResult | undefined;
+let analysis: WorktreeRunResult | undefined;
+let fix: WorktreeRunResult | undefined;
 
 try {
-  result = await wt.run({
-    agent: opencode(model),
+  // No install hook here: analysis is read-only (no pnpm verify, no build),
+  // so it has no use for node_modules. Only the fix stage runs pnpm verify,
+  // and it's skipped whenever there's nothing to fix — installing
+  // unconditionally would pay that cost even on a clean review.
+  analysis = await wt.run({
+    agent: claudeCode(MODEL_OPUS),
     sandbox: noSandbox(),
-    promptFile: '.sandcastle/prompts/review.md',
-    promptArgs: {
-      ISSUE_NUMBER: issueNumber,
-      ISSUE_TITLE: issue.title,
-      ISSUE_BODY: issue.body,
-      ISSUE_URL: issue.url,
-      PR_NUMBER: prNumber,
-    },
-    hooks: {
-      sandbox: {
-        onSandboxReady: [{ command: 'pnpm install --frozen-lockfile' }],
-      },
-    },
+    promptFile: '.sandcastle/prompts/review-analyze.md',
+    promptArgs,
     maxIterations: 5,
     idleTimeoutSeconds: 600,
-    name: `review-${prNumber}`,
+    name: `review-analyze-${prNumber}`,
     logging: { type: 'stdout' },
   });
+
+  const fixesToApply = extractTag(analysis.stdout, 'fixes-to-apply');
+
+  if (hasFixesToApply(fixesToApply)) {
+    fix = await wt.run({
+      agent: claudeCode(MODEL_SONNET),
+      sandbox: noSandbox(),
+      promptFile: '.sandcastle/prompts/review-fix.md',
+      promptArgs: {
+        ...promptArgs,
+        FIXES_TO_APPLY: fixesToApply ?? '',
+      },
+      hooks: {
+        sandbox: {
+          onSandboxReady: [{ command: 'pnpm install --frozen-lockfile' }],
+        },
+      },
+      maxIterations: 5,
+      idleTimeoutSeconds: 600,
+      name: `review-fix-${prNumber}`,
+      logging: { type: 'stdout' },
+    });
+  }
 } catch (_err) {
   console.error('Reviewer run failed:', _err);
   error = true;
 }
 
-const run = !error ? result : undefined;
-const iterations = run?.iterations ?? [];
-const completed = run?.completionSignal !== undefined;
-const commits = run?.commits.length ?? 0;
-const stdout = run?.stdout ?? '';
+// Stage 2's completion signal and branch are authoritative when it ran;
+// otherwise fall back to stage 1 (nothing was found to fix, or the run
+// errored before stage 2).
+const finalRun = !error ? (fix ?? analysis) : undefined;
+const iterations = [...(analysis?.iterations ?? []), ...(fix?.iterations ?? [])];
+const completed = finalRun?.completionSignal !== undefined;
+const commits = fix?.commits.length ?? 0;
 
-console.log(`\nIterations: ${iterations.length}`);
+console.log(`\nAnalysis iterations: ${analysis?.iterations.length ?? 0}`);
+console.log(`Fix iterations: ${fix?.iterations.length ?? 0}`);
 console.log(`Commits: ${commits}`);
 console.log(`Completion signal: ${completed ? 'yes' : 'no'}`);
 
-const findings = extractTag(stdout, 'review-findings');
+// The final report is assembled deterministically, not re-transcribed by an
+// agent: the analysis's own Summary/Flagged text is kept verbatim, and the
+// fix stage only reports a compact per-fix outcome (applied or not) rather
+// than being trusted to faithfully reproduce the whole document.
+const analysisFindings = analysis ? extractTag(analysis.stdout, 'review-findings') : null;
+const findings =
+  !error && analysisFindings
+    ? buildFinalFindings({
+        summary: extractSection(analysisFindings, 'Summary') ?? '',
+        flagged: extractSection(analysisFindings, 'Flagged for maintainer') ?? 'None',
+        outcomes: fix ? parseFixOutcomes(extractTag(fix.stdout, 'fixes-applied')) : [],
+      })
+    : null;
+
 if (findings) {
   const findingsPath = process.env.REVIEW_FINDINGS_PATH;
   if (findingsPath) {
@@ -92,13 +141,16 @@ if (findings) {
     console.log(`Review findings written to ${findingsPath}`);
   }
 } else {
-  console.log('No <review-findings> block found in agent output');
+  console.log('No review findings to report (analysis produced none, or the run errored)');
 }
 
 const verifyPassed = commits > 0 && !error ? verify(wt.worktreePath) : false;
 const flagged = hasFlaggedFindings(findings);
 
-logUsage(model, iterations);
+logUsage(MODEL_OPUS, analysis?.iterations ?? []);
+if (fix) {
+  logUsage(MODEL_SONNET, fix.iterations);
+}
 
 const decision = decideReviewOutcome({
   error,
@@ -109,14 +161,14 @@ const decision = decideReviewOutcome({
 });
 
 writeGithubOutput({
-  branch: result?.branch ?? branch,
+  branch: fix?.branch ?? analysis?.branch ?? branch,
   iterations: String(iterations.length),
   commits: String(commits),
   completed: String(completed),
   verify_passed: String(verifyPassed),
   outcome: decision.outcome,
   push: String(decision.push),
-  model,
+  model: fix ? `${MODEL_OPUS}+${MODEL_SONNET}` : MODEL_OPUS,
 });
 
 if (decision.outcome === 'failed') {

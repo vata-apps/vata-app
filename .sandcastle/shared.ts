@@ -5,8 +5,8 @@ import type { IterationResult } from '@ai-hero/sandcastle';
 // Helpers and constants shared by the sandcastle entry points
 // (run.ts, review.ts).
 
-export const MODEL_DEFAULT = 'opencode-go/kimi-k2.7-code';
-export const MODEL_ESCALATE = 'opencode-go/qwen3.7-max';
+export const MODEL_SONNET = 'sonnet';
+export const MODEL_OPUS = 'opus';
 
 export function required(name: string): string {
   const value = process.env[name];
@@ -32,6 +32,22 @@ export function extractTag(text: string, tag: string): string | null {
 }
 
 /**
+ * Extract a markdown `## <heading>` section's body, up to the next `## `
+ * heading or the end of the text. Returns null if the heading isn't present.
+ */
+export function extractSection(text: string, heading: string): string | null {
+  const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const match = text.match(new RegExp(`##\\s*${escaped}\\s*\\n([\\s\\S]*?)(?:\\n##\\s|$)`, 'i'));
+  return match ? match[1].trim() : null;
+}
+
+/** Whether text is empty or just the prompts' literal "None"/"None." placeholder. */
+export function isNonePlaceholder(text: string): boolean {
+  const trimmed = text.trim();
+  return trimmed.length === 0 || /^none\.?$/i.test(trimmed);
+}
+
+/**
  * Whether a `<review-findings>` block's "Flagged for maintainer" section has
  * actual content, as opposed to the prompt's literal "None" placeholder.
  * Returns false (no flagged findings) if the section is missing entirely —
@@ -39,10 +55,67 @@ export function extractTag(text: string, tag: string): string | null {
  */
 export function hasFlaggedFindings(findingsText: string | null): boolean {
   if (!findingsText) return false;
-  const match = findingsText.match(/##\s*Flagged for maintainer\s*\n([\s\S]*?)(?:\n##\s|$)/i);
-  if (!match) return false;
-  const section = match[1].trim();
-  return section.length > 0 && !/^none\.?$/i.test(section);
+  const section = extractSection(findingsText, 'Flagged for maintainer');
+  return section !== null && !isNonePlaceholder(section);
+}
+
+/**
+ * Whether a `<fixes-to-apply>` block has actual content, as opposed to the
+ * analysis prompt's literal "None" placeholder. Returns false (nothing to
+ * apply) if the block is missing entirely.
+ */
+export function hasFixesToApply(fixesText: string | null): boolean {
+  return fixesText !== null && !isNonePlaceholder(fixesText);
+}
+
+export interface FixOutcome {
+  title: string;
+  applied: boolean;
+  /** Short commit SHA when applied, or the reason it wasn't when not. */
+  detail: string;
+}
+
+/**
+ * Parse a `<fixes-applied>` block (one `### Fix N: <title>` entry per fix,
+ * each with a `- Status: applied|not applied` line and either `- Commit:` or
+ * `- Reason:`) into structured outcomes. Unparseable or missing input yields
+ * an empty array — callers treat that the same as "nothing to report".
+ */
+export function parseFixOutcomes(text: string | null): FixOutcome[] {
+  if (!text) return [];
+  const entries = text.split(/^###\s*Fix\s+\d+:\s*/im).slice(1);
+  return entries.map((entry) => {
+    const title = entry.split('\n')[0].trim();
+    const applied = /-\s*Status:\s*applied\b/i.test(entry);
+    const detailMatch = entry.match(/-\s*(?:Commit|Reason):\s*(.+)/i);
+    return { title, applied, detail: detailMatch ? detailMatch[1].trim() : '' };
+  });
+}
+
+/**
+ * Deterministically assemble the final `<review-findings>` body from the
+ * analysis stage's own Summary/Flagged content (kept verbatim — never
+ * re-transcribed by another agent) plus the fix stage's structured outcomes.
+ */
+export function buildFinalFindings(input: {
+  summary: string;
+  flagged: string;
+  outcomes: FixOutcome[];
+}): string {
+  const fixed = input.outcomes.filter((o) => o.applied);
+  const notApplied = input.outcomes.filter((o) => !o.applied);
+
+  const fixedSection = fixed.length
+    ? fixed.map((o) => `- ${o.title}: ${o.detail}`).join('\n')
+    : 'None';
+
+  const flaggedLines = [
+    ...(isNonePlaceholder(input.flagged) ? [] : [input.flagged]),
+    ...notApplied.map((o) => `- ${o.title} (not applied — ${o.detail})`),
+  ];
+  const flaggedSection = flaggedLines.length ? flaggedLines.join('\n') : 'None';
+
+  return `## Summary\n\n${input.summary}\n\n## Fixed\n\n${fixedSection}\n\n## Flagged for maintainer\n\n${flaggedSection}`;
 }
 
 export function logUsage(model: string, iterations: readonly IterationResult[]): void {

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { decideReviewOutcome, hasFlaggedFindings, type ReviewOutcome } from './shared';
+import {
+  buildFinalFindings,
+  decideReviewOutcome,
+  extractSection,
+  hasFixesToApply,
+  hasFlaggedFindings,
+  parseFixOutcomes,
+  type ReviewOutcome,
+} from './shared';
 
 describe('decideReviewOutcome', () => {
   const cases: Array<{
@@ -153,5 +161,103 @@ describe('hasFlaggedFindings', () => {
   it('returns false when the section heading is absent entirely', () => {
     const text = '## Summary\n\nEverything looks fine.\n\n## Fixed\n\nNone\n';
     expect(hasFlaggedFindings(text)).toBe(false);
+  });
+});
+
+describe('hasFixesToApply', () => {
+  it('returns false when the block is missing', () => {
+    expect(hasFixesToApply(null)).toBe(false);
+  });
+
+  it('returns false when the block says "None"', () => {
+    expect(hasFixesToApply('None')).toBe(false);
+  });
+
+  it('returns false when the block says "None." with trailing punctuation and whitespace', () => {
+    expect(hasFixesToApply('  None.  \n')).toBe(false);
+  });
+
+  it('returns true when the block lists an actual fix', () => {
+    const text =
+      '### Fix 1: missing column list\n- File: src/db/trees/places.ts\n- Fix: list explicit columns instead of a wildcard select';
+    expect(hasFixesToApply(text)).toBe(true);
+  });
+});
+
+describe('extractSection', () => {
+  it('returns null when the heading is absent', () => {
+    expect(extractSection('## Summary\n\nAll good.\n', 'Flagged for maintainer')).toBeNull();
+  });
+
+  it('extracts a section up to the next heading', () => {
+    const text = '## Summary\n\nAll good.\n\n## Flagged for maintainer\n\n- One issue\n';
+    expect(extractSection(text, 'Summary')).toBe('All good.');
+  });
+
+  it('extracts the last section up to the end of the text', () => {
+    const text = '## Summary\n\nAll good.\n\n## Flagged for maintainer\n\n- One issue\n';
+    expect(extractSection(text, 'Flagged for maintainer')).toBe('- One issue');
+  });
+});
+
+describe('parseFixOutcomes', () => {
+  it('returns an empty array when the block is missing', () => {
+    expect(parseFixOutcomes(null)).toEqual([]);
+  });
+
+  it('parses an applied fix with its commit SHA', () => {
+    const text = '### Fix 1: missing column list\n- Status: applied\n- Commit: abc1234\n';
+    expect(parseFixOutcomes(text)).toEqual([
+      { title: 'missing column list', applied: true, detail: 'abc1234' },
+    ]);
+  });
+
+  it('parses a not-applied fix with its reason', () => {
+    const text = '### Fix 1: risky migration\n- Status: not applied\n- Reason: verify stayed red\n';
+    expect(parseFixOutcomes(text)).toEqual([
+      { title: 'risky migration', applied: false, detail: 'verify stayed red' },
+    ]);
+  });
+
+  it('parses multiple entries in order', () => {
+    const text =
+      '### Fix 1: first\n- Status: applied\n- Commit: aaa1111\n\n### Fix 2: second\n- Status: not applied\n- Reason: protected path\n';
+    expect(parseFixOutcomes(text)).toEqual([
+      { title: 'first', applied: true, detail: 'aaa1111' },
+      { title: 'second', applied: false, detail: 'protected path' },
+    ]);
+  });
+});
+
+describe('buildFinalFindings', () => {
+  it('reports "None" for Fixed and Flagged when there is nothing to report', () => {
+    const result = buildFinalFindings({
+      summary: 'Reviewed the diff.',
+      flagged: 'None',
+      outcomes: [],
+    });
+    expect(result).toBe(
+      '## Summary\n\nReviewed the diff.\n\n## Fixed\n\nNone\n\n## Flagged for maintainer\n\nNone'
+    );
+  });
+
+  it('lists applied fixes under Fixed', () => {
+    const result = buildFinalFindings({
+      summary: 'Reviewed the diff.',
+      flagged: 'None',
+      outcomes: [{ title: 'missing column list', applied: true, detail: 'abc1234' }],
+    });
+    expect(result).toContain('## Fixed\n\n- missing column list: abc1234');
+  });
+
+  it('appends not-applied fixes to the original flagged content', () => {
+    const result = buildFinalFindings({
+      summary: 'Reviewed the diff.',
+      flagged: '- The retry logic looks subjective, left as-is',
+      outcomes: [{ title: 'risky migration', applied: false, detail: 'verify stayed red' }],
+    });
+    expect(result).toContain(
+      '## Flagged for maintainer\n\n- The retry logic looks subjective, left as-is\n- risky migration (not applied — verify stayed red)'
+    );
   });
 });

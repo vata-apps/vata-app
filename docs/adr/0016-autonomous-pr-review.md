@@ -1,5 +1,7 @@
 # ADR-016: Autonomous PR Review Agent
 
+> **Provider and model choice superseded by [ADR-017](./0017-revert-to-claude-code.md)**: the reviewer uses `claudeCode()` again — not inherited from the issue's `agent:escalate` label, which is retired. **Execution strategy further superseded by [ADR-018](./0018-two-stage-review.md)**: analysis runs on Opus, but applying the fixes runs as a separate Sonnet stage, not the same Opus session. Everything else below (trigger/triage, reviewer identity, concurrency, review scope and fix policy, outcome table) remains valid.
+
 **Status**: Accepted
 **Date**: 2026-07-15
 
@@ -71,14 +73,14 @@ One comment per run, always posted, anchored to the reviewed state. The workflow
 
 The outcome is derived from a single pure function, the one testable seam. It takes the run facts **and** whether the findings' "Flagged for maintainer" section is non-empty — `commits === 0` alone does not mean nothing was found; the reviewer may flag issues without fixing any of them, and that must not be reported as clean:
 
-| Case | Outcome | Push |
-| --- | --- | --- |
-| Defects found + fixed, verify green, nothing flagged, completed | `fixed` | Yes |
-| Nothing found and nothing flagged | `clean` | No |
-| Anything flagged, or verify red, or iterations exhausted | `flagged` | Yes if commits and verify are green, else no |
-| Run errored | `failed` | No |
+| Case                                                            | Outcome   | Push                                         |
+| --------------------------------------------------------------- | --------- | -------------------------------------------- |
+| Defects found + fixed, verify green, nothing flagged, completed | `fixed`   | Yes                                          |
+| Nothing found and nothing flagged                               | `clean`   | No                                           |
+| Anything flagged, or verify red, or iterations exhausted        | `flagged` | Yes if commits and verify are green, else no |
+| Run errored                                                     | `failed`  | No                                           |
 
-A `flagged` outcome still pushes when there are green, high-confidence fixes alongside the flagged items — withholding a correct fix just because something *else* needed judgment would waste real work. The comment header distinguishes "pushed fixes, other issues flagged" from "found issues, pushed nothing."
+A `flagged` outcome still pushes when there are green, high-confidence fixes alongside the flagged items — withholding a correct fix just because something _else_ needed judgment would waste real work. The comment header distinguishes "pushed fixes, other issues flagged" from "found issues, pushed nothing."
 
 ### Code structure
 

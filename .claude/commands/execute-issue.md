@@ -1,14 +1,16 @@
 ---
 description: Execute a GitHub issue end-to-end in a dedicated worktree
-agent: execute-issue
+argument-hint: <issue-number> [--force]
 ---
 
-Execute issue #$ARGUMENTS.
+Use the Agent tool to launch the `execute-issue` subagent with the following task: execute issue #$ARGUMENTS.
 
 Optional flags:
+
 - Append `--force` to bypass the "Blocked by" dependency check.
 
 The subagent will:
+
 1. Create a worktree `../vata-issue-<N>` from main
 2. Verify dependencies (unless --force)
 3. Fetch the issue spec

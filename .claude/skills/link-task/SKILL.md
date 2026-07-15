@@ -80,7 +80,7 @@ Tell the user in one sentence which issue is linked, e.g. _"Linked to #42 — wi
 
 ## Phase B — Inject the magic word (PR creation)
 
-Run this whenever you're about to call `gh pr create` (directly, via `/commit-push-pr`, or any other path) — **after** the mandatory Pre-PR Review (`/simplify` + `/review`) that AGENTS.md requires, immediately before the PR is opened.
+Run this whenever you're about to call `gh pr create` (directly, via `/commit-push-pr`, or any other path) — **after** the mandatory Pre-PR Review (`/simplify` + `/review`) that CLAUDE.md requires, immediately before the PR is opened.
 
 ### 1. Read the link
 
