@@ -1,0 +1,37 @@
+.sandcastle/shared.ts
+  s_6d81a67fd90c27::t_a3554ac646df06 34-47
+  s_6d81a67fd90c27::t_9e099fdca072ee 85-88,95,101,105,109-110
+.github/workflows/agent-review.yml
+  s_6d81a67fd90c27::t_b33fb640ac22b4 130-138,144,148-165
+  s_6d81a67fd90c27::t_9b61ae97b08a75 14-18,25-30
+  s_6d81a67fd90c27::t_9f3d9969c57e9a 31
+.sandcastle/review.ts
+  s_6d81a67fd90c27::t_20bb55a21c043e 77-81
+  s_6d81a67fd90c27::t_6792f61f828a5e 7
+  s_6d81a67fd90c27::t_4936cb5de14313 99,103-109
+docs/adr/0016-autonomous-pr-review.md
+  s_6d81a67fd90c27::t_3bdb09e8610ab4 22
+  s_6d81a67fd90c27::t_452100c23341b6 44
+  s_6d81a67fd90c27::t_c9c23f855e8ad9 70,72,74-81
+vitest.config.ts
+  s_6d81a67fd90c27::t_30b0dd6a776607 40
+.sandcastle/shared.test.ts
+  s_6d81a67fd90c27::t_edb089cab0471d 2,12,21-28,32-39,43-50,54-61,64-85,88-94,100-102
+  s_6d81a67fd90c27::t_ba460043d540ba 99,103-105,110-116,125-157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "8ae589f5096800f7eda1cadf1217d156da10c422",
+  "prompts": {},
+  "sessions": {
+    "s_6d81a67fd90c27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aebff084-8712-47bb-9faf-1f0fe80c136b",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
