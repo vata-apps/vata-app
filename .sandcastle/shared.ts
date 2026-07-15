@@ -136,7 +136,7 @@ export function verify(cwd: string): boolean {
   }
 }
 
-export type ReviewOutcome = 'fixed' | 'clean' | 'flagged' | 'failed';
+export type ReviewOutcome = 'fixed' | 'clean' | 'noted' | 'flagged' | 'failed';
 
 export interface ReviewDecision {
   outcome: ReviewOutcome;
@@ -151,14 +151,22 @@ export interface ReviewDecision {
  * run facts and returns the outcome classification, whether to push, and the
  * comment header category.
  *
+ * `noted` vs `flagged` both mean "nothing was pushed", but for different
+ * reasons: `noted` is when the analysis never considered anything fixable in
+ * the first place (`hadFixesToApply` false) and the flagged items are pure
+ * judgment calls; `flagged` is when defects *were* identified but couldn't be
+ * safely applied (verify stayed red, or iterations ran out mid-fix) — the
+ * comment header wording differs accordingly so "nothing to fix, see notes"
+ * isn't confused with "found issues, couldn't safely fix".
+ *
  * Outcome table:
- * | Case                                                      | Outcome  | Push |
- * |-----------------------------------------------------------|----------|------|
- * | Defects found + fixed, verify green                       | fixed    | yes  |
- * | Nothing found, nothing to flag                             | clean    | no   |
- * | Issues flagged (fixed and/or unfixed), or verify red,      | flagged  | yes if any fix is green |
- * | or iterations exhausted                                    |          |      |
- * | Run errored                                                | failed   | no   |
+ * | Case                                                       | Outcome | Push                    |
+ * |--------------------------------------------------------------|---------|-------------------------|
+ * | Defects found + fixed, verify green                          | fixed   | yes                     |
+ * | Nothing found, nothing to flag                               | clean   | no                      |
+ * | Nothing was fixable, but something is flagged for judgment   | noted   | no                      |
+ * | Defects found but unfixed (verify red / iterations exhausted) | flagged | yes if any fix is green |
+ * | Run errored                                                   | failed  | no                      |
  */
 export function decideReviewOutcome(input: {
   error: boolean;
@@ -166,6 +174,7 @@ export function decideReviewOutcome(input: {
   completed: boolean;
   verifyPassed: boolean;
   hasFlaggedFindings: boolean;
+  hadFixesToApply: boolean;
 }): ReviewDecision {
   if (input.error) {
     return { outcome: 'failed', push: false, headerCategory: 'failed' };
@@ -177,6 +186,10 @@ export function decideReviewOutcome(input: {
 
   if (input.commits > 0 && input.verifyPassed && input.completed && !input.hasFlaggedFindings) {
     return { outcome: 'fixed', push: true, headerCategory: 'fixed' };
+  }
+
+  if (!input.hadFixesToApply && input.completed) {
+    return { outcome: 'noted', push: false, headerCategory: 'noted' };
   }
 
   const push = input.commits > 0 && input.verifyPassed;

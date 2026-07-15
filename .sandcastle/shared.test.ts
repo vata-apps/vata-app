@@ -18,6 +18,7 @@ describe('decideReviewOutcome', () => {
       completed: boolean;
       verifyPassed: boolean;
       hasFlaggedFindings: boolean;
+      hadFixesToApply: boolean;
     };
     expected: {
       outcome: ReviewOutcome;
@@ -33,6 +34,7 @@ describe('decideReviewOutcome', () => {
         completed: true,
         verifyPassed: true,
         hasFlaggedFindings: false,
+        hadFixesToApply: true,
       },
       expected: { outcome: 'fixed', push: true, headerCategory: 'fixed' },
     },
@@ -44,28 +46,43 @@ describe('decideReviewOutcome', () => {
         completed: true,
         verifyPassed: false,
         hasFlaggedFindings: false,
+        hadFixesToApply: false,
       },
       expected: { outcome: 'clean', push: false, headerCategory: 'clean' },
     },
     {
-      name: 'nothing fixed but issues flagged is not clean',
+      name: 'nothing was ever fixable, but something is flagged for judgment',
       input: {
         error: false,
         commits: 0,
         completed: true,
         verifyPassed: false,
         hasFlaggedFindings: true,
+        hadFixesToApply: false,
+      },
+      expected: { outcome: 'noted', push: false, headerCategory: 'noted' },
+    },
+    {
+      name: 'no fixes proposed but the run never completed — still flagged, not noted',
+      input: {
+        error: false,
+        commits: 0,
+        completed: false,
+        verifyPassed: false,
+        hasFlaggedFindings: true,
+        hadFixesToApply: false,
       },
       expected: { outcome: 'flagged', push: false, headerCategory: 'flagged' },
     },
     {
-      name: 'defects found but verify red after fix',
+      name: 'defects proposed and attempted but verify red after fix',
       input: {
         error: false,
         commits: 2,
         completed: true,
         verifyPassed: false,
         hasFlaggedFindings: false,
+        hadFixesToApply: true,
       },
       expected: { outcome: 'flagged', push: false, headerCategory: 'flagged' },
     },
@@ -77,6 +94,7 @@ describe('decideReviewOutcome', () => {
         completed: true,
         verifyPassed: true,
         hasFlaggedFindings: true,
+        hadFixesToApply: true,
       },
       expected: { outcome: 'flagged', push: true, headerCategory: 'flagged' },
     },
@@ -88,6 +106,7 @@ describe('decideReviewOutcome', () => {
         completed: false,
         verifyPassed: true,
         hasFlaggedFindings: false,
+        hadFixesToApply: true,
       },
       expected: { outcome: 'flagged', push: true, headerCategory: 'flagged' },
     },
@@ -99,6 +118,7 @@ describe('decideReviewOutcome', () => {
         completed: false,
         verifyPassed: false,
         hasFlaggedFindings: false,
+        hadFixesToApply: true,
       },
       expected: { outcome: 'flagged', push: false, headerCategory: 'flagged' },
     },
@@ -110,6 +130,7 @@ describe('decideReviewOutcome', () => {
         completed: true,
         verifyPassed: true,
         hasFlaggedFindings: false,
+        hadFixesToApply: true,
       },
       expected: { outcome: 'failed', push: false, headerCategory: 'failed' },
     },
@@ -121,6 +142,7 @@ describe('decideReviewOutcome', () => {
         completed: false,
         verifyPassed: false,
         hasFlaggedFindings: false,
+        hadFixesToApply: false,
       },
       expected: { outcome: 'failed', push: false, headerCategory: 'failed' },
     },
