@@ -1,0 +1,39 @@
+src/pages/IndividualsPage.test.tsx
+  s_38ad7fb5eec1ca::t_9f86f88e624212 1
+  s_38ad7fb5eec1ca::t_afe8f6dc057d17 132-135
+  s_38ad7fb5eec1ca::t_46b49159057a9e 14
+  s_38ad7fb5eec1ca::t_b320b599d2d7f9 291-313
+src/i18n/locales/en/common.json
+  s_38ad7fb5eec1ca::t_00211d554313aa 7-8
+src/components/places-filters.tsx
+  s_38ad7fb5eec1ca::t_827b0482200a11 69,73-74,80,84-85
+src/i18n/locales/fr/common.json
+  s_38ad7fb5eec1ca::t_57da74f181ae2e 7-8
+src/components/person-events-filters.tsx
+  s_38ad7fb5eec1ca::t_b5789bbe9b4d7b 48-49
+  s_38ad7fb5eec1ca::t_334a57dd294fef 74-75
+src/components/events-filters.tsx
+  s_38ad7fb5eec1ca::t_315bde853c59f1 73,77-78,84,88-89
+src/components/families-filters.tsx
+  s_38ad7fb5eec1ca::t_b3a1506748f096 64,68-69,75,79-80,86,90-91
+src/components/individuals-filters.tsx
+  s_38ad7fb5eec1ca::t_f521ba81ac3074 63,67-68,74,78-79,85,89-90
+src/lib/event-columns.tsx
+  s_38ad7fb5eec1ca::t_09ac2bc83a4161 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "ef61ac645248bdc61ebdd2a7c8de556dcaa0a269",
+  "prompts": {},
+  "sessions": {
+    "s_38ad7fb5eec1ca": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_09d727d5bffe0ksbIu2QJ7yXc6",
+        "model": "glm-5.2"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
