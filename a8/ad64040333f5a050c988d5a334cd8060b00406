@@ -1,0 +1,21 @@
+src/components/ui/table.css.ts
+  s_0ab5e359de89ac::t_b486af60c9f7ef 77,87
+  s_0ab5e359de89ac::t_ea42bbda73bdb3 54
+  s_0ab5e359de89ac::t_336d1af2826b9d 64-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "a8ad64040333f5a050c988d5a334cd8060b00406",
+  "prompts": {},
+  "sessions": {
+    "s_0ab5e359de89ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "723a6aac-6d13-4412-8c0f-e1bb40c48556",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
