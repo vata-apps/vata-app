@@ -1,4 +1,4 @@
-# AGENTS.md
+# CLAUDE.md
 
 Vata — a single-tree-at-a-time desktop genealogy editor (think VS Code / Logic Pro).
 Tauri 2 (Rust shell) + React 18 + TypeScript + Vite + SQLite (`@tauri-apps/plugin-sql`).

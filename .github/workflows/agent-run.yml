@@ -54,15 +54,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install OpenCode CLI
-        run: npm install -g opencode-ai@1.17.18
-
-      - name: Configure OpenCode Go auth
-        env:
-          OPENCODE_GO_API_KEY: ${{ secrets.OPENCODE_GO_API_KEY }}
-        run: |
-          mkdir -p ~/.local/share/opencode
-          printf '{"opencode-go":{"type":"api","key":"%s"}}' "$OPENCODE_GO_API_KEY" > ~/.local/share/opencode/auth.json
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
 
       - name: Configure git identity
         env:
@@ -80,15 +73,6 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: gh issue view "$ISSUE_NUMBER" --json title,body,url,labels > /tmp/issue.json
-
-      - name: Detect escalation opt-in
-        id: model
-        run: |
-          if jq -e '.labels[] | select(.name == "agent:escalate")' /tmp/issue.json > /dev/null; then
-            echo "escalate=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "escalate=false" >> "$GITHUB_OUTPUT"
-          fi
 
       - name: Reset agent labels to running
         env:
@@ -110,7 +94,7 @@ jobs:
       - name: Run agent
         id: agent
         env:
-          ESCALATE: ${{ steps.model.outputs.escalate }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ISSUE_DATA_PATH: /tmp/issue.json
         run: pnpm exec tsx .sandcastle/run.ts
 
@@ -191,7 +175,7 @@ jobs:
           if [ "$DELIVER" = "failure" ]; then
             DETAIL="The agent's work is committed on branch \`${BRANCH}\`, but pushing it or opening the PR failed. Open a PR from that branch manually, or re-label \`agent:ready\` to retry from scratch."
           else
-            DETAIL="Amend the issue body (if scoping issue) and re-label \`agent:ready\` to retry. Optionally add \`agent:escalate\` to escalate."
+            DETAIL="Amend the issue body (if scoping issue) and re-label \`agent:ready\` to retry."
           fi
 
           BODY="❌ Agent run failed.

@@ -69,15 +69,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install OpenCode CLI
-        run: npm install -g opencode-ai@1.17.18
-
-      - name: Configure OpenCode Go auth
-        env:
-          OPENCODE_GO_API_KEY: ${{ secrets.OPENCODE_GO_API_KEY }}
-        run: |
-          mkdir -p ~/.local/share/opencode
-          printf '{"opencode-go":{"type":"api","key":"%s"}}' "$OPENCODE_GO_API_KEY" > ~/.local/share/opencode/auth.json
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
 
       - name: Configure git identity
         env:
@@ -108,19 +101,10 @@ jobs:
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
         run: gh issue view "$ISSUE_NUMBER" --json title,body,url,labels > /tmp/issue.json
 
-      - name: Detect escalation opt-in
-        id: model
-        run: |
-          if jq -e '.labels[] | select(.name == "agent:escalate")' /tmp/issue.json > /dev/null; then
-            echo "escalate=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "escalate=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Run reviewer
         id: reviewer
         env:
-          ESCALATE: ${{ steps.model.outputs.escalate }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           ISSUE_DATA_PATH: /tmp/issue.json

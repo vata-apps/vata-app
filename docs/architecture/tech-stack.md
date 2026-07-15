@@ -37,7 +37,7 @@ The Rust shell is a plugin-composition layer with no custom commands. Plugins us
 
 - **No CSS framework.** `src/styles/app.css` is just the `@radix-ui/themes/styles.css` import plus the self-hosted Geist `@font-face` blocks and a `--default-font-family` override. There is no Tailwind, no PostCSS chain, no `@theme` block.
 - **Vitest is pinned to v2** for compatibility with Vite 5. Test config is in `vitest.config.ts`, kept separate from `vite.config.ts` to avoid version conflicts.
-- **Path aliases** (`$/*`, `$lib/*`, `$db`, …) are documented in `AGENTS.md` and must be declared in _both_ `vite.config.ts` and `vitest.config.ts`.
+- **Path aliases** (`$/*`, `$lib/*`, `$db`, …) are documented in `CLAUDE.md` and must be declared in _both_ `vite.config.ts` and `vitest.config.ts`.
 
 ## UI foundation
 

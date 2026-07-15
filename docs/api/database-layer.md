@@ -43,7 +43,7 @@ Every file in `src/db/system/` and `src/db/trees/` follows the same shape:
 3. A `mapRaw*()` mapper — raw row → public type, formatting integer keys into prefixed IDs.
 4. Exported `async` CRUD functions — receive and return public types, never raw rows.
 
-Rules: explicit column lists (never `SELECT *`), parameterized queries (`$1`, `$2`), IDs converted at the boundary. The full pattern and a scaffold template live in the `sqlite-standards` skill (`.opencode/skills/sqlite-standards/SKILL.md`, §8).
+Rules: explicit column lists (never `SELECT *`), parameterized queries (`$1`, `$2`), IDs converted at the boundary. The full pattern and a scaffold template live in the `sqlite-standards` skill (`.claude/skills/sqlite-standards/SKILL.md`, §8).
 
 ## Modules
 

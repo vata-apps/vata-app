@@ -1,15 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { createWorktree, opencode } from '@ai-hero/sandcastle';
+import { claudeCode, createWorktree } from '@ai-hero/sandcastle';
 import { noSandbox } from '@ai-hero/sandcastle/sandboxes/no-sandbox';
-import {
-  extractTag,
-  logUsage,
-  MODEL_DEFAULT,
-  MODEL_ESCALATE,
-  required,
-  verify,
-  writeGithubOutput,
-} from './shared';
+import { extractTag, logUsage, MODEL_SONNET, required, verify, writeGithubOutput } from './shared';
 
 // Entry point for the issue → PR flow, invoked by .github/workflows/agent-run.yml.
 // See docs/adr/0008-autonomous-agent-execution.md.
@@ -28,8 +20,7 @@ const issue = JSON.parse(readFileSync(issueDataPath, 'utf-8')) as {
   url: string;
 };
 
-const escalate = process.env.ESCALATE === 'true';
-const model = escalate ? MODEL_ESCALATE : MODEL_DEFAULT;
+const model = MODEL_SONNET;
 const branch = `agent/issue-${issueNumber}`;
 
 console.log(`Issue: #${issueNumber} — ${issue.title}`);
@@ -41,7 +32,7 @@ const wt = await createWorktree({
 });
 
 const result = await wt.run({
-  agent: opencode(model),
+  agent: claudeCode(model),
   sandbox: noSandbox(),
   promptFile: '.sandcastle/prompts/default.md',
   promptArgs: {

@@ -1,6 +1,8 @@
 # ADR-015: Migration from Anthropic API to OpenCode Go
 
-**Status**: Accepted
+> **Superseded by [ADR-017](./0017-revert-to-claude-code.md)**: OpenCode Go's execution and review quality did not hold up in practice, so Sandcastle moved back to the Anthropic API (`claudeCode()`) with a fixed Sonnet-authors/Opus-reviews model split, replacing the default/escalate tier described below.
+
+**Status**: Superseded
 **Date**: 2026-07-13
 
 ## Context
