@@ -1,0 +1,27 @@
+.sandcastle/review.ts
+  s_e12c594d8b2e93::t_6d7c756fa27228 173
+  s_e12c594d8b2e93::t_410ad6056180f7 76,95,97
+.sandcastle/shared.ts
+  s_e12c594d8b2e93::t_dfce4a2bfeee57 139,154-161,163-169,177,191-192
+  s_e12c594d8b2e93::t_b49599548396d9 193-194
+.sandcastle/shared.test.ts
+  s_e12c594d8b2e93::t_69bc95a3754f26 21,37,49,54,61-73,78,85,97,109,121,133,145
+.github/workflows/agent-review.yml
+  s_e12c594d8b2e93::t_4941907518bafd 151-152
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "0764f0af04c3109942231e8f7930298a7d2ae405",
+  "prompts": {},
+  "sessions": {
+    "s_e12c594d8b2e93": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2c589c55-4923-4c4f-923c-3e5aa07ace6d",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
