@@ -36,7 +36,8 @@ export const trigger = primitiveStyle({
 
 export const caret = primitiveStyle({
   marginLeft: 'auto',
-  fontSize: 9,
+  display: 'flex',
+  alignItems: 'center',
   color: vars.color.faint,
 });
 

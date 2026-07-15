@@ -128,7 +128,7 @@ export function FamiliesFilterToolbar({
           <Select.Trigger aria-label={t('filters.spouses.label')}>
             <span>{spousesDisplay}</span>
             <Select.Icon>
-              <Icon name="chevron-down" size={12} />
+              <Icon name="chevron-down" size={14} />
             </Select.Icon>
           </Select.Trigger>
           <Select.Portal>
@@ -157,7 +157,7 @@ export function FamiliesFilterToolbar({
           <Select.Trigger aria-label={t('filters.children.label')}>
             <span>{childrenDisplay}</span>
             <Select.Icon>
-              <Icon name="chevron-down" size={12} />
+              <Icon name="chevron-down" size={14} />
             </Select.Icon>
           </Select.Trigger>
           <Select.Portal>
