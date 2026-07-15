@@ -1,0 +1,43 @@
+.claude/skills/design-system-standards/SKILL.md
+  s_199a6b15068b08::t_dc454a83ae2e72 16
+.claude/skills/sqlite-standards/SKILL.md
+  s_199a6b15068b08::t_e40018a692c2b3 113
+  s_199a6b15068b08::t_1e25566b9f5490 221,223
+.claude/agents/design-system-expert.md
+  s_199a6b15068b08::t_98a2f3964d9bfe 55
+.claude/agents/test-writer.md
+  s_199a6b15068b08::t_9239a9a0d77443 4,8
+.claude/skills/testing-standards/SKILL.md
+  s_199a6b15068b08::t_d48de055c9e06f 3,8,10,12-14,16,18,20,22,24,26-31,33,37,42
+  s_199a6b15068b08::t_b4c8fcc020d60b 25
+.claude/agents/execute-issue.md
+  s_199a6b15068b08::t_69f4f55c03bc22 152
+  s_199a6b15068b08::t_879e738f0a2836 70,74
+  s_199a6b15068b08::t_6d5a84506a9598 80
+  s_199a6b15068b08::t_c1471dc5c4a193 3
+CLAUDE.md
+  s_199a6b15068b08::t_004ce8b8a1f0cb 13-14
+docs/architecture/testing-strategy.md
+  s_199a6b15068b08::t_58bafe010322ad 37-39,43
+  s_199a6b15068b08::t_c122b9368c8fc8 120,122
+  s_199a6b15068b08::t_e8b4b420fd8532 5-12
+  s_199a6b15068b08::t_086e49db43b4b6 110-112,114-116
+.claude/commands/execute-issue.md
+  s_199a6b15068b08::t_c8752ee6520d41 17-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "ee95482b1ddcdf858ca25348b7f68c4591ca564f",
+  "prompts": {},
+  "sessions": {
+    "s_199a6b15068b08": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2fb84bec-0a00-4ea6-bd62-867e5d95cc4e",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
