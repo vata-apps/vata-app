@@ -109,7 +109,7 @@ export function EventsFilterToolbar({
           <Select.Trigger aria-label={t('filters.type.label')}>
             <span>{typeDisplay}</span>
             <Select.Icon>
-              <Icon name="chevron-down" size={12} />
+              <Icon name="chevron-down" size={14} />
             </Select.Icon>
           </Select.Trigger>
           <Select.Portal>
@@ -135,7 +135,7 @@ export function EventsFilterToolbar({
           <Select.Trigger aria-label={t('filters.place.label')}>
             <span>{placeDisplay}</span>
             <Select.Icon>
-              <Icon name="chevron-down" size={12} />
+              <Icon name="chevron-down" size={14} />
             </Select.Icon>
           </Select.Trigger>
           <Select.Portal>

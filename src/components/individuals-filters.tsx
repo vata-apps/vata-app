@@ -127,7 +127,7 @@ export function IndividualsFilterToolbar({
           <Select.Trigger aria-label={t('filters.sex.label')}>
             <span>{sexDisplay}</span>
             <Select.Icon>
-              <Icon name="chevron-down" size={12} />
+              <Icon name="chevron-down" size={14} />
             </Select.Icon>
           </Select.Trigger>
           <Select.Portal>
@@ -153,7 +153,7 @@ export function IndividualsFilterToolbar({
           <Select.Trigger aria-label={t('filters.status.label')}>
             <span>{statusDisplay}</span>
             <Select.Icon>
-              <Icon name="chevron-down" size={12} />
+              <Icon name="chevron-down" size={14} />
             </Select.Icon>
           </Select.Trigger>
           <Select.Portal>

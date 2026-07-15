@@ -342,7 +342,7 @@ function NameTypeSelect({
       <Select.Trigger>
         <Select.Value>{(v) => (v ? t(`overview.names.types.${v as NameType}`) : '')}</Select.Value>
         <Select.Icon>
-          <Icon name="chevron-down" size={12} />
+          <Icon name="chevron-down" size={14} />
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>

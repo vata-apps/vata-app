@@ -11,7 +11,7 @@
  * <Select.Root value={value} onValueChange={setValue}>
  *   <Select.Trigger>
  *     <Select.Value />
- *     <Select.Icon><Icon name="chevron-down" size={12} /></Select.Icon>
+ *     <Select.Icon><Icon name="chevron-down" size={14} /></Select.Icon>
  *   </Select.Trigger>
  *   <Select.Portal>
  *     <Select.Positioner sideOffset={4}>
