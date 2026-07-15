@@ -53,11 +53,15 @@ function Item({ className = '', ...props }: React.ComponentProps<typeof BaseSele
   return <BaseSelect.Item className={`${styles.item} ${className}`.trim()} {...props} />;
 }
 
+function Icon({ className = '', ...props }: React.ComponentProps<typeof BaseSelect.Icon>) {
+  return <BaseSelect.Icon className={`${styles.caret} ${className}`.trim()} {...props} />;
+}
+
 export const Select = {
   Root: BaseSelect.Root,
   Trigger,
   Value: BaseSelect.Value,
-  Icon: BaseSelect.Icon,
+  Icon,
   Portal: BaseSelect.Portal,
   Positioner,
   Popup,
