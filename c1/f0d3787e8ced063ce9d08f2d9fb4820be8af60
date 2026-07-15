@@ -1,0 +1,27 @@
+src/pages/PersonEventsPage.test.tsx
+  s_ab336b3a79fc90::t_9d4b3cff346000 165
+  s_ab336b3a79fc90::t_274646739a015a 170
+src/pages/PersonEventsPage.tsx
+  s_ab336b3a79fc90::t_d00cce3718e1fa 44-45
+  s_ab336b3a79fc90::t_49989e23b5f1d2 69-71
+src/components/person-events-filters.tsx
+  s_ab336b3a79fc90::t_4fc011abc1afae 33
+  s_ab336b3a79fc90::t_13b51156aa95c4 18
+  s_ab336b3a79fc90::t_3808c0b932950b 68-73
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "c1f0d3787e8ced063ce9d08f2d9fb4820be8af60",
+  "prompts": {},
+  "sessions": {
+    "s_ab336b3a79fc90": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_09a1d05ddffeX0pD25sJZw6zBe",
+        "model": "glm-5.2"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
