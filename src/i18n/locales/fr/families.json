@@ -10,7 +10,7 @@
     },
     "spouses": {
       "label": "Époux",
-      "all": "Tous",
+      "all": "Tous les époux",
       "both": "Les deux époux",
       "missingHusband": "Mari manquant",
       "missingWife": "Épouse manquante",
@@ -18,7 +18,7 @@
     },
     "children": {
       "label": "Enfants",
-      "all": "Tous",
+      "all": "Tous les enfants",
       "with": "Avec enfants",
       "without": "Sans enfant"
     }

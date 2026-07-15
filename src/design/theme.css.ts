@@ -252,6 +252,12 @@ const dark = {
 
 globalStyle(':root', { vars: assignVars(vars, light) });
 
+// The app font lives on `.radix-themes`, but Base UI surfaces (select popups,
+// dialogs) portal to <body>, outside that scope, and would fall back to the
+// UA serif default. Anchor the sans stack on <body> so every portalled surface
+// inherits it; `.radix-themes` still wins inside the main tree by specificity.
+globalStyle('body', { fontFamily: vars.font.sans });
+
 globalStyle(':root:not([data-theme])', {
   '@media': {
     '(prefers-color-scheme: dark)': { vars: assignVars(vars, dark) },

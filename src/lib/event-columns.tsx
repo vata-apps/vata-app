@@ -1,7 +1,6 @@
 import { Link as RouterLink } from '@tanstack/react-router';
-import { Link } from '@radix-ui/themes';
 
-import type { EntityTableColumn } from '$components/entity-table';
+import { rowLink, type EntityTableColumn } from '$components/entity-table';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import type { EventWithDetails } from '$types/database';
 
@@ -15,9 +14,9 @@ type TranslateFn = (key: string, options?: { ns?: string }) => string;
 export const EVENT_COLUMN_WIDTH = { type: '200px', date: '160px' } as const;
 
 /**
- * The event-type column: a keyboard-focusable link (styled as plain text) to the
- * event's detail route, used as the table's row header. The whole row is also
- * clickable via `onRowClick`, so the link stops propagation. Shared by every
+ * The event-type column: a keyboard-focusable router link (styled as plain
+ * text) to the event's detail route, used as the table's row header. The
+ * whole row is clickable via the table's derived row click. Shared by every
  * event table (the tree-wide Events page and a person's Events tab).
  */
 export function eventTypeColumn<T extends EventWithDetails>(
@@ -30,17 +29,13 @@ export function eventTypeColumn<T extends EventWithDetails>(
     rowHeader: true,
     width: EVENT_COLUMN_WIDTH.type,
     cell: (event) => (
-      <Link
-        asChild
-        color="gray"
-        highContrast
-        underline="none"
-        onClick={(domEvent) => domEvent.stopPropagation()}
+      <RouterLink
+        to="/tree/$treeId/event/$eventId"
+        params={{ treeId, eventId: event.id }}
+        className={rowLink}
       >
-        <RouterLink to="/tree/$treeId/event/$eventId" params={{ treeId, eventId: event.id }}>
-          {eventTypeLabel(event.eventType, t)}
-        </RouterLink>
-      </Link>
+        {eventTypeLabel(event.eventType, t)}
+      </RouterLink>
     ),
     sortValue: (event) => eventTypeLabel(event.eventType, t) || null,
   };

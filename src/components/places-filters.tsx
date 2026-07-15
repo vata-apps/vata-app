@@ -1,6 +1,9 @@
-import { Button, Card, Flex, Heading, Select, Text, TextField } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
+import { Chip } from '$components/ui/chip';
+import { Select } from '$components/ui/select';
+import { TextField } from '$components/ui/text-field';
+import { Button } from '$components/ui/button';
 import { Icon } from '$components/icon';
 
 /** The set of filters applied to the Places list, all combined with AND. */
@@ -33,8 +36,8 @@ export interface PlaceTypeOption {
   label: string;
 }
 
-/** Props accepted by {@link PlacesFilters}. */
-export interface PlacesFiltersProps {
+/** Props accepted by {@link PlacesFilterToolbar}. */
+export interface PlacesFilterToolbarProps {
   /** The current filter values (the page owns this state). */
   value: PlaceFilters;
   /** Called with the next filter values on any control change. */
@@ -44,72 +47,109 @@ export interface PlacesFiltersProps {
 }
 
 /**
- * The Places-list filter card. A controlled component: it renders a name
- * search (matched against the name and full name) and a place-type select,
- * reporting edits through `onChange`. A Clear button appears only while at
- * least one filter is active.
- *
- * Filtering itself happens in the page over the already-loaded list; this
- * component holds no state of its own.
+ * The Places-list filter toolbar. Replaces the permanent left sidebar with a
+ * compact horizontal bar above the table: a debounced name search, a place-type
+ * select, and one dismissible chip per active filter. A Clear-all button
+ * appears only while at least one filter is active.
  */
-export function PlacesFilters({ value, onChange, types }: PlacesFiltersProps): JSX.Element {
+export function PlacesFilterToolbar({
+  value,
+  onChange,
+  types,
+}: PlacesFilterToolbarProps): JSX.Element {
   const { t } = useTranslation('places');
   const { t: tCommon } = useTranslation('common');
   const active = hasActiveFilters(value);
 
+  const typeOption = types.find((option) => option.value === value.type);
+  const typeDisplay = typeOption?.label ?? t('filters.type.all');
+
+  const chips: JSX.Element[] = [];
+  if (value.name.trim()) {
+    const label = `${t('filters.name.label')}: ${value.name.trim()}`;
+    chips.push(
+      <Chip
+        key="name"
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
+        onRemove={() => onChange({ ...value, name: '' })}
+      />
+    );
+  }
+  if (value.type !== 'all') {
+    const label = `${t('filters.type.label')}: ${typeDisplay}`;
+    chips.push(
+      <Chip
+        key="type"
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
+        onRemove={() => onChange({ ...value, type: 'all' })}
+      />
+    );
+  }
+
   return (
-    <Card>
-      <Flex direction="column" gap="4">
-        <Flex align="center" justify="between">
-          <Heading size="3">{tCommon('filters.title')}</Heading>
-          {active && (
-            <Button
-              variant="ghost"
-              size="1"
-              color="gray"
-              onClick={() => onChange(DEFAULT_PLACE_FILTERS)}
-            >
-              <Icon name="x" />
-              {tCommon('filters.clear')}
-            </Button>
-          )}
-        </Flex>
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: '12px',
+      }}
+    >
+      <div style={{ position: 'relative', width: 240 }}>
+        <Icon
+          name="search"
+          size={16}
+          style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }}
+        />
+        <TextField
+          value={value.name}
+          placeholder={t('filters.name.placeholder')}
+          onChange={(event) => onChange({ ...value, name: event.target.value })}
+          style={{ paddingLeft: 34 }}
+          aria-label={t('filters.name.label')}
+        />
+      </div>
 
-        <Flex direction="column" gap="1">
-          <Text size="1" color="gray">
-            {t('filters.name.label')}
-          </Text>
-          <TextField.Root
-            value={value.name}
-            placeholder={t('filters.name.placeholder')}
-            onChange={(event) => onChange({ ...value, name: event.target.value })}
-          >
-            <TextField.Slot>
-              <Icon name="search" />
-            </TextField.Slot>
-          </TextField.Root>
-        </Flex>
+      <div style={{ width: 180 }}>
+        <Select.Root
+          value={value.type}
+          onValueChange={(next) => onChange({ ...value, type: next ?? 'all' })}
+        >
+          <Select.Trigger aria-label={t('filters.type.label')}>
+            <span>{typeDisplay}</span>
+            <Select.Icon>
+              <Icon name="chevron-down" size={12} />
+            </Select.Icon>
+          </Select.Trigger>
+          <Select.Portal>
+            <Select.Positioner>
+              <Select.Popup>
+                <Select.Item value="all">{t('filters.type.all')}</Select.Item>
+                {types.map((option) => (
+                  <Select.Item key={option.value} value={option.value}>
+                    {option.label}
+                  </Select.Item>
+                ))}
+              </Select.Popup>
+            </Select.Positioner>
+          </Select.Portal>
+        </Select.Root>
+      </div>
 
-        <Flex direction="column" gap="1">
-          <Text size="1" color="gray">
-            {t('filters.type.label')}
-          </Text>
-          <Select.Root
-            value={value.type}
-            onValueChange={(next) => onChange({ ...value, type: next })}
-          >
-            <Select.Trigger />
-            <Select.Content>
-              <Select.Item value="all">{t('filters.type.all')}</Select.Item>
-              {types.map((option) => (
-                <Select.Item key={option.value} value={option.value}>
-                  {option.label}
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
-        </Flex>
-      </Flex>
-    </Card>
+      {chips.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
+          {chips}
+        </div>
+      )}
+
+      {active && (
+        <Button variant="ghost" onClick={() => onChange(DEFAULT_PLACE_FILTERS)}>
+          <Icon name="x" size={14} />
+          {tCommon('filters.clear')}
+        </Button>
+      )}
+    </div>
   );
 }

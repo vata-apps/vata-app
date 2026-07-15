@@ -10,7 +10,7 @@
     },
     "spouses": {
       "label": "Spouses",
-      "all": "All",
+      "all": "All spouses",
       "both": "Both spouses",
       "missingHusband": "Missing husband",
       "missingWife": "Missing wife",
@@ -18,7 +18,7 @@
     },
     "children": {
       "label": "Children",
-      "all": "All",
+      "all": "All children",
       "with": "With children",
       "without": "Childless"
     }

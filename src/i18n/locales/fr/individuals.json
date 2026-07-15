@@ -10,11 +10,11 @@
     },
     "sex": {
       "label": "Sexe",
-      "all": "Tous"
+      "all": "Tous les sexes"
     },
     "status": {
       "label": "Statut",
-      "all": "Tous",
+      "all": "Tous les statuts",
       "living": "Vivant",
       "deceased": "Décédé"
     }
@@ -106,6 +106,7 @@
   },
   "events": {
     "scope": {
+      "label": "Portée",
       "principal": "Principal",
       "personal": "Personnel",
       "all": "Tous les rôles"

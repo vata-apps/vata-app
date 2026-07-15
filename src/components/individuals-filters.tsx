@@ -60,28 +60,34 @@ export function IndividualsFilterToolbar({
 
   const chips: JSX.Element[] = [];
   if (value.name.trim()) {
+    const label = `${t('filters.name.label')}: ${value.name.trim()}`;
     chips.push(
       <Chip
         key="name"
-        label={`${t('filters.name.label')}: ${value.name.trim()}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, name: '' })}
       />
     );
   }
   if (value.sex !== 'all') {
+    const label = `${t('filters.sex.label')}: ${sexDisplay}`;
     chips.push(
       <Chip
         key="sex"
-        label={`${t('filters.sex.label')}: ${sexDisplay}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, sex: 'all' })}
       />
     );
   }
   if (value.status !== 'all') {
+    const label = `${t('filters.status.label')}: ${statusDisplay}`;
     chips.push(
       <Chip
         key="status"
-        label={`${t('filters.status.label')}: ${statusDisplay}`}
+        label={label}
+        removeAriaLabel={tCommon('filters.removeAria', { label })}
         onRemove={() => onChange({ ...value, status: 'all' })}
       />
     );
@@ -114,7 +120,9 @@ export function IndividualsFilterToolbar({
       <div style={{ width: 140 }}>
         <Select.Root
           value={value.sex}
-          onValueChange={(next) => onChange({ ...value, sex: next as IndividualFilters['sex'] })}
+          onValueChange={(next) =>
+            onChange({ ...value, sex: (next ?? 'all') as IndividualFilters['sex'] })
+          }
         >
           <Select.Trigger aria-label={t('filters.sex.label')}>
             <span>{sexDisplay}</span>
@@ -139,7 +147,7 @@ export function IndividualsFilterToolbar({
         <Select.Root
           value={value.status}
           onValueChange={(next) =>
-            onChange({ ...value, status: next as IndividualFilters['status'] })
+            onChange({ ...value, status: (next ?? 'all') as IndividualFilters['status'] })
           }
         >
           <Select.Trigger aria-label={t('filters.status.label')}>
