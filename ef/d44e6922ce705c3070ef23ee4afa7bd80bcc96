@@ -1,0 +1,19 @@
+src/pages/PersonRelationsPage.test.tsx
+  s_0ab5e359de89ac::t_ec84732cc3a067 131-134,136-137,143-144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "efd44e6922ce705c3070ef23ee4afa7bd80bcc96",
+  "prompts": {},
+  "sessions": {
+    "s_0ab5e359de89ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "723a6aac-6d13-4412-8c0f-e1bb40c48556",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
