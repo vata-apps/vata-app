@@ -3,7 +3,7 @@
 Vata — a single-tree-at-a-time desktop genealogy editor (think VS Code / Logic Pro).
 Tauri 2 (Rust shell) + React 18 + TypeScript + Vite + SQLite (`@tauri-apps/plugin-sql`).
 State: TanStack Query v5 (server/DB) + Zustand 4 (client, localStorage). Routing: TanStack Router v1 (file-based).
-UI: headless Base UI (`@base-ui/react`) + Vanilla Extract tokens (`src/design/theme.css.ts`) for the new foundation; Radix Themes still coexists for unmigrated screens. Shared behavior-owning primitives live in `src/components/ui/` per ADR-0015.
+UI: headless Base UI (`@base-ui/react`) + Vanilla Extract tokens (`src/design/theme.css.ts`) for the new foundation; Radix Themes still coexists for unmigrated screens. Shared behavior-owning primitives live in `src/components/ui/` per ADR-0014.
 
 ## Non-negotiables
 
