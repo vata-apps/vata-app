@@ -1,8 +1,8 @@
 # ADR-009: Agent Addresses PR Review Feedback
 
-> **Partially superseded by [ADR-015](./0015-migration-to-opencode-go.md)** for the LLM provider and model choice. The review-feedback architecture — trigger, identification, outcome signalling, concurrency — remains valid.
+> **Superseded by [ADR-016](./0016-autonomous-pr-review.md)**. The review-feedback workflow, entry point, and prompt described here have been removed in favor of the autonomous reviewer agent.
 
-**Status**: Accepted
+**Status**: Superseded
 **Date**: 2026-05-22
 
 ## Context

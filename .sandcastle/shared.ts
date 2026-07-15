@@ -2,8 +2,8 @@ import { execSync } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import type { IterationResult } from '@ai-hero/sandcastle';
 
-// Helpers and constants shared by the two sandcastle entry points
-// (run.ts, address-review.ts).
+// Helpers and constants shared by the sandcastle entry points
+// (run.ts, review.ts).
 
 export const MODEL_DEFAULT = 'opencode-go/kimi-k2.7-code';
 export const MODEL_ESCALATE = 'opencode-go/qwen3.7-max';
@@ -47,4 +47,48 @@ export function verify(cwd: string): boolean {
     console.log('Verify: failed');
     return false;
   }
+}
+
+export type ReviewOutcome = 'fixed' | 'clean' | 'flagged' | 'failed';
+
+export interface ReviewDecision {
+  outcome: ReviewOutcome;
+  push: boolean;
+  headerCategory: ReviewOutcome;
+}
+
+/**
+ * Decide what to do after a reviewer run.
+ *
+ * This is the single testable seam for the review outcome. It takes only the
+ * run facts and returns the outcome classification, whether to push, and the
+ * comment header category.
+ *
+ * Outcome table:
+ * | Case                                                      | Outcome  | Push |
+ * |-----------------------------------------------------------|----------|------|
+ * | Defects found + fixed, verify green                       | fixed    | yes  |
+ * | Nothing to fix                                            | clean    | no   |
+ * | Defects found but verify red, or iterations exhausted     | flagged  | no   |
+ * | Run errored                                               | failed   | no   |
+ */
+export function decideReviewOutcome(input: {
+  error: boolean;
+  commits: number;
+  completed: boolean;
+  verifyPassed: boolean;
+}): ReviewDecision {
+  if (input.error) {
+    return { outcome: 'failed', push: false, headerCategory: 'failed' };
+  }
+
+  if (input.commits === 0 && input.completed) {
+    return { outcome: 'clean', push: false, headerCategory: 'clean' };
+  }
+
+  if (input.commits > 0 && input.verifyPassed && input.completed) {
+    return { outcome: 'fixed', push: true, headerCategory: 'fixed' };
+  }
+
+  return { outcome: 'flagged', push: false, headerCategory: 'flagged' };
 }
