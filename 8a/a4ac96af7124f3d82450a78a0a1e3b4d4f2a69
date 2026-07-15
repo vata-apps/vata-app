@@ -1,0 +1,19 @@
+src/components/ui/select.tsx
+  s_28bc9352f199a7::t_51099f4a1b265b 56-59,64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "8aa4ac96af7124f3d82450a78a0a1e3b4d4f2a69",
+  "prompts": {},
+  "sessions": {
+    "s_28bc9352f199a7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "37fb67cd-3542-46a3-ba7a-ccfa98479f71",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
