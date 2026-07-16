@@ -1,9 +1,14 @@
-import { Avatar, Badge, Code, Flex, Heading, IconButton, TabNav, Text } from '@radix-ui/themes';
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import type { Gender } from '$types/database';
+import { vars } from '$/design/theme.css';
 import { Icon, type IconName } from '../icon';
+import { Avatar } from '../ui/avatar';
+import { Badge } from '../ui/badge';
+import { IconButton } from '../ui/icon-button';
+import { Typography } from '../ui/typography';
+import * as s from './identity-header.css';
 import type { OverviewPerson } from './overview-types';
 
 /** Maps a recorded sex to its summary icon, with a neutral fallback. */
@@ -12,9 +17,9 @@ const SEX_ICON: Record<Gender, IconName> = { M: 'mars', F: 'venus', U: 'user' };
 /**
  * The identity band — a monogram avatar, the person's name, and an icon-led
  * summary line: `[sex] · [birth] <date>, <place> · [death] <date>, <place>`.
- * Dates may be imprecise. Pure `@radix-ui/themes` plus the curated `Icon`; the
- * monogram uses `Avatar`'s fallback. The section tabs are a separate
- * {@link OverviewTabs}.
+ * Dates may be imprecise. Built on `Avatar`/`Typography`/`Icon`; the monogram
+ * uses `Avatar`'s fallback. The section tabs are a separate {@link
+ * OverviewTabs}.
  */
 /** Join a (possibly partial) date and place into one label, or `null` when neither is recorded. */
 function vitalLabel(date: string, place: string): string | null {
@@ -34,20 +39,18 @@ function MetaSegment({ segment }: { segment: MetaSegmentData }): JSX.Element | n
 
   if (segment.text) {
     return (
-      <Code variant="ghost" size="2" color="gray">
+      <Typography family="mono" tone="faint">
         {segment.text}
-      </Code>
+      </Typography>
     );
   }
   if (segment.icon && segment.label) {
     return (
-      <Flex align="center" gap="1">
+      <div className={s.metaSegment}>
         {/* Icon sits next to text that carries the meaning → decorative. */}
-        <Icon name={segment.icon} size={14} color="var(--gray-9)" />
-        <Text size="2" color="gray">
-          {segment.label}
-        </Text>
-      </Flex>
+        <Icon name={segment.icon} size={14} color={vars.color.muted} />
+        <Typography tone="muted">{segment.label}</Typography>
+      </div>
     );
   }
   if (segment.icon) {
@@ -56,7 +59,7 @@ function MetaSegment({ segment }: { segment: MetaSegmentData }): JSX.Element | n
       <Icon
         name={segment.icon}
         size={14}
-        color="var(--gray-9)"
+        color={vars.color.muted}
         aria-hidden={false}
         aria-label={t(`overview.vital.${segment.key}`)}
       />
@@ -87,49 +90,41 @@ export function IdentityHeader({
   ];
 
   return (
-    <Flex align="center" justify="between" gap="3">
-      <Flex align="center" gap="3">
-        <Avatar
-          src={person.imageUrl}
-          size="4"
-          radius="full"
-          variant="soft"
-          fallback={person.initials}
-        />
+    <div className={s.header}>
+      <div className={s.identity}>
+        <Avatar.Root size="lg">
+          <Avatar.Image src={person.imageUrl} alt="" />
+          <Avatar.Fallback>{person.initials}</Avatar.Fallback>
+        </Avatar.Root>
 
-        <Flex direction="column" gap="1">
-          <Flex align="center" gap="3" wrap="wrap">
-            <Heading size="6">{person.name}</Heading>
+        <div className={s.meta}>
+          <div className={s.nameRow}>
+            <Typography as="h1" size="16" weight="650">
+              {person.name}
+            </Typography>
             {person.otherNamesCount > 0 && (
-              <Badge variant="soft" color="gray" radius="full">
-                {t('overview.lifespan.otherNames', { count: person.otherNamesCount })}
-              </Badge>
+              <Badge>{t('overview.lifespan.otherNames', { count: person.otherNamesCount })}</Badge>
             )}
-          </Flex>
-          <Flex align="center" gap="2" wrap="wrap">
+          </div>
+          <div className={s.metaRow}>
             {segments.map((segment, i) => (
-              <Flex key={segment.key} align="center" gap="2">
+              <div key={segment.key} className={s.metaSegment}>
                 {i > 0 && (
-                  <Text size="1" color="gray">
+                  <Typography size="12.5" tone="faint">
                     ·
-                  </Text>
+                  </Typography>
                 )}
                 <MetaSegment segment={segment} />
-              </Flex>
+              </div>
             ))}
-          </Flex>
-        </Flex>
-      </Flex>
+          </div>
+        </div>
+      </div>
 
-      <IconButton
-        variant="ghost"
-        color="gray"
-        aria-label={t('personEditor.editButtonAria')}
-        onClick={onEdit}
-      >
+      <IconButton aria-label={t('personEditor.editButtonAria')} onClick={onEdit}>
         <Icon name="pencil" />
       </IconButton>
-    </Flex>
+    </div>
   );
 }
 
@@ -150,9 +145,10 @@ const OVERVIEW_TABS = [
 ] as const;
 
 /**
- * The section tab bar. Every tab is a real destination whose active state the
- * router resolves independently, so adding another tab never mis-marks a
- * sibling.
+ * The section tab bar — a plain semantic nav, not a Base UI `Tabs` component:
+ * every tab is a real route (not a same-DOM tab panel), and the router
+ * resolves each one's active state independently, so adding another tab
+ * never mis-marks a sibling.
  */
 export function OverviewTabs({
   treeId,
@@ -165,7 +161,7 @@ export function OverviewTabs({
   const matchRoute = useMatchRoute();
 
   return (
-    <TabNav.Root>
+    <nav className={s.tabs}>
       {OVERVIEW_TABS.map((tab) => {
         const label = t(`overview.tabs.${tab.id}`);
         // `fuzzy: false` → exact match, so the Overview (index) tab is not
@@ -174,13 +170,17 @@ export function OverviewTabs({
           matchRoute({ to: tab.to, params: { treeId, individualId }, fuzzy: false })
         );
         return (
-          <TabNav.Link key={tab.id} asChild active={active}>
-            <Link to={tab.to} params={{ treeId, individualId }}>
-              {label}
-            </Link>
-          </TabNav.Link>
+          <Link
+            key={tab.id}
+            to={tab.to}
+            params={{ treeId, individualId }}
+            className={active ? `${s.tab} ${s.tabActive}` : s.tab}
+            aria-current={active ? 'page' : undefined}
+          >
+            {label}
+          </Link>
         );
       })}
-    </TabNav.Root>
+    </nav>
   );
 }

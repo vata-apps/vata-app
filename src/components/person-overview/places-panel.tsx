@@ -1,11 +1,15 @@
-import { Badge, Card, Flex, Heading, Text } from '@radix-ui/themes';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { PlacesMap, type MapPoint } from '$components/map/places-map';
+import { Badge } from '../ui/badge';
+import { Card } from '../ui/card';
+import * as card from '../ui/card.css';
+import { Typography } from '../ui/typography';
 import { PlaceLink } from './entity-links';
 import type { OverviewPlaceLived } from './overview-types';
+import * as s from './places-panel.css';
 
 interface PlacesPanelProps {
   places: OverviewPlaceLived[];
@@ -35,46 +39,41 @@ export function PlacesPanel({ places, treeId }: PlacesPanelProps): JSX.Element {
 
   return (
     <Card>
-      <Flex direction="column" gap="3">
-        <Flex align="center" gap="2">
-          <Heading size="4">{t('overview.placesLived.title')}</Heading>
-          {places.length > 0 && (
-            <Badge variant="soft" color="gray" radius="full">
-              {places.length}
-            </Badge>
-          )}
-        </Flex>
+      <div className={card.stack}>
+        <div className={s.head}>
+          <Typography as="h2" size="15" weight="650">
+            {t('overview.placesLived.title')}
+          </Typography>
+          {places.length > 0 && <Badge>{places.length}</Badge>}
+        </div>
 
         {mapPoints.length > 0 && (
           <PlacesMap points={mapPoints} highlightedId={highlightedPlaceId} />
         )}
 
         {places.length === 0 ? (
-          <Text size="2" color="gray">
-            {t('overview.placesLived.empty')}
-          </Text>
+          <Typography tone="muted">{t('overview.placesLived.empty')}</Typography>
         ) : (
-          <Flex gap="3" wrap="wrap">
+          <div className={s.chips}>
             {places.map((place) => (
               <PlaceLink key={place.id} treeId={treeId} placeId={place.id}>
                 <Card
+                  className={s.chip}
                   onMouseEnter={() => setHighlightedPlaceId(place.id)}
                   onMouseLeave={() => setHighlightedPlaceId(null)}
                 >
-                  <Flex direction="column" gap="1">
-                    <Text size="2" weight="medium">
-                      {place.name}
-                    </Text>
-                    <Text size="1" color="gray">
+                  <div className={s.chipBody}>
+                    <Typography weight="550">{place.name}</Typography>
+                    <Typography size="12.5" tone="faint">
                       {place.contexts.map((context) => eventTypeLabel(context, t)).join(' · ')}
-                    </Text>
-                  </Flex>
+                    </Typography>
+                  </div>
                 </Card>
               </PlaceLink>
             ))}
-          </Flex>
+          </div>
         )}
-      </Flex>
+      </div>
     </Card>
   );
 }

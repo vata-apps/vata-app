@@ -1,10 +1,9 @@
-import { Flex, Grid } from '@radix-ui/themes';
-
 import { LifeSpine } from '$components/person-overview/life-spine';
 import { PlacesPanel } from '$components/person-overview/places-panel';
 import { RecordRail } from '$components/person-overview/record-rail';
 import { VitalsPanel } from '$components/person-overview/vitals-panel';
 import { usePersonOverview } from '$hooks/usePersonOverview';
+import * as styles from './individual-overview.css';
 
 interface IndividualOverviewPageProps {
   treeId: string;
@@ -31,15 +30,15 @@ export function IndividualOverviewPage({
   if (!data) return null;
 
   return (
-    <Grid columns={{ initial: '1', sm: 'minmax(0, 1fr) minmax(0, 2fr)' }} gap="4" align="start">
-      <Flex direction="column" gap="4">
+    <div className={styles.grid}>
+      <div className={styles.column}>
         <VitalsPanel vitals={data.vitals} treeId={treeId} />
         <RecordRail parents={data.parents} names={data.names} treeId={treeId} />
-      </Flex>
-      <Flex direction="column" gap="4">
+      </div>
+      <div className={styles.column}>
         <LifeSpine milestones={data.milestones} treeId={treeId} />
         <PlacesPanel places={data.placesLived} treeId={treeId} />
-      </Flex>
-    </Grid>
+      </div>
+    </div>
   );
 }

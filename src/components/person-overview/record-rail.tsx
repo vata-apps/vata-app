@@ -1,9 +1,13 @@
-import { Box, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
-import type { OverviewName, OverviewParents, PersonRefData } from './overview-types';
+import { vars } from '$/design/theme.css';
 import { Icon } from '../icon';
+import { Card } from '../ui/card';
+import * as card from '../ui/card.css';
+import { Typography } from '../ui/typography';
+import type { OverviewName, OverviewParents, PersonRefData } from './overview-types';
 import { PersonRef } from './person-ref';
+import * as s from './record-rail.css';
 
 interface RecordRailProps {
   parents: OverviewParents;
@@ -13,16 +17,16 @@ interface RecordRailProps {
 
 /**
  * The left record rail: the parents panel, the names panel, and the media
- * panel. Pure `@radix-ui/themes`: `PersonRef` for parents, flat rows for names,
- * and an empty-state media panel (per-person media has no data model yet).
+ * panel. `PersonRef` for parents, flat rows for names, and an empty-state
+ * media panel (per-person media has no data model yet).
  */
 export function RecordRail({ parents, names, treeId }: RecordRailProps): JSX.Element {
   return (
-    <Flex direction="column" gap="4">
+    <div className={s.rail}>
       <ParentsPanel parents={parents} treeId={treeId} />
       <NamesPanel names={names} />
       <MediaPanel />
-    </Flex>
+    </div>
   );
 }
 
@@ -36,24 +40,26 @@ function ParentsPanel({
   const { t } = useTranslation('individuals');
   return (
     <Card>
-      <Flex direction="column" gap="3">
-        <Heading size="4">{t('overview.parents.title')}</Heading>
+      <div className={card.stack}>
+        <Typography as="h2" size="15" weight="650">
+          {t('overview.parents.title')}
+        </Typography>
         {/* Always two fixed slots: father on top, mother below. Missing slots
-            show a muted label + an "Add" button instead of a PersonRef. */}
-        <Flex direction="column">
+            show a muted label instead of a PersonRef. */}
+        <div className={card.list}>
           <ParentSlot
             missingLabel={t('overview.parents.missingFather')}
             person={parents.father}
             treeId={treeId}
           />
-          <Separator size="4" my="3" />
+          <div className={card.separator} />
           <ParentSlot
             missingLabel={t('overview.parents.missingMother')}
             person={parents.mother}
             treeId={treeId}
           />
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </Card>
   );
 }
@@ -69,12 +75,10 @@ function ParentSlot({ missingLabel, person, treeId }: ParentSlotProps): JSX.Elem
     return <PersonRef person={person} treeId={treeId} />;
   }
   return (
-    <Flex align="center" gap="2">
-      <Icon name="user" size={14} color="var(--gray-7)" />
-      <Text size="2" color="gray">
-        {missingLabel}
-      </Text>
-    </Flex>
+    <div className={s.missingSlot}>
+      <Icon name="user" size={14} color={vars.color.faint} />
+      <Typography tone="muted">{missingLabel}</Typography>
+    </div>
   );
 }
 
@@ -82,18 +86,20 @@ function NamesPanel({ names }: { names: OverviewName[] }): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
     <Card>
-      <Flex direction="column" gap="3">
-        <Heading size="4">{t('overview.names.title')}</Heading>
+      <div className={card.stack}>
+        <Typography as="h2" size="15" weight="650">
+          {t('overview.names.title')}
+        </Typography>
         {/* Flat, separator-divided rows — same list pattern as Parents. */}
-        <Flex direction="column">
+        <div className={card.list}>
           {names.map((name, i) => (
-            <Flex key={name.id} direction="column">
-              {i > 0 && <Separator size="4" my="3" />}
+            <div key={name.id}>
+              {i > 0 && <div className={card.separator} />}
               <NameRow name={name} />
-            </Flex>
+            </div>
           ))}
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </Card>
   );
 }
@@ -101,19 +107,19 @@ function NamesPanel({ names }: { names: OverviewName[] }): JSX.Element {
 function NameRow({ name }: { name: OverviewName }): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
-    <Flex direction="column" gap="1">
-      <Flex align="center" gap="2">
-        <Text size="1" color="gray">
+    <div className={s.nameRow}>
+      <div className={s.nameRowHead}>
+        <Typography size="12.5" tone="muted">
           {t(`overview.names.types.${name.type}`)}
-        </Text>
+        </Typography>
         {name.isPrimary && (
-          <Text size="1" color="indigo">
+          <Typography size="12.5" tone="accent">
             {t('overview.names.primary')}
-          </Text>
+          </Typography>
         )}
-      </Flex>
-      <Text size="3">{name.text}</Text>
-    </Flex>
+      </div>
+      <Typography size="15">{name.text}</Typography>
+    </div>
   );
 }
 
@@ -121,14 +127,14 @@ function MediaPanel(): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
     <Card>
-      <Flex direction="column" gap="3">
-        <Heading size="4">{t('overview.media.title')}</Heading>
-        <Box px="3" py="5">
-          <Text size="2" color="gray" align="center" as="div">
-            {t('overview.media.empty')}
-          </Text>
-        </Box>
-      </Flex>
+      <div className={card.stack}>
+        <Typography as="h2" size="15" weight="650">
+          {t('overview.media.title')}
+        </Typography>
+        <div className={s.mediaEmpty}>
+          <Typography tone="muted">{t('overview.media.empty')}</Typography>
+        </div>
+      </div>
     </Card>
   );
 }

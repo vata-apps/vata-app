@@ -1,8 +1,11 @@
-import { Badge, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
+import { Card } from '../ui/card';
+import * as card from '../ui/card.css';
+import { Typography } from '../ui/typography';
 import { PlaceLink } from './entity-links';
 import type { OverviewVital } from './overview-types';
+import * as s from './vitals-panel.css';
 
 interface VitalsPanelProps {
   vitals: OverviewVital[];
@@ -10,32 +13,36 @@ interface VitalsPanelProps {
 }
 
 /**
- * The Vitals panel: the person's birth and death, each with its date, a linked
- * place, and a "sourced" badge when the event carries a citation. Only recorded
- * vitals are shown — an inline "add" affordance waits on editing support.
+ * The Vitals panel: the person's birth and death, each with its date and a
+ * linked place. Only recorded vitals are shown — an inline "add" affordance
+ * waits on editing support.
+ *
+ * `OverviewVital.sourced` carries real citation data, but this panel doesn't
+ * render a "sourced" indicator yet — that visual returns once the Sources
+ * screens are rebuilt.
  */
 export function VitalsPanel({ vitals, treeId }: VitalsPanelProps): JSX.Element {
   const { t } = useTranslation('individuals');
 
   return (
     <Card>
-      <Flex direction="column" gap="3">
-        <Heading size="4">{t('overview.vitals.title')}</Heading>
+      <div className={card.stack}>
+        <Typography as="h2" size="15" weight="650">
+          {t('overview.vitals.title')}
+        </Typography>
         {vitals.length === 0 ? (
-          <Text size="2" color="gray">
-            {t('overview.vitals.empty')}
-          </Text>
+          <Typography tone="muted">{t('overview.vitals.empty')}</Typography>
         ) : (
-          <Flex direction="column">
+          <div className={card.list}>
             {vitals.map((vital, index) => (
-              <Flex key={vital.kind} direction="column">
-                {index > 0 && <Separator size="4" my="3" />}
+              <div key={vital.kind}>
+                {index > 0 && <div className={card.separator} />}
                 <VitalRow vital={vital} treeId={treeId} />
-              </Flex>
+              </div>
             ))}
-          </Flex>
+          </div>
         )}
-      </Flex>
+      </div>
     </Card>
   );
 }
@@ -44,32 +51,21 @@ function VitalRow({ vital, treeId }: { vital: OverviewVital; treeId: string }): 
   const { t } = useTranslation('individuals');
 
   return (
-    <Flex direction="column" gap="1">
-      <Flex align="center" gap="2">
-        <Text size="1" color="gray">
+    <div className={s.row}>
+      <div className={s.rowHead}>
+        <Typography size="12.5" tone="muted">
           {t(`overview.vitals.${vital.kind}`)}
-        </Text>
-        {vital.sourced && (
-          <Badge size="1" color="grass" variant="soft">
-            {t('overview.vitals.sourced')}
-          </Badge>
-        )}
-      </Flex>
-      <Flex align="baseline" gap="2" wrap="wrap">
-        {vital.date && <Text size="2">{vital.date}</Text>}
+        </Typography>
+      </div>
+      <div className={s.rowBody}>
+        {vital.date && <Typography>{vital.date}</Typography>}
         {vital.placeId && vital.placeName && (
           <PlaceLink treeId={treeId} placeId={vital.placeId}>
-            <Text size="2" color="gray">
-              {vital.placeName}
-            </Text>
+            <Typography tone="muted">{vital.placeName}</Typography>
           </PlaceLink>
         )}
-        {!vital.date && !vital.placeName && (
-          <Text size="2" color="gray">
-            —
-          </Text>
-        )}
-      </Flex>
-    </Flex>
+        {!vital.date && !vital.placeName && <Typography tone="muted">—</Typography>}
+      </div>
+    </div>
   );
 }
