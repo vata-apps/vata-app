@@ -1,5 +1,5 @@
 /**
- * Self-hosted brand fonts (ADR-0014), pulled from @fontsource. Import this once
+ * Self-hosted brand fonts (ADR-0005), pulled from @fontsource. Import this once
  * where the design tokens are consumed. Family names here must match the
  * `font.*` token values in `theme.css.ts`.
  *

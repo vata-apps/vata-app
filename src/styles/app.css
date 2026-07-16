@@ -5,7 +5,7 @@
  * so Base UI surfaces portaled outside that scope (dialogs, popovers) fall back
  * to the `content-box` default — their padded inputs then render wider than
  * their grid tracks and overflow into neighbouring cells. A global reset keeps
- * every surface on border-box, matching the Person editor prototype (ADR-0014).
+ * every surface on border-box, matching the Person editor prototype (ADR-0005).
  */
 *,
 *::before,

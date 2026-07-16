@@ -34,7 +34,7 @@ Test DBs must enforce foreign keys, or constraint violations silently pass in te
 
 ## What NOT to test
 
-- **Raw Radix Themes components** — owned and tested upstream.
+- **Raw Radix Themes / Base UI components** — owned and tested upstream.
 - Auto-generated files (`routeTree.gen.ts`).
 - Trivial wrappers with no logic.
 - Internal SQL string structure — assert the data returned, not the query.

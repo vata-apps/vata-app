@@ -3,7 +3,7 @@
  *
  * Base UI's RadioGroup supplies the radio-group semantics: roving tabindex and
  * arrow-key navigation that moves focus and selection together, wrapping at
- * both ends (ADR-0014 — Base UI owns the expensive generic behavior, we own
+ * both ends (ADR-0005 — Base UI owns the expensive generic behavior, we own
  * the look). Arrow keys are the whole navigation surface; the ARIA radiogroup
  * pattern has no Home/End. Use it when the user must choose one of a small
  * number of related options, such as a sex selector.

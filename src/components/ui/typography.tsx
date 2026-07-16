@@ -3,7 +3,7 @@
  *
  * Use the `as` prop to choose the semantic element (`p`, `h2`, `span`, etc.);
  * use `size`, `weight`, `tone`, and `family` to select styles from the token
- * contract. Keeping Text and Heading as one component matches ADR-0015: the
+ * contract. Keeping Text and Heading as one component matches ADR-0005: the
  * boundary between them is semantic, which is what `as` is for.
  *
  * Example:

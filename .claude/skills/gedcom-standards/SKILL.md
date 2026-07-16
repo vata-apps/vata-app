@@ -23,7 +23,7 @@ Two **in-app modules** own all GEDCOM parsing and date logic — never write cus
 - **`@vata-apps/gedcom-parser`** (`src/gedcom-parser/`): parsing, serialization, validation, BOM stripping, CONC/CONT continuation, and name-part splitting (given/surname/prefix/suffix).
 - **`@vata-apps/gedcom-date`** (`src/gedcom-date/`): date parsing, formatting, sort-date generation.
 
-These are local source resolved via path alias (see [ADR-004](../../../docs/adr/0004-gedcom-libraries.md)), **not** npm packages — don't look for them in `package.json`.
+These are local source resolved via path alias — **not** npm packages — don't look for them in `package.json`.
 
 ---
 
@@ -113,13 +113,9 @@ Key principles:
 - On export: `1 EVEN` followed by `2 TYPE {custom_name}`
 - On import: `EVEN` tag with a `TYPE` sub-tag maps to a custom event type
 
-### Individual Event Tags
+### Event Tag Lists
 
-`BIRT`, `CHR`, `DEAT`, `BURI`, `CREM`, `ADOP`, `BAPM`, `BARM`, `BASM`, `CONF`, `FCOM`, `ORDN`, `NATU`, `EMIG`, `IMMI`, `CENS`, `PROB`, `WILL`, `GRAD`, `RETI`, `EVEN`, `CAST`, `DSCR`, `EDUC`, `IDNO`, `NATI`, `NCHI`, `NMR`, `OCCU`, `PROP`, `RELI`, `RESI`, `SSN`, `TITL`
-
-### Family Event Tags
-
-`ANUL`, `CENS`, `DIV`, `DIVF`, `ENGA`, `MARB`, `MARC`, `MARL`, `MARR`, `MARS`, `EVEN`
+The full individual and family event tag lists (GEDCOM tag ↔ `event_types.tag`) are in [gedcom-551-mapping.md](../../../docs/references/gedcom-551-mapping.md#individual-event-tags) — do not re-copy them here; check that doc for the current, authoritative list.
 
 ---
 
@@ -135,34 +131,20 @@ Key principles:
 
 ## 7. Place Types
 
-- Place types (`place_types` table) are **application-specific**, not part of GEDCOM 5.5.1
-- Do not map place types to/from GEDCOM on import/export
+Place types (`place_types` table) are **application-specific**, not part of GEDCOM 5.5.1 — do not map them to/from GEDCOM on import/export. See [gedcom-551-mapping.md § Place types](../../../docs/references/gedcom-551-mapping.md#place-types).
 
 ---
 
 ## 8. Unsupported Tags
 
-These tags are **silently ignored** on import:
-
-| Tag  | Reason                            |
-| ---- | --------------------------------- |
-| OBJE | Media — not yet implemented       |
-| BLOB | Obsolete binary                   |
-| ASSO | Complex associations              |
-| ALIA | Alias — use NAME instead          |
-| ANCI | Genealogical interest             |
-| DESI | Genealogical interest             |
-| SUBM | Submitter — not relevant locally  |
-| SUBN | Submission — not relevant locally |
-
-Do not error on unsupported tags. Do not export them.
+The tags silently ignored on import, and why, are listed in [gedcom-551-mapping.md § Unsupported Tags](../../../docs/references/gedcom-551-mapping.md#unsupported-tags) — check that doc for the current, authoritative list. Do not error on unsupported tags. Do not export them.
 
 ---
 
 ## 9. Validation
 
 - Use `validate()` from `gedcom-parser` for pre-import validation
-- Invalid files should report: "Not a valid GEDCOM 5.5.1 file"
+- Invalid files report a specific reason (e.g. "Empty or invalid GEDCOM file", "Missing HEAD record", "Duplicate XREF: ...") — check `src/gedcom-parser/validate.ts` for the current messages rather than assuming generic text
 - Validation stats should report individual and family counts
 
 ---

@@ -109,6 +109,7 @@ When that happens, use inline `#[cfg(test)]` blocks for pure logic and `rusqlite
 
 | Situation                                     | Reason                                            |
 | --------------------------------------------- | ------------------------------------------------- |
+| Raw Radix Themes / Base UI components         | Owned and tested upstream                         |
 | Auto-generated files (`routeTree.gen.ts`)     | Not authored code                                 |
 | Trivial layout wrappers (shell pass-throughs) | No logic to break                                 |
 | Configuration objects (`queryKeys.ts`)        | Assertions would just repeat the definition       |

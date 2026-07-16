@@ -14,7 +14,7 @@ jobs:
   # Lightweight gate, deliberately carrying no concurrency block: a run that
   # gets skipped here (in particular, the reviewer's own push) must never
   # enter the `review` job's concurrency group, or it would cancel a
-  # legitimate in-flight review. See ADR-016, "Concurrency and cancellation".
+  # legitimate in-flight review. See ADR-004 (docs/adr/0004-autonomous-agent-pipeline.md).
   # Runs on every PR now, not just agent-authored ones — but same-repo only:
   # a fork PR's pull_request event gets no repo secrets and can't be pushed
   # to, so it must be skipped cleanly here rather than fail later.

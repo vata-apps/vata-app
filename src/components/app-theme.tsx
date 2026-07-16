@@ -32,14 +32,15 @@ function useResolvedAppearance(): 'light' | 'dark' {
  * appearance to the persisted theme preference. Mounted once, at the React
  * root (see `main.tsx`).
  *
- * Per ADR-010 the theme carries no brand overrides: color, gray, radius, and
- * fonts all fall to Radix Themes defaults (indigo accent, system stacks). Only
- * `appearance` is set.
+ * The Radix Theme provider itself carries no brand overrides: color, gray,
+ * radius, and fonts all fall to Radix Themes defaults (indigo accent, system
+ * stacks). Only `appearance` is set — brand tokens live in the Vanilla
+ * Extract contract instead (`src/design/theme.css.ts`).
  */
 export function AppTheme({ children }: { children: ReactNode }): JSX.Element {
   const appearance = useResolvedAppearance();
 
-  // Bridge the resolved appearance to the Vanilla Extract tokens (ADR-0014):
+  // Bridge the resolved appearance to the Vanilla Extract tokens (ADR-0005):
   // `data-theme` drives `src/design/theme.css.ts` so Base UI + VE surfaces stay
   // in sync with Radix during the migration. useLayoutEffect (not useEffect) so
   // the attribute lands before first paint — no wrong-theme flash on launch when
