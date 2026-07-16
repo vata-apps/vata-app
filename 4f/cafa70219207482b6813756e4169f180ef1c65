@@ -1,0 +1,25 @@
+docs/agents/issue-tracker.md
+  s_a2f249e538f7c6::t_36aaae6c9f556e 1-26
+docs/agents/domain.md
+  s_a2f249e538f7c6::t_68ef44b54d0f33 1-35
+CLAUDE.md
+  s_a2f249e538f7c6::t_ef4ca6827d8f90 29-42
+docs/agents/triage-labels.md
+  s_a2f249e538f7c6::t_31eeffd13300e4 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "4fcafa70219207482b6813756e4169f180ef1c65",
+  "prompts": {},
+  "sessions": {
+    "s_a2f249e538f7c6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6a6baf5d-6b74-4a0c-8927-0870d91a9b54",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
