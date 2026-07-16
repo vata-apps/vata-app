@@ -3,13 +3,13 @@
 **Status**: Accepted
 **Date**: 2026-06-02
 
-**Decision**: The in-tree shell (`TreeShell`) renders only a persistent header + a full-width page body — no fixed three-column scaffold. Each page builds whatever panels it actually needs instead of inheriting an always-present shared layout. The four `*Sidebar` components and `EntityListPanel` are replaced by one `EntityTable` organism (list + loading/empty/error states + row navigation), reused by People, Families, Events, and Places.
+**Decision**: The in-tree shell (`TreeShell`) renders only a persistent header + a full-width page body. Each page builds whatever panels it actually needs (a list, a detail rail) instead of inheriting an always-present shared layout. Entity lists (People, Families, Events, Places) render as a full-width table directly in the page body.
 
-**Why**: The old three-column shell (fixed left sidebar, centre page, reserved-but-unused right panel) left two of three columns either dead space or the _only_ real content — every centre page was a stub.
+**Why**: A shared side-panel scaffold only pays off when most pages actually use it. Left as dead space or forcing every page into a stub otherwise — full width lets each section use exactly the space it needs.
 
 **Alternatives considered**:
 
-- **Keep the three-column shell, fill panels later** — rejected: preserves dead space and stub pages indefinitely.
+- **A shared side-panel scaffold, filled in later** — rejected: preserves dead space and stub pages indefinitely.
 - **Move lists into the page but keep a narrow card list** — rejected: a narrow list stretched to full width reads as sparse; a table uses the space better.
 
 ## References
