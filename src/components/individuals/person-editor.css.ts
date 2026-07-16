@@ -1,5 +1,5 @@
 /**
- * Vanilla Extract styles for the Person editor + Person picker (ADR-0007).
+ * Vanilla Extract styles for the Person editor + Person picker (ADR-0005).
  * Base UI supplies behavior; these styles supply the warm-earth look over the
  * `src/design/theme.css.ts` token contract. Shared by `person-editor-dialog.tsx`
  * and `person-picker.tsx`.
