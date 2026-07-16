@@ -477,7 +477,7 @@ export type PersonEditorDialogProps = {
  * list (dates only — a place picker lands later, see the Person editor PRD),
  * notes, and relations (parents, spouse families, children) via the
  * search-or-create {@link PersonPicker}. Styled from the warm-earth tokens
- * (ADR-0014).
+ * (ADR-0007).
  */
 export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element {
   const { open, onOpenChange, onSaved } = props;

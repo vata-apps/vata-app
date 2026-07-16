@@ -3,7 +3,7 @@
  * solid (primary), ghost (secondary), danger (destructive), dashed (add-row).
  *
  * Variants are declared with `recipe()` so the variant map lives beside the
- * styles it selects (ADR-0014).
+ * styles it selects (ADR-0007).
  */
 import { recipe } from '@vanilla-extract/recipes';
 

@@ -1,12 +1,12 @@
 /**
- * Vata design tokens — the single source of visual truth (ADR-0014).
+ * Vata design tokens — the single source of visual truth (ADR-0007).
  *
  * A typed, zero-runtime Vanilla Extract contract. Every styled component reads
  * `vars.*`; raw color/size values live ONLY here. Warm-earth identity: terracotta
  * (clay) accent over warm sand neutrals, all in oklch. Geist Sans for UI, Geist
  * Mono for data, Fraunces (italic) reserved for lineage moments.
  *
- * Ported from the maintainer's design system. Lean by intent (ADR-0014): the
+ * Ported from the maintainer's design system. Lean by intent (ADR-0007): the
  * contract holds what the product uses today and grows as screens demand it — no
  * inherited shadcn/Radix semantic sprawl.
  *

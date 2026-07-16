@@ -2,7 +2,7 @@
  * Typography primitive styles — a single polymorphic text component.
  *
  * Variants are declared with `recipe()` beside the styles they select
- * (ADR-0014). The semantic boundary between a "text" and a "heading" is
+ * (ADR-0007). The semantic boundary between a "text" and a "heading" is
  * handled by the `as` prop, not by separate components.
  */
 import { recipe } from '@vanilla-extract/recipes';

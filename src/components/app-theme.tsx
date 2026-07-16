@@ -40,7 +40,7 @@ function useResolvedAppearance(): 'light' | 'dark' {
 export function AppTheme({ children }: { children: ReactNode }): JSX.Element {
   const appearance = useResolvedAppearance();
 
-  // Bridge the resolved appearance to the Vanilla Extract tokens (ADR-0014):
+  // Bridge the resolved appearance to the Vanilla Extract tokens (ADR-0007):
   // `data-theme` drives `src/design/theme.css.ts` so Base UI + VE surfaces stay
   // in sync with Radix during the migration. useLayoutEffect (not useEffect) so
   // the attribute lands before first paint — no wrong-theme flash on launch when
