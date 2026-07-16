@@ -71,7 +71,7 @@ None
 <review-findings>
 ## Summary
 
-Briefly state what you reviewed and the overall result.
+One or two sentences: what you reviewed (scope) and the bottom-line result. Do not restate the diff, list every file checked, or repeat detail that belongs in "Fixed" or "Flagged for maintainer" below.
 
 ## Flagged for maintainer
 

@@ -46,8 +46,8 @@ There is no escalation label anymore: the author always runs on Sonnet, the revi
         ▼  (skipped entirely if nothing to fix)
 [Sonnet implements the listed fixes verbatim, runs `pnpm verify` per fix]
         │
-        ├─ fixed  → fixes pushed, comment summarising what was fixed and flagged
-        ├─ clean  → no issues found, comment confirming the review ran
+        ├─ fixed  → fixes pushed, PR approved, comment summarising what was fixed
+        ├─ clean  → no issues found, PR approved, comment confirming the review ran
         ├─ flagged → no push, comment listing issues for you to judge
         └─ failed → review run errored, comment linking to logs
         │
@@ -74,17 +74,19 @@ How it works:
 2. `agent-review.yml` fires on `pull_request` events (`opened`, `synchronize`, `reopened`, `ready_for_review`).
 3. **Analyze (Opus)**: reads the diff, emits a list of high-confidence fixes (each precise enough to implement without further judgment) plus anything flagged for you.
 4. **Fix (Sonnet)** — only runs if there is at least one fix to apply: implements each fix verbatim, one stacked commit per fix, running `pnpm verify` after each. A fix that can't be made to pass verify is reverted and reported as not applied, not re-interpreted.
-5. Fixes are pushed only if `pnpm verify` stays green. A single PR comment explains the outcome:
-   - **fixed** — ✅ Reviewed, fixed N issue(s), each fix linked to its SHA
-   - **clean** — ✅ Reviewed — no issues found (Sonnet never ran)
+5. Fixes are pushed only if `pnpm verify` stays green. A single PR comment explains the outcome — kept short: the headline result plus what was fixed and what was flagged, not a retelling of the diff:
+   - **fixed** — ✅ Reviewed and approved, fixed N issue(s), each fix linked to its SHA
+   - **clean** — ✅ Reviewed and approved — no issues found (Sonnet never ran)
    - **flagged** — ⚠️ Found issues, couldn't safely fix — list for you to judge
    - **failed** — ❌ Review failed — link to logs
+
+`fixed` and `clean` also get the PR approved (`gh pr review --approve`) — nothing is left for you to judge, so there's nothing to wait on before merging.
 
 Notes:
 
 - Draft PRs are skipped until marked ready for review.
 - The reviewer's own pushes are ignored (the sender is `vata-reviewer[bot]`), so there is no infinite review loop.
-- A newer commit cancels the in-flight review and restarts it on the fresh state.
+- A newer commit cancels the in-flight review and restarts it on the fresh state; the cancelled run posts no comment, since it was superseded, not failed — only the fresh run's result is reported.
 - The fix stage is skipped entirely when there's nothing to fix — a clean or flag-only review costs one Opus run, not two.
 - The reviewer only runs on agent-authored PRs (`vata-agent[bot]`).
 - Each review run draws from the same Anthropic API spend as issue runs.

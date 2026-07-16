@@ -126,12 +126,18 @@ jobs:
       # forward) cannot abort the job before the maintainer is told anything.
       - name: Push fixes
         id: push
-        if: always() && steps.reviewer.outputs.push == 'true'
+        if: "!cancelled() && steps.reviewer.outputs.push == 'true'"
         continue-on-error: true
         run: git push origin "$BRANCH"
 
+      # !cancelled() matters here: a newer commit cancels this run via the
+      # concurrency group above, killing "Run reviewer" mid-flight with no
+      # outputs set. Without this guard, `if: always()` would still post a
+      # misleading "Review failed" comment for a run that was only ever
+      # superseded, not actually broken — the newer run's comment is
+      # authoritative.
       - name: Post review comment
-        if: always()
+        if: "!cancelled()"
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           OUTCOME: ${{ steps.reviewer.outputs.outcome }}
@@ -145,9 +151,9 @@ jobs:
           else
             case "$OUTCOME" in
               fixed)
-                HEADER="✅ Reviewed, pushed ${COMMITS} fix commit(s) — see below" ;;
+                HEADER="✅ Reviewed and approved, pushed ${COMMITS} fix commit(s) — see below" ;;
               clean)
-                HEADER="✅ Reviewed — no issues found" ;;
+                HEADER="✅ Reviewed and approved — no issues found" ;;
               noted)
                 HEADER="ℹ️ Reviewed — no defects to fix, but see notes for your judgment" ;;
               flagged)
@@ -170,3 +176,17 @@ jobs:
             fi
           } > /tmp/review-comment.md
           gh pr comment "$PR_NUMBER" --body-file /tmp/review-comment.md
+
+      # `approve` (whether nothing is left for the maintainer to judge) comes
+      # from decideReviewOutcome — the single source of truth for the outcome
+      # table, see shared.ts. Only the push step's actual result is checked
+      # here, since it's a runtime signal not known until after review.ts
+      # exits. continue-on-error so an approval hiccup (e.g. self-review
+      # rules) can't flip the whole run red under a comment that already said
+      # "approved".
+      - name: Approve PR
+        if: "!cancelled() && steps.reviewer.outputs.approve == 'true' && steps.push.outcome != 'failure'"
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: gh pr review "$PR_NUMBER" --approve --body "No outstanding issues."
