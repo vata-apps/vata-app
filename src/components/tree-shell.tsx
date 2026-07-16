@@ -21,7 +21,7 @@ export interface TreeShellProps {
  *
  * The shell provides no fixed side panels: pages render full-width by
  * default and build any panels they need inside their own body. See
- * [ADR-011](../../docs/adr/0011-full-width-shell.md).
+ * [ADR-006](../../docs/adr/0006-full-width-shell.md).
  *
  * Rendered once by the in-tree layout route, wrapping the routed `Outlet`.
  *

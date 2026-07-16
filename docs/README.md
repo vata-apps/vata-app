@@ -16,10 +16,10 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-002: Frontend Stack](./adr/0002-frontend-stack.md) — React, TypeScript, Vite, TanStack, Zustand
 - [ADR-003: Database Architecture](./adr/0003-database-architecture.md) — Dual DB, string IDs, layer separation
 - [ADR-004: GEDCOM Libraries (in-app)](./adr/0004-gedcom-libraries.md) — gedcom-parser and gedcom-date as in-app modules
-- [ADR-008: Autonomous Agent Execution](./adr/0008-autonomous-agent-execution.md) — Sandcastle on GitHub Actions, label-triggered, Claude Code/Sonnet
-- [ADR-011: Full-Width In-Tree Shell](./adr/0011-full-width-shell.md) — Pages own their panels; removes the three-column scaffold and four entity sidebars
-- [ADR-014: Headless UI Foundation](./adr/0014-headless-baseui-vanilla-extract.md) — Base UI + Vanilla Extract, replacing Radix Themes
-- [ADR-016: Autonomous PR Review Agent](./adr/0016-autonomous-pr-review.md) — two-stage review, Opus analyzes / Sonnet fixes
+- [ADR-005: Autonomous Agent Execution](./adr/0005-autonomous-agent-execution.md) — Sandcastle on GitHub Actions, label-triggered, Claude Code/Sonnet
+- [ADR-006: Full-Width In-Tree Shell](./adr/0006-full-width-shell.md) — Pages own their panels; removes the three-column scaffold and four entity sidebars
+- [ADR-007: Headless UI Foundation](./adr/0007-headless-baseui-vanilla-extract.md) — Base UI + Vanilla Extract, replacing Radix Themes
+- [ADR-008: Autonomous PR Review Agent](./adr/0008-autonomous-pr-review.md) — two-stage review, Opus analyzes / Sonnet fixes
 
 ## Architecture
 

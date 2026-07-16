@@ -58,7 +58,7 @@ function sortTrees(trees: Tree[], key: SortKey): Tree[] {
 
 /**
  * Home page (the trees picker). A pure-`@radix-ui/themes` build — not yet
- * migrated to Base UI + Vanilla Extract (see ADR-014): the trees grid,
+ * migrated to Base UI + Vanilla Extract (see ADR-007): the trees grid,
  * cards, sort control, and metadata render via stock `Grid`,
  * `Card`, `SegmentedControl`, `Badge`, and `DataList` with no custom CSS,
  * gradients, or motion. The curated `Icon` registry is kept for action

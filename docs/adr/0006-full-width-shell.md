@@ -1,4 +1,4 @@
-# ADR-011: Full-Width In-Tree Shell — Pages Own Their Panels
+# ADR-006: Full-Width In-Tree Shell — Pages Own Their Panels
 
 **Status**: Accepted
 **Date**: 2026-06-02

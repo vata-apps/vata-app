@@ -1,4 +1,4 @@
-# ADR-008: Autonomous Agent Execution via Sandcastle on GitHub Actions
+# ADR-005: Autonomous Agent Execution via Sandcastle on GitHub Actions
 
 **Status**: Accepted
 **Date**: 2026-05-20 (provider fixed to Claude Code, 2026-07-15)

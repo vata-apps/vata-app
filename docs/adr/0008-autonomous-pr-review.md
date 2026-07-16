@@ -1,4 +1,4 @@
-# ADR-016: Autonomous PR Review Agent
+# ADR-008: Autonomous PR Review Agent
 
 **Status**: Accepted
 **Date**: 2026-07-15
@@ -20,5 +20,5 @@ Outcome (`fixed` / `clean` / `flagged` / `failed`) is assembled deterministicall
 
 ## References
 
-- [ADR-008: Autonomous Agent Execution](./0008-autonomous-agent-execution.md) — the issue → PR flow this reviews
+- [ADR-005: Autonomous Agent Execution](./0005-autonomous-agent-execution.md) — the issue → PR flow this reviews
 - [Agent Workflow](../dev-tools/agent-workflow.md) — operational guide
