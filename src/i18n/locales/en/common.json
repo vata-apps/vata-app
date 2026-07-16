@@ -4,8 +4,7 @@
   },
   "filters": {
     "title": "Filters",
-    "clear": "Clear",
-    "removeAria": "Remove {{label}}"
+    "clear": "Clear"
   },
   "nav": {
     "home": "Home",

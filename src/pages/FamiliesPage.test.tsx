@@ -195,10 +195,6 @@ describe('FamiliesPage', () => {
     const search = screen.getByRole('textbox', { name: 'Name' });
     await user.type(search, 'Doe');
 
-    await waitFor(() => {
-      expect(screen.getByText('Name: Doe')).toBeInTheDocument();
-    });
-
     const table = await screen.findByRole('table', { name: 'Families' });
     await waitFor(() => {
       expect(within(table).getAllByRole('row')).toHaveLength(3); // header + 2 data rows
@@ -221,10 +217,6 @@ describe('FamiliesPage', () => {
     await user.click(spousesSelect);
     const popup = await screen.findByRole('listbox');
     await user.click(within(popup).getByRole('option', { name: 'Both spouses' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Spouses: Both spouses')).toBeInTheDocument();
-    });
 
     const rows = await getBodyRows();
     expect(rows).toHaveLength(1);

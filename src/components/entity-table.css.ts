@@ -6,13 +6,12 @@ import { style } from '@vanilla-extract/css';
 
 import { focusRing, vars } from '$/design/theme.css';
 
-/** The primary cell link: plain text at body font, focusable, no underline until hover. */
+/** The primary cell link: plain text at body font, focusable, never underlined. */
 export const rowLink = style({
   color: 'inherit',
   textDecoration: 'none',
   outline: 'none',
   selectors: {
-    '&:hover': { textDecoration: 'underline' },
     '&:focus-visible': focusRing,
   },
 });

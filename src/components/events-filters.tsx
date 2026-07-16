@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { Chip } from '$components/ui/chip';
 import { Select } from '$components/ui/select';
 import { Button } from '$components/ui/button';
 import { Icon } from '$components/icon';
@@ -49,9 +48,9 @@ export interface EventsFilterToolbarProps {
 
 /**
  * The Events-list filter toolbar. Replaces the permanent left sidebar with a
- * compact horizontal bar above the table: an event-type select, a place select,
- * and one dismissible chip per active filter. A Clear-all button appears only
- * while at least one filter is active.
+ * compact horizontal bar above the table: an event-type select and a place
+ * select. A Clear-all button appears only while at least one filter is
+ * active.
  */
 export function EventsFilterToolbar({
   value,
@@ -67,30 +66,6 @@ export function EventsFilterToolbar({
   const typeDisplay = typeOption?.label ?? t('filters.type.all');
   const placeOption = places.find((option) => option.value === value.place);
   const placeDisplay = placeOption?.label ?? t('filters.place.all');
-
-  const chips: JSX.Element[] = [];
-  if (value.type !== 'all') {
-    const label = `${t('filters.type.label')}: ${typeDisplay}`;
-    chips.push(
-      <Chip
-        key="type"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, type: 'all' })}
-      />
-    );
-  }
-  if (value.place !== 'all') {
-    const label = `${t('filters.place.label')}: ${placeDisplay}`;
-    chips.push(
-      <Chip
-        key="place"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, place: 'all' })}
-      />
-    );
-  }
 
   return (
     <div
@@ -152,12 +127,6 @@ export function EventsFilterToolbar({
           </Select.Portal>
         </Select.Root>
       </div>
-
-      {chips.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
-          {chips}
-        </div>
-      )}
 
       {active && (
         <Button variant="ghost" onClick={() => onChange(DEFAULT_EVENT_FILTERS)}>

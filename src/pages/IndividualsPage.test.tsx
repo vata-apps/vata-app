@@ -255,7 +255,7 @@ describe('IndividualsPage', () => {
     });
   });
 
-  it('renders a dismissible chip for each active filter', async () => {
+  it('filters the list by gender', async () => {
     const user = userEvent.setup();
     mockedGetAll.mockResolvedValue([
       person({ id: 'I-1', gender: 'M', primaryName: { surname: 'Doe', givenNames: 'John' } }),
@@ -265,50 +265,22 @@ describe('IndividualsPage', () => {
     renderPage();
     await screen.findByRole('table', { name: 'People' });
 
-    const sexSelect = screen.getByRole('combobox', { name: 'Sex' });
-    await user.click(sexSelect);
+    const genderSelect = screen.getByRole('combobox', { name: 'Gender' });
+    await user.click(genderSelect);
     const popup = await screen.findByRole('listbox');
     await user.click(within(popup).getByRole('option', { name: 'Male' }));
 
-    await waitFor(() => {
-      expect(screen.getByText('Sex: Male')).toBeInTheDocument();
+    const rowsFiltered = await getBodyRows();
+    expect(rowsFiltered).toHaveLength(1);
+
+    await user.click(genderSelect);
+    const secondPopup = await screen.findByRole('listbox');
+    await user.click(within(secondPopup).getByRole('option', { name: 'All genders' }));
+
+    await waitFor(async () => {
+      const rows = await getBodyRows();
+      expect(rows).toHaveLength(2);
     });
-
-    const rowsBefore = await getBodyRows();
-    expect(rowsBefore).toHaveLength(1);
-
-    const removeButton = screen.getByRole('button', { name: /Remove Sex: Male/ });
-    await user.click(removeButton);
-
-    await waitFor(() => {
-      expect(screen.queryByText('Sex: Male')).not.toBeInTheDocument();
-    });
-
-    const rowsAfter = await getBodyRows();
-    expect(rowsAfter).toHaveLength(2);
-  });
-
-  it('labels the chip remove button with the active locale', async () => {
-    const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
-      person({ id: 'I-1', gender: 'M', primaryName: { surname: 'Doe', givenNames: 'John' } }),
-    ]);
-
-    await i18n.changeLanguage('fr');
-    renderPage();
-    await screen.findByRole('table', { name: 'Personnes' });
-
-    await user.click(screen.getByRole('combobox', { name: 'Sexe' }));
-    const popup = await screen.findByRole('listbox');
-    await user.click(within(popup).getByRole('option', { name: 'Homme' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Sexe: Homme')).toBeInTheDocument();
-    });
-
-    // The remove button's accessible name must follow the active locale, not
-    // the English fallback hardcoded in the Chip primitive.
-    expect(screen.getByRole('button', { name: 'Retirer Sexe: Homme' })).toBeInTheDocument();
   });
 
   it('clears all active filters with the Clear-all button', async () => {
@@ -324,21 +296,20 @@ describe('IndividualsPage', () => {
     const search = screen.getByRole('textbox', { name: 'Name' });
     await user.type(search, 'Jane');
 
-    const sexSelect = screen.getByRole('combobox', { name: 'Sex' });
-    await user.click(sexSelect);
+    const genderSelect = screen.getByRole('combobox', { name: 'Gender' });
+    await user.click(genderSelect);
     const popup = await screen.findByRole('listbox');
     await user.click(within(popup).getByRole('option', { name: 'Female' }));
 
-    await waitFor(() => {
-      expect(screen.getByText('Name: Jane')).toBeInTheDocument();
-      expect(screen.getByText('Sex: Female')).toBeInTheDocument();
+    await waitFor(async () => {
+      const rows = await getBodyRows();
+      expect(rows).toHaveLength(1);
     });
 
     await user.click(screen.getByRole('button', { name: 'Clear' }));
 
     await waitFor(() => {
-      expect(screen.queryByText('Name: Jane')).not.toBeInTheDocument();
-      expect(screen.queryByText('Sex: Female')).not.toBeInTheDocument();
+      expect(search).toHaveValue('');
     });
 
     await waitFor(async () => {

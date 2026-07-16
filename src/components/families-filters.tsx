@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { Chip } from '$components/ui/chip';
 import { Select } from '$components/ui/select';
 import { TextField } from '$components/ui/text-field';
 import { Button } from '$components/ui/button';
@@ -42,9 +41,8 @@ export interface FamiliesFilterToolbarProps {
 /**
  * The Families-list filter toolbar. Replaces the permanent left sidebar with a
  * compact horizontal bar above the table: a debounced name search, a
- * spouse-completeness select, a has-children select, and one dismissible chip
- * per active filter. A Clear-all button appears only while at least one filter
- * is active.
+ * spouse-completeness select, and a has-children select. A Clear-all button
+ * appears only while at least one filter is active.
  */
 export function FamiliesFilterToolbar({
   value,
@@ -58,41 +56,6 @@ export function FamiliesFilterToolbar({
     value.spouses === 'all' ? t('filters.spouses.all') : t(`filters.spouses.${value.spouses}`);
   const childrenDisplay =
     value.children === 'all' ? t('filters.children.all') : t(`filters.children.${value.children}`);
-
-  const chips: JSX.Element[] = [];
-  if (value.name.trim()) {
-    const label = `${t('filters.name.label')}: ${value.name.trim()}`;
-    chips.push(
-      <Chip
-        key="name"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, name: '' })}
-      />
-    );
-  }
-  if (value.spouses !== 'all') {
-    const label = `${t('filters.spouses.label')}: ${spousesDisplay}`;
-    chips.push(
-      <Chip
-        key="spouses"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, spouses: 'all' })}
-      />
-    );
-  }
-  if (value.children !== 'all') {
-    const label = `${t('filters.children.label')}: ${childrenDisplay}`;
-    chips.push(
-      <Chip
-        key="children"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, children: 'all' })}
-      />
-    );
-  }
 
   return (
     <div
@@ -171,12 +134,6 @@ export function FamiliesFilterToolbar({
           </Select.Portal>
         </Select.Root>
       </div>
-
-      {chips.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
-          {chips}
-        </div>
-      )}
 
       {active && (
         <Button variant="ghost" onClick={() => onChange(DEFAULT_FAMILY_FILTERS)}>
