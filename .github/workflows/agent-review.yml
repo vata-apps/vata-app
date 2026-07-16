@@ -126,15 +126,22 @@ jobs:
       # forward) cannot abort the job before the maintainer is told anything.
       - name: Push fixes
         id: push
-        if: always() && steps.reviewer.outputs.push == 'true'
+        if: "!cancelled() && steps.reviewer.outputs.push == 'true'"
         continue-on-error: true
         run: git push origin "$BRANCH"
 
-      - name: Post review comment
-        if: always()
+      # !cancelled() matters here: a newer commit cancels this run via the
+      # concurrency group above, killing "Run reviewer" mid-flight with no
+      # outputs set. Without this guard, `if: always()` would still post a
+      # misleading "Review failed" comment for a run that was only ever
+      # superseded, not actually broken — the newer run's comment is
+      # authoritative.
+      - name: Post review result
+        if: "!cancelled()"
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           OUTCOME: ${{ steps.reviewer.outputs.outcome }}
+          APPROVE: ${{ steps.reviewer.outputs.approve }}
           PUSH: ${{ steps.reviewer.outputs.push }}
           PUSH_OUTCOME: ${{ steps.push.outcome }}
           COMMITS: ${{ steps.reviewer.outputs.commits }}
@@ -145,9 +152,9 @@ jobs:
           else
             case "$OUTCOME" in
               fixed)
-                HEADER="✅ Reviewed, pushed ${COMMITS} fix commit(s) — see below" ;;
+                HEADER="✅ Reviewed and approved, pushed ${COMMITS} fix commit(s) — see below" ;;
               clean)
-                HEADER="✅ Reviewed — no issues found" ;;
+                HEADER="✅ Reviewed and approved — no issues found" ;;
               noted)
                 HEADER="ℹ️ Reviewed — no defects to fix, but see notes for your judgment" ;;
               flagged)
@@ -169,4 +176,17 @@ jobs:
               cat "$REVIEW_FINDINGS_PATH"
             fi
           } > /tmp/review-comment.md
-          gh pr comment "$PR_NUMBER" --body-file /tmp/review-comment.md
+
+          # `approve` (nothing left for the maintainer to judge) comes from
+          # decideReviewOutcome — the single source of truth for the outcome
+          # table, see shared.ts. When it holds, the approval itself carries
+          # the findings as its body instead of a separate plain comment, so
+          # the summary and the "approved" verdict land as one timeline
+          # entry. Falls back to a plain comment if the review call fails
+          # (e.g. a branch-protection self-review rule).
+          if [ "$APPROVE" = "true" ] && [ "$PUSH_OUTCOME" != "failure" ]; then
+            gh pr review "$PR_NUMBER" --approve --body-file /tmp/review-comment.md \
+              || gh pr comment "$PR_NUMBER" --body-file /tmp/review-comment.md
+          else
+            gh pr comment "$PR_NUMBER" --body-file /tmp/review-comment.md
+          fi

@@ -142,14 +142,22 @@ export interface ReviewDecision {
   outcome: ReviewOutcome;
   push: boolean;
   headerCategory: ReviewOutcome;
+  /**
+   * Whether nothing is left for the maintainer to judge — `clean` found
+   * nothing, `fixed` found and fixed everything with verify green. The
+   * workflow still ANDs this with the push step's actual runtime result
+   * (unknown at this point, since pushing happens after this function
+   * returns) before calling `gh pr review --approve`.
+   */
+  approve: boolean;
 }
 
 /**
  * Decide what to do after a reviewer run.
  *
  * This is the single testable seam for the review outcome. It takes only the
- * run facts and returns the outcome classification, whether to push, and the
- * comment header category.
+ * run facts and returns the outcome classification, whether to push, the
+ * comment header category, and whether the PR is approvable.
  *
  * `noted` vs `flagged` both mean "nothing was pushed", but for different
  * reasons: `noted` is when the analysis never considered anything fixable in
@@ -160,13 +168,13 @@ export interface ReviewDecision {
  * isn't confused with "found issues, couldn't safely fix".
  *
  * Outcome table:
- * | Case                                                       | Outcome | Push                    |
- * |--------------------------------------------------------------|---------|-------------------------|
- * | Defects found + fixed, verify green                          | fixed   | yes                     |
- * | Nothing found, nothing to flag                               | clean   | no                      |
- * | Nothing was fixable, but something is flagged for judgment   | noted   | no                      |
- * | Defects found but unfixed (verify red / iterations exhausted) | flagged | yes if any fix is green |
- * | Run errored                                                   | failed  | no                      |
+ * | Case                                                       | Outcome | Push                    | Approve |
+ * |--------------------------------------------------------------|---------|-------------------------|---------|
+ * | Defects found + fixed, verify green                          | fixed   | yes                     | yes     |
+ * | Nothing found, nothing to flag                               | clean   | no                      | yes     |
+ * | Nothing was fixable, but something is flagged for judgment   | noted   | no                      | no      |
+ * | Defects found but unfixed (verify red / iterations exhausted) | flagged | yes if any fix is green | no      |
+ * | Run errored                                                   | failed  | no                      | no      |
  */
 export function decideReviewOutcome(input: {
   error: boolean;
@@ -177,21 +185,21 @@ export function decideReviewOutcome(input: {
   hadFixesToApply: boolean;
 }): ReviewDecision {
   if (input.error) {
-    return { outcome: 'failed', push: false, headerCategory: 'failed' };
+    return { outcome: 'failed', push: false, headerCategory: 'failed', approve: false };
   }
 
   if (input.commits === 0 && !input.hasFlaggedFindings && input.completed) {
-    return { outcome: 'clean', push: false, headerCategory: 'clean' };
+    return { outcome: 'clean', push: false, headerCategory: 'clean', approve: true };
   }
 
   if (input.commits > 0 && input.verifyPassed && input.completed && !input.hasFlaggedFindings) {
-    return { outcome: 'fixed', push: true, headerCategory: 'fixed' };
+    return { outcome: 'fixed', push: true, headerCategory: 'fixed', approve: true };
   }
 
   if (!input.hadFixesToApply && input.completed) {
-    return { outcome: 'noted', push: false, headerCategory: 'noted' };
+    return { outcome: 'noted', push: false, headerCategory: 'noted', approve: false };
   }
 
   const push = input.commits > 0 && input.verifyPassed;
-  return { outcome: 'flagged', push, headerCategory: 'flagged' };
+  return { outcome: 'flagged', push, headerCategory: 'flagged', approve: false };
 }

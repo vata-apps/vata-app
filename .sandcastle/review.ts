@@ -181,6 +181,7 @@ writeGithubOutput({
   verify_passed: String(verifyPassed),
   outcome: decision.outcome,
   push: String(decision.push),
+  approve: String(decision.approve),
   model: fix ? `${MODEL_OPUS}+${MODEL_SONNET}` : MODEL_OPUS,
 });
 
