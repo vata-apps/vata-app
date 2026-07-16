@@ -1,0 +1,59 @@
+.claude/skills/gedcom-standards/SKILL.md
+  s_9e3b334e3feb67::t_f00e220b21d125 26
+src/pages/Home.tsx
+  s_9e3b334e3feb67::t_5d7473bc153963 61
+.claude/agents/docs-consistency.md
+  s_9e3b334e3feb67::t_dab384ee7a27cd 85
+docs/adr/0004-autonomous-agent-pipeline.md
+  s_9e3b334e3feb67::t_af7f78d3b89230 1
+  s_9e3b334e3feb67::t_70f2c7149abe6e 4,6,8-10,16-17
+docs/ui/layouts.md
+  s_9e3b334e3feb67::t_844cbf97ed4b5a 18
+docs/README.md
+  s_9e3b334e3feb67::t_634d84ed4e2542 48
+  s_9e3b334e3feb67::t_795275fbcf11e2 18-19
+docs/dev-tools/agent-workflow.md
+  s_9e3b334e3feb67::t_e7c232d6ed2306 3,21,69
+docs/architecture/overview.md
+  s_9e3b334e3feb67::t_70ed75b2b759d3 40
+  s_9e3b334e3feb67::t_375a22a7445e0b 71
+docs/ui/design-system.md
+  s_9e3b334e3feb67::t_70976653a1f89f 3
+.sandcastle/run.ts
+  s_9e3b334e3feb67::t_77b906111dd5c9 7
+.github/workflows/agent-review.yml
+  s_9e3b334e3feb67::t_77b906111dd5c9 17
+docs/references/date-formats.md
+  s_9e3b334e3feb67::t_a84e53e743f861 3
+docs/references/gedcom-551-mapping.md
+  s_9e3b334e3feb67::t_c52fed0539eb57 7
+.claude/skills/design-system-standards/SKILL.md
+  s_9e3b334e3feb67::t_f208333f8509f7 8
+docs/adr/0005-headless-baseui-vanilla-extract.md
+  s_9e3b334e3feb67::t_37c0233e91fa96 1
+CLAUDE.md
+  s_9e3b334e3feb67::t_2f5395deedb63f 6
+src/components/tree-shell.tsx
+  s_9e3b334e3feb67::t_f42335cdefd399 24
+.sandcastle/review.ts
+  s_9e3b334e3feb67::t_77b906111dd5c9 22
+docs/architecture/tech-stack.md
+  s_9e3b334e3feb67::t_75a6fd9e58872e 29-30
+  s_9e3b334e3feb67::t_ee48f6e728b5fd 44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "e2335d2ee0dad7233cd5d4fb46a826fa9f7b39b2",
+  "prompts": {},
+  "sessions": {
+    "s_9e3b334e3feb67": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "af623796-c159-4669-a88a-aa6d348dae78",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
