@@ -74,13 +74,13 @@ How it works:
 2. `agent-review.yml` fires on `pull_request` events (`opened`, `synchronize`, `reopened`, `ready_for_review`).
 3. **Analyze (Opus)**: reads the diff, emits a list of high-confidence fixes (each precise enough to implement without further judgment) plus anything flagged for you.
 4. **Fix (Sonnet)** — only runs if there is at least one fix to apply: implements each fix verbatim, one stacked commit per fix, running `pnpm verify` after each. A fix that can't be made to pass verify is reverted and reported as not applied, not re-interpreted.
-5. Fixes are pushed only if `pnpm verify` stays green. A single PR comment explains the outcome — kept short: the headline result plus what was fixed and what was flagged, not a retelling of the diff:
+5. Fixes are pushed only if `pnpm verify` stays green. One message explains the outcome — kept short: the headline result plus what was fixed and what was flagged, not a retelling of the diff:
    - **fixed** — ✅ Reviewed and approved, fixed N issue(s), each fix linked to its SHA
    - **clean** — ✅ Reviewed and approved — no issues found (Sonnet never ran)
    - **flagged** — ⚠️ Found issues, couldn't safely fix — list for you to judge
    - **failed** — ❌ Review failed — link to logs
 
-`fixed` and `clean` also get the PR approved (`gh pr review --approve`) — nothing is left for you to judge, so there's nothing to wait on before merging.
+For `fixed` and `clean` — nothing left for you to judge — that message is the body of a `gh pr review --approve`, so the approval and the summary land as one entry. Other outcomes post the same message as a plain PR comment instead.
 
 Notes:
 

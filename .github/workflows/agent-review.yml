@@ -136,11 +136,12 @@ jobs:
       # misleading "Review failed" comment for a run that was only ever
       # superseded, not actually broken — the newer run's comment is
       # authoritative.
-      - name: Post review comment
+      - name: Post review result
         if: "!cancelled()"
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           OUTCOME: ${{ steps.reviewer.outputs.outcome }}
+          APPROVE: ${{ steps.reviewer.outputs.approve }}
           PUSH: ${{ steps.reviewer.outputs.push }}
           PUSH_OUTCOME: ${{ steps.push.outcome }}
           COMMITS: ${{ steps.reviewer.outputs.commits }}
@@ -175,18 +176,17 @@ jobs:
               cat "$REVIEW_FINDINGS_PATH"
             fi
           } > /tmp/review-comment.md
-          gh pr comment "$PR_NUMBER" --body-file /tmp/review-comment.md
 
-      # `approve` (whether nothing is left for the maintainer to judge) comes
-      # from decideReviewOutcome — the single source of truth for the outcome
-      # table, see shared.ts. Only the push step's actual result is checked
-      # here, since it's a runtime signal not known until after review.ts
-      # exits. continue-on-error so an approval hiccup (e.g. self-review
-      # rules) can't flip the whole run red under a comment that already said
-      # "approved".
-      - name: Approve PR
-        if: "!cancelled() && steps.reviewer.outputs.approve == 'true' && steps.push.outcome != 'failure'"
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: gh pr review "$PR_NUMBER" --approve --body "No outstanding issues."
+          # `approve` (nothing left for the maintainer to judge) comes from
+          # decideReviewOutcome — the single source of truth for the outcome
+          # table, see shared.ts. When it holds, the approval itself carries
+          # the findings as its body instead of a separate plain comment, so
+          # the summary and the "approved" verdict land as one timeline
+          # entry. Falls back to a plain comment if the review call fails
+          # (e.g. a branch-protection self-review rule).
+          if [ "$APPROVE" = "true" ] && [ "$PUSH_OUTCOME" != "failure" ]; then
+            gh pr review "$PR_NUMBER" --approve --body-file /tmp/review-comment.md \
+              || gh pr comment "$PR_NUMBER" --body-file /tmp/review-comment.md
+          else
+            gh pr comment "$PR_NUMBER" --body-file /tmp/review-comment.md
+          fi
