@@ -1,0 +1,24 @@
+.github/workflows/agent-review.yml
+  s_6cefa51d6e8220::t_c45af515982574 144,179-192
+  s_6cefa51d6e8220::t_cfa4617ad6ec08 139
+docs/adr/0004-autonomous-agent-pipeline.md
+  s_6cefa51d6e8220::t_f95c2fcea1051f 8
+docs/dev-tools/agent-workflow.md
+  s_6cefa51d6e8220::t_9139f22042aae8 77,83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "482ae7296ee5e6439555103a35344cf67c6c577e",
+  "prompts": {},
+  "sessions": {
+    "s_6cefa51d6e8220": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "41950f54-e9c5-472f-b584-31af672a0a8a",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
