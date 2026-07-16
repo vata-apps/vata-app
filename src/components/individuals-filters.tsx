@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { Chip } from '$components/ui/chip';
 import { Select } from '$components/ui/select';
 import { TextField } from '$components/ui/text-field';
 import { Button } from '$components/ui/button';
@@ -43,8 +42,8 @@ export interface IndividualsFilterToolbarProps {
 /**
  * The People-list filter toolbar. Replaces the permanent left sidebar with a
  * compact horizontal bar above the table: a debounced name search, a sex
- * select, a living-status select, and one dismissible chip per active filter.
- * A Clear-all button appears only while at least one filter is active.
+ * select, and a living-status select. A Clear-all button appears only while
+ * at least one filter is active.
  */
 export function IndividualsFilterToolbar({
   value,
@@ -57,41 +56,6 @@ export function IndividualsFilterToolbar({
   const sexDisplay = value.sex === 'all' ? t('filters.sex.all') : t(`table.sex.${value.sex}`);
   const statusDisplay =
     value.status === 'all' ? t('filters.status.all') : t(`filters.status.${value.status}`);
-
-  const chips: JSX.Element[] = [];
-  if (value.name.trim()) {
-    const label = `${t('filters.name.label')}: ${value.name.trim()}`;
-    chips.push(
-      <Chip
-        key="name"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, name: '' })}
-      />
-    );
-  }
-  if (value.sex !== 'all') {
-    const label = `${t('filters.sex.label')}: ${sexDisplay}`;
-    chips.push(
-      <Chip
-        key="sex"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, sex: 'all' })}
-      />
-    );
-  }
-  if (value.status !== 'all') {
-    const label = `${t('filters.status.label')}: ${statusDisplay}`;
-    chips.push(
-      <Chip
-        key="status"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, status: 'all' })}
-      />
-    );
-  }
 
   return (
     <div
@@ -167,12 +131,6 @@ export function IndividualsFilterToolbar({
           </Select.Portal>
         </Select.Root>
       </div>
-
-      {chips.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
-          {chips}
-        </div>
-      )}
 
       {active && (
         <Button variant="ghost" onClick={() => onChange(DEFAULT_INDIVIDUAL_FILTERS)}>

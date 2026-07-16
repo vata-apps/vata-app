@@ -172,10 +172,6 @@ describe('EventsPage', () => {
     const popup = await screen.findByRole('listbox');
     await user.click(within(popup).getByRole('option', { name: 'Marriage' }));
 
-    await waitFor(() => {
-      expect(screen.getByText('Type: Marriage')).toBeInTheDocument();
-    });
-
     const table = await screen.findByRole('table', { name: 'Events' });
     await waitFor(() => {
       expect(within(table).getAllByRole('row')).toHaveLength(2); // header + 1 data row
@@ -199,10 +195,6 @@ describe('EventsPage', () => {
     await user.click(placeSelect);
     const popup = await screen.findByRole('listbox');
     await user.click(within(popup).getByRole('option', { name: 'Boston' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Place: Boston')).toBeInTheDocument();
-    });
 
     const table = await screen.findByRole('table', { name: 'Events' });
     await waitFor(() => {
@@ -232,7 +224,7 @@ describe('EventsPage', () => {
     await user.click(within(typePopup).getByRole('option', { name: 'Marriage' }));
 
     await waitFor(() => {
-      expect(screen.getByText('Type: Marriage')).toBeInTheDocument();
+      expect(typeSelect).toHaveTextContent('Marriage');
     });
 
     const placeSelect = screen.getByRole('combobox', { name: 'Place' });

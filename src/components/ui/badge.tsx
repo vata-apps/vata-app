@@ -1,8 +1,7 @@
 /**
  * Badge primitive — a compact, non-interactive status token.
  *
- * Use for category tags, role labels, and other read-only pills. For
- * dismissible filter tokens, use {@link Chip} instead.
+ * Use for category tags, role labels, and other read-only pills.
  */
 import * as React from 'react';
 

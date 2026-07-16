@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 
-import { Chip } from '$components/ui/chip';
 import { Select } from '$components/ui/select';
 import { TextField } from '$components/ui/text-field';
 import { Button } from '$components/ui/button';
@@ -48,9 +47,9 @@ export interface PlacesFilterToolbarProps {
 
 /**
  * The Places-list filter toolbar. Replaces the permanent left sidebar with a
- * compact horizontal bar above the table: a debounced name search, a place-type
- * select, and one dismissible chip per active filter. A Clear-all button
- * appears only while at least one filter is active.
+ * compact horizontal bar above the table: a debounced name search and a
+ * place-type select. A Clear-all button appears only while at least one
+ * filter is active.
  */
 export function PlacesFilterToolbar({
   value,
@@ -63,30 +62,6 @@ export function PlacesFilterToolbar({
 
   const typeOption = types.find((option) => option.value === value.type);
   const typeDisplay = typeOption?.label ?? t('filters.type.all');
-
-  const chips: JSX.Element[] = [];
-  if (value.name.trim()) {
-    const label = `${t('filters.name.label')}: ${value.name.trim()}`;
-    chips.push(
-      <Chip
-        key="name"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, name: '' })}
-      />
-    );
-  }
-  if (value.type !== 'all') {
-    const label = `${t('filters.type.label')}: ${typeDisplay}`;
-    chips.push(
-      <Chip
-        key="type"
-        label={label}
-        removeAriaLabel={tCommon('filters.removeAria', { label })}
-        onRemove={() => onChange({ ...value, type: 'all' })}
-      />
-    );
-  }
 
   return (
     <div
@@ -137,12 +112,6 @@ export function PlacesFilterToolbar({
           </Select.Portal>
         </Select.Root>
       </div>
-
-      {chips.length > 0 && (
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
-          {chips}
-        </div>
-      )}
 
       {active && (
         <Button variant="ghost" onClick={() => onChange(DEFAULT_PLACE_FILTERS)}>

@@ -199,15 +199,11 @@ describe('PersonEventsPage', () => {
     const allRadio = within(scopeGroup).getByRole('radio', { name: 'All roles' });
     await user.click(allRadio);
 
-    await waitFor(() => {
-      expect(screen.getByText('Scope: All roles')).toBeInTheDocument();
-    });
-
     const rows = await getBodyRows();
     expect(rows).toHaveLength(2);
   });
 
-  it('resets the scope to personal with the chip remove button', async () => {
+  it('resets the scope to personal by selecting Personal again', async () => {
     const user = userEvent.setup();
     mockedGetPersonEvents.mockResolvedValue([
       personEvent({ id: 'E-1', scope: 'principal', eventType: BIRTH_TYPE }),
@@ -225,20 +221,14 @@ describe('PersonEventsPage', () => {
     const scopeGroup = screen.getByRole('radiogroup', { name: 'Scope' });
     await user.click(within(scopeGroup).getByRole('radio', { name: 'Principal' }));
 
-    await waitFor(() => {
-      expect(screen.getByText('Scope: Principal')).toBeInTheDocument();
-    });
-
     let rows = await getBodyRows();
     expect(rows).toHaveLength(1);
 
-    await user.click(screen.getByRole('button', { name: /Remove Scope: Principal/ }));
+    await user.click(within(scopeGroup).getByRole('radio', { name: 'Personal' }));
 
-    await waitFor(() => {
-      expect(screen.queryByText('Scope: Principal')).not.toBeInTheDocument();
+    await waitFor(async () => {
+      rows = await getBodyRows();
+      expect(rows).toHaveLength(2);
     });
-
-    rows = await getBodyRows();
-    expect(rows).toHaveLength(2);
   });
 });

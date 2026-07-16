@@ -153,10 +153,6 @@ describe('PlacesPage', () => {
     const search = screen.getByRole('textbox', { name: 'Name' });
     await user.type(search, 'Spring');
 
-    await waitFor(() => {
-      expect(screen.getByText('Name: Spring')).toBeInTheDocument();
-    });
-
     const table = await screen.findByRole('table', { name: 'Places' });
     await waitFor(() => {
       expect(within(table).getAllByRole('row')).toHaveLength(3); // header + 2 data rows
@@ -179,10 +175,6 @@ describe('PlacesPage', () => {
     await user.click(typeSelect);
     const popup = await screen.findByRole('listbox');
     await user.click(within(popup).getByRole('option', { name: 'CTRY' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Type: CTRY')).toBeInTheDocument();
-    });
 
     const table = await screen.findByRole('table', { name: 'Places' });
     await waitFor(() => {

@@ -9,8 +9,8 @@
       "placeholder": "Rechercher par nom"
     },
     "sex": {
-      "label": "Sexe",
-      "all": "Tous les sexes"
+      "label": "Genre",
+      "all": "Tous les genres"
     },
     "status": {
       "label": "Statut",
@@ -21,7 +21,7 @@
   },
   "table": {
     "columns": {
-      "sex": "Sexe",
+      "sex": "Genre",
       "surname": "Nom",
       "firstName": "Prénom",
       "birthDate": "Date de naissance",
@@ -54,7 +54,7 @@
       "otherNames_other": "{{count}} autres noms"
     },
     "vital": {
-      "sex": "Sexe"
+      "sex": "Genre"
     },
     "placesLived": {
       "title": "Lieux",
@@ -173,7 +173,7 @@
       "nickname": "Surnom"
     },
     "sex": {
-      "label": "Sexe"
+      "label": "Genre"
     },
     "status": {
       "label": "Statut",
