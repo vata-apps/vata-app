@@ -1,0 +1,37 @@
+.sandcastle/shared.test.ts
+  s_6cefa51d6e8220::t_92bff27c645883 27,40,52,64,76,88,100,112,124,136,148
+docs/adr/0004-autonomous-agent-pipeline.md
+  s_6cefa51d6e8220::t_bd58db547eb05a 8
+.github/workflows/agent-review.yml
+  s_6cefa51d6e8220::t_d88d8956649667 180-185,188
+  s_6cefa51d6e8220::t_68a58e0498dd6f 140
+  s_6cefa51d6e8220::t_fe3049bf1f76ea 129
+  s_6cefa51d6e8220::t_05830b391a2809 133-138
+  s_6cefa51d6e8220::t_17ba6efa657eee 154,156
+  s_6cefa51d6e8220::t_62d5042fee0d48 179,186-187,189-192
+.sandcastle/prompts/review-analyze.md
+  s_6cefa51d6e8220::t_45f6f282235b39 74
+docs/dev-tools/agent-workflow.md
+  s_6cefa51d6e8220::t_377fb919c422c4 49-50
+  s_6cefa51d6e8220::t_fe164735350701 77-79,83-84,89
+.sandcastle/shared.ts
+  s_6cefa51d6e8220::t_11cc40d8dcbaaf 145-152,159-160,171-177,188,192,196,200,204
+.sandcastle/review.ts
+  s_6cefa51d6e8220::t_f36680cfc51c38 184
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.14",
+  "base_commit_sha": "fb8ccf49581dfca6201d353aa418ef0b199c5269",
+  "prompts": {},
+  "sessions": {
+    "s_6cefa51d6e8220": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "41950f54-e9c5-472f-b584-31af672a0a8a",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
