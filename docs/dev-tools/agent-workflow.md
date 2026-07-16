@@ -1,6 +1,6 @@
 # Agent Workflow
 
-Operational guide for the autonomous-execution workflows. For the design rationale, label schema, cost bounds, and trade-offs, read [ADR-008](../adr/0008-autonomous-agent-execution.md) (issue → PR), [ADR-016](../adr/0016-autonomous-pr-review.md) (autonomous PR review), [ADR-017](../adr/0017-revert-to-claude-code.md) (provider and model policy), and [ADR-018](../adr/0018-two-stage-review.md) (two-stage review execution) first — this page does not restate them.
+Operational guide for the autonomous-execution workflows. For the design rationale, label schema, cost bounds, and trade-offs, read [ADR-008](../adr/0008-autonomous-agent-execution.md) (issue → PR) and [ADR-016](../adr/0016-autonomous-pr-review.md) (two-stage autonomous PR review) first — this page does not restate them.
 
 ## When to use it
 
@@ -23,7 +23,7 @@ Full schema and transition rules are in [ADR-008 → Label-based outcome trackin
 - You add **`agent:ready`** to trigger a run.
 - The workflow swaps labels to reflect outcome: **`agent:running`** → **`agent:success`** / **`agent:partial`** / **`agent:failed`**.
 
-There is no escalation label anymore ([ADR-017](../adr/0017-revert-to-claude-code.md)): the author always runs on Sonnet, the reviewer always runs on Opus.
+There is no escalation label anymore: the author always runs on Sonnet, the reviewer always runs on Opus.
 
 ## End-to-end flow
 
@@ -66,7 +66,7 @@ The workflow does not auto-retry. Every run is intentional and paid for.
 
 ## Autonomous review
 
-Every open, non-draft agent PR is automatically reviewed by `vata-reviewer[bot]`, in two stages ([ADR-018](../adr/0018-two-stage-review.md)): Opus analyzes the PR diff against the original issue spec and `CLAUDE.md` and decides what needs fixing (read-only, no edits); Sonnet then implements exactly those fixes — it does not re-review or challenge Opus's judgment. Anything subjective or uncertain is flagged for you to judge instead of auto-fixed.
+Every open, non-draft agent PR is automatically reviewed by `vata-reviewer[bot]`, in two stages ([ADR-016](../adr/0016-autonomous-pr-review.md)): Opus analyzes the PR diff against the original issue spec and `CLAUDE.md` and decides what needs fixing (read-only, no edits); Sonnet then implements exactly those fixes — it does not re-review or challenge Opus's judgment. Anything subjective or uncertain is flagged for you to judge instead of auto-fixed.
 
 How it works:
 

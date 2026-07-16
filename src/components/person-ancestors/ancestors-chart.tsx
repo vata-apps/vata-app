@@ -53,8 +53,8 @@ function AncestorCard({ node, treeId }: { node: AncestorChartNode; treeId: strin
  * the subject at the left opening rightward. Layout (`d3-hierarchy`'s
  * tidy-tree, see {@link buildAncestorsChart}) and rendering are split: only
  * the connector lines are raw SVG themed with Radix CSS custom properties —
- * the same carve-out precedent as the Places map's Leaflet markers (ADR-0012,
- * ADR-0013) — while every card is real `PersonRef`/`IndividualLink` DOM
+ * a scoped exception, same as the Places map's Leaflet markers — while every
+ * card is real `PersonRef`/`IndividualLink` DOM
  * injected via `<foreignObject>`, so avatar, name, focus, and relation-jump
  * navigation are the reused Radix components, not a redrawn approximation.
  */

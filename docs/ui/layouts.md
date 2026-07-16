@@ -22,6 +22,6 @@ The two layouts are the visual expression of the **two app contexts** (outside p
 
 **Pages render full-width by default.** The shell provides only the header and a full-width body — no fixed side panels. A page that needs its own panels (a list rail, a contextual detail pane) builds them inside its own body when the need is real, rather than inheriting an always-present shared scaffold. The entity sections (People, Families, Events, Places) render their list as a full-width `Table` directly in the page body, and a row click opens that entity's detail route.
 
-## Forms Open in Separate Windows
+## Forms Open as Modals
 
-All create/edit operations open in a **separate native Tauri window** — no header, no side panels, only the form content. This is a non-obvious platform decision: it lets the user keep a form open alongside the main shell (or several forms at once) instead of blocking the view with a modal.
+All create/edit operations open as an **in-window modal** (a `Dialog` organism from `src/components/ui/dialog`, e.g. `PersonEditorDialog`) — not a separate section of the page and not a separate OS window. The page composes the dialog via `open` / `onOpenChange` state; the dialog provides its own focus trap, Escape handling, and ARIA.

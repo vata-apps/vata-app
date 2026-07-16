@@ -57,22 +57,7 @@ Don't pass `--repo` — `gh` infers it from the current working directory's git 
 
 ### 4. Pick labels
 
-Vata's labels are **product-shaped, not codebase-shaped** — each one names a user-facing concept, not a folder of code. Select **0 to 2** labels whose name or description clearly matches the item. Current taxonomy and how to read them:
-
-| Label             | Apply when the idea touches…                                           |
-| ----------------- | ---------------------------------------------------------------------- |
-| `individuals`     | People, names, lifespan formatting                                     |
-| `families`        | Spouse / parent / child links, pedigree                                |
-| `events`          | Life events, dates, witnesses                                          |
-| `places`          | Geography, place hierarchy, external place lookup                      |
-| `sources`         | Sources, citations, evidence linking, repositories                     |
-| `media`           | Photos, scans, documents, image attachments and editing                |
-| `gedcom`          | GEDCOM 5.5.1 import / export, interoperability                         |
-| `data-quality`    | Completion tracking, duplicate detection, validation                   |
-| `tree-management` | Creating / opening / importing trees, storage location                 |
-| `design-system`   | Radix Themes, brand tokens, app-theme provider, UI organisms           |
-| `infra`           | CI, scripts, tooling, repo config — non-app changes                    |
-| `monetization`    | Paid-tier ideas (Vata is open source and free; these are aspirational) |
+Vata's labels are **product-shaped, not codebase-shaped** — each one names a user-facing concept, not a folder of code. Select **0 to 2** labels whose name or description clearly matches the item. Canonical taxonomy: [docs/dev-tools/issue-tracking.md](../../../docs/dev-tools/issue-tracking.md); the live `gh label list` from step 3 has the exact current names/descriptions.
 
 Combine two only when the issue is genuinely about the intersection (e.g., "tag people on photos" → `media` + `individuals`). If the idea is a Tauri-shell change, a generic refactor, or a small typo with no clear product surface, **pass no labels**. Do not stretch a match.
 

@@ -23,18 +23,9 @@ Apply this skill when writing or reviewing any SQLite-related code or documentat
 
 ## 1. Connection Initialization PRAGMAs
 
-Every database connection **must** execute these PRAGMAs immediately after opening (check `src/db/connection.ts` for the current implementation):
+Every database connection **must** apply, immediately after opening and before any transaction: WAL journal mode, `synchronous = NORMAL`, `foreign_keys = ON` (critical — SQLite disables this by default), a `busy_timeout`, a page `cache_size`, and `temp_store = MEMORY`. PRAGMAs do not persist across connections; set them on every `Database.load()`.
 
-```sql
-PRAGMA journal_mode = WAL;        -- Write-Ahead Logging; better concurrency and write performance
-PRAGMA synchronous = NORMAL;      -- Safe with WAL; good durability/performance balance
-PRAGMA foreign_keys = ON;          -- CRITICAL: SQLite disables foreign keys by default
-PRAGMA busy_timeout = 5000;       -- Wait up to 5s on lock instead of immediate failure
-PRAGMA cache_size = -20000;       -- 20MB page cache (negative value = KB)
-PRAGMA temp_store = MEMORY;       -- Temp tables and indexes in memory
-```
-
-Execute PRAGMAs **before** any transaction. They do not persist across connections; set them on every `Database.load()`.
+**`src/db/connection.ts` is the source of truth for the exact values** — read it rather than trusting a snapshot here, which would drift the moment a value is tuned.
 
 ---
 
@@ -59,7 +50,7 @@ Execute PRAGMAs **before** any transaction. They do not persist across connectio
 - **Complex queries**: Use `EXPLAIN QUERY PLAN` to verify index usage.
 - **N+1 avoidance**: Prefer a single query with `JOIN` over multiple sequential queries.
 - **Pagination**: Use `LIMIT` and `OFFSET` (or keyset) for list queries.
-- **Batch inserts**: Perform multiple inserts inside one transaction, not one transaction per row.
+- **Batch inserts**: Build a single multi-row `INSERT INTO t (a, b) VALUES ($1, $2), ($3, $4), ...` statement (one `execute()` call) rather than one `execute()` per row. Do not wrap N separate insert calls in `BEGIN`/`COMMIT` — see §3's connection-pooling caveat.
 
 ---
 

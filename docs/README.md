@@ -16,17 +16,10 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-002: Frontend Stack](./adr/0002-frontend-stack.md) — React, TypeScript, Vite, TanStack, Zustand
 - [ADR-003: Database Architecture](./adr/0003-database-architecture.md) — Dual DB, string IDs, layer separation
 - [ADR-004: GEDCOM Libraries (in-app)](./adr/0004-gedcom-libraries.md) — gedcom-parser and gedcom-date as in-app modules
-- [ADR-005: UI Strategy](./adr/0005-ui-strategy.md) — Radix + Tailwind v4 + tailwind-variants (superseded by ADR-007)
-- [ADR-006: Import/Export](./adr/0006-import-export.md) — Two-phase import, round-trip export
-- [ADR-007: UI Foundation](./adr/0007-adopt-radix-themes.md) — Radix Themes, dropping Tailwind + the wrapper layer
-- [ADR-008: Autonomous Agent Execution](./adr/0008-autonomous-agent-execution.md) — Sandcastle on GitHub Actions, label-triggered (provider superseded by ADR-017)
-- [ADR-009: Agent Addresses PR Review Feedback](./adr/0009-agent-review-feedback.md) — review-triggered agent loop on agent PRs (superseded by ADR-016)
-- [ADR-015: Migration to OpenCode Go](./adr/0015-migration-to-opencode-go.md) — replaces Anthropic API with OpenCode Go subscription (superseded by ADR-017)
-- [ADR-016: Autonomous PR Review Agent](./adr/0016-autonomous-pr-review.md) — automatic review of agent PRs by a second bot identity (model choice superseded by ADR-017; execution strategy superseded by ADR-018)
-- [ADR-017: Revert to Claude Code](./adr/0017-revert-to-claude-code.md) — back to the Anthropic API, fixed Sonnet-authors/Opus-reviews model split, drops the escalate label
-- [ADR-018: Two-Stage PR Review](./adr/0018-two-stage-review.md) — Opus analyzes and decides what to fix (read-only), Sonnet implements the fixes verbatim; stage 2 skipped when there's nothing to fix
-- [ADR-010: Pure Radix Themes](./adr/0010-pure-radix-themes.md) — Drop brand palette, custom fonts, motion, and scoped CSS (supersedes parts of ADR-007)
+- [ADR-008: Autonomous Agent Execution](./adr/0008-autonomous-agent-execution.md) — Sandcastle on GitHub Actions, label-triggered, Claude Code/Sonnet
 - [ADR-011: Full-Width In-Tree Shell](./adr/0011-full-width-shell.md) — Pages own their panels; removes the three-column scaffold and four entity sidebars
+- [ADR-014: Headless UI Foundation](./adr/0014-headless-baseui-vanilla-extract.md) — Base UI + Vanilla Extract, replacing Radix Themes
+- [ADR-016: Autonomous PR Review Agent](./adr/0016-autonomous-pr-review.md) — two-stage review, Opus analyzes / Sonnet fixes
 
 ## Architecture
 
@@ -43,7 +36,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 
 ## User Interface
 
-- [Design System](./ui/design-system.md) — Radix Themes foundation, brand tokens, design principles, accessibility
+- [Design System](./ui/design-system.md) — Base UI + Vanilla Extract foundation, brand tokens, design principles, accessibility
 - [Layouts](./ui/layouts.md) — Layout modes
 - Screens: [Home](./ui/screens/home.md) · [Tree View](./ui/screens/tree-view.md) · [Individual View](./ui/screens/individual-view.md) · [Family View](./ui/screens/family-view.md)
 

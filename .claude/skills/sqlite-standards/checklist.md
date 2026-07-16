@@ -4,19 +4,18 @@ Use this checklist when reviewing SQLite code or documentation.
 
 ## Connection
 
-- [ ] PRAGMAs executed on every connection: `journal_mode=WAL`, `synchronous=NORMAL`, `foreign_keys=ON`, `busy_timeout=5000`, `cache_size=-20000`, `temp_store=MEMORY`
+- [ ] PRAGMAs (WAL, `synchronous=NORMAL`, `foreign_keys=ON`, busy timeout, cache size, `temp_store=MEMORY`) match `src/db/connection.ts` — see SKILL.md §1
 - [ ] PRAGMAs run before any transaction
 
 ## Queries
 
 - [ ] No `SELECT *`; columns listed explicitly
 - [ ] All queries parameterized (`$1`, `$2`); no string interpolation
-- [ ] Multi-statement writes wrapped in `BEGIN TRANSACTION` / `COMMIT` / `ROLLBACK`
-- [ ] On error, `ROLLBACK` executed before rethrowing
+- [ ] Multi-statement writes run as independent, individually-committed statements — **not** wrapped in `BEGIN TRANSACTION` / `COMMIT` / `SAVEPOINT` across separate calls (plugin-sql's per-call connection pooling makes this unreliable; see SKILL.md §3)
+- [ ] Batch inserts use a single multi-row `INSERT ... VALUES (...), (...)` statement, not N calls wrapped in a transaction
 - [ ] No N+1 patterns; use JOINs or batch queries where appropriate
 - [ ] List queries use `LIMIT` (and `OFFSET` when paginating)
 - [ ] Existence checks use `EXISTS`, not `COUNT(*) > 0`
-- [ ] Batch inserts in a single transaction
 
 ## Schema
 

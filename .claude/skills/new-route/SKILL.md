@@ -39,10 +39,10 @@ For nested routes with a dynamic ID (e.g., `/tree/$treeId/entity/$entityId`):
 
 ## 2. Page Component
 
-Location: `src/pages/<Entity>Page.tsx`. **Copy the shape of an existing page** — `src/pages/IndividualsPage.tsx` is the canonical example. Invariants:
+Location: `src/pages/<Entity>Page.tsx`. **Copy the shape of an existing page** — `src/pages/IndividualsPage.tsx` is the canonical example (fully migrated to the current foundation). Invariants:
 
 - Receives `{ treeId }` (list page) or `{ treeId, entityId }` (detail page); returns `JSX.Element`.
-- Built from Radix Themes primitives (`Box`, `Flex`, `Heading`, `Button`, …) — never raw HTML tags for layout.
+- Built from shared primitives in `src/components/ui/` (`Button`, `Typography`, `Icon`, …) — never raw HTML tags for interactive elements. Layout (flex/grid, spacing) is a page-level `<page>.css.ts` styled from `vars.*` (see `src/pages/list-page.css.ts`), not JSX layout-prop components. See [design-system-standards](../design-system-standards/SKILL.md) for the full reuse/compose/new-primitive decision tree.
 - All user-facing text via `useTranslation()` — never hardcode strings (project i18n rule).
 - Data via TanStack Query hooks in `src/hooks/use<Entity>.ts`; handle `isLoading` / `isError`.
 
@@ -52,7 +52,7 @@ Path aliases, the query-key factory, `staleTime`, and naming are cross-cutting r
 
 ### Modal dialogs (create/edit forms)
 
-Modals are standalone organism components in `src/components/trees/` (e.g. `new-tree-modal.tsx`), built on Radix Themes **`Dialog`** (`Dialog.Root` / `Dialog.Content` / `Dialog.Title`) — which provides focus trap, Escape handling, and ARIA out of the box. The page composes one via `open` / `onOpenChange` props. **Never hand-roll** `role="dialog"`, Escape listeners, or focus management.
+Create/edit forms open as `$components/ui/dialog` modals — see [Layouts § Forms Open as Modals](../../../docs/ui/layouts.md) for the mechanism. Follow `src/components/individuals/person-editor-dialog.tsx`, not `src/components/trees/new-tree-modal.tsx` (an older, pre-migration modal still on `@radix-ui/themes`'s `Dialog`).
 
 ### Error handling
 
@@ -65,7 +65,7 @@ Before finishing:
 - [ ] Route file uses `createFileRoute()` with correct path
 - [ ] Page component receives `treeId` (and `entityId` for detail views)
 - [ ] `routeTree.gen.ts` was NOT edited
-- [ ] Page uses Radix Themes primitives + `useTranslation()` (no raw HTML layout, no hardcoded strings)
-- [ ] Modal is a Radix `Dialog` organism composed via `open` / `onOpenChange` (no hand-rolled a11y)
+- [ ] Page uses `src/components/ui/` primitives + a page-level `.css.ts` for layout + `useTranslation()` (no raw HTML layout, no hardcoded strings)
+- [ ] Modal is a `$components/ui/dialog` organism composed via `open` / `onOpenChange` (no hand-rolled a11y)
 - [ ] Query key added to `$/lib/query-keys` if new entity
 - [ ] Also apply the [typescript-standards](../typescript-standards/SKILL.md) checklist

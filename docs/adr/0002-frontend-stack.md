@@ -1,38 +1,17 @@
 # ADR-002: Frontend Stack — React, TypeScript, Vite, TanStack, Zustand
 
-**Status**: Accepted  
+**Status**: Accepted
 **Date**: 2025-02-22
 
-## Context
+**Decision**: **React 18 + TypeScript 5** on **Vite**. **TanStack Query** for DB-backed state (cache + invalidation). **TanStack Router** for type-safe, file-based routing. **Zustand** for lightweight client state (current tree, preferences).
 
-The frontend needs a modern, type-safe UI framework with efficient state management. The app reads/writes to a local SQLite database, so "server state" is actually database state that benefits from caching and invalidation.
+**Alternatives considered**:
 
-## Decision
-
-Use **React 18 + TypeScript 5** with **Vite** as bundler, **TanStack Query** for database state (cache + invalidation), **TanStack Router** for type-safe routing, and **Zustand** for lightweight client state (current tree, preferences).
-
-## Alternatives Considered
-
-- **Vue / Svelte**: Viable but React has the largest ecosystem and best Tauri compatibility documentation.
-- **Redux / MobX**: Heavier state management solutions. Zustand covers our needs with minimal boilerplate.
-- **React Router**: Lacks type-safe params. TanStack Router provides end-to-end type safety.
-- **Webpack**: Slower builds. Vite provides instant startup and fast HMR.
-
-## Consequences
-
-**Positive**:
-- Type safety end-to-end (TypeScript + TanStack Router typed params)
-- Intelligent caching for database reads (TanStack Query)
-- Fast development experience (Vite HMR)
-- Minimal boilerplate for global state (Zustand)
-
-**Negative / Trade-offs**:
-- TanStack Router is newer and has a smaller community than React Router
-- Multiple TanStack dependencies to keep in sync
+- **Vue / Svelte** — viable, but React has the larger ecosystem and better Tauri documentation.
+- **Redux / MobX** — heavier than Zustand for our needs.
+- **React Router** — lacks TanStack Router's end-to-end type-safe params.
+- **Webpack** — slower builds/HMR than Vite.
 
 ## References
 
-- [Tech Stack — React 18](../architecture/tech-stack.md)
-- [Tech Stack — TanStack Query 5](../architecture/tech-stack.md)
-- [Tech Stack — TanStack Router](../architecture/tech-stack.md)
-- [Tech Stack — Zustand 4](../architecture/tech-stack.md)
+- [Tech Stack](../architecture/tech-stack.md)
