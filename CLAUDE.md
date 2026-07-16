@@ -26,6 +26,20 @@ Layers: **UI → Hooks (TanStack Query) → Managers (`src/managers/`) → DB (`
 
 Read [docs/architecture/app-structure.md](./docs/architecture/app-structure.md) before touching routing, the home page, the shell, or DB lifecycle. Domain vocabulary: [CONTEXT.md](./CONTEXT.md).
 
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues (`gh` CLI); external PRs are not a triage surface. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Only `ready-for-agent` maps to an existing label (`agent:ready`); the other four canonical roles have no label in this repo. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
 ## Pitfalls
 
 - `routeTree.gen.ts` is auto-generated — never edit it.
