@@ -19,7 +19,7 @@ import {
 
 // Entry point for the autonomous reviewer, invoked by
 // .github/workflows/agent-review.yml.
-// See docs/adr/0008-autonomous-pr-review.md.
+// See docs/adr/0004-autonomous-agent-pipeline.md.
 //
 // Two stages on the same worktree: Opus analyzes the diff and decides what to
 // fix (read-only), then Sonnet implements exactly what Opus specified without

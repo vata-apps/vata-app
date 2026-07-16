@@ -15,7 +15,7 @@ The two layouts are the visual expression of the **two app contexts** (outside p
 
 ## The In-Tree Shell
 
-`TreeShell` (`src/components/tree-shell.tsx`) frames every route under `/tree/$treeId/...`. Full-width, pages-own-their-panels is a deliberate decision — see [ADR-006](../adr/0006-full-width-shell.md):
+`TreeShell` (`src/components/tree-shell.tsx`) frames every route under `/tree/$treeId/...`:
 
 - A persistent **header** carrying `TreeNav` — a Radix `TabNav` for the tree's sections (Home, People, Families, Events, Places). Each section is an icon-and-label underline tab; the section in view draws the accent underline. The Settings button is pinned to the right of the same bar (a trailing slot), so the underline track spans the full header width. The header does not remount as the user moves between sections, and no separator divides it from the body.
 - A **full-width body** holding the routed page. The page owns the full width; there is no shared left or right panel.

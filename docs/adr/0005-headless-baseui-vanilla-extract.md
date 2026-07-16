@@ -1,4 +1,4 @@
-# ADR-007: Headless UI Foundation — Base UI + Vanilla Extract
+# ADR-005: Headless UI Foundation — Base UI + Vanilla Extract
 
 **Status**: Accepted
 **Date**: 2026-07-11

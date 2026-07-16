@@ -4,7 +4,7 @@ import { noSandbox } from '@ai-hero/sandcastle/sandboxes/no-sandbox';
 import { extractTag, logUsage, MODEL_SONNET, required, verify, writeGithubOutput } from './shared';
 
 // Entry point for the issue → PR flow, invoked by .github/workflows/agent-run.yml.
-// See docs/adr/0005-autonomous-agent-execution.md.
+// See docs/adr/0004-autonomous-agent-pipeline.md.
 
 const issueNumber = required('ISSUE_NUMBER');
 const issueDataPath = process.env.ISSUE_DATA_PATH ?? '/tmp/issue.json';

@@ -82,7 +82,7 @@ docs/api/database-layer.md
 
 docs/ui/design-system.md
   -> docs/ui/layouts.md
-  -> docs/adr/0007-headless-baseui-vanilla-extract.md (the UI-foundation decision)
+  -> docs/adr/0005-headless-baseui-vanilla-extract.md (the UI-foundation decision)
 
 docs/ui/layouts.md
   -> docs/architecture/app-structure.md

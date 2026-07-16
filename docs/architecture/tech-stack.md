@@ -26,8 +26,8 @@ This document is a map of the technologies in use. It does **not** reproduce con
 
 - **Tauri** — chosen over Electron for a smaller bundle, lower RAM, and a strict permission sandbox. The full comparison and decision are in [ADR-001](../adr/0001-desktop-framework.md).
 - **React + TypeScript + Vite + TanStack (Query/Router) + Zustand** — the frontend stack and its rationale are in [ADR-002](../adr/0002-frontend-stack.md).
-- **Base UI + Vanilla Extract** — the UI foundation (migrating screen-by-screen off Radix Themes). Decision and rationale in [ADR-007](../adr/0007-headless-baseui-vanilla-extract.md).
-- **In-app GEDCOM and date modules** — why genealogy-specific logic is owned in-house rather than pulled from npm is in [ADR-004](../adr/0004-gedcom-libraries.md).
+- **Base UI + Vanilla Extract** — the UI foundation (migrating screen-by-screen off Radix Themes). Decision and rationale in [ADR-005](../adr/0005-headless-baseui-vanilla-extract.md).
+- **In-app GEDCOM and date modules** — genealogy-specific logic (parsing, dates) is owned in-house rather than pulled from npm; see `src/gedcom-parser/` and `src/gedcom-date/`.
 
 ## Tauri plugins
 
@@ -41,7 +41,7 @@ The Rust shell is a plugin-composition layer with no custom commands. Plugins us
 
 ## UI foundation
 
-Shared, behavior-owning wrappers live in `src/components/ui/`, built on Base UI for behavior and Vanilla Extract (`src/design/theme.css.ts`) for tokens. Radix Themes still coexists for screens not yet migrated. See [Design System](../ui/design-system.md) and [ADR-007](../adr/0007-headless-baseui-vanilla-extract.md).
+Shared, behavior-owning wrappers live in `src/components/ui/`, built on Base UI for behavior and Vanilla Extract (`src/design/theme.css.ts`) for tokens. Radix Themes still coexists for screens not yet migrated. See [Design System](../ui/design-system.md) and [ADR-005](../adr/0005-headless-baseui-vanilla-extract.md).
 
 ## SQLite and i18n
 

@@ -5,7 +5,7 @@ description: Conventions for vata-app's UI — when to reuse a shared primitive,
 
 # Design System Standards — Vata
 
-Vata's UI foundation is **Base UI** (`@base-ui/react`, behavior) + **Vanilla Extract** (`@vanilla-extract/css`, styling), per [ADR-007](../../../docs/adr/0007-headless-baseui-vanilla-extract.md). Full rationale, token list, and brand details live in [docs/ui/design-system.md](../../../docs/ui/design-system.md) — that doc is the source of truth; this skill only adds review/decision heuristics on top of it.
+Vata's UI foundation is **Base UI** (`@base-ui/react`, behavior) + **Vanilla Extract** (`@vanilla-extract/css`, styling), per [ADR-005](../../../docs/adr/0005-headless-baseui-vanilla-extract.md). Full rationale, token list, and brand details live in [docs/ui/design-system.md](../../../docs/ui/design-system.md) — that doc is the source of truth; this skill only adds review/decision heuristics on top of it.
 
 **Radix Themes still wraps unmigrated screens** during the screen-by-screen migration — check imports before applying either system's rules.
 
