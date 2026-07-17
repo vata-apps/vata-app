@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Box, Flex } from '@radix-ui/themes';
 import { Outlet } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
@@ -7,6 +6,7 @@ import { CenteredMessage } from '$components/centered-message';
 import { PersonEditorDialog } from '$components/individuals/person-editor-dialog';
 import { IdentityHeader, OverviewTabs } from '$components/person-overview/identity-header';
 import { usePersonOverview } from '$hooks/usePersonOverview';
+import * as styles from './individual-layout.css';
 
 interface IndividualLayoutProps {
   treeId: string;
@@ -39,14 +39,12 @@ export function IndividualLayout({ treeId, individualId }: IndividualLayoutProps
   }
 
   return (
-    <Box p="4">
-      <Flex direction="column" gap="4">
-        <IdentityHeader person={data.person} onEdit={() => setEditOpen(true)} />
-        <Flex direction="column" gap="4">
-          <OverviewTabs treeId={treeId} individualId={individualId} />
-          <Outlet />
-        </Flex>
-      </Flex>
+    <div className={styles.page}>
+      <IdentityHeader person={data.person} onEdit={() => setEditOpen(true)} />
+      <div className={styles.body}>
+        <OverviewTabs treeId={treeId} individualId={individualId} />
+        <Outlet />
+      </div>
 
       <PersonEditorDialog
         mode="edit"
@@ -54,6 +52,6 @@ export function IndividualLayout({ treeId, individualId }: IndividualLayoutProps
         open={editOpen}
         onOpenChange={setEditOpen}
       />
-    </Box>
+    </div>
   );
 }

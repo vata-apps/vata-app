@@ -1,18 +1,24 @@
-import { Avatar, Badge, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import { useTranslation } from 'react-i18next';
 
-import { IndividualLink } from './entity-links';
-import type { OverviewMilestone, PersonRefData } from './overview-types';
+import { vars } from '$/design/theme.css';
 import { Icon } from '../icon';
+import { Avatar } from '../ui/avatar';
+import { Badge } from '../ui/badge';
+import { Card } from '../ui/card';
+import * as card from '../ui/card.css';
+import { Typography } from '../ui/typography';
+import { IndividualLink } from './entity-links';
+import * as s from './life-spine.css';
+import type { OverviewMilestone, PersonRefData } from './overview-types';
 import { formatLifeDates, PersonRef } from './person-ref';
 
 /**
  * The life events — a person's key vital events (birth, marriages, death) in
  * one card, each a separator-divided row led by its (possibly imprecise) date
- * in a subtle gray `Badge`.
+ * in a `Badge`.
  *
- * Born and death slots are always rendered — a blank state row with an "Add"
- * button appears when the event is not yet recorded.
+ * Born and death slots are always rendered — a blank state row appears when
+ * the event is not yet recorded.
  */
 export function LifeSpine({
   milestones,
@@ -42,15 +48,14 @@ export function LifeSpine({
 
   return (
     <Card>
-      <Flex direction="column" gap="3">
-        <Heading size="4">{t('overview.milestone.title')}</Heading>
-        <Flex direction="column">
+      <div className={card.stack}>
+        <Typography as="h2" size="15" weight="650">
+          {t('overview.milestone.title')}
+        </Typography>
+        <div className={card.list}>
           {rows.map((row, i) => (
-            <Flex
-              key={row.type === 'milestone' ? row.milestone.id : `missing-${row.kind}`}
-              direction="column"
-            >
-              {i > 0 && <Separator size="4" my="3" />}
+            <div key={row.type === 'milestone' ? row.milestone.id : `missing-${row.kind}`}>
+              {i > 0 && <div className={card.separator} />}
               {row.type === 'milestone' ? (
                 <Milestone milestone={row.milestone} treeId={treeId} />
               ) : (
@@ -58,22 +63,20 @@ export function LifeSpine({
                   label={t(`overview.milestone.missing${row.kind === 'born' ? 'Born' : 'Death'}`)}
                 />
               )}
-            </Flex>
+            </div>
           ))}
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </Card>
   );
 }
 
 function MissingMilestone({ label }: { label: string }): JSX.Element {
   return (
-    <Flex align="center" gap="2">
-      <Icon name="circle" size={14} color="var(--gray-7)" />
-      <Text size="2" color="gray">
-        {label}
-      </Text>
-    </Flex>
+    <div className={s.missingRow}>
+      <Icon name="circle" size={14} color={vars.color.faint} />
+      <Typography tone="muted">{label}</Typography>
+    </div>
   );
 }
 
@@ -82,23 +85,18 @@ function SpouseInline({ spouse, treeId }: { spouse: PersonRefData; treeId: strin
 
   return (
     <IndividualLink treeId={treeId} individualId={spouse.id}>
-      <Flex align="center" gap="2" flexShrink="0">
-        <Avatar
-          src={spouse.imageUrl}
-          radius="full"
-          size="1"
-          variant="soft"
-          fallback={spouse.initials}
-        />
-        <Text size="2" weight="medium">
-          {spouse.name}
-        </Text>
+      <div className={s.spouse}>
+        <Avatar.Root size="sm">
+          <Avatar.Image src={spouse.imageUrl} alt="" />
+          <Avatar.Fallback>{spouse.initials}</Avatar.Fallback>
+        </Avatar.Root>
+        <Typography weight="550">{spouse.name}</Typography>
         {dates && (
-          <Text size="1" color="gray">
+          <Typography size="12.5" tone="faint">
             {dates}
-          </Text>
+          </Typography>
         )}
-      </Flex>
+      </div>
     </IndividualLink>
   );
 }
@@ -117,42 +115,35 @@ function Milestone({
   const children = milestone.children ?? [];
 
   return (
-    <Flex direction="column" gap="2">
-      <Flex align="center" gap="3" wrap="wrap">
-        <Badge variant="soft" color="gray" radius="full" size="2">
-          {milestone.date}
-        </Badge>
-        <Text size="3" weight="medium">
+    <div className={s.row}>
+      <div className={s.head}>
+        <Badge>{milestone.date}</Badge>
+        <Typography size="15" weight="550">
           {title}
-        </Text>
+        </Typography>
         {milestone.spouse && <SpouseInline spouse={milestone.spouse} treeId={treeId} />}
-        <Flex flexGrow="1" />
-        <Flex align="center" gap="1" flexShrink="0">
-          <Icon name="map-pin" size={14} color="var(--gray-9)" />
-          <Text size="2" color="gray">
-            {milestone.place}
-          </Text>
-        </Flex>
-      </Flex>
+        <div className={s.spacer} />
+        <div className={s.placeInline}>
+          <Icon name="map-pin" size={14} color={vars.color.muted} />
+          <Typography tone="muted">{milestone.place}</Typography>
+        </div>
+      </div>
 
       {children.length > 0 && (
-        // Nesting cue: a vertical `Separator` spine + indent marks the children
-        // as subordinate to their event, so the lighter `subtle` refs read as a
-        // detail of the milestone rather than a peer block.
-        <Flex ml="2" gap="3" align="stretch">
-          <Separator orientation="vertical" size="4" style={{ height: 'auto' }} />
-          <Flex direction="column" gap="2">
-            <Text size="1" color="gray">
+        <div className={s.childrenGroup}>
+          <div className={s.childrenSpine} />
+          <div className={s.childrenColumn}>
+            <Typography size="12.5" tone="muted">
               {t('overview.milestone.children')}
-            </Text>
-            <Flex gap="3" wrap="wrap">
+            </Typography>
+            <div className={s.childrenList}>
               {children.map((child) => (
                 <PersonRef key={child.id} person={child} variant="subtle" treeId={treeId} />
               ))}
-            </Flex>
-          </Flex>
-        </Flex>
+            </div>
+          </div>
+        </div>
       )}
-    </Flex>
+    </div>
   );
 }

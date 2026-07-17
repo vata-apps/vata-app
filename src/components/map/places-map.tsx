@@ -1,9 +1,10 @@
 import 'leaflet/dist/leaflet.css';
 
-import { useThemeContext } from '@radix-ui/themes';
 import * as L from 'leaflet';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { MapContainer, Marker, TileLayer, Tooltip, useMap } from 'react-leaflet';
+
+import { vars } from '$/design/theme.css';
 
 /** A geocoded point to plot on the map — a place lived-in, a place's own location, etc. */
 export interface MapPoint {
@@ -29,17 +30,40 @@ const TILE_ATTRIBUTION =
 
 const MARKER_ICON = L.divIcon({
   className: 'vata-place-marker',
-  html: '<span style="display:block;width:14px;height:14px;border-radius:9999px;background:var(--accent-9);border:2px solid var(--color-panel-solid);box-shadow:0 0 0 1px var(--gray-a6);"></span>',
+  html: `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:${vars.color.accent};border:2px solid ${vars.color.panel};box-shadow:0 0 0 1px ${vars.color.borderStrong};"></span>`,
   iconSize: [14, 14],
   iconAnchor: [7, 7],
 });
 
 const HIGHLIGHTED_MARKER_ICON = L.divIcon({
   className: 'vata-place-marker vata-place-marker--highlighted',
-  html: '<span style="display:block;width:20px;height:20px;border-radius:9999px;background:var(--accent-9);border:2px solid var(--color-panel-solid);box-shadow:0 0 0 1px var(--gray-a6), 0 0 0 5px var(--accent-a5);"></span>',
+  html: `<span style="display:block;width:20px;height:20px;border-radius:9999px;background:${vars.color.accent};border:2px solid ${vars.color.panel};box-shadow:0 0 0 1px ${vars.color.borderStrong}, 0 0 0 5px ${vars.color.accentBorder};"></span>`,
   iconSize: [20, 20],
   iconAnchor: [10, 10],
 });
+
+/**
+ * Reads the light/dark appearance from the `data-theme` attribute `AppTheme`
+ * sets on `<html>`, staying in sync with a `MutationObserver` — the same
+ * bridge Base UI + Vanilla Extract surfaces use instead of Radix's
+ * `useThemeContext()`.
+ */
+function useResolvedTheme(): 'light' | 'dark' {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'
+  );
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const observer = new MutationObserver(() => {
+      setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
+    });
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+
+  return theme;
+}
 
 /**
  * Fits the map view to the given points, with padding. A single point still
@@ -69,7 +93,7 @@ function FitBounds({ points }: { points: MapPoint[] }): null {
  * the Place detail page).
  */
 export function PlacesMap({ points, highlightedId }: PlacesMapProps): JSX.Element {
-  const { appearance } = useThemeContext();
+  const appearance = useResolvedTheme();
   const tileUrl = appearance === 'dark' ? TILE_URLS.dark : TILE_URLS.light;
 
   return (
@@ -77,7 +101,7 @@ export function PlacesMap({ points, highlightedId }: PlacesMapProps): JSX.Elemen
       center={[0, 0]}
       zoom={2}
       scrollWheelZoom={false}
-      style={{ height: 280, width: '100%', borderRadius: 'var(--radius-3)' }}
+      style={{ height: 280, width: '100%', borderRadius: vars.radius.base }}
     >
       <TileLayer url={tileUrl} attribution={TILE_ATTRIBUTION} subdomains="abcd" />
       <FitBounds points={points} />
