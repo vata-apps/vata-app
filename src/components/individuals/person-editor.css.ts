@@ -152,17 +152,8 @@ export const familyCard = style({
 });
 /** The first family sits below the Parents rows and wants a clearer break from them. */
 export const familyCardFirst = style({ marginTop: 16 });
-export const sectitle = style({
-  fontSize: vars.text['2xs'],
-  letterSpacing: '.09em',
-  textTransform: 'uppercase',
-  color: vars.color.text.muted,
-  fontWeight: vars.weight.strong,
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  marginBottom: 12,
-});
+/** Spacing for a {@link Caption} used as a form-section title. */
+export const sectionCaption = style({ marginBottom: 12 });
 export const subhead = style({
   fontSize: vars.text.xs,
   fontWeight: vars.weight.strong,

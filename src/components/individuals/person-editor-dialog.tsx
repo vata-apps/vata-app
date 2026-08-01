@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '$components/ui/button';
+import { Caption } from '$components/ui/caption';
 import { Dialog } from '$components/ui/dialog';
 import { Field } from '$components/ui/field';
 import { IconButton } from '$components/ui/icon-button';
@@ -800,7 +801,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                     {/* Left column: names, life events, notes */}
                     <div className={s.col}>
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sections.names')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sections.names')}
+                        </Caption>
                         <div className={s.fgridC2}>
                           <Field
                             label={t('personEditor.fields.givenNames')}
@@ -912,7 +915,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                       </div>
 
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sections.lifeEvents')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sections.lifeEvents')}
+                        </Caption>
                         <div className={s.eventlist}>
                           {timelineEvents.map((row) => (
                             <EventDateRow
@@ -978,7 +983,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                       </div>
 
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sections.notes')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sections.notes')}
+                        </Caption>
                         <TextField
                           multiline
                           aria-label={t('personEditor.sections.notes')}
@@ -992,7 +999,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                     {/* Right column: sex, relations */}
                     <div className={s.col}>
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sex.label')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sex.label')}
+                        </Caption>
                         <SegmentedControl
                           aria-label={t('personEditor.sex.label')}
                           value={form.gender}
@@ -1006,7 +1015,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                       </div>
 
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sections.relations')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sections.relations')}
+                        </Caption>
 
                         <div className={s.subhead}>{t('overview.parents.title')}</div>
                         <div className={s.relrow2}>
