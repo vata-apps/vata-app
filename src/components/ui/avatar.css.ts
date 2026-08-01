@@ -19,7 +19,7 @@ export const root = recipe({
     overflow: 'hidden',
     flexShrink: 0,
     fontFamily: vars.font.sans,
-    fontWeight: 700,
+    fontWeight: vars.weight.semibold,
   }),
   variants: {
     size: {
@@ -28,14 +28,21 @@ export const root = recipe({
       lg: primitive({ width: 48, height: 48, fontSize: 18 }),
     },
     tone: {
-      accent: primitive({ background: vars.color.accent, color: vars.color.accentText }),
-      accentSoft: primitive({ background: vars.color.accentSoft, color: vars.color.accent }),
-      neutral: primitive({ background: vars.color.subtle, color: vars.color.muted }),
+      /** Tinted brand fill — the default reference to a person. */
+      brand: primitive({ background: vars.color.brand.subtleBg, color: vars.color.brand.hover }),
+      /** Muted gray — subordinate/secondary references. */
+      neutral: primitive({ background: vars.color.surface.sunken, color: vars.color.text.muted }),
+      /** Dashed outline — a draft or not-yet-linked person. */
+      outline: primitive({
+        background: 'transparent',
+        border: `1px dashed ${vars.color.border.strong}`,
+        color: vars.color.text.subtle,
+      }),
     },
   },
   defaultVariants: {
     size: 'md',
-    tone: 'accentSoft',
+    tone: 'brand',
   },
 });
 

@@ -1,29 +1,30 @@
 /**
  * IconButton primitive styles — a square, icon-only button used for compact
- * actions such as removing a row or closing a dialog.
- *
- * Lifted from the Person editor's `iconbtn` atom; the hover turns danger-red
- * so the control reads as destructive/negative without taking up the width of
- * a text button.
+ * actions such as editing a record, closing a dialog, or removing a row.
  */
-import { primitiveStyle } from '$/design/primitive-layer';
+import { primitiveStyle, transitionFast } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
 
 export const iconButton = primitiveStyle({
-  width: 30,
-  height: 30,
-  borderRadius: 6,
+  width: 32,
+  height: 32,
+  borderRadius: vars.radius.sm,
   border: '1px solid transparent',
   background: 'transparent',
-  color: vars.color.faint,
+  color: vars.color.text.muted,
   cursor: 'pointer',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   flex: '0 0 auto',
+  transition: transitionFast('background', 'color'),
   selectors: {
-    '&:hover': { background: vars.color.subtle, color: vars.color.danger },
+    '&:hover:not(:disabled)': {
+      background: vars.color.surface.hover,
+      color: vars.color.text.strong,
+    },
+    '&:active:not(:disabled)': { background: vars.color.surface.active },
     '&:focus-visible': focusRing,
-    '&:disabled': { cursor: 'default', opacity: 0.5 },
+    '&:disabled': { cursor: 'default', opacity: 0.4 },
   },
 });

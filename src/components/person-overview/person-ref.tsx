@@ -6,11 +6,11 @@ import * as s from './person-ref.css';
 
 type PersonRefVariant = 'normal' | 'subtle' | 'focal';
 
-/** Name color per variant: quiet for subordinate refs, accent for the focal (self) one. */
-const NAME_TONE: Record<PersonRefVariant, 'text' | 'muted' | 'accent'> = {
-  normal: 'text',
+/** Name color per variant: quiet for subordinate refs, brand for the focal (self) one. */
+const NAME_TONE: Record<PersonRefVariant, 'body' | 'muted' | 'brand'> = {
+  normal: 'body',
   subtle: 'muted',
-  focal: 'accent',
+  focal: 'brand',
 };
 
 interface PersonRefProps {
@@ -79,20 +79,20 @@ export function PersonRef({
 
   const content = (
     <div className={dense ? s.rowDense : s.row}>
-      <Avatar.Root size={dense ? 'sm' : 'md'} tone={subtle ? 'neutral' : 'accent'}>
+      <Avatar.Root size={dense ? 'sm' : 'md'} tone={subtle ? 'neutral' : 'brand'}>
         <Avatar.Image src={person.imageUrl} alt="" />
         <Avatar.Fallback>{person.initials}</Avatar.Fallback>
       </Avatar.Root>
       <div className={dense ? s.bodyDense : s.body}>
         <Typography
-          size={dense ? '13' : '15'}
-          weight={focal ? '650' : '550'}
+          size={dense ? 'sm' : 'md'}
+          weight={focal ? 'strong' : 'semibold'}
           tone={NAME_TONE[variant]}
         >
           {person.name}
         </Typography>
         {dates && (
-          <Typography size="12.5" tone="faint">
+          <Typography size="xs" tone="subtle">
             {dates}
           </Typography>
         )}

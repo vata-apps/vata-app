@@ -39,7 +39,7 @@ function MetaSegment({ segment }: { segment: MetaSegmentData }): JSX.Element | n
 
   if (segment.text) {
     return (
-      <Typography family="mono" tone="faint">
+      <Typography family="mono" tone="subtle">
         {segment.text}
       </Typography>
     );
@@ -48,7 +48,7 @@ function MetaSegment({ segment }: { segment: MetaSegmentData }): JSX.Element | n
     return (
       <div className={s.metaSegment}>
         {/* Icon sits next to text that carries the meaning → decorative. */}
-        <Icon name={segment.icon} size={14} color={vars.color.muted} />
+        <Icon name={segment.icon} size={14} color={vars.color.text.muted} />
         <Typography tone="muted">{segment.label}</Typography>
       </div>
     );
@@ -59,7 +59,7 @@ function MetaSegment({ segment }: { segment: MetaSegmentData }): JSX.Element | n
       <Icon
         name={segment.icon}
         size={14}
-        color={vars.color.muted}
+        color={vars.color.text.muted}
         aria-hidden={false}
         aria-label={t(`overview.vital.${segment.key}`)}
       />
@@ -99,7 +99,7 @@ export function IdentityHeader({
 
         <div className={s.meta}>
           <div className={s.nameRow}>
-            <Typography as="h1" size="16" weight="650">
+            <Typography as="h1" size="lg" weight="strong">
               {person.name}
             </Typography>
             {person.otherNamesCount > 0 && (
@@ -110,7 +110,7 @@ export function IdentityHeader({
             {segments.map((segment, i) => (
               <div key={segment.key} className={s.metaSegment}>
                 {i > 0 && (
-                  <Typography size="12.5" tone="faint">
+                  <Typography size="xs" tone="subtle">
                     ·
                   </Typography>
                 )}

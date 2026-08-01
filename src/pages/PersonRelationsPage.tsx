@@ -22,7 +22,7 @@ function NameCell({ row, treeId }: { row: RelationRow; treeId: string }): JSX.El
   if (row.id === null) {
     const missingKey = row.relation === 'father' ? 'missingFather' : 'missingMother';
     return (
-      <Typography tone="muted" size="13">
+      <Typography tone="muted" size="sm">
         {t(`overview.parents.${missingKey}`)}
       </Typography>
     );
@@ -52,11 +52,11 @@ function RelationCell({ row }: { row: RelationRow }): JSX.Element {
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Typography size="13">{t(`relations.labels.${row.relation}`)}</Typography>
+        <Typography size="sm">{t(`relations.labels.${row.relation}`)}</Typography>
         {row.side && <Badge>{t(`relations.side.${row.side}`)}</Badge>}
       </div>
       {row.viaName && (
-        <Typography tone="muted" size="12.5">
+        <Typography tone="muted" size="xs">
           {t('relations.via', { name: row.viaName })}
         </Typography>
       )}

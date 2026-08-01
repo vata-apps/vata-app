@@ -1,6 +1,6 @@
 /**
  * Popover primitive styles — a Base UI `Popover` assembly styled from the
- * warm-earth tokens.
+ * grayscale design tokens.
  *
  * Provides a positioned popup shell that floats above the Dialog primitive's
  * popup. Width and internal layout are left to the caller.
@@ -12,9 +12,9 @@ import { vars } from '$/design/theme.css';
 export const positioner = primitiveStyle({ zIndex: vars.zIndex.popover });
 
 export const popup = primitiveStyle({
-  background: vars.color.panel,
-  border: `1px solid ${vars.color.borderStrong}`,
-  borderRadius: 11,
+  background: vars.color.surface.card,
+  border: `1px solid ${vars.color.border.default}`,
+  borderRadius: vars.radius.md,
   boxShadow: vars.shadow.lg,
-  padding: vars.space['2.25'],
+  padding: vars.space['4'],
 });

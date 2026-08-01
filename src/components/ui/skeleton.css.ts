@@ -20,7 +20,7 @@ export const skeleton = style(
     width: '100%',
     height: '1em',
     borderRadius: vars.radius.sm,
-    background: vars.color.subtle,
+    background: vars.color.surface.sunken,
     animation: `${pulse} 2s ease-in-out infinite`,
   })
 );

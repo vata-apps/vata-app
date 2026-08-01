@@ -12,14 +12,14 @@ export const root = primitiveStyle({
   width: 38,
   height: 22,
   borderRadius: 99,
-  background: vars.color.borderStrong,
+  background: vars.color.border.default,
   position: 'relative',
   flex: '0 0 auto',
   cursor: 'pointer',
   border: 'none',
   padding: 0,
   selectors: {
-    '&[data-checked]': { background: vars.color.accent },
+    '&[data-checked]': { background: vars.color.brand.base },
     '&:focus-visible': focusRing,
     '&:disabled': { cursor: 'default', opacity: 0.6 },
   },
@@ -27,8 +27,8 @@ export const root = primitiveStyle({
 
 export const thumb = primitiveStyle({
   position: 'absolute',
-  top: vars.space['0.5'],
-  left: vars.space['0.5'],
+  top: vars.space['1'],
+  left: vars.space['1'],
   width: 18,
   height: 18,
   borderRadius: '50%',

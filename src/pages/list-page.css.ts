@@ -12,8 +12,8 @@ import { vars } from '$/design/theme.css';
 export const page = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: vars.space['4'],
-  padding: vars.space['4'],
+  gap: vars.space['6'],
+  padding: vars.space['6'],
   height: '100%',
   minHeight: 0,
 });
@@ -22,22 +22,22 @@ export const header = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  paddingTop: vars.space['2'],
-  paddingBottom: vars.space['3'],
+  paddingTop: vars.space['4'],
+  paddingBottom: vars.space['5'],
   flexShrink: 0,
 });
 
 export const title = style({
   display: 'flex',
   alignItems: 'center',
-  gap: vars.space['3'],
+  gap: vars.space['5'],
 });
 
 export const toolbar = style({
   display: 'flex',
   flexWrap: 'wrap',
   alignItems: 'center',
-  gap: vars.space['3'],
+  gap: vars.space['5'],
   flexShrink: 0,
 });
 
@@ -45,7 +45,7 @@ export const tableWrapper = style({
   flex: 1,
   minHeight: 0,
   overflow: 'auto',
-  border: `1px solid ${vars.color.borderStrong}`,
+  border: `1px solid ${vars.color.border.default}`,
   borderRadius: vars.radius.sm,
-  background: vars.color.panel,
+  background: vars.color.surface.card,
 });

@@ -41,7 +41,7 @@ function ParentsPanel({
   return (
     <Card>
       <div className={card.stack}>
-        <Typography as="h2" size="15" weight="650">
+        <Typography as="h2" size="md" weight="strong">
           {t('overview.parents.title')}
         </Typography>
         {/* Always two fixed slots: father on top, mother below. Missing slots
@@ -76,7 +76,7 @@ function ParentSlot({ missingLabel, person, treeId }: ParentSlotProps): JSX.Elem
   }
   return (
     <div className={s.missingSlot}>
-      <Icon name="user" size={14} color={vars.color.faint} />
+      <Icon name="user" size={14} color={vars.color.text.subtle} />
       <Typography tone="muted">{missingLabel}</Typography>
     </div>
   );
@@ -87,7 +87,7 @@ function NamesPanel({ names }: { names: OverviewName[] }): JSX.Element {
   return (
     <Card>
       <div className={card.stack}>
-        <Typography as="h2" size="15" weight="650">
+        <Typography as="h2" size="md" weight="strong">
           {t('overview.names.title')}
         </Typography>
         {/* Flat, separator-divided rows — same list pattern as Parents. */}
@@ -109,16 +109,16 @@ function NameRow({ name }: { name: OverviewName }): JSX.Element {
   return (
     <div className={s.nameRow}>
       <div className={s.nameRowHead}>
-        <Typography size="12.5" tone="muted">
+        <Typography size="xs" tone="muted">
           {t(`overview.names.types.${name.type}`)}
         </Typography>
         {name.isPrimary && (
-          <Typography size="12.5" tone="accent">
+          <Typography size="xs" tone="brand">
             {t('overview.names.primary')}
           </Typography>
         )}
       </div>
-      <Typography size="15">{name.text}</Typography>
+      <Typography size="md">{name.text}</Typography>
     </div>
   );
 }
@@ -128,7 +128,7 @@ function MediaPanel(): JSX.Element {
   return (
     <Card>
       <div className={card.stack}>
-        <Typography as="h2" size="15" weight="650">
+        <Typography as="h2" size="md" weight="strong">
           {t('overview.media.title')}
         </Typography>
         <div className={s.mediaEmpty}>

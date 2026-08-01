@@ -17,31 +17,31 @@ export const rowLink = style({
 });
 
 export const stateCell = style({
-  padding: `${vars.space['5']} ${vars.space['4']}`,
+  padding: `${vars.space['7']} ${vars.space['6']}`,
   textAlign: 'center',
 });
 
 export const stateTitle = style({
   margin: 0,
   fontFamily: vars.font.serif,
-  fontSize: vars.text['16'].fontSize,
-  lineHeight: vars.text['16'].lineHeight,
+  fontSize: vars.text.lg,
+  lineHeight: vars.leading.normal,
   fontStyle: 'italic',
-  color: vars.color.text,
+  color: vars.color.text.strong,
 });
 
 export const stateBody = style({
   margin: 0,
-  marginTop: vars.space['2'],
-  fontSize: vars.text['13'].fontSize,
-  lineHeight: vars.text['13'].lineHeight,
-  color: vars.color.muted,
+  marginTop: vars.space['4'],
+  fontSize: vars.text.sm,
+  lineHeight: vars.leading.normal,
+  color: vars.color.text.muted,
 });
 
 export const stateActions = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: vars.space['3'],
-  marginTop: vars.space['4'],
+  gap: vars.space['5'],
+  marginTop: vars.space['6'],
 });

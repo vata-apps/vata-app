@@ -49,7 +49,7 @@ export function LifeSpine({
   return (
     <Card>
       <div className={card.stack}>
-        <Typography as="h2" size="15" weight="650">
+        <Typography as="h2" size="md" weight="strong">
           {t('overview.milestone.title')}
         </Typography>
         <div className={card.list}>
@@ -74,7 +74,7 @@ export function LifeSpine({
 function MissingMilestone({ label }: { label: string }): JSX.Element {
   return (
     <div className={s.missingRow}>
-      <Icon name="circle" size={14} color={vars.color.faint} />
+      <Icon name="circle" size={14} color={vars.color.text.subtle} />
       <Typography tone="muted">{label}</Typography>
     </div>
   );
@@ -90,9 +90,9 @@ function SpouseInline({ spouse, treeId }: { spouse: PersonRefData; treeId: strin
           <Avatar.Image src={spouse.imageUrl} alt="" />
           <Avatar.Fallback>{spouse.initials}</Avatar.Fallback>
         </Avatar.Root>
-        <Typography weight="550">{spouse.name}</Typography>
+        <Typography weight="semibold">{spouse.name}</Typography>
         {dates && (
-          <Typography size="12.5" tone="faint">
+          <Typography size="xs" tone="subtle">
             {dates}
           </Typography>
         )}
@@ -118,13 +118,13 @@ function Milestone({
     <div className={s.row}>
       <div className={s.head}>
         <Badge>{milestone.date}</Badge>
-        <Typography size="15" weight="550">
+        <Typography size="md" weight="semibold">
           {title}
         </Typography>
         {milestone.spouse && <SpouseInline spouse={milestone.spouse} treeId={treeId} />}
         <div className={s.spacer} />
         <div className={s.placeInline}>
-          <Icon name="map-pin" size={14} color={vars.color.muted} />
+          <Icon name="map-pin" size={14} color={vars.color.text.muted} />
           <Typography tone="muted">{milestone.place}</Typography>
         </div>
       </div>
@@ -133,7 +133,7 @@ function Milestone({
         <div className={s.childrenGroup}>
           <div className={s.childrenSpine} />
           <div className={s.childrenColumn}>
-            <Typography size="12.5" tone="muted">
+            <Typography size="xs" tone="muted">
               {t('overview.milestone.children')}
             </Typography>
             <div className={s.childrenList}>

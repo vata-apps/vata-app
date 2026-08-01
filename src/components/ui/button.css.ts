@@ -7,24 +7,25 @@
  */
 import { recipe } from '@vanilla-extract/recipes';
 
-import { primitive } from '$/design/primitive-layer';
+import { primitive, transitionFast } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
 
 export const button = recipe({
   base: primitive({
     height: 34,
     borderRadius: vars.radius.sm,
-    padding: `0 ${vars.space['4']}`,
-    fontSize: vars.text['13'].fontSize,
-    lineHeight: vars.text['13'].lineHeight,
-    fontWeight: 600,
+    padding: `0 ${vars.space['6']}`,
+    fontSize: vars.text.sm,
+    lineHeight: vars.leading.none,
+    fontWeight: vars.weight.medium,
     cursor: 'pointer',
     border: '1px solid transparent',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: vars.space['2'],
+    gap: vars.space['4'],
     fontFamily: 'inherit',
+    transition: transitionFast('background', 'border-color'),
     selectors: {
       '&:focus-visible': focusRing,
       '&:disabled': { cursor: 'default', opacity: 0.6 },
@@ -33,38 +34,40 @@ export const button = recipe({
   variants: {
     variant: {
       solid: primitive({
-        background: vars.color.accent,
-        color: vars.color.accentText,
+        background: vars.color.brand.base,
+        color: vars.color.text.onBrand,
         selectors: {
-          '&:hover:not(:disabled)': { background: vars.color.accentHover },
+          '&:hover:not(:disabled)': { background: vars.color.brand.hover },
+          '&:active:not(:disabled)': { background: vars.color.brand.active },
         },
       }),
       ghost: primitive({
         background: 'transparent',
-        color: vars.color.muted,
+        color: vars.color.text.body,
         selectors: {
-          '&:hover:not(:disabled)': { color: vars.color.text },
+          '&:hover:not(:disabled)': { background: vars.color.surface.hover },
         },
       }),
       danger: primitive({
-        background: vars.color.danger,
-        color: vars.color.accentText,
+        background: vars.color.status.err.bg,
+        color: vars.color.status.err.fg,
         selectors: {
-          '&:hover:not(:disabled)': { filter: 'brightness(0.94)' },
+          '&:hover:not(:disabled)': {
+            background: `color-mix(in srgb, ${vars.color.status.err.bg} 85%, black)`,
+          },
         },
       }),
       dashed: primitive({
         alignSelf: 'flex-start',
         background: 'transparent',
-        border: `1px dashed ${vars.color.borderStrong}`,
-        color: vars.color.muted,
-        padding: `0 ${vars.space['3']}`,
-        fontSize: vars.text['12.5'].fontSize,
-        lineHeight: vars.text['12.5'].lineHeight,
+        border: `1px dashed ${vars.color.border.strong}`,
+        color: vars.color.text.muted,
+        padding: `0 ${vars.space['5']}`,
+        fontSize: vars.text.xs,
         selectors: {
           '&:hover:not(:disabled)': {
-            borderColor: vars.color.accent,
-            color: vars.color.accent,
+            borderColor: vars.color.brand.base,
+            color: vars.color.brand.base,
           },
         },
       }),
