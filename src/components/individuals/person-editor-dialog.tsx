@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { Button } from '$components/ui/button';
 import { Dialog } from '$components/ui/dialog';
+import { Field } from '$components/ui/field';
 import { IconButton } from '$components/ui/icon-button';
 import { Select } from '$components/ui/select';
 import { SegmentedControl } from '$components/ui/segmented-control';
@@ -801,62 +802,64 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                       <div className={s.ecard}>
                         <div className={s.sectitle}>{t('personEditor.sections.names')}</div>
                         <div className={s.fgridC2}>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>
-                              {t('personEditor.fields.givenNames')}
-                            </span>
+                          <Field
+                            label={t('personEditor.fields.givenNames')}
+                            htmlFor="person-given-names"
+                          >
                             <TextField
+                              id="person-given-names"
                               value={form.givenNames}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, givenNames: e.target.value }))
                               }
                             />
-                          </label>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>{t('personEditor.fields.surname')}</span>
+                          </Field>
+                          <Field label={t('personEditor.fields.surname')} htmlFor="person-surname">
                             <TextField
+                              id="person-surname"
                               value={form.surname}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, surname: e.target.value }))
                               }
                             />
-                          </label>
+                          </Field>
                         </div>
                         <div className={s.fgrid3Gap}>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>{t('personEditor.fields.prefix')}</span>
+                          <Field label={t('personEditor.fields.prefix')} htmlFor="person-prefix">
                             <TextField
+                              id="person-prefix"
                               value={form.prefix}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, prefix: e.target.value }))
                               }
                             />
-                          </label>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>{t('personEditor.fields.suffix')}</span>
+                          </Field>
+                          <Field label={t('personEditor.fields.suffix')} htmlFor="person-suffix">
                             <TextField
+                              id="person-suffix"
                               value={form.suffix}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, suffix: e.target.value }))
                               }
                             />
-                          </label>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>
-                              {t('personEditor.fields.nickname')}
-                            </span>
+                          </Field>
+                          <Field
+                            label={t('personEditor.fields.nickname')}
+                            htmlFor="person-nickname"
+                          >
                             <TextField
+                              id="person-nickname"
                               value={form.nickname}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, nickname: e.target.value }))
                               }
                             />
-                          </label>
+                          </Field>
                         </div>
 
                         <div className={`${s.subhead} ${s.subheadMt}`}>

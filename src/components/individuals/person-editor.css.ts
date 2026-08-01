@@ -173,12 +173,6 @@ export const subheadMt = style({ marginTop: 14 });
 
 /* ---- controls ------------------------------------------------------- */
 
-export const field = style({ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 });
-export const fieldLabel = style({
-  fontSize: vars.text.xs,
-  fontWeight: vars.weight.semibold,
-  color: vars.color.text.strong,
-});
 export const tnum = style({ fontVariantNumeric: 'tabular-nums' });
 export const fgridC2 = style({ display: 'grid', gap: '10px 12px', gridTemplateColumns: '1fr 1fr' });
 export const fgridC3 = style({
