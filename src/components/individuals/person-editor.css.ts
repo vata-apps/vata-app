@@ -341,62 +341,6 @@ export const pfieldName = style({
 });
 export const pfieldDates = style({ fontSize: vars.text['2xs'], color: vars.color.text.subtle });
 
-/* ---- Person picker (Base UI Popover) -------------------------------- */
-
-/** The Popover primitive owns the popup shell; the picker only fixes its width. */
-export const pickerPopup = style({ width: 288 });
-export const pickerList = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 2,
-  marginTop: vars.space['4'],
-  maxHeight: 260,
-  overflow: 'auto',
-});
-export const pickerItem = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 9,
-  width: '100%',
-  border: 0,
-  background: 'transparent',
-  textAlign: 'left',
-  padding: '7px 8px',
-  borderRadius: vars.radius.sm,
-  cursor: 'pointer',
-  color: vars.color.text.body,
-  fontFamily: 'inherit',
-  selectors: {
-    '&:hover': { background: vars.color.surface.hover },
-    '&:focus-visible': focusRing,
-  },
-});
-export const pickerMeta = style({
-  fontSize: vars.text.xs,
-  color: vars.color.text.subtle,
-  padding: '6px 8px',
-});
-export const pickerCreate = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  width: '100%',
-  marginTop: 6,
-  border: 0,
-  borderTop: `1px solid ${vars.color.border.subtle}`,
-  paddingTop: 9,
-  paddingBottom: 3,
-  paddingInline: 8,
-  background: 'transparent',
-  color: vars.color.brand.base,
-  fontWeight: vars.weight.strong,
-  fontSize: vars.text.xs,
-  cursor: 'pointer',
-  textAlign: 'left',
-  fontFamily: 'inherit',
-  selectors: { '&:focus-visible': focusRing },
-});
-
 /* ---- error callout -------------------------------------------------- */
 
 export const callout = style({

@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Popover } from '$components/ui/popover';
-import { TextField } from '$components/ui/text-field';
+import { EntityPicker, type EntityPickerItem } from '$components/ui/entity-picker';
 import { Icon } from '$components/icon';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { useIndividualSearch, useIndividuals } from '$hooks/useIndividuals';
@@ -44,9 +43,10 @@ export interface PersonPickerProps {
 
 /**
  * Search-existing-or-create-new person combobox, used by the Person editor's
- * Relations card to fill a father/mother/spouse/child slot. Base UI `Popover`
- * over a plain search input and button list (no combobox atom needed), styled
- * from the warm-earth tokens.
+ * Relations card to fill a father/mother/spouse/child slot. Wraps the shared
+ * `ui/entity-picker` chrome; this component owns the actual data — debounced
+ * DB search when typing, a browse list when not — and maps results into the
+ * primitive's flat item shape.
  */
 export function PersonPicker({
   label,
@@ -56,6 +56,7 @@ export function PersonPicker({
   disabled,
 }: PersonPickerProps): JSX.Element {
   const { t } = useTranslation('individuals');
+  const { t: tCommon } = useTranslation('common');
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
 
@@ -97,68 +98,51 @@ export function PersonPicker({
     handleOpenChange(false);
   }
 
+  const items: EntityPickerItem[] = results.map((person) => ({
+    id: person.id,
+    title: person.displayName,
+    meta: formatLifeYears(person.bornYear, person.deathYear),
+    initials: initialsFromDisplayName(person.displayName),
+  }));
+
+  function handleItemSelect(item: EntityPickerItem): void {
+    const person = results.find((candidate) => candidate.id === item.id);
+    if (person) pick(person);
+  }
+
+  function handleCreate(): void {
+    pick({
+      createNew: { ...splitDisplayName(trimmedQuery), gender: newPersonGender },
+      displayName: trimmedQuery,
+    });
+  }
+
+  let hint: string | undefined;
+  if (hiddenCount > 0) hint = t('personEditor.picker.moreHidden', { count: hiddenCount });
+  else if (noMatches) hint = t('personEditor.picker.noMatches');
+
   return (
-    <Popover.Root open={open} onOpenChange={handleOpenChange}>
-      <Popover.Trigger className={s.relslot} disabled={disabled}>
-        <Icon name="plus" size={14} />
-        {label}
-      </Popover.Trigger>
-      <Popover.Portal>
-        <Popover.Positioner sideOffset={6} align="start" positionMethod="fixed">
-          <Popover.Popup className={s.pickerPopup}>
-            <TextField
-              autoFocus
-              placeholder={t('personEditor.picker.searchPlaceholder')}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
-            <div className={s.pickerList}>
-              {results.map((person) => {
-                const dates = formatLifeYears(person.bornYear, person.deathYear);
-                return (
-                  <button
-                    key={person.id}
-                    type="button"
-                    className={s.pickerItem}
-                    onClick={() => pick(person)}
-                  >
-                    <span className={s.pfieldAvatar} aria-hidden="true">
-                      {initialsFromDisplayName(person.displayName)}
-                    </span>
-                    <span className={s.pfieldBody}>
-                      <span className={s.pfieldName}>{person.displayName}</span>
-                      {dates && <span className={s.pfieldDates}>{dates}</span>}
-                    </span>
-                  </button>
-                );
-              })}
-              {hiddenCount > 0 && (
-                <div className={s.pickerMeta}>
-                  {t('personEditor.picker.moreHidden', { count: hiddenCount })}
-                </div>
-              )}
-              {noMatches && (
-                <div className={s.pickerMeta}>{t('personEditor.picker.noMatches')}</div>
-              )}
-            </div>
-            {isTyping && (
-              <button
-                type="button"
-                className={s.pickerCreate}
-                onClick={() =>
-                  pick({
-                    createNew: { ...splitDisplayName(trimmedQuery), gender: newPersonGender },
-                    displayName: trimmedQuery,
-                  })
-                }
-              >
-                <Icon name="plus" size={14} />
-                {t('personEditor.picker.createNew', { name: trimmedQuery })}
-              </button>
-            )}
-          </Popover.Popup>
-        </Popover.Positioner>
-      </Popover.Portal>
-    </Popover.Root>
+    <EntityPicker
+      open={open}
+      onOpenChange={handleOpenChange}
+      trigger={
+        <>
+          <Icon name="plus" size={14} />
+          {label}
+        </>
+      }
+      triggerClassName={s.relslot}
+      disabled={disabled}
+      query={query}
+      onQueryChange={setQuery}
+      searchPlaceholder={t('personEditor.picker.searchPlaceholder')}
+      clearLabel={tCommon('filters.clearSearch')}
+      items={items}
+      onSelect={handleItemSelect}
+      hint={hint}
+      onCreate={isTyping ? handleCreate : undefined}
+      createLabel={t('personEditor.picker.createNew', { name: trimmedQuery })}
+      createIcon={<Icon name="plus" size={14} />}
+    />
   );
 }
