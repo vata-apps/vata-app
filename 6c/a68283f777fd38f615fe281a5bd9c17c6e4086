@@ -1,0 +1,137 @@
+src/components/person-overview/life-spine.tsx
+  s_3c9a303afce6e3::t_e426eebe36f486 52
+  s_3c9a303afce6e3::t_333da029fabf4f 93,95
+  s_3c9a303afce6e3::t_0cb47f625b68e5 121,127,136
+  s_3c9a303afce6e3::t_389a423186aeea 77
+src/components/ui/icon-button.css.ts
+  s_3c9a303afce6e3::t_8b2fdfcb535b83 3,9-11,14,22-23,25-26,28
+  s_3c9a303afce6e3::t_56669eaf3747f9 5
+  s_3c9a303afce6e3::t_dc0a4b46007d30 20
+  s_3c9a303afce6e3::t_25cac418d5edd5 24
+src/components/person-overview/places-panel.css.ts
+  s_3c9a303afce6e3::t_1c523fe20df096 5,7,11
+package.json
+  s_3c9a303afce6e3::t_d29dfcb962c1ea 45-47
+src/pages/IndividualsPage.tsx
+  s_3c9a303afce6e3::t_4dff17ac96c054 169
+src/components/ui/typography.css.ts
+  s_3c9a303afce6e3::t_a4e3435168f9b9 28-29
+  s_3c9a303afce6e3::t_9b71c01ffe26b7 16,20-27,32-36,39-44,53-55
+src/components/person-overview/life-spine.css.ts
+  s_3c9a303afce6e3::t_ca6e160da67927 5,7,12,21,28,34,36,40,45,50
+src/pages/PersonRelationsPage.tsx
+  s_3c9a303afce6e3::t_9154c965222c78 25
+  s_3c9a303afce6e3::t_d6622e270ddb73 55,59
+src/pages/EventsPage.tsx
+  s_3c9a303afce6e3::t_e03bca7de9a535 113
+docs/ui/design-system.md
+  s_3c9a303afce6e3::t_35455fd179756e 9
+src/components/person-overview/vitals-panel.css.ts
+  s_3c9a303afce6e3::t_a877623957367a 5,7,12
+src/pages/list-page.css.ts
+  s_3c9a303afce6e3::t_5762d3b20084f0 15-16,25-26,33,40,48,50
+src/components/person-overview/vitals-panel.tsx
+  s_3c9a303afce6e3::t_76bca33ad863c5 30
+  s_3c9a303afce6e3::t_3910e49d9a7621 56
+src/design/theme.css.ts
+  s_3c9a303afce6e3::t_dfaec690616001 5-9,11-14,40-90,92-108,111-127,130-132,155-156,159-160,165-173,180,188-190,193-194,198-200,203-226,229-231,242-256,259-273,278-319,323-328,330,332-335,342-381,385-390,392,394-397,417
+  s_3c9a303afce6e3::t_fdeccf71aa6762 128-129
+  s_3c9a303afce6e3::t_7f18e829b9b26c 227
+  s_3c9a303afce6e3::t_3e5607a9e17d2a 228
+src/components/person-overview/identity-header.css.ts
+  s_3c9a303afce6e3::t_7892afde260604 11,14,16,21,28,32,39-40,47-50,54,59-61,63
+src/components/ui/card.css.ts
+  s_3c9a303afce6e3::t_1927b44436a79b 16-20,26,33-34
+src/components/ui/segmented-control.css.ts
+  s_3c9a303afce6e3::t_7d147be07971a6 14-19,24-28,36,38-39
+  s_3c9a303afce6e3::t_e7b143b4d9cb85 33-34
+  s_3c9a303afce6e3::t_5e737104750555 9
+src/components/ui/avatar.css.ts
+  s_3c9a303afce6e3::t_4bf961b66c8094 22,31-40,45
+src/components/ui/switch.css.ts
+  s_3c9a303afce6e3::t_4a2d842b8f3e0a 15,22,30-31
+src/components/map/places-map.tsx
+  s_3c9a303afce6e3::t_4fbf735bf0c004 104
+  s_3c9a303afce6e3::t_dd319492be9650 33,40
+src/components/ui/text-field.css.ts
+  s_3c9a303afce6e3::t_0d716a99d1f0a2 14-16,18,23-24,27-32,40,45-46
+  s_3c9a303afce6e3::t_7116f8bb092456 21
+  s_3c9a303afce6e3::t_80b6e6766abe93 9
+src/components/ui/skeleton.css.ts
+  s_3c9a303afce6e3::t_c839464e0614e2 23
+src/components/ui/typography.tsx
+  s_3c9a303afce6e3::t_e9cd990bf835b7 11,26,28,30-31,37-39
+src/components/ui/dialog.css.ts
+  s_3c9a303afce6e3::t_7b88136562e4aa 3,40-44
+src/components/person-overview/record-rail.css.ts
+  s_3c9a303afce6e3::t_33f37b37f97640 5,7,9,11,14
+src/components/ui/button.css.ts
+  s_3c9a303afce6e3::t_9893eeee0d5e9c 19,26,28
+  s_3c9a303afce6e3::t_cc305e80f00e3a 10
+  s_3c9a303afce6e3::t_b6f613bcf30361 17-18,20,37-38,40-41,46,48,52-53,55-57,63-66,69-70
+src/components/ui/popover.css.ts
+  s_3c9a303afce6e3::t_0d0549daffb653 3,15-17,19
+src/design/fonts.ts
+  s_3c9a303afce6e3::t_6e1a65c15ec690 6-8,13-16,18,20-21
+  s_3c9a303afce6e3::t_bed2bae6ba46b0 9-11
+src/components/ui/avatar.tsx
+  s_3c9a303afce6e3::t_268dd925e8a56e 16-19,22
+src/components/ui/select.css.ts
+  s_3c9a303afce6e3::t_86573b58fc937b 29
+  s_3c9a303afce6e3::t_26506bf84b735e 8
+  s_3c9a303afce6e3::t_3437c03273a8dc 3,5-6,16-17,21-24,31-32,41,45-47,49,58-59,61-62,67-68
+src/components/person-overview/record-rail.tsx
+  s_3c9a303afce6e3::t_0199221ccc7ba5 79
+  s_3c9a303afce6e3::t_9d7f5fe013ab51 112,116,121
+  s_3c9a303afce6e3::t_3f7b0ff5a1df24 44,90,131
+src/components/ui/badge.css.ts
+  s_3c9a303afce6e3::t_712dcd37bd678c 7-14,16-18
+docs/adr/0005-headless-baseui-vanilla-extract.md
+  s_3c9a303afce6e3::t_fa455a3729c2f0 6,16-20
+  s_3c9a303afce6e3::t_8ef60cdec0208e 21
+src/pages/FamiliesPage.tsx
+  s_3c9a303afce6e3::t_bb0857987ea17b 134
+src/design/primitive-layer.ts
+  s_3c9a303afce6e3::t_2673c0642e5d05 20,30-40
+  s_3c9a303afce6e3::t_17aea79b4a7577 41
+src/components/ui/table.css.ts
+  s_3c9a303afce6e3::t_7b4160d977cddb 24,71,80
+  s_3c9a303afce6e3::t_b3e19507591849 3-4,12-13,20,22-23,25,32,48,50,52,59,75,83,85
+src/pages/PlacesPage.tsx
+  s_3c9a303afce6e3::t_dd94f07ed6e0db 136
+src/components/person-overview/places-panel.tsx
+  s_3c9a303afce6e3::t_5baff898009708 44
+  s_3c9a303afce6e3::t_ca8589d1894944 66-67
+src/components/entity-table.css.ts
+  s_3c9a303afce6e3::t_abeb21d53cb078 20,27-28,30,35-38,45-46
+src/components/individuals/person-editor.css.ts
+  s_3c9a303afce6e3::t_b0ed28cac85d03 3,31,37-40,44,56-57,63-65,67-68,72-73,91,93-94,98,106,108,114-116,122,125-127,129,142-144,148-149,156,159-160,167-169,177-179,181,200,213,238-240,252-254,258-260,262,264,269-271,286-290,294,296,302-303,308,311-312,317-318,330-331,333,341-343,348,358,371,373,376,380-384,392,397-399,413-417,430,434-436,440-441,443
+  s_3c9a303afce6e3::t_beac67c2735dde 66
+  s_3c9a303afce6e3::t_559d1e26f1e902 128
+  s_3c9a303afce6e3::t_5217f1f7d885af 180
+src/components/person-overview/person-ref.tsx
+  s_3c9a303afce6e3::t_32de72a18d88b0 82,88-89,95
+  s_3c9a303afce6e3::t_0cf7b8c4268aa6 9-11,13
+src/components/person-overview/identity-header.tsx
+  s_3c9a303afce6e3::t_d73457307c60ff 113
+  s_3c9a303afce6e3::t_061ad8d44e270b 42,51,62
+  s_3c9a303afce6e3::t_34392593a55d80 102
+pnpm-lock.yaml
+  s_3c9a303afce6e3::t_77a0132255ae71 14-22,748-749,751-752,754-755,1551,1557,1563,1569,1575,1581,1587,1593,1599,1605,1611,1617,1623,1746,1753,1760,1767,1774,4358,4360,4362
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "6ca68283f777fd38f615fe281a5bd9c17c6e4086",
+  "prompts": {},
+  "sessions": {
+    "s_3c9a303afce6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4b993bb3-57e3-4b8d-bb3b-36661cec38fa",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
