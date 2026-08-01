@@ -1,0 +1,35 @@
+src/components/person-overview/life-spine.tsx
+  s_3c9a303afce6e3::t_ffb20b548a6216 8,18
+  s_3c9a303afce6e3::t_cb042f7824aa08 120
+src/components/ui/data-chip.tsx
+  s_3c9a303afce6e3::t_d98ad0b53597c5 1-17
+src/components/individuals/person-editor-dialog.tsx
+  s_3c9a303afce6e3::t_9551491e8474ac 804
+  s_3c9a303afce6e3::t_515a018ec215f8 6
+  s_3c9a303afce6e3::t_b0936894369a03 805-806,918-920,986-988,1002-1004,1018-1020
+src/components/ui/caption.tsx
+  s_3c9a303afce6e3::t_e26c24b3583e02 1-17
+src/components/individuals/person-editor.css.ts
+  s_3c9a303afce6e3::t_e08f992beb9a73 155-156
+src/components/ui/caption.css.ts
+  s_3c9a303afce6e3::t_c41f0410c91846 5
+  s_3c9a303afce6e3::t_ae759122a31396 1-4,6-13
+src/components/ui/data-chip.css.ts
+  s_3c9a303afce6e3::t_e48af09c8e294f 1-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.19",
+  "base_commit_sha": "33c897d9e0f5be5076c32c791b642586e1d08063",
+  "prompts": {},
+  "sessions": {
+    "s_3c9a303afce6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4b993bb3-57e3-4b8d-bb3b-36661cec38fa",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
