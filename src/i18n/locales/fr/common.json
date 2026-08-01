@@ -4,7 +4,8 @@
   },
   "filters": {
     "title": "Filtres",
-    "clear": "Effacer"
+    "clear": "Effacer",
+    "clearSearch": "Effacer la recherche"
   },
   "nav": {
     "home": "Accueil",
