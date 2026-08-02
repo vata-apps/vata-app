@@ -1,0 +1,60 @@
+.sandcastle/prompts/review-analyze.md
+  s_b13cae0e8316d6::t_da75c91f3db062 65
+  s_b13cae0e8316d6::t_15de506cc7f135 9,11,13,15,17,19-22,24,26,28,30-31,33,35,37-60,62-64,71,104
+  s_b13cae0e8316d6::t_7f34034fd39af8 61
+docs/adr/0004-autonomous-agent-pipeline.md
+  s_b13cae0e8316d6::t_8e3917ec0ee42d 25-26
+  s_b13cae0e8316d6::t_fe819df19b7c67 8-10
+  s_b13cae0e8316d6::t_e2b15b901059f2 11,13
+  s_b13cae0e8316d6::t_fd5a30e17cae08 28
+  s_b13cae0e8316d6::t_06704b170f73f9 12
+  s_b13cae0e8316d6::t_90fcbea50f6e57 14-16
+.sandcastle/shared.ts
+  s_b13cae0e8316d6::t_1b60b58062a992 121-151,156
+docs/dev-tools/agent-workflow.md
+  s_b13cae0e8316d6::t_142090a5b01d2a 96-97
+  s_b13cae0e8316d6::t_96b83df8454010 79
+  s_b13cae0e8316d6::t_0d6447f25020ff 44,47
+  s_b13cae0e8316d6::t_52b2edfa210598 69,72-73,80
+  s_b13cae0e8316d6::t_06704b170f73f9 71
+  s_b13cae0e8316d6::t_35c008eec8049c 95
+  s_b13cae0e8316d6::t_91a8cd1c45ecb9 70
+.sandcastle/review.ts
+  s_b13cae0e8316d6::t_ffe366f1c1ac23 84-91,93
+  s_b13cae0e8316d6::t_6bd6e39aee3224 139-142
+  s_b13cae0e8316d6::t_9147e8d723bd7d 143-146
+  s_b13cae0e8316d6::t_452c5f8b8f1381 197,202-205
+  s_b13cae0e8316d6::t_3f62a7499d989b 7
+  s_b13cae0e8316d6::t_9b5477974e8752 112
+  s_b13cae0e8316d6::t_dd27a1fb0c51bb 225-226
+  s_b13cae0e8316d6::t_7d3cbabf003d05 106-110,115-120
+  s_b13cae0e8316d6::t_1c6d686758f3a1 70-83,94
+  s_b13cae0e8316d6::t_6dd2ec455ff415 42
+  s_b13cae0e8316d6::t_ad79731eaf9781 92
+  s_b13cae0e8316d6::t_4dbd027b130b02 206
+.github/workflows/agent-review.yml
+  s_b13cae0e8316d6::t_ece22c13d5bf1a 35-37,48
+  s_b13cae0e8316d6::t_b070c7f79dce55 118-123,130-140,149
+  s_b13cae0e8316d6::t_afa522f5a93bc5 167
+  s_b13cae0e8316d6::t_6884a6844d3673 124-129
+.sandcastle/prompts/review-fix.md
+  s_b13cae0e8316d6::t_8d5d21285185de 11,14,17-22
+  s_b13cae0e8316d6::t_0deb5f582ec4e7 52
+  s_b13cae0e8316d6::t_da206f043724e6 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "bcb4807f335a8513fbfe2820c0e31d83e6d9f8e6",
+  "prompts": {},
+  "sessions": {
+    "s_b13cae0e8316d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "39dc0382-d611-4cef-8469-6e2632c05f91",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
