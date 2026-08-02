@@ -43,6 +43,7 @@
     "notFound": "Individual not found",
     "tabs": {
       "overview": "Overview",
+      "names": "Names",
       "ancestors": "Pedigree",
       "events": "Events",
       "relations": "Relations",
@@ -153,6 +154,49 @@
   },
   "notes": {
     "comingSoon": "Notes are not available yet."
+  },
+  "namesTab": {
+    "comingSoon": "Names are not available yet."
+  },
+  "rail": {
+    "expandedAriaLabel": "People list",
+    "collapsedAriaLabel": "People list (collapsed)",
+    "searchPlaceholder": "Filter by name",
+    "noMatches": "No people match these filters.",
+    "ofTotal": "of {{count}}",
+    "collapse": "Collapse the list",
+    "expand": "Expand the people list",
+    "filters": {
+      "title": "Filters",
+      "reset": "Reset",
+      "close": "Close",
+      "apply_one": "View {{count}} person",
+      "apply_other": "View {{count}} people",
+      "sex": "Gender",
+      "status": "Status",
+      "statusValue": {
+        "living": "Living",
+        "deceased": "Deceased"
+      }
+    },
+    "sort": {
+      "trigger": "Sort",
+      "menuLabel": "Sort by",
+      "field": {
+        "surname": "Surname",
+        "firstName": "First name",
+        "birthYear": "Birth year",
+        "deathYear": "Death year"
+      },
+      "direction": {
+        "asc": "Ascending",
+        "desc": "Descending"
+      }
+    },
+    "hover": {
+      "born": "Born",
+      "died": "Died"
+    }
   },
   "personEditor": {
     "createTitle": "Add person",
