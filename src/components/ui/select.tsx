@@ -3,7 +3,7 @@
  *
  * Composes the same parts as Base UI (`Root`, `Trigger`, `Value`, `Icon`,
  * `Portal`, `Positioner`, `Popup`, `Item`, `ItemText`) but applies the
- * warm-earth trigger, popup, and item styles. Consumers drive it by role
+ * grayscale trigger, popup, and item styles. Consumers drive it by role
  * (`combobox`, `option`) and label.
  *
  * Example:
