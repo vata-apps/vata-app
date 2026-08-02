@@ -92,14 +92,14 @@ export function IdentityHeader({
   return (
     <div className={s.header}>
       <div className={s.identity}>
-        <Avatar.Root size="lg">
+        <Avatar.Root size="xl" tone="neutral">
           <Avatar.Image src={person.imageUrl} alt="" />
           <Avatar.Fallback>{person.initials}</Avatar.Fallback>
         </Avatar.Root>
 
         <div className={s.meta}>
           <div className={s.nameRow}>
-            <Typography as="h1" size="lg" weight="strong">
+            <Typography as="h1" family="serif" size="3xl" className={s.name}>
               {person.name}
             </Typography>
             {person.otherNamesCount > 0 && (

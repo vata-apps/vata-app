@@ -26,11 +26,13 @@ export const root = recipe({
       sm: primitive({ width: 24, height: 24, fontSize: 10 }),
       md: primitive({ width: 32, height: 32, fontSize: 13 }),
       lg: primitive({ width: 48, height: 48, fontSize: 18 }),
+      /** The person-record header avatar — the one large use. */
+      xl: primitive({ width: 56, height: 56, fontSize: vars.text['2xl'] }),
     },
     tone: {
       /** Tinted brand fill — the default reference to a person. */
       brand: primitive({ background: vars.color.brand.subtleBg, color: vars.color.brand.hover }),
-      /** Muted gray — subordinate/secondary references. */
+      /** Muted gray — subordinate references, and the calm record-header avatar. */
       neutral: primitive({ background: vars.color.surface.sunken, color: vars.color.text.muted }),
       /** Dashed outline — a draft or not-yet-linked person. */
       outline: primitive({
