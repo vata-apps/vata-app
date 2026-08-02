@@ -10,7 +10,7 @@ import * as styles from './tree-header.css';
  * `/tree/$treeId/...`, next to {@link TreeNav}.
  *
  * Two controls, both disabled for now: a global search trigger (`⌘K`) and a
- * `Créer` quick-create button. Neither is wired to behavior yet — this slice
+ * `Create` quick-create button. Neither is wired to behavior yet — this slice
  * only builds the app-shell chrome; see the parent PRD for the follow-up
  * issues that bring them to life.
  */
