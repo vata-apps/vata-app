@@ -95,7 +95,7 @@ export const vars = createGlobalThemeContract(
         err: { fg: null, bg: null, text: null },
       },
     },
-    radius: { sm: null, md: null, lg: null, xl: null, full: null },
+    radius: { sm: null, md: null, lg: null, full: null },
     shadow: { sm: null, lg: null, xl: null },
     motion: {
       ease: { standard: null },
@@ -151,7 +151,6 @@ export const vars = createGlobalThemeContract(
      */
     space: {
       '1': null,
-      '2': null,
       '3': null,
       '4': null,
       '5': null,
@@ -197,7 +196,7 @@ const font = {
   mono: `'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace`,
 };
 
-const radius = { sm: '5px', md: '8px', lg: '12px', xl: '16px', full: '999px' };
+const radius = { sm: '5px', md: '8px', lg: '12px', full: '999px' };
 
 const motion = {
   ease: { standard: 'cubic-bezier(0.2, 0, 0, 1)' },
@@ -233,7 +232,6 @@ const zIndex = {
 
 const space = {
   '1': '2px',
-  '2': '4px',
   '3': '6px',
   '4': '8px',
   '5': '12px',
