@@ -1,8 +1,9 @@
-import { primitiveStyle } from '$/design/primitive-layer';
+import { style } from '@vanilla-extract/css';
+
 import { vars } from '$/design/theme.css';
 import { root as searchFieldRoot } from './ui/search-input.css';
 
-export const header = primitiveStyle({
+export const header = style({
   height: 56,
   flexShrink: 0,
   boxSizing: 'border-box',
@@ -17,7 +18,7 @@ export const header = primitiveStyle({
 // Same bordered-field chrome as `SearchInput`'s root, applied to a disabled
 // trigger button instead of a live `<input>` — only the width and the
 // disabled-state opacity reset differ.
-export const search = `${searchFieldRoot} ${primitiveStyle({
+export const search = `${searchFieldRoot} ${style({
   width: 260,
   cursor: 'default',
   selectors: {
@@ -25,7 +26,7 @@ export const search = `${searchFieldRoot} ${primitiveStyle({
   },
 })}`;
 
-export const searchLabel = primitiveStyle({
+export const searchLabel = style({
   flex: 1,
   minWidth: 0,
   textAlign: 'left',
@@ -36,4 +37,4 @@ export const searchLabel = primitiveStyle({
   whiteSpace: 'nowrap',
 });
 
-export const spacer = primitiveStyle({ flex: 1 });
+export const spacer = style({ flex: 1 });
