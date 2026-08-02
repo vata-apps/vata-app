@@ -1,0 +1,47 @@
+src/components/tree-nav.tsx
+  s_f423bfc0cee8db::t_e21a472a7e7411 68
+  s_f423bfc0cee8db::t_a78c51d4d282f3 49-66
+  s_f423bfc0cee8db::t_3d71d9c90f0cc1 79
+  s_f423bfc0cee8db::t_62dc1a43173744 19-23
+  s_f423bfc0cee8db::t_3900068e1a5d38 6-7,9,17-18,24-25,41-48,67,69-76,78,80-83
+src/i18n/locales/fr/common.json
+  s_f423bfc0cee8db::t_2cba4dce69e70a 20-24
+src/i18n/locales/en/common.json
+  s_f423bfc0cee8db::t_45f4912991e1c2 20-24
+src/components/tree-nav.css.ts
+  s_f423bfc0cee8db::t_b7daf848470afb 1-17
+src/components/tree-shell.css.ts
+  s_f423bfc0cee8db::t_e57fbc77184dcf 1-25
+src/components/ui/icon-button.css.ts
+  s_f423bfc0cee8db::t_27f51f9856111a 3-7,9-11,14-53,56
+src/components/ui/tooltip.tsx
+  s_f423bfc0cee8db::t_41b19ed5e523d9 1-43
+src/components/tree-header.tsx
+  s_f423bfc0cee8db::t_d1747a97f5ba3e 1-36
+src/components/tree-shell.tsx
+  s_f423bfc0cee8db::t_37f2e181476f2b 3,5,20-21,36,38-42
+src/components/ui/tooltip.css.ts
+  s_f423bfc0cee8db::t_b4442b7dbf2a5e 1-20
+src/components/ui/icon-button.tsx
+  s_f423bfc0cee8db::t_a82aceb67ce5c6 8-11,24-25,29-40
+  s_f423bfc0cee8db::t_64fba46f7dc067 5-6,19-23,26
+src/components/tree-header.css.ts
+  s_f423bfc0cee8db::t_200bf01c867900 3,17-20,26,32-33
+  s_f423bfc0cee8db::t_12d1df01988be0 1-2,4-16,21-25,27-31,34-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "772ac6f2bcdde8fbd2d7a978810095c091528fba",
+  "prompts": {},
+  "sessions": {
+    "s_f423bfc0cee8db": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01bcf1c7-f107-4e2c-a77d-0f7e16d80d77",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
