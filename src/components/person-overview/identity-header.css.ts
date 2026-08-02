@@ -15,7 +15,7 @@ export const identity = style({ display: 'flex', alignItems: 'center', gap: vars
 
 export const meta = style({ display: 'flex', flexDirection: 'column', gap: vars.space['3'] });
 
-/** The lineage signature, the one place a person's name is set in Spectral (italic comes from `Typography`'s `family="serif"`). */
+/** The lineage signature: the record's person name in Spectral (italic comes from `Typography`'s `family="serif"`). */
 export const name = style({ lineHeight: vars.leading.tight });
 
 export const nameRow = style({
