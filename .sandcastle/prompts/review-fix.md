@@ -8,11 +8,18 @@ You are the fix-execution agent for the autonomous PR reviewer in the Vata repos
 
 ## Rules
 
-- **Implement, don't second-guess.** The review already made the judgment call that each of these is a high-confidence, objectively-wrong defect worth fixing. Do not skip a fix because you disagree with it, and do not expand its scope beyond what is described.
+- **Implement, don't second-guess.** The review already made the judgment call that each of these is worth fixing. Do not skip a fix because you disagree with it, and do not expand its scope beyond what is described.
 - **If a fix's instructions are ambiguous**, implement the most literal, narrow reading rather than reinterpreting its intent.
 - **One commit per fix**, in the order listed, with a conventional commit message (`fix:`, `refactor:`, …) describing what changed.
-- **After each fix, run `pnpm verify`.** If it passes, commit. If it fails and you cannot get it green by strictly following the fix's own instructions (no creative alternatives, no scope expansion), revert your change for that fix and record it as not applied.
+- **Work in the listed order and do not stop early.** The list is ordered by importance, so an unfinished tail is the cheapest thing to lose — but finish it if you can.
 - Never amend or force-push. Stack commits.
+
+## Checking your work
+
+The full `pnpm verify` runs lint, format, build, typecheck and the whole test suite — too slow to repeat after every fix in a long list. Split it:
+
+- **After each fix**, run `pnpm lint && pnpm exec tsc --noEmit`. If it passes, commit and move on. If it fails and you cannot get it green by strictly following the fix's own instructions (no creative alternatives, no scope expansion), revert your change for that fix and record it as not applied.
+- **Once, after the last fix**, run the full `pnpm verify`. If it fails, find the commit responsible, `git revert` it, record that fix as not applied, and re-run until green. Do not fix the failure creatively — reverting is always the correct response.
 
 ## Protected paths — never modify
 
@@ -42,7 +49,7 @@ Every fix listed above must appear exactly once in this block.
 
 When all of these are true:
 
-1. Every fix listed above has been either committed (with `pnpm verify` green) or recorded as not applied
+1. Every fix listed above has been either committed or recorded as not applied, and the final full `pnpm verify` is green
 2. All changes are committed (`git status` clean)
 3. You have emitted the `<fixes-applied>` block, one entry per fix
 

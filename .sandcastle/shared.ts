@@ -118,10 +118,42 @@ export function buildFinalFindings(input: {
   return `## Summary\n\n${input.summary}\n\n## Fixed\n\n${fixedSection}\n\n## Flagged for maintainer\n\n${flaggedSection}`;
 }
 
+/**
+ * Per-MTok list prices, USD. Cache writes bill at 1.25x input, cache reads at
+ * 0.1x. Sonnet is listed at its standard rate, not the promotional one that
+ * runs to 2026-08-31 — an estimate that drifts high for a few weeks is safer
+ * than one that silently understates every run after the promo ends.
+ */
+const PRICING: Record<string, { input: number; output: number }> = {
+  [MODEL_OPUS]: { input: 5, output: 25 },
+  [MODEL_SONNET]: { input: 3, output: 15 },
+};
+
+/**
+ * Estimated USD cost of a run. This is a **lower bound**: sandcastle reports
+ * the usage of each iteration's last assistant message, so intermediate turns
+ * within an iteration aren't counted. Useful for comparing runs against each
+ * other — not a substitute for the Anthropic Console's billing page.
+ */
+export function estimateCost(model: string, iterations: readonly IterationResult[]): number {
+  const price = PRICING[model];
+  if (!price) return 0;
+
+  return iterations.reduce((total, { usage }) => {
+    if (!usage) return total;
+    const input =
+      usage.inputTokens * price.input +
+      usage.cacheCreationInputTokens * price.input * 1.25 +
+      usage.cacheReadInputTokens * price.input * 0.1;
+    return total + (input + usage.outputTokens * price.output) / 1_000_000;
+  }, 0);
+}
+
 export function logUsage(model: string, iterations: readonly IterationResult[]): void {
   console.log('\nRun usage');
   console.log(`  Model:      ${model}`);
   console.log(`  Iterations: ${iterations.length}`);
+  console.log(`  Cost:       ~$${estimateCost(model, iterations).toFixed(2)} (lower bound)`);
 }
 
 export function verify(cwd: string): boolean {

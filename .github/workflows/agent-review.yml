@@ -32,7 +32,9 @@ jobs:
   review:
     needs: triage
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # Headroom for a long fix list: the reviewer fixes what it can decide
+    # alone rather than flagging it, so a round can carry a dozen commits.
+    timeout-minutes: 60
 
     concurrency:
       group: agent-review-${{ github.event.pull_request.number }}
@@ -43,6 +45,7 @@ jobs:
       BRANCH: ${{ github.event.pull_request.head.ref }}
       ISSUE_DATA_PATH: /tmp/issue.json
       REVIEW_FINDINGS_PATH: /tmp/review-findings.md
+      PRIOR_REVIEWS_PATH: /tmp/prior-reviews.md
 
     steps:
       - name: Generate reviewer app token
@@ -112,6 +115,29 @@ jobs:
           ISSUE_NUMBER: ${{ steps.issue.outputs.number }}
         run: gh issue view "$ISSUE_NUMBER" --json title,body,url,labels > /tmp/issue.json
 
+      # Each round reviews the whole main...HEAD diff, so a reviewer with no
+      # memory re-derives — and re-posts — the same observations on every
+      # push, and the PR never converges. Its own previous comments are the
+      # memory: already-reported items stay reported, and an item the
+      # maintainer left standing reads as a decision, not an oversight.
+      # Missing or empty is fine — that's simply the first round.
+      # The author match accepts the login with or without the `[bot]` suffix:
+      # the PR-comments API reports this App as plain `vata-reviewer`, while
+      # the webhook sender (see the triage job) is `vata-reviewer[bot]`. Do not
+      # "simplify" this to an equality check without verifying which form the
+      # API actually returns — matching the wrong one silently yields no
+      # memory at all, and every round starts over.
+      - name: Fetch previous review rounds
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh pr view "$PR_NUMBER" --json comments --jq '
+            [ .comments[]
+              | select(.author.login | test("^vata-reviewer(\\[bot\\])?$"))
+              | .body
+            ] | join("\n\n---\n\n")
+          ' > "$PRIOR_REVIEWS_PATH"
+
       - name: Run reviewer
         id: reviewer
         env:
@@ -120,6 +146,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           ISSUE_DATA_PATH: /tmp/issue.json
           REVIEW_FINDINGS_PATH: /tmp/review-findings.md
+          PRIOR_REVIEWS_PATH: /tmp/prior-reviews.md
         run: pnpm exec tsx .sandcastle/review.ts
 
       # Split from the comment step so a push failure (rejected, non-fast-
@@ -137,7 +164,7 @@ jobs:
       # superseded, not actually broken — the newer run's comment is
       # authoritative.
       - name: Post review result
-        if: "!cancelled()"
+        if: '!cancelled()'
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           OUTCOME: ${{ steps.reviewer.outputs.outcome }}

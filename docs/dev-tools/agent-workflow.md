@@ -41,10 +41,10 @@ There is no escalation label anymore: the author always runs on Sonnet, the revi
         └─ failed  → no PR, comment on issue with log excerpt, label agent:failed
         │
         ▼  (GitHub Actions: pull_request)
-[vata-reviewer[bot]: Opus analyzes the diff (read-only) → decides what to fix]
+[vata-reviewer[bot]: Opus analyzes the full diff + its own previous rounds (read-only) → decides what to fix]
         │
         ▼  (skipped entirely if nothing to fix)
-[Sonnet implements the listed fixes verbatim, runs `pnpm verify` per fix]
+[Sonnet implements the listed fixes verbatim, one commit each, full `pnpm verify` at the end]
         │
         ├─ fixed  → fixes pushed, PR approved, comment summarising what was fixed
         ├─ clean  → no issues found, PR approved, comment confirming the review ran
@@ -66,14 +66,18 @@ The workflow does not auto-retry. Every run is intentional and paid for.
 
 ## Autonomous review
 
-Every open, non-draft agent PR is automatically reviewed by `vata-reviewer[bot]`, in two stages ([ADR-004](../adr/0004-autonomous-agent-pipeline.md)): Opus analyzes the PR diff against the original issue spec and `CLAUDE.md` and decides what needs fixing (read-only, no edits); Sonnet then implements exactly those fixes — it does not re-review or challenge Opus's judgment. Anything subjective or uncertain is flagged for you to judge instead of auto-fixed.
+Every open, non-draft PR is automatically reviewed by `vata-reviewer[bot]`, in two stages ([ADR-004](../adr/0004-autonomous-agent-pipeline.md)): Opus analyzes the PR diff against the original issue spec and `CLAUDE.md` and decides what needs fixing (read-only, no edits); Sonnet then implements exactly those fixes — it does not re-review or challenge Opus's judgment.
+
+**The reviewer owns the code; you own the product.** Structure, naming, dead code, convention drift, stale comments, an internal tradeoff with two defensible answers — the reviewer decides and fixes those itself rather than asking you. It escalates at most 3 items per round, and only for something that changes what a user sees _and_ it can't settle alone: the issue is silent or contradicts itself, or confirming it needs the app running. If you see "this is a design call" in a review comment, the prompt is failing — the reviewer is supposed to make the call.
+
+**Rounds are additive, not repeats.** The reviewer reads its own previous comments on the PR before each round, so it reports a given finding once. An item you left standing after a round counts as your decision and won't come back, and a later round won't reverse an earlier one's fix/flag split. Expect round 2 to be much shorter than round 1; "nothing new" is the normal outcome, not a sign it stopped looking.
 
 How it works:
 
 1. `vata-agent[bot]` opens the PR.
 2. `agent-review.yml` fires on `pull_request` events (`opened`, `synchronize`, `reopened`, `ready_for_review`).
-3. **Analyze (Opus)**: reads the diff, emits a list of high-confidence fixes (each precise enough to implement without further judgment) plus anything flagged for you.
-4. **Fix (Sonnet)** — only runs if there is at least one fix to apply: implements each fix verbatim, one stacked commit per fix, running `pnpm verify` after each. A fix that can't be made to pass verify is reverted and reported as not applied, not re-interpreted.
+3. **Analyze**: reads the full `main...HEAD` diff — never just the newest commit — plus its own previous rounds, then emits the list of fixes (each precise enough to implement without further judgment) plus anything flagged for you. Dependencies are installed here too, so it verifies with `tsc`/`lint`/`test` instead of reporting unverified suspicions. **Opus on a PR's first round, Sonnet on later ones**: the first round is the cold, decisive read; later rounds check an increment against what round 1 already found, at a fraction of the cost.
+4. **Fix (Sonnet)** — only runs if there is at least one fix to apply: implements each fix verbatim, one stacked commit per fix, running `pnpm lint` + `tsc --noEmit` after each and the full `pnpm verify` once at the end. A fix that can't be made green is reverted and reported as not applied, not re-interpreted.
 5. Fixes are pushed only if `pnpm verify` stays green. One message explains the outcome — kept short: the headline result plus what was fixed and what was flagged, not a retelling of the diff:
    - **fixed** — ✅ Reviewed and approved, fixed N issue(s), each fix linked to its SHA
    - **clean** — ✅ Reviewed and approved — no issues found (Sonnet never ran)
@@ -88,8 +92,9 @@ Notes:
 - The reviewer's own pushes are ignored (the sender is `vata-reviewer[bot]`), so there is no infinite review loop.
 - A newer commit cancels the in-flight review and restarts it on the fresh state; the cancelled run posts no comment, since it was superseded, not failed — only the fresh run's result is reported.
 - The fix stage is skipped entirely when there's nothing to fix — a clean or flag-only review costs one Opus run, not two.
-- The reviewer only runs on agent-authored PRs (`vata-agent[bot]`).
-- Each review run draws from the same Anthropic API spend as issue runs.
+- The reviewer runs on every same-repo PR, agent-authored or yours. Fork PRs are skipped: their `pull_request` event carries no repo secrets and can't be pushed to.
+- Each review run draws from the same Anthropic API spend as issue runs. Every run logs a per-stage and total cost estimate (a lower bound — sandcastle reports only each iteration's last-message usage); read it in the "Run reviewer" step's logs to see where spend is actually going.
+- **Every push to an open PR is a paid review round.** The trigger includes `synchronize`, and the concurrency group cancels an in-flight run when a newer commit lands — so rapid pushes cost one round, but five spaced-out pushes cost five. If a PR is getting expensive, mark it draft while you iterate and mark it ready when you want the review.
 
 ## What stays manual
 
