@@ -1,0 +1,39 @@
+src/design/theme.css.ts
+  s_f00afbcaa250fa::t_7895a77ddd420d 292
+  s_f00afbcaa250fa::t_1d7372a1540d6d 303-305
+  s_f00afbcaa250fa::t_15d92ba59be945 178-181,186-191
+  s_f00afbcaa250fa::t_6997c2f4df5208 347,351-352
+  s_f00afbcaa250fa::t_4a52ae84236506 353
+  s_f00afbcaa250fa::t_36a3c0b09a6aeb 382
+src/components/ui/data-chip.css.ts
+  s_f00afbcaa250fa::t_c84a75717f8b72 12
+docs/architecture/tech-stack.md
+  s_f00afbcaa250fa::t_8024f96c043157 38
+src/components/ui/search-input.css.ts
+  s_f00afbcaa250fa::t_737f8dfc6246c2 11
+  s_f00afbcaa250fa::t_b6cd5677378e62 31
+src/components/individuals/person-editor.css.ts
+  s_f00afbcaa250fa::t_ba95e9d049687d 106-111,117
+src/components/ui/entity-picker.tsx
+  s_f00afbcaa250fa::t_a1861e9e23eb83 64
+  s_f00afbcaa250fa::t_266338d1410aad 73-76
+src/components/ui/entity-picker.css.ts
+  s_f00afbcaa250fa::t_69891c7792e2dc 81,85-86
+  s_f00afbcaa250fa::t_2a8214cd8df046 10-15,18,21-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "9e7691d1228b4ea3ab89362dd6e477a82f5e1b5a",
+  "prompts": {},
+  "sessions": {
+    "s_f00afbcaa250fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6c1a5e87-0ec3-4309-be61-d47d7fe6060c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
