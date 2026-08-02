@@ -16,6 +16,7 @@ export const iconButton = recipe({
     borderRadius: vars.radius.sm,
     border: '1px solid transparent',
     cursor: 'pointer',
+    textDecoration: 'none',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
