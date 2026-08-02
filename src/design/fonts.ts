@@ -17,5 +17,4 @@ import '@fontsource/ibm-plex-sans/700.css';
 
 import '@fontsource/ibm-plex-mono/400.css';
 
-import '@fontsource/spectral/400.css';
 import '@fontsource/spectral/400-italic.css';
