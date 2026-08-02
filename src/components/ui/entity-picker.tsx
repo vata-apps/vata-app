@@ -42,7 +42,6 @@ export interface EntityPickerProps {
   onCreate?: () => void;
   createLabel?: React.ReactNode;
   createIcon?: React.ReactNode;
-  width?: number | string;
 }
 
 export function EntityPicker({
@@ -61,7 +60,6 @@ export function EntityPicker({
   onCreate,
   createLabel,
   createIcon,
-  width = styles.DEFAULT_WIDTH,
 }: EntityPickerProps): JSX.Element {
   return (
     <Popover.Root open={open} onOpenChange={onOpenChange}>
@@ -70,10 +68,7 @@ export function EntityPicker({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner sideOffset={6} align="start" positionMethod="fixed">
-          <Popover.Popup
-            className={styles.popup}
-            style={width === styles.DEFAULT_WIDTH ? undefined : { width }}
-          >
+          <Popover.Popup className={styles.popup}>
             <div className={styles.search}>
               <SearchInput
                 autoFocus

@@ -6,10 +6,7 @@
 import { primitiveStyle, transitionFast } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
 
-/** Default popup width; callers needing another width pass an inline style, which wins over this. */
-export const DEFAULT_WIDTH = 300;
-
-export const popup = primitiveStyle({ width: DEFAULT_WIDTH });
+export const popup = primitiveStyle({ width: 300 });
 
 /** Cancels `Popover.Popup`'s own padding so the search/footer bands can bleed to its edges. */
 const bleed = `calc(${vars.space['4']} * -1)`;
