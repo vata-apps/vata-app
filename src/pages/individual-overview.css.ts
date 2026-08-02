@@ -10,7 +10,7 @@ import { vars } from '$/design/theme.css';
 export const grid = style({
   display: 'grid',
   gridTemplateColumns: 'minmax(0, 1fr)',
-  gap: vars.space['4'],
+  gap: vars.space['6'],
   alignItems: 'start',
   '@media': {
     'screen and (min-width: 640px)': {
@@ -19,4 +19,4 @@ export const grid = style({
   },
 });
 
-export const column = style({ display: 'flex', flexDirection: 'column', gap: vars.space['4'] });
+export const column = style({ display: 'flex', flexDirection: 'column', gap: vars.space['6'] });
