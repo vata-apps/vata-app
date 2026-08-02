@@ -1,0 +1,54 @@
+src/design/theme.css.ts
+  s_f00afbcaa250fa::t_2cac37f0906861 190,193-194
+  s_f00afbcaa250fa::t_c101247c78e9b9 149-150
+  s_f00afbcaa250fa::t_7bc82ae8e44035 210,214
+  s_f00afbcaa250fa::t_1cab6dd734c5a3 123,126
+  s_f00afbcaa250fa::t_830d60d5e5005d 98-99,101-102
+src/components/individuals/person-editor.css.ts
+  s_f00afbcaa250fa::t_32e1b3a8a3b737 68
+src/components/ui/entity-picker.tsx
+  s_f00afbcaa250fa::t_c04aca144b26f7 73
+src/components/entity-table.tsx
+  s_f00afbcaa250fa::t_c950fd6ce2d95b 4
+  s_f00afbcaa250fa::t_f9ca1525d93047 79
+src/components/ui/field.css.ts
+  s_f00afbcaa250fa::t_e990afba502048 2
+src/components/person-overview/identity-header.css.ts
+  s_f00afbcaa250fa::t_8828ef5bb2686d 14
+  s_f00afbcaa250fa::t_ef5047e3fa2964 18-19
+src/components/ui/avatar.tsx
+  s_f00afbcaa250fa::t_d5105c717a5333 16-18
+src/components/individuals/person-editor-dialog.tsx
+  s_f00afbcaa250fa::t_3775a264202b7e 14
+  s_f00afbcaa250fa::t_c345ff022c2a54 781-783
+src/components/entity-table.css.ts
+  s_f00afbcaa250fa::t_14d9d8d78ef23e 24-25
+src/components/centered-message.css.ts
+  s_f00afbcaa250fa::t_d5ecf1ee1cd208 1-9
+src/components/centered-message.tsx
+  s_f00afbcaa250fa::t_1a5b5977884d3f 4,9
+src/components/ui/field.tsx
+  s_f00afbcaa250fa::t_940e5fc940fede 2,4,19
+src/components/ui/typography.css.ts
+  s_f00afbcaa250fa::t_769378b9f61105 48-49
+src/components/ui/entity-picker.css.ts
+  s_f00afbcaa250fa::t_7857c275c9e202 9-11
+src/components/ui/card.css.ts
+  s_f00afbcaa250fa::t_ab02262bc61957 20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "5556f621b205bde6476192dc1c678bae453a398b",
+  "prompts": {},
+  "sessions": {
+    "s_f00afbcaa250fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6c1a5e87-0ec3-4309-be61-d47d7fe6060c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
