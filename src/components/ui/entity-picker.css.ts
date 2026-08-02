@@ -4,7 +4,7 @@
  * styles the picker's own search wrap, result rows and create footer.
  */
 import { primitiveStyle, transitionFast } from '$/design/primitive-layer';
-import { vars } from '$/design/theme.css';
+import { focusRing, vars } from '$/design/theme.css';
 
 /** Default popup width; callers needing another width pass an inline style, which wins over this. */
 export const popup = primitiveStyle({ width: 300 });
@@ -36,6 +36,7 @@ export const row = primitiveStyle({
   transition: transitionFast('background'),
   selectors: {
     '&:hover': { background: vars.color.surface.hover },
+    '&:focus-visible': focusRing,
   },
 });
 
@@ -91,6 +92,7 @@ export const create = primitiveStyle({
   transition: transitionFast('background'),
   selectors: {
     '&:hover': { background: vars.color.brand.subtleBg },
+    '&:focus-visible': focusRing,
   },
 });
 
