@@ -2,8 +2,9 @@
  * Switch primitive styles — a Base UI `Switch` assembly styled as a rounded
  * toggle with a sliding thumb.
  *
- * The root fills with the accent color when checked; the thumb is a white
- * circle that slides horizontally.
+ * The root fills with `brand.base` when checked; the thumb is a circle that
+ * slides horizontally — `text.onBrand` while checked, so it stays legible
+ * against the near-white checked track in dark mode.
  */
 import { primitiveStyle } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
@@ -35,5 +36,5 @@ export const thumb = primitiveStyle({
   background: '#fff',
   boxShadow: vars.shadow.sm,
   transition: 'left .15s',
-  selectors: { [`${root}[data-checked] &`]: { left: 18 } },
+  selectors: { [`${root}[data-checked] &`]: { left: 18, background: vars.color.text.onBrand } },
 });
