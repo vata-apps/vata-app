@@ -1,0 +1,25 @@
+src/design/fonts.ts
+  s_f00afbcaa250fa::t_41cb0e467ed242 6-9,16
+package.json
+  s_f00afbcaa250fa::t_83c12a9e846f8d 45
+src/design/theme.css.ts
+  s_f00afbcaa250fa::t_2733247e9df4aa 185
+pnpm-lock.yaml
+  s_f00afbcaa250fa::t_39eab977c1408b 14,17,748-750,4358,4360
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "87f1e0221c968e9e532a8f9cf28b9d682e9195df",
+  "prompts": {},
+  "sessions": {
+    "s_f00afbcaa250fa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6c1a5e87-0ec3-4309-be61-d47d7fe6060c",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
