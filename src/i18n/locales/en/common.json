@@ -17,6 +17,11 @@
     "back": "Back",
     "ariaLabel": "Tree sections"
   },
+  "header": {
+    "search": "Search everywhere…",
+    "searchShortcut": "⌘K",
+    "create": "Create"
+  },
   "errors": {
     "generic": "Something went wrong",
     "loadFailed": "Failed to load data.",

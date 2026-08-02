@@ -17,6 +17,11 @@
     "back": "Retour",
     "ariaLabel": "Sections de l'arbre"
   },
+  "header": {
+    "search": "Rechercher partout…",
+    "searchShortcut": "⌘K",
+    "create": "Créer"
+  },
   "errors": {
     "generic": "Une erreur est survenue",
     "loadFailed": "Échec du chargement des données.",
