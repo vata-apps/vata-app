@@ -7,11 +7,19 @@ import { primitiveStyle, transitionFast } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
 
 /** Default popup width; callers needing another width pass an inline style, which wins over this. */
-export const popup = primitiveStyle({ width: 300 });
+export const DEFAULT_WIDTH = 300;
+
+export const popup = primitiveStyle({ width: DEFAULT_WIDTH });
+
+/** Cancels `Popover.Popup`'s own padding so the search/footer bands can bleed to its edges. */
+const bleed = `calc(${vars.space['4']} * -1)`;
 
 export const search = primitiveStyle({
+  margin: `${bleed} ${bleed} 0`,
   padding: vars.space['5'],
   borderBottom: `1px solid ${vars.color.border.subtle}`,
+  borderTopLeftRadius: vars.radius.md,
+  borderTopRightRadius: vars.radius.md,
 });
 
 export const list = primitiveStyle({
@@ -70,9 +78,12 @@ export const hint = primitiveStyle({
 });
 
 export const foot = primitiveStyle({
+  margin: `0 ${bleed} ${bleed}`,
   borderTop: `1px solid ${vars.color.border.subtle}`,
   padding: vars.space['3'],
   background: vars.color.surface.app,
+  borderBottomLeftRadius: vars.radius.md,
+  borderBottomRightRadius: vars.radius.md,
 });
 
 export const create = primitiveStyle({

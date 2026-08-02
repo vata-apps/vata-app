@@ -103,12 +103,18 @@ export const mfoot = style({
   flex: '0 0 auto',
   background: `color-mix(in srgb, ${vars.color.surface.card} 92%, transparent)`,
 });
+/**
+ * The text alone carries the meaning ("Unsaved changes"); the dot is a
+ * secondary glance-cue, not the signal itself — so it's the one thing here
+ * colored `warn.fg`, while the label stays `muted` instead of also wearing
+ * `warn.fg` (which is `text.strong`'s exact ink and read as plain bold text).
+ */
 export const dirty = style({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
   fontSize: vars.text.xs,
-  color: vars.color.status.warn.fg,
+  color: vars.color.text.muted,
   fontWeight: vars.weight.semibold,
   '::before': {
     content: '""',

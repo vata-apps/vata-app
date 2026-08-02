@@ -8,7 +8,7 @@ export const root = primitiveStyle({
   display: 'flex',
   alignItems: 'center',
   gap: vars.space['4'],
-  height: 32,
+  height: 34,
   padding: `0 ${vars.space['5']}`,
   border: `1px solid ${vars.color.border.default}`,
   borderRadius: vars.radius.sm,
@@ -28,7 +28,7 @@ export const input = primitiveStyle({
   outline: 'none',
   background: 'transparent',
   fontFamily: vars.font.sans,
-  fontSize: vars.text.xs,
+  fontSize: vars.text.sm,
   color: vars.color.text.body,
   selectors: {
     '&::placeholder': { color: vars.color.text.subtle },

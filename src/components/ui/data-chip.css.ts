@@ -9,7 +9,7 @@ export const dataChip = primitiveStyle({
   background: vars.color.surface.hover,
   border: `1px solid ${vars.color.border.default}`,
   borderRadius: vars.radius.md,
-  fontFamily: vars.font.sans,
+  fontFamily: vars.font.mono,
   fontSize: vars.text['2xs'],
   lineHeight: vars.leading.none,
   color: vars.color.text.body,

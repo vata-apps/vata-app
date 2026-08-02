@@ -175,10 +175,20 @@ export const vars = createGlobalThemeContract(
  * The one focus treatment: a halo plus a darker border. Spread the halo into
  * a `:focus-visible` selector and pair it with `border: vars.color.border.focus`
  * on the control; every focusable control in the app wears the same one.
+ * `ring` is opaque (not alpha-mixed) so the halo alone clears the 3:1
+ * non-text contrast floor on controls that have no paired border color.
+ * Forced-colors mode (Windows High Contrast) drops box-shadows entirely, so
+ * it gets a real `outline` instead.
  */
 export const focusRing = {
   outline: 'none',
   boxShadow: `0 0 0 3px ${vars.color.ring}`,
+  '@media': {
+    '(forced-colors: active)': {
+      outline: '2px solid CanvasText',
+      boxShadow: 'none',
+    },
+  },
 } as const;
 
 const font = {
@@ -279,7 +289,7 @@ const light = {
       subtleBg: neutral[100],
       subtleBorder: neutral[300],
     },
-    ring: `color-mix(in srgb, ${neutral[500]} 45%, transparent)`,
+    ring: neutral[600],
     // No scrim token ships in the source system; derived from the darkest
     // neutral to stay hue-free, same role as the old warm-tinted scrim.
     scrim: `oklch(0.145 0 0 / 0.55)`,
@@ -290,9 +300,9 @@ const light = {
   },
   radius,
   shadow: {
-    sm: '0 1px 2px rgba(36, 33, 28, 0.06), 0 1px 1px rgba(36, 33, 28, 0.04)',
-    lg: '0 8px 24px rgba(36, 33, 28, 0.12), 0 2px 6px rgba(36, 33, 28, 0.08)',
-    xl: '0 18px 48px rgba(36, 33, 28, 0.18), 0 6px 14px rgba(36, 33, 28, 0.10)',
+    sm: '0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 1px rgba(0, 0, 0, 0.04)',
+    lg: '0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08)',
+    xl: '0 18px 48px rgba(0, 0, 0, 0.18), 0 6px 14px rgba(0, 0, 0, 0.10)',
   },
   motion,
   font,
@@ -334,11 +344,13 @@ const dark = {
       subtleBg: 'oklch(0.285 0 0)',
       subtleBorder: 'oklch(0.40 0 0)',
     },
-    ring: 'color-mix(in srgb, oklch(0.85 0 0) 40%, transparent)',
+    ring: 'oklch(0.85 0 0)',
     scrim: 'oklch(0 0 0 / 0.70)',
     status: {
       warn: { fg: 'oklch(0.98 0 0)', bg: 'oklch(0.34 0 0)' },
-      err: { fg: 'oklch(0.145 0 0)', bg: 'oklch(0.90 0 0)', text: 'oklch(0.96 0 0)' },
+      // `bg` sits well below `brand.base` (0.92) — a near-white danger fill
+      // would otherwise be ~2% off brand's and read as the same button.
+      err: { fg: 'oklch(0.145 0 0)', bg: 'oklch(0.60 0 0)', text: 'oklch(0.96 0 0)' },
     },
   },
   radius,
@@ -367,7 +379,7 @@ globalStyle('body', { fontFamily: vars.font.sans });
 
 globalStyle(':root:not([data-theme])', {
   '@media': {
-    '(prefers-color-scheme: dark)': { vars: assignVars(vars, dark) },
+    '(prefers-color-scheme: dark)': { vars: assignVars(vars, dark), colorScheme: 'dark' },
   },
 });
 
