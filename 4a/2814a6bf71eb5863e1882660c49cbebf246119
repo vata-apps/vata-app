@@ -1,0 +1,19 @@
+src/components/ui/tooltip.css.ts
+  s_f423bfc0cee8db::t_d7f5a2c2bc9d6b 8-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "4a2814a6bf71eb5863e1882660c49cbebf246119",
+  "prompts": {},
+  "sessions": {
+    "s_f423bfc0cee8db": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01bcf1c7-f107-4e2c-a77d-0f7e16d80d77",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
