@@ -1,6 +1,6 @@
 /**
  * Dialog primitive styles — a Base UI `Dialog` assembly styled from the
- * warm-earth tokens.
+ * grayscale design tokens.
  *
  * Provides a scrim backdrop and a rounded popup shell. The `layer` variant
  * picks the stacking level: `dialog` for a regular modal, `alert` for a
@@ -37,11 +37,11 @@ export const popup = recipe({
     left: '50%',
     transform: 'translate(-50%, -50%)',
     fontFamily: vars.font.sans,
-    color: vars.color.text,
-    background: vars.color.panel,
-    border: `1px solid ${vars.color.borderStrong}`,
-    borderRadius: 14,
-    boxShadow: vars.shadow.lg,
+    color: vars.color.text.body,
+    background: vars.color.surface.card,
+    border: `1px solid ${vars.color.border.default}`,
+    borderRadius: vars.radius.lg,
+    boxShadow: vars.shadow.xl,
   }),
   variants: {
     layer: {

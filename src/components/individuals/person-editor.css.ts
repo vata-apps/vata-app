@@ -1,6 +1,6 @@
 /**
  * Vanilla Extract styles for the Person editor + Person picker (ADR-0005).
- * Base UI supplies behavior; these styles supply the warm-earth look over the
+ * Base UI supplies behavior; these styles supply the grayscale look over the
  * `src/design/theme.css.ts` token contract. Shared by `person-editor-dialog.tsx`
  * and `person-picker.tsx`.
  *
@@ -28,20 +28,20 @@ export const mhead = style({
   alignItems: 'center',
   gap: 12,
   padding: '14px 18px',
-  borderBottom: `1px solid ${vars.color.border}`,
+  borderBottom: `1px solid ${vars.color.border.subtle}`,
   flex: '0 0 auto',
 });
 export const headAvatar = style({
   width: 38,
   height: 38,
-  borderRadius: 10,
-  background: vars.color.subtle,
-  border: `1px solid ${vars.color.borderStrong}`,
-  color: vars.color.muted,
+  borderRadius: vars.radius.md,
+  background: vars.color.surface.sunken,
+  border: `1px solid ${vars.color.border.default}`,
+  color: vars.color.text.muted,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontWeight: 700,
+  fontWeight: vars.weight.bold,
   fontSize: 13,
   flex: '0 0 auto',
 });
@@ -53,20 +53,20 @@ export const headCrumb = style({
   minWidth: 0,
 });
 export const headTitle = style({
-  fontSize: 15,
-  fontWeight: 650,
+  fontSize: vars.text.md,
+  fontWeight: vars.weight.strong,
   margin: 0,
   whiteSpace: 'nowrap',
   flex: '0 0 auto',
 });
 /** Breadcrumb separator between the title and the person name. */
-export const headSep = style({ fontSize: 14, color: vars.color.faint, flex: '0 0 auto' });
-/** The lineage signature: the person's name in Fraunces italic, truncated if long. */
+export const headSep = style({
+  fontSize: vars.text.md,
+  color: vars.color.text.subtle,
+  flex: '0 0 auto',
+});
+/** Truncation for the person's name, rendered via `Typography family="serif"`. */
 export const headSub = style({
-  fontFamily: vars.font.serif,
-  fontStyle: 'italic',
-  fontSize: 15,
-  color: vars.color.muted,
   minWidth: 0,
   flex: '0 1 auto',
   overflow: 'hidden',
@@ -84,14 +84,14 @@ export const mbody = style({
   selectors: {
     '&::-webkit-scrollbar': { width: 14, height: 14 },
     '&::-webkit-scrollbar-track': { background: 'transparent' },
-    // Warm, inset thumb (transparent border + padding-box clip) that sits on the theme.
+    // Inset thumb (transparent border + padding-box clip) that sits on the theme.
     '&::-webkit-scrollbar-thumb': {
-      background: vars.color.faint,
-      borderRadius: 999,
+      background: vars.color.text.subtle,
+      borderRadius: vars.radius.full,
       border: '4px solid transparent',
       backgroundClip: 'padding-box',
     },
-    '&::-webkit-scrollbar-thumb:hover': { background: vars.color.muted },
+    '&::-webkit-scrollbar-thumb:hover': { background: vars.color.text.muted },
   },
 });
 export const mfoot = style({
@@ -99,26 +99,36 @@ export const mfoot = style({
   alignItems: 'center',
   gap: 12,
   padding: '11px 18px',
-  borderTop: `1px solid ${vars.color.border}`,
+  borderTop: `1px solid ${vars.color.border.subtle}`,
   flex: '0 0 auto',
-  background: `color-mix(in srgb, ${vars.color.panel} 92%, transparent)`,
+  background: `color-mix(in srgb, ${vars.color.surface.card} 92%, transparent)`,
 });
+/**
+ * The text alone carries the meaning ("Unsaved changes"); the dot is a
+ * secondary glance-cue, not the signal itself — so it's the one thing here
+ * colored `warn.fg`, while the label stays `muted` instead of also wearing
+ * `warn.fg` (which is `text.strong`'s exact ink and read as plain bold text).
+ */
 export const dirty = style({
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
-  fontSize: 12.5,
-  color: vars.color.warn,
-  fontWeight: 600,
+  fontSize: vars.text.xs,
+  color: vars.color.text.muted,
+  fontWeight: vars.weight.semibold,
   '::before': {
     content: '""',
     width: 7,
     height: 7,
     borderRadius: '50%',
-    background: vars.color.warn,
+    background: vars.color.status.warn.fg,
   },
 });
-export const loadingText = style({ fontSize: 13.5, color: vars.color.muted, padding: '8px 0' });
+export const loadingText = style({
+  fontSize: vars.text.sm,
+  color: vars.color.text.muted,
+  padding: '8px 0',
+});
 
 /* ---- layout + cards ------------------------------------------------- */
 
@@ -131,42 +141,31 @@ export const cols = style({
 });
 export const col = style({ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 });
 export const ecard = style({
-  background: vars.color.panel,
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 11,
+  background: vars.color.surface.card,
+  border: `1px solid ${vars.color.border.default}`,
+  borderRadius: vars.radius.md,
   padding: '14px 15px',
 });
 export const familyCard = style({
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: 10,
+  border: `1px solid ${vars.color.border.default}`,
+  borderRadius: vars.radius.md,
   padding: '12px 13px',
   marginTop: 4,
 });
 /** The first family sits below the Parents rows and wants a clearer break from them. */
 export const familyCardFirst = style({ marginTop: 16 });
-export const sectitle = style({
-  fontSize: 11,
-  letterSpacing: '.09em',
-  textTransform: 'uppercase',
-  color: vars.color.muted,
-  fontWeight: 650,
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  marginBottom: 12,
-});
+/** Spacing for a {@link Caption} used as a form-section title. */
+export const sectionCaption = style({ marginBottom: 12 });
 export const subhead = style({
-  fontSize: 11.5,
-  fontWeight: 650,
-  color: vars.color.text,
+  fontSize: vars.text.xs,
+  fontWeight: vars.weight.strong,
+  color: vars.color.text.strong,
   margin: '0 0 8px',
 });
 export const subheadMt = style({ marginTop: 14 });
 
 /* ---- controls ------------------------------------------------------- */
 
-export const field = style({ display: 'flex', flexDirection: 'column', gap: 5, minWidth: 0 });
-export const fieldLabel = style({ fontSize: 11.5, fontWeight: 600, color: vars.color.text });
 export const tnum = style({ fontVariantNumeric: 'tabular-nums' });
 export const fgridC2 = style({ display: 'grid', gap: '10px 12px', gridTemplateColumns: '1fr 1fr' });
 export const fgridC3 = style({
@@ -185,7 +184,7 @@ export const fgrid3Gap = style([fgridC3, { marginTop: 10 }]);
 export const deathGroup = style({
   marginTop: 12,
   paddingTop: 12,
-  borderTop: `1px solid ${vars.color.border}`,
+  borderTop: `1px solid ${vars.color.border.subtle}`,
   display: 'flex',
   flexDirection: 'column',
   gap: 10,
@@ -198,7 +197,7 @@ export const familyHead = style({ display: 'flex', alignItems: 'center', gap: 8,
 export const familyTitle = style([subhead, { margin: 0 }]);
 
 export const statusrow = style({ display: 'flex', alignItems: 'center', gap: 10 });
-export const switchLabel = style({ fontSize: 13, fontWeight: 600 });
+export const switchLabel = style({ fontSize: vars.text.sm, fontWeight: vars.weight.semibold });
 
 export const altrow = style({
   display: 'grid',
@@ -223,9 +222,9 @@ export const eventType = style({
   display: 'flex',
   alignItems: 'center',
   height: 34,
-  fontSize: 13,
-  fontWeight: 550,
-  color: vars.color.text,
+  fontSize: vars.text.sm,
+  fontWeight: vars.weight.semibold,
+  color: vars.color.text.body,
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -237,26 +236,26 @@ export const typegrid = style({
   gridTemplateColumns: '1fr 1fr 1fr',
   gap: 6,
   maxWidth: 430,
-  border: `1px solid ${vars.color.border}`,
-  background: vars.color.panel2,
-  borderRadius: 10,
+  border: `1px solid ${vars.color.border.default}`,
+  background: vars.color.surface.panel,
+  borderRadius: vars.radius.md,
   padding: 8,
 });
 export const typegridBtn = style({
-  border: `1px solid ${vars.color.border}`,
-  background: vars.color.panel,
-  borderRadius: 7,
+  border: `1px solid ${vars.color.border.subtle}`,
+  background: vars.color.surface.card,
+  borderRadius: vars.radius.sm,
   padding: '8px 9px',
-  fontSize: 12.5,
+  fontSize: vars.text.xs,
   cursor: 'pointer',
-  color: vars.color.text,
+  color: vars.color.text.body,
   textAlign: 'left',
   fontFamily: 'inherit',
   selectors: {
     '&:hover': {
-      borderColor: vars.color.accent,
-      color: vars.color.accent,
-      background: vars.color.accentSoft,
+      borderColor: vars.color.brand.base,
+      color: vars.color.brand.base,
+      background: vars.color.brand.subtleBg,
     },
     '&:focus-visible': focusRing,
   },
@@ -271,35 +270,39 @@ export const relrow2 = style({
   alignItems: 'start',
   padding: '4px 0',
 });
-export const relLabel = style({ fontSize: 12, color: vars.color.text, paddingTop: 12 });
+export const relLabel = style({
+  fontSize: vars.text.xs,
+  color: vars.color.text.body,
+  paddingTop: 12,
+});
 export const childstack = style({ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 });
 export const relslot = style({
   minHeight: 44,
-  border: `1px dashed ${vars.color.borderStrong}`,
+  border: `1px dashed ${vars.color.border.strong}`,
   background: 'transparent',
-  color: vars.color.faint,
+  color: vars.color.text.subtle,
   borderRadius: vars.radius.sm,
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
   padding: '0 12px',
-  fontSize: 12.5,
-  fontWeight: 600,
+  fontSize: vars.text.xs,
+  fontWeight: vars.weight.semibold,
   cursor: 'pointer',
   width: '100%',
   fontFamily: 'inherit',
   selectors: {
-    '&:hover': { borderColor: vars.color.accent, color: vars.color.accent },
+    '&:hover': { borderColor: vars.color.brand.base, color: vars.color.brand.base },
     '&:focus-visible': focusRing,
     '&:disabled': { cursor: 'default', opacity: 0.6 },
-    // Keep the resting look while disabled — no accent hover on a dead control.
-    '&:disabled:hover': { borderColor: vars.color.borderStrong, color: vars.color.faint },
+    // Keep the resting look while disabled — no brand hover on a dead control.
+    '&:disabled:hover': { borderColor: vars.color.border.strong, color: vars.color.text.subtle },
   },
 });
 export const pfield = style({
   minHeight: 44,
-  border: `1px solid ${vars.color.borderStrong}`,
-  background: vars.color.panel,
+  border: `1px solid ${vars.color.border.default}`,
+  background: vars.color.surface.card,
   borderRadius: vars.radius.sm,
   display: 'flex',
   alignItems: 'center',
@@ -311,10 +314,10 @@ export const pfieldAvatar = style({
   width: 26,
   height: 26,
   borderRadius: '50%',
-  background: vars.color.accentSoft,
-  color: vars.color.accent,
+  background: vars.color.brand.subtleBg,
+  color: vars.color.brand.base,
   fontSize: 9,
-  fontWeight: 700,
+  fontWeight: vars.weight.bold,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -322,66 +325,14 @@ export const pfieldAvatar = style({
 });
 export const pfieldBody = style({ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 });
 export const pfieldName = style({
-  fontSize: 13,
-  fontWeight: 550,
-  color: vars.color.text,
+  fontSize: vars.text.sm,
+  fontWeight: vars.weight.semibold,
+  color: vars.color.text.body,
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 });
-export const pfieldDates = style({ fontSize: 11, color: vars.color.faint });
-
-/* ---- Person picker (Base UI Popover) -------------------------------- */
-
-/** The Popover primitive owns the popup shell; the picker only fixes its width. */
-export const pickerPopup = style({ width: 288 });
-export const pickerList = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 2,
-  marginTop: 8,
-  maxHeight: 260,
-  overflow: 'auto',
-});
-export const pickerItem = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 9,
-  width: '100%',
-  border: 0,
-  background: 'transparent',
-  textAlign: 'left',
-  padding: '7px 8px',
-  borderRadius: 7,
-  cursor: 'pointer',
-  color: vars.color.text,
-  fontFamily: 'inherit',
-  selectors: {
-    '&:hover': { background: vars.color.subtle },
-    '&:focus-visible': focusRing,
-  },
-});
-export const pickerMeta = style({ fontSize: 12, color: vars.color.faint, padding: '6px 8px' });
-export const pickerCreate = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  width: '100%',
-  marginTop: 6,
-  border: 0,
-  borderTop: `1px solid ${vars.color.border}`,
-  paddingTop: 9,
-  paddingBottom: 3,
-  paddingInline: 8,
-  background: 'transparent',
-  color: vars.color.accent,
-  fontWeight: 650,
-  fontSize: 12.5,
-  cursor: 'pointer',
-  textAlign: 'left',
-  fontFamily: 'inherit',
-  selectors: { '&:focus-visible': focusRing },
-});
+export const pfieldDates = style({ fontSize: vars.text['2xs'], color: vars.color.text.subtle });
 
 /* ---- error callout -------------------------------------------------- */
 
@@ -390,11 +341,11 @@ export const callout = style({
   display: 'flex',
   alignItems: 'center',
   gap: 8,
-  fontSize: 12.5,
-  color: vars.color.danger,
-  background: `color-mix(in srgb, ${vars.color.danger} 12%, transparent)`,
-  border: `1px solid color-mix(in srgb, ${vars.color.danger} 30%, transparent)`,
-  borderRadius: 8,
+  fontSize: vars.text.xs,
+  color: vars.color.status.err.text,
+  background: `color-mix(in srgb, ${vars.color.status.err.text} 12%, transparent)`,
+  border: `1px solid color-mix(in srgb, ${vars.color.status.err.text} 30%, transparent)`,
+  borderRadius: vars.radius.md,
   padding: '9px 12px',
 });
 
@@ -407,20 +358,20 @@ export const callout = style({
 export const alertPopup = style({
   width: 'calc(100vw - 44px)',
   maxWidth: 440,
-  borderRadius: 12,
+  borderRadius: vars.radius.lg,
   padding: 20,
 });
 export const alertTitle = style({
-  fontSize: 16,
-  fontWeight: 650,
-  color: vars.color.text,
+  fontSize: vars.text.lg,
+  fontWeight: vars.weight.strong,
+  color: vars.color.text.strong,
   margin: 0,
 });
 export const alertDesc = style({
-  fontSize: 13,
-  color: vars.color.muted,
+  fontSize: vars.text.sm,
+  color: vars.color.text.muted,
   margin: '8px 0 0',
-  lineHeight: 1.5,
+  lineHeight: vars.leading.normal,
 });
 export const alertActions = style({
   display: 'flex',

@@ -1,7 +1,7 @@
 /**
  * Table primitive styles — semantic, sortable, activatable rows over the
- * warm-earth tokens. Owns table mechanics only: no loading, error, or empty
- * messages (those live in the application {@link EntityTable}).
+ * grayscale design tokens. Owns table mechanics only: no loading, error, or
+ * empty messages (those live in the application {@link EntityTable}).
  */
 import { primitiveStyle } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
@@ -9,29 +9,27 @@ import { focusRing, vars } from '$/design/theme.css';
 export const table = primitiveStyle({
   width: '100%',
   borderCollapse: 'collapse',
-  fontSize: vars.text['13'].fontSize,
-  lineHeight: vars.text['13'].lineHeight,
-  color: vars.color.text,
+  fontSize: vars.text.sm,
+  color: vars.color.text.body,
 });
 
 export const headerCell = primitiveStyle({
   position: 'sticky',
   top: 0,
   zIndex: 1,
-  background: vars.color.panel,
+  background: vars.color.surface.card,
   textAlign: 'left',
-  fontWeight: 600,
-  fontSize: vars.text['12.5'].fontSize,
-  lineHeight: vars.text['12.5'].lineHeight,
-  padding: `${vars.space['2.5']} ${vars.space['3']}`,
-  borderBottom: `1px solid ${vars.color.borderStrong}`,
+  fontWeight: vars.weight.semibold,
+  fontSize: vars.text.xs,
+  padding: `${vars.space['4']} ${vars.space['5']}`,
+  borderBottom: `1px solid ${vars.color.border.default}`,
   whiteSpace: 'nowrap',
 });
 
 export const sortButton = primitiveStyle({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: vars.space['1.5'],
+  gap: vars.space['3'],
   background: 'transparent',
   border: 'none',
   padding: 0,
@@ -47,18 +45,18 @@ export const sortButton = primitiveStyle({
 
 export const sortIndicator = primitiveStyle({
   display: 'inline-flex',
-  color: vars.color.faint,
+  color: vars.color.text.subtle,
   opacity: 0,
-  transition: 'opacity 100ms ease',
+  transition: `opacity ${vars.motion.duration.instant} ${vars.motion.ease.standard}`,
   selectors: {
-    '&[data-sort-active="true"]': { opacity: 1, color: vars.color.text },
+    '&[data-sort-active="true"]': { opacity: 1, color: vars.color.text.strong },
     [`${sortButton}:hover &`]: { opacity: 1 },
     [`${sortButton}:focus-visible &`]: { opacity: 1 },
   },
 });
 
 export const row = primitiveStyle({
-  borderBottom: `1px solid ${vars.color.border}`,
+  borderBottom: `1px solid ${vars.color.border.subtle}`,
   selectors: {
     '&:last-child': { borderBottom: 'none' },
     // Only rows that actually carry a link are pointer-cursored. A row whose
@@ -70,20 +68,20 @@ export const row = primitiveStyle({
 });
 
 export const cell = primitiveStyle({
-  padding: `${vars.space['2.5']} ${vars.space['3']}`,
+  padding: `${vars.space['4']} ${vars.space['5']}`,
   textAlign: 'left',
   verticalAlign: 'middle',
   selectors: {
-    [`${row}[data-row-link="true"]:has(a):hover &`]: { background: vars.color.subtle },
+    [`${row}[data-row-link="true"]:has(a):hover &`]: { background: vars.color.surface.hover },
   },
 });
 
 export const rowHeaderCell = primitiveStyle({
-  padding: `${vars.space['2.5']} ${vars.space['3']}`,
+  padding: `${vars.space['4']} ${vars.space['5']}`,
   textAlign: 'left',
   verticalAlign: 'middle',
-  fontWeight: 500,
+  fontWeight: vars.weight.medium,
   selectors: {
-    [`${row}[data-row-link="true"]:has(a):hover &`]: { background: vars.color.subtle },
+    [`${row}[data-row-link="true"]:has(a):hover &`]: { background: vars.color.surface.hover },
   },
 });

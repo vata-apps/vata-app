@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { Button } from '$components/ui/button';
+import { EmptyState } from '$components/ui/empty-state';
 import { Skeleton } from '$components/ui/skeleton';
 import { Table, type TableColumn, type TableSort } from '$components/ui/table';
 
@@ -75,7 +76,7 @@ function StateRow({
   return (
     <tr>
       <td colSpan={span} className={styles.stateCell}>
-        <p className={styles.stateTitle}>{title}</p>
+        <EmptyState className={styles.stateTitleOverride}>{title}</EmptyState>
         {body && <p className={styles.stateBody}>{body}</p>}
         {action && (
           <div className={styles.stateActions}>

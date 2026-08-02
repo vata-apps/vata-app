@@ -17,7 +17,7 @@
  */
 import { style, type StyleRule } from '@vanilla-extract/css';
 
-import { primitiveLayer } from './theme.css';
+import { primitiveLayer, vars } from './theme.css';
 
 export function primitive(rule: StyleRule): StyleRule {
   return { '@layer': { [primitiveLayer]: rule } };
@@ -26,4 +26,16 @@ export function primitive(rule: StyleRule): StyleRule {
 /** `style()` for primitives: the rule lands in the primitives layer. */
 export function primitiveStyle(rule: StyleRule): string {
   return style(primitive(rule));
+}
+
+/**
+ * The standard hover/press transition: comma-join the CSS properties that
+ * should animate (e.g. `transitionFast('background', 'border-color')`). Lives
+ * here rather than `theme.css.ts` for the same reason as {@link primitive} —
+ * Vanilla Extract can't serialize a function export from a `.css.ts` file.
+ */
+export function transitionFast(...properties: string[]): string {
+  return properties
+    .map((property) => `${property} ${vars.motion.duration.fast} ${vars.motion.ease.standard}`)
+    .join(', ');
 }

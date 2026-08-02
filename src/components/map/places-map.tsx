@@ -30,14 +30,14 @@ const TILE_ATTRIBUTION =
 
 const MARKER_ICON = L.divIcon({
   className: 'vata-place-marker',
-  html: `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:${vars.color.accent};border:2px solid ${vars.color.panel};box-shadow:0 0 0 1px ${vars.color.borderStrong};"></span>`,
+  html: `<span style="display:block;width:14px;height:14px;border-radius:9999px;background:${vars.color.brand.base};border:2px solid ${vars.color.surface.card};box-shadow:0 0 0 1px ${vars.color.border.default};"></span>`,
   iconSize: [14, 14],
   iconAnchor: [7, 7],
 });
 
 const HIGHLIGHTED_MARKER_ICON = L.divIcon({
   className: 'vata-place-marker vata-place-marker--highlighted',
-  html: `<span style="display:block;width:20px;height:20px;border-radius:9999px;background:${vars.color.accent};border:2px solid ${vars.color.panel};box-shadow:0 0 0 1px ${vars.color.borderStrong}, 0 0 0 5px ${vars.color.accentBorder};"></span>`,
+  html: `<span style="display:block;width:20px;height:20px;border-radius:9999px;background:${vars.color.brand.base};border:2px solid ${vars.color.surface.card};box-shadow:0 0 0 1px ${vars.color.border.default}, 0 0 0 5px ${vars.color.brand.subtleBorder};"></span>`,
   iconSize: [20, 20],
   iconAnchor: [10, 10],
 });
@@ -86,7 +86,7 @@ function FitBounds({ points }: { points: MapPoint[] }): null {
 }
 
 /**
- * A themed Leaflet map plotting the given points as accent-colored markers
+ * A themed Leaflet map plotting the given points as brand-colored markers
  * with hover tooltips. The basemap swaps between CARTO Positron and Dark
  * Matter with the app's resolved light/dark appearance. Shared by anywhere
  * geocoded places need a map surface (Person Overview's Places panel,
@@ -101,7 +101,7 @@ export function PlacesMap({ points, highlightedId }: PlacesMapProps): JSX.Elemen
       center={[0, 0]}
       zoom={2}
       scrollWheelZoom={false}
-      style={{ height: 280, width: '100%', borderRadius: vars.radius.base }}
+      style={{ height: 280, width: '100%', borderRadius: vars.radius.md }}
     >
       <TileLayer url={tileUrl} attribution={TILE_ATTRIBUTION} subdomains="abcd" />
       <FitBounds points={points} />

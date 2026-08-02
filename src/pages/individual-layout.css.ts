@@ -7,8 +7,8 @@ import { vars } from '$/design/theme.css';
 export const page = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: vars.space['4'],
-  padding: vars.space['4'],
+  gap: vars.space['6'],
+  padding: vars.space['6'],
 });
 
-export const body = style({ display: 'flex', flexDirection: 'column', gap: vars.space['4'] });
+export const body = style({ display: 'flex', flexDirection: 'column', gap: vars.space['6'] });

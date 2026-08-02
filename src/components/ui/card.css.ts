@@ -13,22 +13,23 @@ import { primitiveStyle } from '$/design/primitive-layer';
 import { vars } from '$/design/theme.css';
 
 export const card = primitiveStyle({
-  background: vars.color.panel,
-  border: `1px solid ${vars.color.borderStrong}`,
-  borderRadius: vars.radius.base,
-  padding: vars.space['4'],
+  background: vars.color.surface.card,
+  border: `1px solid ${vars.color.border.default}`,
+  borderRadius: vars.radius.md,
+  boxShadow: vars.shadow.sm,
+  padding: vars.space['6'],
 });
 
 export const stack = primitiveStyle({
   display: 'flex',
   flexDirection: 'column',
-  gap: vars.space['3'],
+  gap: vars.space['5'],
 });
 
 export const list = primitiveStyle({ display: 'flex', flexDirection: 'column' });
 
 export const separator = primitiveStyle({
   height: 1,
-  background: vars.color.border,
-  margin: `${vars.space['3']} 0`,
+  background: vars.color.border.subtle,
+  margin: `${vars.space['5']} 0`,
 });

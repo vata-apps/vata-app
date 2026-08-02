@@ -8,8 +8,8 @@ import { vars } from '$/design/theme.css';
  * after the name, for compact grids).
  */
 
-export const row = style({ display: 'flex', alignItems: 'center', gap: vars.space['3'] });
-export const rowDense = style({ display: 'flex', alignItems: 'center', gap: vars.space['2'] });
+export const row = style({ display: 'flex', alignItems: 'center', gap: vars.space['5'] });
+export const rowDense = style({ display: 'flex', alignItems: 'center', gap: vars.space['4'] });
 
 export const body = style({
   display: 'flex',
@@ -21,6 +21,6 @@ export const bodyDense = style({
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'baseline',
-  gap: vars.space['2'],
+  gap: vars.space['4'],
   minWidth: 0,
 });

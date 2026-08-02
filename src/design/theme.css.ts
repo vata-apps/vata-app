@@ -2,13 +2,16 @@
  * Vata design tokens — the single source of visual truth (ADR-0005).
  *
  * A typed, zero-runtime Vanilla Extract contract. Every styled component reads
- * `vars.*`; raw color/size values live ONLY here. Warm-earth identity: terracotta
- * (clay) accent over warm sand neutrals, all in oklch. Geist Sans for UI, Geist
- * Mono for data, Fraunces (italic) reserved for lineage moments.
+ * `vars.*`; raw color/size values live ONLY here. Grayscale identity: no hue
+ * anywhere in the product — contrast and weight carry meaning instead. Spectral
+ * (serif) is reserved for person names, drafts and empty states; IBM Plex Sans
+ * is the UI/body face; IBM Plex Mono is for structured data (dates, ids,
+ * coordinates, counts).
  *
- * Ported from the maintainer's design system. Lean by intent (ADR-0005): the
- * contract holds what the product uses today and grows as screens demand it — no
- * inherited shadcn/Radix semantic sprawl.
+ * Ported from the "Vata Design System" Claude Design project, itself derived
+ * from the "Personnes" reference mockup — that mockup is the ultimate source
+ * of truth. Lean by intent (ADR-0005): the contract holds what the product
+ * uses today and grows as screens demand it.
  *
  * Light is the default on `:root`; dark applies via `:root[data-theme="dark"]`
  * (set from the resolved app appearance) and, as a fallback, via
@@ -34,41 +37,93 @@ export const primitiveLayer = globalLayer('vata-primitives');
 export const vars = createGlobalThemeContract(
   {
     color: {
-      /** App canvas. */
-      ground: null,
-      /** Raised surfaces: cards, modal, inputs. */
-      panel: null,
-      /** Secondary surface: popovers, nested panels. */
-      panel2: null,
-      /** Subtle fills: segmented track, hover wells. */
-      subtle: null,
-      /** Hairline separators. */
-      border: null,
-      /** Field / control borders. */
-      borderStrong: null,
-      /** Primary text. */
-      text: null,
-      /** Secondary text, labels. */
-      muted: null,
-      /** Tertiary text, placeholders, hints. */
-      faint: null,
-      /** Terracotta accent (primary). */
-      accent: null,
-      accentHover: null,
-      /** Tinted accent fill: avatars, hint bars. */
-      accentSoft: null,
-      accentBorder: null,
-      /** Text/glyphs on an accent fill. */
-      accentText: null,
-      success: null,
-      warn: null,
-      danger: null,
-      /** Modal backdrop. */
+      /** Surfaces, from the workspace up to a floating panel. */
+      surface: {
+        /** Workspace behind cards, expanded row bodies, drafts. */
+        app: null,
+        /** Cards, popovers, menus, inputs. */
+        card: null,
+        /** Left rails and list panes — a hair off the app ground. */
+        panel: null,
+        sunken: null,
+        hover: null,
+        active: null,
+      },
+      text: {
+        /** Card and section titles (paired with `weight.strong`). */
+        strong: null,
+        /** Default body/UI ink. */
+        body: null,
+        /** Secondary text, labels. */
+        muted: null,
+        /** Placeholders, hints, tertiary text. */
+        subtle: null,
+        /** Text/glyphs on a `brand` fill. */
+        onBrand: null,
+      },
+      border: {
+        /** Dividers inside a card. */
+        subtle: null,
+        /** Card and input outlines. */
+        default: null,
+        /** Hover, and the dashed "empty slot" / "not saved yet" outline. */
+        strong: null,
+        focus: null,
+      },
+      /**
+       * Not a color — the darkest ink. Marks links, focus, selected rows and
+       * icon pucks. See `readme.md` in the source design system.
+       */
+      brand: {
+        base: null,
+        hover: null,
+        active: null,
+        subtleBg: null,
+        subtleBorder: null,
+      },
+      /** Focus halo: pair with a `border.focus` outline, per the source system. */
+      ring: null,
+      /** Dialog/alert backdrop. */
       scrim: null,
+      /**
+       * Grayscale status tones — fill and weight distinguish them, never hue.
+       * Always pair with a text label; never rely on shade alone.
+       */
+      status: {
+        warn: { fg: null, bg: null },
+        /** `err` is the most severe treatment: solid ink fill, white text. */
+        err: { fg: null, bg: null, text: null },
+      },
     },
-    radius: { base: null, sm: null },
-    shadow: { sm: null, lg: null },
+    radius: { sm: null, md: null, lg: null, full: null },
+    shadow: { sm: null, lg: null, xl: null },
+    motion: {
+      ease: { standard: null },
+      duration: { instant: null, fast: null },
+    },
     font: { sans: null, serif: null, mono: null },
+    /**
+     * Type scale is closed — no half-steps. Round to the nearest token, never
+     * smaller than `2xs`. Line height, weight and tracking are separate scales
+     * combined per component, not paired per size.
+     */
+    text: {
+      '2xs': null,
+      xs: null,
+      sm: null,
+      md: null,
+      lg: null,
+      xl: null,
+      '2xl': null,
+      '3xl': null,
+      '4xl': null,
+      '5xl': null,
+    },
+    /** `none` is the single-line reset for compact controls (buttons, badges, segments). */
+    leading: { none: null, tight: null, snug: null, normal: null },
+    /** `strong` is the card/section title weight — heavier than `semibold`, short of `bold`. */
+    weight: { regular: null, medium: null, semibold: null, strong: null, bold: null },
+    tracking: { wide: null, caps: null },
     /**
      * Stacking order for portalled surfaces. Primitives read these; features
      * never declare a raw z-index.
@@ -91,44 +146,24 @@ export const vars = createGlobalThemeContract(
       alert: null,
     },
     /**
-     * Spacing scale, Tailwind-style: step N is N × 4px.
-     * Only steps currently consumed by the product are declared — gaps are
-     * intentional and signal unfinished scale territory.
+     * 4px-based spacing scale. Only steps currently consumed by the product
+     * are declared.
      */
     space: {
-      '0.5': null,
-      '0.75': null,
-      '1.5': null,
-      '1.75': null,
-      '2': null,
-      '2.25': null,
-      '2.5': null,
-      '2.75': null,
+      '1': null,
       '3': null,
-      '3.25': null,
-      '3.5': null,
       '4': null,
-      '4.5': null,
       '5': null,
-    },
-    /**
-     * Type scale as size/line-height pairs. Steps are keyed by the consumed
-     * font size in px; the pair keeps font-size and line-height together at
-     * the token layer so components never compose them ad hoc.
-     */
-    text: {
-      '12.5': { fontSize: null, lineHeight: null },
-      '13': { fontSize: null, lineHeight: null },
-      '13.5': { fontSize: null, lineHeight: null },
-      '15': { fontSize: null, lineHeight: null },
-      '16': { fontSize: null, lineHeight: null },
+      '6': null,
+      '7': null,
+      '8': null,
     },
   },
   (_value, path) =>
     `vata-${path
       .map((segment) =>
         // CSS custom property identifiers cannot contain a leading digit or a
-        // period; escape them so numeric token steps (e.g. space.0.5) remain
+        // period; escape them so numeric token steps (e.g. text.2xl) remain
         // valid variables.
         segment.replace(/\.|^\d/g, (match) => (match === '.' ? '_' : `_${match}`))
       )
@@ -136,21 +171,56 @@ export const vars = createGlobalThemeContract(
 );
 
 /**
- * The one focus ring. Spread it into a `:focus-visible` selector; every
- * focusable control in the app wears the same one.
+ * The one focus treatment: a halo plus a darker border. Spread the halo into
+ * a `:focus-visible` selector and pair it with `border: vars.color.border.focus`
+ * on the control; every focusable control in the app wears the same one.
+ * `ring` is opaque (not alpha-mixed) so the halo alone clears the 3:1
+ * non-text contrast floor on controls that have no paired border color.
+ * Forced-colors mode (Windows High Contrast) drops box-shadows entirely, so
+ * it gets a real `outline` instead.
  */
 export const focusRing = {
-  outline: `2px solid ${vars.color.accent}`,
-  outlineOffset: 2,
+  outline: 'none',
+  boxShadow: `0 0 0 3px ${vars.color.ring}`,
+  '@media': {
+    '(forced-colors: active)': {
+      outline: '2px solid CanvasText',
+      boxShadow: 'none',
+    },
+  },
 } as const;
 
 const font = {
-  sans: '"Geist Sans", ui-sans-serif, system-ui, sans-serif',
-  serif: '"Fraunces", ui-serif, Georgia, serif',
-  mono: '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+  sans: `'IBM Plex Sans Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif`,
+  serif: `'Spectral', 'Iowan Old Style', Georgia, serif`,
+  mono: `'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace`,
 };
 
-const radius = { base: '0.625rem', sm: '0.4375rem' };
+const radius = { sm: '5px', md: '8px', lg: '12px', full: '999px' };
+
+const motion = {
+  ease: { standard: 'cubic-bezier(0.2, 0, 0, 1)' },
+  duration: { instant: '80ms', fast: '140ms' },
+};
+
+const text = {
+  '2xs': '11px',
+  xs: '12px',
+  sm: '13px',
+  md: '14px',
+  lg: '16px',
+  xl: '18px',
+  '2xl': '22px',
+  '3xl': '28px',
+  '4xl': '36px',
+  '5xl': '46px',
+};
+
+const leading = { none: '1', tight: '1.15', snug: '1.3', normal: '1.5' };
+
+const weight = { regular: '400', medium: '500', semibold: '600', strong: '650', bold: '700' };
+
+const tracking = { wide: '0.02em', caps: '0.04em' };
 
 const zIndex = {
   dialogBackdrop: '100',
@@ -160,94 +230,141 @@ const zIndex = {
   alert: '111',
 };
 
-/** Geometry, not identity: the scales are the same in both appearances. */
 const space = {
-  '0.5': '2px',
-  '0.75': '3px',
-  '1.5': '6px',
-  '1.75': '7px',
-  '2': '8px',
-  '2.25': '9px',
-  '2.5': '10px',
-  '2.75': '11px',
-  '3': '12px',
-  '3.25': '13px',
-  '3.5': '14px',
-  '4': '16px',
-  '4.5': '18px',
-  '5': '20px',
+  '1': '2px',
+  '3': '6px',
+  '4': '8px',
+  '5': '12px',
+  '6': '16px',
+  '7': '20px',
+  '8': '24px',
 };
 
-const text = {
-  '12.5': { fontSize: '12.5px', lineHeight: '1.4' },
-  '13': { fontSize: '13px', lineHeight: '1.45' },
-  '13.5': { fontSize: '13.5px', lineHeight: '1.45' },
-  '15': { fontSize: '15px', lineHeight: '1.5' },
-  '16': { fontSize: '16px', lineHeight: '1.5' },
+// Neutral gray ramp (light). One scale, zero chroma — every color below is a
+// reference into this ramp at a different lightness.
+const neutral = {
+  0: '#ffffff',
+  25: 'oklch(0.99 0 0)',
+  50: 'oklch(0.975 0 0)',
+  100: 'oklch(0.95 0 0)',
+  200: 'oklch(0.905 0 0)',
+  300: 'oklch(0.83 0 0)',
+  400: 'oklch(0.65 0 0)',
+  500: 'oklch(0.50 0 0)',
+  600: 'oklch(0.40 0 0)',
+  700: 'oklch(0.305 0 0)',
+  800: 'oklch(0.22 0 0)',
+  900: 'oklch(0.145 0 0)',
 };
 
 const light = {
   color: {
-    ground: 'oklch(0.985 0.012 85)', // sand-50
-    panel: 'oklch(1 0 0)',
-    panel2: 'oklch(0.965 0.018 82)', // sand-100
-    subtle: 'oklch(0.945 0.021 82)',
-    border: 'oklch(0.22 0.028 45 / 0.10)',
-    borderStrong: 'oklch(0.22 0.028 45 / 0.16)',
-    text: 'oklch(0.22 0.028 45)', // sand-900
-    muted: 'oklch(0.46 0.055 52)', // sand-700
-    faint: 'oklch(0.60 0.05 58)',
-    accent: 'oklch(0.54 0.13 32)', // clay-600
-    accentHover: 'oklch(0.45 0.115 30)', // clay-700
-    accentSoft: 'oklch(0.93 0.035 42)', // clay-100
-    accentBorder: 'oklch(0.87 0.055 40)', // clay-200
-    accentText: 'oklch(0.985 0.012 85)', // warm white
-    success: 'oklch(0.52 0.13 145)',
-    warn: 'oklch(0.64 0.15 70)',
-    danger: 'oklch(0.555 0.195 27)',
-    scrim: 'oklch(0.22 0.028 45 / 0.55)',
+    surface: {
+      app: neutral[50],
+      card: neutral[0],
+      panel: neutral[25],
+      sunken: neutral[100],
+      hover: neutral[100],
+      active: neutral[200],
+    },
+    text: {
+      strong: neutral[900],
+      body: neutral[800],
+      muted: neutral[600],
+      subtle: neutral[500],
+      onBrand: '#ffffff',
+    },
+    border: {
+      subtle: neutral[200],
+      default: neutral[300],
+      strong: neutral[400],
+      focus: neutral[700],
+    },
+    brand: {
+      base: neutral[800],
+      hover: neutral[900],
+      active: '#000000',
+      subtleBg: neutral[100],
+      subtleBorder: neutral[300],
+    },
+    ring: neutral[600],
+    // No scrim token ships in the source system; derived from the darkest
+    // neutral to stay hue-free, same role as the old warm-tinted scrim.
+    scrim: `oklch(0.145 0 0 / 0.55)`,
+    status: {
+      warn: { fg: neutral[900], bg: neutral[200] },
+      err: { fg: '#ffffff', bg: neutral[900], text: neutral[900] },
+    },
   },
   radius,
   shadow: {
-    sm: '0 1px 3px oklch(0.2 0.02 50 / 0.08), 0 1px 2px oklch(0.2 0.02 50 / 0.06)',
-    lg: '0 12px 28px oklch(0.2 0.02 50 / 0.12), 0 4px 10px oklch(0.2 0.02 50 / 0.08)',
+    sm: '0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 1px rgba(0, 0, 0, 0.04)',
+    lg: '0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08)',
+    xl: '0 18px 48px rgba(0, 0, 0, 0.18), 0 6px 14px rgba(0, 0, 0, 0.10)',
   },
+  motion,
   font,
+  text,
+  leading,
+  weight,
+  tracking,
   zIndex,
   space,
-  text,
 };
 
 const dark = {
   color: {
-    ground: 'oklch(0.155 0.02 42)', // sand-950
-    panel: 'oklch(0.195 0.022 44)',
-    panel2: 'oklch(0.235 0.02 44)',
-    subtle: 'oklch(0.255 0.025 44)',
-    border: 'oklch(1 0 0 / 0.08)',
-    borderStrong: 'oklch(1 0 0 / 0.14)',
-    text: 'oklch(0.90 0.022 80)', // sand-200 — softened off-white (pure white reads too harsh on the dark panels)
-    muted: 'oklch(0.78 0.042 70)', // sand-400
-    faint: 'oklch(0.62 0.035 60)',
-    accent: 'oklch(0.62 0.125 34)', // clay-500
-    accentHover: 'oklch(0.70 0.105 36)', // clay-400
-    accentSoft: 'oklch(0.295 0.065 28)',
-    accentBorder: 'oklch(0.36 0.09 28)', // clay-800
-    accentText: 'oklch(0.985 0.012 85)',
-    success: 'oklch(0.64 0.115 145)',
-    warn: 'oklch(0.75 0.15 70)',
-    danger: 'oklch(0.635 0.18 27)',
-    scrim: 'oklch(0.12 0.01 45 / 0.70)',
+    surface: {
+      app: 'oklch(0.155 0 0)',
+      card: 'oklch(0.195 0 0)',
+      panel: 'oklch(0.175 0 0)',
+      sunken: 'oklch(0.145 0 0)',
+      hover: 'oklch(0.245 0 0)',
+      active: 'oklch(0.285 0 0)',
+    },
+    text: {
+      strong: 'oklch(0.97 0 0)',
+      body: 'oklch(0.92 0 0)',
+      muted: 'oklch(0.74 0 0)',
+      subtle: 'oklch(0.62 0 0)',
+      onBrand: 'oklch(0.145 0 0)',
+    },
+    border: {
+      subtle: 'oklch(0.27 0 0)',
+      default: 'oklch(0.33 0 0)',
+      strong: 'oklch(0.44 0 0)',
+      focus: 'oklch(0.85 0 0)',
+    },
+    brand: {
+      base: 'oklch(0.92 0 0)',
+      hover: 'oklch(0.97 0 0)',
+      active: '#ffffff',
+      subtleBg: 'oklch(0.285 0 0)',
+      subtleBorder: 'oklch(0.40 0 0)',
+    },
+    ring: 'oklch(0.85 0 0)',
+    scrim: 'oklch(0 0 0 / 0.70)',
+    status: {
+      warn: { fg: 'oklch(0.98 0 0)', bg: 'oklch(0.34 0 0)' },
+      // `bg` sits well below `brand.base` (0.92) — a near-white danger fill
+      // would otherwise be ~2% off brand's and read as the same button.
+      err: { fg: 'oklch(0.145 0 0)', bg: 'oklch(0.60 0 0)', text: 'oklch(0.96 0 0)' },
+    },
   },
   radius,
   shadow: {
-    sm: '0 1px 2px oklch(0 0 0 / 0.5)',
-    lg: '0 12px 28px oklch(0 0 0 / 0.55), 0 4px 10px oklch(0 0 0 / 0.4)',
+    sm: '0 1px 2px rgba(0, 0, 0, 0.40), 0 1px 1px rgba(0, 0, 0, 0.30)',
+    lg: '0 10px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.40)',
+    xl: '0 20px 56px rgba(0, 0, 0, 0.65), 0 6px 14px rgba(0, 0, 0, 0.45)',
   },
+  motion,
   font,
+  text,
+  leading,
+  weight,
+  tracking,
   zIndex,
   space,
-  text,
 };
 
 globalStyle(':root', { vars: assignVars(vars, light) });
@@ -260,9 +377,9 @@ globalStyle('body', { fontFamily: vars.font.sans });
 
 globalStyle(':root:not([data-theme])', {
   '@media': {
-    '(prefers-color-scheme: dark)': { vars: assignVars(vars, dark) },
+    '(prefers-color-scheme: dark)': { vars: assignVars(vars, dark), colorScheme: 'dark' },
   },
 });
 
 globalStyle(':root[data-theme="light"]', { vars: assignVars(vars, light) });
-globalStyle(':root[data-theme="dark"]', { vars: assignVars(vars, dark) });
+globalStyle(':root[data-theme="dark"]', { vars: assignVars(vars, dark), colorScheme: 'dark' });

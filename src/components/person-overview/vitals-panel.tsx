@@ -27,7 +27,7 @@ export function VitalsPanel({ vitals, treeId }: VitalsPanelProps): JSX.Element {
   return (
     <Card>
       <div className={card.stack}>
-        <Typography as="h2" size="15" weight="650">
+        <Typography as="h2" size="md" weight="strong">
           {t('overview.vitals.title')}
         </Typography>
         {vitals.length === 0 ? (
@@ -53,7 +53,7 @@ function VitalRow({ vital, treeId }: { vital: OverviewVital; treeId: string }): 
   return (
     <div className={s.row}>
       <div className={s.rowHead}>
-        <Typography size="12.5" tone="muted">
+        <Typography size="xs" tone="muted">
           {t(`overview.vitals.${vital.kind}`)}
         </Typography>
       </div>

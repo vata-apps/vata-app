@@ -6,33 +6,37 @@
  * radio with `data-checked`, so the active segment is a selector rather than a
  * variant the component has to thread through.
  */
-import { primitiveStyle } from '$/design/primitive-layer';
+import { primitiveStyle, transitionFast } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
 
 export const track = primitiveStyle({
   display: 'inline-flex',
-  background: vars.color.subtle,
-  borderRadius: 8,
-  padding: vars.space['0.75'],
-  gap: vars.space['0.5'],
+  alignItems: 'center',
+  gap: 2,
+  background: vars.color.surface.sunken,
+  border: `1px solid ${vars.color.border.subtle}`,
+  borderRadius: vars.radius.full,
+  padding: 4,
   width: 'max-content',
 });
 
 export const item = primitiveStyle({
-  padding: `${vars.space['1.5']} ${vars.space['3.25']}`,
-  borderRadius: 6,
-  fontSize: vars.text['12.5'].fontSize,
-  lineHeight: vars.text['12.5'].lineHeight,
-  fontWeight: 600,
-  color: vars.color.muted,
+  padding: '8px 16px',
+  borderRadius: vars.radius.full,
+  fontSize: vars.text.sm,
+  fontWeight: vars.weight.medium,
+  color: vars.color.text.muted,
   cursor: 'pointer',
   border: 'none',
   background: 'transparent',
   fontFamily: 'inherit',
+  lineHeight: vars.leading.none,
+  transition: transitionFast('color', 'background'),
   selectors: {
+    '&:hover:not(:disabled):not([data-checked])': { color: vars.color.text.strong },
     '&[data-checked]': {
-      background: vars.color.panel,
-      color: vars.color.text,
+      background: vars.color.surface.card,
+      color: vars.color.text.strong,
       boxShadow: vars.shadow.sm,
     },
     '&:disabled': { cursor: 'default', opacity: 0.6 },

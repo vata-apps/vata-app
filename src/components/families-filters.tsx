@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { Select } from '$components/ui/select';
-import { TextField } from '$components/ui/text-field';
+import { SearchInput } from '$components/ui/search-input';
 import { Button } from '$components/ui/button';
 import { Icon } from '$components/icon';
 
@@ -66,17 +66,13 @@ export function FamiliesFilterToolbar({
         gap: '12px',
       }}
     >
-      <div style={{ position: 'relative', width: 260 }}>
-        <Icon
-          name="search"
-          size={16}
-          style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)' }}
-        />
-        <TextField
+      <div style={{ width: 260 }}>
+        <SearchInput
           value={value.name}
           placeholder={t('filters.name.placeholder')}
           onChange={(event) => onChange({ ...value, name: event.target.value })}
-          style={{ paddingLeft: 34 }}
+          onClear={() => onChange({ ...value, name: '' })}
+          clearLabel={tCommon('filters.clearSearch')}
           aria-label={t('filters.name.label')}
         />
       </div>

@@ -133,7 +133,7 @@ export function PlacesPage({ treeId }: PlacesPageProps): JSX.Element {
       <header className={styles.header}>
         <div className={styles.title}>
           <Icon name="map-pin" size={28} />
-          <Typography as="h1" size="16" weight="650">
+          <Typography as="h1" size="lg" weight="strong">
             {tCommon('nav.places')}
           </Typography>
         </div>

@@ -8,7 +8,7 @@
  *
  * Example:
  * ```tsx
- * <Typography as="h2" size="15" weight="650">
+ * <Typography as="h2" size="md" weight="strong">
  *   Add person
  * </Typography>
  * ```
@@ -23,20 +23,20 @@ export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
   /** Semantic element to render. */
   as?: TypographyElement;
   /** Type size from the token scale. */
-  size?: '12.5' | '13' | '13.5' | '15' | '16';
+  size?: '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
   /** Font weight. */
-  weight?: '400' | '500' | '550' | '600' | '650' | '700';
+  weight?: 'regular' | 'medium' | 'semibold' | 'strong' | 'bold';
   /** Text color tone. */
-  tone?: 'text' | 'muted' | 'faint' | 'accent' | 'danger' | 'warn';
-  /** Font family. */
+  tone?: 'body' | 'muted' | 'subtle' | 'brand' | 'danger' | 'warn';
+  /** Font family. `serif` is reserved for person names, drafts and empty states. */
   family?: 'sans' | 'serif' | 'mono';
 }
 
 export function Typography({
   as: Component = 'span',
-  size = '13',
-  weight = '400',
-  tone = 'text',
+  size = 'sm',
+  weight = 'regular',
+  tone = 'body',
   family = 'sans',
   className = '',
   ...props

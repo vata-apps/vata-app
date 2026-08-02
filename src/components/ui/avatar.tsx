@@ -12,13 +12,13 @@ import * as styles from './avatar.css';
 
 export interface AvatarRootProps extends React.ComponentProps<typeof BaseAvatar.Root> {
   /** Circle diameter. */
-  size?: 'sm' | 'md' | 'lg';
-  /** Fill tone: `accent` (solid, brand-forward), `accentSoft` (tinted, the
-   * default), or `neutral` (muted gray, for subordinate references). */
-  tone?: 'accent' | 'accentSoft' | 'neutral';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** Fill tone: `brand` (tinted, the default), or `neutral` (muted gray, for
+   * subordinate references). */
+  tone?: 'brand' | 'neutral';
 }
 
-function Root({ size = 'md', tone = 'accentSoft', className = '', ...props }: AvatarRootProps) {
+function Root({ size = 'md', tone = 'brand', className = '', ...props }: AvatarRootProps) {
   return (
     <BaseAvatar.Root className={`${styles.root({ size, tone })} ${className}`.trim()} {...props} />
   );

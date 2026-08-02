@@ -19,23 +19,26 @@ export const root = recipe({
     overflow: 'hidden',
     flexShrink: 0,
     fontFamily: vars.font.sans,
-    fontWeight: 700,
+    fontWeight: vars.weight.semibold,
   }),
   variants: {
     size: {
       sm: primitive({ width: 24, height: 24, fontSize: 10 }),
       md: primitive({ width: 32, height: 32, fontSize: 13 }),
       lg: primitive({ width: 48, height: 48, fontSize: 18 }),
+      /** The person-record header avatar — the one large use. */
+      xl: primitive({ width: 56, height: 56, fontSize: vars.text['2xl'] }),
     },
     tone: {
-      accent: primitive({ background: vars.color.accent, color: vars.color.accentText }),
-      accentSoft: primitive({ background: vars.color.accentSoft, color: vars.color.accent }),
-      neutral: primitive({ background: vars.color.subtle, color: vars.color.muted }),
+      /** Tinted brand fill — the default reference to a person. */
+      brand: primitive({ background: vars.color.brand.subtleBg, color: vars.color.brand.hover }),
+      /** Muted gray — subordinate references, and the calm record-header avatar. */
+      neutral: primitive({ background: vars.color.surface.sunken, color: vars.color.text.muted }),
     },
   },
   defaultVariants: {
     size: 'md',
-    tone: 'accentSoft',
+    tone: 'brand',
   },
 });
 

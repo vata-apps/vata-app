@@ -41,7 +41,7 @@ export function PlacesPanel({ places, treeId }: PlacesPanelProps): JSX.Element {
     <Card>
       <div className={card.stack}>
         <div className={s.head}>
-          <Typography as="h2" size="15" weight="650">
+          <Typography as="h2" size="md" weight="strong">
             {t('overview.placesLived.title')}
           </Typography>
           {places.length > 0 && <Badge>{places.length}</Badge>}
@@ -63,8 +63,8 @@ export function PlacesPanel({ places, treeId }: PlacesPanelProps): JSX.Element {
                   onMouseLeave={() => setHighlightedPlaceId(null)}
                 >
                   <div className={s.chipBody}>
-                    <Typography weight="550">{place.name}</Typography>
-                    <Typography size="12.5" tone="faint">
+                    <Typography weight="semibold">{place.name}</Typography>
+                    <Typography size="xs" tone="subtle">
                       {place.contexts.map((context) => eventTypeLabel(context, t)).join(' · ')}
                     </Typography>
                   </div>

@@ -3,12 +3,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '$components/ui/button';
+import { Caption } from '$components/ui/caption';
 import { Dialog } from '$components/ui/dialog';
+import { Field } from '$components/ui/field';
 import { IconButton } from '$components/ui/icon-button';
 import { Select } from '$components/ui/select';
 import { SegmentedControl } from '$components/ui/segmented-control';
 import { Switch } from '$components/ui/switch';
 import { TextField } from '$components/ui/text-field';
+import { Typography } from '$components/ui/typography';
 import { Icon } from '$components/icon';
 import { useEventTypes } from '$hooks/useEvents';
 import { useParentFamily, useSpouseFamilies } from '$hooks/useFamilies';
@@ -476,7 +479,7 @@ export type PersonEditorDialogProps = {
  * (primary + alternate names, sex, living status), a generic typed life-events
  * list (dates only — a place picker lands later, see the Person editor PRD),
  * notes, and relations (parents, spouse families, children) via the
- * search-or-create {@link PersonPicker}. Styled from the warm-earth tokens
+ * search-or-create {@link PersonPicker}. Styled from the grayscale tokens
  * (ADR-0005).
  */
 export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element {
@@ -775,7 +778,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                     <span className={s.headSep} aria-hidden="true">
                       /
                     </span>
-                    <span className={s.headSub}>{subtitle}</span>
+                    <Typography family="serif" tone="muted" size="md" className={s.headSub}>
+                      {subtitle}
+                    </Typography>
                   </>
                 )}
               </div>
@@ -799,64 +804,68 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                     {/* Left column: names, life events, notes */}
                     <div className={s.col}>
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sections.names')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sections.names')}
+                        </Caption>
                         <div className={s.fgridC2}>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>
-                              {t('personEditor.fields.givenNames')}
-                            </span>
+                          <Field
+                            label={t('personEditor.fields.givenNames')}
+                            htmlFor="person-given-names"
+                          >
                             <TextField
+                              id="person-given-names"
                               value={form.givenNames}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, givenNames: e.target.value }))
                               }
                             />
-                          </label>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>{t('personEditor.fields.surname')}</span>
+                          </Field>
+                          <Field label={t('personEditor.fields.surname')} htmlFor="person-surname">
                             <TextField
+                              id="person-surname"
                               value={form.surname}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, surname: e.target.value }))
                               }
                             />
-                          </label>
+                          </Field>
                         </div>
                         <div className={s.fgrid3Gap}>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>{t('personEditor.fields.prefix')}</span>
+                          <Field label={t('personEditor.fields.prefix')} htmlFor="person-prefix">
                             <TextField
+                              id="person-prefix"
                               value={form.prefix}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, prefix: e.target.value }))
                               }
                             />
-                          </label>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>{t('personEditor.fields.suffix')}</span>
+                          </Field>
+                          <Field label={t('personEditor.fields.suffix')} htmlFor="person-suffix">
                             <TextField
+                              id="person-suffix"
                               value={form.suffix}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, suffix: e.target.value }))
                               }
                             />
-                          </label>
-                          <label className={s.field}>
-                            <span className={s.fieldLabel}>
-                              {t('personEditor.fields.nickname')}
-                            </span>
+                          </Field>
+                          <Field
+                            label={t('personEditor.fields.nickname')}
+                            htmlFor="person-nickname"
+                          >
                             <TextField
+                              id="person-nickname"
                               value={form.nickname}
                               disabled={mutation.isPending}
                               onChange={(e) =>
                                 setForm((prev) => ({ ...prev, nickname: e.target.value }))
                               }
                             />
-                          </label>
+                          </Field>
                         </div>
 
                         <div className={`${s.subhead} ${s.subheadMt}`}>
@@ -909,7 +918,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                       </div>
 
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sections.lifeEvents')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sections.lifeEvents')}
+                        </Caption>
                         <div className={s.eventlist}>
                           {timelineEvents.map((row) => (
                             <EventDateRow
@@ -975,7 +986,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                       </div>
 
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sections.notes')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sections.notes')}
+                        </Caption>
                         <TextField
                           multiline
                           aria-label={t('personEditor.sections.notes')}
@@ -989,7 +1002,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                     {/* Right column: sex, relations */}
                     <div className={s.col}>
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sex.label')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sex.label')}
+                        </Caption>
                         <SegmentedControl
                           aria-label={t('personEditor.sex.label')}
                           value={form.gender}
@@ -1003,7 +1018,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                       </div>
 
                       <div className={s.ecard}>
-                        <div className={s.sectitle}>{t('personEditor.sections.relations')}</div>
+                        <Caption className={s.sectionCaption}>
+                          {t('personEditor.sections.relations')}
+                        </Caption>
 
                         <div className={s.subhead}>{t('overview.parents.title')}</div>
                         <div className={s.relrow2}>

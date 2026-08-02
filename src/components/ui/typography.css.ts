@@ -13,56 +13,47 @@ import { vars } from '$/design/theme.css';
 export const typography = recipe({
   base: primitive({
     margin: 0,
+    lineHeight: vars.leading.normal,
   }),
   variants: {
     size: {
-      '12.5': primitive({
-        fontSize: vars.text['12.5'].fontSize,
-        lineHeight: vars.text['12.5'].lineHeight,
-      }),
-      '13': primitive({
-        fontSize: vars.text['13'].fontSize,
-        lineHeight: vars.text['13'].lineHeight,
-      }),
-      '13.5': primitive({
-        fontSize: vars.text['13.5'].fontSize,
-        lineHeight: vars.text['13.5'].lineHeight,
-      }),
-      '15': primitive({
-        fontSize: vars.text['15'].fontSize,
-        lineHeight: vars.text['15'].lineHeight,
-      }),
-      '16': primitive({
-        fontSize: vars.text['16'].fontSize,
-        lineHeight: vars.text['16'].lineHeight,
-      }),
+      '2xs': primitive({ fontSize: vars.text['2xs'] }),
+      xs: primitive({ fontSize: vars.text.xs }),
+      sm: primitive({ fontSize: vars.text.sm }),
+      md: primitive({ fontSize: vars.text.md }),
+      lg: primitive({ fontSize: vars.text.lg }),
+      xl: primitive({ fontSize: vars.text.xl }),
+      '2xl': primitive({ fontSize: vars.text['2xl'] }),
+      '3xl': primitive({ fontSize: vars.text['3xl'] }),
+      '4xl': primitive({ fontSize: vars.text['4xl'] }),
+      '5xl': primitive({ fontSize: vars.text['5xl'] }),
     },
     weight: {
-      '400': primitive({ fontWeight: 400 }),
-      '500': primitive({ fontWeight: 500 }),
-      '550': primitive({ fontWeight: 550 }),
-      '600': primitive({ fontWeight: 600 }),
-      '650': primitive({ fontWeight: 650 }),
-      '700': primitive({ fontWeight: 700 }),
+      regular: primitive({ fontWeight: vars.weight.regular }),
+      medium: primitive({ fontWeight: vars.weight.medium }),
+      semibold: primitive({ fontWeight: vars.weight.semibold }),
+      strong: primitive({ fontWeight: vars.weight.strong }),
+      bold: primitive({ fontWeight: vars.weight.bold }),
     },
     tone: {
-      text: primitive({ color: vars.color.text }),
-      muted: primitive({ color: vars.color.muted }),
-      faint: primitive({ color: vars.color.faint }),
-      accent: primitive({ color: vars.color.accent }),
-      danger: primitive({ color: vars.color.danger }),
-      warn: primitive({ color: vars.color.warn }),
+      body: primitive({ color: vars.color.text.body }),
+      muted: primitive({ color: vars.color.text.muted }),
+      subtle: primitive({ color: vars.color.text.subtle }),
+      brand: primitive({ color: vars.color.brand.base }),
+      danger: primitive({ color: vars.color.status.err.text }),
+      warn: primitive({ color: vars.color.status.warn.fg }),
     },
     family: {
       sans: primitive({ fontFamily: vars.font.sans }),
-      serif: primitive({ fontFamily: vars.font.serif }),
+      /** The lineage signature: serif is always italic — see `theme.css.ts`. */
+      serif: primitive({ fontFamily: vars.font.serif, fontStyle: 'italic' }),
       mono: primitive({ fontFamily: vars.font.mono }),
     },
   },
   defaultVariants: {
-    size: '13',
-    weight: '400',
-    tone: 'text',
+    size: 'sm',
+    weight: 'regular',
+    tone: 'body',
     family: 'sans',
   },
 });

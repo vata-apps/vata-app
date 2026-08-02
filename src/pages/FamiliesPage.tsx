@@ -131,7 +131,7 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
       <header className={styles.header}>
         <div className={styles.title}>
           <Icon name="users" size={28} />
-          <Typography as="h1" size="16" weight="650">
+          <Typography as="h1" size="lg" weight="strong">
             {tCommon('nav.families')}
           </Typography>
         </div>
