@@ -86,7 +86,7 @@ function FitBounds({ points }: { points: MapPoint[] }): null {
 }
 
 /**
- * A themed Leaflet map plotting the given points as accent-colored markers
+ * A themed Leaflet map plotting the given points as brand-colored markers
  * with hover tooltips. The basemap swaps between CARTO Positron and Dark
  * Matter with the app's resolved light/dark appearance. Shared by anywhere
  * geocoded places need a map surface (Person Overview's Places panel,

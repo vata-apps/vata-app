@@ -19,10 +19,10 @@ interface PersonRefProps {
   treeId: string;
   /**
    * Visual weight of the same chrome-less avatar + name + life-dates layout.
-   * `normal` — an accent-toned avatar, for first-class references (e.g. parents).
+   * `normal` — a brand-toned avatar, for first-class references (e.g. parents).
    * `subtle` — a muted gray avatar, for subordinate references (e.g. an
    *   event's children) that must not out-weigh their host.
-   * `focal` — an accent name marking "you are here" (e.g. the subject inside
+   * `focal` — a brand-toned name marking "you are here" (e.g. the subject inside
    *   their own Ancestors chart); not wrapped in a link, since it would only
    *   navigate to the page already open.
    */
@@ -53,10 +53,10 @@ export function formatLifeDates(person: PersonRefData): string {
  * {@link PersonRefVariant}, each optionally in a {@link PersonRefProps.compact}
  * shape:
  *
- * - `normal` — an accent-toned avatar; the dates stack under the name. Clickable.
+ * - `normal` — a brand-toned avatar; the dates stack under the name. Clickable.
  * - `subtle` — a smaller muted avatar with the dates running after the name
  *   inline (always compact), so subordinate references stay quiet. Clickable.
- * - `focal` — an accent-colored name marking the subject themselves; not
+ * - `focal` — a brand-toned name marking the subject themselves; not
  *   clickable, since it would only navigate to the page already open.
  *
  * Draws no box of its own: rows sit flat inside their host (separator-divided,
