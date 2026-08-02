@@ -479,7 +479,7 @@ export type PersonEditorDialogProps = {
  * (primary + alternate names, sex, living status), a generic typed life-events
  * list (dates only — a place picker lands later, see the Person editor PRD),
  * notes, and relations (parents, spouse families, children) via the
- * search-or-create {@link PersonPicker}. Styled from the warm-earth tokens
+ * search-or-create {@link PersonPicker}. Styled from the grayscale tokens
  * (ADR-0005).
  */
 export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element {
