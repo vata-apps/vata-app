@@ -182,7 +182,7 @@ export const focusRing = {
 } as const;
 
 const font = {
-  sans: `'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif`,
+  sans: `'IBM Plex Sans Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif`,
   serif: `'Spectral', 'Iowan Old Style', Georgia, serif`,
   mono: `'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace`,
 };
