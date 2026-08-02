@@ -1,7 +1,8 @@
-import { primitiveStyle } from '$/design/primitive-layer';
+import { style } from '@vanilla-extract/css';
+
 import { vars } from '$/design/theme.css';
 
-export const nav = primitiveStyle({
+export const nav = style({
   width: 64,
   flexShrink: 0,
   height: '100%',
@@ -14,4 +15,4 @@ export const nav = primitiveStyle({
   borderRight: `1px solid ${vars.color.border.subtle}`,
 });
 
-export const settingsTrigger = primitiveStyle({ marginTop: 'auto' });
+export const settingsTrigger = style({ marginTop: 'auto' });
