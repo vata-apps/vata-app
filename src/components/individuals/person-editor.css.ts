@@ -65,12 +65,8 @@ export const headSep = style({
   color: vars.color.text.subtle,
   flex: '0 0 auto',
 });
-/** The lineage signature: the person's name in Spectral italic, truncated if long. */
+/** Truncation for the person's name, rendered via `Typography family="serif"`. */
 export const headSub = style({
-  fontFamily: vars.font.serif,
-  fontStyle: 'italic',
-  fontSize: vars.text.md,
-  color: vars.color.text.muted,
   minWidth: 0,
   flex: '0 1 auto',
   overflow: 'hidden',

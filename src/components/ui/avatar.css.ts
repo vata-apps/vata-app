@@ -34,12 +34,6 @@ export const root = recipe({
       brand: primitive({ background: vars.color.brand.subtleBg, color: vars.color.brand.hover }),
       /** Muted gray — subordinate references, and the calm record-header avatar. */
       neutral: primitive({ background: vars.color.surface.sunken, color: vars.color.text.muted }),
-      /** Dashed outline — a draft or not-yet-linked person. */
-      outline: primitive({
-        background: 'transparent',
-        border: `1px dashed ${vars.color.border.strong}`,
-        color: vars.color.text.subtle,
-      }),
     },
   },
   defaultVariants: {

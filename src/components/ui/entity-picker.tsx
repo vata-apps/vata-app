@@ -70,7 +70,7 @@ export function EntityPicker({
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Positioner sideOffset={6} align="start" positionMethod="fixed">
-          <Popover.Popup style={{ width }}>
+          <Popover.Popup className={styles.popup} style={width === 300 ? undefined : { width }}>
             <div className={styles.search}>
               <SearchInput
                 autoFocus

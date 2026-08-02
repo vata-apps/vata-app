@@ -6,6 +6,9 @@
 import { primitiveStyle, transitionFast } from '$/design/primitive-layer';
 import { vars } from '$/design/theme.css';
 
+/** Default popup width; callers needing another width pass an inline style, which wins over this. */
+export const popup = primitiveStyle({ width: 300 });
+
 export const search = primitiveStyle({
   padding: vars.space['5'],
   borderBottom: `1px solid ${vars.color.border.subtle}`,

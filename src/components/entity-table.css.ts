@@ -21,12 +21,10 @@ export const stateCell = style({
   textAlign: 'center',
 });
 
-export const stateTitle = style({
-  margin: 0,
-  fontFamily: vars.font.serif,
+/** Overrides {@link EmptyState}'s default size/tone for the table's state row. */
+export const stateTitleOverride = style({
   fontSize: vars.text.lg,
   lineHeight: vars.leading.normal,
-  fontStyle: 'italic',
   color: vars.color.text.strong,
 });
 

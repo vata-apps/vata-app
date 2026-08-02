@@ -11,6 +11,7 @@ import { Select } from '$components/ui/select';
 import { SegmentedControl } from '$components/ui/segmented-control';
 import { Switch } from '$components/ui/switch';
 import { TextField } from '$components/ui/text-field';
+import { Typography } from '$components/ui/typography';
 import { Icon } from '$components/icon';
 import { useEventTypes } from '$hooks/useEvents';
 import { useParentFamily, useSpouseFamilies } from '$hooks/useFamilies';
@@ -777,7 +778,9 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                     <span className={s.headSep} aria-hidden="true">
                       /
                     </span>
-                    <span className={s.headSub}>{subtitle}</span>
+                    <Typography family="serif" tone="muted" size="md" className={s.headSub}>
+                      {subtitle}
+                    </Typography>
                   </>
                 )}
               </div>

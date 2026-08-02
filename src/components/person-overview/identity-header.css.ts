@@ -11,12 +11,12 @@ export const header = style({
   gap: vars.space['5'],
 });
 
-export const identity = style({ display: 'flex', alignItems: 'center', gap: 18 });
+export const identity = style({ display: 'flex', alignItems: 'center', gap: vars.space['6'] });
 
 export const meta = style({ display: 'flex', flexDirection: 'column', gap: vars.space['3'] });
 
-/** The lineage signature: serif italic, the one place a person's name is set in Spectral. */
-export const name = style({ fontStyle: 'italic', lineHeight: vars.leading.tight });
+/** The lineage signature, the one place a person's name is set in Spectral (italic comes from `Typography`'s `family="serif"`). */
+export const name = style({ lineHeight: vars.leading.tight });
 
 export const nameRow = style({
   display: 'flex',

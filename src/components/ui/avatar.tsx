@@ -13,10 +13,9 @@ import * as styles from './avatar.css';
 export interface AvatarRootProps extends React.ComponentProps<typeof BaseAvatar.Root> {
   /** Circle diameter. */
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** Fill tone: `brand` (tinted, the default), `neutral` (muted gray, for
-   * subordinate references), or `outline` (dashed, for a draft/unlinked
-   * person). */
-  tone?: 'brand' | 'neutral' | 'outline';
+  /** Fill tone: `brand` (tinted, the default), or `neutral` (muted gray, for
+   * subordinate references). */
+  tone?: 'brand' | 'neutral';
 }
 
 function Root({ size = 'md', tone = 'brand', className = '', ...props }: AvatarRootProps) {

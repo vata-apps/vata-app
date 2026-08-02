@@ -45,7 +45,8 @@ export const typography = recipe({
     },
     family: {
       sans: primitive({ fontFamily: vars.font.sans }),
-      serif: primitive({ fontFamily: vars.font.serif }),
+      /** The lineage signature: serif is always italic — see `theme.css.ts`. */
+      serif: primitive({ fontFamily: vars.font.serif, fontStyle: 'italic' }),
       mono: primitive({ fontFamily: vars.font.mono }),
     },
   },

@@ -17,7 +17,7 @@ export const card = primitiveStyle({
   border: `1px solid ${vars.color.border.default}`,
   borderRadius: vars.radius.md,
   boxShadow: vars.shadow.sm,
-  padding: vars.space.cardPad,
+  padding: vars.space['6'],
 });
 
 export const stack = primitiveStyle({

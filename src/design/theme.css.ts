@@ -46,10 +46,8 @@ export const vars = createGlobalThemeContract(
         /** Left rails and list panes — a hair off the app ground. */
         panel: null,
         sunken: null,
-        raised: null,
         hover: null,
         active: null,
-        inverse: null,
       },
       text: {
         /** Card and section titles (paired with `weight.strong`). */
@@ -60,8 +58,6 @@ export const vars = createGlobalThemeContract(
         muted: null,
         /** Placeholders, hints, tertiary text. */
         subtle: null,
-        inverse: null,
-        link: null,
         /** Text/glyphs on a `brand` fill. */
         onBrand: null,
       },
@@ -94,18 +90,16 @@ export const vars = createGlobalThemeContract(
        * Always pair with a text label; never rely on shade alone.
        */
       status: {
-        ok: { fg: null, bg: null },
         warn: { fg: null, bg: null },
         /** `err` is the most severe treatment: solid ink fill, white text. */
         err: { fg: null, bg: null, text: null },
-        info: { fg: null, bg: null },
       },
     },
-    radius: { xs: null, sm: null, md: null, lg: null, xl: null, full: null },
-    shadow: { none: null, sm: null, md: null, lg: null, xl: null, inset: null },
+    radius: { sm: null, md: null, lg: null, xl: null, full: null },
+    shadow: { sm: null, lg: null, xl: null },
     motion: {
-      ease: { standard: null, out: null, in: null },
-      duration: { instant: null, fast: null, base: null, slow: null },
+      ease: { standard: null },
+      duration: { instant: null, fast: null },
     },
     font: { sans: null, serif: null, mono: null },
     /**
@@ -126,10 +120,10 @@ export const vars = createGlobalThemeContract(
       '5xl': null,
     },
     /** `none` is the single-line reset for compact controls (buttons, badges, segments). */
-    leading: { none: null, tight: null, snug: null, normal: null, relaxed: null },
+    leading: { none: null, tight: null, snug: null, normal: null },
     /** `strong` is the card/section title weight — heavier than `semibold`, short of `bold`. */
     weight: { regular: null, medium: null, semibold: null, strong: null, bold: null },
-    tracking: { tight: null, normal: null, wide: null, caps: null },
+    tracking: { wide: null, caps: null },
     /**
      * Stacking order for portalled surfaces. Primitives read these; features
      * never declare a raw z-index.
@@ -152,11 +146,10 @@ export const vars = createGlobalThemeContract(
       alert: null,
     },
     /**
-     * 4px-based spacing scale, plus named paddings for common component
-     * rhythm. Only steps currently consumed by the product are declared.
+     * 4px-based spacing scale. Only steps currently consumed by the product
+     * are declared.
      */
     space: {
-      '0': null,
       '1': null,
       '2': null,
       '3': null,
@@ -165,12 +158,6 @@ export const vars = createGlobalThemeContract(
       '6': null,
       '7': null,
       '8': null,
-      '9': null,
-      '10': null,
-      '11': null,
-      '12': null,
-      '13': null,
-      cardPad: null,
     },
   },
   (_value, path) =>
@@ -200,15 +187,11 @@ const font = {
   mono: `'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace`,
 };
 
-const radius = { xs: '3px', sm: '5px', md: '8px', lg: '12px', xl: '16px', full: '999px' };
+const radius = { sm: '5px', md: '8px', lg: '12px', xl: '16px', full: '999px' };
 
 const motion = {
-  ease: {
-    standard: 'cubic-bezier(0.2, 0, 0, 1)',
-    out: 'cubic-bezier(0.16, 1, 0.3, 1)',
-    in: 'cubic-bezier(0.4, 0, 1, 1)',
-  },
-  duration: { instant: '80ms', fast: '140ms', base: '220ms', slow: '360ms' },
+  ease: { standard: 'cubic-bezier(0.2, 0, 0, 1)' },
+  duration: { instant: '80ms', fast: '140ms' },
 };
 
 const text = {
@@ -224,11 +207,11 @@ const text = {
   '5xl': '46px',
 };
 
-const leading = { none: '1', tight: '1.15', snug: '1.3', normal: '1.5', relaxed: '1.65' };
+const leading = { none: '1', tight: '1.15', snug: '1.3', normal: '1.5' };
 
 const weight = { regular: '400', medium: '500', semibold: '600', strong: '650', bold: '700' };
 
-const tracking = { tight: '-0.01em', normal: '0', wide: '0.02em', caps: '0.04em' };
+const tracking = { wide: '0.02em', caps: '0.04em' };
 
 const zIndex = {
   dialogBackdrop: '100',
@@ -239,7 +222,6 @@ const zIndex = {
 };
 
 const space = {
-  '0': '0',
   '1': '2px',
   '2': '4px',
   '3': '6px',
@@ -248,12 +230,6 @@ const space = {
   '6': '16px',
   '7': '20px',
   '8': '24px',
-  '9': '32px',
-  '10': '40px',
-  '11': '48px',
-  '12': '64px',
-  '13': '80px',
-  cardPad: '16px',
 };
 
 // Neutral gray ramp (light). One scale, zero chroma — every color below is a
@@ -280,18 +256,14 @@ const light = {
       card: neutral[0],
       panel: neutral[25],
       sunken: neutral[100],
-      raised: neutral[0],
       hover: neutral[100],
       active: neutral[200],
-      inverse: neutral[800],
     },
     text: {
       strong: neutral[900],
       body: neutral[800],
       muted: neutral[600],
       subtle: neutral[500],
-      inverse: neutral[50],
-      link: neutral[700],
       onBrand: '#ffffff',
     },
     border: {
@@ -312,20 +284,15 @@ const light = {
     // neutral to stay hue-free, same role as the old warm-tinted scrim.
     scrim: `oklch(0.145 0 0 / 0.55)`,
     status: {
-      ok: { fg: neutral[800], bg: neutral[100] },
       warn: { fg: neutral[900], bg: neutral[200] },
       err: { fg: '#ffffff', bg: neutral[900], text: neutral[900] },
-      info: { fg: neutral[700], bg: neutral[100] },
     },
   },
   radius,
   shadow: {
-    none: 'none',
     sm: '0 1px 2px rgba(36, 33, 28, 0.06), 0 1px 1px rgba(36, 33, 28, 0.04)',
-    md: '0 2px 6px rgba(36, 33, 28, 0.08), 0 1px 2px rgba(36, 33, 28, 0.06)',
     lg: '0 8px 24px rgba(36, 33, 28, 0.12), 0 2px 6px rgba(36, 33, 28, 0.08)',
     xl: '0 18px 48px rgba(36, 33, 28, 0.18), 0 6px 14px rgba(36, 33, 28, 0.10)',
-    inset: 'inset 0 1px 2px rgba(36, 33, 28, 0.07)',
   },
   motion,
   font,
@@ -344,18 +311,14 @@ const dark = {
       card: 'oklch(0.195 0 0)',
       panel: 'oklch(0.175 0 0)',
       sunken: 'oklch(0.145 0 0)',
-      raised: 'oklch(0.235 0 0)',
       hover: 'oklch(0.245 0 0)',
       active: 'oklch(0.285 0 0)',
-      inverse: neutral[100],
     },
     text: {
       strong: 'oklch(0.97 0 0)',
       body: 'oklch(0.92 0 0)',
       muted: 'oklch(0.74 0 0)',
       subtle: 'oklch(0.62 0 0)',
-      inverse: neutral[900],
-      link: 'oklch(0.92 0 0)',
       onBrand: 'oklch(0.145 0 0)',
     },
     border: {
@@ -374,20 +337,15 @@ const dark = {
     ring: 'color-mix(in srgb, oklch(0.85 0 0) 40%, transparent)',
     scrim: 'oklch(0 0 0 / 0.70)',
     status: {
-      ok: { fg: 'oklch(0.92 0 0)', bg: 'oklch(0.285 0 0)' },
       warn: { fg: 'oklch(0.98 0 0)', bg: 'oklch(0.34 0 0)' },
       err: { fg: 'oklch(0.145 0 0)', bg: 'oklch(0.90 0 0)', text: 'oklch(0.96 0 0)' },
-      info: { fg: 'oklch(0.85 0 0)', bg: 'oklch(0.285 0 0)' },
     },
   },
   radius,
   shadow: {
-    none: 'none',
     sm: '0 1px 2px rgba(0, 0, 0, 0.40), 0 1px 1px rgba(0, 0, 0, 0.30)',
-    md: '0 2px 8px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.35)',
     lg: '0 10px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.40)',
     xl: '0 20px 56px rgba(0, 0, 0, 0.65), 0 6px 14px rgba(0, 0, 0, 0.45)',
-    inset: 'inset 0 1px 2px rgba(0, 0, 0, 0.45)',
   },
   motion,
   font,
