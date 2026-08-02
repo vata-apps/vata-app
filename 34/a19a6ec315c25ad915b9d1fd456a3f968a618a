@@ -1,0 +1,26 @@
+src/components/person-overview/identity-header.tsx
+  s_3c9a303afce6e3::t_0b12527be881d0 95,102
+src/components/ui/avatar.tsx
+  s_3c9a303afce6e3::t_c808c8dd087475 15
+src/components/person-overview/identity-header.css.ts
+  s_3c9a303afce6e3::t_6d06238ec4521c 14,18-19
+  s_3c9a303afce6e3::t_2d9488d0e96bf8 20
+src/components/ui/avatar.css.ts
+  s_3c9a303afce6e3::t_29b080b375b786 29-30,35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "34a19a6ec315c25ad915b9d1fd456a3f968a618a",
+  "prompts": {},
+  "sessions": {
+    "s_3c9a303afce6e3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4b993bb3-57e3-4b8d-bb3b-36661cec38fa",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
