@@ -44,5 +44,6 @@ export const clear = primitiveStyle({
   color: vars.color.text.subtle,
   selectors: {
     '&:hover': { color: vars.color.text.body },
+    '&:focus-visible': focusRing,
   },
 });
