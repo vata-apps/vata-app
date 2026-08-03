@@ -1,0 +1,122 @@
+src/components/tree-nav.tsx
+  s_f423bfc0cee8db::t_e21a472a7e7411 68
+  s_f423bfc0cee8db::t_a78c51d4d282f3 49-66
+  s_f423bfc0cee8db::t_3d71d9c90f0cc1 79
+  s_f423bfc0cee8db::t_62dc1a43173744 19-23
+  s_f423bfc0cee8db::t_3900068e1a5d38 6-7,9,17-18,24-25,41-48,67,69-76,78,80-83
+src/i18n/locales/fr/common.json
+  s_f423bfc0cee8db::t_2cba4dce69e70a 20-24
+src/i18n/locales/en/common.json
+  s_f423bfc0cee8db::t_45f4912991e1c2 20-24
+src/components/tree-nav.css.ts
+  s_f423bfc0cee8db::t_b7daf848470afb 3-4,6-17
+src/components/tree-shell.css.ts
+  s_f423bfc0cee8db::t_e57fbc77184dcf 2,4-9,11-20,22-25
+src/components/ui/icon-button.css.ts
+  s_f423bfc0cee8db::t_27f51f9856111a 3-7,9-11,14-18,20-54,57
+src/components/ui/tooltip.tsx
+  s_f423bfc0cee8db::t_41b19ed5e523d9 1-43
+src/components/tree-header.tsx
+  s_f423bfc0cee8db::t_d1747a97f5ba3e 1-12,14-36
+src/components/tree-shell.tsx
+  s_f423bfc0cee8db::t_37f2e181476f2b 3,5,20-21,36,38-42
+src/components/ui/tooltip.css.ts
+  s_f423bfc0cee8db::t_b4442b7dbf2a5e 1-7,23-33
+  s_f423bfc0cee8db::t_d7f5a2c2bc9d6b 8-22
+src/components/ui/icon-button.tsx
+  s_f423bfc0cee8db::t_a82aceb67ce5c6 8-11,24-25,29-40
+  s_f423bfc0cee8db::t_64fba46f7dc067 5-6,19-23,26
+src/components/tree-header.css.ts
+  s_f423bfc0cee8db::t_200bf01c867900 4,18-20,27,33-34
+  s_f423bfc0cee8db::t_12d1df01988be0 3,5,7-17,22-26,28,30-32,35-39
+src/hooks/useMediaQuery.ts
+  s_f423bfc0cee8db::t_895b708bbb5246 1-17
+src/pages/PersonNamesPage.tsx
+  s_f423bfc0cee8db::t_f73b50d191de7f 1-10
+src/i18n/locales/fr/individuals.json
+  s_f423bfc0cee8db::t_a907927ba7ba2b 158-200
+  s_f423bfc0cee8db::t_84ae4d1657dbb8 46
+src/components/person-rail/person-rail.tsx
+  s_f423bfc0cee8db::t_5b35d2394d28de 1-25,27-38,40,42,44-77
+  s_f423bfc0cee8db::t_1ed9836a38b73d 26
+  s_f423bfc0cee8db::t_f25ac669a1180f 39,41,43
+src/components/person-rail/expanded-people-list.tsx
+  s_f423bfc0cee8db::t_fb6f52fd63b9c0 97
+  s_f423bfc0cee8db::t_51abeb1d9fa681 64,66-67,70
+  s_f423bfc0cee8db::t_211bbf937152af 108-110
+  s_f423bfc0cee8db::t_9ba9b8f890f0ee 5,8,11-12
+  s_f423bfc0cee8db::t_e5eb9c69da9db5 1-4,6-7,9-10,13-63,65,68-69,71-96,98-107,111-116
+src/pages/IndividualLayout.tsx
+  s_f423bfc0cee8db::t_b835b1c50b3a83 32,34-51,58
+  s_f423bfc0cee8db::t_7e2923fce7f6b4 7,18-24,55-57
+src/components/ui/popover.tsx
+  s_f423bfc0cee8db::t_211bbf937152af 34-37
+  s_f423bfc0cee8db::t_eac400bfa8c778 4-8,16,32-33,38-40,47
+src/i18n/locales/en/individuals.json
+  s_f423bfc0cee8db::t_c649f4f4eb6a74 46
+  s_f423bfc0cee8db::t_48c39e723d59bc 158-200
+src/store/app-store.ts
+  s_f423bfc0cee8db::t_db6afb0b0f49a3 4-5,8-23,29-35,45-50
+src/components/ui/popover.css.ts
+  s_f423bfc0cee8db::t_1e2c527ad4e88a 11-25
+src/pages/individual-layout.css.ts
+  s_f423bfc0cee8db::t_1f43bdb6d31131 5,7-24,29,32-37
+src/routes/tree/$treeId/individual/$individualId/names.tsx
+  s_f423bfc0cee8db::t_334929c43fbdbc 1-6
+src/components/person-rail/people-filter-panel.tsx
+  s_f423bfc0cee8db::t_50500b3168c998 120
+  s_f423bfc0cee8db::t_a90f5236b88a43 104
+  s_f423bfc0cee8db::t_52ac5ac76c65c8 1,7,9
+  s_f423bfc0cee8db::t_211bbf937152af 40-44
+  s_f423bfc0cee8db::t_50f7da9acee04f 119
+  s_f423bfc0cee8db::t_f0bb950ee058dc 59-64
+  s_f423bfc0cee8db::t_f2cb08e5ee3dc1 2-6,8,10-39,45-58,65-79,81-85,87-103,105-107,109-118,121-171
+  s_f423bfc0cee8db::t_0e54f2e68311c9 108
+  s_f423bfc0cee8db::t_c2d27de6f06240 80,86
+src/components/person-overview/identity-header.tsx
+  s_f423bfc0cee8db::t_41d1d6b2715507 140
+src/components/person-rail/people-sort-menu.tsx
+  s_f423bfc0cee8db::t_54ecf25b8a283d 1-8,15-83
+  s_f423bfc0cee8db::t_211bbf937152af 9-14
+src/components/person-rail/person-rail.css.ts
+  s_f423bfc0cee8db::t_57ebbfd652bea9 254-256,259,266-268,288,290-291
+  s_f423bfc0cee8db::t_ab032c09eb78f2 405
+  s_f423bfc0cee8db::t_807efb7605521a 355
+  s_f423bfc0cee8db::t_3568dfa9b0fe9a 1-5,7-15,17-30,32,34-44,46-55,57-62,64-68,70-75,77-82,84-88,90-93,95-101,103-111,113-123,125-131,137,139,144,146,148-156,158-172,174-180,182,184-191,193-199,201-210,212-229,231,233-238,240-247,253,258,260,262-265,269-270,275,277-286,289,292-296,298-304,306,308-326,328-338,340-343,345,347-351,353-354,356-363,365-368,370-387,392,394-398,404,407,409-415,417-435,437-442,444-447
+  s_f423bfc0cee8db::t_8150c729a705f0 6,16,31,33,45,56,69,76,83,89,94,102,112,124,132,138,140,145,147,157,173,181,183,192,200,211,230,232,239,248,257,261,271,276,287,297,305,307,327,339,344,346,352,364,369,388,393,399,406,408,416,436,443
+  s_f423bfc0cee8db::t_018cf56952b986 63
+  s_f423bfc0cee8db::t_211bbf937152af 133-136,141-143,249-252,272-274,389-391,400-403
+src/components/icon.tsx
+  s_f423bfc0cee8db::t_6ef67634133c6a 53,59,74-75,80
+  s_f423bfc0cee8db::t_20a89083e98ac0 2,8,23-24,29
+src/components/person-rail/collapsed-people-rail.tsx
+  s_f423bfc0cee8db::t_12d127ff0c01cd 75
+  s_f423bfc0cee8db::t_44c7b13f78ac04 43,45-46,50
+  s_f423bfc0cee8db::t_17e2a3ed392771 1-4,7,9,12-42,44,47-49,51-70,76-84,86-87,89-99,103-107,111-119,124-129
+  s_f423bfc0cee8db::t_211bbf937152af 71-74,100-102,108-110,120-123
+  s_f423bfc0cee8db::t_ddb97f8fd4a70a 85,88
+  s_f423bfc0cee8db::t_bd812e2de73a53 5-6,8,10-11
+src/components/person-rail/person-rail-data.ts
+  s_f423bfc0cee8db::t_174884ee8ed63e 52-73
+  s_f423bfc0cee8db::t_00c59f2dcc9aa5 1,4-11
+  s_f423bfc0cee8db::t_09ef4928268c32 2-3,12-30,35-51,74-75,80-107,112-114,120-132
+  s_f423bfc0cee8db::t_211bbf937152af 31-34,76-79,108-111
+  s_f423bfc0cee8db::t_8b267ac73917b5 115-119
+  s_f423bfc0cee8db::t_e3eb9d920b143b 133-134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "928313e284323eaf086fd8d2360cad6b8627d615",
+  "prompts": {},
+  "sessions": {
+    "s_f423bfc0cee8db": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "01bcf1c7-f107-4e2c-a77d-0f7e16d80d77",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
