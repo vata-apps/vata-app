@@ -21,12 +21,12 @@ import {
 // .github/workflows/agent-review.yml.
 // See docs/adr/0004-autonomous-agent-pipeline.md.
 //
-// Two stages on the same worktree: Opus analyzes the diff and decides what to
-// fix (read-only), then Sonnet implements exactly what Opus specified without
-// re-judging it. Opus costs several times more per token than Sonnet, so
-// keeping the token-heavy edit/verify loop on Sonnet cuts review cost while
-// keeping Opus's judgment on what to fix. Stage 2 is skipped entirely when
-// there is nothing to fix.
+// Two stages on the same worktree: analysis reads the diff and decides what to
+// fix (read-only), then Sonnet implements exactly what was specified without
+// re-judging it. Opus costs several times more per token than Sonnet, so the
+// token-heavy edit/verify loop always runs on Sonnet, and analysis only pays
+// Opus rates on a PR's first round — see `analysisModel` below. Stage 2 is
+// skipped entirely when there is nothing to fix.
 //
 // Runs on every PR, not just agent-authored ones — the branch to review is
 // always the PR's actual head ref, never derived from the issue number. An
@@ -38,6 +38,7 @@ const issueNumber = process.env.ISSUE_NUMBER || undefined;
 const prNumber = required('PR_NUMBER');
 const branch = required('BRANCH');
 const issueDataPath = process.env.ISSUE_DATA_PATH ?? '/tmp/issue.json';
+const priorReviewsPath = process.env.PRIOR_REVIEWS_PATH;
 
 if (issueNumber && !existsSync(issueDataPath)) {
   console.error(
@@ -65,6 +66,31 @@ const issueContext = issue
   ? `Implements GitHub issue **#${issueNumber}**.\n\n## Original issue (the spec)\n\n**${issue.title}**\n\n${issue.url}\n\n${issue.body}`
   : 'No issue is linked to this PR — review it against `CLAUDE.md` conventions and general correctness only.';
 
+// Every round re-reads the whole main...HEAD diff, so without its own prior
+// reports the reviewer re-derives the same observations on every push and the
+// PR never converges. Feeding the previous rounds back in makes each one
+// additive: already-reported items stay reported, and an item the maintainer
+// left standing reads as a decision rather than an oversight.
+const priorReviews =
+  priorReviewsPath && existsSync(priorReviewsPath)
+    ? readFileSync(priorReviewsPath, 'utf-8').trim()
+    : '';
+
+const priorReviewsContext = priorReviews
+  ? `You have already reviewed this PR. Your previous rounds, oldest first:\n\n${priorReviews}`
+  : 'This is your first round on this PR — you have not reported anything yet.';
+
+// The first round is the expensive one and the one that matters: a cold read of
+// the whole diff, every pass, nothing already ruled out. Later rounds check an
+// increment against findings the first round already made — much lighter work,
+// and Sonnet is a fraction of Opus per token. Paying Opus rates to re-read a
+// diff it has already reported on is where the review budget was going.
+const analysisModel = priorReviews ? MODEL_SONNET : MODEL_OPUS;
+
+console.log(
+  `Prior rounds: ${priorReviews ? 'found' : 'none (first review)'} — analyzing with ${analysisModel}`
+);
+
 const promptArgs = {
   PR_NUMBER: prNumber,
   ISSUE_CONTEXT: issueContext,
@@ -76,15 +102,21 @@ let fix: WorktreeRunResult | undefined;
 let hadFixesToApply = false;
 
 try {
-  // No install hook here: analysis is read-only (no pnpm verify, no build),
-  // so it has no use for node_modules. Only the fix stage runs pnpm verify,
-  // and it's skipped whenever there's nothing to fix — installing
-  // unconditionally would pay that cost even on a clean review.
+  // Analysis stays read-only, but it still installs: without node_modules it
+  // could not run tsc/lint/test, and it reported unverified suspicions
+  // ("could not confirm, no node_modules in this checkout") that the next
+  // round then re-derived. The install is a hardlink from the store the job
+  // already populated, so it's cheap next to an Opus round of guessing.
   analysis = await wt.run({
-    agent: claudeCode(MODEL_OPUS),
+    agent: claudeCode(analysisModel),
     sandbox: noSandbox(),
     promptFile: '.sandcastle/prompts/review-analyze.md',
-    promptArgs,
+    promptArgs: { ...promptArgs, PRIOR_REVIEWS: priorReviewsContext },
+    hooks: {
+      sandbox: {
+        onSandboxReady: [{ command: 'pnpm install --frozen-lockfile' }],
+      },
+    },
     maxIterations: 5,
     idleTimeoutSeconds: 600,
     name: `review-analyze-${prNumber}`,
@@ -103,12 +135,14 @@ try {
         ...promptArgs,
         FIXES_TO_APPLY: fixesToApply ?? '',
       },
-      hooks: {
-        sandbox: {
-          onSandboxReady: [{ command: 'pnpm install --frozen-lockfile' }],
-        },
-      },
-      maxIterations: 5,
+      // No install hook: this stage only runs after analysis, on the same
+      // worktree, and analysis is read-only — so node_modules is already
+      // current. `onSandboxReady` fires per `wt.run()`, so installing here
+      // too would re-verify the lockfile for nothing on every fixing round.
+      // Higher than the analysis cap: the reviewer now fixes everything it can
+      // decide alone instead of flagging it, so a list of a dozen fixes — each
+      // its own commit — is normal rather than exceptional.
+      maxIterations: 10,
       idleTimeoutSeconds: 600,
       name: `review-fix-${prNumber}`,
       logging: { type: 'stdout' },
@@ -159,7 +193,7 @@ if (findings) {
 const verifyPassed = commits > 0 && !error ? verify(wt.worktreePath) : false;
 const flagged = hasFlaggedFindings(findings);
 
-logUsage(MODEL_OPUS, analysis?.iterations ?? []);
+logUsage(analysisModel, analysis?.iterations ?? []);
 if (fix) {
   logUsage(MODEL_SONNET, fix.iterations);
 }
@@ -182,7 +216,7 @@ writeGithubOutput({
   outcome: decision.outcome,
   push: String(decision.push),
   approve: String(decision.approve),
-  model: fix ? `${MODEL_OPUS}+${MODEL_SONNET}` : MODEL_OPUS,
+  model: fix ? `${analysisModel}+${MODEL_SONNET}` : analysisModel,
 });
 
 if (decision.outcome === 'failed') {
