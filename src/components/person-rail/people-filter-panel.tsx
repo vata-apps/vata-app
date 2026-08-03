@@ -65,34 +65,27 @@ export function PeopleFilterPanel({
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger className={styles.filterButton}>
-        <Icon name="sliders-horizontal" size={13} />
-        <span className={styles.filterButtonLabel}>{t('rail.filters.title')}</span>
-        {hasFilters && <span className={styles.filterButtonSummary}>· {summary}</span>}
+      <div className={styles.filterBar}>
+        <Popover.Trigger className={styles.filterButton}>
+          <Icon name="sliders-horizontal" size={13} />
+          <span className={styles.filterButtonLabel}>{t('rail.filters.title')}</span>
+          {hasFilters && <span className={styles.filterButtonSummary}>· {summary}</span>}
+          <span className={styles.filterButtonChevron}>
+            <Icon name={open ? 'chevron-up' : 'chevron-down'} size={13} />
+          </span>
+        </Popover.Trigger>
         {hasFilters && (
-          <span
-            role="button"
-            tabIndex={0}
+          <button
+            type="button"
             className={styles.filterButtonClear}
             title={t('rail.filters.reset')}
-            onClick={(event) => {
-              event.stopPropagation();
-              onApply(DEFAULT_PEOPLE_RAIL_FILTERS);
-            }}
-            onKeyDown={(event) => {
-              if (event.key !== 'Enter' && event.key !== ' ') return;
-              event.preventDefault();
-              event.stopPropagation();
-              onApply(DEFAULT_PEOPLE_RAIL_FILTERS);
-            }}
+            aria-label={t('rail.filters.reset')}
+            onClick={() => onApply(DEFAULT_PEOPLE_RAIL_FILTERS)}
           >
             <Icon name="x" size={13} />
-          </span>
+          </button>
         )}
-        <span className={styles.filterButtonChevron}>
-          <Icon name={open ? 'chevron-up' : 'chevron-down'} size={13} />
-        </span>
-      </Popover.Trigger>
+      </div>
       <Popover.Portal>
         <Popover.Positioner sideOffset={4} align="start">
           <Popover.Popup className={styles.filterPanel}>

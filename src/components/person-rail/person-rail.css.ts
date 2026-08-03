@@ -215,7 +215,7 @@ export const emptyRows = style({
 // Filter button + panel
 // ---------------------------------------------------------------------------
 
-export const filterButton = style({
+export const filterBar = style({
   width: '100%',
   boxSizing: 'border-box',
   display: 'flex',
@@ -228,6 +228,21 @@ export const filterButton = style({
   background: vars.color.surface.card,
   color: vars.color.text.subtle,
   fontSize: vars.text.xs,
+});
+
+export const filterButton = style({
+  flex: 1,
+  minWidth: 0,
+  height: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  gap: vars.space['4'],
+  padding: 0,
+  border: 'none',
+  background: 'none',
+  color: 'inherit',
+  fontSize: 'inherit',
+  fontFamily: 'inherit',
   cursor: 'pointer',
   selectors: {
     '&:focus-visible': focusRing,
@@ -246,9 +261,14 @@ export const filterButtonSummary = style({
 export const filterButtonClear = style({
   display: 'flex',
   flexShrink: 0,
+  padding: 0,
+  border: 'none',
+  background: 'none',
+  cursor: 'pointer',
   color: vars.color.text.subtle,
   selectors: {
     '&:hover': { color: vars.color.text.body },
+    '&:focus-visible': focusRing,
   },
 });
 
