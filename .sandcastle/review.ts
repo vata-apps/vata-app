@@ -4,9 +4,7 @@ import { noSandbox } from '@ai-hero/sandcastle/sandboxes/no-sandbox';
 import {
   buildFinalFindings,
   decideReviewOutcome,
-  estimateCost,
   extractSection,
-  formatCost,
   extractTag,
   hasFixesToApply,
   hasFlaggedFindings,
@@ -200,12 +198,6 @@ if (fix) {
   logUsage(MODEL_SONNET, fix.iterations);
 }
 
-const analysisCost = estimateCost(analysisModel, analysis?.iterations ?? []);
-const fixCost = fix ? estimateCost(MODEL_SONNET, fix.iterations) : null;
-const totalCost =
-  analysisCost === null && fixCost === null ? null : (analysisCost ?? 0) + (fixCost ?? 0);
-console.log(`\nRound total: ${formatCost(totalCost)}`);
-
 const decision = decideReviewOutcome({
   error,
   commits,
@@ -225,7 +217,6 @@ writeGithubOutput({
   push: String(decision.push),
   approve: String(decision.approve),
   model: fix ? `${analysisModel}+${MODEL_SONNET}` : analysisModel,
-  cost: totalCost === null ? 'unavailable' : totalCost.toFixed(2),
 });
 
 if (decision.outcome === 'failed') {

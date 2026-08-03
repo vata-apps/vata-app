@@ -93,7 +93,7 @@ Notes:
 - A newer commit cancels the in-flight review and restarts it on the fresh state; the cancelled run posts no comment, since it was superseded, not failed — only the fresh run's result is reported.
 - The fix stage is skipped entirely when there's nothing to fix — a clean or flag-only review costs one Opus run, not two.
 - The reviewer runs on every same-repo PR, agent-authored or yours. Fork PRs are skipped: their `pull_request` event carries no repo secrets and can't be pushed to.
-- Each review run draws from the same Anthropic API spend as issue runs. Every run logs a per-stage and total cost estimate (a lower bound — sandcastle reports only each iteration's last-message usage); read it in the "Run reviewer" step's logs to see where spend is actually going.
+- Each review run draws from the same Anthropic API spend as issue runs. The run logs report iteration counts but **not** cost — sandcastle cannot surface token usage under `noSandbox()` (see [ADR-004](../adr/0004-autonomous-agent-pipeline.md)). Track actual spend in the Anthropic Console.
 - **Every push to an open PR is a paid review round.** The trigger includes `synchronize`, and the concurrency group cancels an in-flight run when a newer commit lands — so rapid pushes cost one round, but five spaced-out pushes cost five. If a PR is getting expensive, mark it draft while you iterate and mark it ready when you want the review.
 
 ## What stays manual
