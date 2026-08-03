@@ -15,7 +15,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 - [ADR-001: Desktop Framework](./adr/0001-desktop-framework.md) — Tauri over Electron
 - [ADR-002: Frontend Stack](./adr/0002-frontend-stack.md) — React, TypeScript, Vite, TanStack, Zustand
 - [ADR-003: Database Architecture](./adr/0003-database-architecture.md) — Dual DB, string IDs, layer separation
-- [ADR-004: Autonomous Agent Pipeline](./adr/0004-autonomous-agent-pipeline.md) — Sandcastle issue→PR execution (Claude Code/Sonnet) plus two-stage PR review (Opus analyzes / Sonnet fixes)
+- [ADR-004: Autonomous Agent Pipeline](./adr/0004-autonomous-agent-pipeline.md) — Sandcastle issue→PR execution (Claude Code/Sonnet) plus two-stage PR review (Opus or Sonnet analyzes / Sonnet fixes)
 - [ADR-005: Headless UI Foundation](./adr/0005-headless-baseui-vanilla-extract.md) — Base UI + Vanilla Extract, replacing Radix Themes
 
 ## Architecture
