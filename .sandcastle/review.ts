@@ -6,6 +6,7 @@ import {
   decideReviewOutcome,
   estimateCost,
   extractSection,
+  formatCost,
   extractTag,
   hasFixesToApply,
   hasFlaggedFindings,
@@ -22,12 +23,12 @@ import {
 // .github/workflows/agent-review.yml.
 // See docs/adr/0004-autonomous-agent-pipeline.md.
 //
-// Two stages on the same worktree: Opus analyzes the diff and decides what to
-// fix (read-only), then Sonnet implements exactly what Opus specified without
-// re-judging it. Opus costs several times more per token than Sonnet, so
-// keeping the token-heavy edit/verify loop on Sonnet cuts review cost while
-// keeping Opus's judgment on what to fix. Stage 2 is skipped entirely when
-// there is nothing to fix.
+// Two stages on the same worktree: analysis reads the diff and decides what to
+// fix (read-only), then Sonnet implements exactly what was specified without
+// re-judging it. Opus costs several times more per token than Sonnet, so the
+// token-heavy edit/verify loop always runs on Sonnet, and analysis only pays
+// Opus rates on a PR's first round — see `analysisModel` below. Stage 2 is
+// skipped entirely when there is nothing to fix.
 //
 // Runs on every PR, not just agent-authored ones — the branch to review is
 // always the PR's actual head ref, never derived from the issue number. An
@@ -199,10 +200,11 @@ if (fix) {
   logUsage(MODEL_SONNET, fix.iterations);
 }
 
+const analysisCost = estimateCost(analysisModel, analysis?.iterations ?? []);
+const fixCost = fix ? estimateCost(MODEL_SONNET, fix.iterations) : null;
 const totalCost =
-  estimateCost(analysisModel, analysis?.iterations ?? []) +
-  (fix ? estimateCost(MODEL_SONNET, fix.iterations) : 0);
-console.log(`\nRound total: ~$${totalCost.toFixed(2)} (lower bound)`);
+  analysisCost === null && fixCost === null ? null : (analysisCost ?? 0) + (fixCost ?? 0);
+console.log(`\nRound total: ${formatCost(totalCost)}`);
 
 const decision = decideReviewOutcome({
   error,
@@ -223,7 +225,7 @@ writeGithubOutput({
   push: String(decision.push),
   approve: String(decision.approve),
   model: fix ? `${analysisModel}+${MODEL_SONNET}` : analysisModel,
-  cost: totalCost.toFixed(2),
+  cost: totalCost === null ? 'unavailable' : totalCost.toFixed(2),
 });
 
 if (decision.outcome === 'failed') {

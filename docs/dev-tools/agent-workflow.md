@@ -23,7 +23,7 @@ Full schema and transition rules are in [ADR-004](../adr/0004-autonomous-agent-p
 - You add **`agent:ready`** to trigger a run.
 - The workflow swaps labels to reflect outcome: **`agent:running`** → **`agent:success`** / **`agent:partial`** / **`agent:failed`**.
 
-There is no escalation label anymore: the author always runs on Sonnet, the reviewer always runs on Opus.
+There is no escalation label anymore: the author always runs on Sonnet, and the reviewer picks its own model per round (Opus on a PR's first, Sonnet after).
 
 ## End-to-end flow
 
@@ -41,7 +41,7 @@ There is no escalation label anymore: the author always runs on Sonnet, the revi
         └─ failed  → no PR, comment on issue with log excerpt, label agent:failed
         │
         ▼  (GitHub Actions: pull_request)
-[vata-reviewer[bot]: Opus analyzes the full diff + its own previous rounds (read-only) → decides what to fix]
+[vata-reviewer[bot]: analyzes the full diff + its own previous rounds (read-only) → decides what to fix]
         │
         ▼  (skipped entirely if nothing to fix)
 [Sonnet implements the listed fixes verbatim, one commit each, full `pnpm verify` at the end]
@@ -66,7 +66,7 @@ The workflow does not auto-retry. Every run is intentional and paid for.
 
 ## Autonomous review
 
-Every open, non-draft PR is automatically reviewed by `vata-reviewer[bot]`, in two stages ([ADR-004](../adr/0004-autonomous-agent-pipeline.md)): Opus analyzes the PR diff against the original issue spec and `CLAUDE.md` and decides what needs fixing (read-only, no edits); Sonnet then implements exactly those fixes — it does not re-review or challenge Opus's judgment.
+Every open, non-draft PR is automatically reviewed by `vata-reviewer[bot]`, in two stages ([ADR-004](../adr/0004-autonomous-agent-pipeline.md)): the analysis stage reads the PR diff against the original issue spec and `CLAUDE.md` and decides what needs fixing (read-only, no edits); Sonnet then implements exactly those fixes — it does not re-review or challenge that judgment.
 
 **The reviewer owns the code; you own the product.** Structure, naming, dead code, convention drift, stale comments, an internal tradeoff with two defensible answers — the reviewer decides and fixes those itself rather than asking you. It escalates at most 3 items per round, and only for something that changes what a user sees _and_ it can't settle alone: the issue is silent or contradicts itself, or confirming it needs the app running. If you see "this is a design call" in a review comment, the prompt is failing — the reviewer is supposed to make the call.
 

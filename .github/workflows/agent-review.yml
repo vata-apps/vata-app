@@ -120,6 +120,10 @@ jobs:
       # push, and the PR never converges. Its own previous comments are the
       # memory: already-reported items stay reported, and an item the
       # maintainer left standing reads as a decision, not an oversight.
+      # Both `comments` and `reviews` are read: the `fixed`/`clean` outcomes
+      # post their findings as the body of `gh pr review --approve`, which
+      # never appears under `comments` — reading only that would leave the
+      # reviewer blind to exactly the rounds it succeeded on.
       # Missing or empty is fine — that's simply the first round.
       # The author match accepts the login with or without the `[bot]` suffix:
       # the PR-comments API reports this App as plain `vata-reviewer`, while
@@ -131,11 +135,13 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          gh pr view "$PR_NUMBER" --json comments --jq '
-            [ .comments[]
-              | select(.author.login | test("^vata-reviewer(\\[bot\\])?$"))
-              | .body
-            ] | join("\n\n---\n\n")
+          gh pr view "$PR_NUMBER" --json comments,reviews --jq '
+            [ .comments[], .reviews[] ]
+            | map(select(.author.login | test("^vata-reviewer(\\[bot\\])?$")))
+            | map(select((.body // "") != ""))
+            | sort_by(.createdAt // .submittedAt // "")
+            | map(.body)
+            | join("\n\n---\n\n")
           ' > "$PRIOR_REVIEWS_PATH"
 
       - name: Run reviewer

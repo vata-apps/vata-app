@@ -130,16 +130,24 @@ const PRICING: Record<string, { input: number; output: number }> = {
 };
 
 /**
- * Estimated USD cost of a run. This is a **lower bound**: sandcastle reports
- * the usage of each iteration's last assistant message, so intermediate turns
+ * Estimated USD cost of a run, or `null` when sandcastle reported no token
+ * usage at all (session capture off, or an agent provider that doesn't parse
+ * usage) — a real run never costs zero, so a `0` here would read as "free"
+ * rather than "unmeasured".
+ *
+ * When a number does come back it is a **lower bound**: sandcastle reports the
+ * usage of each iteration's last assistant message, so intermediate turns
  * within an iteration aren't counted. Useful for comparing runs against each
  * other — not a substitute for the Anthropic Console's billing page.
  */
-export function estimateCost(model: string, iterations: readonly IterationResult[]): number {
+export function estimateCost(model: string, iterations: readonly IterationResult[]): number | null {
   const price = PRICING[model];
-  if (!price) return 0;
+  if (!price) return null;
 
-  return iterations.reduce((total, { usage }) => {
+  const measured = iterations.filter((i) => i.usage);
+  if (measured.length === 0) return null;
+
+  return measured.reduce((total, { usage }) => {
     if (!usage) return total;
     const input =
       usage.inputTokens * price.input +
@@ -149,11 +157,16 @@ export function estimateCost(model: string, iterations: readonly IterationResult
   }, 0);
 }
 
+/** Render a cost estimate for logs, distinguishing "unmeasured" from "cheap". */
+export function formatCost(cost: number | null): string {
+  return cost === null ? 'unavailable (no token usage reported)' : `~$${cost.toFixed(2)}`;
+}
+
 export function logUsage(model: string, iterations: readonly IterationResult[]): void {
   console.log('\nRun usage');
   console.log(`  Model:      ${model}`);
   console.log(`  Iterations: ${iterations.length}`);
-  console.log(`  Cost:       ~$${estimateCost(model, iterations).toFixed(2)} (lower bound)`);
+  console.log(`  Cost:       ${formatCost(estimateCost(model, iterations))}`);
 }
 
 export function verify(cwd: string): boolean {
