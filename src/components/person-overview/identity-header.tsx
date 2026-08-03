@@ -137,6 +137,7 @@ export function IdentityHeader({
  */
 const OVERVIEW_TABS = [
   { id: 'overview', to: '/tree/$treeId/individual/$individualId' },
+  { id: 'names', to: '/tree/$treeId/individual/$individualId/names' },
   { id: 'ancestors', to: '/tree/$treeId/individual/$individualId/ancestors' },
   { id: 'events', to: '/tree/$treeId/individual/$individualId/events' },
   { id: 'relations', to: '/tree/$treeId/individual/$individualId/relations' },

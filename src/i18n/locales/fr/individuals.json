@@ -43,6 +43,7 @@
     "notFound": "Individu introuvable",
     "tabs": {
       "overview": "Aperçu",
+      "names": "Noms",
       "ancestors": "Ascendance",
       "events": "Événements",
       "relations": "Relations",
@@ -153,6 +154,51 @@
   },
   "notes": {
     "comingSoon": "Les notes ne sont pas encore disponibles."
+  },
+  "namesTab": {
+    "comingSoon": "Les noms ne sont pas encore disponibles."
+  },
+  "rail": {
+    "expandedAriaLabel": "Liste des personnes",
+    "collapsedAriaLabel": "Liste des personnes (repliée)",
+    "searchPlaceholder": "Filtrer par nom",
+    "noMatches": "Aucune personne ne correspond à ces filtres.",
+    "ofTotal": "sur {{count}}",
+    "visibleCount_one": "{{count}} personne affichée",
+    "visibleCount_other": "{{count}} personnes affichées",
+    "collapse": "Replier la liste",
+    "expand": "Déployer la liste des personnes",
+    "filters": {
+      "title": "Filtres",
+      "reset": "Réinitialiser",
+      "close": "Fermer",
+      "apply_one": "Voir {{count}} personne",
+      "apply_other": "Voir {{count}} personnes",
+      "sex": "Genre",
+      "status": "Statut",
+      "statusValue": {
+        "living": "Vivant",
+        "deceased": "Décédé"
+      }
+    },
+    "sort": {
+      "trigger": "Trier",
+      "menuLabel": "Trier par",
+      "field": {
+        "surname": "Nom",
+        "firstName": "Prénom",
+        "birthYear": "Année de naissance",
+        "deathYear": "Année de décès"
+      },
+      "direction": {
+        "asc": "Croissant",
+        "desc": "Décroissant"
+      }
+    },
+    "hover": {
+      "born": "Naissance",
+      "died": "Décès"
+    }
   },
   "personEditor": {
     "createTitle": "Ajouter une personne",
