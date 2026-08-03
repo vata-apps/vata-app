@@ -1,0 +1,21 @@
+.sandcastle/prompts/review-fix.md
+  s_b13cae0e8316d6::t_74d078b4f8bd5c 26-31
+docs/adr/0004-autonomous-agent-pipeline.md
+  s_b13cae0e8316d6::t_f3151bf00c99e8 31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "a4d657502b8d536a9c41a6f88b16c713a65b2bef",
+  "prompts": {},
+  "sessions": {
+    "s_b13cae0e8316d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "39dc0382-d611-4cef-8469-6e2632c05f91",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
