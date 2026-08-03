@@ -43,7 +43,8 @@ export function PersonRail({ treeId, activeIndividualId }: PersonRailProps): JSX
   if (!allPeople) return null;
 
   const collapsed = collapsedOverride ?? isNarrow;
-  const hasFilters = filters.sex.length > 0 || filters.status.length > 0;
+  const hasFilters =
+    filters.sex.length > 0 || filters.status.length > 0 || debouncedQuery.trim() !== '';
 
   if (collapsed) {
     return (
