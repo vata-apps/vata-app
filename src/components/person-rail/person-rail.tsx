@@ -37,7 +37,7 @@ export function PersonRail({ treeId, activeIndividualId }: PersonRailProps): JSX
 
   const visiblePeople = useMemo(() => {
     const filtered = filterPeopleRail(allPeople ?? [], filters, debouncedQuery);
-    return [...filtered].sort(buildPeopleRailComparator(sort, i18n.language));
+    return filtered.sort(buildPeopleRailComparator(sort, i18n.language));
   }, [allPeople, filters, debouncedQuery, sort, i18n.language]);
 
   if (!allPeople) return null;

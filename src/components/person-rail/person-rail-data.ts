@@ -125,7 +125,7 @@ export function formatEventDate(event: IndividualWithDetails['birthEvent']): str
   return event?.dateOriginal ?? (event?.dateSort ? event.dateSort.slice(0, 4) : '—');
 }
 
-/** Free-text + filter pass, used by both the expanded list and the collapsed rail's count. */
+/** Free-text + filter pass for the rail's people list. */
 export function filterPeopleRail(
   people: IndividualWithDetails[],
   filters: PeopleRailFilters,
