@@ -164,6 +164,8 @@
     "searchPlaceholder": "Filter by name",
     "noMatches": "No people match these filters.",
     "ofTotal": "of {{count}}",
+    "visibleCount_one": "{{count}} person shown",
+    "visibleCount_other": "{{count}} people shown",
     "collapse": "Collapse the list",
     "expand": "Expand the people list",
     "filters": {
