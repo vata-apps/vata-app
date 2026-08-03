@@ -25,8 +25,8 @@ export function lifespanYears(person: IndividualWithDetails): string {
 
 /**
  * Display name for a rail row — "Surname, Given" when sorted by surname (per
- * the mockup: "l'affichage passe en « Nom, Prénom » quand le tri se fait sur
- * le nom de famille"), otherwise "Given Surname".
+ * the mockup: the display switches to "Surname, Given name" when the sort is
+ * on the surname), otherwise "Given Surname".
  */
 export function rowDisplayName(
   person: IndividualWithDetails,
