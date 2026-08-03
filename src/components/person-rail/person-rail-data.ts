@@ -102,10 +102,16 @@ export function buildPeopleRailComparator(
   return (a, b) => {
     const keyA = key(a);
     const keyB = key(b);
-    const primary =
-      typeof keyA === 'number' || typeof keyB === 'number'
-        ? Number(keyA) - Number(keyB)
-        : collator.compare(String(keyA), String(keyB));
+    let primary: number;
+    if (typeof keyA === 'number' || typeof keyB === 'number') {
+      const numA = Number(keyA);
+      const numB = Number(keyB);
+      // `Infinity - Infinity` is NaN — compare for equality first so two
+      // people with no year fall through to the name tie-break below.
+      primary = numA === numB ? 0 : numA - numB;
+    } else {
+      primary = collator.compare(String(keyA), String(keyB));
+    }
     if (primary !== 0) return primary * direction;
     return (
       collator.compare(formatName(a.primaryName).sortable, formatName(b.primaryName).sortable) *
