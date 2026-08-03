@@ -53,7 +53,7 @@ export interface PersonOverviewData {
   deathEvent: EventWithDetails | null;
   /**
    * The person's own (principal) events, enriched with citation presence —
-   * used for places lived and the sourced vitals.
+   * used for places lived.
    */
   events: EventTimelineEntry[];
   father: RelatedPerson | null;

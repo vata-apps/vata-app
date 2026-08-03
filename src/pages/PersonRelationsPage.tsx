@@ -20,10 +20,10 @@ function NameCell({ row, treeId }: { row: RelationRow; treeId: string }): JSX.El
   const { t } = useTranslation('individuals');
 
   if (row.id === null) {
-    const missingKey = row.relation === 'father' ? 'missingFather' : 'missingMother';
+    const role = row.relation === 'father' ? 'father' : 'mother';
     return (
       <Typography tone="muted" size="sm">
-        {t(`overview.parents.${missingKey}`)}
+        {t(`overview.parents.${role}.missing`)}
       </Typography>
     );
   }

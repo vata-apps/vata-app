@@ -6,9 +6,11 @@ import { PlacesMap, type MapPoint } from '$components/map/places-map';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 import * as card from '../ui/card.css';
+import { EmptyState } from '../ui/empty-state';
 import { Typography } from '../ui/typography';
 import { PlaceLink } from './entity-links';
 import type { OverviewPlaceLived } from './overview-types';
+import { PanelHead, ViewAllUnavailable } from './panel';
 import * as s from './places-panel.css';
 
 interface PlacesPanelProps {
@@ -22,12 +24,12 @@ function toMapPoint(place: OverviewPlaceLived): MapPoint | null {
 }
 
 /**
- * The full-width Places panel: a map of the person's geocoded places above
- * chips for every distinct place tied to their events (geocoded or not,
- * including their marriages), each chip linking to that Place and annotated
- * with the event types recorded there. Titled "Places" rather than "Places
- * lived" since a marriage or death location isn't necessarily a residence.
- * Hovering a chip highlights its marker on the map.
+ * The Places panel: a map of the person's geocoded places above a row for
+ * every distinct place tied to their events (geocoded or not, including their
+ * marriages), each linking to that Place and tagged with the event types
+ * recorded there. Titled "Places" rather than "Places lived" since a marriage
+ * or death location isn't necessarily a residence. Hovering a row highlights
+ * its marker on the map.
  */
 export function PlacesPanel({ places, treeId }: PlacesPanelProps): JSX.Element {
   const { t } = useTranslation('individuals');
@@ -38,42 +40,45 @@ export function PlacesPanel({ places, treeId }: PlacesPanelProps): JSX.Element {
   );
 
   return (
-    <Card>
-      <div className={card.stack}>
-        <div className={s.head}>
-          <Typography as="h2" size="md" weight="strong">
-            {t('overview.placesLived.title')}
-          </Typography>
-          {places.length > 0 && <Badge>{places.length}</Badge>}
-        </div>
+    <Card layout="sectioned">
+      <PanelHead title={t('overview.placesLived.title')}>
+        {places.length > 0 && <Badge>{places.length}</Badge>}
+        <ViewAllUnavailable />
+      </PanelHead>
 
-        {mapPoints.length > 0 && (
+      {mapPoints.length > 0 && (
+        <div className={s.map}>
           <PlacesMap points={mapPoints} highlightedId={highlightedPlaceId} />
-        )}
+        </div>
+      )}
 
-        {places.length === 0 ? (
-          <Typography tone="muted">{t('overview.placesLived.empty')}</Typography>
-        ) : (
-          <div className={s.chips}>
-            {places.map((place) => (
-              <PlaceLink key={place.id} treeId={treeId} placeId={place.id}>
-                <Card
-                  className={s.chip}
-                  onMouseEnter={() => setHighlightedPlaceId(place.id)}
-                  onMouseLeave={() => setHighlightedPlaceId(null)}
-                >
-                  <div className={s.chipBody}>
-                    <Typography weight="semibold">{place.name}</Typography>
-                    <Typography size="xs" tone="subtle">
-                      {place.contexts.map((context) => eventTypeLabel(context, t)).join(' · ')}
-                    </Typography>
-                  </div>
-                </Card>
-              </PlaceLink>
-            ))}
+      {places.length === 0 ? (
+        <div className={card.row}>
+          <EmptyState>{t('overview.placesLived.empty')}</EmptyState>
+        </div>
+      ) : (
+        places.map((place) => (
+          <div
+            key={place.id}
+            className={`${card.row} ${s.placeRow}`}
+            onMouseEnter={() => setHighlightedPlaceId(place.id)}
+            onMouseLeave={() => setHighlightedPlaceId(null)}
+          >
+            <PlaceLink treeId={treeId} placeId={place.id}>
+              <Typography size="md" weight="semibold">
+                {place.name}
+              </Typography>
+            </PlaceLink>
+            {place.contexts.length > 0 && (
+              <div className={s.tags}>
+                {place.contexts.map((context) => (
+                  <Badge key={context.id}>{eventTypeLabel(context, t)}</Badge>
+                ))}
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        ))
+      )}
     </Card>
   );
 }
