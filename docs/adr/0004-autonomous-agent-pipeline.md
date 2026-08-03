@@ -28,6 +28,7 @@ For `fixed`/`clean` — nothing left for the maintainer to judge — that messag
 - **Leaving code-quality findings to the maintainer** — rejected after PRs #216 and #226, where three consecutive rounds each produced ~13 findings, mostly repeats, and most of them internal to the code rather than about whether the feature worked.
 - **Escalation label / auto-escalation on failure** — rejected: a failing PRD fails on any model, and the reviewer's job is uniformly "look harder," so fixed model pairings need no per-issue opt-in.
 - **Opus on every analysis round** — rejected on cost: a day of review across two PRs reached ~$20, dominated by re-reading the same diffs at Opus rates round after round.
+- **Letting the fix stage edit `.sandcastle/**`** — rejected 2026-08-03, after a round found two real defects in the reviewer's own prompts and could only report them. Those files hold the reviewer's constraints (the flag cap, what it must fix itself, the no-repeat rule) and are re-read each round, so a self-applied edit would govern the next round before any human saw it — and that round would review against the already-relaxed rules. The situation only arises on PRs that modify the harness itself, so the cost of applying such fixes by hand is low. `.github/workflows/**` is closed for a separate, harder reason: the App lacks the `workflows` permission and the push would be rejected.
 
 ## References
 

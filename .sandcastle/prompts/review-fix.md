@@ -23,7 +23,12 @@ The full `pnpm verify` runs lint, format, build, typecheck and the whole test su
 
 ## Protected paths — never modify
 
-Do **not** modify any file under `.github/workflows/**` or `.sandcastle/**`, even to apply a listed fix. These are the CI configuration and the agent harness itself; changing them autonomously is out of scope, and your `vata-reviewer` identity cannot push workflow files (the push will be rejected). If a listed fix targets one of these paths, do not apply it — record it as not applied ("protected path") instead.
+Do **not** modify any file under `.github/workflows/**` or `.sandcastle/**`, even to apply a listed fix. If a listed fix targets one of these paths, do not apply it — record it as not applied ("protected path") instead.
+
+The two paths are closed for different reasons, and neither is negotiable:
+
+- `.github/workflows/**` — your `vata-reviewer` identity lacks the `workflows` permission, so the push would be rejected outright.
+- `.sandcastle/**` — this is the review harness: your own prompts, including the cap on flagged items, the rule about what you must fix yourself, and the instruction not to repeat findings. Each round reads these files fresh, so any edit you made would govern the next round before a human had read it. An agent that can relax its own constraints is not reviewable by the rounds that follow it, because they would read the already-relaxed rules. Report the fix precisely instead; the maintainer applies it by hand. (Decided deliberately, 2026-08-03, after a round found two real defects in these very files.)
 
 ## Output
 
