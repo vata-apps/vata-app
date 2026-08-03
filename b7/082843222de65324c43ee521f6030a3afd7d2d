@@ -1,0 +1,75 @@
+src/pages/PersonRelationsPage.tsx
+  s_4e00a1523d00ab::t_e6ff62389d8121 23,26
+src/components/person-overview/places-panel.tsx
+  s_4e00a1523d00ab::t_b1543cc25d79fd 57
+  s_4e00a1523d00ab::t_93aba5204210c9 43-47
+  s_4e00a1523d00ab::t_2c76823912379e 13,27-32,49-50,52-53,55-56,58-78,80-81
+  s_4e00a1523d00ab::t_b5a24bb9618600 9
+src/components/person-overview/panel.css.ts
+  s_4e00a1523d00ab::t_4d1e5b4e3d7690 1-13,17-21,23-24,26-29
+  s_4e00a1523d00ab::t_084cd40d8cdae4 14-16,22,25
+  s_4e00a1523d00ab::t_03fd15e4088cbd 30-33
+src/components/person-overview/build-overview.test.ts
+  s_4e00a1523d00ab::t_02855bf6b3e97a 245
+  s_4e00a1523d00ab::t_9eb6074c6ba343 85
+src/i18n/locales/en/individuals.json
+  s_4e00a1523d00ab::t_44bdaa3244d8f9 57,91,97-98
+  s_4e00a1523d00ab::t_1b2751ac481757 67-74
+src/pages/IndividualOverviewPage.tsx
+  s_4e00a1523d00ab::t_7b697864dd4ad2 13-16,31-36,38
+src/components/ui/card.tsx
+  s_4e00a1523d00ab::t_aebda3e13ce5c6 7-11,17-20,23-26
+src/components/person-overview/build-overview.ts
+  s_4e00a1523d00ab::t_6b52d72073e9bd 140
+src/components/ui/card.css.ts
+  s_4e00a1523d00ab::t_9f0211a57ac1c5 12,42,44-46,50,52
+  s_4e00a1523d00ab::t_4c858dc08a3b8d 4-5,7-11,14-16,19-39,47,51
+src/components/person-overview/record-rail.tsx
+  s_4e00a1523d00ab::t_428b01d2c7c1ec 17,29-30,38,42,55-56,74-79,81-83,85,90-98,109-111,119,125,142
+  s_4e00a1523d00ab::t_03fd15e4088cbd 26
+  s_4e00a1523d00ab::t_035d393fc2d6bd 7,10,47-54,57-58,63-68,71-72,80,84,101-108,138-141,143
+src/components/person-overview/life-spine.tsx
+  s_4e00a1523d00ab::t_3ac62836c0aadc 143-146,152-157
+  s_4e00a1523d00ab::t_52a398dc5374e8 14
+  s_4e00a1523d00ab::t_67f0ccf02bb46b 83
+  s_4e00a1523d00ab::t_a66ef2d01d3b52 4,6,17-23,26-27,30-31,35,39,70-82,84-86,94-98,140-142
+  s_4e00a1523d00ab::t_2f6594a0ab7374 62-69
+  s_4e00a1523d00ab::t_152c78f263c714 138
+src/components/person-overview/life-spine.css.ts
+  s_4e00a1523d00ab::t_46e2c5a76cddd3 34-57
+  s_4e00a1523d00ab::t_371f5c143cdf5e 5-7
+  s_4e00a1523d00ab::t_480daa6be47bbd 8-30
+  s_4e00a1523d00ab::t_1385c51c1f770a 81-85,87
+src/components/person-overview/places-panel.css.ts
+  s_4e00a1523d00ab::t_9e79dd021f401d 3,9-10,13
+  s_4e00a1523d00ab::t_4601e852ffa733 6-8,11-12,14-16,18,20
+src/components/person-overview/record-rail.css.ts
+  s_4e00a1523d00ab::t_d39ba9067f009c 7-8,11-13
+src/pages/individual-overview.css.ts
+  s_4e00a1523d00ab::t_77d76e22a895c1 6-9,19
+src/i18n/locales/fr/individuals.json
+  s_4e00a1523d00ab::t_44bdaa3244d8f9 57,91,96-98,102
+  s_4e00a1523d00ab::t_1b2751ac481757 67-74
+src/db/trees/person-overview.ts
+  s_4e00a1523d00ab::t_c6c31d6991ef23 56
+src/components/person-overview/panel.tsx
+  s_4e00a1523d00ab::t_42903ea3e0f366 1,9-14,16-19,33,38-54,57-59
+  s_4e00a1523d00ab::t_a26e25362419ba 2-8,15,20,28-32,34-37,55-56,60-68
+  s_4e00a1523d00ab::t_b2b2556b6d9dac 21-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.20",
+  "base_commit_sha": "b7082843222de65324c43ee521f6030a3afd7d2d",
+  "prompts": {},
+  "sessions": {
+    "s_4e00a1523d00ab": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a874fcbf-4229-4031-8a7c-48bc0883d35d",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
