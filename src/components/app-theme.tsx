@@ -1,6 +1,7 @@
 import { Theme } from '@radix-ui/themes';
-import { useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
+import { useLayoutEffect, type ReactNode } from 'react';
 
+import { useMediaQuery } from '$hooks/useMediaQuery';
 import { useAppStore } from '$/store/app-store';
 
 const DARK_QUERY = '(prefers-color-scheme: dark)';
@@ -12,16 +13,7 @@ const DARK_QUERY = '(prefers-color-scheme: dark)';
  */
 function useResolvedAppearance(): 'light' | 'dark' {
   const theme = useAppStore((state) => state.theme);
-  const [systemPrefersDark, setSystemPrefersDark] = useState(
-    () => window.matchMedia(DARK_QUERY).matches
-  );
-
-  useEffect(() => {
-    const media = window.matchMedia(DARK_QUERY);
-    const onChange = (event: MediaQueryListEvent): void => setSystemPrefersDark(event.matches);
-    media.addEventListener('change', onChange);
-    return () => media.removeEventListener('change', onChange);
-  }, []);
+  const systemPrefersDark = useMediaQuery(DARK_QUERY);
 
   if (theme === 'system') return systemPrefersDark ? 'dark' : 'light';
   return theme;
