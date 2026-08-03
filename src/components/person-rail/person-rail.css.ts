@@ -78,6 +78,13 @@ export const hoverPopover = style({
   display: 'flex',
   flexDirection: 'column',
   gap: vars.space['4'],
+  background: vars.color.surface.card,
+  color: vars.color.text.body,
+  border: `1px solid ${vars.color.border.default}`,
+  borderRadius: vars.radius.md,
+  boxShadow: vars.shadow.lg,
+  padding: vars.space['5'],
+  whiteSpace: 'normal',
 });
 
 export const hoverHeader = style({
