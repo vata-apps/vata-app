@@ -54,6 +54,7 @@
       "otherNames_one": "{{count}} autre nom",
       "otherNames_other": "{{count}} autres noms"
     },
+    "viewAll": "Voir tout",
     "vital": {
       "sex": "Genre"
     },
@@ -61,17 +62,16 @@
       "title": "Lieux",
       "empty": "Aucun lieu enregistré"
     },
-    "vitals": {
-      "title": "État civil",
-      "born": "Naissance",
-      "died": "Décès",
-      "sourced": "Sourcé",
-      "empty": "Aucun événement d'état civil enregistré"
-    },
     "parents": {
       "title": "Parents",
-      "missingFather": "Père inconnu",
-      "missingMother": "Mère inconnue"
+      "father": {
+        "label": "Père",
+        "missing": "Père inconnu"
+      },
+      "mother": {
+        "label": "Mère",
+        "missing": "Mère inconnue"
+      }
     },
     "names": {
       "title": "Noms",
@@ -88,17 +88,18 @@
       }
     },
     "milestone": {
-      "title": "Événements de vie",
+      "title": "Événements importants",
       "born": "Naissance",
       "marriage": "Mariage",
       "death": "Décès",
       "children": "Enfants",
-      "missingBorn": "Naissance non enregistrée",
-      "missingDeath": "Décès non enregistré"
+      "missingBorn": "Naissance non renseignée",
+      "missingDeath": "Décès non renseigné",
+      "addEvent": "Ajouter un événement"
     },
     "media": {
       "title": "Médias",
-      "empty": "Aucun média pour le moment"
+      "empty": "Aucun média pour l'instant"
     }
   },
   "ancestors": {

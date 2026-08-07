@@ -1,35 +1,53 @@
 /**
  * Card primitive styles — shared panel chrome for entity-detail sections.
  *
- * Pure visual chrome, no variants: consumers place their own heading and
- * content inside (same convention as {@link ../badge.css}).
+ * Two layouts, selected by variant rather than by overriding one with the
+ * other:
  *
- * `stack`/`list`/`separator` are the recurring "heading + separator-divided
- * rows" content shape every Person Overview card uses (Vitals, Parents,
- * Names, Media, Life events, Places) — exported here rather than
- * re-declared per panel so all of them share one hairline and one rhythm.
+ * - `box` (default) — a padded card the consumer fills freely.
+ * - `sectioned` — the card hands its padding to a {@link head} strip above
+ *   hairline-separated {@link row}s that run edge to edge. This is the
+ *   recurring panel shape across the person screen (Parents, Names, Media,
+ *   Key events, Places), declared once here so every panel shares one
+ *   hairline, one row rhythm, and one header baseline.
  */
-import { primitiveStyle } from '$/design/primitive-layer';
+import { recipe } from '@vanilla-extract/recipes';
+
+import { primitive, primitiveStyle } from '$/design/primitive-layer';
 import { vars } from '$/design/theme.css';
 
-export const card = primitiveStyle({
-  background: vars.color.surface.card,
-  border: `1px solid ${vars.color.border.default}`,
-  borderRadius: vars.radius.md,
-  boxShadow: vars.shadow.sm,
-  padding: vars.space['6'],
+/**
+ * Inline padding of a sectioned card's head and rows. Named so anything that
+ * has to line up with them (the Places map inset) derives it instead of
+ * restating the token and silently drifting.
+ */
+export const inlinePadding = vars.space['6'];
+
+export const card = recipe({
+  base: primitive({
+    background: vars.color.surface.card,
+    border: `1px solid ${vars.color.border.default}`,
+    borderRadius: vars.radius.md,
+    boxShadow: vars.shadow.sm,
+  }),
+  variants: {
+    layout: {
+      box: primitive({ padding: vars.space['6'] }),
+      sectioned: primitive({ padding: 0 }),
+    },
+  },
+  defaultVariants: { layout: 'box' },
 });
 
-export const stack = primitiveStyle({
+export const head = primitiveStyle({
   display: 'flex',
-  flexDirection: 'column',
-  gap: vars.space['5'],
+  alignItems: 'baseline',
+  flexWrap: 'wrap',
+  gap: vars.space['4'],
+  padding: `${vars.space['5']} ${inlinePadding} ${vars.space['4']}`,
 });
 
-export const list = primitiveStyle({ display: 'flex', flexDirection: 'column' });
-
-export const separator = primitiveStyle({
-  height: 1,
-  background: vars.color.border.subtle,
-  margin: `${vars.space['5']} 0`,
+export const row = primitiveStyle({
+  padding: `${vars.space['5']} ${inlinePadding}`,
+  borderTop: `1px solid ${vars.color.border.subtle}`,
 });

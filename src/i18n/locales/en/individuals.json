@@ -54,6 +54,7 @@
       "otherNames_one": "{{count}} other name",
       "otherNames_other": "{{count}} other names"
     },
+    "viewAll": "View all",
     "vital": {
       "sex": "Gender"
     },
@@ -61,17 +62,16 @@
       "title": "Places",
       "empty": "No places recorded yet"
     },
-    "vitals": {
-      "title": "Vitals",
-      "born": "Born",
-      "died": "Died",
-      "sourced": "Sourced",
-      "empty": "No vital events recorded yet"
-    },
     "parents": {
       "title": "Parents",
-      "missingFather": "Father unknown",
-      "missingMother": "Mother unknown"
+      "father": {
+        "label": "Father",
+        "missing": "Father unknown"
+      },
+      "mother": {
+        "label": "Mother",
+        "missing": "Mother unknown"
+      }
     },
     "names": {
       "title": "Names",
@@ -88,13 +88,14 @@
       }
     },
     "milestone": {
-      "title": "Life events",
+      "title": "Key events",
       "born": "Born",
       "marriage": "Married",
       "death": "Died",
       "children": "Children",
       "missingBorn": "Birth not recorded",
-      "missingDeath": "Death not recorded"
+      "missingDeath": "Death not recorded",
+      "addEvent": "Add an event"
     },
     "media": {
       "title": "Media",

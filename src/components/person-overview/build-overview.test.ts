@@ -59,7 +59,6 @@ function makeEvent(
   dateOriginal: string,
   dateSort: string,
   placeName: string | null,
-  hasCitations = false,
   placeCoords: Coords = null
 ): EventTimelineEntry {
   return {
@@ -83,7 +82,7 @@ function makeEvent(
     place: placeName ? makePlace(placeName, placeCoords) : null,
     participants: [],
     thumbnails: [],
-    hasCitations,
+    hasCitations: false,
   };
 }
 
@@ -243,7 +242,7 @@ describe('buildPersonOverview', () => {
     const { placesLived } = buildPersonOverview({
       ...baseData(),
       events: [
-        makeEvent('BIRT', '1890', '1890', 'Longueuil', false, {
+        makeEvent('BIRT', '1890', '1890', 'Longueuil', {
           latitude: 45.53,
           longitude: -73.5,
         }),
@@ -256,29 +255,5 @@ describe('buildPersonOverview', () => {
 
     const montreal = placesLived.find((place) => place.name === 'Montréal')!;
     expect(montreal).toMatchObject({ latitude: null, longitude: null });
-  });
-
-  it('derives vitals for birth and death with their sourcing, ignoring other events', () => {
-    const { vitals } = buildPersonOverview({
-      ...baseData(),
-      events: [
-        makeEvent('BIRT', '1890', '1890', 'Longueuil', true),
-        makeEvent('BAPM', '1890', '1890', 'Longueuil', false),
-        makeEvent('DEAT', '1955', '1955', 'Montréal', false),
-        makeEvent('BURI', '1955', '1955', 'Montréal', true),
-      ],
-    });
-
-    expect(vitals.map((vital) => vital.kind)).toEqual(['born', 'died']);
-    expect(vitals.find((vital) => vital.kind === 'born')).toMatchObject({
-      date: '1890',
-      placeName: 'Longueuil',
-      sourced: true,
-    });
-    expect(vitals.find((vital) => vital.kind === 'died')?.sourced).toBe(false);
-  });
-
-  it('omits vitals for events that are not recorded', () => {
-    expect(buildPersonOverview(baseData()).vitals).toEqual([]);
   });
 });

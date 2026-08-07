@@ -7,7 +7,6 @@ import type {
   OverviewParents,
   OverviewPerson,
   OverviewPlaceLived,
-  OverviewVital,
 } from './overview-types';
 import { initialsOf, toPersonRef } from './to-person-ref';
 
@@ -20,7 +19,6 @@ export interface PersonOverviewView {
   person: OverviewPerson;
   names: OverviewName[];
   parents: OverviewParents;
-  vitals: OverviewVital[];
   milestones: OverviewMilestone[];
   placesLived: OverviewPlaceLived[];
 }
@@ -69,25 +67,6 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
     father: father ? toPersonRef(father) : undefined,
     mother: mother ? toPersonRef(mother) : undefined,
   };
-
-  // Vital events with their sourcing state; only those actually recorded show.
-  const vitalSpecs: { kind: OverviewVital['kind']; tag: string }[] = [
-    { kind: 'born', tag: 'BIRT' },
-    { kind: 'died', tag: 'DEAT' },
-  ];
-  const vitals: OverviewVital[] = vitalSpecs.flatMap((spec) => {
-    const event = events.find((candidate) => candidate.eventType.tag === spec.tag);
-    if (!event) return [];
-    return [
-      {
-        kind: spec.kind,
-        date: event.dateOriginal ?? '',
-        placeId: event.place?.id,
-        placeName: event.place?.name,
-        sourced: event.hasCitations,
-      },
-    ];
-  });
 
   const bornMilestone: OverviewMilestone | null = birthEvent
     ? {
@@ -158,5 +137,5 @@ export function buildPersonOverview(data: PersonOverviewData): PersonOverviewVie
   }
   const placesLived = [...placesById.values()];
 
-  return { person, names: viewNames, parents, vitals, milestones, placesLived };
+  return { person, names: viewNames, parents, milestones, placesLived };
 }

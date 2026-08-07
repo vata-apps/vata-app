@@ -81,16 +81,6 @@ export interface OverviewMilestone {
   children?: PersonRefData[];
 }
 
-/** A vital event (birth, death) with its sourcing state. */
-export interface OverviewVital {
-  kind: 'born' | 'died';
-  date: string;
-  placeId?: string;
-  placeName?: string;
-  /** Whether the event carries at least one source citation. */
-  sourced: boolean;
-}
-
 /** A distinct place tied to the person, with the event types that occurred there. */
 export interface OverviewPlaceLived {
   id: string;

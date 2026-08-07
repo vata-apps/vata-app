@@ -4,14 +4,17 @@ import { vars } from '$/design/theme.css';
 import { Icon } from '../icon';
 import { Card } from '../ui/card';
 import * as card from '../ui/card.css';
+import { EmptyState } from '../ui/empty-state';
 import { Typography } from '../ui/typography';
 import type { OverviewName, OverviewParents, PersonRefData } from './overview-types';
+import { PanelHead, ViewAllLink, ViewAllUnavailable } from './panel';
 import { PersonRef } from './person-ref';
 import * as s from './record-rail.css';
 
 interface RecordRailProps {
   parents: OverviewParents;
   names: OverviewName[];
+  individualId: string;
   treeId: string;
 }
 
@@ -20,11 +23,11 @@ interface RecordRailProps {
  * panel. `PersonRef` for parents, flat rows for names, and an empty-state
  * media panel (per-person media has no data model yet).
  */
-export function RecordRail({ parents, names, treeId }: RecordRailProps): JSX.Element {
+export function RecordRail({ parents, names, individualId, treeId }: RecordRailProps): JSX.Element {
   return (
     <div className={s.rail}>
-      <ParentsPanel parents={parents} treeId={treeId} />
-      <NamesPanel names={names} />
+      <ParentsPanel parents={parents} individualId={individualId} treeId={treeId} />
+      <NamesPanel names={names} individualId={individualId} treeId={treeId} />
       <MediaPanel />
     </div>
   );
@@ -32,74 +35,80 @@ export function RecordRail({ parents, names, treeId }: RecordRailProps): JSX.Ele
 
 function ParentsPanel({
   parents,
+  individualId,
   treeId,
 }: {
   parents: OverviewParents;
+  individualId: string;
   treeId: string;
 }): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
-    <Card>
-      <div className={card.stack}>
-        <Typography as="h2" size="md" weight="strong">
-          {t('overview.parents.title')}
-        </Typography>
-        {/* Always two fixed slots: father on top, mother below. Missing slots
-            show a muted label instead of a PersonRef. */}
-        <div className={card.list}>
-          <ParentSlot
-            missingLabel={t('overview.parents.missingFather')}
-            person={parents.father}
-            treeId={treeId}
-          />
-          <div className={card.separator} />
-          <ParentSlot
-            missingLabel={t('overview.parents.missingMother')}
-            person={parents.mother}
-            treeId={treeId}
-          />
-        </div>
-      </div>
+    <Card layout="sectioned">
+      <PanelHead title={t('overview.parents.title')}>
+        <ViewAllLink
+          to="/tree/$treeId/individual/$individualId/relations"
+          treeId={treeId}
+          individualId={individualId}
+        />
+      </PanelHead>
+      {/* Always two fixed slots: father on top, mother below. Missing slots
+          show a muted label instead of a PersonRef. */}
+      <ParentSlot role="father" person={parents.father} treeId={treeId} />
+      <ParentSlot role="mother" person={parents.mother} treeId={treeId} />
     </Card>
   );
 }
 
-interface ParentSlotProps {
-  missingLabel: string;
+function ParentSlot({
+  role,
+  person,
+  treeId,
+}: {
+  role: 'father' | 'mother';
   person?: PersonRefData;
   treeId: string;
-}
-
-function ParentSlot({ missingLabel, person, treeId }: ParentSlotProps): JSX.Element {
-  if (person) {
-    return <PersonRef person={person} treeId={treeId} />;
-  }
+}): JSX.Element {
+  const { t } = useTranslation('individuals');
   return (
-    <div className={s.missingSlot}>
-      <Icon name="user" size={14} color={vars.color.text.subtle} />
-      <Typography tone="muted">{missingLabel}</Typography>
+    <div className={`${card.row} ${s.parentRow}`}>
+      {person ? (
+        <PersonRef person={person} treeId={treeId} />
+      ) : (
+        <div className={s.missingSlot}>
+          <Icon name="user" size={14} color={vars.color.text.subtle} />
+          <Typography tone="muted">{t(`overview.parents.${role}.missing`)}</Typography>
+        </div>
+      )}
+      <Typography size="xs" tone="muted" className={s.roleLabel}>
+        {t(`overview.parents.${role}.label`)}
+      </Typography>
     </div>
   );
 }
 
-function NamesPanel({ names }: { names: OverviewName[] }): JSX.Element {
+function NamesPanel({
+  names,
+  individualId,
+  treeId,
+}: {
+  names: OverviewName[];
+  individualId: string;
+  treeId: string;
+}): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
-    <Card>
-      <div className={card.stack}>
-        <Typography as="h2" size="md" weight="strong">
-          {t('overview.names.title')}
-        </Typography>
-        {/* Flat, separator-divided rows — same list pattern as Parents. */}
-        <div className={card.list}>
-          {names.map((name, i) => (
-            <div key={name.id}>
-              {i > 0 && <div className={card.separator} />}
-              <NameRow name={name} />
-            </div>
-          ))}
-        </div>
-      </div>
+    <Card layout="sectioned">
+      <PanelHead title={t('overview.names.title')}>
+        <ViewAllLink
+          to="/tree/$treeId/individual/$individualId/names"
+          treeId={treeId}
+          individualId={individualId}
+        />
+      </PanelHead>
+      {names.map((name) => (
+        <NameRow key={name.id} name={name} />
+      ))}
     </Card>
   );
 }
@@ -107,13 +116,13 @@ function NamesPanel({ names }: { names: OverviewName[] }): JSX.Element {
 function NameRow({ name }: { name: OverviewName }): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
-    <div className={s.nameRow}>
+    <div className={`${card.row} ${s.nameRow}`}>
       <div className={s.nameRowHead}>
         <Typography size="xs" tone="muted">
           {t(`overview.names.types.${name.type}`)}
         </Typography>
         {name.isPrimary && (
-          <Typography size="xs" tone="brand">
+          <Typography size="xs" weight="semibold" tone="brand">
             {t('overview.names.primary')}
           </Typography>
         )}
@@ -126,14 +135,12 @@ function NameRow({ name }: { name: OverviewName }): JSX.Element {
 function MediaPanel(): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
-    <Card>
-      <div className={card.stack}>
-        <Typography as="h2" size="md" weight="strong">
-          {t('overview.media.title')}
-        </Typography>
-        <div className={s.mediaEmpty}>
-          <Typography tone="muted">{t('overview.media.empty')}</Typography>
-        </div>
+    <Card layout="sectioned">
+      <PanelHead title={t('overview.media.title')}>
+        <ViewAllUnavailable />
+      </PanelHead>
+      <div className={card.row}>
+        <EmptyState>{t('overview.media.empty')}</EmptyState>
       </div>
     </Card>
   );
