@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import type {
   Source,
   SourceCitation,
@@ -376,4 +377,48 @@ export async function getCitationsForPlace(id: string): Promise<SourceCitationWi
  */
 export async function getCitationsForName(id: string): Promise<SourceCitationWithSource[]> {
   return getCitationsForEntity('name', id);
+}
+
+/**
+ * How many citations back each of `entityIds`, in one query per chunk rather
+ * than one query per entity. Feeds the per-row source-count indicator in the
+ * person tabs, where a list of facts each needs its own count and calling
+ * {@link getCitationsForEntity} per row would be N round trips.
+ *
+ * Entities with no citation are absent from the map — callers read a missing
+ * key as zero, which is exactly the "unsourced" state the indicator warns on.
+ */
+export async function countCitationsForEntities(
+  entityType: CitableEntityType,
+  entityIds: string[]
+): Promise<Map<string, number>> {
+  const counts = new Map<string, number>();
+  if (entityIds.length === 0) return counts;
+
+  const db = await getTreeDb();
+  // Keyed by the DB id so each returned row maps back to the caller's own id
+  // string, whose shape is entity-type specific (`I-12` for an individual,
+  // a bare `12` for a name).
+  const callerIdByDbId = new Map<number, string>();
+  for (const entityId of entityIds) {
+    callerIdByDbId.set(parseEntityIdForType(entityType, entityId), entityId);
+  }
+  const dbIds = [...callerIdByDbId.keys()];
+
+  // One slot of the statement's parameter budget goes to `entity_type`.
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT - 1)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length, 1);
+    const rows = await db.select<{ entity_id: number; count: number }[]>(
+      `SELECT entity_id, COUNT(*) AS count
+       FROM citation_links
+       WHERE entity_type = $1 AND entity_id IN (${placeholders})
+       GROUP BY entity_id`,
+      [entityType, ...idsChunk]
+    );
+    for (const row of rows) {
+      const callerId = callerIdByDbId.get(row.entity_id);
+      if (callerId !== undefined) counts.set(callerId, row.count);
+    }
+  }
+  return counts;
 }

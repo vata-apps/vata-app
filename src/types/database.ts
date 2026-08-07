@@ -82,21 +82,26 @@ export interface Name {
 export interface CreateNameInput {
   individualId: string;
   type?: NameType;
-  prefix?: string;
-  givenNames?: string;
-  surname?: string;
-  suffix?: string;
-  nickname?: string;
+  prefix?: string | null;
+  givenNames?: string | null;
+  surname?: string | null;
+  suffix?: string | null;
+  nickname?: string | null;
   isPrimary?: boolean;
 }
 
+/**
+ * Omitting a part leaves it untouched; passing `null` clears it. The two are
+ * distinct on purpose — a partial edit of one field must not wipe the rest,
+ * but emptying a field in the editor has to reach the column as `NULL`.
+ */
 export interface UpdateNameInput {
   type?: NameType;
-  prefix?: string;
-  givenNames?: string;
-  surname?: string;
-  suffix?: string;
-  nickname?: string;
+  prefix?: string | null;
+  givenNames?: string | null;
+  surname?: string | null;
+  suffix?: string | null;
+  nickname?: string | null;
   isPrimary?: boolean;
 }
 

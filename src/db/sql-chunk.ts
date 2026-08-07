@@ -23,7 +23,11 @@ export function chunkArray<T>(items: T[], size: number): T[][] {
  * Build a comma-separated list of positional placeholders ($1, $2, …, $N)
  * for an `IN (...)` clause whose parameters will be passed via the
  * `plugin-sql` positional binding.
+ *
+ * Pass `offset` when the statement binds other parameters before the list —
+ * the placeholders then start at `$offset + 1`, so the caller can spread the
+ * chunk after its own leading parameters.
  */
-export function buildInClausePlaceholders(count: number): string {
-  return Array.from({ length: count }, (_, i) => `$${i + 1}`).join(', ');
+export function buildInClausePlaceholders(count: number, offset = 0): string {
+  return Array.from({ length: count }, (_, i) => `$${offset + i + 1}`).join(', ');
 }
