@@ -1,0 +1,100 @@
+src/components/person-names/name-form.ts
+  s_10a445f55f03ce::t_603c1b6d4729bd 3-53,63-64,70,83
+  s_10a445f55f03ce::t_b0ca6d16bd162d 1
+  s_10a445f55f03ce::t_7a8041270c08f0 2
+  s_10a445f55f03ce::t_59276d5f38b795 54,60,62,65-69
+  s_10a445f55f03ce::t_bb1ef49fbea418 55-59,61,71-75
+  s_10a445f55f03ce::t_bec6143bf8918a 76-82
+src/db/trees/citations.ts
+  s_10a445f55f03ce::t_55d1a1b68b9de6 399-406,408,410,419-420
+  s_10a445f55f03ce::t_e84b9942b51cd4 3
+  s_10a445f55f03ce::t_06a9e97d15a2fd 381-398,407,409,411-418,421-424
+src/components/record-panel/record-actions.css.ts
+  s_10a445f55f03ce::t_9f84b9e381de09 32-36,38-39
+  s_10a445f55f03ce::t_770b85f0f54b9d 1-31,37,40-63
+src/hooks/usePersonNames.ts
+  s_10a445f55f03ce::t_1ca3021c4deb62 1-39,49,51-52,54-56,62-69,71-76,80-85,88-94,97-98
+  s_10a445f55f03ce::t_1a81704dcfdfbc 40-48,50,53,57-61,70,77-79,86-87,95-96
+src/i18n/locales/en/individuals.json
+  s_10a445f55f03ce::t_63a7c3c158a82c 160-181,304-312
+src/components/person-names/name-detail.tsx
+  s_10a445f55f03ce::t_1df32a55577db9 35-41
+  s_10a445f55f03ce::t_1ca3163eb93e33 28-29
+  s_10a445f55f03ce::t_3dd376dcb1598e 67-68,70
+  s_10a445f55f03ce::t_afdb8e23e457b8 1-27,30-34,42-66,69,71-98,100-106,108-117,119-125,127-133,135-161
+  s_10a445f55f03ce::t_06413a0c779421 99,107,118,126,134
+src/types/database.ts
+  s_10a445f55f03ce::t_58385096031669 85-89,93-97,100-104
+src/i18n/locales/fr/individuals.json
+  s_10a445f55f03ce::t_63a7c3c158a82c 160-181,304-312
+src/components/record-panel/record-panel.css.ts
+  s_10a445f55f03ce::t_9da0cab12ee2b3 111
+  s_10a445f55f03ce::t_ecc29c37f11f8b 1-110,112-114
+src/db/trees/names.ts
+  s_10a445f55f03ce::t_b5ae02c40ab6ef 366-382
+  s_10a445f55f03ce::t_e805486bbb4b0a 398
+  s_10a445f55f03ce::t_2282ee9962da4d 365
+src/components/individuals/person-editor-dialog.tsx
+  s_10a445f55f03ce::t_5baeb92112b290 36
+src/components/record-panel/record-row.tsx
+  s_10a445f55f03ce::t_6b9847757895c9 1-12,14-20,22-41,43,45,52-69,81-106,108-111,113-116
+  s_10a445f55f03ce::t_12bebfb8a7feac 47-51
+  s_10a445f55f03ce::t_08864a06793b6d 70-80
+  s_10a445f55f03ce::t_229d9bf6cb9d3e 42,44,46
+  s_10a445f55f03ce::t_96c2d83401fccd 112
+  s_10a445f55f03ce::t_6e30cbbc7c052d 13
+  s_10a445f55f03ce::t_d3be7c999602a8 107
+  s_10a445f55f03ce::t_fef5e9d9e3fa0a 21
+src/pages/PersonNamesPage.tsx
+  s_10a445f55f03ce::t_bbdf20bd062528 88
+  s_10a445f55f03ce::t_35ab7c29133355 25
+  s_10a445f55f03ce::t_59ca79bfda8ab2 89-98
+  s_10a445f55f03ce::t_d7a57265808c3a 124-128
+  s_10a445f55f03ce::t_768a5d1534caaf 149,155,159
+  s_10a445f55f03ce::t_c4bb04eca58ebd 2,6-10,12,14-24,26-30,32-39,41-43,45,47-87,99-123,129-137,164-175,177-261,266
+  s_10a445f55f03ce::t_c34b7af7d57ac8 262-265,269
+  s_10a445f55f03ce::t_086af1d9996b12 1
+  s_10a445f55f03ce::t_06ef86352e0144 138-148,150-154,156-158,160-163,176
+  s_10a445f55f03ce::t_7c67102a0e6da4 267-268
+  s_10a445f55f03ce::t_0a82fc8e61fab3 11,13
+src/components/person-names/name-detail.css.ts
+  s_10a445f55f03ce::t_ad95e334bd489b 1-41
+src/components/icon.tsx
+  s_10a445f55f03ce::t_3aa4cbe98f0aa4 59
+  s_10a445f55f03ce::t_2ad3c8ce338bf7 30
+  s_10a445f55f03ce::t_61b2d66a2a04fc 83
+  s_10a445f55f03ce::t_927fdb70a94feb 6
+src/db/sql-chunk.ts
+  s_10a445f55f03ce::t_59bde50c8a2964 26-29,31-32
+src/components/record-panel/record-panel.tsx
+  s_10a445f55f03ce::t_b30e980dfc471e 1-33,35-82,84-110,112-129
+  s_10a445f55f03ce::t_44e14c538bcce8 83
+  s_10a445f55f03ce::t_ee77ba935a3bf8 111
+  s_10a445f55f03ce::t_8374954b40b9dc 34
+src/components/record-panel/record-actions.tsx
+  s_10a445f55f03ce::t_788c56358b7a41 1-98
+src/lib/query-keys.ts
+  s_10a445f55f03ce::t_603614bc918a31 28
+src/components/record-panel/record-row.css.ts
+  s_10a445f55f03ce::t_fdd25d14e21739 1-4,6-8,32,34-40,48-100,102-134,139
+  s_10a445f55f03ce::t_eca3faa31268f5 5,9-31,33
+  s_10a445f55f03ce::t_d30eafb9671258 101
+  s_10a445f55f03ce::t_27f827a868dd19 135-138
+  s_10a445f55f03ce::t_bb8738a566c058 41-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "b1de87ace67d173a4fe92d5ca82522d78f671d09",
+  "prompts": {},
+  "sessions": {
+    "s_10a445f55f03ce": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "811f80c7-cdb7-4121-9a0a-6035a1e4612f",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
