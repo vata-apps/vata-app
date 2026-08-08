@@ -1,0 +1,19 @@
+src/pages/PersonNamesPage.tsx
+  s_03135ad1656ecd::t_af67acab2fe46b 74-83,86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "e2101c4d74134a597bbe8533780ec09367338562",
+  "prompts": {},
+  "sessions": {
+    "s_03135ad1656ecd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "df3792da-229c-4aca-9dc3-464cade4a4da",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
