@@ -212,7 +212,7 @@ export function PersonNamesPage(): JSX.Element {
                   title={rowLabel(name, t)}
                   titleSuffix={
                     name.isPrimary ? (
-                      <Typography size="xs" tone="muted">
+                      <Typography size="xs" weight="semibold" tone="brand">
                         {t('overview.names.primary')}
                       </Typography>
                     ) : null
