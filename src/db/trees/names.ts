@@ -363,6 +363,24 @@ export async function countNamesForIndividual(individualId: string): Promise<num
 // =============================================================================
 
 /**
+ * The `type` values offered by the name editors, in the order they are listed.
+ * Lives beside {@link formatName} so the enumeration and its display rules
+ * have one home rather than one copy per editor.
+ */
+export const NAME_TYPES: readonly NameType[] = [
+  'birth',
+  'married',
+  'adopted',
+  'aka',
+  'immigrant',
+  'religious',
+  'other',
+];
+
+/** The parts {@link formatName} reads — a full {@link Name} or an unsaved draft of one. */
+export type NameParts = Pick<Name, 'prefix' | 'givenNames' | 'surname' | 'suffix' | 'nickname'>;
+
+/**
  * Format a name for display. Returns four representations:
  *
  * - `full` — given-first, all parts: `Dr. John Paul Dupont Jr.`
@@ -377,7 +395,7 @@ export async function countNamesForIndividual(individualId: string): Promise<num
  * key (a `Dr.` in front would otherwise break intra-surname ordering);
  * `surnameFirst` is the display string for surname-first list rows.
  */
-export function formatName(name: Name | null): NameDisplay {
+export function formatName(name: NameParts | null): NameDisplay {
   if (!name) {
     return {
       full: '(Unknown)',

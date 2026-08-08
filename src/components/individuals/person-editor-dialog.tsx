@@ -33,20 +33,11 @@ import type {
   Name,
   NameType,
 } from '$types/database';
+import { NAME_TYPES } from '$db-tree/names';
 import type { PersonEventEntry } from '$db-tree/person-events';
 import { formatLifeYears, initialsFromDisplayName, personDisplayFields } from './person-display';
 import { PersonPicker, type PersonPickerSelection } from './person-picker';
 import * as s from './person-editor.css';
-
-const NAME_TYPES: NameType[] = [
-  'birth',
-  'married',
-  'adopted',
-  'aka',
-  'immigrant',
-  'religious',
-  'other',
-];
 
 const SEX_VALUES: Gender[] = ['F', 'M', 'U'];
 

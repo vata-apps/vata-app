@@ -157,7 +157,28 @@
     "comingSoon": "Les notes ne sont pas encore disponibles."
   },
   "namesTab": {
-    "comingSoon": "Les noms ne sont pas encore disponibles."
+    "hint": "Un seul nom peut être le nom principal.",
+    "add": "Ajouter un nom",
+    "create": "Créer le nom",
+    "newName": "Nouveau nom",
+    "detailTitle": "Détail du nom",
+    "untitled": "Nom à saisir",
+    "fields": {
+      "type": "Type",
+      "givenNames": "Prénoms",
+      "surname": "Nom de famille",
+      "prefix": "Préfixe",
+      "suffix": "Suffixe",
+      "nickname": "Surnom"
+    },
+    "primary": {
+      "label": "Nom principal",
+      "hint": "Affiché dans les listes et l'arbre."
+    },
+    "delete": {
+      "trigger": "Supprimer ce nom",
+      "question": "Supprimer définitivement « {{name}} » ?"
+    }
   },
   "rail": {
     "expandedAriaLabel": "Liste des personnes",
@@ -280,5 +301,14 @@
       "confirm": "Retirer la famille",
       "keepFamily": "Conserver la famille"
     }
+  },
+  "records": {
+    "draft": "Brouillon",
+    "notSaved": "Non enregistré",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "sources_one": "{{count}} source",
+    "sources_other": "{{count}} sources",
+    "unsourced": "Aucune source"
   }
 }
