@@ -70,7 +70,12 @@ export function PersonNamesPage(): JSX.Element {
   const isDraftSelected = activeId === DRAFT_ID;
   const selectedName = rows.find((name) => name.id === activeId);
 
-  if (!isDraftSelected && bufferFor !== activeId) {
+  // Also re-seed when the record arrives late: right after "create" the
+  // selection moves to the new id before the refetch has delivered its row, so
+  // the first pass would otherwise leave the buffer empty with `bufferFor`
+  // already pointing at it.
+  const needsBufferSeed = bufferFor !== activeId || (buffer === null && selectedName !== undefined);
+  if (!isDraftSelected && needsBufferSeed) {
     setBufferFor(activeId);
     setBuffer(selectedName ? toNameForm(selectedName) : null);
   }
