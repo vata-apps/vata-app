@@ -3,15 +3,18 @@ import { useTranslation } from 'react-i18next';
 
 import { EntityPicker, type EntityPickerItem } from '$components/ui/entity-picker';
 import { Icon } from '$components/icon';
-import { useDebouncedValue } from '$hooks/useDebouncedValue';
-import { useIndividualSearch, useIndividuals } from '$hooks/useIndividuals';
+import { useIndividualBrowseOrSearch } from '$hooks/useIndividualBrowseOrSearch';
 import { formatNameSimple } from '$db-tree/names';
-import { formatLifeYears, initialsFromDisplayName, personDisplayFields } from './person-display';
+import {
+  formatLifeYears,
+  initialsFromDisplayName,
+  personDisplayFields,
+  splitDisplayName,
+} from './person-display';
 import type { Gender, IndividualWithDetails } from '$types/database';
 import * as s from './person-editor.css';
 
 const MAX_RESULTS = 8;
-const SEARCH_DEBOUNCE_MS = 200;
 
 /** One person picked from the popover — either an existing individual or a brand-new one to create on save. */
 export interface PersonPickerSelection {
@@ -21,13 +24,6 @@ export interface PersonPickerSelection {
   /** Life-event years, carried through so a filled relation slot can show "b. 1960 – 2020" (existing people only). */
   bornYear?: number;
   deathYear?: number;
-}
-
-/** Splits free-typed text into given names + surname: the last word is the surname, everything before it the given names — a single word has no surname. */
-function splitDisplayName(name: string): { givenNames?: string; surname?: string } {
-  const words = name.trim().split(/\s+/).filter(Boolean);
-  if (words.length <= 1) return { givenNames: words[0] };
-  return { givenNames: words.slice(0, -1).join(' '), surname: words[words.length - 1] };
 }
 
 export interface PersonPickerProps {
@@ -60,17 +56,8 @@ export function PersonPicker({
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
 
-  const trimmedQuery = query.trim();
-  const isTyping = trimmedQuery.length > 0;
-  const debouncedQuery = useDebouncedValue(trimmedQuery, SEARCH_DEBOUNCE_MS);
-  const debounceSettled = debouncedQuery === trimmedQuery;
-
-  // Nothing typed yet: browse the existing people already in the tree.
-  // Once typing starts, switch to a (debounced) name search.
-  const defaultListQuery = useIndividuals({ enabled: open && !isTyping });
-  const searchQuery = useIndividualSearch(debouncedQuery, {
-    enabled: open && debouncedQuery.length > 0,
-  });
+  const { trimmedQuery, isTyping, debounceSettled, browseResults, searchResults, isFetching } =
+    useIndividualBrowseOrSearch(query, { enabled: open });
 
   const excluded = new Set(excludeIds ?? []);
   function toDisplay(person: IndividualWithDetails): PersonPickerSelection & { id: string } {
@@ -78,11 +65,10 @@ export function PersonPicker({
   }
 
   const matches = isTyping
-    ? (searchQuery.data ?? [])
-    : [...(defaultListQuery.data ?? [])].sort((a, b) =>
+    ? searchResults
+    : [...browseResults].sort((a, b) =>
         formatNameSimple(a.primaryName).localeCompare(formatNameSimple(b.primaryName))
       );
-  const isFetching = isTyping ? searchQuery.isFetching : defaultListQuery.isFetching;
   const filtered = matches.filter((person) => !excluded.has(person.id)).map(toDisplay);
   const results = filtered.slice(0, MAX_RESULTS);
   const hiddenCount = filtered.length - results.length;

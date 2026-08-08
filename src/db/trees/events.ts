@@ -2,6 +2,7 @@ import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
 import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import { mapToPlace, type RawPlace } from './places';
+import { formatNameSimple, getPrimaryNamesForIndividuals } from './names';
 import type {
   Event,
   EventType,
@@ -500,6 +501,36 @@ export async function getEventParticipants(eventId: string): Promise<EventPartic
     [dbId]
   );
   return rows.map(mapToEventParticipant);
+}
+
+/** One event participant, resolved to its individual's display name. `individualId` is narrowed to `string` — family-linked participants are filtered out below. */
+export interface EventParticipantWithName extends Omit<EventParticipant, 'individualId'> {
+  individualId: string;
+  displayName: string;
+}
+
+/**
+ * An event's participants, each resolved to a display name. Family-linked
+ * participants (the couple on a union event) have no individual name to
+ * resolve and are left out — the detail panel's participants section only
+ * manages individual participants (witnesses, informants, …).
+ */
+export async function getEventParticipantsWithNames(
+  eventId: string
+): Promise<EventParticipantWithName[]> {
+  const participants = await getEventParticipants(eventId);
+  const individualParticipants = participants.filter(
+    (participant): participant is EventParticipant & { individualId: string } =>
+      participant.individualId !== null
+  );
+  const individualIds = [...new Set(individualParticipants.map((p) => p.individualId))];
+  const names = individualIds.length > 0 ? await getPrimaryNamesForIndividuals(individualIds) : [];
+  const nameById = new Map(names.map((name) => [name.individualId, formatNameSimple(name)]));
+
+  return individualParticipants.map((participant) => ({
+    ...participant,
+    displayName: nameById.get(participant.individualId) ?? '',
+  }));
 }
 
 /**

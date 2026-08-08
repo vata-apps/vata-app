@@ -21,6 +21,9 @@ export interface PeopleRailSort {
 export const DEFAULT_PEOPLE_RAIL_FILTERS: PeopleRailFilters = { sex: [], status: [] };
 export const DEFAULT_PEOPLE_RAIL_SORT: PeopleRailSort = { field: 'surname', direction: 'asc' };
 
+/** How many recently-picked individuals a picker's "Récents" tab keeps. */
+const MAX_RECENT_EVENT_PARTICIPANTS = 5;
+
 interface AppState {
   currentTreeId: string | null;
   setCurrentTree: (id: string | null) => void;
@@ -33,11 +36,20 @@ interface AppState {
   setPeopleRailFilters: (filters: PeopleRailFilters) => void;
   peopleRailSort: PeopleRailSort;
   setPeopleRailSort: (sort: PeopleRailSort) => void;
+  /**
+   * Individual ids recently picked as event participants, most recent
+   * first, keyed by tree id — feeds the entity picker's "Récents" tab.
+   * Individual ids are only unique within their own tree's database, so a
+   * flat cross-tree list would risk resolving a stale id to an unrelated
+   * person after switching trees.
+   */
+  recentEventParticipantIdsByTree: Record<string, string[]>;
+  addRecentEventParticipant: (individualId: string) => void;
 }
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       currentTreeId: null,
       setCurrentTree: (id) => set({ currentTreeId: id }),
       theme: 'system',
@@ -48,9 +60,33 @@ export const useAppStore = create<AppState>()(
       setPeopleRailFilters: (filters) => set({ peopleRailFilters: filters }),
       peopleRailSort: DEFAULT_PEOPLE_RAIL_SORT,
       setPeopleRailSort: (sort) => set({ peopleRailSort: sort }),
+      recentEventParticipantIdsByTree: {},
+      addRecentEventParticipant: (individualId) => {
+        const treeId = get().currentTreeId;
+        if (!treeId) return;
+        set((state) => {
+          const existing = state.recentEventParticipantIdsByTree[treeId] ?? [];
+          return {
+            recentEventParticipantIdsByTree: {
+              ...state.recentEventParticipantIdsByTree,
+              [treeId]: [individualId, ...existing.filter((id) => id !== individualId)].slice(
+                0,
+                MAX_RECENT_EVENT_PARTICIPANTS
+              ),
+            },
+          };
+        });
+      },
     }),
     {
       name: 'vata-app-storage',
     }
   )
 );
+
+/** This tree's recently-picked event participants — `[]` outside a tree or before any pick. */
+export function useRecentEventParticipantIds(): string[] {
+  return useAppStore((state) =>
+    state.currentTreeId ? (state.recentEventParticipantIdsByTree[state.currentTreeId] ?? []) : []
+  );
+}

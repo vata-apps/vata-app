@@ -42,6 +42,16 @@ export function eventTypeColumn<T extends EventWithDetails>(
 }
 
 /**
+ * An event's displayable date: the verbatim original text, falling back to
+ * just the year from the sortable date. `null` when neither is known —
+ * callers supply their own "unknown" label, since it differs by context
+ * (a table cell vs. a row's combined date/place summary).
+ */
+export function eventDateDisplay(event: EventWithDetails): string | null {
+  return event.dateOriginal ?? (event.dateSort ? event.dateSort.slice(0, 4) : null);
+}
+
+/**
  * The event-date column: the verbatim original date, falling back to the
  * sortable year, then an unknown label. Pass `sortable` to make the header sort
  * by the sortable date; omit it to preserve a caller-supplied order.
@@ -55,8 +65,7 @@ export function eventDateColumn<T extends EventWithDetails>(
     key: 'date',
     header: t('table.columns.date'),
     width: EVENT_COLUMN_WIDTH.date,
-    cell: (event) =>
-      event.dateOriginal ?? (event.dateSort ? event.dateSort.slice(0, 4) : dateUnknown),
+    cell: (event) => eventDateDisplay(event) ?? dateUnknown,
     ...(options.sortable ? { sortValue: (event: T) => event.dateSort ?? null } : {}),
   };
 }

@@ -106,18 +106,6 @@
     "chartLabel": "Pedigree chart",
     "unknown": "Unknown"
   },
-  "events": {
-    "scope": {
-      "label": "Scope",
-      "principal": "Principal",
-      "personal": "Personal",
-      "all": "All roles"
-    },
-    "columns": {
-      "details": "Details"
-    },
-    "empty": "No events recorded yet"
-  },
   "relations": {
     "table": {
       "columns": {
@@ -186,6 +174,63 @@
     "delete": {
       "trigger": "Delete this name",
       "question": "Permanently delete “{{name}}”?"
+    }
+  },
+  "eventsTab": {
+    "add": "Add an event",
+    "create": "Create event",
+    "newEvent": "New event",
+    "detailTitle": "Event details",
+    "untitled": "Type to fill in",
+    "filter": {
+      "label": "Filter events",
+      "all": "All",
+      "personal": "Personal life",
+      "other": "Other roles"
+    },
+    "group": {
+      "personal": {
+        "title": "Personal life",
+        "hint": "Events where this person is the one it's about: birth, death, marriage…"
+      },
+      "other": {
+        "title": "Other roles",
+        "hint": "Other people's events where this person is a witness, informant, or godparent."
+      }
+    },
+    "fields": {
+      "type": "Type",
+      "typePlaceholder": "Choose a type",
+      "date": "Date",
+      "datePlaceholder": "Date",
+      "place": "Place",
+      "placeUnavailable": "Not available yet",
+      "role": "Role",
+      "roleSpouse": "Spouse",
+      "note": "Note"
+    },
+    "participants": {
+      "title": "Participants",
+      "empty": "No other participants",
+      "add": "Add a person",
+      "removeAria": "Remove {{name}} from this event",
+      "browseLabel": "Browse people",
+      "recent": "Recent",
+      "all": "All people",
+      "noRecents": "No recent people"
+    },
+    "sources": {
+      "title": "Sources"
+    },
+    "media": {
+      "title": "Media",
+      "comingSoon": "Coming soon."
+    },
+    "delete": {
+      "trigger": "Delete this event",
+      "question": "Permanently delete “{{name}}”?",
+      "removeParticipation": "Remove myself from this event",
+      "removeParticipationQuestion": "Remove your participation in “{{name}}”? The event stays for its other participants."
     }
   },
   "rail": {

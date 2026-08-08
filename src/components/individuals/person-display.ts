@@ -32,6 +32,18 @@ export function formatLifeYears(bornYear?: number, deathYear?: number): string {
   return '';
 }
 
+/**
+ * Splits free-typed text into given names + surname: the last word is the
+ * surname, everything before it the given names — a single word has no
+ * surname. Shared by every "create on the fly" picker (the Person editor's
+ * relation slots, the Events tab's participant picker).
+ */
+export function splitDisplayName(name: string): { givenNames?: string; surname?: string } {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= 1) return { givenNames: words[0] };
+  return { givenNames: words.slice(0, -1).join(' '), surname: words[words.length - 1] };
+}
+
 /** The display fields a relation slot or picker row shows for an existing individual: a name and life-event years. */
 export interface PersonDisplayFields {
   displayName: string;

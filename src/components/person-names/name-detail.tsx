@@ -20,21 +20,18 @@ import { useTranslation } from 'react-i18next';
 
 import { Field } from '../ui/field';
 import { Icon } from '../icon';
+import { RecordSources, type RecordSourcesProps } from '../record-panel/record-sources';
 import { Select } from '../ui/select';
 import { Switch } from '../ui/switch';
 import { TextField } from '../ui/text-field';
 import { Typography } from '../ui/typography';
 import * as s from './name-detail.css';
 import { NAME_TYPES } from '$db-tree/names';
-import type { NameType, SourceCitationWithSource } from '$types/database';
+import type { NameType } from '$types/database';
 import { type NameForm } from './name-form';
 
 /** Props for the read-only Sources section. Omitted entirely for a draft. */
-export interface NameDetailSources {
-  count: number;
-  /** `undefined` while the citations query is still loading. */
-  citations: SourceCitationWithSource[] | undefined;
-}
+export type NameDetailSources = Omit<RecordSourcesProps, 'title'>;
 
 export interface NameDetailProps {
   value: NameForm;
@@ -168,34 +165,9 @@ export function NameDetail({
         </Switch.Root>
       </div>
 
-      {sources ? <NameSources sources={sources} /> : null}
+      {sources ? <RecordSources title={t('namesTab.sources.title')} {...sources} /> : null}
 
       {footer}
-    </div>
-  );
-}
-
-/** Read-only list of the sources backing this name — no add/remove UI yet. */
-function NameSources({ sources }: { sources: NameDetailSources }): JSX.Element {
-  const { t } = useTranslation('individuals');
-
-  return (
-    <div className={s.sourcesSection}>
-      <Typography weight="semibold">{t('namesTab.sources.title')}</Typography>
-      {sources.count === 0 ? (
-        <Typography size="xs" tone="muted">
-          {t('records.unsourced')}
-        </Typography>
-      ) : (
-        <ul className={s.sourcesList}>
-          {(sources.citations ?? []).map((citation) => (
-            <li key={citation.id} className={s.sourceItem}>
-              <Icon name="book-marked" size={14} />
-              <Typography size="sm">{citation.source.title}</Typography>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }

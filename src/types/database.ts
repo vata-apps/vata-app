@@ -265,11 +265,13 @@ export interface CreateEventInput {
 
 export interface UpdateEventInput {
   eventTypeId?: string;
-  dateOriginal?: string;
+  /** `null` clears the field; `undefined` leaves it untouched. */
+  dateOriginal?: string | null;
   dateSort?: string;
   placeId?: string;
   description?: string;
-  notes?: string;
+  /** `null` clears the field; `undefined` leaves it untouched. */
+  notes?: string | null;
 }
 
 // =============================================================================

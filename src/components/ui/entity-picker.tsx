@@ -34,6 +34,8 @@ export interface EntityPickerProps {
   onQueryChange: (query: string) => void;
   searchPlaceholder?: string;
   clearLabel?: string;
+  /** Rendered above the search field, e.g. a Récents/Toutes tab switch — a caller-owned data concern, not popover chrome. */
+  header?: React.ReactNode;
   items: EntityPickerItem[];
   onSelect: (item: EntityPickerItem) => void;
   /** Line rendered under the list — e.g. a "N more hidden" or "no matches" message. */
@@ -54,6 +56,7 @@ export function EntityPicker({
   onQueryChange,
   searchPlaceholder,
   clearLabel,
+  header,
   items,
   onSelect,
   hint,
@@ -69,6 +72,7 @@ export function EntityPicker({
       <Popover.Portal>
         <Popover.Positioner sideOffset={6} align="start" positionMethod="fixed">
           <Popover.Popup className={styles.popup}>
+            {header}
             <div className={styles.search}>
               <SearchInput
                 autoFocus
