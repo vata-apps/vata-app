@@ -127,9 +127,17 @@ export function PersonNamesPage(): JSX.Element {
   }
 
   function removeName(name: PersonName): void {
+    // Every tree-wide list reads `is_primary = 1`, so deleting the primary row
+    // without promoting another would leave the person unnamed everywhere else.
+    const successor = name.isPrimary ? rows.find((row) => row.id !== name.id) : undefined;
     deleteName.mutate(
       { id: name.id, isPrimary: name.isPrimary },
-      { onSuccess: () => setSelectedId(null) }
+      {
+        onSuccess: () => {
+          setSelectedId(null);
+          if (successor) setPrimaryName.mutate(successor.id);
+        },
+      }
     );
   }
 
