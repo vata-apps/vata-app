@@ -130,7 +130,7 @@ function handleRowClick(event: React.MouseEvent<HTMLTableRowElement>): void {
   const anchor = event.currentTarget.querySelector('a');
   if (!anchor) return;
 
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+  if (event.metaKey || event.ctrlKey || event.shiftKey) {
     window.open(anchor.href, '_blank');
     return;
   }
