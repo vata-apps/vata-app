@@ -180,11 +180,10 @@ export function PersonNamesPage(): JSX.Element {
       onChange={patchValue}
       onCommit={commitEdit}
       onPrimaryChange={() => {
-        if (isDraftSelected) {
-          patchValue({ isPrimary: true });
-        } else if (activeId) {
-          setPrimaryName.mutate(activeId);
-        }
+        // The buffer is not re-seeded from the refetched row, so it has to
+        // carry the new value itself or the switch snaps straight back off.
+        patchValue({ isPrimary: true });
+        if (!isDraftSelected && activeId) setPrimaryName.mutate(activeId);
       }}
       footer={footer}
     />
