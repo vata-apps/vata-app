@@ -39,3 +39,27 @@ export const primaryText = style({
   flexDirection: 'column',
   gap: vars.space['1'],
 });
+
+export const sourcesSection = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: vars.space['3'],
+  borderTop: `1px solid ${vars.color.border.subtle}`,
+  paddingTop: vars.space['5'],
+});
+
+export const sourcesList = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: vars.space['3'],
+  margin: 0,
+  padding: 0,
+  listStyle: 'none',
+});
+
+export const sourceItem = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: vars.space['3'],
+  color: vars.color.text.muted,
+});

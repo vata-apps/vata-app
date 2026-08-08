@@ -14,6 +14,7 @@ import {
   toNamePayload,
   type NameForm,
 } from '$components/person-names/name-form';
+import { PersonNamesFilterToolbar, type PersonNameFilter } from '$components/person-names-filters';
 import { DraftFooter, InlineDelete } from '$components/record-panel/record-actions';
 import { DRAFT_ID, RecordPanel } from '$components/record-panel/record-panel';
 import { RecordRow } from '$components/record-panel/record-row';
@@ -22,12 +23,19 @@ import { Typography } from '$components/ui/typography';
 import {
   useCreateName,
   useDeleteName,
+  useNameCitations,
   usePersonNames,
   useSetPrimaryName,
   useUpdateName,
   type PersonName,
 } from '$hooks/usePersonNames';
 import { formatName } from '$db-tree/names';
+
+function matchesNameFilter(name: PersonName, filter: PersonNameFilter): boolean {
+  if (filter === 'primary') return name.isPrimary;
+  if (filter === 'secondary') return !name.isPrimary;
+  return true;
+}
 
 /**
  * The Names tab: every name record of one person, edited through the shared
@@ -53,6 +61,7 @@ export function PersonNamesPage(): JSX.Element {
 
   const [draft, setDraft] = useState<NameForm | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<PersonNameFilter>('all');
 
   // Editing buffer for the selected saved name. Re-seeded during render when
   // the selection moves, so the fields never show the previous record's values
@@ -60,15 +69,28 @@ export function PersonNamesPage(): JSX.Element {
   const [buffer, setBuffer] = useState<NameForm | null>(null);
   const [bufferFor, setBufferFor] = useState<string | null>(null);
 
+  const rows = names ?? [];
+  const visibleRows = rows.filter((name) => matchesNameFilter(name, filter));
+  // Falling back to the first visible row keeps a record open at all times,
+  // which is what makes the side panel worth its width.
+  const activeId = selectedId ?? visibleRows[0]?.id ?? null;
+  const isDraftSelected = activeId === DRAFT_ID;
+  // Looked up in the full list, not the filtered one: a row selected before a
+  // filter change stays open even after it drops out of view.
+  const selectedName = rows.find((name) => name.id === activeId);
+  // Undefined for a draft, or once a stale `activeId` points at a just-deleted
+  // row — the one condition every "this record is saved and current" check
+  // below reuses.
+  const savedName = isDraftSelected ? undefined : selectedName;
+
+  // Called unconditionally so hook order stays stable across the loading
+  // early-return below; disabled (via `null`) while there is no saved
+  // selection, since nothing can cite a record that does not exist or isn't
+  // known yet.
+  const nameCitations = useNameCitations(savedName ? savedName.id : null);
+
   if (isLoading) return <CenteredMessage>{t('overview.loading')}</CenteredMessage>;
   if (isError) return <CenteredMessage>{tCommon('errors.loadFailed')}</CenteredMessage>;
-
-  const rows = names ?? [];
-  // Falling back to the first row keeps a record open at all times, which is
-  // what makes the side panel worth its width.
-  const activeId = selectedId ?? rows[0]?.id ?? null;
-  const isDraftSelected = activeId === DRAFT_ID;
-  const selectedName = rows.find((name) => name.id === activeId);
 
   // Also re-seed when the record arrives late: right after "create" the
   // selection moves to the new id before the refetch has delivered its row, so
@@ -186,15 +208,21 @@ export function PersonNamesPage(): JSX.Element {
         if (!isDraftSelected && activeId) setPrimaryName.mutate(activeId);
       }}
       footer={footer}
+      sources={
+        savedName ? { count: savedName.sourceCount, citations: nameCitations.data } : undefined
+      }
     />
   ) : null;
 
   return (
     <RecordPanel.Root>
       <RecordPanel.Toolbar>
-        <Typography size="xs" tone="muted">
-          {t('namesTab.hint')}
-        </Typography>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <PersonNamesFilterToolbar value={filter} onChange={setFilter} />
+          <Typography size="xs" tone="muted">
+            {t('namesTab.hint')}
+          </Typography>
+        </div>
         {addButton}
       </RecordPanel.Toolbar>
 
@@ -202,10 +230,10 @@ export function PersonNamesPage(): JSX.Element {
         <RecordPanel.List>
           <RecordPanel.ListCard
             title={t('overview.names.title')}
-            count={rows.length + (draft ? 1 : 0)}
+            count={visibleRows.length + (draft ? 1 : 0)}
             footer={addButton}
           >
-            {rows.map((name) => (
+            {visibleRows.map((name) => (
               <Fragment key={name.id}>
                 <RecordRow
                   icon="signature"

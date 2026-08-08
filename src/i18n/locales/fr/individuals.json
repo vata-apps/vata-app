@@ -163,6 +163,11 @@
     "newName": "Nouveau nom",
     "detailTitle": "Détail du nom",
     "untitled": "Nom à saisir",
+    "filter": {
+      "label": "Filtrer les noms",
+      "all": "Tous",
+      "secondary": "Secondaires"
+    },
     "fields": {
       "type": "Type",
       "givenNames": "Prénoms",
@@ -174,6 +179,9 @@
     "primary": {
       "label": "Nom principal",
       "hint": "Affiché dans les listes et l'arbre."
+    },
+    "sources": {
+      "title": "Sources"
     },
     "delete": {
       "trigger": "Supprimer ce nom",

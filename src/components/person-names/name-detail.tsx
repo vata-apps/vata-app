@@ -26,8 +26,15 @@ import { TextField } from '../ui/text-field';
 import { Typography } from '../ui/typography';
 import * as s from './name-detail.css';
 import { NAME_TYPES } from '$db-tree/names';
-import type { NameType } from '$types/database';
+import type { NameType, SourceCitationWithSource } from '$types/database';
 import { type NameForm } from './name-form';
+
+/** Props for the read-only Sources section. Omitted entirely for a draft. */
+export interface NameDetailSources {
+  count: number;
+  /** `undefined` while the citations query is still loading. */
+  citations: SourceCitationWithSource[] | undefined;
+}
 
 export interface NameDetailProps {
   value: NameForm;
@@ -47,6 +54,8 @@ export interface NameDetailProps {
   onPrimaryChange: (isPrimary: boolean) => void;
   /** Draft footer or inline delete, depending on whether the record exists. */
   footer: ReactNode;
+  /** Omit for a draft — nothing can cite a record that does not exist yet. */
+  sources?: NameDetailSources;
 }
 
 export function NameDetail({
@@ -55,6 +64,7 @@ export function NameDetail({
   onCommit,
   onPrimaryChange,
   footer,
+  sources,
 }: NameDetailProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const id = useId();
@@ -158,7 +168,34 @@ export function NameDetail({
         </Switch.Root>
       </div>
 
+      {sources ? <NameSources sources={sources} /> : null}
+
       {footer}
+    </div>
+  );
+}
+
+/** Read-only list of the sources backing this name — no add/remove UI yet. */
+function NameSources({ sources }: { sources: NameDetailSources }): JSX.Element {
+  const { t } = useTranslation('individuals');
+
+  return (
+    <div className={s.sourcesSection}>
+      <Typography weight="semibold">{t('namesTab.sources.title')}</Typography>
+      {sources.count === 0 ? (
+        <Typography size="xs" tone="muted">
+          {t('records.unsourced')}
+        </Typography>
+      ) : (
+        <ul className={s.sourcesList}>
+          {(sources.citations ?? []).map((citation) => (
+            <li key={citation.id} className={s.sourceItem}>
+              <Icon name="book-marked" size={14} />
+              <Typography size="sm">{citation.source.title}</Typography>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
