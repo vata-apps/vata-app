@@ -138,12 +138,33 @@ export interface UpdateFamilyInput {
 export type FamilyRole = 'husband' | 'wife' | 'child';
 export type Pedigree = 'birth' | 'adopted' | 'foster' | 'sealing' | 'step';
 
+/**
+ * How a family member relates to that family — broader than {@link Pedigree}
+ * (the GEDCOM PEDI enum, child-only): `nature` also covers spouse rows
+ * (`marriage`, `common_law`) and has no GEDCOM equivalent. Powers the
+ * Relations tab's "Nature" field.
+ */
+export type RelationNature =
+  | 'biological'
+  | 'adoption'
+  | 'acknowledgment'
+  | 'marriage'
+  | 'common_law'
+  | 'step_parent'
+  | 'guardian';
+
+/** How confident the researcher is in a recorded relation. Powers the Relations tab's "Certitude" field. */
+export type RelationCertainty = 'confirmed' | 'probable' | 'to_verify' | 'disputed';
+
 export interface FamilyMember {
   id: string;
   familyId: string;
   individualId: string;
   role: FamilyRole;
   pedigree: Pedigree | null;
+  nature: RelationNature | null;
+  certainty: RelationCertainty | null;
+  note: string | null;
   sortOrder: number;
   createdAt: string;
 }
@@ -153,7 +174,17 @@ export interface CreateFamilyMemberInput {
   individualId: string;
   role: FamilyRole;
   pedigree?: Pedigree;
+  nature?: RelationNature;
+  certainty?: RelationCertainty;
+  note?: string;
   sortOrder?: number;
+}
+
+/** `null` clears a field; `undefined` leaves it untouched — see the {@link UpdateNameInput} note on the same convention. */
+export interface UpdateFamilyMemberDetailsInput {
+  nature?: RelationNature | null;
+  certainty?: RelationCertainty | null;
+  note?: string | null;
 }
 
 // =============================================================================

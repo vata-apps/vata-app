@@ -10,6 +10,7 @@ import {
   addFamilyMember,
   removeFamilyMember,
   removeFamilyMemberById,
+  updateFamilyMember,
   getParentFamilies,
   getSpouseFamilies,
 } from '$db-tree/families';
@@ -24,6 +25,7 @@ import type {
   IndividualWithDetails,
   Gender,
   Pedigree,
+  UpdateFamilyMemberDetailsInput,
 } from '$types/database';
 
 /** A relation slot filled by an existing individual, or a brand-new one to create on save. */
@@ -62,6 +64,25 @@ async function replaceRoleMember(
   const existing = (await getFamilyMembers(familyId)).find((m) => m.role === role);
   if (existing) await removeFamilyMemberById(existing.id);
   if (individualId) await addFamilyMember({ familyId, individualId, role });
+}
+
+/**
+ * The individual's own parent family, creating one (with them as its `child`
+ * member) if they don't have one yet. Shared by every write path that needs
+ * a guaranteed parent family: `setParent`, `addSibling`, and the father/mother
+ * reconciliation in `saveRelations`.
+ */
+async function ensureParentFamily(individualId: string): Promise<string> {
+  const existing = (await getParentFamilies(individualId))[0]?.id;
+  if (existing) return existing;
+  const familyId = await createFamily({});
+  await addFamilyMember({ familyId, individualId, role: 'child' });
+  return familyId;
+}
+
+/** Which family_members slot (husband/wife) an individual of this gender fills as a spouse — unknown defaults to husband. */
+export function spouseRoleFor(gender: Gender): FamilyRole {
+  return gender === 'F' ? 'wife' : 'husband';
 }
 
 export class FamilyManager {
@@ -300,14 +321,7 @@ export class FamilyManager {
     parentId: string
   ): Promise<void> {
     const memberRole = role === 'father' ? 'husband' : 'wife';
-    const families = await getParentFamilies(individualId);
-
-    let familyId = families[0]?.id;
-    if (!familyId) {
-      familyId = await createFamily({});
-      await addFamilyMember({ familyId, individualId, role: 'child' });
-    }
-
+    const familyId = await ensureParentFamily(individualId);
     await replaceRoleMember(familyId, memberRole, parentId);
   }
 
@@ -320,6 +334,57 @@ export class FamilyManager {
     if (families.length === 0) return;
 
     await replaceRoleMember(families[0].id, memberRole, null);
+  }
+
+  /**
+   * Add a sibling: a new child of the individual's own parent family,
+   * creating that family first if the individual has none yet — same
+   * bootstrap `setParent` uses for the father/mother slots.
+   */
+  static async addSibling(individualId: string, siblingId: string): Promise<string> {
+    const familyId = await ensureParentFamily(individualId);
+    await FamilyManager.addChild(familyId, siblingId);
+    return familyId;
+  }
+
+  /**
+   * Fill a union's empty spouse slot — the "second parent" of a family whose
+   * other husband/wife slot is unset (e.g. children recorded before their
+   * other parent was known). Requires the family to already have one spouse
+   * — every caller reaches this through a `spouseUnions` entry, which by
+   * construction always has the subject in a husband/wife slot; the new
+   * spouse takes whichever slot that isn't.
+   */
+  static async setSecondParent(familyId: string, spouseId: string): Promise<void> {
+    const members = await getFamilyMembers(familyId);
+    const existingSpouseRole = members.find((m) => m.role === 'husband' || m.role === 'wife')?.role;
+    if (!existingSpouseRole) {
+      throw new Error(`setSecondParent: family ${familyId} has no existing spouse to pair against`);
+    }
+    const slot: FamilyRole = existingSpouseRole === 'husband' ? 'wife' : 'husband';
+    await replaceRoleMember(familyId, slot, spouseId);
+  }
+
+  /**
+   * Remove any member (spouse or child) from a family by individual id —
+   * the general form `removeChild`/`removeParent` specialize for their roles.
+   */
+  static async removeMember(familyId: string, individualId: string): Promise<void> {
+    await removeFamilyMember(familyId, individualId);
+  }
+
+  /**
+   * Update the Relations tab's per-membership metadata (nature, certainty,
+   * note) on one `family_members` row. `memberId` is that row's own id —
+   * for a father/mother row this is the *subject's* row in the parent
+   * family (shared between both parent rows), for a sibling/spouse/child
+   * row it is that person's own row.
+   */
+  static async updateRelationDetails(
+    memberId: string,
+    input: UpdateFamilyMemberDetailsInput
+  ): Promise<void> {
+    await updateFamilyMember(memberId, input);
   }
 
   /**
@@ -338,26 +403,18 @@ export class FamilyManager {
     input: PersonRelationsInput
   ): Promise<void> {
     if (input.father !== undefined || input.mother !== undefined) {
-      let parentFamilyId = (await getParentFamilies(individualId))[0]?.id;
-
-      async function ensureParentFamilyId(): Promise<string> {
-        if (parentFamilyId) return parentFamilyId;
-        parentFamilyId = await createFamily({});
-        await addFamilyMember({ familyId: parentFamilyId, individualId, role: 'child' });
-        return parentFamilyId;
-      }
-
       async function applyParent(
         memberRole: 'husband' | 'wife',
         value: RelationPersonInput | null | undefined
       ): Promise<void> {
         if (value === undefined) return;
         if (value === null) {
-          if (parentFamilyId) await replaceRoleMember(parentFamilyId, memberRole, null);
+          const familyId = (await getParentFamilies(individualId))[0]?.id;
+          if (familyId) await replaceRoleMember(familyId, memberRole, null);
           return;
         }
         await replaceRoleMember(
-          await ensureParentFamilyId(),
+          await ensureParentFamily(individualId),
           memberRole,
           await resolvePersonId(value)
         );
@@ -374,7 +431,7 @@ export class FamilyManager {
     // `setParent`'s `role`, there is no explicit caller-supplied slot here,
     // and getting it right matters: their own future children resolve
     // father/mother from this same husband/wife slot (see `setParent`).
-    const individualRole: FamilyRole = individualGender === 'F' ? 'wife' : 'husband';
+    const individualRole: FamilyRole = spouseRoleFor(individualGender);
     const spouseRole: FamilyRole = individualRole === 'husband' ? 'wife' : 'husband';
 
     // Snapshot pre-existing spouse families before the loop can create new ones,
@@ -397,7 +454,7 @@ export class FamilyManager {
 }
 
 /** Create a brand-new individual for a "create new person" pick, or reuse an existing id. */
-async function resolvePersonId(ref: RelationPersonInput): Promise<string> {
+export async function resolvePersonId(ref: RelationPersonInput): Promise<string> {
   if (ref.id) return ref.id;
   return IndividualManager.create({
     gender: ref.createNew?.gender,

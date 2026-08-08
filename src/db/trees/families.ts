@@ -9,6 +9,9 @@ import type {
   CreateFamilyMemberInput,
   FamilyRole,
   Pedigree,
+  RelationNature,
+  RelationCertainty,
+  UpdateFamilyMemberDetailsInput,
   FamilyWithMembers,
   IndividualWithDetails,
 } from '$types/database';
@@ -32,6 +35,9 @@ interface RawFamilyMember {
   individual_id: number;
   role: FamilyRole;
   pedigree: Pedigree | null;
+  nature: RelationNature | null;
+  certainty: RelationCertainty | null;
+  note: string | null;
   sort_order: number;
   created_at: string;
 }
@@ -56,6 +62,9 @@ function mapToFamilyMember(raw: RawFamilyMember): FamilyMember {
     individualId: formatEntityId('I', raw.individual_id),
     role: raw.role,
     pedigree: raw.pedigree,
+    nature: raw.nature,
+    certainty: raw.certainty,
+    note: raw.note,
     sortOrder: raw.sort_order,
     createdAt: raw.created_at,
   };
@@ -161,7 +170,7 @@ export async function countFamilies(): Promise<number> {
 export async function getAllFamilyMembers(): Promise<FamilyMember[]> {
   const db = await getTreeDb();
   const rows = await db.select<RawFamilyMember[]>(
-    `SELECT id, family_id, individual_id, role, pedigree, sort_order, created_at
+    `SELECT id, family_id, individual_id, role, pedigree, nature, certainty, note, sort_order, created_at
      FROM family_members
      ORDER BY
        family_id,
@@ -183,7 +192,7 @@ export async function getFamilyMembers(familyId: string): Promise<FamilyMember[]
   const db = await getTreeDb();
   const dbId = parseEntityId(familyId);
   const rows = await db.select<RawFamilyMember[]>(
-    `SELECT id, family_id, individual_id, role, pedigree, sort_order, created_at
+    `SELECT id, family_id, individual_id, role, pedigree, nature, certainty, note, sort_order, created_at
      FROM family_members
      WHERE family_id = $1
      ORDER BY 
@@ -209,9 +218,18 @@ export async function addFamilyMember(input: CreateFamilyMemberInput): Promise<s
   const individualDbId = parseEntityId(input.individualId);
 
   const result = await db.execute(
-    `INSERT INTO family_members (family_id, individual_id, role, pedigree, sort_order)
-     VALUES ($1, $2, $3, $4, $5)`,
-    [familyDbId, individualDbId, input.role, input.pedigree ?? null, input.sortOrder ?? 0]
+    `INSERT INTO family_members (family_id, individual_id, role, pedigree, nature, certainty, note, sort_order)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+    [
+      familyDbId,
+      individualDbId,
+      input.role,
+      input.pedigree ?? null,
+      input.nature ?? null,
+      input.certainty ?? null,
+      input.note ?? null,
+      input.sortOrder ?? 0,
+    ]
   );
 
   if (result.lastInsertId === undefined) {
@@ -248,7 +266,11 @@ export async function removeFamilyMemberById(memberId: string): Promise<void> {
  */
 export async function updateFamilyMember(
   memberId: string,
-  input: { role?: FamilyRole; pedigree?: Pedigree | null; sortOrder?: number }
+  input: {
+    role?: FamilyRole;
+    pedigree?: Pedigree | null;
+    sortOrder?: number;
+  } & UpdateFamilyMemberDetailsInput
 ): Promise<void> {
   const db = await getTreeDb();
   const memberDbId = parseInt(memberId, 10);
@@ -264,6 +286,18 @@ export async function updateFamilyMember(
   if (input.pedigree !== undefined) {
     sets.push(`pedigree = $${paramIndex++}`);
     params.push(input.pedigree);
+  }
+  if (input.nature !== undefined) {
+    sets.push(`nature = $${paramIndex++}`);
+    params.push(input.nature);
+  }
+  if (input.certainty !== undefined) {
+    sets.push(`certainty = $${paramIndex++}`);
+    params.push(input.certainty);
+  }
+  if (input.note !== undefined) {
+    sets.push(`note = $${paramIndex++}`);
+    params.push(input.note);
   }
   if (input.sortOrder !== undefined) {
     sets.push(`sort_order = $${paramIndex++}`);
@@ -286,7 +320,7 @@ export async function updateFamilyMember(
 export async function getFamilyMemberById(memberId: string): Promise<FamilyMember | null> {
   const db = await getTreeDb();
   const rows = await db.select<RawFamilyMember[]>(
-    `SELECT id, family_id, individual_id, role, pedigree, sort_order, created_at
+    `SELECT id, family_id, individual_id, role, pedigree, nature, certainty, note, sort_order, created_at
      FROM family_members
      WHERE id = $1`,
     [parseInt(memberId, 10)]
