@@ -31,6 +31,7 @@ export const queryKeys = {
   eventParticipants: (eventId: string) => ['eventParticipants', eventId] as const,
   personRelations: (individualId: string) => ['personRelations', individualId] as const,
   relationCitations: (familyId: string) => ['relationCitations', familyId] as const,
+  personNotes: (individualId: string) => ['personNotes', individualId] as const,
   ancestors: (individualId: string) => ['ancestors', individualId] as const,
   parentFamily: (individualId: string) => ['parentFamily', individualId] as const,
   spouseFamilies: (individualId: string) => ['spouseFamilies', individualId] as const,

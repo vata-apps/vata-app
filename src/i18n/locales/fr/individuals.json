@@ -131,9 +131,6 @@
   "sources": {
     "comingSoon": "Les sources ne sont pas encore disponibles."
   },
-  "notes": {
-    "comingSoon": "Les notes ne sont pas encore disponibles."
-  },
   "namesTab": {
     "hint": "Un seul nom peut être le nom principal.",
     "add": "Ajouter un nom",
@@ -276,6 +273,66 @@
     "delete": {
       "trigger": "Retirer ce lien",
       "question": "Retirer définitivement le lien avec « {{name}} » ?"
+    }
+  },
+  "notesTab": {
+    "create": "Créer la note",
+    "newNote": "Nouvelle note",
+    "detailTitle": "Détail de la note",
+    "untitled": "Note vide",
+    "private": "Note privée",
+    "filter": {
+      "label": "Filtrer les notes",
+      "all": "Toutes",
+      "person": "Personne",
+      "event": "Événements",
+      "relation": "Liens"
+    },
+    "group": {
+      "person": {
+        "title": "Notes sur la personne",
+        "hint": "Rattachées à {{name}}.",
+        "empty": "Aucune note sur la personne."
+      },
+      "event": {
+        "title": "Notes sur les événements",
+        "hint": "Rattachées à un événement précis de sa vie.",
+        "empty": "Aucune note sur un événement."
+      },
+      "relation": {
+        "title": "Notes sur les liens",
+        "hint": "Justifient ou nuancent un lien de parenté.",
+        "empty": "Aucune note sur un lien."
+      }
+    },
+    "add": {
+      "person": "Ajouter une note sur la personne",
+      "event": "Ajouter une note sur un événement",
+      "relation": "Ajouter une note sur un lien"
+    },
+    "target": {
+      "person": "Personne",
+      "event": "Événement",
+      "relation": "Lien",
+      "unknownEvent": "Événement inconnu",
+      "unknownRelation": "Lien inconnu"
+    },
+    "fields": {
+      "target": "Rattachée à",
+      "content": "Contenu",
+      "contentPlaceholder": "Saisir la note, la transcription ou l'hypothèse…",
+      "charCountEmpty": "Vide",
+      "charCount_one": "{{count}} caractère",
+      "charCount_other": "{{count}} caractères",
+      "private": "Note privée",
+      "privateHint": "Visible par vous seul, exclue de l'export GEDCOM."
+    },
+    "picker": {
+      "noItems": "Rien à rattacher pour l'instant"
+    },
+    "delete": {
+      "trigger": "Supprimer cette note",
+      "question": "Supprimer définitivement cette note ?"
     }
   },
   "rail": {
