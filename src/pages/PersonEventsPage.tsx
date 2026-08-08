@@ -24,7 +24,11 @@ import {
   PersonEventsFilterToolbar,
   type PersonEventFilter,
 } from '$components/person-events-filters';
-import { DraftFooter, InlineDelete } from '$components/record-panel/record-actions';
+import {
+  deleteQuestionWithNoteCount,
+  DraftFooter,
+  InlineDelete,
+} from '$components/record-panel/record-actions';
 import { DRAFT_ID, RecordPanel } from '$components/record-panel/record-panel';
 import { RecordRow } from '$components/record-panel/record-row';
 import { Button } from '$components/ui/button';
@@ -42,6 +46,7 @@ import {
   useUpdateParticipantRole,
   type PersonEventRow,
 } from '$hooks/usePersonEvents';
+import { useEventNoteCount } from '$hooks/usePersonNotes';
 import { eventDateDisplay } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { principalsText } from '$lib/principals-text';
@@ -150,6 +155,8 @@ export function PersonEventsPage(): JSX.Element {
   // Disabled while nothing is selected yet, since nothing can cite or list participants for a record that does not exist or isn't known yet.
   const eventCitations = useEventCitations(savedEvent ? savedEvent.id : null);
   const eventParticipants = useEventParticipants(savedEvent ? savedEvent.id : null);
+  // Feeds the delete confirmation's "this will also delete N notes" warning — see useEventNoteCount's doc comment.
+  const eventNoteCount = useEventNoteCount(savedEvent ? savedEvent.id : null);
 
   if (isLoading) return <CenteredMessage>{t('overview.loading')}</CenteredMessage>;
   if (isError) return <CenteredMessage>{tCommon('errors.loadFailed')}</CenteredMessage>;
@@ -292,7 +299,12 @@ export function PersonEventsPage(): JSX.Element {
       <InlineDelete
         key={savedEvent.id}
         triggerLabel={t('eventsTab.delete.trigger')}
-        question={t('eventsTab.delete.question', { name: rowLabel(savedEvent, tEvents) })}
+        question={deleteQuestionWithNoteCount(
+          t,
+          'eventsTab.delete.question',
+          { name: rowLabel(savedEvent, tEvents) },
+          eventNoteCount.data ?? 0
+        )}
         isDeleting={deleteEvent.isPending}
         onDelete={() => removeEvent(savedEvent)}
       />

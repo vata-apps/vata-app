@@ -121,3 +121,34 @@ export async function deleteNote(id: string): Promise<void> {
   const db = await getTreeDb();
   await db.execute('DELETE FROM notes WHERE id = $1', [parseInt(id, 10)]);
 }
+
+// =============================================================================
+// Counts — for the "this will also delete N notes" cascade-delete warning on
+// the Events/Relations tabs (`notes.event_id`/`family_member_id` are
+// `ON DELETE CASCADE`).
+// =============================================================================
+
+/**
+ * How many notes are attached to one event.
+ */
+export async function countNotesForEvent(eventId: string): Promise<number> {
+  const db = await getTreeDb();
+  const dbId = parseEntityId(eventId);
+  const rows = await db.select<{ count: number }[]>(
+    'SELECT COUNT(*) as count FROM notes WHERE event_id = $1',
+    [dbId]
+  );
+  return rows[0]?.count ?? 0;
+}
+
+/**
+ * How many notes are attached to one relation (a `family_members` row).
+ */
+export async function countNotesForFamilyMember(familyMemberId: string): Promise<number> {
+  const db = await getTreeDb();
+  const rows = await db.select<{ count: number }[]>(
+    'SELECT COUNT(*) as count FROM notes WHERE family_member_id = $1',
+    [parseInt(familyMemberId, 10)]
+  );
+  return rows[0]?.count ?? 0;
+}

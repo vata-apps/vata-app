@@ -16,6 +16,23 @@ import { Typography } from '../ui/typography';
 import * as s from './record-actions.css';
 
 /**
+ * An `InlineDelete` question, with a "will also delete N notes" suffix key
+ * swapped in when the record has attached notes riding along via its
+ * `notes.event_id`/`family_member_id` `ON DELETE CASCADE`. `baseKey` must
+ * have a `${baseKey}WithNotes` sibling key (`_one`/`_other`) alongside it.
+ */
+export function deleteQuestionWithNoteCount(
+  t: (key: string, options?: Record<string, unknown>) => string,
+  baseKey: string,
+  params: Record<string, unknown>,
+  noteCount: number
+): string {
+  return noteCount > 0
+    ? t(`${baseKey}WithNotes`, { ...params, count: noteCount })
+    : t(baseKey, params);
+}
+
+/**
  * Footer of a draft record: a "not saved" marker, cancel, and create. Create
  * stays disabled until the entity's required field is filled, which the caller
  * decides through `canCreate` — the primitive has no opinion on which field

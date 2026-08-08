@@ -216,6 +216,8 @@
     "delete": {
       "trigger": "Supprimer cet événement",
       "question": "Supprimer définitivement « {{name}} » ?",
+      "questionWithNotes_one": "Supprimer définitivement « {{name}} » ? {{count}} note attachée sera aussi supprimée.",
+      "questionWithNotes_other": "Supprimer définitivement « {{name}} » ? {{count}} notes attachées seront aussi supprimées.",
       "removeParticipation": "Me retirer de cet événement",
       "removeParticipationQuestion": "Retirer votre participation à « {{name}} » ? L'événement reste pour les autres participants."
     }
@@ -272,7 +274,9 @@
     },
     "delete": {
       "trigger": "Retirer ce lien",
-      "question": "Retirer définitivement le lien avec « {{name}} » ?"
+      "question": "Retirer définitivement le lien avec « {{name}} » ?",
+      "questionWithNotes_one": "Retirer définitivement le lien avec « {{name}} » ? {{count}} note attachée sera aussi supprimée.",
+      "questionWithNotes_other": "Retirer définitivement le lien avec « {{name}} » ? {{count}} notes attachées seront aussi supprimées."
     }
   },
   "notesTab": {

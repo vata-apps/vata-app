@@ -25,7 +25,11 @@ import {
   type PersonRelationFilter,
 } from '$components/person-relations-filters';
 import { button } from '$components/ui/button.css';
-import { DraftFooter, InlineDelete } from '$components/record-panel/record-actions';
+import {
+  deleteQuestionWithNoteCount,
+  DraftFooter,
+  InlineDelete,
+} from '$components/record-panel/record-actions';
 import { DRAFT_ID, RecordPanel } from '$components/record-panel/record-panel';
 import { RecordRow } from '$components/record-panel/record-row';
 import { Typography } from '$components/ui/typography';
@@ -46,6 +50,7 @@ import {
   type RelationPersonInput,
 } from '$hooks/usePersonRelations';
 import { useIndividual } from '$hooks/useIndividuals';
+import { useRelationNoteCount } from '$hooks/usePersonNotes';
 import { formatName } from '$db-tree/names';
 import type { RelatedPersonWithGender, RelationDetails } from '$db-tree/person-relations';
 import type { RelationCertainty, RelationNature } from '$types/database';
@@ -159,6 +164,15 @@ export function PersonRelationsPage(): JSX.Element {
   // Disabled while nothing is selected yet, since nothing can cite a family
   // that does not exist or isn't known yet.
   const relationCitations = useRelationCitations(savedRow ? savedRow.familyId : null);
+  // Feeds the delete confirmation's "this will also delete N notes" warning.
+  // Excludes father/mother: removing either deletes that parent's own
+  // husband/wife-role row, never `savedRow.memberId` (the subject's own row,
+  // shared between both — see useRelationNoteCount's doc comment), so no
+  // note is ever at risk there.
+  const isParentRow = savedRow?.id === 'father' || savedRow?.id === 'mother';
+  const relationNoteCount = useRelationNoteCount(
+    savedRow && !isParentRow ? savedRow.memberId : null
+  );
 
   if (isLoading) return <CenteredMessage>{t('overview.loading')}</CenteredMessage>;
   if (isError || !data) return <CenteredMessage>{tCommon('errors.loadFailed')}</CenteredMessage>;
@@ -270,7 +284,12 @@ export function PersonRelationsPage(): JSX.Element {
       <InlineDelete
         key={savedRow.id}
         triggerLabel={t('relationsTab.delete.trigger')}
-        question={t('relationsTab.delete.question', { name: savedRow.displayName })}
+        question={deleteQuestionWithNoteCount(
+          t,
+          'relationsTab.delete.question',
+          { name: savedRow.displayName },
+          relationNoteCount.data ?? 0
+        )}
         isDeleting={
           removeParent.isPending ||
           removeSibling.isPending ||
