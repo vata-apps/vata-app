@@ -340,7 +340,7 @@ export function PersonNotesPage(): JSX.Element {
   }
 
   function removeNote(note: Note): void {
-    deleteNote.mutate(note.id, { onSuccess: () => setSelectedId(null) });
+    deleteNote.mutate({ id: note.id, scope: note.scope }, { onSuccess: () => setSelectedId(null) });
   }
 
   function startPersonDraft(): void {

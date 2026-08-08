@@ -216,6 +216,8 @@
     "delete": {
       "trigger": "Delete this event",
       "question": "Permanently delete “{{name}}”?",
+      "questionWithNotes_one": "Permanently delete “{{name}}”? {{count}} attached note will also be deleted.",
+      "questionWithNotes_other": "Permanently delete “{{name}}”? {{count}} attached notes will also be deleted.",
       "removeParticipation": "Remove myself from this event",
       "removeParticipationQuestion": "Remove your participation in “{{name}}”? The event stays for its other participants."
     }
@@ -272,7 +274,9 @@
     },
     "delete": {
       "trigger": "Remove this relation",
-      "question": "Permanently remove the relation with \"{{name}}\"?"
+      "question": "Permanently remove the relation with \"{{name}}\"?",
+      "questionWithNotes_one": "Permanently remove the relation with \"{{name}}\"? {{count}} attached note will also be deleted.",
+      "questionWithNotes_other": "Permanently remove the relation with \"{{name}}\"? {{count}} attached notes will also be deleted."
     }
   },
   "notesTab": {
