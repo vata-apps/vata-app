@@ -27,7 +27,7 @@ export interface PersonPickerSelection {
 }
 
 export interface PersonPickerProps {
-  /** Text for the dashed "+ Add …" trigger the picker renders when empty. */
+  /** Text for the "+ Add …" trigger the picker renders when empty. */
   label: string;
   onSelect: (selection: PersonPickerSelection) => void;
   /** Individual ids to hide from search results (e.g. the person being edited, or people already picked elsewhere in this form). */
@@ -35,6 +35,8 @@ export interface PersonPickerProps {
   /** Gender to seed a newly-created person with (e.g. 'M' for a father slot); left unset defaults to unknown. */
   newPersonGender?: Gender;
   disabled?: boolean;
+  /** Overrides the default dashed-slot trigger style — e.g. a compact ghost button for a card's inline "add" action. */
+  triggerClassName?: string;
 }
 
 /**
@@ -50,6 +52,7 @@ export function PersonPicker({
   excludeIds,
   newPersonGender,
   disabled,
+  triggerClassName,
 }: PersonPickerProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');
@@ -117,7 +120,7 @@ export function PersonPicker({
           {label}
         </>
       }
-      triggerClassName={s.relslot}
+      triggerClassName={triggerClassName ?? s.relslot}
       disabled={disabled}
       query={query}
       onQueryChange={setQuery}

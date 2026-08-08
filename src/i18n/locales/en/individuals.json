@@ -107,15 +107,6 @@
     "unknown": "Unknown"
   },
   "relations": {
-    "table": {
-      "columns": {
-        "name": "Name",
-        "relation": "Relation",
-        "born": "Born",
-        "died": "Died"
-      },
-      "empty": "No relations recorded yet"
-    },
     "labels": {
       "father": "Father",
       "mother": "Mother",
@@ -135,8 +126,7 @@
     "side": {
       "paternal": "Paternal",
       "maternal": "Maternal"
-    },
-    "via": "via {{name}}"
+    }
   },
   "sources": {
     "comingSoon": "Sources are not available yet."
@@ -231,6 +221,61 @@
       "question": "Permanently delete “{{name}}”?",
       "removeParticipation": "Remove myself from this event",
       "removeParticipationQuestion": "Remove your participation in “{{name}}”? The event stays for its other participants."
+    }
+  },
+  "relationsTab": {
+    "create": "Create relation",
+    "newRelation": "New relation",
+    "detailTitle": "Relation detail",
+    "lifespanUnknown": "Dates unknown",
+    "noSpouse": "Second parent unknown",
+    "filter": {
+      "label": "Filter relations",
+      "all": "All",
+      "origin": "Parents and siblings",
+      "unions": "Spouses and children"
+    },
+    "union": {
+      "title": "Family {{count}}",
+      "newTitle": "New union"
+    },
+    "add": {
+      "father": "Add father",
+      "mother": "Add mother",
+      "sibling": "Add a sibling",
+      "union": "Add a spouse",
+      "secondParent": "Add second parent",
+      "child": "Add a child"
+    },
+    "fields": {
+      "type": "Relation type",
+      "nature": "Nature",
+      "natureUnset": "Not set",
+      "natureOptions": {
+        "biological": "Biological",
+        "adoption": "Adoption",
+        "acknowledgment": "Acknowledgment",
+        "marriage": "Marriage",
+        "common_law": "Common-law",
+        "step_parent": "Step-parent",
+        "guardian": "Guardian"
+      },
+      "certainty": "Certainty",
+      "certaintyUnset": "Not set",
+      "certaintyOptions": {
+        "confirmed": "Confirmed",
+        "probable": "Probable",
+        "to_verify": "To verify",
+        "disputed": "Disputed"
+      },
+      "note": "Note"
+    },
+    "sources": {
+      "title": "Relation sources"
+    },
+    "delete": {
+      "trigger": "Remove this relation",
+      "question": "Permanently remove the relation with \"{{name}}\"?"
     }
   },
   "rail": {

@@ -90,6 +90,7 @@ async function initializeTreeDb(db: Database): Promise<void> {
   await db.execute(
     `CREATE INDEX IF NOT EXISTS idx_family_members_individual ON family_members(individual_id)`
   );
+  await migrateFamilyMembersRelationColumns(db);
 
   // place_types
   await db.execute(`
@@ -359,6 +360,37 @@ async function initializeTreeDb(db: Database): Promise<void> {
   `);
   await db.execute(`CREATE INDEX IF NOT EXISTS idx_source_files_source ON source_files(source_id)`);
   await db.execute(`CREATE INDEX IF NOT EXISTS idx_source_files_file ON source_files(file_id)`);
+}
+
+/**
+ * Add the Relations tab's per-membership metadata columns to an
+ * already-existing `family_members` table. Additive only — `ALTER TABLE ADD
+ * COLUMN` is safe on a live tree, unlike changing `pedigree`'s CHECK
+ * constraint, which is left untouched (it is the GEDCOM PEDI enum, reserved
+ * for a future import/export mapping — a distinct concept from `nature`,
+ * which also covers spouse rows and has no GEDCOM equivalent).
+ */
+async function migrateFamilyMembersRelationColumns(db: Database): Promise<void> {
+  const cols = await db.select<{ name: string }[]>(
+    "SELECT name FROM pragma_table_info('family_members')"
+  );
+  const names = new Set(cols.map((col) => col.name));
+
+  if (!names.has('nature')) {
+    await db.execute(`
+      ALTER TABLE family_members ADD COLUMN nature TEXT
+        CHECK(nature IN ('biological', 'adoption', 'acknowledgment', 'marriage', 'common_law', 'step_parent', 'guardian'))
+    `);
+  }
+  if (!names.has('certainty')) {
+    await db.execute(`
+      ALTER TABLE family_members ADD COLUMN certainty TEXT
+        CHECK(certainty IN ('confirmed', 'probable', 'to_verify', 'disputed'))
+    `);
+  }
+  if (!names.has('note')) {
+    await db.execute(`ALTER TABLE family_members ADD COLUMN note TEXT`);
+  }
 }
 
 async function migrateSystemDbFilenameToPath(db: Database): Promise<void> {

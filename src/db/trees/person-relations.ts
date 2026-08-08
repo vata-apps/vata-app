@@ -13,9 +13,19 @@ import { buildYearMaps, extractYear, type RelatedPerson } from './person-overvie
 // =============================================================================
 // Domain bundle types
 //
-// `getPersonRelations` returns plain domain data; resolving it to sex-specific
-// relation labels and a display order is the job of the presentation layer
-// (`build-relations.ts`), so this stays a clean data-layer aggregate.
+// `getPersonRelations` returns plain domain data; resolving it into the
+// Relations tab's cards (Parents / Fratrie / one per union) is the job of the
+// presentation layer (`build-relations.ts`), so this stays a clean data-layer
+// aggregate.
+//
+// Every relation the tab can edit is backed by a real `family_members` row —
+// there is no separate "relation" entity. A sibling, spouse, or child row
+// carries *that person's own* row (their `id`/`nature`/`certainty`/`note`).
+// A father/mother row is different: both point at the *subject's own* row in
+// their parent family (`parentMembership`), because that is the one row that
+// actually describes how the subject belongs to that family — editing
+// "nature" from either the Father or the Mother row changes the same
+// underlying fact and is expected to show the same value on both.
 // =============================================================================
 
 /** A {@link RelatedPerson} plus the sex needed to resolve a sex-specific label. */
@@ -23,62 +33,80 @@ export interface RelatedPersonWithGender extends RelatedPerson {
   gender: Gender;
 }
 
-/**
- * One of a parent's other unions: the children they had with someone other
- * than the subject's other parent. `otherParent` is the person the shared
- * parent had these children with — `null` when that parent is not recorded.
- */
-export interface HalfSiblingUnion {
-  side: 'paternal' | 'maternal';
-  otherParent: RelatedPersonWithGender | null;
-  children: RelatedPersonWithGender[];
+/** The Relations tab's editable per-membership metadata, lifted from a `family_members` row. */
+export interface RelationDetails extends Pick<FamilyMember, 'nature' | 'certainty' | 'note'> {
+  /** The `family_members.id` this metadata lives on — the target of an edit. */
+  memberId: string;
+  /** The family this membership belongs to — sources are scoped at this level (see `getCitationsForFamily`). */
+  familyId: string;
+}
+
+/** A related person (sibling, spouse, or child) together with their own editable membership. */
+export interface RelationMember extends RelatedPersonWithGender, RelationDetails {
+  /** Which shared parent connects a half-sibling to the subject — `null` for a full sibling, spouse, or child. */
+  side: 'paternal' | 'maternal' | null;
 }
 
 /** One of the subject's own marriages: the spouse, its children, and the marriage year for ordering. */
 export interface SpouseUnion {
-  spouse: RelatedPersonWithGender | null;
+  familyId: string;
+  spouse: RelationMember | null;
   marriageYear: number | null;
-  children: RelatedPersonWithGender[];
+  children: RelationMember[];
 }
 
 /**
- * Everything the Relations tab reads for one individual, pre-joined: parents,
- * full siblings (same parent family), half-siblings (grouped by the parent's
- * other unions), and the subject's own spouse unions with their children.
+ * Everything the Relations tab reads for one individual, pre-joined: parents
+ * (plus the subject's own parent-family membership, edited from either
+ * parent row), siblings (full and half, flattened — which family a sibling
+ * comes from is carried on their own row), and the subject's own spouse
+ * unions with their children.
  */
 export interface PersonRelationsData {
+  parentFamilyId: string | null;
+  /** The subject's own row in their parent family — `null` when no parent family exists yet. */
+  parentMembership: RelationDetails | null;
   father: RelatedPersonWithGender | null;
   mother: RelatedPersonWithGender | null;
-  fullSiblings: RelatedPersonWithGender[];
-  halfSiblingUnions: HalfSiblingUnion[];
+  siblings: RelationMember[];
   spouseUnions: SpouseUnion[];
 }
 
-/** The husband/wife of a family who isn't `excludeId` — the "other" spouse. */
-function otherSpouseId(members: FamilyMember[], excludeId: string | null): string | null {
+function toRelationDetails(member: FamilyMember): RelationDetails {
+  return {
+    memberId: member.id,
+    familyId: member.familyId,
+    nature: member.nature,
+    certainty: member.certainty,
+    note: member.note,
+  };
+}
+
+/** The husband/wife member of a family who isn't `excludeId` — the "other" spouse. */
+function otherSpouseMember(members: FamilyMember[], excludeId: string | null): FamilyMember | null {
   return (
     members.find(
       (member) =>
         (member.role === 'husband' || member.role === 'wife') && member.individualId !== excludeId
-    )?.individualId ?? null
+    ) ?? null
   );
 }
 
-/** The children of a family. */
-function childIdsOf(members: FamilyMember[]): string[] {
-  return members.filter((member) => member.role === 'child').map((member) => member.individualId);
+/** The child members of a family. */
+function childMembersOf(members: FamilyMember[]): FamilyMember[] {
+  return members.filter((member) => member.role === 'child');
 }
 
 /**
- * Load every direct relation of one individual in a single call: parents,
- * full siblings, half-siblings (paternal and maternal), and spouses with
- * their children.
+ * Load every direct relation of one individual in a single call: parents
+ * (with the subject's own parent-family membership), full and half siblings,
+ * and spouse unions with their children.
  *
  * Full siblings are the parent family's other children. Half-siblings come
  * from each known parent's *other* families (excluding the subject's own
- * parent family) — the family's other spouse is the "other parent" the
- * half-siblings are had with. Pedigree (biological/adopted/…) does not affect
- * this classification: any child of the parent family counts as a sibling.
+ * parent family) — the family's other spouse is the "other parent" they
+ * share. Assumes a single parent family per individual, matching every other
+ * write path (`FamilyManager.setParent`/`removeParent`).
  */
 export async function getPersonRelations(individualId: string): Promise<PersonRelationsData> {
   const [parentFamilies, spouseFamilies] = await Promise.all([
@@ -94,71 +122,74 @@ export async function getPersonRelations(individualId: string): Promise<PersonRe
         getFamilyMembers(family.id),
         getFamilyEventByType(family.id, 'MARR'),
       ]);
-      return { members, marriageEvent };
+      return { familyId: family.id, members, marriageEvent };
     })
   );
 
   const parentFamily = parentFamilies[0] ?? null;
   const parentMembers = parentFamily ? await getFamilyMembers(parentFamily.id) : [];
 
-  const fatherId = parentMembers.find((member) => member.role === 'husband')?.individualId ?? null;
-  const motherId = parentMembers.find((member) => member.role === 'wife')?.individualId ?? null;
-  const fullSiblingIds = parentMembers
-    .filter((member) => member.role === 'child' && member.individualId !== individualId)
-    .map((member) => member.individualId);
+  const fatherMember = parentMembers.find((member) => member.role === 'husband') ?? null;
+  const motherMember = parentMembers.find((member) => member.role === 'wife') ?? null;
+  const subjectMember =
+    parentMembers.find(
+      (member) => member.role === 'child' && member.individualId === individualId
+    ) ?? null;
+  const fullSiblingMembers = parentMembers.filter(
+    (member) => member.role === 'child' && member.individualId !== individualId
+  );
 
   // Each known parent's other families (excluding the subject's own parent
-  // family) are the source of half-siblings, tagged by which parent is shared.
+  // family) are the source of half-siblings, tagged by which parent is
+  // shared — paternal takes precedence in the unlikely case a family shows
+  // up under both (father and mother remarried each other elsewhere).
   const [fatherOtherFamilies, motherOtherFamilies] = await Promise.all([
-    fatherId ? getFamiliesOfIndividual(fatherId, 'husband') : Promise.resolve([]),
-    motherId ? getFamiliesOfIndividual(motherId, 'wife') : Promise.resolve([]),
+    fatherMember
+      ? getFamiliesOfIndividual(fatherMember.individualId, 'husband')
+      : Promise.resolve([]),
+    motherMember ? getFamiliesOfIndividual(motherMember.individualId, 'wife') : Promise.resolve([]),
   ]);
 
-  const halfSiblingSources = [
-    ...fatherOtherFamilies
-      .filter((family) => family.id !== parentFamily?.id)
-      .map((family) => ({ side: 'paternal' as const, sharedParentId: fatherId, family })),
-    ...motherOtherFamilies
-      .filter((family) => family.id !== parentFamily?.id)
-      .map((family) => ({ side: 'maternal' as const, sharedParentId: motherId, family })),
-  ];
+  const sideByHalfSiblingFamilyId = new Map<string, 'paternal' | 'maternal'>();
+  for (const family of fatherOtherFamilies) {
+    if (family.id !== parentFamily?.id) sideByHalfSiblingFamilyId.set(family.id, 'paternal');
+  }
+  for (const family of motherOtherFamilies) {
+    if (family.id !== parentFamily?.id && !sideByHalfSiblingFamilyId.has(family.id)) {
+      sideByHalfSiblingFamilyId.set(family.id, 'maternal');
+    }
+  }
 
   const [halfSiblingFamilyMembers, spouseFamilyDetails] = await Promise.all([
     Promise.all(
-      halfSiblingSources.map(async (source) => ({
-        ...source,
-        members: await getFamilyMembers(source.family.id),
+      [...sideByHalfSiblingFamilyId].map(async ([familyId, side]) => ({
+        side,
+        members: await getFamilyMembers(familyId),
       }))
     ),
     spouseFamilyDetailsPromise,
   ]);
 
-  const halfSiblingUnionsRaw = halfSiblingFamilyMembers.map(
-    ({ side, sharedParentId, members }) => ({
-      side,
-      otherParentId: otherSpouseId(members, sharedParentId),
-      childIds: childIdsOf(members),
-    })
+  const halfSiblingMembers = halfSiblingFamilyMembers.flatMap(({ members, side }) =>
+    childMembersOf(members).map((member) => ({ member, side }))
   );
 
-  const spouseUnionsRaw = spouseFamilyDetails.map(({ members, marriageEvent }) => ({
-    spouseId: otherSpouseId(members, individualId),
-    childIds: childIdsOf(members),
+  const spouseUnionsRaw = spouseFamilyDetails.map(({ familyId, members, marriageEvent }) => ({
+    familyId,
+    spouseMember: otherSpouseMember(members, individualId),
+    childMembers: childMembersOf(members),
     marriageYear: extractYear(marriageEvent),
   }));
 
   // Batch-resolve names, sex, and birth/death years for every related individual.
   const relatedIds = [
-    ...(fatherId ? [fatherId] : []),
-    ...(motherId ? [motherId] : []),
-    ...fullSiblingIds,
-    ...halfSiblingUnionsRaw.flatMap((union) => [
-      ...(union.otherParentId ? [union.otherParentId] : []),
-      ...union.childIds,
-    ]),
+    ...(fatherMember ? [fatherMember.individualId] : []),
+    ...(motherMember ? [motherMember.individualId] : []),
+    ...fullSiblingMembers.map((m) => m.individualId),
+    ...halfSiblingMembers.map(({ member }) => member.individualId),
     ...spouseUnionsRaw.flatMap((union) => [
-      ...(union.spouseId ? [union.spouseId] : []),
-      ...union.childIds,
+      ...(union.spouseMember ? [union.spouseMember.individualId] : []),
+      ...union.childMembers.map((m) => m.individualId),
     ]),
   ];
   const uniqueRelatedIds = [...new Set(relatedIds)];
@@ -183,19 +214,29 @@ export async function getPersonRelations(individualId: string): Promise<PersonRe
     gender: genderById.get(id) ?? 'U',
   });
 
+  const toRelationMember = (
+    member: FamilyMember,
+    side: 'paternal' | 'maternal' | null = null
+  ): RelationMember => ({
+    ...toRelated(member.individualId),
+    ...toRelationDetails(member),
+    side,
+  });
+
   return {
-    father: fatherId ? toRelated(fatherId) : null,
-    mother: motherId ? toRelated(motherId) : null,
-    fullSiblings: fullSiblingIds.map(toRelated),
-    halfSiblingUnions: halfSiblingUnionsRaw.map((union) => ({
-      side: union.side,
-      otherParent: union.otherParentId ? toRelated(union.otherParentId) : null,
-      children: union.childIds.map(toRelated),
-    })),
+    parentFamilyId: parentFamily?.id ?? null,
+    parentMembership: subjectMember ? toRelationDetails(subjectMember) : null,
+    father: fatherMember ? toRelated(fatherMember.individualId) : null,
+    mother: motherMember ? toRelated(motherMember.individualId) : null,
+    siblings: [
+      ...fullSiblingMembers.map((member) => toRelationMember(member)),
+      ...halfSiblingMembers.map(({ member, side }) => toRelationMember(member, side)),
+    ],
     spouseUnions: spouseUnionsRaw.map((union) => ({
-      spouse: union.spouseId ? toRelated(union.spouseId) : null,
+      familyId: union.familyId,
+      spouse: union.spouseMember ? toRelationMember(union.spouseMember) : null,
       marriageYear: union.marriageYear,
-      children: union.childIds.map(toRelated),
+      children: union.childMembers.map((member) => toRelationMember(member)),
     })),
   };
 }

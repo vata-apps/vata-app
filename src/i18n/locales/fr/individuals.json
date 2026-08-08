@@ -107,15 +107,6 @@
     "unknown": "Inconnu"
   },
   "relations": {
-    "table": {
-      "columns": {
-        "name": "Nom",
-        "relation": "Relation",
-        "born": "Naissance",
-        "died": "Décès"
-      },
-      "empty": "Aucune relation enregistrée"
-    },
     "labels": {
       "father": "Père",
       "mother": "Mère",
@@ -135,8 +126,7 @@
     "side": {
       "paternal": "Paternel",
       "maternal": "Maternel"
-    },
-    "via": "via {{name}}"
+    }
   },
   "sources": {
     "comingSoon": "Les sources ne sont pas encore disponibles."
@@ -231,6 +221,61 @@
       "question": "Supprimer définitivement « {{name}} » ?",
       "removeParticipation": "Me retirer de cet événement",
       "removeParticipationQuestion": "Retirer votre participation à « {{name}} » ? L'événement reste pour les autres participants."
+    }
+  },
+  "relationsTab": {
+    "create": "Créer le lien",
+    "newRelation": "Nouveau lien",
+    "detailTitle": "Détail du lien",
+    "lifespanUnknown": "Dates inconnues",
+    "noSpouse": "Second parent inconnu",
+    "filter": {
+      "label": "Filtrer les relations",
+      "all": "Tous",
+      "origin": "Parents et fratrie",
+      "unions": "Conjoints et enfants"
+    },
+    "union": {
+      "title": "Famille {{count}}",
+      "newTitle": "Nouvelle union"
+    },
+    "add": {
+      "father": "Ajouter le père",
+      "mother": "Ajouter la mère",
+      "sibling": "Ajouter un frère ou une sœur",
+      "union": "Ajouter un conjoint",
+      "secondParent": "Ajouter le second parent",
+      "child": "Ajouter un enfant"
+    },
+    "fields": {
+      "type": "Type de lien",
+      "nature": "Nature",
+      "natureUnset": "Non précisée",
+      "natureOptions": {
+        "biological": "Biologique",
+        "adoption": "Adoption",
+        "acknowledgment": "Reconnaissance",
+        "marriage": "Mariage",
+        "common_law": "Union de fait",
+        "step_parent": "Beau-parent",
+        "guardian": "Tuteur"
+      },
+      "certainty": "Certitude",
+      "certaintyUnset": "Non précisée",
+      "certaintyOptions": {
+        "confirmed": "Confirmée",
+        "probable": "Probable",
+        "to_verify": "À vérifier",
+        "disputed": "Contestée"
+      },
+      "note": "Note"
+    },
+    "sources": {
+      "title": "Sources du lien"
+    },
+    "delete": {
+      "trigger": "Retirer ce lien",
+      "question": "Retirer définitivement le lien avec « {{name}} » ?"
     }
   },
   "rail": {
