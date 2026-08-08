@@ -9,8 +9,8 @@
  * Row activation is derived from the primary cell's real `<a>` link. A click
  * anywhere on the row follows that same link, unless it lands on an
  * interactive element or is part of a text selection. Keyboard users tab to
- * the link and press Enter; pointer users can ⌘-click the row because the
- * synthetic click preserves modifiers.
+ * the link and press Enter; modifier-clicks (⌘/Ctrl/Shift) open the link's
+ * target in a new context.
  */
 import { type ReactNode, useMemo, useState } from 'react';
 
@@ -111,9 +111,12 @@ function sortRows<T>(rows: T[], columns: TableColumn<T>[], sort: TableSort | und
 }
 
 /**
- * Follow the first anchor inside the row, preserving modifiers so that
- * ⌘-click / Ctrl-click still opens in a new context. Clicks that land on an
- * interactive element or that are part of a text selection are ignored.
+ * Follow the first anchor inside the row. Plain clicks delegate to the link so
+ * the router performs client-side navigation; modifier-clicks (⌘/Ctrl/Shift)
+ * open the href in a new context explicitly, because a programmatic click is
+ * untrusted and so never gets the browser's own modifier-click handling.
+ * Clicks that land on an interactive element or that are part of a text
+ * selection are ignored.
  */
 function handleRowClick(event: React.MouseEvent<HTMLTableRowElement>): void {
   const target = event.target as HTMLElement;
@@ -127,17 +130,15 @@ function handleRowClick(event: React.MouseEvent<HTMLTableRowElement>): void {
   const anchor = event.currentTarget.querySelector('a');
   if (!anchor) return;
 
-  event.preventDefault();
-  anchor.dispatchEvent(
-    new MouseEvent('click', {
-      bubbles: true,
-      cancelable: true,
-      button: event.button,
-      ctrlKey: event.ctrlKey,
-      metaKey: event.metaKey,
-      shiftKey: event.shiftKey,
-    })
-  );
+  if (event.metaKey || event.ctrlKey || event.shiftKey) {
+    window.open(anchor.href, '_blank');
+    return;
+  }
+
+  // `click()` fires an untrusted click that still runs the anchor's activation
+  // behavior; the router's own handler on the link cancels it and navigates
+  // client-side.
+  anchor.click();
 }
 
 export function Table<T>({
