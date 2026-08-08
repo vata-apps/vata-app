@@ -163,6 +163,11 @@
     "newName": "New name",
     "detailTitle": "Name details",
     "untitled": "Name to fill in",
+    "filter": {
+      "label": "Filter names",
+      "all": "All",
+      "secondary": "Secondary"
+    },
     "fields": {
       "type": "Type",
       "givenNames": "Given names",
@@ -174,6 +179,9 @@
     "primary": {
       "label": "Primary name",
       "hint": "Shown in lists and in the tree."
+    },
+    "sources": {
+      "title": "Sources"
     },
     "delete": {
       "trigger": "Delete this name",

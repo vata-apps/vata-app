@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { queryKeys } from '$/lib/query-keys';
-import { countCitationsForEntities } from '$db-tree/citations';
+import { countCitationsForEntities, getCitationsForName } from '$db-tree/citations';
 import {
   createName,
   deleteName,
@@ -85,6 +85,20 @@ export function useDeleteName(individualId: string) {
   return useMutation({
     mutationFn: ({ id }: { id: string; isPrimary: boolean }) => deleteName(id),
     onSuccess: (_result, { isPrimary }) => invalidate(isPrimary),
+  });
+}
+
+/**
+ * The sources backing one saved name, for the detail panel's read-only Sources
+ * section. `nameId` is `null` while a draft is selected — nothing can cite a
+ * record that does not exist yet — which disables the query instead of firing
+ * it against a placeholder id.
+ */
+export function useNameCitations(nameId: string | null) {
+  return useQuery({
+    queryKey: queryKeys.nameCitations(nameId ?? ''),
+    queryFn: () => getCitationsForName(nameId as string),
+    enabled: nameId !== null,
   });
 }
 
