@@ -1,14 +1,11 @@
 import { style } from '@vanilla-extract/css';
 
 import { vars } from '$/design/theme.css';
+import { body } from '../record-panel/record-detail-shell.css';
 
 /** Styles for {@link ./name-detail}: the fields of one name record. */
 
-export const body = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: vars.space['5'],
-});
+export { body };
 
 /** Given names and surname share a row once there is room for two columns. */
 export const nameParts = style({

@@ -131,9 +131,6 @@
   "sources": {
     "comingSoon": "Sources are not available yet."
   },
-  "notes": {
-    "comingSoon": "Notes are not available yet."
-  },
   "namesTab": {
     "hint": "Only one name can be the primary name.",
     "add": "Add a name",
@@ -276,6 +273,66 @@
     "delete": {
       "trigger": "Remove this relation",
       "question": "Permanently remove the relation with \"{{name}}\"?"
+    }
+  },
+  "notesTab": {
+    "create": "Create note",
+    "newNote": "New note",
+    "detailTitle": "Note details",
+    "untitled": "Empty note",
+    "private": "Private note",
+    "filter": {
+      "label": "Filter notes",
+      "all": "All",
+      "person": "Person",
+      "event": "Events",
+      "relation": "Relations"
+    },
+    "group": {
+      "person": {
+        "title": "Notes about the person",
+        "hint": "Attached to {{name}}.",
+        "empty": "No notes about the person yet."
+      },
+      "event": {
+        "title": "Notes about events",
+        "hint": "Attached to one specific event in their life.",
+        "empty": "No notes about an event yet."
+      },
+      "relation": {
+        "title": "Notes about relations",
+        "hint": "Justify or qualify a family relation.",
+        "empty": "No notes about a relation yet."
+      }
+    },
+    "add": {
+      "person": "Add a note about the person",
+      "event": "Add a note about an event",
+      "relation": "Add a note about a relation"
+    },
+    "target": {
+      "person": "Person",
+      "event": "Event",
+      "relation": "Relation",
+      "unknownEvent": "Unknown event",
+      "unknownRelation": "Unknown relation"
+    },
+    "fields": {
+      "target": "Attached to",
+      "content": "Content",
+      "contentPlaceholder": "Enter the note, transcription, or hypothesis…",
+      "charCountEmpty": "Empty",
+      "charCount_one": "{{count}} character",
+      "charCount_other": "{{count}} characters",
+      "private": "Private note",
+      "privateHint": "Visible to you only, excluded from GEDCOM export."
+    },
+    "picker": {
+      "noItems": "Nothing to attach a note to yet"
+    },
+    "delete": {
+      "trigger": "Delete this note",
+      "question": "Permanently delete this note?"
     }
   },
   "rail": {

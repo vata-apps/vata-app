@@ -182,6 +182,30 @@ const TREE_SCHEMA = `
   CREATE INDEX IF NOT EXISTS idx_event_participants_individual ON event_participants(individual_id);
   CREATE INDEX IF NOT EXISTS idx_event_participants_family ON event_participants(family_id);
 
+  -- notes
+  CREATE TABLE IF NOT EXISTS notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    individual_id INTEGER NOT NULL,
+    scope TEXT NOT NULL CHECK(scope IN ('person', 'event', 'relation')),
+    event_id INTEGER,
+    family_member_id INTEGER,
+    text TEXT NOT NULL,
+    is_private INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (individual_id) REFERENCES individuals(id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+    FOREIGN KEY (family_member_id) REFERENCES family_members(id) ON DELETE CASCADE,
+    CHECK (
+      (scope = 'person' AND event_id IS NULL AND family_member_id IS NULL) OR
+      (scope = 'event' AND event_id IS NOT NULL AND family_member_id IS NULL) OR
+      (scope = 'relation' AND event_id IS NULL AND family_member_id IS NOT NULL)
+    )
+  );
+  CREATE INDEX IF NOT EXISTS idx_notes_individual ON notes(individual_id);
+  CREATE INDEX IF NOT EXISTS idx_notes_event ON notes(event_id);
+  CREATE INDEX IF NOT EXISTS idx_notes_family_member ON notes(family_member_id);
+
   -- tree_meta
   CREATE TABLE IF NOT EXISTS tree_meta (
     key TEXT PRIMARY KEY,

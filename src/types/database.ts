@@ -609,3 +609,38 @@ export interface EventTimelineEntry extends EventWithDetails {
   thumbnails: EventTimelineThumbnail[];
   hasCitations: boolean;
 }
+
+// =============================================================================
+// Note
+// =============================================================================
+
+/** Which of the person's records a note is attached to: themself, one of their events, or one of their relations (a `family_members` row). */
+export type NoteScope = 'person' | 'event' | 'relation';
+
+export interface Note {
+  id: string;
+  individualId: string;
+  scope: NoteScope;
+  /** Set when `scope` is `'event'`. */
+  eventId: string | null;
+  /** Set when `scope` is `'relation'` — the `family_members` row the note is about, same id `RelationDetails.memberId` points at. */
+  familyMemberId: string | null;
+  text: string;
+  isPrivate: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateNoteInput {
+  individualId: string;
+  scope: NoteScope;
+  eventId?: string;
+  familyMemberId?: string;
+  text: string;
+  isPrivate?: boolean;
+}
+
+export interface UpdateNoteInput {
+  text?: string;
+  isPrivate?: boolean;
+}
