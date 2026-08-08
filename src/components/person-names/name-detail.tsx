@@ -26,6 +26,7 @@ import { TextField } from '../ui/text-field';
 import { Typography } from '../ui/typography';
 import * as s from './name-detail.css';
 import { NAME_TYPES } from '$db-tree/names';
+import type { NameType } from '$types/database';
 import { type NameForm } from './name-form';
 
 export interface NameDetailProps {
@@ -71,7 +72,9 @@ export function NameDetail({
           }}
         >
           <Select.Trigger id={`${id}-type`}>
-            <Select.Value />
+            <Select.Value>
+              {(selected) => (selected ? t(`overview.names.types.${selected as NameType}`) : '')}
+            </Select.Value>
             <Select.Icon>
               <Icon name="chevron-down" size={14} />
             </Select.Icon>
