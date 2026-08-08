@@ -9,8 +9,8 @@
  * Row activation is derived from the primary cell's real `<a>` link. A click
  * anywhere on the row follows that same link, unless it lands on an
  * interactive element or is part of a text selection. Keyboard users tab to
- * the link and press Enter; modifier-clicks (⌘/Ctrl/Shift/Alt) open the
- * link's target in a new context.
+ * the link and press Enter; modifier-clicks (⌘/Ctrl/Shift) open the link's
+ * target in a new context.
  */
 import { type ReactNode, useMemo, useState } from 'react';
 
@@ -112,11 +112,11 @@ function sortRows<T>(rows: T[], columns: TableColumn<T>[], sort: TableSort | und
 
 /**
  * Follow the first anchor inside the row. Plain clicks delegate to the link so
- * the router performs client-side navigation; modifier-clicks (⌘/Ctrl/Shift/
- * Alt) open the href in a new context explicitly, because a dispatched event
- * is untrusted and so never triggers the browser's modifier-click default
- * action. Clicks that land on an interactive element or that are part of a
- * text selection are ignored.
+ * the router performs client-side navigation; modifier-clicks (⌘/Ctrl/Shift)
+ * open the href in a new context explicitly, because a programmatic click is
+ * untrusted and so never gets the browser's own modifier-click handling.
+ * Clicks that land on an interactive element or that are part of a text
+ * selection are ignored.
  */
 function handleRowClick(event: React.MouseEvent<HTMLTableRowElement>): void {
   const target = event.target as HTMLElement;
@@ -135,8 +135,9 @@ function handleRowClick(event: React.MouseEvent<HTMLTableRowElement>): void {
     return;
   }
 
-  // `HTMLElement.click()` runs the element's activation behavior, which a
-  // dispatched MouseEvent does not — the router's own handler then takes over.
+  // `click()` fires an untrusted click that still runs the anchor's activation
+  // behavior; the router's own handler on the link cancels it and navigates
+  // client-side.
   anchor.click();
 }
 
