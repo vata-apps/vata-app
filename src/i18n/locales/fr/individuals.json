@@ -106,18 +106,6 @@
     "chartLabel": "Arbre généalogique",
     "unknown": "Inconnu"
   },
-  "events": {
-    "scope": {
-      "label": "Portée",
-      "principal": "Principal",
-      "personal": "Personnel",
-      "all": "Tous les rôles"
-    },
-    "columns": {
-      "details": "Détails"
-    },
-    "empty": "Aucun événement enregistré"
-  },
   "relations": {
     "table": {
       "columns": {
@@ -186,6 +174,63 @@
     "delete": {
       "trigger": "Supprimer ce nom",
       "question": "Supprimer définitivement « {{name}} » ?"
+    }
+  },
+  "eventsTab": {
+    "add": "Ajouter un événement",
+    "create": "Créer l'événement",
+    "newEvent": "Nouvel événement",
+    "detailTitle": "Détail de l'événement",
+    "untitled": "Type à choisir",
+    "filter": {
+      "label": "Filtrer les événements",
+      "all": "Tous",
+      "personal": "Vie personnelle",
+      "other": "Autres rôles"
+    },
+    "group": {
+      "personal": {
+        "title": "Vie personnelle",
+        "hint": "Les événements où cette personne est la principale concernée : naissance, décès, mariage…"
+      },
+      "other": {
+        "title": "Autres rôles",
+        "hint": "Les événements d'autres personnes où celle-ci intervient comme témoin, déclarant ou parrain/marraine."
+      }
+    },
+    "fields": {
+      "type": "Type",
+      "typePlaceholder": "Choisir un type",
+      "date": "Date",
+      "datePlaceholder": "Date",
+      "place": "Lieu",
+      "placeUnavailable": "Non disponible pour l'instant",
+      "role": "Rôle",
+      "roleSpouse": "Conjoint",
+      "note": "Note"
+    },
+    "participants": {
+      "title": "Participants",
+      "empty": "Aucun autre participant",
+      "add": "Ajouter une personne",
+      "removeAria": "Retirer {{name}} de cet événement",
+      "browseLabel": "Parcourir les personnes",
+      "recent": "Récents",
+      "all": "Toutes les personnes",
+      "noRecents": "Aucune personne récente"
+    },
+    "sources": {
+      "title": "Sources"
+    },
+    "media": {
+      "title": "Médias",
+      "comingSoon": "Bientôt disponible."
+    },
+    "delete": {
+      "trigger": "Supprimer cet événement",
+      "question": "Supprimer définitivement « {{name}} » ?",
+      "removeParticipation": "Me retirer de cet événement",
+      "removeParticipationQuestion": "Retirer votre participation à « {{name}} » ? L'événement reste pour les autres participants."
     }
   },
   "rail": {

@@ -3,28 +3,21 @@ import { useTranslation } from 'react-i18next';
 import { SegmentedControl } from '$components/ui/segmented-control';
 
 /**
- * The graduated scope filter for a person's Events tab. Each level is
- * cumulative:
- * - `principal` — the person's own principal events only.
- * - `personal` — adds their unions (marriages, divorces).
- * - `all` — adds their secondary roles in others' events (witness, …).
+ * Which of a person's events are shown: all of them, only their own "vie
+ * personnelle" (principal events and unions — their own vital records and
+ * marriages), or only "autres rôles" (secondary roles in someone else's
+ * event: witness, informant, godparent, …).
  */
-export type PersonEventScope = 'principal' | 'personal' | 'all';
+export type PersonEventFilter = 'all' | 'personal' | 'other';
 
-/** The default scope — shows principal events plus unions. */
-export const DEFAULT_PERSON_EVENT_SCOPE: PersonEventScope = 'personal';
-
-/** Props accepted by {@link PersonEventsFilterToolbar}. */
 export interface PersonEventsFilterToolbarProps {
-  /** The current scope value (the page owns this state). */
-  value: PersonEventScope;
-  /** Called with the next scope value on any control change. */
-  onChange: (next: PersonEventScope) => void;
+  /** The current filter value (the page owns this state). */
+  value: PersonEventFilter;
+  /** Called with the next filter value on any control change. */
+  onChange: (next: PersonEventFilter) => void;
 }
 
-/**
- * The Person Events tab filter toolbar. Holds the cumulative scope control.
- */
+/** The Person Events tab filter toolbar. Holds the Tous/Vie personnelle/Autres rôles control. */
 export function PersonEventsFilterToolbar({
   value,
   onChange,
@@ -32,24 +25,15 @@ export function PersonEventsFilterToolbar({
   const { t } = useTranslation('individuals');
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        gap: '12px',
-      }}
-    >
-      <SegmentedControl
-        aria-label={t('events.scope.label')}
-        value={value}
-        onValueChange={onChange}
-        options={[
-          { value: 'principal', label: t('events.scope.principal') },
-          { value: 'personal', label: t('events.scope.personal') },
-          { value: 'all', label: t('events.scope.all') },
-        ]}
-      />
-    </div>
+    <SegmentedControl
+      aria-label={t('eventsTab.filter.label')}
+      value={value}
+      onValueChange={onChange}
+      options={[
+        { value: 'all', label: t('eventsTab.filter.all') },
+        { value: 'personal', label: t('eventsTab.filter.personal') },
+        { value: 'other', label: t('eventsTab.filter.other') },
+      ]}
+    />
   );
 }
