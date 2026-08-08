@@ -1,0 +1,117 @@
+src/components/person-events-filters.tsx
+  s_a9d61cd94863bd::t_54cb69c3a6f9d3 6-9,11,14-17,20,28-37
+src/i18n/locales/en/individuals.json
+  s_a9d61cd94863bd::t_08a23c9a9bd2e0 231-233
+  s_a9d61cd94863bd::t_4008e70f5a0c38 179-230,234-235
+src/components/person-events/event-detail.css.ts
+  s_a9d61cd94863bd::t_7c7d00d84a35ee 1-51
+src/routes/tree/$treeId/individual/$individualId/events.tsx
+  s_a9d61cd94863bd::t_371a90ec0b7ed7 5
+src/types/database.ts
+  s_a9d61cd94863bd::t_e063740afeaa6c 268-269,273-274
+src/i18n/locales/fr/individuals.json
+  s_a9d61cd94863bd::t_e84e9bd17af579 231-233
+  s_a9d61cd94863bd::t_ce86592ca7a0ee 179-230,234-235
+src/components/person-names/name-detail.tsx
+  s_a9d61cd94863bd::t_0624b912189143 168
+  s_a9d61cd94863bd::t_caa0d9f6524398 23,30
+  s_a9d61cd94863bd::t_5a6501cea3996f 34
+src/components/individuals/person-display.ts
+  s_a9d61cd94863bd::t_06c550fc5f9d49 35-46
+src/db/trees/events.ts
+  s_a9d61cd94863bd::t_70fc5229995e6f 5
+  s_a9d61cd94863bd::t_fc947f7e3e28d3 506-535
+src/components/person-events/event-detail.tsx
+  s_a9d61cd94863bd::t_dc9a2e2d2298ad 15
+  s_a9d61cd94863bd::t_ccad26cd0019f0 42-86
+  s_a9d61cd94863bd::t_15a8c24864d1a4 20,31
+  s_a9d61cd94863bd::t_56ea56ec30a876 196
+  s_a9d61cd94863bd::t_059044ce1a9534 30
+  s_a9d61cd94863bd::t_27d44baa6497de 260-262,264-265
+  s_a9d61cd94863bd::t_3594af401bfbdd 1-14,16-19,21-29,32-41,87-105,107-195,197-211,213-259,263,266-285
+  s_a9d61cd94863bd::t_25a9277fe5b744 212
+  s_a9d61cd94863bd::t_4d97053c9c25ef 106
+  s_a9d61cd94863bd::t_5822c1832fe6dd 286-289
+src/pages/PersonEventsPage.tsx
+  s_a9d61cd94863bd::t_dae72522fa3985 37
+  s_a9d61cd94863bd::t_2b9adbc7feeffb 167
+  s_a9d61cd94863bd::t_82895bc730d82b 216-217
+  s_a9d61cd94863bd::t_869f787f05c694 223-224,226,236-243,253-268,287
+  s_a9d61cd94863bd::t_75bb19a655f65c 200-202,204
+  s_a9d61cd94863bd::t_623c37b5a587fa 1-2,5,8-23,25,27-29,31-36,38-46,48-58,60-63,65-69,72-76,80-81,83-94,99-104,107-111,113-119,121-166,168-199,205-206,208-215,219-221,225,227-233,235,244-252,269-286,288-302,306-356,358-383,385-403,405-406
+  s_a9d61cd94863bd::t_2fe61b81b6627a 95-98
+  s_a9d61cd94863bd::t_5ee122e5443f88 384
+  s_a9d61cd94863bd::t_2c86df360a6580 303-305
+  s_a9d61cd94863bd::t_6453937df22bb0 234,404,407-428
+src/components/record-panel/record-sources.css.ts
+  s_a9d61cd94863bd::t_d594598bba8931 1-29
+src/components/individuals/person-picker.tsx
+  s_a9d61cd94863bd::t_4073a689c4834e 59-60,68-69
+  s_a9d61cd94863bd::t_8f8c9249f0e306 6
+  s_a9d61cd94863bd::t_bd93413f9148f1 8-13
+src/components/person-events/event-form.ts
+  s_a9d61cd94863bd::t_e54f41249a1607 50-67
+  s_a9d61cd94863bd::t_c01a8d45b7d6e4 1
+  s_a9d61cd94863bd::t_c555430065cb50 2-49
+src/hooks/usePersonEvents.ts
+  s_a9d61cd94863bd::t_84b84044a1b95a 5-8,10-13,57,88,212
+  s_a9d61cd94863bd::t_195842fa9650e2 19-20
+  s_a9d61cd94863bd::t_e547417ffa1135 201,210-211,213-218
+  s_a9d61cd94863bd::t_bd8b9a4efc476c 1-2,4,47-49,56,58-63,67-68,70-72,77-87,89,93-98,110-115,120-135,142-159,168-169,171,187-200,202-209,219-220
+  s_a9d61cd94863bd::t_38bc7fea90d8e1 136-141
+  s_a9d61cd94863bd::t_e4e06805b80371 14-18
+  s_a9d61cd94863bd::t_015ae6044a13e0 160-167,170,172,174,181,183-186
+  s_a9d61cd94863bd::t_4aa381f9271108 173,175-180
+  s_a9d61cd94863bd::t_540e2b7a98f851 9
+  s_a9d61cd94863bd::t_600e851020b03b 50-55,64-66,69,73-76,90-92,99-109,116-119
+  s_a9d61cd94863bd::t_86e4fda7d3270d 22-25,29-31,36-43
+  s_a9d61cd94863bd::t_635abc872f7a8a 182
+  s_a9d61cd94863bd::t_d0b784b55a20e2 21,221-225
+src/hooks/useIndividualBrowseOrSearch.ts
+  s_a9d61cd94863bd::t_706e79411af59d 1-50
+src/lib/query-keys.ts
+  s_a9d61cd94863bd::t_fb293b5249c983 30-31
+src/components/ui/entity-picker.tsx
+  s_a9d61cd94863bd::t_eb07a700a3fe9b 59
+  s_a9d61cd94863bd::t_6aa23a1ee1e104 75
+  s_a9d61cd94863bd::t_623d7406253131 37-38
+src/components/record-panel/record-sources.tsx
+  s_a9d61cd94863bd::t_5c66c875b2bef3 1-43
+src/components/person-events/event-participant-picker.tsx
+  s_a9d61cd94863bd::t_13d9df8dbfcce9 20
+  s_a9d61cd94863bd::t_6e2bb449b57ef5 25
+  s_a9d61cd94863bd::t_679e1922eddd9f 60-61,70,72,77
+  s_a9d61cd94863bd::t_82403ca2cb8043 5-8
+  s_a9d61cd94863bd::t_4092c8c57725c0 18
+  s_a9d61cd94863bd::t_33bf17e7792314 1-4,9-13,21-23,26-34,37-57,59,62-64,66-69,71,73-76,78-99,106-142,144-158
+  s_a9d61cd94863bd::t_385697b9e17fd3 58
+  s_a9d61cd94863bd::t_54ab6a5d3c058f 143
+  s_a9d61cd94863bd::t_8c4af1c9f14d1e 100-105
+  s_a9d61cd94863bd::t_68db01a9494fc2 14-17,19
+  s_a9d61cd94863bd::t_e676abb1fa5154 65
+  s_a9d61cd94863bd::t_12b53a9afaa624 24
+  s_a9d61cd94863bd::t_fac8dcbc870b98 35-36
+  s_a9d61cd94863bd::t_c0b0650f1d8f28 159
+src/store/app-store.ts
+  s_a9d61cd94863bd::t_8aa5ede931d2a8 39-46,52,63-79,86-92
+  s_a9d61cd94863bd::t_699c322992613c 24-26,47
+src/lib/event-columns.tsx
+  s_a9d61cd94863bd::t_56302129503f80 45-53,68
+  s_a9d61cd94863bd::t_f4c7897cb497c8 44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.21",
+  "base_commit_sha": "531593b3a39264301da8fe8f7d479634afd6783b",
+  "prompts": {},
+  "sessions": {
+    "s_a9d61cd94863bd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "39a59a01-0a36-4589-9ca8-2fe3c1bf41b2",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
