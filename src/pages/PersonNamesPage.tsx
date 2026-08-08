@@ -71,12 +71,20 @@ export function PersonNamesPage(): JSX.Element {
 
   const rows = names ?? [];
   const visibleRows = rows.filter((name) => matchesNameFilter(name, filter));
+  // A row selected before a filter change is dropped once the filter hides
+  // it, rather than kept active: the inline detail only renders for a row
+  // inside the visible-rows loop, while the sticky side panel renders
+  // unconditionally — keeping a hidden selection would desync the two
+  // (nothing shown below the 900px breakpoint, a panel editing an invisible
+  // row above it).
+  const isSelectionHidden =
+    selectedId !== null &&
+    selectedId !== DRAFT_ID &&
+    !visibleRows.some((name) => name.id === selectedId);
   // Falling back to the first visible row keeps a record open at all times,
   // which is what makes the side panel worth its width.
-  const activeId = selectedId ?? visibleRows[0]?.id ?? null;
+  const activeId = (isSelectionHidden ? null : selectedId) ?? visibleRows[0]?.id ?? null;
   const isDraftSelected = activeId === DRAFT_ID;
-  // Looked up in the full list, not the filtered one: a row selected before a
-  // filter change stays open even after it drops out of view.
   const selectedName = rows.find((name) => name.id === activeId);
   // Undefined for a draft, or once a stale `activeId` points at a just-deleted
   // row — the one condition every "this record is saved and current" check
