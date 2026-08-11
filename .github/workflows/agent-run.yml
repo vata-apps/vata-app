@@ -15,7 +15,8 @@ concurrency:
 
 jobs:
   run-agent:
-    if: github.event.label.name == 'agent:ready'
+    # Disabled — keep the pipeline code intact, just stop it from running.
+    if: false && github.event.label.name == 'agent:ready'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:

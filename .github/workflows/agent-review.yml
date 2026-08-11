@@ -19,8 +19,10 @@ jobs:
   # a fork PR's pull_request event gets no repo secrets and can't be pushed
   # to, so it must be skipped cleanly here rather than fail later.
   triage:
+    # Disabled — keep the pipeline code intact, just stop it from running.
     if: >-
-      github.event.sender.login != 'vata-reviewer[bot]'
+      false
+      && github.event.sender.login != 'vata-reviewer[bot]'
       && github.event.pull_request.head.repo.full_name == github.repository
       && github.event.pull_request.draft == false
       && github.event.pull_request.state == 'open'
