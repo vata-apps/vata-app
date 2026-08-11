@@ -40,7 +40,6 @@ describe('getPersonEvents', () => {
     const eventId = await createEvent({
       eventTypeId: birth!.id,
       dateOriginal: '31 JUL 1980',
-      dateSort: '1980-07-31',
     });
     await addEventParticipant({ eventId, individualId, role: 'principal' });
 
@@ -185,7 +184,6 @@ describe('getPersonEvents', () => {
     const birthId = await createEvent({
       eventTypeId: birth!.id,
       dateOriginal: '31 JUL 1980',
-      dateSort: '1980-07-31',
     });
     await addEventParticipant({ eventId: birthId, individualId: harry, role: 'principal' });
 
@@ -193,7 +191,7 @@ describe('getPersonEvents', () => {
     const familyId = await createFamily({});
     await addFamilyMember({ familyId, individualId: harry, role: 'husband' });
     await addFamilyMember({ familyId, individualId: ginny, role: 'wife' });
-    const marriageId = await createEvent({ eventTypeId: marriage!.id, dateSort: '2002' });
+    const marriageId = await createEvent({ eventTypeId: marriage!.id, dateOriginal: '2002' });
     await addEventParticipant({ eventId: marriageId, familyId, role: 'principal' });
 
     // Undated secondary role (witness at another person's event).

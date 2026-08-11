@@ -1,4 +1,5 @@
 import { getTreeDb } from '../connection';
+import { tryParseSortDate } from '$/lib/dateSort';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
 import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import { mapToPlace, type RawPlace } from './places';
@@ -227,7 +228,7 @@ export async function getAllEvents(): Promise<Event[]> {
   const rows = await db.select<RawEvent[]>(
     `SELECT id, event_type_id, date_original, date_sort, place_id, description, notes, created_at, updated_at
      FROM events
-     ORDER BY date_sort, id`
+     ORDER BY CASE WHEN date_sort IS NULL THEN 1 ELSE 0 END, date_sort, id`
   );
   return rows.map(mapToEvent);
 }
@@ -290,7 +291,7 @@ export async function createEvent(input: CreateEventInput): Promise<string> {
     [
       parseInt(input.eventTypeId, 10),
       input.dateOriginal ?? null,
-      input.dateSort ?? null,
+      tryParseSortDate(input.dateOriginal) ?? null,
       placeDbId,
       input.description ?? null,
       input.notes ?? null,
@@ -322,10 +323,14 @@ export async function updateEvent(id: string, input: UpdateEventInput): Promise<
   if (input.dateOriginal !== undefined) {
     sets.push(`date_original = $${paramIndex++}`);
     params.push(input.dateOriginal);
-  }
-  if (input.dateSort !== undefined) {
+
+    // date_sort is derived state, not a caller's responsibility: it tracks
+    // date_original on every write so the two writers of an event's date
+    // that go through this function (the Person editor and the Events
+    // tab) can never disagree about it. The GEDCOM importer bypasses this
+    // function with its own raw insert and computes date_sort separately.
     sets.push(`date_sort = $${paramIndex++}`);
-    params.push(input.dateSort);
+    params.push(tryParseSortDate(input.dateOriginal ?? undefined) ?? null);
   }
   if (input.placeId !== undefined) {
     sets.push(`place_id = $${paramIndex++}`);
@@ -382,7 +387,7 @@ export async function getEventsByIndividualId(individualId: string): Promise<Eve
      FROM events e
      INNER JOIN event_participants ep ON ep.event_id = e.id
      WHERE ep.individual_id = $1
-     ORDER BY e.date_sort, e.id`,
+     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`,
     [dbId]
   );
   return rows.map(mapToEvent);
@@ -406,7 +411,7 @@ export async function getEventsByIndividualIdWithDetails(
      INNER JOIN event_types et ON et.id = e.event_type_id
      INNER JOIN event_participants ep ON ep.event_id = e.id
      WHERE ep.individual_id = $1
-     ORDER BY e.date_sort, e.id`,
+     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`,
     [dbId]
   );
   return assembleEventsWithDetails(rows);
@@ -423,7 +428,7 @@ export async function getEventsByFamilyId(familyId: string): Promise<Event[]> {
      FROM events e
      INNER JOIN event_participants ep ON ep.event_id = e.id
      WHERE ep.family_id = $1
-     ORDER BY e.date_sort, e.id`,
+     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`,
     [dbId]
   );
   return rows.map(mapToEvent);
@@ -446,7 +451,7 @@ export async function getEventsByFamilyIdWithDetails(
      INNER JOIN event_types et ON et.id = e.event_type_id
      INNER JOIN event_participants ep ON ep.event_id = e.id
      WHERE ep.family_id = $1
-     ORDER BY e.date_sort, e.id`,
+     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`,
     [dbId]
   );
   return assembleEventsWithDetails(rows);
@@ -462,7 +467,7 @@ export async function getEventsByPlaceId(placeId: string): Promise<Event[]> {
     `SELECT id, event_type_id, date_original, date_sort, place_id, description, notes, created_at, updated_at
      FROM events
      WHERE place_id = $1
-     ORDER BY date_sort, id`,
+     ORDER BY CASE WHEN date_sort IS NULL THEN 1 ELSE 0 END, date_sort, id`,
     [dbId]
   );
   return rows.map(mapToEvent);
@@ -477,7 +482,7 @@ export async function getEventsByTypeId(eventTypeId: string): Promise<Event[]> {
     `SELECT id, event_type_id, date_original, date_sort, place_id, description, notes, created_at, updated_at
      FROM events
      WHERE event_type_id = $1
-     ORDER BY date_sort, id`,
+     ORDER BY CASE WHEN date_sort IS NULL THEN 1 ELSE 0 END, date_sort, id`,
     [parseInt(eventTypeId, 10)]
   );
   return rows.map(mapToEvent);

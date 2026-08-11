@@ -140,13 +140,11 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
   async function addBirth(
     individualId: string,
     dateOriginal: string,
-    dateSort: string,
     placeId?: string
   ): Promise<string> {
     const eventId = await createEvent({
       eventTypeId: birtType!.id,
       dateOriginal,
-      dateSort,
       placeId,
     });
     await addEventParticipant({ eventId, individualId, role: 'principal' });
@@ -156,13 +154,11 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
   async function addDeath(
     individualId: string,
     dateOriginal: string,
-    dateSort: string,
     placeId?: string
   ): Promise<void> {
     const eventId = await createEvent({
       eventTypeId: deatType!.id,
       dateOriginal,
-      dateSort,
       placeId,
     });
     await addEventParticipant({ eventId, individualId, role: 'principal' });
@@ -171,13 +167,11 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
   async function addMarriage(
     familyId: string,
     dateOriginal?: string,
-    dateSort?: string,
     placeId?: string
   ): Promise<string> {
     const eventId = await createEvent({
       eventTypeId: marrType!.id,
       dateOriginal,
-      dateSort,
       placeId,
     });
     await addEventParticipant({ eventId, familyId, role: 'principal' });
@@ -274,66 +268,66 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
   // =========================================================================
 
   // James Potter — 27 Mar 1960
-  await addBirth(james, '27 MAR 1960', '1960-03-27');
+  await addBirth(james, '27 MAR 1960');
   // Lily Evans — 30 Jan 1960
-  await addBirth(lily, '30 JAN 1960', '1960-01-30');
+  await addBirth(lily, '30 JAN 1960');
   // Harry Potter — 31 Jul 1980, Godric's Hollow
-  const harryBirth = await addBirth(harry, '31 JUL 1980', '1980-07-31', godricsHollow);
+  const harryBirth = await addBirth(harry, '31 JUL 1980', godricsHollow);
   // Ginny Weasley — 11 Aug 1981, The Burrow
-  await addBirth(ginny, '11 AUG 1981', '1981-08-11', burrow);
+  await addBirth(ginny, '11 AUG 1981', burrow);
   // James Sirius — ABT 2004
-  const jamesSiriusBirth = await addBirth(jamesSirius, 'ABT 2004', '2004');
+  const jamesSiriusBirth = await addBirth(jamesSirius, 'ABT 2004');
   // Albus Severus — ABT 2006
-  const albusSeverusBirth = await addBirth(albusSeverus, 'ABT 2006', '2006');
+  const albusSeverusBirth = await addBirth(albusSeverus, 'ABT 2006');
   // Lily Luna — ABT 2008
-  const lilyLunaBirth = await addBirth(lilyLuna, 'ABT 2008', '2008');
+  const lilyLunaBirth = await addBirth(lilyLuna, 'ABT 2008');
   // Petunia — ABT 1959
-  await addBirth(petunia, 'ABT 1959', '1959');
+  await addBirth(petunia, 'ABT 1959');
   // Dudley — 23 Jun 1980
-  await addBirth(dudley, '23 JUN 1980', '1980-06-23', privetDrive);
+  await addBirth(dudley, '23 JUN 1980', privetDrive);
   // Arthur — 6 Feb 1950
-  await addBirth(arthur, '6 FEB 1950', '1950-02-06');
+  await addBirth(arthur, '6 FEB 1950');
   // Molly — 30 Oct 1949
-  await addBirth(molly, '30 OCT 1949', '1949-10-30');
+  await addBirth(molly, '30 OCT 1949');
   // Bill — 29 Nov 1970
-  await addBirth(bill, '29 NOV 1970', '1970-11-29');
+  await addBirth(bill, '29 NOV 1970');
   // Charlie — 12 Dec 1972
-  await addBirth(charlie, '12 DEC 1972', '1972-12-12');
+  await addBirth(charlie, '12 DEC 1972');
   // Percy — 22 Aug 1976
-  await addBirth(percy, '22 AUG 1976', '1976-08-22');
+  await addBirth(percy, '22 AUG 1976');
   // Fred — 1 Apr 1978
-  await addBirth(fred, '1 APR 1978', '1978-04-01');
+  await addBirth(fred, '1 APR 1978');
   // George — 1 Apr 1978
-  await addBirth(george, '1 APR 1978', '1978-04-01');
+  await addBirth(george, '1 APR 1978');
   // Ron — 1 Mar 1980
-  const ronBirth = await addBirth(ron, '1 MAR 1980', '1980-03-01', burrow);
+  const ronBirth = await addBirth(ron, '1 MAR 1980', burrow);
   // Hermione — 19 Sep 1979
-  await addBirth(hermione, '19 SEP 1979', '1979-09-19');
+  await addBirth(hermione, '19 SEP 1979');
   // Victoire — 2 May 2000
-  await addBirth(victoire, '2 MAY 2000', '2000-05-02');
+  await addBirth(victoire, '2 MAY 2000');
   // Dominique — ABT 2002
-  await addBirth(dominique, 'ABT 2002', '2002');
+  await addBirth(dominique, 'ABT 2002');
   // Louis — ABT 2004
-  await addBirth(louis, 'ABT 2004', '2004');
+  await addBirth(louis, 'ABT 2004');
   // Rose — ABT 2006
-  await addBirth(rose, 'ABT 2006', '2006');
+  await addBirth(rose, 'ABT 2006');
   // Hugo — ABT 2008
-  await addBirth(hugo, 'ABT 2008', '2008');
+  await addBirth(hugo, 'ABT 2008');
 
   // =========================================================================
   // Death events
   // =========================================================================
 
   // Fleamont — ABT 1979
-  await addDeath(fleamont, 'ABT 1979', '1979');
+  await addDeath(fleamont, 'ABT 1979');
   // Euphemia — ABT 1979
-  await addDeath(euphemia, 'ABT 1979', '1979');
+  await addDeath(euphemia, 'ABT 1979');
   // James — 31 Oct 1981, Godric's Hollow
-  await addDeath(james, '31 OCT 1981', '1981-10-31', godricsHollow);
+  await addDeath(james, '31 OCT 1981', godricsHollow);
   // Lily — 31 Oct 1981, Godric's Hollow
-  await addDeath(lily, '31 OCT 1981', '1981-10-31', godricsHollow);
+  await addDeath(lily, '31 OCT 1981', godricsHollow);
   // Fred — 2 May 1998, Hogwarts
-  await addDeath(fred, '2 MAY 1998', '1998-05-02', hogwarts);
+  await addDeath(fred, '2 MAY 1998', hogwarts);
 
   // =========================================================================
   // Families (10) + Marriage events
@@ -364,7 +358,7 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
   await addFamilyMember({ familyId: f3, individualId: james, role: 'husband' });
   await addFamilyMember({ familyId: f3, individualId: lily, role: 'wife' });
   await addFamilyMember({ familyId: f3, individualId: harry, role: 'child', pedigree: 'birth' });
-  const jamesLilyMarriage = await addMarriage(f3, 'ABT 1978', '1978', godricsHollow);
+  const jamesLilyMarriage = await addMarriage(f3, 'ABT 1978', godricsHollow);
 
   // F4: Vernon + Petunia → Dudley
   const f4 = await createFamily({});
@@ -389,7 +383,7 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
   await addFamilyMember({ familyId: f5, individualId: george, role: 'child', pedigree: 'birth' });
   await addFamilyMember({ familyId: f5, individualId: ron, role: 'child', pedigree: 'birth' });
   await addFamilyMember({ familyId: f5, individualId: ginny, role: 'child', pedigree: 'birth' });
-  await addMarriage(f5, 'ABT 1969', '1969', burrow);
+  await addMarriage(f5, 'ABT 1969', burrow);
 
   // F6: Harry + Ginny → James Sirius, Albus Severus, Lily Luna
   const f6 = await createFamily({});
@@ -413,7 +407,7 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
     role: 'child',
     pedigree: 'birth',
   });
-  const harryGinnyMarriage = await addMarriage(f6, 'ABT 2002', '2002');
+  const harryGinnyMarriage = await addMarriage(f6, 'ABT 2002');
 
   // F7: Bill + Fleur → Victoire, Dominique, Louis
   const f7 = await createFamily({});
@@ -432,7 +426,7 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
     pedigree: 'birth',
   });
   await addFamilyMember({ familyId: f7, individualId: louis, role: 'child', pedigree: 'birth' });
-  await addMarriage(f7, '1 AUG 1997', '1997-08-01');
+  await addMarriage(f7, '1 AUG 1997');
 
   // F8: Percy + Audrey → Molly II, Lucy
   const f8 = await createFamily({});
@@ -466,7 +460,7 @@ async function seedDemoTree(systemDb: Database, treePath: string): Promise<void>
   await addFamilyMember({ familyId: f10, individualId: hermione, role: 'wife' });
   await addFamilyMember({ familyId: f10, individualId: rose, role: 'child', pedigree: 'birth' });
   await addFamilyMember({ familyId: f10, individualId: hugo, role: 'child', pedigree: 'birth' });
-  const ronHermioneMarriage = await addMarriage(f10, 'ABT 2003', '2003');
+  const ronHermioneMarriage = await addMarriage(f10, 'ABT 2003');
 
   // =========================================================================
   // Secondary participants — people present at an event without being its
