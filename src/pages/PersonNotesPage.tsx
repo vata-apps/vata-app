@@ -478,18 +478,10 @@ export function PersonNotesPage(): JSX.Element {
     );
   }
 
-  function cardBody(
-    scope: NoteScope,
-    scopeNotes: Note[],
-    hint: string,
-    emptyLabel: string
-  ): ReactNode {
+  function cardBody(scope: NoteScope, scopeNotes: Note[], emptyLabel: string): ReactNode {
     const isEmpty = scopeNotes.length === 0 && draft?.target.scope !== scope;
     return (
       <>
-        <Typography size="xs" tone="muted">
-          {hint}
-        </Typography>
         {scopeNotes.map(renderRow)}
         {renderDraftRow(scope)}
         {isEmpty ? (
@@ -506,28 +498,24 @@ export function PersonNotesPage(): JSX.Element {
   const scopeCards: {
     scope: NoteScope;
     title: string;
-    hint: string;
     empty: string;
     footer: ReactNode;
   }[] = [
     {
       scope: 'person',
       title: t('notesTab.group.person.title'),
-      hint: t('notesTab.group.person.hint', { name: personName }),
       empty: t('notesTab.group.person.empty'),
       footer: addPersonButton,
     },
     {
       scope: 'event',
       title: t('notesTab.group.event.title'),
-      hint: t('notesTab.group.event.hint'),
       empty: t('notesTab.group.event.empty'),
       footer: eventPicker,
     },
     {
       scope: 'relation',
       title: t('notesTab.group.relation.title'),
-      hint: t('notesTab.group.relation.hint'),
       empty: t('notesTab.group.relation.empty'),
       footer: relationPicker,
     },
@@ -552,7 +540,7 @@ export function PersonNotesPage(): JSX.Element {
                 count={scopeNotes.length + (draft?.target.scope === card.scope ? 1 : 0)}
                 footer={card.footer}
               >
-                {cardBody(card.scope, scopeNotes, card.hint, card.empty)}
+                {cardBody(card.scope, scopeNotes, card.empty)}
               </RecordPanel.ListCard>
             );
           })}

@@ -391,10 +391,6 @@ export function PersonEventsPage(): JSX.Element {
               count={(showPersonalRows ? personalRows.length : 0) + (draft ? 1 : 0)}
               footer={addButton}
             >
-              <Typography size="xs" tone="muted">
-                {t('eventsTab.group.personal.hint')}
-              </Typography>
-
               {showPersonalRows ? personalRows.map((entry) => renderRow(entry, 'personal')) : null}
 
               {draft ? (
@@ -420,9 +416,6 @@ export function PersonEventsPage(): JSX.Element {
 
           {showOtherRows ? (
             <RecordPanel.ListCard title={t('eventsTab.group.other.title')} count={otherRows.length}>
-              <Typography size="xs" tone="muted">
-                {t('eventsTab.group.other.hint')}
-              </Typography>
               {otherRows.map((entry) => renderRow(entry, 'other'))}
             </RecordPanel.ListCard>
           ) : null}

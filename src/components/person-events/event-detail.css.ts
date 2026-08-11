@@ -38,3 +38,14 @@ export const participantName = style({
   flex: 1,
   minWidth: 0,
 });
+
+/**
+ * Wraps the role `Select` in a participant row. The shared trigger sets
+ * `width: 100%` to fill a `Field`; as a bare flex item that substitutes for
+ * `flex-basis` and makes it claim the whole row, starving the name next to
+ * it. This wrapper gives the trigger its own shrink-to-fit box to fill
+ * instead.
+ */
+export const participantRole = style({
+  flexShrink: 0,
+});
