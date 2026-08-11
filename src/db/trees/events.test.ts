@@ -263,11 +263,11 @@ describe('getAllEvents', () => {
 
     await createEvent({
       eventTypeId: types[0].id,
-      dateSort: '1990-01-01',
+      dateOriginal: '1990',
     });
     await createEvent({
       eventTypeId: types[0].id,
-      dateSort: '1980-01-01',
+      dateOriginal: '1980',
     });
 
     const events = await getAllEvents();
@@ -368,7 +368,6 @@ describe('createEvent', () => {
     const id = await createEvent({
       eventTypeId: types[0].id,
       dateOriginal: 'ABT 1850',
-      dateSort: '1850-01-01',
       placeId: `P-${String(placeDbId).padStart(4, '0')}`,
       description: 'Birth event',
       notes: 'Some notes',
@@ -410,7 +409,6 @@ describe('updateEvent', () => {
     const id = await createEvent({ eventTypeId: types[0].id });
     await updateEvent(id, {
       dateOriginal: '1 JAN 1900',
-      dateSort: '1900-01-01',
     });
 
     const event = await getEventById(id);

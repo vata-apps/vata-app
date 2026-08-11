@@ -47,7 +47,6 @@ describe('EventManager.getAll', () => {
     const eventId = await createEvent({
       eventTypeId: birtType.id,
       dateOriginal: '1867-11-07',
-      dateSort: '1867-11-07',
     });
     await addEventParticipant({ eventId, individualId, role: 'principal' });
 
@@ -77,7 +76,6 @@ describe('EventManager.getAll', () => {
     const eventId = await createEvent({
       eventTypeId: marrType.id,
       dateOriginal: '1895-07-26',
-      dateSort: '1895-07-26',
     });
     await addEventParticipant({ eventId, familyId, role: 'principal' });
 
@@ -167,9 +165,9 @@ describe('EventManager.getAll', () => {
     const birtType = await getEventTypeByTag('BIRT');
     if (!birtType) throw new Error('BIRT missing');
 
-    const id1 = await createEvent({ eventTypeId: birtType.id, dateSort: '1900-01-01' });
+    const id1 = await createEvent({ eventTypeId: birtType.id, dateOriginal: '1 JAN 1900' });
     const id2 = await createEvent({ eventTypeId: birtType.id });
-    const id3 = await createEvent({ eventTypeId: birtType.id, dateSort: '1850-06-15' });
+    const id3 = await createEvent({ eventTypeId: birtType.id, dateOriginal: '15 JUN 1850' });
 
     const results = await EventManager.getAll();
 

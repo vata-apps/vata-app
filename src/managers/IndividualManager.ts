@@ -1,4 +1,3 @@
-import { tryParseSortDate } from '$/lib/dateSort';
 import {
   createIndividual,
   deleteIndividual,
@@ -160,15 +159,14 @@ async function saveEvents(
 
   for (const event of input) {
     if (!hasDate(event)) continue;
-    const dateSort = tryParseSortDate(event.dateOriginal);
     if (event.id) {
-      await updateEvent(event.id, { dateOriginal: event.dateOriginal, dateSort });
+      await updateEvent(event.id, { dateOriginal: event.dateOriginal });
       continue;
     }
     const eventType = eventTypesByTag.get(event.tag);
     if (!eventType) continue;
     await createEventWithParticipant(
-      { eventTypeId: eventType.id, dateOriginal: event.dateOriginal, dateSort },
+      { eventTypeId: eventType.id, dateOriginal: event.dateOriginal },
       { individualId, role: 'principal' }
     );
   }

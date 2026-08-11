@@ -197,13 +197,34 @@ function parsePeriod(input: string, original: string): ParseResult {
  * - "15 JAN 1845" (day month year)
  * - "JAN 1845" (month year)
  * - "1845" (year only)
+ * - "1845-01-15" (ISO)
+ * - "15/01/1845" (French dd/mm/yyyy notation)
  */
 function parseDatePoint(input: string): DatePoint | null {
-  const parts = input.trim().split(/\s+/);
+  const trimmed = input.trim();
+  if (trimmed === '') return null;
 
-  if (parts.length === 0 || parts[0] === '') {
-    return null;
+  // ISO: "1845-01-15"
+  const isoMatch = trimmed.match(/^(\d{1,4})-(\d{1,2})-(\d{1,2})$/);
+  if (isoMatch) {
+    return buildDatePoint(
+      parseYear(isoMatch[1]),
+      parseNumericMonth(isoMatch[2]),
+      parseDay(isoMatch[3])
+    );
   }
+
+  // French dd/mm/yyyy notation: "15/01/1845"
+  const frMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{1,4})$/);
+  if (frMatch) {
+    return buildDatePoint(
+      parseYear(frMatch[3]),
+      parseNumericMonth(frMatch[2]),
+      parseDay(frMatch[1])
+    );
+  }
+
+  const parts = trimmed.split(/\s+/);
 
   // Year only: "1845"
   if (parts.length === 1) {
@@ -232,8 +253,21 @@ function parseDatePoint(input: string): DatePoint | null {
   return null;
 }
 
+/** `null` if any field failed to parse, otherwise the assembled `DatePoint`. */
+function buildDatePoint(
+  year: number | null,
+  month: number | null,
+  day: number | null
+): DatePoint | null {
+  if (year === null || month === null || day === null) return null;
+  return { year, month, day };
+}
+
 /**
- * Parse year string to number.
+ * Parse year string to number. Anchored on a full match — anything
+ * trailing (a slash, a dash, extra digits) means the input isn't a bare
+ * year, and must be rejected rather than silently parsed to whatever
+ * digits happen to lead the string (see issue #242).
  */
 function parseYear(str: string): number | null {
   // Handle BC years (e.g., "500BC" or "500 BC")
@@ -242,13 +276,24 @@ function parseYear(str: string): number | null {
     return -parseInt(bcMatch[1], 10);
   }
 
-  const year = parseInt(str, 10);
-  if (isNaN(year)) return null;
+  // Dual-dated year (e.g. "1750/51" — a Julian/Gregorian split, common in
+  // pre-1752 records): sort on the later (Gregorian, New Style) year.
+  // Dual dating always names two *consecutive* years, so the suffix must
+  // equal (year+1) mod 100 — anything else isn't a valid dual date and
+  // must be rejected, not resolved to a guessed year (this also handles
+  // a century boundary correctly, e.g. "1699/00" -> 1700, since 1700 mod
+  // 100 is 0).
+  const dualMatch = str.match(/^(\d{3,4})\/(\d{1,2})$/);
+  if (dualMatch) {
+    const fullYear = parseInt(dualMatch[1], 10);
+    const laterYear = fullYear + 1;
+    const suffix = parseInt(dualMatch[2], 10);
+    return laterYear % 100 === suffix ? laterYear : null;
+  }
 
-  // Reasonable year range
-  if (year < -9999 || year > 9999) return null;
+  if (!/^\d{1,4}$/.test(str)) return null;
 
-  return year;
+  return parseInt(str, 10);
 }
 
 /**
@@ -262,11 +307,25 @@ function parseMonth(str: string): number | null {
 }
 
 /**
- * Parse day string to number (1-31).
+ * Parse a numeric month string (e.g. "01") to number (1-12) — the ISO and
+ * French dd/mm/yyyy forms, unlike GEDCOM's own dates, spell the month as a
+ * number rather than a three-letter abbreviation.
+ */
+function parseNumericMonth(str: string): number | null {
+  if (!/^\d{1,2}$/.test(str)) return null;
+  const month = parseInt(str, 10);
+  if (month < 1 || month > 12) return null;
+  return month;
+}
+
+/**
+ * Parse day string to number (1-31). Anchored on a full match for the same
+ * reason as {@link parseYear}.
  */
 function parseDay(str: string): number | null {
+  if (!/^\d{1,2}$/.test(str)) return null;
   const day = parseInt(str, 10);
-  if (isNaN(day) || day < 1 || day > 31) return null;
+  if (day < 1 || day > 31) return null;
   return day;
 }
 
@@ -289,6 +348,16 @@ export function isValidDate(date: GedcomDate): boolean {
 }
 
 /**
+ * Whether `year` is a leap year in the (proleptic) Gregorian calendar.
+ * `Math.abs` treats BC years the same as their AD counterpart — the rule
+ * itself doesn't depend on the era.
+ */
+function isLeapYear(year: number): boolean {
+  const y = Math.abs(year);
+  return (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+}
+
+/**
  * Check if a date point is valid.
  */
 function isValidDatePoint(point: DatePoint): boolean {
@@ -298,7 +367,20 @@ function isValidDatePoint(point: DatePoint): boolean {
 
   // Basic day-of-month validation
   if (point.day !== undefined && point.month !== undefined) {
-    const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    const daysInMonth = [
+      31,
+      isLeapYear(point.year) ? 29 : 28,
+      31,
+      30,
+      31,
+      30,
+      31,
+      31,
+      30,
+      31,
+      30,
+      31,
+    ];
     if (point.day > daysInMonth[point.month - 1]) return false;
   }
 

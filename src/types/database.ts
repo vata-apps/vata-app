@@ -287,8 +287,8 @@ export interface Event {
 
 export interface CreateEventInput {
   eventTypeId: string;
+  /** `dateSort` is not settable here — it's derived from `dateOriginal` inside `createEvent`. */
   dateOriginal?: string;
-  dateSort?: string;
   placeId?: string;
   description?: string;
   notes?: string;
@@ -296,9 +296,12 @@ export interface CreateEventInput {
 
 export interface UpdateEventInput {
   eventTypeId?: string;
-  /** `null` clears the field; `undefined` leaves it untouched. */
+  /**
+   * `null` clears the field (and its derived sort date); `undefined` leaves
+   * both untouched. `dateSort` is not settable here — it's derived from
+   * `dateOriginal` inside `updateEvent`.
+   */
   dateOriginal?: string | null;
-  dateSort?: string;
   placeId?: string;
   description?: string;
   /** `null` clears the field; `undefined` leaves it untouched. */
