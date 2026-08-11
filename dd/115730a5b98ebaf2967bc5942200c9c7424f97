@@ -1,0 +1,33 @@
+src/components/trees/delete-tree-modal.tsx
+  s_90e589759b2a63::t_26b4a5138a4482 7
+  s_90e589759b2a63::t_e1b31a666e2984 37
+  s_90e589759b2a63::t_bd3cf11bc004e4 64
+src/managers/TreeManager.ts
+  s_90e589759b2a63::t_5636e5e7fc8de4 15
+  s_90e589759b2a63::t_abcbbf5e8ac665 51-54,60
+  s_90e589759b2a63::t_80a003a442eb83 1,5
+  s_90e589759b2a63::t_722b89e9adf114 55-59,67-74,81
+  s_90e589759b2a63::t_a3251b38cddd78 97-102,104-111
+  s_90e589759b2a63::t_f9d8b75b47d10a 103
+  s_90e589759b2a63::t_40ac253ff5f5f4 96
+src/managers/GedcomManager.ts
+  s_90e589759b2a63::t_d8e771144e8f2c 108
+  s_90e589759b2a63::t_a71b3b7425ccdf 11-12,15
+  s_90e589759b2a63::t_34261ae2e6bc67 76-78
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "dd115730a5b98ebaf2967bc5942200c9c7424f97",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
