@@ -1,0 +1,21 @@
+docs/references/date-formats.md
+  s_90e589759b2a63::t_46f2de019e7800 18
+src/db/trees/events.ts
+  s_90e589759b2a63::t_7695e513492e70 231,390,414,431,454,470,485,863
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "17c3ff46306e238604319bd3b88d4873ff61ea61",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
