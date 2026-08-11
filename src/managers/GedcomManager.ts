@@ -8,11 +8,11 @@
 import { importGedcom, type ImportStats } from '$/lib/gedcom/importer';
 import { exportGedcom } from '$/lib/gedcom/exporter';
 import { validate } from '@vata-apps/gedcom-parser';
-import { createTree, updateTreeStats, markTreeOpened } from '$/db/system/trees';
-import { openTreeDb, getTreeDb } from '$/db/connection';
+import { updateTreeStats, markTreeOpened } from '$/db/system/trees';
+import { getTreeDb } from '$/db/connection';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { open, save } from '@tauri-apps/plugin-dialog';
-import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
+import { TreeManager } from '$managers/TreeManager';
 
 export interface ImportResult {
   treeId: string;
@@ -73,19 +73,12 @@ export class GedcomManager {
     const filename = filePath.split('/').pop() ?? 'imported';
     const treeName = filename.replace(/\.[^.]+$/, '');
 
-    // Create tree folder in app data directory
-    const slug = slugifyTreeName(treeName) || crypto.randomUUID();
-    const treePath = await getTreePathForSlug(slug);
-
-    // Create new tree in system database
-    const treeId = await createTree({
+    // Create the tree (path resolution + row + DB open owned by TreeManager,
+    // so this can't diverge from delete's leftover-path check).
+    const treeId = await TreeManager.create({
       name: treeName,
-      path: treePath,
       description: `Imported from ${filename}`,
     });
-
-    // Open the tree database
-    await openTreeDb(treePath);
 
     // Import GEDCOM data
     const stats = await importGedcom(content);
@@ -112,16 +105,10 @@ export class GedcomManager {
    * @returns Import result with tree ID and stats
    */
   static async importFromContent(content: string, treeName: string): Promise<ImportResult> {
-    const slug = slugifyTreeName(treeName) || crypto.randomUUID();
-    const treePath = await getTreePathForSlug(slug);
-
-    const treeId = await createTree({
+    const treeId = await TreeManager.create({
       name: treeName,
-      path: treePath,
       description: 'Imported from GEDCOM',
     });
-
-    await openTreeDb(treePath);
 
     const stats = await importGedcom(content);
 

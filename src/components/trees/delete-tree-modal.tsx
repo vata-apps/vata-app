@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Callout, Dialog, Flex, Grid, Switch, Text, TextField } from '@radix-ui/themes';
 
 import { StatCell } from '$components/trees/stat-cell';
-import { deleteTree as defaultDeleteTree } from '$db-system/trees';
+import { TreeManager } from '$managers/TreeManager';
 import { GedcomManager } from '$managers/GedcomManager';
 import { queryKeys } from '$lib/query-keys';
 
@@ -34,7 +34,7 @@ interface DeleteTreeModalProps {
   onOpenChange: (open: boolean) => void;
 
   /**
-   * Override the delete function. Defaults to the DB-layer `deleteTree`.
+   * Override the delete function. Defaults to {@link TreeManager.delete}.
    * Tests inject a spy here so the flow can be exercised without hitting
    * Tauri SQL.
    */
@@ -61,7 +61,7 @@ export function DeleteTreeModal({
   tree,
   open,
   onOpenChange,
-  deleteTree = defaultDeleteTree,
+  deleteTree = TreeManager.delete,
   exportTree = defaultExportTree,
 }: DeleteTreeModalProps): JSX.Element | null {
   const { t } = useTranslation('trees');

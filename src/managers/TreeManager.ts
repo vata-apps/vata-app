@@ -1,6 +1,8 @@
+import { exists, remove } from '@tauri-apps/plugin-fs';
 import { openTreeDb, closeTreeDb } from '$/db/connection';
 import {
   createTree,
+  deleteTree,
   getTreeById,
   treeExistsAtPath,
   updateTreeStats,
@@ -10,6 +12,7 @@ import { countIndividuals } from '$db-tree/individuals';
 import { countFamilies } from '$db-tree/families';
 import { useAppStore } from '$/store/app-store';
 import { getTreePathForSlug, slugifyTreeName } from '$lib/tree-paths';
+import type { Tree } from '$types/database';
 
 interface CreateTreeData {
   name: string;
@@ -45,11 +48,28 @@ export class TreeManager {
     for (let suffix = 0; suffix < MAX_ATTEMPTS; suffix++) {
       const slug = suffix === 0 ? baseSlug : `${baseSlug}-${suffix + 1}`;
       const candidate = await getTreePathForSlug(slug);
-      if (!(await treeExistsAtPath(candidate))) return candidate;
+      // Check both system.db and the filesystem: a directory can exist
+      // without a row (leftover from a delete) or a row without a
+      // directory (not yet created), so neither check alone is enough
+      // to call a path free.
+      const [dbHasPath, fsHasPath] = await Promise.all([
+        treeExistsAtPath(candidate),
+        exists(candidate),
+      ]);
+      if (dbHasPath || fsHasPath) continue;
+      return candidate;
     }
     throw new Error(
       `Unable to find an available path for slug "${baseSlug}" after ${MAX_ATTEMPTS} attempts`
     );
+  }
+
+  private static async getTreeOrThrow(treeId: string): Promise<Tree> {
+    const tree = await getTreeById(treeId);
+    if (!tree) {
+      throw new Error(`Tree not found: ${treeId}`);
+    }
+    return tree;
   }
 
   /**
@@ -58,10 +78,7 @@ export class TreeManager {
    * and sets it as the current tree in the app store.
    */
   static async open(treeId: string): Promise<void> {
-    const tree = await getTreeById(treeId);
-    if (!tree) {
-      throw new Error(`Tree not found: ${treeId}`);
-    }
+    const tree = await TreeManager.getTreeOrThrow(treeId);
 
     await openTreeDb(tree.path);
     await markTreeOpened(treeId);
@@ -74,6 +91,22 @@ export class TreeManager {
   static async close(): Promise<void> {
     await closeTreeDb();
     useAppStore.getState().setCurrentTree(null);
+  }
+
+  /**
+   * Delete a tree: removes its directory (database file + media) from
+   * disk before removing its row from system.db. Deleting the row
+   * without the directory would let the next tree created at the same
+   * path silently adopt the leftover data.
+   */
+  static async delete(treeId: string): Promise<void> {
+    const tree = await TreeManager.getTreeOrThrow(treeId);
+
+    if (await exists(tree.path)) {
+      await remove(tree.path, { recursive: true });
+    }
+
+    await deleteTree(treeId);
   }
 
   /**
