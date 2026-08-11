@@ -1,0 +1,33 @@
+src/components/person-events/event-detail.css.ts
+  s_f6e652d6a25e7d::t_7451726cd2a160 41-51
+src/components/ui/card.css.ts
+  s_f6e652d6a25e7d::t_63f175cc7d2946 44
+src/i18n/locales/en/individuals.json
+  s_f6e652d6a25e7d::t_f2b3a8ddc23693 191
+  s_f6e652d6a25e7d::t_4d0a21ed0494bf 180,183
+src/pages/PersonNotesPage.tsx
+  s_f6e652d6a25e7d::t_047e800027d318 481
+  s_f6e652d6a25e7d::t_64347d2f3428e4 543
+src/i18n/locales/fr/individuals.json
+  s_f6e652d6a25e7d::t_d2c18936a8ee43 191
+  s_f6e652d6a25e7d::t_8036742d7d26a2 180,183
+src/components/person-events/event-detail.tsx
+  s_f6e652d6a25e7d::t_b6e09459fb06d2 147-151
+  s_f6e652d6a25e7d::t_780ea8e4b1903e 267-274
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "21d1eec63ffa66530a2d1b61fba5180371f5070c",
+  "prompts": {},
+  "sessions": {
+    "s_f6e652d6a25e7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23165849-c52e-49b8-9f7e-31281b9d37ae",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
