@@ -1,0 +1,50 @@
+src/managers/IndividualManager.ts
+  s_90e589759b2a63::t_0137d45813aa38 163,169
+src/db/seed/harry-potter-demo.ts
+  s_90e589759b2a63::t_dceae3c0fb5df9 271,273,275,277,279,281,283,285,287,289,291,293,295,297,299,301,303,305,307,309,311,313,315,322,324,326,328,330,361,386,410,429,463
+src/types/database.ts
+  s_90e589759b2a63::t_d9b097e3b8479d 290,299-303
+src/lib/dateSort.ts
+  s_90e589759b2a63::t_120ba1702b2033 1,6-7,12-14
+src/gedcom-date/parse.ts
+  s_90e589759b2a63::t_2843d4f61a8b5e 280-282
+  s_90e589759b2a63::t_4220dd04df793f 210
+  s_90e589759b2a63::t_695ead63c6581e 322,350-359,370-374,380
+  s_90e589759b2a63::t_8dc218ca57ab62 256
+  s_90e589759b2a63::t_99fc01a498946f 200-201,204-209,211-215,217-218,258-265,267-270,279,283-292,294,296,310-319,377
+  s_90e589759b2a63::t_524cffff6e8aa2 219-224,227-228,257,320-321,323,326,328,375-376,378-379,381-383
+src/managers/EventManager.test.ts
+  s_90e589759b2a63::t_98fe333302076a 168,170
+src/db/trees/events.test.ts
+  s_90e589759b2a63::t_e86ef9e9d6fe68 266,270
+src/db/trees/events.ts
+  s_90e589759b2a63::t_fa8c058c7107a2 2
+  s_90e589759b2a63::t_45999484b7a2a3 231
+  s_90e589759b2a63::t_8e7121cf8131c7 326-328
+  s_90e589759b2a63::t_f1ad29e5ab3659 470
+  s_90e589759b2a63::t_254df285fa415f 329-331,333
+  s_90e589759b2a63::t_28024bba97a473 431
+  s_90e589759b2a63::t_79774c575e3fbe 485
+  s_90e589759b2a63::t_29d24bf7dafc9a 414
+  s_90e589759b2a63::t_77c713c58e063b 294
+  s_90e589759b2a63::t_6ed2a0eccf6b32 454
+  s_90e589759b2a63::t_30a67cb71c2a1f 390
+src/db/trees/person-events.test.ts
+  s_90e589759b2a63::t_54568f5e3098f5 194
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "1379473715b61b17d272bd55fef5cc3610792b1d",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
