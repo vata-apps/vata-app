@@ -39,6 +39,28 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
     await remove(treePath, { recursive: true });
   }
 
+  try {
+    await seedDemoTree(systemDb, treePath);
+  } catch (err) {
+    // A failure partway through (as opposed to the process being killed
+    // outright) must not leave a half-populated "Harry Potter Family"
+    // row visible and selectable in the Picker until the next launch's
+    // leftover-cleanup runs above — roll it back immediately.
+    // getSystemDb()'s own catch still ensures the app itself doesn't
+    // brick regardless of what happens here.
+    await deleteTreeByPath(treePath, systemDb).catch(() => {});
+    await closeTreeDb().catch(() => {});
+    throw err;
+  }
+
+  // Mark as seeded
+  await systemDb.execute(
+    "INSERT OR REPLACE INTO app_settings (key, value) VALUES ('demo_tree_seeded', 'true')",
+    []
+  );
+}
+
+async function seedDemoTree(systemDb: Database, treePath: string): Promise<void> {
   const treeId = await createTree(
     {
       name: 'Harry Potter Family',
@@ -470,10 +492,4 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
 
   await updateTreeStats(treeId, { individualCount: 35, familyCount: 10 }, systemDb);
   await closeTreeDb();
-
-  // Mark as seeded
-  await systemDb.execute(
-    "INSERT OR REPLACE INTO app_settings (key, value) VALUES ('demo_tree_seeded', 'true')",
-    []
-  );
 }
