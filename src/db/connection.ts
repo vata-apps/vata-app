@@ -525,7 +525,21 @@ export async function getSystemDb(): Promise<Database> {
       await applyConnectionPragmas(db);
       await initializeSystemDb(db);
       await migrateSystemDbFilenameToPath(db);
-      await seedHarryPotterDemo(db);
+      try {
+        await seedHarryPotterDemo(db);
+      } catch (err) {
+        // The demo seed is a nice-to-have, not a requirement to use the
+        // app — a failure here must degrade to "no demo tree" rather
+        // than leave systemDb unassigned, which would permanently brick
+        // every subsequent launch. Guard the cleanup call too: it must
+        // not be able to throw its way into the same brick.
+        console.error('Failed to seed demo tree:', err);
+        try {
+          await closeTreeDb();
+        } catch (closeErr) {
+          console.error('Failed to close tree db after seed failure:', closeErr);
+        }
+      }
       systemDb = db;
       return db;
     })().finally(() => {

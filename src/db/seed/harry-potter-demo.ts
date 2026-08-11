@@ -1,7 +1,8 @@
 import type Database from '@tauri-apps/plugin-sql';
+import { exists, remove } from '@tauri-apps/plugin-fs';
 import type { ParticipantRole } from '$types/database';
 import { openTreeDb, closeTreeDb } from '../connection';
-import { createTree, updateTreeStats } from '../system/trees';
+import { createTree, deleteTreeByPath, updateTreeStats } from '../system/trees';
 import { createIndividual } from '../trees/individuals';
 import { createName } from '../trees/names';
 import { createFamily, addFamilyMember } from '../trees/families';
@@ -22,6 +23,21 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
 
   // Create tree entry in system DB
   const treePath = await getTreePathForSlug(DEMO_SLUG);
+
+  // A prior seed attempt may have been interrupted after this point but
+  // before the 'demo_tree_seeded' flag below was written. Clear any
+  // leftover row/directory at this path so this attempt starts clean
+  // instead of colliding on the UNIQUE path constraint and permanently
+  // failing every subsequent launch. The two checks are independent, so
+  // run them concurrently — this runs on every fresh install, not just
+  // the recovery case.
+  const [, leftoverDirExists] = await Promise.all([
+    deleteTreeByPath(treePath, systemDb),
+    exists(treePath),
+  ]);
+  if (leftoverDirExists) {
+    await remove(treePath, { recursive: true });
+  }
 
   const treeId = await createTree(
     {

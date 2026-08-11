@@ -97,6 +97,18 @@ export async function deleteTree(id: string): Promise<void> {
   await db.execute('DELETE FROM trees WHERE id = $1', [parseInt(id, 10)]);
 }
 
+/**
+ * Delete any row at the given path, if one exists. `dbOverride` lets
+ * callers running inside `getSystemDb()`'s own init sequence (before
+ * `systemDb` is assigned) pass the already-open connection directly —
+ * calling `getSystemDb()` from there would await the in-flight init
+ * promise itself and deadlock.
+ */
+export async function deleteTreeByPath(path: string, dbOverride?: Database): Promise<void> {
+  const db = dbOverride ?? (await getSystemDb());
+  await db.execute('DELETE FROM trees WHERE path = $1', [path]);
+}
+
 export async function updateTreeStats(
   id: string,
   stats: { individualCount?: number; familyCount?: number },
