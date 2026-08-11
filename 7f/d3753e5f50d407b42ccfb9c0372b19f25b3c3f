@@ -1,0 +1,21 @@
+.github/workflows/agent-run.yml
+  s_e222485240b978::t_1d1112ba6f734d 18-19
+.github/workflows/agent-review.yml
+  s_e222485240b978::t_801c3c3264842b 22,24-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "7fd3753e5f50d407b42ccfb9c0372b19f25b3c3f",
+  "prompts": {},
+  "sessions": {
+    "s_e222485240b978": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c28e1546-c8e6-4979-b004-f860656432f2",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
