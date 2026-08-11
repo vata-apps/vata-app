@@ -228,7 +228,7 @@ export async function getAllEvents(): Promise<Event[]> {
   const rows = await db.select<RawEvent[]>(
     `SELECT id, event_type_id, date_original, date_sort, place_id, description, notes, created_at, updated_at
      FROM events
-     ORDER BY CASE WHEN date_sort IS NULL THEN 1 ELSE 0 END, date_sort, id`
+     ORDER BY date_sort NULLS LAST, id`
   );
   return rows.map(mapToEvent);
 }
@@ -387,7 +387,7 @@ export async function getEventsByIndividualId(individualId: string): Promise<Eve
      FROM events e
      INNER JOIN event_participants ep ON ep.event_id = e.id
      WHERE ep.individual_id = $1
-     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`,
+     ORDER BY e.date_sort NULLS LAST, e.id`,
     [dbId]
   );
   return rows.map(mapToEvent);
@@ -411,7 +411,7 @@ export async function getEventsByIndividualIdWithDetails(
      INNER JOIN event_types et ON et.id = e.event_type_id
      INNER JOIN event_participants ep ON ep.event_id = e.id
      WHERE ep.individual_id = $1
-     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`,
+     ORDER BY e.date_sort NULLS LAST, e.id`,
     [dbId]
   );
   return assembleEventsWithDetails(rows);
@@ -428,7 +428,7 @@ export async function getEventsByFamilyId(familyId: string): Promise<Event[]> {
      FROM events e
      INNER JOIN event_participants ep ON ep.event_id = e.id
      WHERE ep.family_id = $1
-     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`,
+     ORDER BY e.date_sort NULLS LAST, e.id`,
     [dbId]
   );
   return rows.map(mapToEvent);
@@ -451,7 +451,7 @@ export async function getEventsByFamilyIdWithDetails(
      INNER JOIN event_types et ON et.id = e.event_type_id
      INNER JOIN event_participants ep ON ep.event_id = e.id
      WHERE ep.family_id = $1
-     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`,
+     ORDER BY e.date_sort NULLS LAST, e.id`,
     [dbId]
   );
   return assembleEventsWithDetails(rows);
@@ -467,7 +467,7 @@ export async function getEventsByPlaceId(placeId: string): Promise<Event[]> {
     `SELECT id, event_type_id, date_original, date_sort, place_id, description, notes, created_at, updated_at
      FROM events
      WHERE place_id = $1
-     ORDER BY CASE WHEN date_sort IS NULL THEN 1 ELSE 0 END, date_sort, id`,
+     ORDER BY date_sort NULLS LAST, id`,
     [dbId]
   );
   return rows.map(mapToEvent);
@@ -482,7 +482,7 @@ export async function getEventsByTypeId(eventTypeId: string): Promise<Event[]> {
     `SELECT id, event_type_id, date_original, date_sort, place_id, description, notes, created_at, updated_at
      FROM events
      WHERE event_type_id = $1
-     ORDER BY CASE WHEN date_sort IS NULL THEN 1 ELSE 0 END, date_sort, id`,
+     ORDER BY date_sort NULLS LAST, id`,
     [parseInt(eventTypeId, 10)]
   );
   return rows.map(mapToEvent);
@@ -860,7 +860,7 @@ export async function getAllEventsWithDetails(): Promise<EventWithDetails[]> {
             et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
      FROM events e
      INNER JOIN event_types et ON et.id = e.event_type_id
-     ORDER BY CASE WHEN e.date_sort IS NULL THEN 1 ELSE 0 END, e.date_sort, e.id`
+     ORDER BY e.date_sort NULLS LAST, e.id`
   );
   return assembleEventsWithDetails(rows);
 }

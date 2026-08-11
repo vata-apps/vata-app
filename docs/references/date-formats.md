@@ -15,6 +15,7 @@ The `DateInput` component accepts the following formats, case-insensitive:
 | `1845`              | Year only             |
 | `1845-01-15`        | ISO format            |
 | `15/01/1845`        | French notation       |
+| `11 FEB 1750/51`    | Dual-dated year (Julian/Gregorian split, pre-1752) — sorts on 1751 |
 | `ABT 1845`          | About 1845            |
 | `CAL 1845`          | Calculated to be 1845 |
 | `EST 1845`          | Estimated 1845        |
