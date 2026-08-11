@@ -121,18 +121,32 @@ async function saveAlternateNames(
   }
 }
 
-/** A row with no date is treated as absent: never created, never kept, never updated. This is how Birth/Death — never individually removable in the editor — are removed: clearing the date. */
+/** A row with no date is skipped when creating or updating: never created, never used to overwrite an existing date. */
 function hasDate(event: PersonEventInput): boolean {
   return Boolean(event.dateOriginal);
 }
 
-/** Create or update the events in `input` against `existing`, deleting any existing principal event not represented. Rows with no date are skipped entirely (never created, never used to keep an existing row alive). */
+/**
+ * Birth and Death have no individual remove control in the editor —
+ * clearing their date is the only way to remove them, so a dateless row
+ * for either counts as "removed". Every other event type (e.g. a baptism
+ * with an unresearched date) is removed by omitting its row from `input`
+ * entirely; a dateless row for those must be kept, not swept away just
+ * because the date field happens to be empty.
+ */
+function isRemovedByBlankDate(event: PersonEventInput): boolean {
+  return event.tag === 'BIRT' || event.tag === 'DEAT';
+}
+
+/** Create or update the events in `input` against `existing`, deleting any existing principal event not represented (see {@link isRemovedByBlankDate} for what "not represented" means for a dateless row). */
 async function saveEvents(
   individualId: string,
   input: PersonEventInput[],
   existing: EventWithDetails[]
 ): Promise<void> {
-  const keptIds = new Set(input.filter((e) => e.id && hasDate(e)).map((e) => e.id));
+  const keptIds = new Set(
+    input.filter((e) => e.id && !(isRemovedByBlankDate(e) && !hasDate(e))).map((e) => e.id)
+  );
   for (const event of existing) {
     if (!keptIds.has(event.id)) {
       await deleteEvent(event.id);
