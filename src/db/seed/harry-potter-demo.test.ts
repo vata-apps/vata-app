@@ -16,6 +16,12 @@ vi.mock('@tauri-apps/api/path', () => ({
   appDataDir: vi.fn().mockResolvedValue('/mock/app-data'),
 }));
 
+vi.mock('@tauri-apps/plugin-fs', () => ({
+  // No leftover directory from a prior interrupted run in these tests.
+  exists: vi.fn().mockResolvedValue(false),
+  remove: vi.fn().mockResolvedValue(undefined),
+}));
+
 // Lazily resolve the mock after the module is loaded
 import('../connection').then((mod) => {
   (mod.getSystemDb as ReturnType<typeof vi.fn>).mockResolvedValue(systemDb);

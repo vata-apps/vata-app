@@ -1,7 +1,8 @@
 import type Database from '@tauri-apps/plugin-sql';
+import { exists, remove } from '@tauri-apps/plugin-fs';
 import type { ParticipantRole } from '$types/database';
 import { openTreeDb, closeTreeDb } from '../connection';
-import { createTree, updateTreeStats } from '../system/trees';
+import { createTree, deleteTreeByPath, updateTreeStats } from '../system/trees';
 import { createIndividual } from '../trees/individuals';
 import { createName } from '../trees/names';
 import { createFamily, addFamilyMember } from '../trees/families';
@@ -23,6 +24,43 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
   // Create tree entry in system DB
   const treePath = await getTreePathForSlug(DEMO_SLUG);
 
+  // A prior seed attempt may have been interrupted after this point but
+  // before the 'demo_tree_seeded' flag below was written. Clear any
+  // leftover row/directory at this path so this attempt starts clean
+  // instead of colliding on the UNIQUE path constraint and permanently
+  // failing every subsequent launch. The two checks are independent, so
+  // run them concurrently — this runs on every fresh install, not just
+  // the recovery case.
+  const [, leftoverDirExists] = await Promise.all([
+    deleteTreeByPath(treePath, systemDb),
+    exists(treePath),
+  ]);
+  if (leftoverDirExists) {
+    await remove(treePath, { recursive: true });
+  }
+
+  try {
+    await seedDemoTree(systemDb, treePath);
+  } catch (err) {
+    // A failure partway through (as opposed to the process being killed
+    // outright) must not leave a half-populated "Harry Potter Family"
+    // row visible and selectable in the Picker until the next launch's
+    // leftover-cleanup runs above — roll it back immediately.
+    // getSystemDb()'s own catch still ensures the app itself doesn't
+    // brick regardless of what happens here.
+    await deleteTreeByPath(treePath, systemDb).catch(() => {});
+    await closeTreeDb().catch(() => {});
+    throw err;
+  }
+
+  // Mark as seeded
+  await systemDb.execute(
+    "INSERT OR REPLACE INTO app_settings (key, value) VALUES ('demo_tree_seeded', 'true')",
+    []
+  );
+}
+
+async function seedDemoTree(systemDb: Database, treePath: string): Promise<void> {
   const treeId = await createTree(
     {
       name: 'Harry Potter Family',
@@ -454,10 +492,4 @@ export async function seedHarryPotterDemo(systemDb: Database): Promise<void> {
 
   await updateTreeStats(treeId, { individualCount: 35, familyCount: 10 }, systemDb);
   await closeTreeDb();
-
-  // Mark as seeded
-  await systemDb.execute(
-    "INSERT OR REPLACE INTO app_settings (key, value) VALUES ('demo_tree_seeded', 'true')",
-    []
-  );
 }
