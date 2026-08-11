@@ -1,0 +1,19 @@
+src/managers/TreeManager.ts
+  s_90e589759b2a63::t_f0756a16972919 97-103,109-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "7e4d77c18e04a626815db253ce306f0983f9219c",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
