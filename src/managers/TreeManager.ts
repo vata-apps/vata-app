@@ -94,19 +94,29 @@ export class TreeManager {
   }
 
   /**
-   * Delete a tree: removes its directory (database file + media) from
-   * disk before removing its row from system.db. Deleting the row
-   * without the directory would let the next tree created at the same
-   * path silently adopt the leftover data.
+   * Delete a tree: removes its row from system.db, then its directory
+   * (database file + media) from disk. The row goes first so a failed
+   * directory removal can't leave a row pointing at a wiped path that
+   * `open()` would silently recreate as an empty tree. A leftover
+   * directory from a failed removal is harmless: `resolveAvailablePath`
+   * checks the filesystem directly, so it can never be adopted by a
+   * future tree.
    */
   static async delete(treeId: string): Promise<void> {
     const tree = await TreeManager.getTreeOrThrow(treeId);
 
-    if (await exists(tree.path)) {
-      await remove(tree.path, { recursive: true });
-    }
-
     await deleteTree(treeId);
+
+    try {
+      if (await exists(tree.path)) {
+        await remove(tree.path, { recursive: true });
+      }
+    } catch (err) {
+      // The row is already gone — the user-visible delete succeeded.
+      // Log rather than throw so a disk-level failure here doesn't
+      // surface as an error for an operation that already completed.
+      console.error(`Failed to remove tree directory for deleted tree ${treeId}:`, err);
+    }
   }
 
   /**
