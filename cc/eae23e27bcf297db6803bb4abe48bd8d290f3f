@@ -1,0 +1,20 @@
+src/components/individuals/person-editor-dialog.tsx
+  s_90e589759b2a63::t_8ae12f66c27d91 1213
+  s_90e589759b2a63::t_2150e2c4184ddc 759-773
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "cceae23e27bcf297db6803bb4abe48bd8d290f3f",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
