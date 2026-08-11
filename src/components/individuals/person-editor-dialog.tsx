@@ -756,6 +756,21 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
   const subtitle = `${form.givenNames} ${form.surname}`.trim();
   const excludeSelf = individualId ? [individualId] : undefined;
   const familyPendingRemoval = form.families.find((row) => row.key === confirmRemoveFamilyKey);
+  // Composed from independent clauses, not concatenated unconditionally —
+  // a marriage-only removal (0 children) must not read "This family has 0
+  // children", it should show only the marriage warning.
+  const removeFamilyWarning = [
+    familyPendingRemoval && familyPendingRemoval.children.length > 0
+      ? t('personEditor.removeFamilyConfirm.description', {
+          count: familyPendingRemoval.children.length,
+        })
+      : null,
+    familyPendingRemoval?.hasMarriageEvent
+      ? t('personEditor.removeFamilyConfirm.marriageWarning')
+      : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <>
@@ -1195,14 +1210,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
             <Dialog.Title className={s.alertTitle}>
               {t('personEditor.removeFamilyConfirm.title')}
             </Dialog.Title>
-            <Dialog.Description className={s.alertDesc}>
-              {t('personEditor.removeFamilyConfirm.description', {
-                count: familyPendingRemoval?.children.length ?? 0,
-              })}
-              {familyPendingRemoval?.hasMarriageEvent
-                ? ` ${t('personEditor.removeFamilyConfirm.marriageWarning')}`
-                : null}
-            </Dialog.Description>
+            <Dialog.Description className={s.alertDesc}>{removeFamilyWarning}</Dialog.Description>
             <div className={s.alertActions}>
               <Button type="button" variant="ghost" onClick={() => setConfirmRemoveFamilyKey(null)}>
                 {t('personEditor.removeFamilyConfirm.keepFamily')}
