@@ -77,6 +77,8 @@ interface FamilyRelationRow {
   id?: string;
   spouse: RelationPersonRef | null;
   children: RelationPersonRef[];
+  /** Whether this family has a recorded marriage event — removing it deletes that event too. */
+  hasMarriageEvent: boolean;
 }
 
 interface FormState {
@@ -124,7 +126,7 @@ function emptyEventRows(): EventRow[] {
 }
 
 function emptyFamilyRow(): FamilyRelationRow {
-  return { key: nextLocalKey('family'), spouse: null, children: [] };
+  return { key: nextLocalKey('family'), spouse: null, children: [], hasMarriageEvent: false };
 }
 
 function emptyForm(): FormState {
@@ -168,6 +170,7 @@ function buildFamilyRows(
       id: family.id,
       spouse: spouse ? personRef(spouse, t) : null,
       children: family.children.map((child) => personRef(child, t)),
+      hasMarriageEvent: family.marriageEvent !== null,
     };
   });
 }
@@ -713,9 +716,10 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
     setForm((prev) => ({ ...prev, families: prev.families.filter((row) => row.key !== key) }));
   }
 
-  // Removing a family with children detaches those children — confirm first.
+  // Removing a family with children detaches those children, and removing
+  // one with a marriage event deletes that event — confirm first either way.
   function requestRemoveFamily(row: FamilyRelationRow): void {
-    if (row.children.length > 0) {
+    if (row.children.length > 0 || row.hasMarriageEvent) {
       setConfirmRemoveFamilyKey(row.key);
       return;
     }
@@ -751,6 +755,22 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
   const showForm = mode === 'create' || hydrated;
   const subtitle = `${form.givenNames} ${form.surname}`.trim();
   const excludeSelf = individualId ? [individualId] : undefined;
+  const familyPendingRemoval = form.families.find((row) => row.key === confirmRemoveFamilyKey);
+  // Composed from independent clauses, not concatenated unconditionally —
+  // a marriage-only removal (0 children) must not read "This family has 0
+  // children", it should show only the marriage warning.
+  const removeFamilyWarning = [
+    familyPendingRemoval && familyPendingRemoval.children.length > 0
+      ? t('personEditor.removeFamilyConfirm.description', {
+          count: familyPendingRemoval.children.length,
+        })
+      : null,
+    familyPendingRemoval?.hasMarriageEvent
+      ? t('personEditor.removeFamilyConfirm.marriageWarning')
+      : null,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <>
@@ -1190,13 +1210,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
             <Dialog.Title className={s.alertTitle}>
               {t('personEditor.removeFamilyConfirm.title')}
             </Dialog.Title>
-            <Dialog.Description className={s.alertDesc}>
-              {t('personEditor.removeFamilyConfirm.description', {
-                count:
-                  form.families.find((row) => row.key === confirmRemoveFamilyKey)?.children
-                    .length ?? 0,
-              })}
-            </Dialog.Description>
+            <Dialog.Description className={s.alertDesc}>{removeFamilyWarning}</Dialog.Description>
             <div className={s.alertActions}>
               <Button type="button" variant="ghost" onClick={() => setConfirmRemoveFamilyKey(null)}>
                 {t('personEditor.removeFamilyConfirm.keepFamily')}

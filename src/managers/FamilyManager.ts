@@ -14,7 +14,12 @@ import {
   getParentFamilies,
   getSpouseFamilies,
 } from '$db-tree/families';
-import { getAllMarriageEvents, getFamilyEventByType } from '$db-tree/events';
+import {
+  deleteEvent,
+  getAllMarriageEvents,
+  getEventsByFamilyId,
+  getFamilyEventByType,
+} from '$db-tree/events';
 import { IndividualManager } from './IndividualManager';
 import type {
   CreateFamilyInput,
@@ -259,9 +264,17 @@ export class FamilyManager {
   }
 
   /**
-   * Delete a family and all cascading records.
+   * Delete a family and all cascading records — including any event
+   * attached to it (e.g. a marriage). The schema's cascade alone doesn't
+   * reach this: `event_participants.family_id` cascades away with the
+   * family, but the `events` row itself has no FK back to `families` and
+   * would otherwise survive with no participant, unattributable and
+   * unreachable from anywhere in the app.
    */
   static async delete(id: string): Promise<void> {
+    for (const event of await getEventsByFamilyId(id)) {
+      await deleteEvent(event.id);
+    }
     await deleteFamily(id);
   }
 
@@ -445,10 +458,11 @@ export class FamilyManager {
       await saveSpouseFamily(individualId, individualRole, spouseRole, familyInput);
     }
 
-    // A pre-existing spouse family no longer listed was removed in the editor:
-    // delete the union (cascades to its member links; the individuals remain).
+    // A pre-existing spouse family no longer listed was removed in the
+    // editor: delete the union (cascades to its member links and any
+    // attached event; the individuals remain).
     for (const familyId of priorSpouseFamilyIds) {
-      if (!keptFamilyIds.has(familyId)) await deleteFamily(familyId);
+      if (!keptFamilyIds.has(familyId)) await FamilyManager.delete(familyId);
     }
   }
 }
