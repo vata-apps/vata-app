@@ -59,15 +59,19 @@ export interface PersonRelationsInput {
  * `individualId` — or clear the slot when `individualId` is `null`. Shared by
  * every place that reassigns a single husband/wife slot (`setParent`,
  * `removeParent`, and parent-relation reconciliation in `saveRelations`).
+ * @returns The id of whoever previously held the slot, or `null` if it was
+ * already empty — callers that displace or remove an occupant need this to
+ * invalidate that person's own cached views.
  */
 async function replaceRoleMember(
   familyId: string,
   role: FamilyRole,
   individualId: string | null
-): Promise<void> {
+): Promise<string | null> {
   const existing = (await getFamilyMembers(familyId)).find((m) => m.role === role);
   if (existing) await removeFamilyMemberById(existing.id);
   if (individualId) await addFamilyMember({ familyId, individualId, role });
+  return existing?.individualId ?? null;
 }
 
 /**
@@ -345,13 +349,19 @@ export class FamilyManager {
 
   /**
    * Remove an individual's father or mother link, if a parent family exists.
+   * @returns The removed parent's id, or `null` if there was no parent in
+   * that slot to remove — the caller needs it to invalidate the ex-parent's
+   * own Overview/Relations cache, which this call doesn't touch.
    */
-  static async removeParent(individualId: string, role: 'father' | 'mother'): Promise<void> {
+  static async removeParent(
+    individualId: string,
+    role: 'father' | 'mother'
+  ): Promise<string | null> {
     const memberRole = role === 'father' ? 'husband' : 'wife';
     const families = await getParentFamilies(individualId);
-    if (families.length === 0) return;
+    if (families.length === 0) return null;
 
-    await replaceRoleMember(families[0].id, memberRole, null);
+    return replaceRoleMember(families[0].id, memberRole, null);
   }
 
   /**

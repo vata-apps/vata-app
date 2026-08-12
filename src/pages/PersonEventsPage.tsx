@@ -239,17 +239,28 @@ export function PersonEventsPage(): JSX.Element {
     );
   }
 
-  function handleRemoveParticipant(event: PersonEventRow, participantId: string): void {
-    removeParticipant.mutate({ eventId: event.id, participantId });
+  function handleRemoveParticipant(
+    event: PersonEventRow,
+    participantId: string,
+    participantIndividualId?: string
+  ): void {
+    removeParticipant.mutate({ eventId: event.id, participantId, participantIndividualId });
   }
 
   function handleParticipantRoleChange(
     event: PersonEventRow,
     participantId: string,
     role: ParticipantRole,
-    isOwnParticipant = false
+    isOwnParticipant = false,
+    participantIndividualId?: string
   ): void {
-    updateParticipantRole.mutate({ eventId: event.id, participantId, role, isOwnParticipant });
+    updateParticipantRole.mutate({
+      eventId: event.id,
+      participantId,
+      role,
+      isOwnParticipant,
+      participantIndividualId,
+    });
   }
 
   const addButton = (
@@ -335,9 +346,20 @@ export function PersonEventsPage(): JSX.Element {
         ],
         isAdding: addParticipant.isPending,
         onAdd: (selection) => handleAddParticipant(savedEvent, selection),
-        onRemove: (participantId) => handleRemoveParticipant(savedEvent, participantId),
+        onRemove: (participantId) =>
+          handleRemoveParticipant(
+            savedEvent,
+            participantId,
+            otherParticipants.find((participant) => participant.id === participantId)?.individualId
+          ),
         onRoleChange: (participantId, role) =>
-          handleParticipantRoleChange(savedEvent, participantId, role),
+          handleParticipantRoleChange(
+            savedEvent,
+            participantId,
+            role,
+            false,
+            otherParticipants.find((participant) => participant.id === participantId)?.individualId
+          ),
       }
     : undefined;
 

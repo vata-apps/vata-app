@@ -1,3 +1,5 @@
+import type { EventCategory } from '$types/database';
+
 export const queryKeys = {
   trees: ['trees'] as const,
   tree: (id: string) => ['trees', id] as const,
@@ -11,7 +13,8 @@ export const queryKeys = {
   family: (id: string) => ['families', id] as const,
   events: ['events'] as const,
   event: (id: string) => ['events', id] as const,
-  eventTypes: ['eventTypes'] as const,
+  /** Category-keyed — `undefined` (all types) and `'individual'`/`'family'` are distinct cache entries, since callers deliberately ask for different subsets. `['eventTypes']` alone still prefix-invalidates every variant. */
+  eventTypes: (category?: EventCategory) => ['eventTypes', category ?? 'all'] as const,
   places: ['places'] as const,
   place: (id: string) => ['places', id] as const,
   placeTypes: ['placeTypes'] as const,

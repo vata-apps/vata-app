@@ -153,12 +153,22 @@ export function useEventParticipants(eventId: string | null) {
   });
 }
 
-/** Invalidation shared by every participant mutation: only this event's own participants and this tab's list ever change. */
-function useInvalidateParticipants(individualId: string): (eventId: string) => void {
+/**
+ * Invalidation shared by every participant mutation: this event's own
+ * participants and this tab's list. `otherIndividualId` also refreshes the
+ * added/removed participant's own Events tab — without it, a person just
+ * added as a witness never sees the event under "other roles" until reload.
+ */
+function useInvalidateParticipants(
+  individualId: string
+): (eventId: string, otherIndividualId?: string) => void {
   const queryClient = useQueryClient();
-  return (eventId: string) => {
+  return (eventId: string, otherIndividualId?: string) => {
     queryClient.invalidateQueries({ queryKey: queryKeys.eventParticipants(eventId) });
     queryClient.invalidateQueries({ queryKey: queryKeys.personEvents(individualId) });
+    if (otherIndividualId && otherIndividualId !== individualId) {
+      queryClient.invalidateQueries({ queryKey: queryKeys.personEvents(otherIndividualId) });
+    }
   };
 }
 
@@ -184,8 +194,8 @@ export function useAddEventParticipant(individualId: string) {
       });
       return { participantId, individualId: participantIndividualId };
     },
-    onSuccess: (_result, input) => {
-      invalidate(input.eventId);
+    onSuccess: (result, input) => {
+      invalidate(input.eventId, result.individualId);
       // A brand-new person must show up in every tree-wide list that reads `individuals`.
       if (input.createNew) queryClient.invalidateQueries({ queryKey: queryKeys.individuals });
     },
@@ -195,9 +205,17 @@ export function useAddEventParticipant(individualId: string) {
 export function useRemoveEventParticipant(individualId: string) {
   const invalidate = useInvalidateParticipants(individualId);
   return useMutation({
-    mutationFn: ({ eventId, participantId }: { eventId: string; participantId: string }) =>
-      removeEventParticipant(eventId, participantId),
-    onSuccess: (_result, { eventId }) => invalidate(eventId),
+    mutationFn: ({
+      eventId,
+      participantId,
+    }: {
+      eventId: string;
+      participantId: string;
+      /** The removed row's own individual — the caller already has it loaded (it's what's rendered), so this only refreshes their Events tab. */
+      participantIndividualId?: string;
+    }) => removeEventParticipant(eventId, participantId),
+    onSuccess: (_result, { eventId, participantIndividualId }) =>
+      invalidate(eventId, participantIndividualId),
   });
 }
 
@@ -214,9 +232,11 @@ export function useUpdateParticipantRole(individualId: string) {
       role: ParticipantRole;
       /** Set when this is the tab's own person's participant row — changing it can move their `scope` classification (principal ↔ secondary), which the Overview tab's own-events/marriages summary is filtered on. Omit for another participant's role, which never affects this person's own scope. */
       isOwnParticipant?: boolean;
+      /** The edited row's own individual, when it isn't the tab's own person — the caller already has it loaded, so this only refreshes their Events tab. */
+      participantIndividualId?: string;
     }) => updateEventParticipant(participantId, { role }),
-    onSuccess: (_result, { eventId, isOwnParticipant }) => {
-      invalidate(eventId);
+    onSuccess: (_result, { eventId, isOwnParticipant, participantIndividualId }) => {
+      invalidate(eventId, participantIndividualId);
       if (isOwnParticipant) {
         queryClient.invalidateQueries({ queryKey: queryKeys.personOverview(individualId) });
       }

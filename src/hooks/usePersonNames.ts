@@ -9,6 +9,7 @@ import {
   setPrimaryName,
   updateName,
 } from '$db-tree/names';
+import { getPersonRelations } from '$db-tree/person-relations';
 import type { CreateNameInput, Name, UpdateNameInput } from '$types/database';
 
 /** A person's name records, each with how many sources back it. */
@@ -58,6 +59,37 @@ function useInvalidateNames(individualId: string): (affectsPrimaryName: boolean)
     if (affectsPrimaryName) {
       queryClient.invalidateQueries({ queryKey: queryKeys.individuals });
       queryClient.invalidateQueries({ queryKey: queryKeys.families });
+
+      // The primary name is what every relation card (parent, sibling,
+      // spouse, child) displays for this person on someone *else's*
+      // screen — their cached personRelations rows would otherwise keep
+      // rendering the old name until the cache naturally expires.
+      void getPersonRelations(individualId).then(
+        (relations) => {
+          const counterpartyIds = [
+            relations.father?.id,
+            relations.mother?.id,
+            ...relations.siblings.map((sibling) => sibling.id),
+            ...relations.spouseUnions.flatMap((union) => [
+              union.spouse?.id,
+              ...union.children.map((child) => child.id),
+            ]),
+          ].filter((id): id is string => id !== undefined && id !== null);
+
+          for (const counterpartyId of new Set(counterpartyIds)) {
+            queryClient.invalidateQueries({ queryKey: queryKeys.personRelations(counterpartyId) });
+          }
+        },
+        (err) => {
+          // Best-effort fan-out — the rename itself already succeeded and is
+          // reflected everywhere else invalidated above. Log rather than
+          // throw from inside a detached promise chain.
+          console.error(
+            `Failed to refresh counterparties' relations after renaming ${individualId}:`,
+            err
+          );
+        }
+      );
     }
   };
 }
