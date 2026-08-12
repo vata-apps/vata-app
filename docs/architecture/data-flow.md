@@ -16,7 +16,7 @@ graph LR
 
 - **UI** renders cache state and dispatches events; it never calls a Manager or the DB directly.
 - **Hooks** wrap Managers in TanStack Query (`useQuery` / `useMutation`), own the cache, and expose loading/error state.
-- **Managers** hold business logic — validation, multi-entity orchestration, transactions. No React dependency. Code in `src/managers/`.
+- **Managers** hold business logic — validation, multi-entity orchestration. No React dependency, no DB transactions (see [ADR-006](../adr/0006-no-client-side-transactions.md)). Code in `src/managers/`.
 - **DB layer** is the only code that runs SQL. Code in `src/db/`.
 
 Hooks live in `src/hooks/`.
@@ -50,7 +50,7 @@ sequenceDiagram
 
 ## Write Flow (Mutation)
 
-A write goes through Manager validation, runs inside a DB transaction, then invalidates the affected cache keys so dependent views re-render automatically.
+A write goes through Manager validation, then each statement commits on its own (no `BEGIN`/`COMMIT` — see [ADR-006](../adr/0006-no-client-side-transactions.md)), then invalidates the affected cache keys so dependent views re-render automatically.
 
 ```mermaid
 sequenceDiagram
@@ -64,12 +64,11 @@ sequenceDiagram
     UI->>Hook: mutation.mutate(data)
     Hook->>Manager: create(data)
     Note over Manager: Validate data<br/>• Required fields<br/>• Format validation
-    Manager->>Database: BEGIN TX
     Manager->>Database: INSERT...
     Database-->>Manager: {lastInsertId}
     Note over Manager: formatEntityId('I', lastInsertId)
     Manager->>Database: INSERT name...
-    Manager->>Database: COMMIT
+    Note over Manager: Each write commits on its own —<br/>no BEGIN/COMMIT (ADR-006)
     Manager-->>Hook: {newId}
     Note over Hook: onSuccess:<br/>• invalidateQueries(...)<br/>• Show success notification
     Hook-->>UI: {success}

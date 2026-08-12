@@ -45,6 +45,15 @@ function eventTypeCacheKey(tag: string, category: 'individual' | 'family'): stri
 /**
  * Import GEDCOM content into current tree database.
  *
+ * Not wrapped in a DB transaction — see the note on
+ * {@link IndividualManager.create}. A per-record failure is caught and
+ * recorded in `stats.errors` rather than aborting the whole import —
+ * deliberately: a single malformed record in an otherwise-good file
+ * shouldn't cost the researcher everything else in it. Callers that need
+ * "all or nothing" are responsible for cleaning up a partial import
+ * themselves (see {@link GedcomManager.importFromFile}, which deletes the
+ * tree it just created if this throws).
+ *
  * @param content - Raw GEDCOM text content
  * @returns Import statistics including counts and errors
  */
@@ -71,40 +80,31 @@ export async function importGedcom(content: string): Promise<ImportStats> {
   // Pre-load event types cache
   await loadEventTypeCache(context);
 
-  await db.execute('BEGIN TRANSACTION');
-
-  try {
-    // Phase 1: Import individuals (without family links)
-    for (const individual of document.individuals) {
-      try {
-        const eventCount = await importIndividual(individual, context);
-        stats.individuals++;
-        stats.events += eventCount;
-      } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        stats.errors.push(`INDI ${individual.xref}: ${message}`);
-      }
+  // Phase 1: Import individuals (without family links)
+  for (const individual of document.individuals) {
+    try {
+      const eventCount = await importIndividual(individual, context);
+      stats.individuals++;
+      stats.events += eventCount;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      stats.errors.push(`INDI ${individual.xref}: ${message}`);
     }
-
-    // Phase 2: Import families and link members
-    for (const family of document.families) {
-      try {
-        const eventCount = await importFamily(family, context);
-        stats.families++;
-        stats.events += eventCount;
-      } catch (e) {
-        const message = e instanceof Error ? e.message : String(e);
-        stats.errors.push(`FAM ${family.xref}: ${message}`);
-      }
-    }
-
-    stats.places = context.placeCache.size;
-
-    await db.execute('COMMIT');
-  } catch (e) {
-    await db.execute('ROLLBACK');
-    throw e;
   }
+
+  // Phase 2: Import families and link members
+  for (const family of document.families) {
+    try {
+      const eventCount = await importFamily(family, context);
+      stats.families++;
+      stats.events += eventCount;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      stats.errors.push(`FAM ${family.xref}: ${message}`);
+    }
+  }
+
+  stats.places = context.placeCache.size;
 
   return stats;
 }

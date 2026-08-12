@@ -17,7 +17,7 @@ No modern local-first option combines a contemporary tech stack, native desktop 
 
 1. **Local-first** — All data stays on the user's computer. No account, no cloud, no subscription, no network required for any feature.
 2. **Performance** — Responsive even on trees with thousands of individuals.
-3. **Reliability** — Zero data loss. All write operations use database transactions.
+3. **Reliability** — Zero data loss is the goal. Writes commit incrementally rather than atomically (the SQL plugin's connection pool makes client-side `BEGIN`/`COMMIT` unsafe across separate calls — see [ADR-006](../adr/0006-no-client-side-transactions.md)); operations that can leave partial state on failure clean up explicitly instead.
 4. **Extensibility** — Modular, layered architecture designed for future evolution.
 5. **Standards** — GEDCOM 5.5.1 compliance for interoperability with other genealogy software.
 

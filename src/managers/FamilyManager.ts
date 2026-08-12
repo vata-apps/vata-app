@@ -1,4 +1,3 @@
-import { getTreeDb } from '$/db/connection';
 import {
   getAllFamilies,
   getAllFamilyMembers,
@@ -92,7 +91,13 @@ export function spouseRoleFor(gender: Gender): FamilyRole {
 
 export class FamilyManager {
   /**
-   * Create a family with optional husband and wife in a single transaction.
+   * Create a family with optional husband and wife.
+   *
+   * Not wrapped in a DB transaction — see the note on
+   * {@link IndividualManager.create}. Each write below commits on its own,
+   * so a failure adding either spouse is caught and the just-created
+   * family deleted — otherwise it would sit permanently in the Families
+   * list as a blank, member-less row with no trace of what happened.
    * @returns The formatted ID of the created family
    */
   static async create(
@@ -100,12 +105,9 @@ export class FamilyManager {
     husbandId?: string,
     wifeId?: string
   ): Promise<string> {
-    const db = await getTreeDb();
+    const familyId = await createFamily(input);
 
-    await db.execute('BEGIN TRANSACTION');
     try {
-      const familyId = await createFamily(input);
-
       if (husbandId) {
         await addFamilyMember({
           familyId,
@@ -121,13 +123,12 @@ export class FamilyManager {
           role: 'wife',
         });
       }
-
-      await db.execute('COMMIT');
-      return familyId;
-    } catch (error) {
-      await db.execute('ROLLBACK');
-      throw error;
+    } catch (err) {
+      await deleteFamily(familyId);
+      throw err;
     }
+
+    return familyId;
   }
 
   /**
