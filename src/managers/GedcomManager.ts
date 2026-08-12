@@ -9,6 +9,7 @@ import { importGedcom, type ImportStats } from '$/lib/gedcom/importer';
 import { exportGedcom } from '$/lib/gedcom/exporter';
 import { validate } from '@vata-apps/gedcom-parser';
 import { updateTreeStats, markTreeOpened } from '$/db/system/trees';
+import { countLivingIndividuals } from '$db-tree/individuals';
 import { getTreeDb } from '$/db/connection';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { open, save } from '@tauri-apps/plugin-dialog';
@@ -238,5 +239,14 @@ export class GedcomManager {
       individuals: indResult[0]?.count ?? 0,
       families: famResult[0]?.count ?? 0,
     };
+  }
+
+  /**
+   * Count individuals the export's privacy filter would exclude when
+   * `includePrivate` is false — surfaced by the export UI so hiding living
+   * individuals doesn't silently drop most of the tree with no warning.
+   */
+  static async getLivingCount(): Promise<number> {
+    return countLivingIndividuals();
   }
 }

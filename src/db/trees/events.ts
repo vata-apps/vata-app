@@ -154,15 +154,28 @@ export async function getEventTypeById(id: string): Promise<EventType | null> {
 }
 
 /**
- * Get an event type by tag (for system types)
+ * Get an event type by tag (for system types). A tag alone doesn't
+ * uniquely identify a row — CENS and EVEN are legitimately both
+ * individual and family tags (`event_types` is keyed on `(tag,
+ * category)`, not `tag` alone) — so an ambiguous tag without a
+ * `category` resolves to whichever matching row the query returns
+ * first, not necessarily the caller's intent. Pass `category` whenever
+ * it's known.
  */
-export async function getEventTypeByTag(tag: string): Promise<EventType | null> {
+export async function getEventTypeByTag(
+  tag: string,
+  category?: 'individual' | 'family'
+): Promise<EventType | null> {
   const db = await getTreeDb();
   const rows = await db.select<RawEventType[]>(
-    `SELECT id, tag, category, is_system, custom_name, sort_order
-     FROM event_types
-     WHERE tag = $1`,
-    [tag]
+    category
+      ? `SELECT id, tag, category, is_system, custom_name, sort_order
+         FROM event_types
+         WHERE tag = $1 AND category = $2`
+      : `SELECT id, tag, category, is_system, custom_name, sort_order
+         FROM event_types
+         WHERE tag = $1`,
+    category ? [tag, category] : [tag]
   );
   return rows[0] ? mapToEventType(rows[0]) : null;
 }

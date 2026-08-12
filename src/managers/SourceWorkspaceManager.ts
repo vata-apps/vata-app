@@ -136,7 +136,14 @@ export class SourceWorkspaceManager {
     const tag = options.eventTypeTag || template.eventTypeTag;
     if (!tag) return undefined;
 
-    const eventType = await getEventTypeByTag(tag);
+    // CENS is the one tag seeded for both categories (see event_types in
+    // connection.ts). This method always links participants as
+    // individuals, never a family (see the loop below), so the
+    // individual-category row is the correct one for it specifically.
+    // Every other tag a template uses here (MARR, BIRT, DEAT, BURI,
+    // BAPM, …) exists in exactly one category, so an unqualified lookup
+    // for those stays unambiguous without needing to pass one.
+    const eventType = await getEventTypeByTag(tag, tag === 'CENS' ? 'individual' : undefined);
     if (!eventType) return undefined;
 
     const eventId = await createEvent({

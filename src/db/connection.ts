@@ -130,10 +130,18 @@ async function initializeTreeDb(db: Database): Promise<void> {
   await db.execute(`CREATE INDEX IF NOT EXISTS idx_places_parent ON places(parent_id)`);
 
   // event_types
+  //
+  // tag+category is the unique key, not tag alone: GEDCOM's CENS (Census) is
+  // both a documented individual and family event tag, and a plain UNIQUE(tag)
+  // can't hold both rows (see issue #243). Existing tree.db files created
+  // before this change keep their old single-column UNIQUE(tag) constraint —
+  // CREATE TABLE IF NOT EXISTS never retroactively alters it — so family CENS
+  // stays unavailable there until a migration exists (tracked as #250); new
+  // trees get it correctly from creation.
   await db.execute(`
     CREATE TABLE IF NOT EXISTS event_types (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      tag TEXT UNIQUE,
+      tag TEXT,
       category TEXT NOT NULL CHECK(category IN ('individual', 'family')),
       is_system INTEGER DEFAULT 0,
       custom_name TEXT,
@@ -141,11 +149,15 @@ async function initializeTreeDb(db: Database): Promise<void> {
       CHECK (
         (is_system = 1 AND tag IS NOT NULL AND custom_name IS NULL) OR
         (is_system = 0 AND custom_name IS NOT NULL)
-      )
+      ),
+      UNIQUE(tag, category)
     )
   `);
 
-  // Insert system event types (only if not already present)
+  // Insert system event types (only if not already present). Every tag here
+  // must match docs/references/gedcom-551-mapping.md's Individual/Family
+  // Event Tags tables — a documented tag missing from this list imports
+  // silently as nothing (see issue #243).
   const systemEventTypes = [
     ['BIRT', 'individual', 1],
     ['CHR', 'individual', 2],
@@ -171,6 +183,16 @@ async function initializeTreeDb(db: Database): Promise<void> {
     ['RESI', 'individual', 22],
     ['EDUC', 'individual', 23],
     ['RELI', 'individual', 24],
+    ['EVEN', 'individual', 25],
+    ['CAST', 'individual', 26],
+    ['DSCR', 'individual', 27],
+    ['IDNO', 'individual', 28],
+    ['NATI', 'individual', 29],
+    ['NCHI', 'individual', 30],
+    ['NMR', 'individual', 31],
+    ['PROP', 'individual', 32],
+    ['SSN', 'individual', 33],
+    ['TITL', 'individual', 34],
     ['MARR', 'family', 1],
     ['MARB', 'family', 2],
     ['MARC', 'family', 3],
@@ -180,6 +202,8 @@ async function initializeTreeDb(db: Database): Promise<void> {
     ['DIV', 'family', 7],
     ['DIVF', 'family', 8],
     ['ANUL', 'family', 9],
+    ['CENS', 'family', 10],
+    ['EVEN', 'family', 11],
   ];
   for (const [tag, category, sortOrder] of systemEventTypes) {
     await db.execute(

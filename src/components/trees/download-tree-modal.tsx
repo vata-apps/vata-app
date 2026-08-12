@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -17,6 +17,7 @@ import {
 import { Icon } from '$components/icon';
 import { StatCell } from '$components/trees/stat-cell';
 import { GedcomManager } from '$managers/GedcomManager';
+import { queryKeys } from '$lib/query-keys';
 
 /**
  * Lightweight projection of {@link Tree} carrying just what the modal
@@ -48,11 +49,20 @@ export interface DownloadTreeModalProps {
    * {@link GedcomManager.exportToFile}.
    */
   exportTree?: (treeName: string, includePrivate: boolean) => Promise<boolean>;
+
+  /**
+   * Override the living-count lookup. Defaults to
+   * {@link GedcomManager.getLivingCount}.
+   */
+  getLivingCount?: () => Promise<number>;
 }
 
 /** Default export — wraps `GedcomManager.exportToFile`. */
 const defaultExportTree = (treeName: string, includePrivate: boolean): Promise<boolean> =>
   GedcomManager.exportToFile(treeName, includePrivate);
+
+/** Default living-count lookup — wraps `GedcomManager.getLivingCount`. */
+const defaultGetLivingCount = (): Promise<number> => GedcomManager.getLivingCount();
 
 /** A localized estimate of the exported file size, bucketed by magnitude. */
 type SizeEstimate =
@@ -83,11 +93,21 @@ export function DownloadTreeModal({
   open,
   onOpenChange,
   exportTree = defaultExportTree,
+  getLivingCount = defaultGetLivingCount,
 }: DownloadTreeModalProps): JSX.Element | null {
   const { t } = useTranslation('trees');
   const formId = useId();
 
   const [hideLiving, setHideLiving] = useState(false);
+
+  // Only fetched while the toggle is on — it's the one piece of data this
+  // modal needs beyond the tree's own totals, and only to answer "how many
+  // will this exclude" once the user asks to hide living individuals.
+  const livingCountQuery = useQuery({
+    queryKey: queryKeys.livingCount(tree?.id ?? ''),
+    queryFn: getLivingCount,
+    enabled: open && hideLiving && !!tree,
+  });
 
   const mutation = useMutation({
     mutationFn: ({ treeName, includePrivate }: { treeName: string; includePrivate: boolean }) =>
@@ -131,8 +151,20 @@ export function DownloadTreeModal({
   })();
   const sizeValue = sizeEstimate.bucket === 'under-kb' ? '' : sizeEstimate.value;
 
+  // Once the living count loads, the shown individual total reflects what
+  // will actually be in the file — not the tree's raw count — so toggling
+  // "Hide living" can't silently promise more than the export delivers.
+  // 0 while loading: the badge below distinguishes "loading" from "0
+  // excluded" with its own isLoading check, so this only has to pick a
+  // safe number for the stat-cell subtraction in the meantime.
+  const excludedCount = hideLiving ? (livingCountQuery.data ?? 0) : 0;
+  const displayedIndividualCount = tree.individualCount - excludedCount;
+
   const stats: { value: string; label: string }[] = [
-    { value: tree.individualCount.toLocaleString(), label: t('downloadTree.summaryIndividuals') },
+    {
+      value: displayedIndividualCount.toLocaleString(),
+      label: t('downloadTree.summaryIndividuals'),
+    },
     { value: tree.familyCount.toLocaleString(), label: t('downloadTree.summaryFamilies') },
     { value: t(sizeKey, { value: sizeValue }), label: t('downloadTree.summaryEstimatedSize') },
   ];
@@ -214,6 +246,13 @@ export function DownloadTreeModal({
                     {t('downloadTree.hideLivingLabel')}
                   </Flex>
                 </Text>
+                {hideLiving && (
+                  <Text size="1" color="amber">
+                    {livingCountQuery.isLoading
+                      ? t('downloadTree.livingCountLoading')
+                      : t('downloadTree.livingCountExcluded', { count: excludedCount })}
+                  </Text>
+                )}
                 <SoonSwitch label={t('downloadTree.includePrivateNotesLabel')} />
               </Flex>
             </Card>

@@ -160,6 +160,21 @@ export async function countIndividuals(): Promise<number> {
 }
 
 /**
+ * Count individuals marked living — the GEDCOM export's privacy filter
+ * excludes exactly this set when `includePrivate` is false. `is_living`
+ * defaults to true for anyone without a recorded death (see
+ * `lib/gedcom/importer.ts`), so this count skews high on a typical
+ * imported tree — surfaced to the export UI rather than left implicit.
+ */
+export async function countLivingIndividuals(): Promise<number> {
+  const db = await getTreeDb();
+  const rows = await db.select<{ count: number }[]>(
+    'SELECT COUNT(*) as count FROM individuals WHERE is_living = 1'
+  );
+  return rows[0]?.count ?? 0;
+}
+
+/**
  * Search individuals by name (requires names table join)
  * Note: This searches across given_names and surname in the names table
  */

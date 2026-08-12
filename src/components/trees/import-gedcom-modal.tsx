@@ -345,25 +345,25 @@ function FileRow({ file, onClear }: { file: SelectedFile; onClear: () => void })
 /**
  * Four-cell stat grid summarising the GEDCOM scan: individuals,
  * families, places (always 0 — see {@link ScanResult.places}), and
- * sources. The Places cell renders a `Soon` badge to set expectations.
+ * sources. Places and Sources both render a `Soon` badge — SOUR/REPO
+ * parsing doesn't exist yet (see issue #243), so this count is real but
+ * nothing is actually imported from it.
  */
 function ScanGrid({ scan }: { scan: ScanResult }): JSX.Element {
   const { t } = useTranslation('trees');
+  const soonLabel = (text: string): React.ReactNode => (
+    <Flex align="center" gap="2" display="inline-flex">
+      {text}
+      <Badge variant="outline" color="gray">
+        {t('importGedcom.soonLabel')}
+      </Badge>
+    </Flex>
+  );
   const items: { value: number; label: React.ReactNode }[] = [
     { value: scan.individuals, label: t('importGedcom.scanIndividuals') },
     { value: scan.families, label: t('importGedcom.scanFamilies') },
-    {
-      value: scan.places,
-      label: (
-        <Flex align="center" gap="2" display="inline-flex">
-          {t('importGedcom.scanPlaces')}
-          <Badge variant="outline" color="gray">
-            {t('importGedcom.soonLabel')}
-          </Badge>
-        </Flex>
-      ),
-    },
-    { value: scan.sources, label: t('importGedcom.scanSources') },
+    { value: scan.places, label: soonLabel(t('importGedcom.scanPlaces')) },
+    { value: scan.sources, label: soonLabel(t('importGedcom.scanSources')) },
   ];
   return (
     <Card>
