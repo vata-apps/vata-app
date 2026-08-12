@@ -1,0 +1,43 @@
+src/managers/FamilyManager.ts
+  s_90e589759b2a63::t_25098154e87298 97-100,126-128
+  s_90e589759b2a63::t_454013939be1e6 94-96,108,130-131
+src/lib/gedcom/importer.ts
+  s_90e589759b2a63::t_29cbca814c42cc 56,83-91,93,95-103,107
+  s_90e589759b2a63::t_5da0e3defc373e 48-55
+  s_90e589759b2a63::t_3ad0825a4721d6 108
+src/managers/GedcomManager.ts
+  s_90e589759b2a63::t_fc435296675436 77,90-91,93-96,102-116
+  s_90e589759b2a63::t_c377709c8c95f8 97-101
+docs/architecture/data-flow.md
+  s_90e589759b2a63::t_557a2fb043993b 53
+  s_90e589759b2a63::t_6b2aff425c6961 71
+  s_90e589759b2a63::t_46cac1c01906c3 19
+docs/architecture/tech-stack.md
+  s_90e589759b2a63::t_31d76b344611df 34
+docs/product/prd.md
+  s_90e589759b2a63::t_377d5bde71e47d 20
+docs/architecture/overview.md
+  s_90e589759b2a63::t_fda320e7b1d3f2 110
+src/managers/TreeManager.ts
+  s_90e589759b2a63::t_20961680df8add 2
+  s_90e589759b2a63::t_73d9efa616e560 104-110,115-117
+  s_90e589759b2a63::t_ee9153d1bce64e 118
+docs/adr/0006-no-client-side-transactions.md
+  s_90e589759b2a63::t_a774e204d08944 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "4375353369fe60fc1b007d2eaf60d82bb57aca33",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
