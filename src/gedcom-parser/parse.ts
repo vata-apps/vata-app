@@ -160,8 +160,10 @@ function parseIndividual(lines: GedcomLine[], startIndex: number, xref: string):
         break;
       }
       case 'NOTE': {
-        const noteText = child.value || '';
-        if (noteText) individual.notes.push(noteText);
+        // A bare `@N1@` is a pointer to a top-level NOTE record, which this
+        // parser doesn't resolve yet — storing the pointer text itself would
+        // fabricate a "note" that reads as real content but isn't (#243).
+        if (child.value && !extractXref(child.value)) individual.notes.push(child.value);
         break;
       }
       // Individual events
@@ -321,7 +323,9 @@ function parseEvent(
         event.type = child.value;
         break;
       case 'NOTE':
-        if (child.value) event.notes.push(child.value);
+        // See the individual-notes case above: a bare `@N1@` pointer isn't
+        // resolved yet, so it must not be stored as literal note text.
+        if (child.value && !extractXref(child.value)) event.notes.push(child.value);
         break;
     }
   }
@@ -363,8 +367,9 @@ function parseFamily(lines: GedcomLine[], startIndex: number, xref: string): Ged
         break;
       }
       case 'NOTE': {
-        const noteText = child.value || '';
-        if (noteText) family.notes.push(noteText);
+        // See parseIndividual's NOTE case above: a bare `@N1@` pointer isn't
+        // resolved yet, so it must not be stored as literal note text.
+        if (child.value && !extractXref(child.value)) family.notes.push(child.value);
         break;
       }
       // Family events

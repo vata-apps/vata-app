@@ -229,12 +229,12 @@ async function exportIndividualEvents(
   const { db } = ctx;
 
   const rows = await db.select<EventRow[]>(
-    `SELECT e.id, et.tag, et.custom_name, e.date_original, p.full_name AS place_full_name, e.description
+    `SELECT DISTINCT e.id, et.tag, et.custom_name, e.date_original, p.full_name AS place_full_name, e.description
      FROM events e
      JOIN event_participants ep ON ep.event_id = e.id
      JOIN event_types et ON et.id = e.event_type_id
      LEFT JOIN places p ON p.id = e.place_id
-     WHERE ep.individual_id = $1
+     WHERE ep.individual_id = $1 AND ep.role = 'principal'
      ORDER BY e.date_sort, e.id`,
     [individualId]
   );
@@ -317,12 +317,12 @@ async function exportFamilyEvents(familyId: number, ctx: ExportContext): Promise
   const { db } = ctx;
 
   const rows = await db.select<EventRow[]>(
-    `SELECT e.id, et.tag, et.custom_name, e.date_original, p.full_name AS place_full_name, e.description
+    `SELECT DISTINCT e.id, et.tag, et.custom_name, e.date_original, p.full_name AS place_full_name, e.description
      FROM events e
      JOIN event_participants ep ON ep.event_id = e.id
      JOIN event_types et ON et.id = e.event_type_id
      LEFT JOIN places p ON p.id = e.place_id
-     WHERE ep.family_id = $1
+     WHERE ep.family_id = $1 AND ep.role = 'principal'
      ORDER BY e.date_sort, e.id`,
     [familyId]
   );

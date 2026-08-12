@@ -39,4 +39,5 @@ export const queryKeys = {
   ancestors: (individualId: string) => ['ancestors', individualId] as const,
   parentFamily: (individualId: string) => ['parentFamily', individualId] as const,
   spouseFamilies: (individualId: string) => ['spouseFamilies', individualId] as const,
+  livingCount: (treeId: string) => ['gedcom', 'livingCount', treeId] as const,
 };

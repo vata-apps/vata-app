@@ -15,6 +15,7 @@ import {
   type GedcomEvent,
 } from '@vata-apps/gedcom-parser';
 import { getTreeDb } from '$/db/connection';
+import { createNote } from '$db-tree/notes';
 import type { Gender } from '$types/database';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
 import { tryParseSortDate } from '$/lib/dateSort';
@@ -33,6 +34,12 @@ interface ImportContext {
   xrefToId: Map<string, string>;
   placeCache: Map<string, string>;
   eventTypeCache: Map<string, number>;
+  stats: ImportStats;
+}
+
+/** Cache key for a system event type — tag alone collides between categories (e.g. CENS is both an individual and a family tag), so category is part of the key. */
+function eventTypeCacheKey(tag: string, category: 'individual' | 'family'): string {
+  return `${tag}:${category}`;
 }
 
 /**
@@ -58,6 +65,7 @@ export async function importGedcom(content: string): Promise<ImportStats> {
     xrefToId: new Map(),
     placeCache: new Map(),
     eventTypeCache: new Map(),
+    stats,
   };
 
   // Pre-load event types cache
@@ -107,12 +115,12 @@ export async function importGedcom(content: string): Promise<ImportStats> {
 async function loadEventTypeCache(ctx: ImportContext): Promise<void> {
   const { db, eventTypeCache } = ctx;
 
-  const rows = await db.select<{ id: number; tag: string }[]>(
-    'SELECT id, tag FROM event_types WHERE tag IS NOT NULL'
+  const rows = await db.select<{ id: number; tag: string; category: 'individual' | 'family' }[]>(
+    'SELECT id, tag, category FROM event_types WHERE tag IS NOT NULL'
   );
 
   for (const row of rows) {
-    eventTypeCache.set(row.tag, row.id);
+    eventTypeCache.set(eventTypeCacheKey(row.tag, row.category), row.id);
   }
 }
 
@@ -129,8 +137,13 @@ async function importIndividual(individual: GedcomIndividual, ctx: ImportContext
     return 'U';
   })();
 
-  // Determine if living: individual is deceased if they have a DEAT event
-  const isLiving = !individual.events.some((e) => e.tag === 'DEAT');
+  // Determine if living: individual is deceased if they have a death-
+  // indicating event. A missing DEAT alone is not reliable evidence of
+  // life — the normal state in a genealogy file is "not yet found" — but
+  // a burial or cremation record is unambiguous, so check those too.
+  const isLiving = !individual.events.some(
+    (e) => e.tag === 'DEAT' || e.tag === 'BURI' || e.tag === 'CREM'
+  );
 
   // Create individual
   const result = await db.execute('INSERT INTO individuals (gender, is_living) VALUES ($1, $2)', [
@@ -150,10 +163,19 @@ async function importIndividual(individual: GedcomIndividual, ctx: ImportContext
     isPrimary = false;
   }
 
+  // Import notes — person-scoped, since they belong to the individual
+  // directly rather than one of their events. Every row in the `notes`
+  // table is anchored to an individual regardless of scope, so a family
+  // or family-event note has no individual to anchor to and is left
+  // unimported rather than guessing one (see issue #243).
+  for (const text of individual.notes) {
+    await createNote({ individualId, scope: 'person', text });
+  }
+
   // Import events
   let eventCount = 0;
   for (const event of individual.events) {
-    const imported = await importIndividualEvent(event, individualId, ctx);
+    const imported = await importIndividualEvent(event, individualId, individual.xref, ctx);
     if (imported) eventCount++;
   }
 
@@ -193,19 +215,23 @@ async function importName(
 async function importIndividualEvent(
   event: GedcomEvent,
   individualId: string,
+  xref: string,
   ctx: ImportContext
 ): Promise<boolean> {
-  const { db, eventTypeCache } = ctx;
+  const { db, eventTypeCache, stats } = ctx;
 
   // Get event type ID — either a custom one we materialise on the fly,
   // or one pulled from the cache for a standard tag.
   const eventTypeId =
     event.tag === 'EVEN' && event.type
       ? await getOrCreateCustomEventType(event.type, 'individual', ctx)
-      : eventTypeCache.get(event.tag);
+      : eventTypeCache.get(eventTypeCacheKey(event.tag, 'individual'));
 
   if (eventTypeId === undefined) {
-    // Unknown event type - skip silently
+    // Not one of the tags event_types is seeded with — surfaced instead of
+    // dropped silently, so a documented-but-unseeded tag or a genuinely
+    // unrecognized one doesn't vanish with no trace (see issue #243).
+    stats.errors.push(`INDI ${xref}: unsupported event tag ${event.tag}`);
     return false;
   }
 
@@ -237,6 +263,15 @@ async function importIndividualEvent(
      VALUES ($1, $2, 'principal')`,
     [eventId, parseEntityId(individualId)]
   );
+
+  for (const text of event.notes) {
+    await createNote({
+      individualId,
+      scope: 'event',
+      eventId: formatEntityId('E', eventId),
+      text,
+    });
+  }
 
   return true;
 }
@@ -288,7 +323,7 @@ async function importFamily(family: GedcomFamily, ctx: ImportContext): Promise<n
   // Import family events
   let eventCount = 0;
   for (const event of family.events) {
-    const imported = await importFamilyEvent(event, familyId, ctx);
+    const imported = await importFamilyEvent(event, familyId, family.xref, ctx);
     if (imported) eventCount++;
   }
 
@@ -301,18 +336,20 @@ async function importFamily(family: GedcomFamily, ctx: ImportContext): Promise<n
 async function importFamilyEvent(
   event: GedcomEvent,
   familyId: string,
+  xref: string,
   ctx: ImportContext
 ): Promise<boolean> {
-  const { db, eventTypeCache } = ctx;
+  const { db, eventTypeCache, stats } = ctx;
 
   // Get event type ID — either a custom one we materialise on the fly,
   // or one pulled from the cache for a standard tag.
   const eventTypeId =
     event.tag === 'EVEN' && event.type
       ? await getOrCreateCustomEventType(event.type, 'family', ctx)
-      : eventTypeCache.get(event.tag);
+      : eventTypeCache.get(eventTypeCacheKey(event.tag, 'family'));
 
   if (eventTypeId === undefined) {
+    stats.errors.push(`FAM ${xref}: unsupported event tag ${event.tag}`);
     return false;
   }
 

@@ -124,9 +124,11 @@ const TREE_SCHEMA = `
   CREATE INDEX IF NOT EXISTS idx_places_parent ON places(parent_id);
 
   -- event_types
+  -- tag+category is the unique key, not tag alone: CENS is both a
+  -- documented individual and family event tag (see connection.ts).
   CREATE TABLE IF NOT EXISTS event_types (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tag TEXT UNIQUE,
+    tag TEXT,
     category TEXT NOT NULL CHECK(category IN ('individual', 'family')),
     is_system INTEGER DEFAULT 0,
     custom_name TEXT,
@@ -134,7 +136,8 @@ const TREE_SCHEMA = `
     CHECK (
       (is_system = 1 AND tag IS NOT NULL AND custom_name IS NULL) OR
       (is_system = 0 AND custom_name IS NOT NULL)
-    )
+    ),
+    UNIQUE(tag, category)
   );
 
   -- system event types
