@@ -131,13 +131,14 @@ async function initializeTreeDb(db: Database): Promise<void> {
 
   // event_types
   //
-  // tag+category is the unique key, not tag alone: GEDCOM's CENS (Census) is
-  // both a documented individual and family event tag, and a plain UNIQUE(tag)
-  // can't hold both rows (see issue #243). Existing tree.db files created
-  // before this change keep their old single-column UNIQUE(tag) constraint —
-  // CREATE TABLE IF NOT EXISTS never retroactively alters it — so family CENS
-  // stays unavailable there until a migration exists (tracked as #250); new
-  // trees get it correctly from creation.
+  // tag+category is the unique key, not tag alone: GEDCOM's CENS (Census) and
+  // EVEN (generic event) are each both a documented individual and family
+  // event tag, and a plain UNIQUE(tag) can't hold both rows per tag (see
+  // issue #243). Existing tree.db files created before this change keep their
+  // old single-column UNIQUE(tag) constraint — CREATE TABLE IF NOT EXISTS
+  // never retroactively alters it — so family CENS and family EVEN stay
+  // unavailable there until a migration exists (tracked as #250); new trees
+  // get both correctly from creation.
   await db.execute(`
     CREATE TABLE IF NOT EXISTS event_types (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
