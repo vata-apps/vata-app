@@ -1,0 +1,74 @@
+src/gedcom-parser/parse.ts
+  s_90e589759b2a63::t_c645816aec2e56 370-372
+  s_90e589759b2a63::t_1ce17e37fce9d8 163-166
+  s_90e589759b2a63::t_86d1b2bb255bcc 326-328
+src/db/trees/events.ts
+  s_90e589759b2a63::t_9548915837b1ef 157-163,165-168,171-178
+src/lib/query-keys.ts
+  s_90e589759b2a63::t_eca474170aee9f 42
+src/test/sqlite-memory.ts
+  s_90e589759b2a63::t_4233c4f04f2f51 127-128,131,139-140
+src/lib/gedcom/importer.ts
+  s_90e589759b2a63::t_52b4e73b790cdd 178
+  s_90e589759b2a63::t_f116e1d92df331 267,274-275
+  s_90e589759b2a63::t_ec07eb4c5d570e 326,339,342
+  s_90e589759b2a63::t_7a62b2dc21afe9 349,352
+  s_90e589759b2a63::t_ebea03e2fcf528 268-273
+  s_90e589759b2a63::t_b53d66f64c84ef 68
+  s_90e589759b2a63::t_fc95ce2a2f6746 218,221,228,231-234
+  s_90e589759b2a63::t_1be3d5113c0360 140-146
+  s_90e589759b2a63::t_f66bf01393d347 18
+  s_90e589759b2a63::t_c22d19d64203fb 166,171,173-174
+  s_90e589759b2a63::t_8a80cc0fd32e13 167-170,172
+  s_90e589759b2a63::t_656abd9e107077 118-119,123
+  s_90e589759b2a63::t_3a57a06f009c18 37-42
+src/components/trees/download-tree-modal.tsx
+  s_90e589759b2a63::t_f76a3d3bc936b2 249-252,254-255
+  s_90e589759b2a63::t_9bfce5db12bf1c 107
+  s_90e589759b2a63::t_426a389423818f 52-57,64-65
+  s_90e589759b2a63::t_b76ddf6827805b 157-161
+  s_90e589759b2a63::t_8c9267c7945d4e 1
+  s_90e589759b2a63::t_c11b65b0ff79b0 20
+  s_90e589759b2a63::t_c9f50cf0ef74e0 154-156,162,164-167
+  s_90e589759b2a63::t_8a3ef303ca5644 253
+  s_90e589759b2a63::t_383ba4f3fd44d6 96,103-106,108-110
+  s_90e589759b2a63::t_80d741535356ba 66
+  s_90e589759b2a63::t_8de0c59f67f024 111
+src/components/trees/import-gedcom-modal.tsx
+  s_90e589759b2a63::t_68cf3842197047 354-361,365-366
+  s_90e589759b2a63::t_3b0da6f7cc97a4 348-350
+src/managers/SourceWorkspaceManager.ts
+  s_90e589759b2a63::t_9f3a2273671604 139-146
+src/i18n/locales/fr/trees.json
+  s_90e589759b2a63::t_84eea0779892c7 119-121
+src/lib/gedcom/exporter.ts
+  s_90e589759b2a63::t_b62667ee13b3b2 320,325
+  s_90e589759b2a63::t_0de2a8cf5ef2be 232,237
+src/managers/GedcomManager.ts
+  s_90e589759b2a63::t_58dbf706f2710c 12
+  s_90e589759b2a63::t_a04cf1b45f94f1 243-251
+src/db/trees/individuals.ts
+  s_90e589759b2a63::t_48c254206db411 163-176
+  s_90e589759b2a63::t_927cbec5057e19 162
+src/i18n/locales/en/trees.json
+  s_90e589759b2a63::t_9389df817eeb95 119-121
+src/db/connection.ts
+  s_90e589759b2a63::t_d538b390523e45 133-140,144,152-153,157-160,186-195,205
+  s_90e589759b2a63::t_942f0d0f64cf7f 206
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "7958e25b46102f20b73366a642427d448c1d854e",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
