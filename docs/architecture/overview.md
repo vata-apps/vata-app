@@ -105,10 +105,9 @@ graph LR
 2. **Hook**: `useCreateIndividual().mutate(data)` is called
 3. **Manager**: `IndividualManager.create(data)`
    - Validates the data
-   - Opens a transaction
    - Inserts the individual into `individuals`
    - Inserts the name into `names`
-   - Commits the transaction
+   - Each write commits on its own — see [ADR-006](../adr/0006-no-client-side-transactions.md)
 4. **DB**: Executes the SQL queries
 5. **Hook**: Invalidates the cache via `queryKeys.individuals`
 6. **UI**: The list refreshes automatically

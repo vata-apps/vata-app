@@ -1,5 +1,5 @@
 import { exists, remove } from '@tauri-apps/plugin-fs';
-import { openTreeDb, closeTreeDb } from '$/db/connection';
+import { openTreeDb, closeTreeDb, getCurrentTreePath } from '$/db/connection';
 import {
   createTree,
   deleteTree,
@@ -101,9 +101,20 @@ export class TreeManager {
    * directory from a failed removal is harmless: `resolveAvailablePath`
    * checks the filesystem directly, so it can never be adopted by a
    * future tree.
+   *
+   * Closes the tree DB first if the tree being deleted is the one
+   * currently open — e.g. a failed GEDCOM import deletes the tree it
+   * just created via `TreeManager.create`, which leaves that tree's
+   * connection open. Removing a directory backing an open SQLite handle
+   * is undefined behavior on at least one platform (Windows locks open
+   * files), so this can't be skipped.
    */
   static async delete(treeId: string): Promise<void> {
     const tree = await TreeManager.getTreeOrThrow(treeId);
+
+    if (getCurrentTreePath() === tree.path) {
+      await closeTreeDb();
+    }
 
     await deleteTree(treeId);
 

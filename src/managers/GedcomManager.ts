@@ -74,26 +74,7 @@ export class GedcomManager {
     const filename = filePath.split('/').pop() ?? 'imported';
     const treeName = filename.replace(/\.[^.]+$/, '');
 
-    // Create the tree (path resolution + row + DB open owned by TreeManager,
-    // so this can't diverge from delete's leftover-path check).
-    const treeId = await TreeManager.create({
-      name: treeName,
-      description: `Imported from ${filename}`,
-    });
-
-    // Import GEDCOM data
-    const stats = await importGedcom(content);
-
-    // Update tree stats
-    await updateTreeStats(treeId, {
-      individualCount: stats.individuals,
-      familyCount: stats.families,
-    });
-
-    // Mark as opened
-    await markTreeOpened(treeId);
-
-    return { treeId, stats };
+    return GedcomManager.importIntoNewTree(treeName, `Imported from ${filename}`, content);
   }
 
   /**
@@ -106,12 +87,37 @@ export class GedcomManager {
    * @returns Import result with tree ID and stats
    */
   static async importFromContent(content: string, treeName: string): Promise<ImportResult> {
-    const treeId = await TreeManager.create({
-      name: treeName,
-      description: 'Imported from GEDCOM',
-    });
+    return GedcomManager.importIntoNewTree(treeName, 'Imported from GEDCOM', content);
+  }
 
-    const stats = await importGedcom(content);
+  /**
+   * Create a tree and import GEDCOM content into it.
+   *
+   * `importGedcom` isn't wrapped in a DB transaction (see its own doc
+   * comment) so a failure partway through can leave a partially-populated
+   * tree. Since this always creates a brand-new tree for the import,
+   * "partial" here means "worthless" — clean it up with
+   * `TreeManager.delete` rather than leaving a broken half-imported tree
+   * sitting in the picker.
+   */
+  private static async importIntoNewTree(
+    treeName: string,
+    description: string,
+    content: string
+  ): Promise<ImportResult> {
+    const treeId = await TreeManager.create({ name: treeName, description });
+
+    let stats: ImportStats;
+    try {
+      stats = await importGedcom(content);
+    } catch (err) {
+      try {
+        await TreeManager.delete(treeId);
+      } catch (cleanupErr) {
+        console.error(`Failed to clean up tree ${treeId} after a failed import:`, cleanupErr);
+      }
+      throw err;
+    }
 
     await updateTreeStats(treeId, {
       individualCount: stats.individuals,

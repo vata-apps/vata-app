@@ -31,7 +31,7 @@ This document is a map of the technologies in use. It does **not** reproduce con
 
 ## Tauri plugins
 
-The Rust shell is a plugin-composition layer with no custom commands. Plugins used: `tauri-plugin-sql` (SQLite from the frontend, with transactions), `tauri-plugin-fs` (file I/O for GEDCOM and media), `tauri-plugin-dialog` (native file/confirm dialogs), `tauri-plugin-store` (persistent key/value). Versions and feature flags are in `src-tauri/Cargo.toml`; permissions are in `src-tauri/capabilities/`.
+The Rust shell is a plugin-composition layer with no custom commands. Plugins used: `tauri-plugin-sql` (SQLite from the frontend — client-side `BEGIN`/`COMMIT` across separate calls isn't safe with this plugin's connection pool, see [ADR-006](../adr/0006-no-client-side-transactions.md)), `tauri-plugin-fs` (file I/O for GEDCOM and media), `tauri-plugin-dialog` (native file/confirm dialogs), `tauri-plugin-store` (persistent key/value). Versions and feature flags are in `src-tauri/Cargo.toml`; permissions are in `src-tauri/capabilities/`.
 
 ## Non-obvious notes
 
