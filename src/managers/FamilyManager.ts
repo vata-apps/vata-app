@@ -124,7 +124,11 @@ export class FamilyManager {
         });
       }
     } catch (err) {
-      await deleteFamily(familyId);
+      try {
+        await deleteFamily(familyId);
+      } catch (cleanupErr) {
+        console.error(`Failed to clean up family ${familyId} after a failed create:`, cleanupErr);
+      }
       throw err;
     }
 

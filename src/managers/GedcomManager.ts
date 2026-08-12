@@ -111,7 +111,11 @@ export class GedcomManager {
     try {
       stats = await importGedcom(content);
     } catch (err) {
-      await TreeManager.delete(treeId);
+      try {
+        await TreeManager.delete(treeId);
+      } catch (cleanupErr) {
+        console.error(`Failed to clean up tree ${treeId} after a failed import:`, cleanupErr);
+      }
       throw err;
     }
 

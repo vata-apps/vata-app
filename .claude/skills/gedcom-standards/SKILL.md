@@ -38,9 +38,9 @@ Never import families before all individuals are created.
 
 ### Transaction Management
 
-- Wrap the entire import in `BEGIN TRANSACTION` / `COMMIT`
-- On any error, execute `ROLLBACK` before rethrowing
+- **Do not** wrap the import in `BEGIN TRANSACTION` / `COMMIT` / `ROLLBACK` — `@tauri-apps/plugin-sql`'s per-call connection pooling makes that unreliable; see the sqlite-standards skill §3 and [ADR-006](../../../docs/adr/0006-no-client-side-transactions.md). Each write commits on its own.
 - Individual record errors are caught and collected in `stats.errors` without aborting the whole import
+- A failed import can't be rolled back at the DB level — the caller (`GedcomManager.importFromFile`/`importFromContent`) deletes the tree it just created if `importGedcom` throws, rather than leaving a broken half-imported tree behind
 
 ### XREF Mapping
 

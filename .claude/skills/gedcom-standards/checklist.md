@@ -13,9 +13,9 @@ Use this checklist when reviewing GEDCOM-related code or documentation.
 - [ ] Two-phase import: individuals first, then families
 - [ ] `xrefToId` map used for XREF-to-DB-ID correspondence
 - [ ] Place caching (`placeCache`) to avoid duplicate places
-- [ ] Entire import wrapped in `BEGIN TRANSACTION` / `COMMIT`
-- [ ] `ROLLBACK` executed on error before rethrowing
+- [ ] Import is **not** wrapped in `BEGIN TRANSACTION` / `COMMIT` / `ROLLBACK` (unsafe with plugin-sql's connection pool — see ADR-006); each write commits on its own
 - [ ] Per-record errors collected without aborting (format: `INDI I1: ...`)
+- [ ] Caller cleans up (e.g. deletes the tree) if the import throws, since a partial import can't be rolled back at the DB level
 - [ ] Unsupported tags silently ignored (OBJE, BLOB, ASSO, ALIA, ANCI, DESI, SUBM, SUBN)
 - [ ] Accepted file extensions: `.ged`, `.gedcom`
 
