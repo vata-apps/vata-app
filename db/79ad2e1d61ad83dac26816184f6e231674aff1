@@ -1,0 +1,25 @@
+.claude/skills/gedcom-standards/SKILL.md
+  s_90e589759b2a63::t_8af00d582e3983 41,43
+.claude/skills/gedcom-standards/checklist.md
+  s_90e589759b2a63::t_994b7dfe811b49 16,18
+src/managers/GedcomManager.ts
+  s_90e589759b2a63::t_f3f8dbc6830eaa 114-118
+src/managers/FamilyManager.ts
+  s_90e589759b2a63::t_f866de8dd21b48 127-131
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "db79ad2e1d61ad83dac26816184f6e231674aff1",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
