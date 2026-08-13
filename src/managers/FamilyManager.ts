@@ -336,15 +336,18 @@ export class FamilyManager {
    * family on first use. `role` maps to the schema's `husband`/`wife` slot —
    * see the sqlite-standards note: family-member role is a positional slot,
    * independent of the parent's own `gender` field.
+   * @returns The id of whoever previously held the slot, or `null` if it was
+   * empty — the caller needs it to invalidate a *displaced* parent's own
+   * cached views, not just the newly-set one.
    */
   static async setParent(
     individualId: string,
     role: 'father' | 'mother',
     parentId: string
-  ): Promise<void> {
+  ): Promise<string | null> {
     const memberRole = role === 'father' ? 'husband' : 'wife';
     const familyId = await ensureParentFamily(individualId);
-    await replaceRoleMember(familyId, memberRole, parentId);
+    return replaceRoleMember(familyId, memberRole, parentId);
   }
 
   /**

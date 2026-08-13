@@ -192,8 +192,10 @@ describe('FamilyManager.setParent / removeParent', () => {
     const oldFatherId = await createNamedIndividual('Old Dad', 'Doe', 'M');
     const newFatherId = await createNamedIndividual('New Dad', 'Doe', 'M');
 
-    await FamilyManager.setParent(childId, 'father', oldFatherId);
-    await FamilyManager.setParent(childId, 'father', newFatherId);
+    await expect(FamilyManager.setParent(childId, 'father', oldFatherId)).resolves.toBeNull();
+    await expect(FamilyManager.setParent(childId, 'father', newFatherId)).resolves.toBe(
+      oldFatherId
+    );
 
     const family = await FamilyManager.getParentFamily(childId);
     expect(family?.husband?.id).toBe(newFatherId);

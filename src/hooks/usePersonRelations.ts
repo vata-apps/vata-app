@@ -135,16 +135,23 @@ export function useSetParent(individualId: string) {
       person: RelationPersonInput;
     }) => {
       const personId = await resolvePersonId(person);
-      await FamilyManager.setParent(individualId, role, personId);
-      return personId;
+      const displacedParentId = await FamilyManager.setParent(individualId, role, personId);
+      return { personId, displacedParentId };
     },
-    onSuccess: (personId, { person }) =>
+    onSuccess: ({ personId, displacedParentId }, { person }) => {
       invalidate({
         createNew: !!person.createNew,
         affectsOverview: true,
         affectsAncestors: true,
         counterpartyId: personId,
-      }),
+      });
+      // Setting a slot that already had someone in it displaces them —
+      // their own cached views need the same refresh removeParent gives
+      // an explicitly-removed parent.
+      if (displacedParentId && displacedParentId !== personId) {
+        invalidate({ affectsOverview: true, counterpartyId: displacedParentId });
+      }
+    },
   });
 }
 
