@@ -59,6 +59,15 @@ export function useRelationCitations(familyId: string | null) {
  * `ancestors` are narrower: only a parent or spouse/child change can move
  * what they display — a sibling edit, or a pure nature/certainty/note edit,
  * never does.
+ *
+ * Every relation mutation writes a `family_members` row that by definition
+ * appears on the *other* person's screens too — refreshed via
+ * `counterpartyId`. Their `personOverview` mirrors `affectsOverview`: a
+ * parent/spouse/child edge is visible from both sides of the same row, a
+ * sibling edit from neither. `ancestors` does not mirror `affectsAncestors`
+ * — it's directional (only the *child* side of a parent-child edge
+ * gains/loses an ancestor), so pass `counterpartyAffectsAncestors`
+ * explicitly instead of assuming symmetry.
  */
 function useInvalidateRelations(
   individualId: string
@@ -66,6 +75,8 @@ function useInvalidateRelations(
   createNew?: boolean;
   affectsOverview?: boolean;
   affectsAncestors?: boolean;
+  counterpartyId?: string | null;
+  counterpartyAffectsAncestors?: boolean;
 }) => void {
   const queryClient = useQueryClient();
 
@@ -81,6 +92,17 @@ function useInvalidateRelations(
     }
     if (options.createNew) {
       queryClient.invalidateQueries({ queryKey: queryKeys.individuals });
+    }
+
+    if (options.counterpartyId) {
+      const counterpartyId = options.counterpartyId;
+      queryClient.invalidateQueries({ queryKey: queryKeys.personRelations(counterpartyId) });
+      if (options.affectsOverview) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.personOverview(counterpartyId) });
+      }
+      if (options.counterpartyAffectsAncestors) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.ancestors(counterpartyId) });
+      }
     }
   };
 }
@@ -113,11 +135,23 @@ export function useSetParent(individualId: string) {
       person: RelationPersonInput;
     }) => {
       const personId = await resolvePersonId(person);
-      await FamilyManager.setParent(individualId, role, personId);
-      return personId;
+      const displacedParentId = await FamilyManager.setParent(individualId, role, personId);
+      return { personId, displacedParentId };
     },
-    onSuccess: (_result, { person }) =>
-      invalidate({ createNew: !!person.createNew, affectsOverview: true, affectsAncestors: true }),
+    onSuccess: ({ personId, displacedParentId }, { person }) => {
+      invalidate({
+        createNew: !!person.createNew,
+        affectsOverview: true,
+        affectsAncestors: true,
+        counterpartyId: personId,
+      });
+      // Setting a slot that already had someone in it displaces them —
+      // their own cached views need the same refresh removeParent gives
+      // an explicitly-removed parent.
+      if (displacedParentId && displacedParentId !== personId) {
+        invalidate({ affectsOverview: true, counterpartyId: displacedParentId });
+      }
+    },
   });
 }
 
@@ -125,10 +159,16 @@ export function useRemoveParent(individualId: string) {
   const invalidate = useInvalidateRelations(individualId);
   return useMutation({
     mutationFn: (role: 'father' | 'mother') => FamilyManager.removeParent(individualId, role),
-    onSuccess: () => invalidate({ affectsOverview: true, affectsAncestors: true }),
+    onSuccess: (removedParentId) =>
+      invalidate({
+        affectsOverview: true,
+        affectsAncestors: true,
+        counterpartyId: removedParentId,
+      }),
   });
 }
 
+/** Adding/removing a sibling never moves Overview or ancestors for either person — see {@link useInvalidateRelations}'s doc comment. */
 export function useAddSibling(individualId: string) {
   const invalidate = useInvalidateRelations(individualId);
   return useMutation({
@@ -137,7 +177,8 @@ export function useAddSibling(individualId: string) {
       await FamilyManager.addSibling(individualId, siblingId);
       return siblingId;
     },
-    onSuccess: (_result, person) => invalidate({ createNew: !!person.createNew }),
+    onSuccess: (siblingId, person) =>
+      invalidate({ createNew: !!person.createNew, counterpartyId: siblingId }),
   });
 }
 
@@ -146,7 +187,7 @@ export function useRemoveSibling(individualId: string) {
   return useMutation({
     mutationFn: ({ familyId, siblingId }: { familyId: string; siblingId: string }) =>
       FamilyManager.removeMember(familyId, siblingId),
-    onSuccess: () => invalidate(),
+    onSuccess: (_result, { siblingId }) => invalidate({ counterpartyId: siblingId }),
   });
 }
 
@@ -159,10 +200,15 @@ export function useCreateUnion(individualId: string, individualGender: Gender) {
       const individualRole = spouseRoleFor(individualGender);
       const husbandId = individualRole === 'husband' ? individualId : spouseId;
       const wifeId = individualRole === 'husband' ? spouseId : individualId;
-      return FamilyManager.create({}, husbandId, wifeId);
+      await FamilyManager.create({}, husbandId, wifeId);
+      return spouseId;
     },
-    onSuccess: (_result, person) =>
-      invalidate({ createNew: !!person.createNew, affectsOverview: true }),
+    onSuccess: (spouseId, person) =>
+      invalidate({
+        createNew: !!person.createNew,
+        affectsOverview: true,
+        counterpartyId: spouseId,
+      }),
   });
 }
 
@@ -175,8 +221,12 @@ export function useSetSecondParent(individualId: string) {
       await FamilyManager.setSecondParent(familyId, spouseId);
       return spouseId;
     },
-    onSuccess: (_result, { person }) =>
-      invalidate({ createNew: !!person.createNew, affectsOverview: true }),
+    onSuccess: (spouseId, { person }) =>
+      invalidate({
+        createNew: !!person.createNew,
+        affectsOverview: true,
+        counterpartyId: spouseId,
+      }),
   });
 }
 
@@ -185,7 +235,8 @@ export function useRemoveSpouse(individualId: string) {
   return useMutation({
     mutationFn: ({ familyId, spouseId }: { familyId: string; spouseId: string }) =>
       FamilyManager.removeMember(familyId, spouseId),
-    onSuccess: () => invalidate({ affectsOverview: true }),
+    onSuccess: (_result, { spouseId }) =>
+      invalidate({ affectsOverview: true, counterpartyId: spouseId }),
   });
 }
 
@@ -197,8 +248,13 @@ export function useAddChildToUnion(individualId: string) {
       await FamilyManager.addChild(familyId, childId);
       return childId;
     },
-    onSuccess: (_result, { person }) =>
-      invalidate({ createNew: !!person.createNew, affectsOverview: true }),
+    onSuccess: (childId, { person }) =>
+      invalidate({
+        createNew: !!person.createNew,
+        affectsOverview: true,
+        counterpartyId: childId,
+        counterpartyAffectsAncestors: true,
+      }),
   });
 }
 
@@ -207,6 +263,11 @@ export function useRemoveChildFromUnion(individualId: string) {
   return useMutation({
     mutationFn: ({ familyId, childId }: { familyId: string; childId: string }) =>
       FamilyManager.removeChild(familyId, childId),
-    onSuccess: () => invalidate({ affectsOverview: true }),
+    onSuccess: (_result, { childId }) =>
+      invalidate({
+        affectsOverview: true,
+        counterpartyId: childId,
+        counterpartyAffectsAncestors: true,
+      }),
   });
 }

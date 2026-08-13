@@ -192,8 +192,10 @@ describe('FamilyManager.setParent / removeParent', () => {
     const oldFatherId = await createNamedIndividual('Old Dad', 'Doe', 'M');
     const newFatherId = await createNamedIndividual('New Dad', 'Doe', 'M');
 
-    await FamilyManager.setParent(childId, 'father', oldFatherId);
-    await FamilyManager.setParent(childId, 'father', newFatherId);
+    await expect(FamilyManager.setParent(childId, 'father', oldFatherId)).resolves.toBeNull();
+    await expect(FamilyManager.setParent(childId, 'father', newFatherId)).resolves.toBe(
+      oldFatherId
+    );
 
     const family = await FamilyManager.getParentFamily(childId);
     expect(family?.husband?.id).toBe(newFatherId);
@@ -208,7 +210,7 @@ describe('FamilyManager.setParent / removeParent', () => {
     await FamilyManager.setParent(childId, 'father', fatherId);
     await FamilyManager.setParent(childId, 'mother', motherId);
 
-    await FamilyManager.removeParent(childId, 'father');
+    await expect(FamilyManager.removeParent(childId, 'father')).resolves.toBe(fatherId);
 
     const family = await FamilyManager.getParentFamily(childId);
     expect(family?.husband).toBeNull();
@@ -217,7 +219,7 @@ describe('FamilyManager.setParent / removeParent', () => {
 
   it('is a no-op when the individual has no parent family yet', async () => {
     const childId = await createNamedIndividual('Kid', 'Doe');
-    await expect(FamilyManager.removeParent(childId, 'father')).resolves.toBeUndefined();
+    await expect(FamilyManager.removeParent(childId, 'father')).resolves.toBeNull();
     expect(await FamilyManager.getParentFamily(childId)).toBeNull();
   });
 });
