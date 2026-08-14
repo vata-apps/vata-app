@@ -1,4 +1,3 @@
-use image::ImageReader;
 use tauri::menu::{AboutMetadata, Menu, MenuItem, PredefinedMenuItem, Submenu};
 use tauri::{AppHandle, Emitter, Manager, Runtime, State};
 
@@ -6,25 +5,6 @@ const CLOSE_TREE_MENU_ID: &str = "close-tree";
 const CLOSE_TREE_MENU_EVENT: &str = "menu:close-tree";
 
 struct CloseTreeMenuItem(MenuItem<tauri::Wry>);
-
-#[tauri::command]
-async fn generate_thumbnail(
-    source_path: String,
-    dest_path: String,
-    max_width: u32,
-) -> Result<(), String> {
-    let img = ImageReader::open(&source_path)
-        .map_err(|e| format!("Failed to open image: {e}"))?
-        .decode()
-        .map_err(|e| format!("Failed to decode image: {e}"))?;
-
-    let thumbnail = img.thumbnail(max_width, u32::MAX);
-    thumbnail
-        .save(&dest_path)
-        .map_err(|e| format!("Failed to save thumbnail: {e}"))?;
-
-    Ok(())
-}
 
 // Mirrors `tauri::menu::Menu::default` with File > "Close Window" replaced by
 // "Close Tree" and Window > "Close Window" removed. Re-sync on Tauri upgrades.
@@ -150,16 +130,33 @@ pub fn run() {
             }
         });
 
+    // Localhost-only: the crate's default `0.0.0.0` bind makes debug builds a
+    // network service reachable by anything on the LAN. This still doesn't
+    // close the narrower vector of a malicious page in the same browser
+    // session opening `ws://127.0.0.1:9223` directly (WebSocket handshakes
+    // are exempt from same-origin policy) — that needs an auth token the
+    // crate doesn't currently support.
+    //
+    // The plugin itself (and its WebSocket server, and its execute_js/
+    // execute_command handlers) is only ever registered here, in a debug
+    // build — a release binary contains none of it, regardless of what
+    // `capabilities/default.json`'s `mcp-bridge:default` entry nominally
+    // grants. That capability line staying in the one shared capability
+    // file for release builds too is a cosmetic gap, not a live one: Tauri
+    // has no built-in debug/release capability split (only `platforms`,
+    // which is OS- not profile-scoped — checked the capability schema), so
+    // closing it for real needs custom build tooling (e.g. a build.rs step
+    // swapping capability files by profile), tracked separately rather than
+    // guessed at here.
     #[cfg(debug_assertions)]
     {
-        builder = builder.plugin(tauri_plugin_mcp_bridge::init());
+        builder = builder.plugin(tauri_plugin_mcp_bridge::init_with_config(
+            tauri_plugin_mcp_bridge::Config::localhost_only(),
+        ));
     }
 
     builder
-        .invoke_handler(tauri::generate_handler![
-            generate_thumbnail,
-            set_close_tree_enabled
-        ])
+        .invoke_handler(tauri::generate_handler![set_close_tree_enabled])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
