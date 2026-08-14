@@ -1,0 +1,69 @@
+src/components/ui/toast.css.ts
+  s_90e589759b2a63::t_8af5015dc912d3 1-28,31-37,39-63,65-66,68-73
+  s_90e589759b2a63::t_8b6fe864ec9892 29-30,38
+  s_90e589759b2a63::t_7ed893e28ddb98 64
+  s_90e589759b2a63::t_abb411ad52a09f 67
+src/lib/toast.ts
+  s_90e589759b2a63::t_c60ec8d3ef39f4 1
+  s_90e589759b2a63::t_f06476a38d0f11 3-12,14-22
+  s_90e589759b2a63::t_9e42f5a4221421 13
+  s_90e589759b2a63::t_48ae6bc56e0104 27-37,39-45
+  s_90e589759b2a63::t_d27f0b5af4ca87 2
+  s_90e589759b2a63::t_13d04cd721dabb 23-26,38,46
+src/pages/PersonRelationsPage.tsx
+  s_90e589759b2a63::t_c9b463ecdf32d3 196-197,199
+  s_90e589759b2a63::t_b3e1cae6a41e13 56
+  s_90e589759b2a63::t_1caf19943a625d 198
+src/lib/query-client.ts
+  s_90e589759b2a63::t_55a205c519b9d8 1-4,7-15
+src/main.tsx
+  s_90e589759b2a63::t_0db2d446308cca 10
+  s_90e589759b2a63::t_2946ab7d864f08 26-29
+src/i18n/locales/fr/common.json
+  s_90e589759b2a63::t_84d124f442a9a2 30-37
+src/pages/Home.tsx
+  s_90e589759b2a63::t_dd39276ea5b022 31,37-38,41-47,49-58,63
+  s_90e589759b2a63::t_98d85c8baf39e0 59-62
+  s_90e589759b2a63::t_2076b13a3c238b 351-355
+  s_90e589759b2a63::t_8bd4d841455592 34
+  s_90e589759b2a63::t_74fc4246f135f2 39-40,48
+  s_90e589759b2a63::t_709b8274559ad8 64
+src/i18n/locales/en/common.json
+  s_90e589759b2a63::t_2fd8fb435ad1db 30-37
+src/pages/PersonNamesPage.tsx
+  s_90e589759b2a63::t_fbb868afca4af3 33
+  s_90e589759b2a63::t_57faad57c3b8ec 130-135,137
+  s_90e589759b2a63::t_da9052d9fdee62 136
+src/pages/PersonNotesPage.tsx
+  s_90e589759b2a63::t_128aa3382d5f44 312-313,315
+  s_90e589759b2a63::t_083412f5217d56 314
+  s_90e589759b2a63::t_218b2501a50036 41
+src/design/theme.css.ts
+  s_90e589759b2a63::t_15424c8f798c22 233
+  s_90e589759b2a63::t_78ae52b3674007 147-148
+src/pages/PersonEventsPage.tsx
+  s_90e589759b2a63::t_fd5e94ee0ebc06 193
+  s_90e589759b2a63::t_12c3689f186752 53
+  s_90e589759b2a63::t_fb60e0751ec5ff 186-192,194
+src/components/ui/toast.tsx
+  s_90e589759b2a63::t_5d0ab3d5388471 1-12,14-15,17-25,27-38,44,46-53
+  s_90e589759b2a63::t_dd5bf8f23a2074 39-43,45
+  s_90e589759b2a63::t_a3ba6c057949bf 13,26
+  s_90e589759b2a63::t_3ca838ab484a83 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c22f721b9234f7165e69ffb89f6079933a7fdecc",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
