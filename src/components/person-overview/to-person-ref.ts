@@ -1,15 +1,7 @@
-import type { Name } from '$types/database';
 import { formatName } from '$db-tree/names';
 import type { RelatedPerson } from '$db-tree/person-overview';
+import { initialsOf } from '$lib/personSummary';
 import type { PersonRefData } from './overview-types';
-
-/** Two-letter monogram from a primary name, falling back to `?`. */
-export function initialsOf(name: Name | null): string {
-  const first = name?.givenNames?.trim()?.[0] ?? '';
-  const last = name?.surname?.trim()?.[0] ?? '';
-  const initials = `${first}${last}`.toUpperCase();
-  return initials || '?';
-}
 
 /**
  * A related individual (parent, spouse, child, ancestor, …) reduced to the

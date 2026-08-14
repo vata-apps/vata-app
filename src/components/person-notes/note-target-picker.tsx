@@ -11,9 +11,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { initialsFromDisplayName } from '$components/individuals/person-display';
 import { Icon } from '$components/icon';
 import { EntityPicker, type EntityPickerItem } from '$components/ui/entity-picker';
+import { initialsFromDisplayName } from '$lib/personSummary';
 
 export interface NoteTargetOption {
   id: string;

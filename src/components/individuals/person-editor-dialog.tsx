@@ -35,7 +35,8 @@ import type {
 } from '$types/database';
 import { NAME_TYPES } from '$db-tree/names';
 import type { PersonEventEntry } from '$db-tree/person-events';
-import { formatLifeYears, initialsFromDisplayName, personDisplayFields } from './person-display';
+import { formatLifeYears, initialsFromDisplayName } from '$lib/personSummary';
+import { personDisplayFields } from './person-display';
 import { PersonPicker, type PersonPickerSelection } from './person-picker';
 import * as s from './person-editor.css';
 
@@ -389,7 +390,7 @@ function RelationSlot({
   const { t } = useTranslation('individuals');
 
   if (person) {
-    const dates = formatLifeYears(person.bornYear, person.deathYear);
+    const dates = formatLifeYears(person, t);
     return (
       <div className={s.pfield}>
         <span className={s.pfieldAvatar} aria-hidden="true">

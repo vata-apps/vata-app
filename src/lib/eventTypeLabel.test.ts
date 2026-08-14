@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { eventTypeLabel } from './eventTypeLabel';
+import { SYSTEM_EVENT_TYPES } from '$/db/connection';
 import type { EventType } from '$types/database';
 
 function makeSystemType(tag: string, id = '1'): EventType {
@@ -79,8 +80,19 @@ describe('eventTypeLabel', () => {
   });
 
   it('falls back to the tag itself for a system tag without a translation key', () => {
-    expect(eventTypeLabel(makeSystemType('TITL'), t)).toBe('TITL');
-    expect(eventTypeLabel(makeSystemType('CAST'), t)).toBe('CAST');
+    // A genuinely unrecognized tag — every tag this app actually seeds has a
+    // translation key, guarded by the test below.
+    expect(eventTypeLabel(makeSystemType('ZZZZ'), t)).toBe('ZZZZ');
+  });
+
+  it('has a translation key for every tag SYSTEM_EVENT_TYPES seeds into a new tree', () => {
+    for (const [tag] of SYSTEM_EVENT_TYPES) {
+      const label = eventTypeLabel(makeSystemType(tag), t);
+      expect(
+        label,
+        `"${tag}" falls back to its raw GEDCOM code — add it to KNOWN_TAG_KEYS`
+      ).not.toBe(tag);
+    }
   });
 
   it('returns customName verbatim for a custom (non-system) type', () => {

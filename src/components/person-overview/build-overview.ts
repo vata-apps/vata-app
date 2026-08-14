@@ -8,7 +8,8 @@ import type {
   OverviewPerson,
   OverviewPlaceLived,
 } from './overview-types';
-import { initialsOf, toPersonRef } from './to-person-ref';
+import { initialsOf } from '$lib/personSummary';
+import { toPersonRef } from './to-person-ref';
 
 /**
  * The slice of the Person Overview view-model that the components render from

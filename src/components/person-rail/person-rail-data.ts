@@ -1,5 +1,6 @@
 import type { IconName } from '$components/icon';
 import { formatName, nameMatchesQuery } from '$db-tree/names';
+import { formatLifeYearsCompact } from '$lib/personSummary';
 import type { PeopleRailFilters, PeopleRailSort } from '$/store/app-store';
 import type { Gender, IndividualWithDetails } from '$types/database';
 
@@ -18,9 +19,13 @@ function eventYear(event: IndividualWithDetails['birthEvent']): number | null {
 
 /** Compact "1959–2020" / "1959–" (living) / "?–2020" lifespan string for the rail. */
 export function lifespanYears(person: IndividualWithDetails): string {
-  const birth = eventYear(person.birthEvent);
-  const death = person.isLiving ? '' : (eventYear(person.deathEvent)?.toString() ?? '?');
-  return `${birth ?? '?'}–${death}`;
+  return formatLifeYearsCompact(
+    {
+      bornYear: eventYear(person.birthEvent) ?? undefined,
+      deathYear: eventYear(person.deathEvent) ?? undefined,
+    },
+    person.isLiving
+  );
 }
 
 /**

@@ -11,17 +11,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Icon } from '$components/icon';
-import {
-  formatLifeYears,
-  initialsFromDisplayName,
-  personDisplayFields,
-  splitDisplayName,
-} from '$components/individuals/person-display';
+import { personDisplayFields, splitDisplayName } from '$components/individuals/person-display';
 import { button } from '$components/ui/button.css';
 import { EntityPicker, type EntityPickerItem } from '$components/ui/entity-picker';
 import { SegmentedControl } from '$components/ui/segmented-control';
 import { formatNameSimple } from '$db-tree/names';
 import { useIndividualBrowseOrSearch } from '$hooks/useIndividualBrowseOrSearch';
+import { formatLifeYears, initialsFromDisplayName } from '$lib/personSummary';
 import { useRecentEventParticipantIds } from '$/store/app-store';
 import type { IndividualWithDetails } from '$types/database';
 
@@ -100,7 +96,7 @@ export function EventParticipantPicker({
   const items: EntityPickerItem[] = results.map((person) => ({
     id: person.id,
     title: person.displayName,
-    meta: formatLifeYears(person.bornYear, person.deathYear),
+    meta: formatLifeYears(person, t),
     initials: initialsFromDisplayName(person.displayName),
   }));
 

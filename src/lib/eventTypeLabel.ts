@@ -1,11 +1,15 @@
 import type { EventType } from '$types/database';
 
-/** The i18next `t` shape this file needs — enough to resolve a key in another namespace via `{ ns }`. */
-export type TranslateFn = (key: string, options?: { ns?: string }) => string;
+/** The i18next `t` shape this app's plain (non-component) formatters need — resolving a key in another namespace via `{ ns }`, or with interpolation values. Shared by `$lib/personSummary`. */
+export type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
 
 /**
  * System tags whose translations live in the `events` namespace.
  * BAPM and CHR intentionally share the same key (both render as Baptism/Baptême).
+ *
+ * Every tag `SYSTEM_EVENT_TYPES` (`$/db/connection.ts`) seeds into a new tree
+ * must have an entry here — `eventTypeLabel.test.ts` asserts that. Otherwise
+ * it falls through to `eventTypeLabel`'s raw-tag fallback below (see #251).
  */
 const KNOWN_TAG_KEYS: Record<string, string> = {
   BIRT: 'types.BIRT',
@@ -34,6 +38,23 @@ const KNOWN_TAG_KEYS: Record<string, string> = {
   OCCU: 'types.OCCU',
   EDUC: 'types.EDUC',
   RELI: 'types.RELI',
+  EVEN: 'types.EVEN',
+  CAST: 'types.CAST',
+  DSCR: 'types.DSCR',
+  IDNO: 'types.IDNO',
+  NATI: 'types.NATI',
+  NCHI: 'types.NCHI',
+  NMR: 'types.NMR',
+  PROP: 'types.PROP',
+  SSN: 'types.SSN',
+  TITL: 'types.TITL',
+  MARB: 'types.MARB',
+  MARC: 'types.MARC',
+  MARL: 'types.MARL',
+  MARS: 'types.MARS',
+  ENGA: 'types.ENGA',
+  DIVF: 'types.DIVF',
+  ANUL: 'types.ANUL',
 };
 
 /**
