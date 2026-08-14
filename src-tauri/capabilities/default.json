@@ -14,14 +14,9 @@
     "fs:allow-rename",
     "fs:allow-exists",
     "fs:allow-write-text-file",
-    "fs:allow-stat",
     {
       "identifier": "fs:scope",
-      "allow": [
-        { "path": "$APPDATA/**" },
-        { "path": "$DOCUMENT/**" },
-        { "path": "$DOWNLOAD/**" }
-      ]
+      "allow": [{ "path": "$APPDATA/**" }]
     },
     "dialog:default",
     "dialog:allow-open",
