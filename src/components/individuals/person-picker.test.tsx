@@ -119,7 +119,7 @@ describe('PersonPicker', () => {
     const result = await screen.findByRole('button', { name: 'John Doe' });
     await user.click(result);
 
-    expect(onSelect).toHaveBeenCalledWith({ id: 'I-0001', displayName: 'John Doe' });
+    expect(onSelect).toHaveBeenCalledWith({ id: 'I-0001', gender: 'M', displayName: 'John Doe' });
   });
 
   it('excludes ids passed via excludeIds from the results', async () => {
@@ -148,6 +148,7 @@ describe('PersonPicker', () => {
     expect(onSelect).toHaveBeenCalledWith({
       createNew: { givenNames: 'Someone', surname: 'New', gender: 'M' },
       displayName: 'Someone New',
+      gender: 'M',
     });
   });
 
@@ -165,6 +166,7 @@ describe('PersonPicker', () => {
     expect(onSelect).toHaveBeenCalledWith({
       createNew: { givenNames: 'Madonna', gender: undefined },
       displayName: 'Madonna',
+      gender: 'U',
     });
   });
 });

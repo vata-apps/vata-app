@@ -417,9 +417,10 @@ async function initializeTreeDb(db: Database): Promise<void> {
  * Add the Relations tab's per-membership metadata columns to an
  * already-existing `family_members` table. Additive only — `ALTER TABLE ADD
  * COLUMN` is safe on a live tree, unlike changing `pedigree`'s CHECK
- * constraint, which is left untouched (it is the GEDCOM PEDI enum, reserved
- * for a future import/export mapping — a distinct concept from `nature`,
- * which also covers spouse rows and has no GEDCOM equivalent).
+ * constraint, which is left untouched (it is the GEDCOM PEDI enum, read and
+ * written by GEDCOM import/export — see `gedcom-551-mapping.md` — and a
+ * distinct concept from `nature`, which also covers spouse rows and has no
+ * GEDCOM equivalent).
  */
 async function migrateFamilyMembersRelationColumns(db: Database): Promise<void> {
   const cols = await db.select<{ name: string }[]>(

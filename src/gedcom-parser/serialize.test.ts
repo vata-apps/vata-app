@@ -177,7 +177,7 @@ describe('serialize', () => {
             names: [{ surname: 'Test' }],
             gender: 'M',
             events: [],
-            familyChildRefs: ['F2'],
+            familyChildRefs: [{ familyXref: 'F2', pedigree: 'adopted' }],
             familySpouseRefs: ['F1'],
             notes: [],
             sources: [],
@@ -192,6 +192,7 @@ describe('serialize', () => {
       const result = serialize(doc);
 
       expect(result).toContain('1 FAMC @F2@');
+      expect(result).toContain('2 PEDI adopted');
       expect(result).toContain('1 FAMS @F1@');
     });
 

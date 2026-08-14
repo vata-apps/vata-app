@@ -87,7 +87,7 @@ describe('parseDocument', () => {
     expect(jean.familySpouseRefs).toContain('F1');
 
     const pierre = doc.individuals[2];
-    expect(pierre.familyChildRefs).toContain('F1');
+    expect(pierre.familyChildRefs).toContainEqual({ familyXref: 'F1', pedigree: undefined });
   });
 
   it('parses families', () => {

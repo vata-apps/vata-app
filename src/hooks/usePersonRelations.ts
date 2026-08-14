@@ -6,7 +6,7 @@ import { getPersonRelations, type PersonRelationsData } from '$db-tree/person-re
 import {
   FamilyManager,
   resolvePersonId,
-  spouseRoleFor,
+  resolveSpouseRoles,
   type RelationPersonInput,
 } from '$managers/FamilyManager';
 import type { Gender, UpdateFamilyMemberDetailsInput } from '$types/database';
@@ -197,7 +197,7 @@ export function useCreateUnion(individualId: string, individualGender: Gender) {
   return useMutation({
     mutationFn: async (person: RelationPersonInput) => {
       const spouseId = await resolvePersonId(person);
-      const individualRole = spouseRoleFor(individualGender);
+      const { individualRole } = resolveSpouseRoles(individualGender, person.gender ?? 'U');
       const husbandId = individualRole === 'husband' ? individualId : spouseId;
       const wifeId = individualRole === 'husband' ? spouseId : individualId;
       await FamilyManager.create({}, husbandId, wifeId);

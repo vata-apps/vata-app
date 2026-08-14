@@ -241,6 +241,7 @@ describe('PersonEditorDialog', () => {
           expect.objectContaining({
             spouse: {
               createNew: { givenNames: 'Ginny', surname: 'Weasley', gender: undefined },
+              gender: 'U',
             },
             children: [],
           }),

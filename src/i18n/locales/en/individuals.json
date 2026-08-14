@@ -276,7 +276,23 @@
       "trigger": "Remove this relation",
       "question": "Permanently remove the relation with \"{{name}}\"?",
       "questionWithNotes_one": "Permanently remove the relation with \"{{name}}\"? {{count}} attached note will also be deleted.",
-      "questionWithNotes_other": "Permanently remove the relation with \"{{name}}\"? {{count}} attached notes will also be deleted."
+      "questionWithNotes_other": "Permanently remove the relation with \"{{name}}\"? {{count}} attached notes will also be deleted.",
+      "questionParent": "Permanently remove \"{{name}}\" as a parent? This removes them as a parent for every child in this family, not just this person.",
+      "questionParentWithNotes_one": "Permanently remove \"{{name}}\" as a parent? This removes them as a parent for every child in this family, not just this person. {{count}} attached note will also be deleted.",
+      "questionParentWithNotes_other": "Permanently remove \"{{name}}\" as a parent? This removes them as a parent for every child in this family, not just this person. {{count}} attached notes will also be deleted.",
+      "halfSiblingNotRemovable": "This half-sibling relation comes from their own parent family — remove it from their own Relations tab instead."
+    },
+    "additionalParentFamily": {
+      "label": "Also recorded as a child of {{father}} and {{mother}}",
+      "labelWithPedigree": "Also recorded as a child of {{father}} and {{mother}} ({{pedigree}})",
+      "unknownParent": "Unknown",
+      "pedigree": {
+        "birth": "birth",
+        "adopted": "adopted",
+        "foster": "foster",
+        "sealing": "sealing",
+        "step": "step"
+      }
     }
   },
   "notesTab": {

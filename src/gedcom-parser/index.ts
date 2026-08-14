@@ -23,6 +23,7 @@ export type {
   GedcomDocument,
   GedcomHeader,
   GedcomIndividual,
+  GedcomFamilyChildRef,
   GedcomFamily,
   GedcomName,
   GedcomEvent,

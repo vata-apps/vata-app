@@ -24,6 +24,7 @@ import type {
   CreateFamilyInput,
   EventWithDetails,
   UpdateFamilyInput,
+  FamilyMember,
   FamilyRole,
   FamilyWithMembers,
   IndividualWithDetails,
@@ -36,6 +37,13 @@ import type {
 export interface RelationPersonInput {
   id?: string;
   createNew?: { givenNames?: string; surname?: string; gender?: Gender };
+  /**
+   * The picked person's recorded sex — known for an existing pick (their own
+   * `individuals.gender`) or the seeded value for a new one. Used only to
+   * decide which husband/wife slot a spouse pick fills (see
+   * {@link resolveSpouseRoles}); never written back to the individual.
+   */
+  gender?: Gender;
 }
 
 export interface FamilyRelationInput {
@@ -89,8 +97,38 @@ async function ensureParentFamily(individualId: string): Promise<string> {
 }
 
 /** Which family_members slot (husband/wife) an individual of this gender fills as a spouse — unknown defaults to husband. */
-export function spouseRoleFor(gender: Gender): FamilyRole {
+function spouseRoleFor(gender: Gender): FamilyRole {
   return gender === 'F' ? 'wife' : 'husband';
+}
+
+/** The other husband/wife slot — the schema only has these two. */
+function otherRole(role: FamilyRole): FamilyRole {
+  return role === 'husband' ? 'wife' : 'husband';
+}
+
+/**
+ * Which husband/wife slots a pair of spouses fill, anchored on whichever one
+ * has a recorded sex — a known `M`/`F` must never be forced into the slot for
+ * the other sex just because the *other* person's sex happens to be unknown
+ * (see issue #246: an unknown-sex subject was defaulting to `husband` and
+ * pushing a recorded-`M` spouse into `wife`). Falls back to the positional
+ * default only when neither person's sex is known, or both share the same
+ * known sex — that pairing is arbitrary either way, the schema has no third
+ * slot.
+ */
+export function resolveSpouseRoles(
+  individualGender: Gender,
+  spouseGender: Gender
+): { individualRole: FamilyRole; spouseRole: FamilyRole } {
+  let individualRole: FamilyRole;
+  if (individualGender !== 'U') {
+    individualRole = spouseRoleFor(individualGender);
+  } else if (spouseGender !== 'U') {
+    individualRole = otherRole(spouseRoleFor(spouseGender));
+  } else {
+    individualRole = 'husband';
+  }
+  return { individualRole, spouseRole: otherRole(individualRole) };
 }
 
 export class FamilyManager {
@@ -392,7 +430,7 @@ export class FamilyManager {
     if (!existingSpouseRole) {
       throw new Error(`setSecondParent: family ${familyId} has no existing spouse to pair against`);
     }
-    const slot: FamilyRole = existingSpouseRole === 'husband' ? 'wife' : 'husband';
+    const slot: FamilyRole = otherRole(existingSpouseRole);
     await replaceRoleMember(familyId, slot, spouseId);
   }
 
@@ -457,14 +495,6 @@ export class FamilyManager {
 
     if (!input.families) return;
 
-    // The edited person's own slot in a *new* spouse family is guessed from
-    // their gender (defaulting to husband when unknown) — unlike
-    // `setParent`'s `role`, there is no explicit caller-supplied slot here,
-    // and getting it right matters: their own future children resolve
-    // father/mother from this same husband/wife slot (see `setParent`).
-    const individualRole: FamilyRole = spouseRoleFor(individualGender);
-    const spouseRole: FamilyRole = individualRole === 'husband' ? 'wife' : 'husband';
-
     // Snapshot pre-existing spouse families before the loop can create new ones,
     // so removal reconciliation only targets unions the caller dropped.
     const priorSpouseFamilyIds = (await getSpouseFamilies(individualId)).map((family) => family.id);
@@ -473,7 +503,7 @@ export class FamilyManager {
     );
 
     for (const familyInput of input.families) {
-      await saveSpouseFamily(individualId, individualRole, spouseRole, familyInput);
+      await saveSpouseFamily(individualId, individualGender, familyInput);
     }
 
     // A pre-existing spouse family no longer listed was removed in the
@@ -496,26 +526,39 @@ export async function resolvePersonId(ref: RelationPersonInput): Promise<string>
 
 /**
  * Reconcile one spouse-family row: create it if new and non-empty, replace
- * the spouse slot, and reconcile children to the exact desired set. Fetches
- * the family's members once and reuses that single result for both the
- * spouse-slot lookup and the existing-children diff.
+ * the spouse slot, and reconcile children to the exact desired set.
+ *
+ * The husband/wife slot pair is resolved differently depending on whether
+ * the family already exists: an *existing* family's roles were already fixed
+ * when it was created, so the individual's own slot is read back off their
+ * current membership rather than re-guessed (re-guessing from gender here
+ * could pick a slot pair that doesn't match what's actually stored, breaking
+ * the spouse-slot lookup below). Only a brand-new family gets its slots from
+ * {@link resolveSpouseRoles}.
  */
 async function saveSpouseFamily(
   individualId: string,
-  individualRole: FamilyRole,
-  spouseRole: FamilyRole,
+  individualGender: Gender,
   familyInput: FamilyRelationInput
 ): Promise<void> {
   const hasContent = familyInput.spouse || familyInput.children.length > 0;
   if (!familyInput.id && !hasContent) return;
 
   let familyId = familyInput.id;
-  if (!familyId) {
+  let individualRole: FamilyRole;
+  let existingMembers: FamilyMember[];
+
+  if (familyId) {
+    existingMembers = await getFamilyMembers(familyId);
+    const ownRole = existingMembers.find((m) => m.individualId === individualId)?.role;
+    individualRole = ownRole === 'wife' ? 'wife' : 'husband';
+  } else {
+    ({ individualRole } = resolveSpouseRoles(individualGender, familyInput.spouse?.gender ?? 'U'));
     familyId = await createFamily({});
     await addFamilyMember({ familyId, individualId, role: individualRole });
+    existingMembers = [];
   }
-
-  const existingMembers = await getFamilyMembers(familyId);
+  const spouseRole: FamilyRole = otherRole(individualRole);
 
   if (familyInput.spouse !== undefined) {
     const existingSpouse = existingMembers.find((m) => m.role === spouseRole);

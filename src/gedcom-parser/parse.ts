@@ -151,7 +151,10 @@ function parseIndividual(lines: GedcomLine[], startIndex: number, xref: string):
         break;
       case 'FAMC': {
         const ref = extractXref(child.value);
-        if (ref) individual.familyChildRefs.push(ref);
+        if (ref) {
+          const pedigree = getChildValue(lines, childIdx, 'PEDI');
+          individual.familyChildRefs.push({ familyXref: ref, pedigree });
+        }
         break;
       }
       case 'FAMS': {

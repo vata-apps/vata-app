@@ -1,4 +1,4 @@
-import type { FamilyMember, Gender } from '$types/database';
+import type { FamilyMember, Gender, Pedigree } from '$types/database';
 import { getIndividualsByIds } from './individuals';
 import { getPrimaryNamesForIndividuals } from './names';
 import { getBirthDeathEventsForIndividuals, getFamilyEventByType } from './events';
@@ -56,6 +56,21 @@ export interface SpouseUnion {
 }
 
 /**
+ * A parent family beyond the individual's primary one (`parentFamilyId`) —
+ * only possible from GEDCOM import, where a `PEDI`-tagged second `FAMC`
+ * records e.g. an adoption alongside the birth family (see issue #246).
+ * Read-only: no write path in the app creates a second parent family, so
+ * this tab has nothing to offer beyond surfacing that it exists.
+ */
+export interface AdditionalParentFamily {
+  familyId: string;
+  /** How the subject relates to this family, if recorded (e.g. "adopted"). */
+  pedigree: Pedigree | null;
+  father: RelatedPersonWithGender | null;
+  mother: RelatedPersonWithGender | null;
+}
+
+/**
  * Everything the Relations tab reads for one individual, pre-joined: parents
  * (plus the subject's own parent-family membership, edited from either
  * parent row), siblings (full and half, flattened — which family a sibling
@@ -70,6 +85,8 @@ export interface PersonRelationsData {
   mother: RelatedPersonWithGender | null;
   siblings: RelationMember[];
   spouseUnions: SpouseUnion[];
+  /** Parent families beyond `parentFamilyId` — see {@link AdditionalParentFamily}. */
+  additionalParentFamilies: AdditionalParentFamily[];
 }
 
 function toRelationDetails(member: FamilyMember): RelationDetails {
@@ -97,6 +114,20 @@ function childMembersOf(members: FamilyMember[]): FamilyMember[] {
   return members.filter((member) => member.role === 'child');
 }
 
+/** A parent family's father, mother, and the subject's own child-row in it. */
+function parentFamilyRoles(
+  members: FamilyMember[],
+  individualId: string
+): { father: FamilyMember | null; mother: FamilyMember | null; subject: FamilyMember | null } {
+  return {
+    father: members.find((member) => member.role === 'husband') ?? null,
+    mother: members.find((member) => member.role === 'wife') ?? null,
+    subject:
+      members.find((member) => member.role === 'child' && member.individualId === individualId) ??
+      null,
+  };
+}
+
 /**
  * Load every direct relation of one individual in a single call: parents
  * (with the subject's own parent-family membership), full and half siblings,
@@ -105,8 +136,10 @@ function childMembersOf(members: FamilyMember[]): FamilyMember[] {
  * Full siblings are the parent family's other children. Half-siblings come
  * from each known parent's *other* families (excluding the subject's own
  * parent family) — the family's other spouse is the "other parent" they
- * share. Assumes a single parent family per individual, matching every other
- * write path (`FamilyManager.setParent`/`removeParent`).
+ * share. Siblings and every write path (`FamilyManager.setParent`/
+ * `removeParent`) key off a single primary parent family
+ * (`parentFamilies[0]`); any further ones are surfaced read-only via
+ * `additionalParentFamilies` — see its doc comment.
  */
 export async function getPersonRelations(individualId: string): Promise<PersonRelationsData> {
   const [parentFamilies, spouseFamilies] = await Promise.all([
@@ -126,15 +159,24 @@ export async function getPersonRelations(individualId: string): Promise<PersonRe
     })
   );
 
+  // Any parent family beyond the first — only possible from a GEDCOM import
+  // with a second PEDI-tagged FAMC (see `AdditionalParentFamily`'s doc
+  // comment). Started immediately alongside the rest of the parent chain.
+  const additionalParentFamilyMembersPromise = Promise.all(
+    parentFamilies.slice(1).map(async (family) => ({
+      familyId: family.id,
+      members: await getFamilyMembers(family.id),
+    }))
+  );
+
   const parentFamily = parentFamilies[0] ?? null;
   const parentMembers = parentFamily ? await getFamilyMembers(parentFamily.id) : [];
 
-  const fatherMember = parentMembers.find((member) => member.role === 'husband') ?? null;
-  const motherMember = parentMembers.find((member) => member.role === 'wife') ?? null;
-  const subjectMember =
-    parentMembers.find(
-      (member) => member.role === 'child' && member.individualId === individualId
-    ) ?? null;
+  const {
+    father: fatherMember,
+    mother: motherMember,
+    subject: subjectMember,
+  } = parentFamilyRoles(parentMembers, individualId);
   const fullSiblingMembers = parentMembers.filter(
     (member) => member.role === 'child' && member.individualId !== individualId
   );
@@ -160,15 +202,17 @@ export async function getPersonRelations(individualId: string): Promise<PersonRe
     }
   }
 
-  const [halfSiblingFamilyMembers, spouseFamilyDetails] = await Promise.all([
-    Promise.all(
-      [...sideByHalfSiblingFamilyId].map(async ([familyId, side]) => ({
-        side,
-        members: await getFamilyMembers(familyId),
-      }))
-    ),
-    spouseFamilyDetailsPromise,
-  ]);
+  const [halfSiblingFamilyMembers, spouseFamilyDetails, additionalParentFamilyMembers] =
+    await Promise.all([
+      Promise.all(
+        [...sideByHalfSiblingFamilyId].map(async ([familyId, side]) => ({
+          side,
+          members: await getFamilyMembers(familyId),
+        }))
+      ),
+      spouseFamilyDetailsPromise,
+      additionalParentFamilyMembersPromise,
+    ]);
 
   const halfSiblingMembers = halfSiblingFamilyMembers.flatMap(({ members, side }) =>
     childMembersOf(members).map((member) => ({ member, side }))
@@ -181,6 +225,11 @@ export async function getPersonRelations(individualId: string): Promise<PersonRe
     marriageYear: extractYear(marriageEvent),
   }));
 
+  const additionalParentFamilyRoles = additionalParentFamilyMembers.map(({ familyId, members }) => {
+    const { father, mother, subject } = parentFamilyRoles(members, individualId);
+    return { familyId, father, mother, pedigree: subject?.pedigree ?? null };
+  });
+
   // Batch-resolve names, sex, and birth/death years for every related individual.
   const relatedIds = [
     ...(fatherMember ? [fatherMember.individualId] : []),
@@ -190,6 +239,10 @@ export async function getPersonRelations(individualId: string): Promise<PersonRe
     ...spouseUnionsRaw.flatMap((union) => [
       ...(union.spouseMember ? [union.spouseMember.individualId] : []),
       ...union.childMembers.map((m) => m.individualId),
+    ]),
+    ...additionalParentFamilyRoles.flatMap(({ father, mother }) => [
+      ...(father ? [father.individualId] : []),
+      ...(mother ? [mother.individualId] : []),
     ]),
   ];
   const uniqueRelatedIds = [...new Set(relatedIds)];
@@ -238,5 +291,13 @@ export async function getPersonRelations(individualId: string): Promise<PersonRe
       marriageYear: union.marriageYear,
       children: union.childMembers.map((member) => toRelationMember(member)),
     })),
+    additionalParentFamilies: additionalParentFamilyRoles.map(
+      ({ familyId, father, mother, pedigree }) => ({
+        familyId,
+        pedigree,
+        father: father ? toRelated(father.individualId) : null,
+        mother: mother ? toRelated(mother.individualId) : null,
+      })
+    ),
   };
 }

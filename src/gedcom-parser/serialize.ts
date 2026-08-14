@@ -126,7 +126,8 @@ function serializeIndividual(individual: GedcomIndividual, maxLineLength: number
 
   // Family references as child
   for (const famRef of individual.familyChildRefs) {
-    lines.push(`1 FAMC @${famRef}@`);
+    lines.push(`1 FAMC @${famRef.familyXref}@`);
+    if (famRef.pedigree) lines.push(`2 PEDI ${famRef.pedigree}`);
   }
 
   // Family references as spouse

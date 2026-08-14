@@ -49,6 +49,7 @@ This document describes the correspondence between GEDCOM 5.5.1 structures and t
 | DATE       | events         | date_original   | Original text                  |
 | PLAC       | places, events | place_id        | Stored verbatim (see below)    |
 | FAMC       | family_members | -               | role = 'child'                 |
+| FAMC/PEDI  | family_members | pedigree        | birth, adopted, foster, sealing — unrecognized values are dropped, not errored |
 | FAMS       | family_members | -               | role = 'husband' or 'wife'     |
 
 > **PLAC handling:** the `PLAC` value is stored verbatim as both `places.name` and `places.full_name`; import does **not** decompose it into a hierarchy (`parent_id` stays null). Places are deduplicated on `full_name`. Splitting a place into a parent chain or deriving a shorter display name is left to in-app editing tools.
