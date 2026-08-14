@@ -1,0 +1,23 @@
+src-tauri/capabilities/default.json
+  s_90e589759b2a63::t_1fe6f7fbcdd837 19
+src-tauri/src/lib.rs
+  s_90e589759b2a63::t_c08f26243d62bc 133-138,153-155
+  s_90e589759b2a63::t_c6f595c8b53d81 159
+  s_90e589759b2a63::t_de2fca2e54c6f7 139-150
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "92a4b51b406e7c2f99b3c637dd03c9a47f2ef0b1",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
