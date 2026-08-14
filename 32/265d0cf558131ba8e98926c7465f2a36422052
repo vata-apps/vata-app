@@ -1,0 +1,83 @@
+src/lib/eventTypeLabel.test.ts
+  s_90e589759b2a63::t_83802751ad23a5 3
+  s_90e589759b2a63::t_74320d529936eb 83-95
+src/components/person-rail/expanded-people-list.tsx
+  s_90e589759b2a63::t_8b54ae3e87a957 9
+src/components/person-overview/life-spine.tsx
+  s_90e589759b2a63::t_4ead57c9753f71 105-106
+  s_90e589759b2a63::t_40da692b7b6cb3 4,16
+src/components/individuals/person-editor-dialog.tsx
+  s_90e589759b2a63::t_58f62456956c27 393
+  s_90e589759b2a63::t_085938525b2779 38-39
+src/components/person-overview/person-ref.tsx
+  s_90e589759b2a63::t_0e64d9b2c9f983 69,73
+  s_90e589759b2a63::t_0fa2459609a57c 1-3
+src/lib/personSummary.ts
+  s_90e589759b2a63::t_0f9873a2c26d42 2-3,5-16,18,20-27,41-55,63,67
+  s_90e589759b2a63::t_2055db8d3a8b63 56-62,64-66
+  s_90e589759b2a63::t_69642bb6525c3c 17,19,28-40
+  s_90e589759b2a63::t_0aff38c563c161 1,4
+src/i18n/locales/en/individuals.json
+  s_90e589759b2a63::t_836ac29a7230a0 55-58
+src/components/person-overview/build-overview.ts
+  s_90e589759b2a63::t_c157b67981d971 11-12
+src/components/person-overview/to-person-ref.ts
+  s_90e589759b2a63::t_453559bf247ca0 3
+src/components/person-rail/collapsed-people-rail.tsx
+  s_90e589759b2a63::t_d779a115a7c5b6 9
+src/components/person-events/event-participant-picker.tsx
+  s_90e589759b2a63::t_31226bd8ec6889 20
+  s_90e589759b2a63::t_97da6ba249d27d 99
+  s_dfbd2110f9133c::t_2f2245aaf16516 14
+src/db/connection.ts
+  s_90e589759b2a63::t_aa7c4a4808dd69 12-24,26-73
+  s_90e589759b2a63::t_71fe0b186c9221 220-222
+  s_90e589759b2a63::t_54aea8bd8c85e8 25
+src/components/person-notes/note-target-picker.tsx
+  s_90e589759b2a63::t_111eb99ea5afcc 16
+src/components/person-rail/person-rail-data.ts
+  s_90e589759b2a63::t_361ece6796bc37 23-24,26,28
+  s_90e589759b2a63::t_df20745e5f95dc 3
+  s_90e589759b2a63::t_dc84760d6a241a 22,27
+  s_90e589759b2a63::t_aec3336675907c 25
+src/lib/eventTypeLabel.ts
+  s_90e589759b2a63::t_c0c253600aea5d 9-12,41-57
+  s_90e589759b2a63::t_b65e2fbbe9f299 3-4
+src/i18n/locales/en/events.json
+  s_90e589759b2a63::t_65272fb04b9b89 53,55-70
+  s_90e589759b2a63::t_ae21156bec47c8 54
+src/i18n/locales/fr/events.json
+  s_90e589759b2a63::t_8c6c2daefd4ab4 53-70
+src/components/individuals/person-picker.tsx
+  s_90e589759b2a63::t_67c2d67476ea0b 8-9
+  s_90e589759b2a63::t_84777854ef699a 91
+src/i18n/locales/fr/individuals.json
+  s_90e589759b2a63::t_f715c4775be507 55-58
+src/pages/PersonRelationsPage.tsx
+  s_90e589759b2a63::t_0a197aae42890c 55
+  s_90e589759b2a63::t_0e0f8600591d5b 643-646
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "32265d0cf558131ba8e98926c7465f2a36422052",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    },
+    "s_dfbd2110f9133c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "agent-a8f53a6446e726661",
+        "model": "unknown"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
