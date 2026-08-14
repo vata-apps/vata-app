@@ -56,3 +56,4 @@ export {
   getChildValues,
   extractXref,
 } from './lexer';
+export type { ChildLine } from './lexer';

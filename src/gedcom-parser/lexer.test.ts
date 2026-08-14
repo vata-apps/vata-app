@@ -121,8 +121,10 @@ describe('getChildLines', () => {
     const children = getChildLines(lines, 0);
 
     expect(children).toHaveLength(2);
-    expect(children[0].tag).toBe('NAME');
-    expect(children[1].tag).toBe('SEX');
+    expect(children[0].line.tag).toBe('NAME');
+    expect(children[0].index).toBe(1);
+    expect(children[1].line.tag).toBe('SEX');
+    expect(children[1].index).toBe(4);
   });
 
   it('stops at same level', () => {
@@ -134,7 +136,7 @@ describe('getChildLines', () => {
     const children = getChildLines(lines, 0);
 
     expect(children).toHaveLength(1);
-    expect(children[0].value).toBe('John');
+    expect(children[0].line.value).toBe('John');
   });
 });
 
