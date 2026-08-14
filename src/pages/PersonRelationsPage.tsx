@@ -53,6 +53,7 @@ import { useIndividual } from '$hooks/useIndividuals';
 import { useRelationNoteCount } from '$hooks/usePersonNotes';
 import { formatName } from '$db-tree/names';
 import type { RelatedPersonWithGender, RelationDetails } from '$db-tree/person-relations';
+import { resetBufferOnError } from '$lib/toast';
 import type { RelationCertainty, RelationNature } from '$types/database';
 
 /** Where a new relation lands once created — decides which structural write to run and where the draft row renders. */
@@ -192,7 +193,10 @@ export function PersonRelationsPage(): JSX.Element {
     if (!savedRow || !buffer) return;
     const next = { ...buffer, ...patch };
     if (isSameRelationDetailsForm(toRelationDetailsForm(savedRow), next)) return;
-    updateDetails.mutate({ memberId: savedRow.memberId, input: toRelationDetailsPayload(next) });
+    updateDetails.mutate(
+      { memberId: savedRow.memberId, input: toRelationDetailsPayload(next) },
+      resetBufferOnError(setBufferFor, savedRow.id)
+    );
   }
 
   function startDraft(target: RelationTarget, selection: PersonPickerSelection): void {

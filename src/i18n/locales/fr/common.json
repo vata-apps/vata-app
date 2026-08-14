@@ -27,7 +27,14 @@
     "loadFailed": "Échec du chargement des données.",
     "reload": "Recharger",
     "failedToOpenDatabase": "Échec de l'ouverture de la base de données.",
-    "importFailed": "Échec de l'import GEDCOM."
+    "importFailed": "Échec de l'import GEDCOM.",
+    "saveFailed": "Échec de l'enregistrement des modifications.",
+    "importCompletedWithWarnings_one": "Import terminé avec {{count}} avertissement",
+    "importCompletedWithWarnings_other": "Import terminé avec {{count}} avertissements",
+    "importWarningsMore": "+{{count}} de plus"
+  },
+  "toast": {
+    "close": "Fermer"
   },
   "statusBar": {
     "debug": "Débogage",

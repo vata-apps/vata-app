@@ -27,7 +27,14 @@
     "loadFailed": "Failed to load data.",
     "reload": "Reload",
     "failedToOpenDatabase": "Failed to open database.",
-    "importFailed": "GEDCOM import failed."
+    "importFailed": "GEDCOM import failed.",
+    "saveFailed": "Failed to save changes.",
+    "importCompletedWithWarnings_one": "Import completed with {{count}} warning",
+    "importCompletedWithWarnings_other": "Import completed with {{count}} warnings",
+    "importWarningsMore": "+{{count}} more"
+  },
+  "toast": {
+    "close": "Close"
   },
   "statusBar": {
     "debug": "Debug",

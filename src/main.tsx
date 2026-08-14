@@ -7,6 +7,7 @@ import ReactDOM from 'react-dom/client';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { AppTheme } from '$components/app-theme';
+import { Toast } from '$components/ui/toast';
 import { queryClient } from './lib/query-client';
 import { routeTree } from './routeTree.gen';
 
@@ -22,7 +23,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AppTheme>
-        <RouterProvider router={router} />
+        <Toast.Provider>
+          <RouterProvider router={router} />
+          <Toast.Viewport />
+        </Toast.Provider>
       </AppTheme>
     </QueryClientProvider>
   </React.StrictMode>
