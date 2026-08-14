@@ -16,7 +16,7 @@ import {
 } from '@vata-apps/gedcom-parser';
 import { getTreeDb } from '$/db/connection';
 import { createNote } from '$db-tree/notes';
-import type { Gender } from '$types/database';
+import type { Gender, Pedigree } from '$types/database';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
 import { tryParseSortDate } from '$/lib/dateSort';
 import type Database from '@tauri-apps/plugin-sql';
@@ -34,12 +34,40 @@ interface ImportContext {
   xrefToId: Map<string, string>;
   placeCache: Map<string, string>;
   eventTypeCache: Map<string, number>;
+  /** `${childXref}:${familyXref}` → this child's pedigree in that family, from the INDI's own FAMC/PEDI. */
+  pedigreeByChildFamily: Map<string, Pedigree>;
   stats: ImportStats;
 }
 
 /** Cache key for a system event type — tag alone collides between categories (e.g. CENS is both an individual and a family tag), so category is part of the key. */
 function eventTypeCacheKey(tag: string, category: 'individual' | 'family'): string {
   return `${tag}:${category}`;
+}
+
+const VALID_PEDIGREES: ReadonlySet<string> = new Set([
+  'birth',
+  'adopted',
+  'foster',
+  'sealing',
+  'step',
+]);
+
+/** Normalizes a raw PEDI value to one of the schema's pedigree values, or `undefined` if not recognized — an unrecognized value is dropped rather than failing the import (same policy as an unsupported tag). */
+function normalizePedigree(raw: string | undefined): Pedigree | undefined {
+  const normalized = raw?.trim().toLowerCase();
+  return normalized && VALID_PEDIGREES.has(normalized) ? (normalized as Pedigree) : undefined;
+}
+
+/** Every individual's FAMC/PEDI, keyed by `${childXref}:${familyXref}` for `importFamily`'s child-linking loop to look up. */
+function buildPedigreeMap(individuals: GedcomIndividual[]): Map<string, Pedigree> {
+  const map = new Map<string, Pedigree>();
+  for (const individual of individuals) {
+    for (const famRef of individual.familyChildRefs) {
+      const pedigree = normalizePedigree(famRef.pedigree);
+      if (pedigree) map.set(`${individual.xref}:${famRef.familyXref}`, pedigree);
+    }
+  }
+  return map;
 }
 
 /**
@@ -74,6 +102,7 @@ export async function importGedcom(content: string): Promise<ImportStats> {
     xrefToId: new Map(),
     placeCache: new Map(),
     eventTypeCache: new Map(),
+    pedigreeByChildFamily: buildPedigreeMap(document.individuals),
     stats,
   };
 
@@ -280,7 +309,7 @@ async function importIndividualEvent(
  * Import a family record.
  */
 async function importFamily(family: GedcomFamily, ctx: ImportContext): Promise<number> {
-  const { db, xrefToId } = ctx;
+  const { db, xrefToId, pedigreeByChildFamily } = ctx;
 
   // Create family
   const result = await db.execute('INSERT INTO families DEFAULT VALUES');
@@ -312,10 +341,11 @@ async function importFamily(family: GedcomFamily, ctx: ImportContext): Promise<n
   let sortOrder = 0;
   for (const childXref of family.childRefs) {
     if (xrefToId.has(childXref)) {
+      const pedigree = pedigreeByChildFamily.get(`${childXref}:${family.xref}`) ?? null;
       await db.execute(
-        `INSERT INTO family_members (family_id, individual_id, role, sort_order)
-         VALUES ($1, $2, 'child', $3)`,
-        [parseEntityId(familyId), parseEntityId(xrefToId.get(childXref)!), sortOrder++]
+        `INSERT INTO family_members (family_id, individual_id, role, pedigree, sort_order)
+         VALUES ($1, $2, 'child', $3, $4)`,
+        [parseEntityId(familyId), parseEntityId(xrefToId.get(childXref)!), pedigree, sortOrder++]
       );
     }
   }

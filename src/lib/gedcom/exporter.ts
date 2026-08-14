@@ -8,6 +8,7 @@ import {
   serialize,
   type GedcomDocument,
   type GedcomIndividual,
+  type GedcomFamilyChildRef,
   type GedcomFamily,
   type GedcomName,
   type GedcomEvent,
@@ -162,13 +163,12 @@ async function exportIndividuals(ctx: ExportContext): Promise<GedcomIndividual[]
     const events = await exportIndividualEvents(row.id, ctx);
 
     // Get family references
-    const familyRefs = await db.select<{ family_id: number; role: string }[]>(
-      `SELECT family_id, role FROM family_members WHERE individual_id = $1`,
-      [row.id]
-    );
+    const familyRefs = await db.select<
+      { family_id: number; role: string; pedigree: string | null }[]
+    >(`SELECT family_id, role, pedigree FROM family_members WHERE individual_id = $1`, [row.id]);
 
     const familySpouseRefs: string[] = [];
-    const familyChildRefs: string[] = [];
+    const familyChildRefs: GedcomFamilyChildRef[] = [];
 
     for (const ref of familyRefs) {
       const famEntityId = formatEntityId('F', ref.family_id);
@@ -177,7 +177,7 @@ async function exportIndividuals(ctx: ExportContext): Promise<GedcomIndividual[]
         if (ref.role === 'husband' || ref.role === 'wife') {
           familySpouseRefs.push(famXref);
         } else if (ref.role === 'child') {
-          familyChildRefs.push(famXref);
+          familyChildRefs.push({ familyXref: famXref, pedigree: ref.pedigree ?? undefined });
         }
       }
     }

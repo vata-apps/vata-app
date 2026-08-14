@@ -24,6 +24,8 @@ export interface PersonPickerSelection {
   /** Life-event years, carried through so a filled relation slot can show "b. 1960 – 2020" (existing people only). */
   bornYear?: number;
   deathYear?: number;
+  /** The picked person's recorded sex — their own for an existing pick, the seeded value for a new one. */
+  gender: Gender;
 }
 
 export interface PersonPickerProps {
@@ -64,7 +66,7 @@ export function PersonPicker({
 
   const excluded = new Set(excludeIds ?? []);
   function toDisplay(person: IndividualWithDetails): PersonPickerSelection & { id: string } {
-    return { id: person.id, ...personDisplayFields(person, t) };
+    return { id: person.id, gender: person.gender, ...personDisplayFields(person, t) };
   }
 
   const matches = isTyping
@@ -103,6 +105,7 @@ export function PersonPicker({
     pick({
       createNew: { ...splitDisplayName(trimmedQuery), gender: newPersonGender },
       displayName: trimmedQuery,
+      gender: newPersonGender ?? 'U',
     });
   }
 

@@ -55,14 +55,26 @@ export interface GedcomIndividual {
   gender: 'M' | 'F' | 'U';
   /** Life events (BIRT, DEAT, etc.) */
   events: GedcomEvent[];
-  /** Family references where this individual is a child (FAMC) */
-  familyChildRefs: string[];
+  /** Family references where this individual is a child (FAMC), with pedigree linkage when recorded */
+  familyChildRefs: GedcomFamilyChildRef[];
   /** Family references where this individual is a spouse (FAMS) */
   familySpouseRefs: string[];
   /** Notes attached to this individual */
   notes: string[];
   /** Source citations - TODO: not yet supported, empty for now */
   sources: GedcomSourceCitation[];
+}
+
+/**
+ * One FAMC link (a family this individual is a child in), with its optional
+ * pedigree linkage type (PEDI) — how they relate to that family (birth,
+ * adopted, foster, sealing).
+ */
+export interface GedcomFamilyChildRef {
+  /** Family XREF identifier (e.g., "F1" without @) */
+  familyXref: string;
+  /** Pedigree linkage type (PEDI), verbatim from the file (e.g. "birth", "adopted") */
+  pedigree?: string;
 }
 
 /**

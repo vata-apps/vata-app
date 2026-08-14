@@ -69,6 +69,8 @@ interface RelationPersonRef {
   /** Birth/death years for existing people, so the filled chip can show "b. 1960 – 2020". */
   bornYear?: number;
   deathYear?: number;
+  /** The picked person's recorded sex — their own for an existing pick, the seeded value for a new one. */
+  gender: Gender;
 }
 
 interface FamilyRelationRow {
@@ -152,6 +154,7 @@ function personRef(individual: IndividualWithDetails, t: TranslateFn): RelationP
   return {
     key: individual.id,
     id: individual.id,
+    gender: individual.gender,
     ...personDisplayFields(individual, t),
   };
 }
@@ -230,7 +233,9 @@ function buildEditForm(
 
 function toRelationInput(ref: RelationPersonRef | null): RelationPersonInput | null {
   if (!ref) return null;
-  return ref.id ? { id: ref.id } : { createNew: ref.createNew };
+  return ref.id
+    ? { id: ref.id, gender: ref.gender }
+    : { createNew: ref.createNew, gender: ref.gender };
 }
 
 function buildRelationsPayload(form: FormState): PersonRelationsInput {
@@ -311,6 +316,7 @@ function toRelationRef(selection: PersonPickerSelection): RelationPersonRef {
     key: selection.id ?? nextLocalKey('person'),
     id: selection.id,
     createNew: selection.createNew,
+    gender: selection.gender,
     displayName: selection.displayName,
     bornYear: selection.bornYear,
     deathYear: selection.deathYear,

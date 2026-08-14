@@ -89,7 +89,8 @@ interface RelationRowVM {
   note: string | null;
   natureOptions: RelationNature[];
   sourceCount: number;
-  onRemove: () => void;
+  /** Omitted for a half-sibling row — that relation is derived from their own other family, not the subject's to sever (see issue #246). */
+  onRemove?: () => void;
 }
 
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
@@ -200,6 +201,7 @@ export function PersonRelationsPage(): JSX.Element {
       person: {
         id: selection.id,
         createNew: selection.createNew,
+        gender: selection.gender,
         displayName: selection.displayName,
         bornYear: selection.bornYear,
         deathYear: selection.deathYear,
@@ -215,7 +217,11 @@ export function PersonRelationsPage(): JSX.Element {
 
   function submitDraft(): void {
     if (!draft) return;
-    const person: RelationPersonInput = { id: draft.person.id, createNew: draft.person.createNew };
+    const person: RelationPersonInput = {
+      id: draft.person.id,
+      createNew: draft.person.createNew,
+      gender: draft.person.gender,
+    };
 
     switch (draft.target.kind) {
       case 'father':
@@ -279,14 +285,24 @@ export function PersonRelationsPage(): JSX.Element {
         onCreate={submitDraft}
       />
     );
-  } else if (savedRow) {
+  } else if (savedRow && !savedRow.onRemove) {
+    // No `onRemove` means this relation isn't the subject's to sever — today
+    // that's only a half-sibling row, derived from the other parent's own
+    // other family (see issue #246).
+    footer = (
+      <Typography size="xs" tone="muted">
+        {t('relationsTab.delete.halfSiblingNotRemovable')}
+      </Typography>
+    );
+  } else if (savedRow && savedRow.onRemove) {
+    const onRemove = savedRow.onRemove;
     footer = (
       <InlineDelete
         key={savedRow.id}
         triggerLabel={t('relationsTab.delete.trigger')}
         question={deleteQuestionWithNoteCount(
           t,
-          'relationsTab.delete.question',
+          isParentRow ? 'relationsTab.delete.questionParent' : 'relationsTab.delete.question',
           { name: savedRow.displayName },
           relationNoteCount.data ?? 0
         )}
@@ -296,7 +312,7 @@ export function PersonRelationsPage(): JSX.Element {
           removeSpouse.isPending ||
           removeChildFromUnion.isPending
         }
-        onDelete={savedRow.onRemove}
+        onDelete={onRemove}
       />
     );
   }
@@ -473,6 +489,16 @@ export function PersonRelationsPage(): JSX.Element {
               {rows.parents.map(renderRow)}
               {renderDraftRow('father')}
               {renderDraftRow('mother')}
+              {data.additionalParentFamilies.map((family) => (
+                <Typography
+                  key={family.familyId}
+                  size="xs"
+                  tone="muted"
+                  style={{ display: 'block', padding: '4px 12px' }}
+                >
+                  {additionalParentFamilyLabel(family, t)}
+                </Typography>
+              ))}
             </RecordPanel.ListCard>
           ) : null}
 
@@ -559,6 +585,25 @@ function personDisplayName(person: RelatedPersonWithGender): string {
   return formatName(person.primaryName).full;
 }
 
+/** Read-only summary line for an {@link AdditionalParentFamily} — see its doc comment for why this tab can't offer more than that. */
+function additionalParentFamilyLabel(
+  family: PersonRelationsResult['additionalParentFamilies'][number],
+  t: TranslateFn
+): string {
+  const father = family.father
+    ? personDisplayName(family.father)
+    : t('relationsTab.additionalParentFamily.unknownParent');
+  const mother = family.mother
+    ? personDisplayName(family.mother)
+    : t('relationsTab.additionalParentFamily.unknownParent');
+  if (!family.pedigree) return t('relationsTab.additionalParentFamily.label', { father, mother });
+  return t('relationsTab.additionalParentFamily.labelWithPedigree', {
+    father,
+    mother,
+    pedigree: t(`relationsTab.additionalParentFamily.pedigree.${family.pedigree}`),
+  });
+}
+
 /**
  * Shapes the query's data into the page's per-card row view-models, and an
  * id-indexed lookup for the selected row. `data` is `undefined` while the
@@ -584,7 +629,7 @@ function buildRows(
     details: RelationDetails,
     relationLabelKey: RelationLabelKey,
     natureOptions: RelationNature[],
-    onRemove: () => void,
+    onRemove: (() => void) | undefined,
     side: 'paternal' | 'maternal' | null = null
   ): RelationRowVM {
     const row: RelationRowVM = {
@@ -621,6 +666,9 @@ function buildRows(
     }
   }
 
+  // A half-sibling row is derived from the other parent's own other family —
+  // it isn't the subject's link to sever (see issue #246), so it gets no
+  // `onRemove` at all rather than a UI-only gate on an otherwise-live one.
   const siblings = data.siblings.map((sibling) =>
     toRow(
       `sibling:${sibling.id}`,
@@ -628,7 +676,9 @@ function buildRows(
       sibling,
       siblingLabel(sibling, data.parentFamilyId),
       CHILD_NATURE_OPTIONS,
-      () => callbacks.onRemoveSibling(sibling.familyId, sibling.id),
+      sibling.side === null
+        ? () => callbacks.onRemoveSibling(sibling.familyId, sibling.id)
+        : undefined,
       sibling.side
     )
   );

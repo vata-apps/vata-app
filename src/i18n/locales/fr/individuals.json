@@ -276,7 +276,23 @@
       "trigger": "Retirer ce lien",
       "question": "Retirer définitivement le lien avec « {{name}} » ?",
       "questionWithNotes_one": "Retirer définitivement le lien avec « {{name}} » ? {{count}} note attachée sera aussi supprimée.",
-      "questionWithNotes_other": "Retirer définitivement le lien avec « {{name}} » ? {{count}} notes attachées seront aussi supprimées."
+      "questionWithNotes_other": "Retirer définitivement le lien avec « {{name}} » ? {{count}} notes attachées seront aussi supprimées.",
+      "questionParent": "Retirer définitivement « {{name}} » comme parent ? Cela le retire comme parent pour tous les enfants de cette famille, pas seulement pour cette personne.",
+      "questionParentWithNotes_one": "Retirer définitivement « {{name}} » comme parent ? Cela le retire comme parent pour tous les enfants de cette famille, pas seulement pour cette personne. {{count}} note attachée sera aussi supprimée.",
+      "questionParentWithNotes_other": "Retirer définitivement « {{name}} » comme parent ? Cela le retire comme parent pour tous les enfants de cette famille, pas seulement pour cette personne. {{count}} notes attachées seront aussi supprimées.",
+      "halfSiblingNotRemovable": "Ce lien de demi-frère ou demi-sœur provient de sa propre famille parentale — retirez-le plutôt depuis son propre onglet Relations."
+    },
+    "additionalParentFamily": {
+      "label": "Également enregistré comme enfant de {{father}} et {{mother}}",
+      "labelWithPedigree": "Également enregistré comme enfant de {{father}} et {{mother}} ({{pedigree}})",
+      "unknownParent": "Inconnu",
+      "pedigree": {
+        "birth": "naissance",
+        "adopted": "adoption",
+        "foster": "famille d'accueil",
+        "sealing": "scellement",
+        "step": "beau-parent"
+      }
     }
   },
   "notesTab": {
