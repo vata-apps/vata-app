@@ -30,6 +30,7 @@ import {
   type PersonName,
 } from '$hooks/usePersonNames';
 import { formatName } from '$db-tree/names';
+import { resetBufferOnError } from '$lib/toast';
 
 function matchesNameFilter(name: PersonName, filter: PersonNameFilter): boolean {
   if (filter === 'primary') return name.isPrimary;
@@ -126,11 +127,14 @@ export function PersonNamesPage(): JSX.Element {
     // Blur fires whether or not the user typed anything, so an unchanged field
     // must not cost a write and a round of cache invalidation.
     if (isSameNamePayload(toNameForm(selectedName), next)) return;
-    updateName.mutate({
-      id: activeId,
-      input: toNamePayload(next),
-      isPrimary: selectedName.isPrimary,
-    });
+    updateName.mutate(
+      {
+        id: activeId,
+        input: toNamePayload(next),
+        isPrimary: selectedName.isPrimary,
+      },
+      resetBufferOnError(setBufferFor, activeId)
+    );
   }
 
   function startDraft(): void {

@@ -144,6 +144,8 @@ export const vars = createGlobalThemeContract(
       popover: null,
       alertBackdrop: null,
       alert: null,
+      /** Above everything — a write can fail while a dialog or alert is open. */
+      toast: null,
     },
     /**
      * 4px-based spacing scale. Only steps currently consumed by the product
@@ -228,6 +230,7 @@ const zIndex = {
   popover: '105',
   alertBackdrop: '110',
   alert: '111',
+  toast: '120',
 };
 
 const space = {

@@ -50,6 +50,7 @@ import { useEventNoteCount } from '$hooks/usePersonNotes';
 import { eventDateDisplay } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { principalsText } from '$lib/principals-text';
+import { resetBufferOnError } from '$lib/toast';
 import { useAppStore } from '$/store/app-store';
 import type { ParticipantRole } from '$types/database';
 
@@ -182,12 +183,15 @@ export function PersonEventsPage(): JSX.Element {
     if (isDraftSelected || !activeId || !buffer || !selectedEvent) return;
     const next = { ...buffer, ...patch };
     if (isSameEventPayload(toEventForm(selectedEvent), next)) return;
-    updateEvent.mutate({
-      id: activeId,
-      input: toEventPayload(next),
-      scope: selectedEvent.scope,
-      affectsTreeWideDisplay: affectsTreeWideDisplay(next.eventTypeId, eventTypes ?? []),
-    });
+    updateEvent.mutate(
+      {
+        id: activeId,
+        input: toEventPayload(next),
+        scope: selectedEvent.scope,
+        affectsTreeWideDisplay: affectsTreeWideDisplay(next.eventTypeId, eventTypes ?? []),
+      },
+      resetBufferOnError(setBufferFor, activeId)
+    );
   }
 
   function startDraft(): void {

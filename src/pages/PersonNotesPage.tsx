@@ -38,6 +38,7 @@ import { usePersonRelations, type PersonRelationsResult } from '$hooks/usePerson
 import { formatName } from '$db-tree/names';
 import { eventDateDisplay } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
+import { resetBufferOnError } from '$lib/toast';
 import type { Note, NoteScope } from '$types/database';
 
 type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
@@ -308,7 +309,10 @@ export function PersonNotesPage(): JSX.Element {
     if (isDraftSelected || !activeId || !buffer || !savedNote) return;
     const next = { ...buffer, ...patch };
     if (isSameNotePayload(toNoteForm(savedNote), next)) return;
-    updateNote.mutate({ id: activeId, input: toNotePayload(next) });
+    updateNote.mutate(
+      { id: activeId, input: toNotePayload(next) },
+      resetBufferOnError(setBufferFor, activeId)
+    );
   }
 
   function startDraft(target: NoteTarget): void {

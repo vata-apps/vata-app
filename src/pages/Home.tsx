@@ -28,9 +28,39 @@ import { ImportGedcomModal } from '$components/trees/import-gedcom-modal';
 import { NewTreeModal } from '$components/trees/new-tree-modal';
 import { getAllTrees } from '$db-system/trees';
 import { TreeManager } from '$managers/TreeManager';
+import type { ImportResult } from '$managers/GedcomManager';
 import { formatIsoDate } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
+import { notifyError } from '$lib/toast';
 import type { Tree } from '$types/database';
+
+const MAX_IMPORT_WARNINGS_SHOWN = 3;
+
+type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
+
+/**
+ * `importGedcom` commits a partially-failed import rather than rolling it
+ * back (see its own doc comment) — a bad record shouldn't cost the
+ * researcher everything else in the file. That means success can still
+ * carry per-record errors that would otherwise go unnoticed once the modal
+ * closes; surface them as a toast rather than silently dropping them.
+ */
+function notifyImportWarnings(result: ImportResult, t: TranslateFn): void {
+  const { errors } = result.stats;
+  if (errors.length === 0) return;
+
+  const shown = errors.slice(0, MAX_IMPORT_WARNINGS_SHOWN);
+  const remaining = errors.length - shown.length;
+  const description =
+    remaining > 0
+      ? [...shown, t('common:errors.importWarningsMore', { count: remaining })].join('\n')
+      : shown.join('\n');
+
+  notifyError(
+    t('common:errors.importCompletedWithWarnings', { count: errors.length }),
+    description
+  );
+}
 
 // DEV-only: lazy-loaded so the module (and its Tauri DB imports) are never
 // bundled in production builds where import.meta.env.DEV is false.
@@ -318,7 +348,11 @@ export function HomePage(): JSX.Element {
       </Flex>
 
       <NewTreeModal open={newTreeOpen} onOpenChange={setNewTreeOpen} />
-      <ImportGedcomModal open={importOpen} onOpenChange={setImportOpen} />
+      <ImportGedcomModal
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        onImported={(result) => notifyImportWarnings(result, t)}
+      />
       <DownloadTreeModal
         tree={exportingTree}
         open={exportingTree !== null}
