@@ -73,18 +73,16 @@ function parseHeader(lines: GedcomLine[], startIndex: number): GedcomHeader {
   const header: GedcomHeader = {};
 
   const children = getChildLines(lines, startIndex);
-  for (const child of children) {
+  for (const { line: child, index: childIdx } of children) {
     switch (child.tag) {
       case 'SOUR': {
         header.sourceApp = child.value;
         // Look for VERSION sub-tag
-        const childIdx = lines.indexOf(child);
         const vers = getChildValue(lines, childIdx, 'VERS');
         if (vers) header.sourceVersion = vers;
         break;
       }
       case 'GEDC': {
-        const childIdx = lines.indexOf(child);
         const vers = getChildValue(lines, childIdx, 'VERS');
         if (vers) header.gedcomVersion = vers;
         break;
@@ -103,11 +101,10 @@ function parseHeader(lines: GedcomLine[], startIndex: number): GedcomHeader {
         const submRef = extractXref(child.value);
         if (submRef) {
           // Find SUBM record and get NAME
-          const submLine = lines.find(
+          const submIdx = lines.findIndex(
             (l) => l.level === 0 && l.xref === submRef && l.tag === 'SUBM'
           );
-          if (submLine) {
-            const submIdx = lines.indexOf(submLine);
+          if (submIdx !== -1) {
             const name = getChildValue(lines, submIdx, 'NAME');
             if (name) header.submitterName = name;
           }
@@ -137,9 +134,7 @@ function parseIndividual(lines: GedcomLine[], startIndex: number, xref: string):
 
   const children = getChildLines(lines, startIndex);
 
-  for (const child of children) {
-    const childIdx = lines.indexOf(child);
-
+  for (const { line: child, index: childIdx } of children) {
     switch (child.tag) {
       case 'NAME':
         individual.names.push(parseName(lines, childIdx, child.value));
@@ -232,7 +227,7 @@ function parseName(lines: GedcomLine[], startIndex: number, value?: string): Ged
 
   // Parse sub-tags
   const children = getChildLines(lines, startIndex);
-  for (const child of children) {
+  for (const { line: child } of children) {
     switch (child.tag) {
       case 'GIVN':
         name.givenNames = child.value;
@@ -314,7 +309,7 @@ function parseEvent(
 
   // Parse sub-tags
   const children = getChildLines(lines, startIndex);
-  for (const child of children) {
+  for (const { line: child } of children) {
     switch (child.tag) {
       case 'DATE':
         event.date = child.value;
@@ -350,9 +345,7 @@ function parseFamily(lines: GedcomLine[], startIndex: number, xref: string): Ged
 
   const children = getChildLines(lines, startIndex);
 
-  for (const child of children) {
-    const childIdx = lines.indexOf(child);
-
+  for (const { line: child, index: childIdx } of children) {
     switch (child.tag) {
       case 'HUSB': {
         const ref = extractXref(child.value);

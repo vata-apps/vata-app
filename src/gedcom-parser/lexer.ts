@@ -108,18 +108,31 @@ export function processContinuations(lines: GedcomLine[]): GedcomLine[] {
   return result;
 }
 
+/** A child line paired with its own index in the full `lines` array, so a caller that needs to recurse into it never has to search for that index. */
+export interface ChildLine {
+  line: GedcomLine;
+  index: number;
+}
+
 /**
  * Find all child lines of a given line (based on level).
  *
+ * Returns each child paired with its absolute index in `lines` — every
+ * caller that recurses into a child (to read its own sub-tags, or via
+ * {@link getChildValue}/{@link getChildValues}) needs that index, and
+ * `lines.indexOf(child)` would otherwise re-scan the *entire* document per
+ * child line: O(document size) callers × O(document size) scan = quadratic
+ * in the number of lines. Returning it here makes each child's lookup O(1).
+ *
  * @param lines - Array of lines to search
  * @param startIndex - Index of the parent line
- * @returns Array of child lines
+ * @returns Array of child lines, each paired with its own index
  */
-export function getChildLines(lines: GedcomLine[], startIndex: number): GedcomLine[] {
+export function getChildLines(lines: GedcomLine[], startIndex: number): ChildLine[] {
   const parent = lines[startIndex];
   if (!parent) return [];
 
-  const children: GedcomLine[] = [];
+  const children: ChildLine[] = [];
   const childLevel = parent.level + 1;
 
   for (let i = startIndex + 1; i < lines.length; i++) {
@@ -129,7 +142,7 @@ export function getChildLines(lines: GedcomLine[], startIndex: number): GedcomLi
       break;
     }
     if (line.level === childLevel) {
-      children.push(line);
+      children.push({ line, index: i });
     }
   }
 
@@ -175,8 +188,8 @@ export function getChildValue(
   tag: string
 ): string | undefined {
   const children = getChildLines(lines, startIndex);
-  const child = children.find((c) => c.tag === tag);
-  return child?.value;
+  const child = children.find(({ line }) => line.tag === tag);
+  return child?.line.value;
 }
 
 /**
@@ -190,8 +203,8 @@ export function getChildValue(
 export function getChildValues(lines: GedcomLine[], startIndex: number, tag: string): string[] {
   const children = getChildLines(lines, startIndex);
   return children
-    .filter((c) => c.tag === tag)
-    .map((c) => c.value)
+    .filter(({ line }) => line.tag === tag)
+    .map(({ line }) => line.value)
     .filter((v): v is string => v !== undefined);
 }
 
