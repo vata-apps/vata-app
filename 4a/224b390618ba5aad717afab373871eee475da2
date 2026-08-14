@@ -1,0 +1,104 @@
+src/db/connection.ts
+  s_90e589759b2a63::t_af5f7ec9cad6bb 420-423
+src/i18n/locales/fr/individuals.json
+  s_90e589759b2a63::t_103c29bedd338a 284-295
+  s_90e589759b2a63::t_6226078c92d582 279-283
+src/gedcom-parser/parse.ts
+  s_90e589759b2a63::t_946bd05ed3db3a 154-155,157
+  s_90e589759b2a63::t_f9ec972cef487e 156
+src/gedcom-parser/serialize.ts
+  s_90e589759b2a63::t_377f8b0ddc2bdc 129-130
+src/hooks/usePersonRelations.ts
+  s_90e589759b2a63::t_a6a4c2fbfd6e6b 200
+  s_90e589759b2a63::t_f4f781ef413248 9
+src/gedcom-parser/parse.test.ts
+  s_90e589759b2a63::t_4a9444f4c4bb37 90
+src/components/individuals/person-editor-dialog.test.tsx
+  s_90e589759b2a63::t_0e32ec2536d0a7 244
+src/components/individuals/person-editor-dialog.tsx
+  s_90e589759b2a63::t_85b5735a4cf971 319
+  s_90e589759b2a63::t_8652119e05699f 236-238
+  s_90e589759b2a63::t_dc34786906ce4c 72-73
+  s_90e589759b2a63::t_7d4035b2f299cf 157
+src/gedcom-parser/types.ts
+  s_90e589759b2a63::t_6d0dd119a7289c 69-79
+  s_90e589759b2a63::t_a25b41823b2560 58-59
+  s_90e589759b2a63::t_2c065cc947effd 68
+src/pages/PersonRelationsPage.tsx
+  s_90e589759b2a63::t_0ac129b79d3667 669-671,679-681
+  s_90e589759b2a63::t_90d948fb829a88 220-224
+  s_90e589759b2a63::t_8e6475d379c3f1 288-291,297-298,315
+  s_90e589759b2a63::t_b6cc922eab33bf 204
+  s_90e589759b2a63::t_ee02335ed41d5b 632
+  s_90e589759b2a63::t_82f6ed2e3e4491 292-296,305
+  s_90e589759b2a63::t_78e4da4651e011 92-93
+  s_90e589759b2a63::t_962be4cf8fa42f 492-501
+  s_90e589759b2a63::t_78e8ab6700c934 588-606
+src/i18n/locales/en/individuals.json
+  s_90e589759b2a63::t_58ca4f74b53082 284-295
+  s_90e589759b2a63::t_bb01c4b8edaf51 279-283
+src/managers/FamilyManager.ts
+  s_90e589759b2a63::t_0ae352b194654f 107,109-122,132-133
+  s_90e589759b2a63::t_a896c531c79b2e 506
+  s_90e589759b2a63::t_c6fec08d401c5b 40-46
+  s_90e589759b2a63::t_a738493d25dda9 100,104-106
+  s_90e589759b2a63::t_4c6f643f6ecf3a 27
+  s_90e589759b2a63::t_fb95b696be97a0 561
+  s_90e589759b2a63::t_1004c49aceb996 127,131
+  s_90e589759b2a63::t_d39c8b7f3aed78 433
+  s_90e589759b2a63::t_6726f8f719f3e6 123-126,128-130
+  s_90e589759b2a63::t_1df18c4a9355ed 529-537,541,548,550-556,559
+  s_90e589759b2a63::t_7001be3a96c03a 549
+  s_90e589759b2a63::t_fad126dd52b3e5 108
+src/gedcom-parser/index.ts
+  s_90e589759b2a63::t_c48f5621659b56 26
+src/gedcom-parser/serialize.test.ts
+  s_90e589759b2a63::t_ab17744d7c1cf4 180,195
+src/db/trees/person-relations.ts
+  s_90e589759b2a63::t_49c6c6679754b2 243-246
+  s_90e589759b2a63::t_edf7cf33370087 162-171
+  s_90e589759b2a63::t_945e47f269c3fe 205-215
+  s_90e589759b2a63::t_ad9d3ba11ee1c0 175-179
+  s_90e589759b2a63::t_fd67de980789e2 59-72,88-89
+  s_90e589759b2a63::t_36e37827c6f447 228-232
+  s_90e589759b2a63::t_3c406da9a93b71 1
+  s_90e589759b2a63::t_e391da8ab0e5d0 117-130
+  s_90e589759b2a63::t_b27ced99832180 139-142
+  s_90e589759b2a63::t_2227bf15e540cf 294-301
+  s_90e589759b2a63::t_dafcd969fba819 58
+src/components/individuals/person-picker.tsx
+  s_90e589759b2a63::t_a3ae4d74a84398 27-28
+  s_90e589759b2a63::t_540baba089d570 108
+  s_90e589759b2a63::t_386e6bf4a6aab3 69
+docs/references/gedcom-551-mapping.md
+  s_90e589759b2a63::t_0018301fd8ccb4 52
+src/components/individuals/person-picker.test.tsx
+  s_90e589759b2a63::t_2addc49ded6d01 151
+  s_90e589759b2a63::t_3e38bbf0703966 169
+  s_90e589759b2a63::t_7f511581969baa 122
+src/lib/gedcom/exporter.ts
+  s_90e589759b2a63::t_8a4a94bb20e8db 11
+  s_90e589759b2a63::t_9518b41f625dfa 166-168,171,180
+src/lib/gedcom/importer.ts
+  s_90e589759b2a63::t_04bde1edb16c8a 105
+  s_90e589759b2a63::t_40e0a1c08a2bdc 344,346-348
+  s_90e589759b2a63::t_c8fc829457ce58 19,37-38,47-71
+  s_90e589759b2a63::t_1b5bf9a0c0d9f1 312
+  s_90e589759b2a63::t_dd4273d15aa680 72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "4a224b390618ba5aad717afab373871eee475da2",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
