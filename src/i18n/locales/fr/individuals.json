@@ -177,12 +177,10 @@
     },
     "group": {
       "personal": {
-        "title": "Vie personnelle",
-        "hint": "Les événements où cette personne est la principale concernée : naissance, décès, mariage…"
+        "title": "Vie personnelle"
       },
       "other": {
-        "title": "Autres rôles",
-        "hint": "Les événements d'autres personnes où celle-ci intervient comme témoin, déclarant ou parrain/marraine."
+        "title": "Autres rôles"
       }
     },
     "fields": {
@@ -190,7 +188,7 @@
       "typePlaceholder": "Choisir un type",
       "date": "Date",
       "datePlaceholder": "Date",
-      "place": "Lieu",
+      "place": "Lieu (non disponible pour l'instant)",
       "placeUnavailable": "Non disponible pour l'instant",
       "role": "Rôle",
       "roleSpouse": "Conjoint",
@@ -311,17 +309,14 @@
     "group": {
       "person": {
         "title": "Notes sur la personne",
-        "hint": "Rattachées à {{name}}.",
         "empty": "Aucune note sur la personne."
       },
       "event": {
         "title": "Notes sur les événements",
-        "hint": "Rattachées à un événement précis de sa vie.",
         "empty": "Aucune note sur un événement."
       },
       "relation": {
         "title": "Notes sur les liens",
-        "hint": "Justifient ou nuancent un lien de parenté.",
         "empty": "Aucune note sur un lien."
       }
     },

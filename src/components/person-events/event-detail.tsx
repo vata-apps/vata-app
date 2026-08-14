@@ -144,6 +144,11 @@ export function EventDetail({
               onChange({ eventTypeId: next });
               onCommit({ eventTypeId: next });
             }}
+            // The type is fixed once the event exists — different types carry
+            // different participant shapes (e.g. a marriage's two spouses),
+            // so changing it in place would leave stale participants behind.
+            // Delete and recreate instead; only a draft's type is editable.
+            disabled={context !== undefined}
           >
             <Select.Trigger id={`${id}-type`}>
               <Select.Value>
@@ -259,12 +264,14 @@ function EventParticipantsSection({
               <Typography className={s.participantName} size="sm">
                 {participant.displayName}
               </Typography>
-              <RoleSelect
-                id={`${roleSelectId}-${participant.id}`}
-                ariaLabel={t('eventsTab.fields.role')}
-                value={participant.role}
-                onValueChange={(role) => participants.onRoleChange(participant.id, role)}
-              />
+              <div className={s.participantRole}>
+                <RoleSelect
+                  id={`${roleSelectId}-${participant.id}`}
+                  ariaLabel={t('eventsTab.fields.role')}
+                  value={participant.role}
+                  onValueChange={(role) => participants.onRoleChange(participant.id, role)}
+                />
+              </div>
               <IconButton
                 aria-label={t('eventsTab.participants.removeAria', {
                   name: participant.displayName,

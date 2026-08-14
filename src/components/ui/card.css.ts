@@ -41,7 +41,7 @@ export const card = recipe({
 
 export const head = primitiveStyle({
   display: 'flex',
-  alignItems: 'baseline',
+  alignItems: 'center',
   flexWrap: 'wrap',
   gap: vars.space['4'],
   padding: `${vars.space['5']} ${inlinePadding} ${vars.space['4']}`,

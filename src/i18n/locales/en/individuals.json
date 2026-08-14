@@ -177,12 +177,10 @@
     },
     "group": {
       "personal": {
-        "title": "Personal life",
-        "hint": "Events where this person is the one it's about: birth, death, marriage…"
+        "title": "Personal life"
       },
       "other": {
-        "title": "Other roles",
-        "hint": "Other people's events where this person is a witness, informant, or godparent."
+        "title": "Other roles"
       }
     },
     "fields": {
@@ -190,7 +188,7 @@
       "typePlaceholder": "Choose a type",
       "date": "Date",
       "datePlaceholder": "Date",
-      "place": "Place",
+      "place": "Place (Not available yet)",
       "placeUnavailable": "Not available yet",
       "role": "Role",
       "roleSpouse": "Spouse",
@@ -311,17 +309,14 @@
     "group": {
       "person": {
         "title": "Notes about the person",
-        "hint": "Attached to {{name}}.",
         "empty": "No notes about the person yet."
       },
       "event": {
         "title": "Notes about events",
-        "hint": "Attached to one specific event in their life.",
         "empty": "No notes about an event yet."
       },
       "relation": {
         "title": "Notes about relations",
-        "hint": "Justify or qualify a family relation.",
         "empty": "No notes about a relation yet."
       }
     },
