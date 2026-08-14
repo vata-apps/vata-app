@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 
 import { Icon } from '$components/icon';
 import { formatName } from '$db-tree/names';
-import { initialsOf } from '$components/person-overview/to-person-ref';
 import { Avatar } from '$components/ui/avatar';
 import { IconButton } from '$components/ui/icon-button';
 import { Tooltip } from '$components/ui/tooltip';
+import { initialsOf } from '$lib/personSummary';
 import type { IndividualWithDetails } from '$types/database';
 import { SEX_ICON, formatEventDate, lifespanYears } from './person-rail-data';
 import * as styles from './person-rail.css';

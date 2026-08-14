@@ -1,3 +1,6 @@
+import { useTranslation } from 'react-i18next';
+
+import { formatLifeYears } from '$lib/personSummary';
 import { Avatar } from '../ui/avatar';
 import { Typography } from '../ui/typography';
 import { IndividualLink } from './entity-links';
@@ -37,15 +40,6 @@ interface PersonRefProps {
   compact?: boolean;
 }
 
-/** Formats the life dates as "b. 1855 – 1921", "b. 1855", "d. 1921", or "". */
-export function formatLifeDates(person: PersonRefData): string {
-  const { bornYear, deathYear } = person;
-  if (bornYear !== undefined && deathYear !== undefined) return `b. ${bornYear} – ${deathYear}`;
-  if (bornYear !== undefined) return `b. ${bornYear}`;
-  if (deathYear !== undefined) return `d. ${deathYear}`;
-  return '';
-}
-
 /**
  * A reference to another person, shared wherever the app shows a related
  * individual (parents, children, spouses, …). One chrome-less layout —
@@ -72,10 +66,11 @@ export function PersonRef({
   variant = 'normal',
   compact = false,
 }: PersonRefProps): JSX.Element {
+  const { t } = useTranslation('individuals');
   const subtle = variant === 'subtle';
   const focal = variant === 'focal';
   const dense = subtle || compact;
-  const dates = formatLifeDates(person);
+  const dates = formatLifeYears(person, t);
 
   const content = (
     <div className={dense ? s.rowDense : s.row}>

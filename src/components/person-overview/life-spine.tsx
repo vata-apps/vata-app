@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import { vars } from '$/design/theme.css';
+import { formatLifeYears } from '$lib/personSummary';
 import { Icon, type IconName } from '../icon';
 import { Avatar } from '../ui/avatar';
 import { Button } from '../ui/button';
@@ -12,7 +13,7 @@ import { IndividualLink } from './entity-links';
 import * as s from './life-spine.css';
 import type { OverviewMilestone, PersonRefData } from './overview-types';
 import { PanelHead, ViewAllLink } from './panel';
-import { formatLifeDates, PersonRef } from './person-ref';
+import { PersonRef } from './person-ref';
 
 /** The glyph in each milestone's puck, one per kind of vital event. */
 const KIND_ICON: Record<OverviewMilestone['kind'], IconName> = {
@@ -101,7 +102,8 @@ function MissingMilestone({ label }: { label: string }): JSX.Element {
 }
 
 function SpouseInline({ spouse, treeId }: { spouse: PersonRefData; treeId: string }): JSX.Element {
-  const dates = formatLifeDates(spouse);
+  const { t } = useTranslation('individuals');
+  const dates = formatLifeYears(spouse, t);
 
   return (
     <IndividualLink treeId={treeId} individualId={spouse.id}>

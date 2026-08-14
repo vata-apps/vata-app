@@ -5,12 +5,8 @@ import { EntityPicker, type EntityPickerItem } from '$components/ui/entity-picke
 import { Icon } from '$components/icon';
 import { useIndividualBrowseOrSearch } from '$hooks/useIndividualBrowseOrSearch';
 import { formatNameSimple } from '$db-tree/names';
-import {
-  formatLifeYears,
-  initialsFromDisplayName,
-  personDisplayFields,
-  splitDisplayName,
-} from './person-display';
+import { formatLifeYears, initialsFromDisplayName } from '$lib/personSummary';
+import { personDisplayFields, splitDisplayName } from './person-display';
 import type { Gender, IndividualWithDetails } from '$types/database';
 import * as s from './person-editor.css';
 
@@ -92,7 +88,7 @@ export function PersonPicker({
   const items: EntityPickerItem[] = results.map((person) => ({
     id: person.id,
     title: person.displayName,
-    meta: formatLifeYears(person.bornYear, person.deathYear),
+    meta: formatLifeYears(person, t),
     initials: initialsFromDisplayName(person.displayName),
   }));
 

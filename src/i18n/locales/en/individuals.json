@@ -52,7 +52,10 @@
     },
     "lifespan": {
       "otherNames_one": "{{count}} other name",
-      "otherNames_other": "{{count}} other names"
+      "otherNames_other": "{{count}} other names",
+      "bornAndDied": "b. {{born}} – {{died}}",
+      "born": "b. {{born}}",
+      "died": "d. {{died}}"
     },
     "viewAll": "View all",
     "vital": {

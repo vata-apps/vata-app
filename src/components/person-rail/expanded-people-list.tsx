@@ -2,11 +2,11 @@ import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { Icon } from '$components/icon';
-import { initialsOf } from '$components/person-overview/to-person-ref';
 import { Avatar } from '$components/ui/avatar';
 import { Badge } from '$components/ui/badge';
 import { IconButton } from '$components/ui/icon-button';
 import { SearchInput } from '$components/ui/search-input';
+import { initialsOf } from '$lib/personSummary';
 import type { PeopleRailFilters, PeopleRailSort } from '$/store/app-store';
 import type { IndividualWithDetails } from '$types/database';
 import { SEX_ICON, lifespanYears, rowDisplayName } from './person-rail-data';

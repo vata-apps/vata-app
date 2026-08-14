@@ -3,7 +3,6 @@ import { useParams } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 import { CenteredMessage } from '$components/centered-message';
-import { formatLifeYears } from '$components/individuals/person-display';
 import { PersonPicker, type PersonPickerSelection } from '$components/individuals/person-picker';
 import {
   CHILD_NATURE_OPTIONS,
@@ -53,6 +52,7 @@ import { useIndividual } from '$hooks/useIndividuals';
 import { useRelationNoteCount } from '$hooks/usePersonNotes';
 import { formatName } from '$db-tree/names';
 import type { RelatedPersonWithGender, RelationDetails } from '$db-tree/person-relations';
+import { formatLifeYears } from '$lib/personSummary';
 import { resetBufferOnError } from '$lib/toast';
 import type { RelationCertainty, RelationNature } from '$types/database';
 
@@ -640,7 +640,10 @@ function buildRows(
       id,
       personId: person.id,
       displayName: personDisplayName(person),
-      lifespan: formatLifeYears(person.birthYear ?? undefined, person.deathYear ?? undefined),
+      lifespan: formatLifeYears(
+        { bornYear: person.birthYear ?? undefined, deathYear: person.deathYear ?? undefined },
+        t
+      ),
       relationLabel: t(`relations.labels.${relationLabelKey}`),
       side,
       memberId: details.memberId,

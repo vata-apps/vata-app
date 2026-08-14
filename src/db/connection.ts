@@ -9,6 +9,68 @@ let systemDbInitPromise: Promise<Database> | null = null;
 let treeDb: Database | null = null;
 let currentTreePath: string | null = null;
 
+/**
+ * Every system event type this app seeds into a new tree — the single
+ * source of truth for `initializeTreeDb`'s `INSERT` loop below. Every tag
+ * here must match `docs/references/gedcom-551-mapping.md`'s Individual/
+ * Family Event Tags tables (a documented tag missing from this list imports
+ * silently as nothing, see issue #243) *and* have an entry in
+ * `KNOWN_TAG_KEYS` in `$lib/eventTypeLabel.ts` (a seeded tag missing there
+ * renders as its own raw GEDCOM code instead of a label, see issue #251) —
+ * `eventTypeLabel.test.ts` asserts the second property against this array.
+ */
+export const SYSTEM_EVENT_TYPES: readonly [
+  tag: string,
+  category: 'individual' | 'family',
+  sortOrder: number,
+][] = [
+  ['BIRT', 'individual', 1],
+  ['CHR', 'individual', 2],
+  ['DEAT', 'individual', 3],
+  ['BURI', 'individual', 4],
+  ['CREM', 'individual', 5],
+  ['ADOP', 'individual', 6],
+  ['BAPM', 'individual', 7],
+  ['BARM', 'individual', 8],
+  ['BASM', 'individual', 9],
+  ['CONF', 'individual', 10],
+  ['FCOM', 'individual', 11],
+  ['ORDN', 'individual', 12],
+  ['NATU', 'individual', 13],
+  ['EMIG', 'individual', 14],
+  ['IMMI', 'individual', 15],
+  ['CENS', 'individual', 16],
+  ['PROB', 'individual', 17],
+  ['WILL', 'individual', 18],
+  ['GRAD', 'individual', 19],
+  ['RETI', 'individual', 20],
+  ['OCCU', 'individual', 21],
+  ['RESI', 'individual', 22],
+  ['EDUC', 'individual', 23],
+  ['RELI', 'individual', 24],
+  ['EVEN', 'individual', 25],
+  ['CAST', 'individual', 26],
+  ['DSCR', 'individual', 27],
+  ['IDNO', 'individual', 28],
+  ['NATI', 'individual', 29],
+  ['NCHI', 'individual', 30],
+  ['NMR', 'individual', 31],
+  ['PROP', 'individual', 32],
+  ['SSN', 'individual', 33],
+  ['TITL', 'individual', 34],
+  ['MARR', 'family', 1],
+  ['MARB', 'family', 2],
+  ['MARC', 'family', 3],
+  ['MARL', 'family', 4],
+  ['MARS', 'family', 5],
+  ['ENGA', 'family', 6],
+  ['DIV', 'family', 7],
+  ['DIVF', 'family', 8],
+  ['ANUL', 'family', 9],
+  ['CENS', 'family', 10],
+  ['EVEN', 'family', 11],
+];
+
 async function applyConnectionPragmas(db: Database): Promise<void> {
   await db.execute('PRAGMA journal_mode = WAL');
   await db.execute('PRAGMA synchronous = NORMAL');
@@ -155,58 +217,9 @@ async function initializeTreeDb(db: Database): Promise<void> {
     )
   `);
 
-  // Insert system event types (only if not already present). Every tag here
-  // must match docs/references/gedcom-551-mapping.md's Individual/Family
-  // Event Tags tables — a documented tag missing from this list imports
-  // silently as nothing (see issue #243).
-  const systemEventTypes = [
-    ['BIRT', 'individual', 1],
-    ['CHR', 'individual', 2],
-    ['DEAT', 'individual', 3],
-    ['BURI', 'individual', 4],
-    ['CREM', 'individual', 5],
-    ['ADOP', 'individual', 6],
-    ['BAPM', 'individual', 7],
-    ['BARM', 'individual', 8],
-    ['BASM', 'individual', 9],
-    ['CONF', 'individual', 10],
-    ['FCOM', 'individual', 11],
-    ['ORDN', 'individual', 12],
-    ['NATU', 'individual', 13],
-    ['EMIG', 'individual', 14],
-    ['IMMI', 'individual', 15],
-    ['CENS', 'individual', 16],
-    ['PROB', 'individual', 17],
-    ['WILL', 'individual', 18],
-    ['GRAD', 'individual', 19],
-    ['RETI', 'individual', 20],
-    ['OCCU', 'individual', 21],
-    ['RESI', 'individual', 22],
-    ['EDUC', 'individual', 23],
-    ['RELI', 'individual', 24],
-    ['EVEN', 'individual', 25],
-    ['CAST', 'individual', 26],
-    ['DSCR', 'individual', 27],
-    ['IDNO', 'individual', 28],
-    ['NATI', 'individual', 29],
-    ['NCHI', 'individual', 30],
-    ['NMR', 'individual', 31],
-    ['PROP', 'individual', 32],
-    ['SSN', 'individual', 33],
-    ['TITL', 'individual', 34],
-    ['MARR', 'family', 1],
-    ['MARB', 'family', 2],
-    ['MARC', 'family', 3],
-    ['MARL', 'family', 4],
-    ['MARS', 'family', 5],
-    ['ENGA', 'family', 6],
-    ['DIV', 'family', 7],
-    ['DIVF', 'family', 8],
-    ['ANUL', 'family', 9],
-    ['CENS', 'family', 10],
-    ['EVEN', 'family', 11],
-  ];
-  for (const [tag, category, sortOrder] of systemEventTypes) {
+  // Insert system event types (only if not already present) — see
+  // `SYSTEM_EVENT_TYPES`'s doc comment for what every tag here must satisfy.
+  for (const [tag, category, sortOrder] of SYSTEM_EVENT_TYPES) {
     await db.execute(
       `INSERT OR IGNORE INTO event_types (tag, category, is_system, sort_order) VALUES ($1, $2, 1, $3)`,
       [tag, category, sortOrder]
