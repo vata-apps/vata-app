@@ -44,7 +44,7 @@ export const head = primitiveStyle({
   alignItems: 'center',
   flexWrap: 'wrap',
   gap: vars.space['4'],
-  padding: `${vars.space['5']} ${inlinePadding} ${vars.space['4']}`,
+  padding: `${vars.space['5']} ${inlinePadding}`,
 });
 
 export const row = primitiveStyle({

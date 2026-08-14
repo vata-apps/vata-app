@@ -10,7 +10,8 @@ import * as s from './panel.css';
 type PanelTabRoute =
   | '/tree/$treeId/individual/$individualId/names'
   | '/tree/$treeId/individual/$individualId/events'
-  | '/tree/$treeId/individual/$individualId/relations';
+  | '/tree/$treeId/individual/$individualId/relations'
+  | '/tree/$treeId/individual/$individualId/places';
 
 /**
  * The head strip of a sectioned Overview card: the section title, then whatever

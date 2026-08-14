@@ -18,6 +18,7 @@ import { PersonNamesFilterToolbar, type PersonNameFilter } from '$components/per
 import { DraftFooter, InlineDelete } from '$components/record-panel/record-actions';
 import { DRAFT_ID, RecordPanel } from '$components/record-panel/record-panel';
 import { RecordRow } from '$components/record-panel/record-row';
+import { Badge } from '$components/ui/badge';
 import { Button } from '$components/ui/button';
 import { Typography } from '$components/ui/typography';
 import {
@@ -250,13 +251,7 @@ export function PersonNamesPage(): JSX.Element {
                 <RecordRow
                   icon="signature"
                   title={rowLabel(name, t)}
-                  titleSuffix={
-                    name.isPrimary ? (
-                      <Typography size="xs" weight="semibold" tone="brand">
-                        {t('overview.names.primary')}
-                      </Typography>
-                    ) : null
-                  }
+                  titleSuffix={name.isPrimary ? <Badge>{t('overview.names.primary')}</Badge> : null}
                   meta={t(`overview.names.types.${name.type}`)}
                   sourceCount={name.sourceCount}
                   isSelected={name.id === activeId}

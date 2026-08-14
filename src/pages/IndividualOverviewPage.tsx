@@ -1,4 +1,5 @@
 import { LifeSpine } from '$components/person-overview/life-spine';
+import { ViewAllLink } from '$components/person-overview/panel';
 import { PlacesPanel } from '$components/person-overview/places-panel';
 import { RecordRail } from '$components/person-overview/record-rail';
 import { usePersonOverview } from '$hooks/usePersonOverview';
@@ -36,7 +37,17 @@ export function IndividualOverviewPage({
       />
       <div className={styles.column}>
         <LifeSpine milestones={data.milestones} individualId={individualId} treeId={treeId} />
-        <PlacesPanel places={data.placesLived} treeId={treeId} />
+        <PlacesPanel
+          places={data.placesLived}
+          treeId={treeId}
+          viewAll={
+            <ViewAllLink
+              to="/tree/$treeId/individual/$individualId/places"
+              treeId={treeId}
+              individualId={individualId}
+            />
+          }
+        />
       </div>
     </div>
   );
