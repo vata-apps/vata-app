@@ -1,0 +1,32 @@
+src/gedcom-parser/parse.ts
+  s_90e589759b2a63::t_7c99704f705e2c 312
+  s_90e589759b2a63::t_9517e22356e6f4 230
+  s_90e589759b2a63::t_be1bd4997166f4 137
+  s_90e589759b2a63::t_3ec4aae8872b54 76,104,107
+  s_90e589759b2a63::t_53bb1fa910ff08 348
+src/gedcom-parser/index.ts
+  s_90e589759b2a63::t_0f3435247939b7 59
+src/gedcom-parser/lexer.test.ts
+  s_90e589759b2a63::t_2ab1e581e3fffb 139
+  s_90e589759b2a63::t_a18bca879f3f39 124-127
+src/gedcom-parser/lexer.ts
+  s_90e589759b2a63::t_602505022052b6 206-207
+  s_90e589759b2a63::t_5af5e9ae7c7582 191-192
+  s_90e589759b2a63::t_3020598dbe0486 111-116,120-126,129,131,135,145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "22ba34d6639f68124220268f87531c516515dd4c",
+  "prompts": {},
+  "sessions": {
+    "s_90e589759b2a63": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ef1ef8cc-60f3-4c7b-9803-6724d9da4465",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
