@@ -374,35 +374,42 @@ export class FamilyManager {
    * family on first use. `role` maps to the schema's `husband`/`wife` slot —
    * see the sqlite-standards note: family-member role is a positional slot,
    * independent of the parent's own `gender` field.
-   * @returns The id of whoever previously held the slot, or `null` if it was
-   * empty — the caller needs it to invalidate a *displaced* parent's own
-   * cached views, not just the newly-set one.
+   * @returns The parent family's id (the caller needs it to invalidate any
+   * other current member's stale cache — siblings, the other parent — per
+   * issue #263) and the id of whoever previously held the slot, or `null` if
+   * it was empty — the caller needs that to invalidate a *displaced* parent's
+   * own cached views, not just the newly-set one.
    */
   static async setParent(
     individualId: string,
     role: 'father' | 'mother',
     parentId: string
-  ): Promise<string | null> {
+  ): Promise<{ familyId: string; displacedParentId: string | null }> {
     const memberRole = role === 'father' ? 'husband' : 'wife';
     const familyId = await ensureParentFamily(individualId);
-    return replaceRoleMember(familyId, memberRole, parentId);
+    const displacedParentId = await replaceRoleMember(familyId, memberRole, parentId);
+    return { familyId, displacedParentId };
   }
 
   /**
    * Remove an individual's father or mother link, if a parent family exists.
-   * @returns The removed parent's id, or `null` if there was no parent in
-   * that slot to remove — the caller needs it to invalidate the ex-parent's
-   * own Overview/Relations cache, which this call doesn't touch.
+   * @returns `null` if there was no parent family at all. Otherwise the
+   * family's id (the caller needs it to invalidate any other current
+   * member's stale cache — siblings, the other parent — per issue #263) and
+   * the removed parent's id, or `null` if there was no parent in that slot to
+   * remove — the caller needs that to invalidate the ex-parent's own
+   * Overview/Relations cache, which this call doesn't touch.
    */
   static async removeParent(
     individualId: string,
     role: 'father' | 'mother'
-  ): Promise<string | null> {
+  ): Promise<{ familyId: string; removedParentId: string | null } | null> {
     const memberRole = role === 'father' ? 'husband' : 'wife';
     const families = await getParentFamilies(individualId);
     if (families.length === 0) return null;
 
-    return replaceRoleMember(families[0].id, memberRole, null);
+    const removedParentId = await replaceRoleMember(families[0].id, memberRole, null);
+    return { familyId: families[0].id, removedParentId };
   }
 
   /**

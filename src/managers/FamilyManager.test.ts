@@ -192,10 +192,12 @@ describe('FamilyManager.setParent / removeParent', () => {
     const oldFatherId = await createNamedIndividual('Old Dad', 'Doe', 'M');
     const newFatherId = await createNamedIndividual('New Dad', 'Doe', 'M');
 
-    await expect(FamilyManager.setParent(childId, 'father', oldFatherId)).resolves.toBeNull();
-    await expect(FamilyManager.setParent(childId, 'father', newFatherId)).resolves.toBe(
-      oldFatherId
-    );
+    await expect(FamilyManager.setParent(childId, 'father', oldFatherId)).resolves.toMatchObject({
+      displacedParentId: null,
+    });
+    await expect(FamilyManager.setParent(childId, 'father', newFatherId)).resolves.toMatchObject({
+      displacedParentId: oldFatherId,
+    });
 
     const family = await FamilyManager.getParentFamily(childId);
     expect(family?.husband?.id).toBe(newFatherId);
@@ -210,7 +212,9 @@ describe('FamilyManager.setParent / removeParent', () => {
     await FamilyManager.setParent(childId, 'father', fatherId);
     await FamilyManager.setParent(childId, 'mother', motherId);
 
-    await expect(FamilyManager.removeParent(childId, 'father')).resolves.toBe(fatherId);
+    await expect(FamilyManager.removeParent(childId, 'father')).resolves.toMatchObject({
+      removedParentId: fatherId,
+    });
 
     const family = await FamilyManager.getParentFamily(childId);
     expect(family?.husband).toBeNull();
