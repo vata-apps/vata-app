@@ -11,24 +11,6 @@ export const milestoneRow = style({
   gap: vars.space['4'],
 });
 
-/**
- * The panel's "add an event" control: a bordered secondary button on the card
- * surface. Local rather than a shared Button variant — the Events tab is the
- * slice that will bring real callers, and a variant nobody renders enabled
- * can't be validated.
- */
-export const addEvent = style({
-  background: vars.color.surface.card,
-  border: `1px solid ${vars.color.border.default}`,
-  selectors: {
-    '&:hover:not(:disabled)': {
-      background: vars.color.brand.subtleBg,
-      borderColor: vars.color.brand.base,
-      color: vars.color.brand.base,
-    },
-  },
-});
-
 export const missingRow = style({ display: 'flex', alignItems: 'center', gap: vars.space['4'] });
 
 /** Kind marker leading a milestone row: a ringed puck holding the event glyph. */

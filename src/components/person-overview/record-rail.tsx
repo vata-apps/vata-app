@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 
 import { vars } from '$/design/theme.css';
 import { Icon } from '../icon';
+import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 import * as card from '../ui/card.css';
 import { EmptyState } from '../ui/empty-state';
@@ -117,17 +118,15 @@ function NameRow({ name }: { name: OverviewName }): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
     <div className={`${card.row} ${s.nameRow}`}>
-      <div className={s.nameRowHead}>
+      <div className={s.nameRowText}>
         <Typography size="xs" tone="muted">
           {t(`overview.names.types.${name.type}`)}
         </Typography>
-        {name.isPrimary && (
-          <Typography size="xs" weight="semibold" tone="brand">
-            {t('overview.names.primary')}
-          </Typography>
-        )}
+        <Typography size="md">{name.text}</Typography>
       </div>
-      <Typography size="md">{name.text}</Typography>
+      {name.isPrimary && (
+        <Badge className={s.namePrimaryBadge}>{t('overview.names.primary')}</Badge>
+      )}
     </div>
   );
 }

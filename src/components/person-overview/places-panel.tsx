@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { eventTypeLabel } from '$lib/eventTypeLabel';
@@ -10,12 +11,14 @@ import { EmptyState } from '../ui/empty-state';
 import { Typography } from '../ui/typography';
 import { PlaceLink } from './entity-links';
 import type { OverviewPlaceLived } from './overview-types';
-import { PanelHead, ViewAllUnavailable } from './panel';
+import { PanelHead } from './panel';
 import * as s from './places-panel.css';
 
 interface PlacesPanelProps {
   places: OverviewPlaceLived[];
   treeId: string;
+  /** The head's trailing action — a `ViewAllLink` on the Overview summary, omitted on the full Places tab it links to. */
+  viewAll?: ReactNode;
 }
 
 function toMapPoint(place: OverviewPlaceLived): MapPoint | null {
@@ -31,7 +34,7 @@ function toMapPoint(place: OverviewPlaceLived): MapPoint | null {
  * or death location isn't necessarily a residence. Hovering a row highlights
  * its marker on the map.
  */
-export function PlacesPanel({ places, treeId }: PlacesPanelProps): JSX.Element {
+export function PlacesPanel({ places, treeId, viewAll }: PlacesPanelProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const [highlightedPlaceId, setHighlightedPlaceId] = useState<string | null>(null);
   const mapPoints = useMemo(
@@ -43,7 +46,7 @@ export function PlacesPanel({ places, treeId }: PlacesPanelProps): JSX.Element {
     <Card layout="sectioned">
       <PanelHead title={t('overview.placesLived.title')}>
         {places.length > 0 && <Badge>{places.length}</Badge>}
-        <ViewAllUnavailable />
+        {viewAll}
       </PanelHead>
 
       {mapPoints.length > 0 && (

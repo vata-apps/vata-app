@@ -140,6 +140,7 @@ const OVERVIEW_TABS = [
   { id: 'names', to: '/tree/$treeId/individual/$individualId/names' },
   { id: 'ancestors', to: '/tree/$treeId/individual/$individualId/ancestors' },
   { id: 'events', to: '/tree/$treeId/individual/$individualId/events' },
+  { id: 'places', to: '/tree/$treeId/individual/$individualId/places' },
   { id: 'relations', to: '/tree/$treeId/individual/$individualId/relations' },
   { id: 'sources', to: '/tree/$treeId/individual/$individualId/sources' },
   { id: 'notes', to: '/tree/$treeId/individual/$individualId/notes' },

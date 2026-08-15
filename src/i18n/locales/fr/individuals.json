@@ -46,6 +46,7 @@
       "names": "Noms",
       "ancestors": "Ascendance",
       "events": "Événements",
+      "places": "Lieux",
       "relations": "Relations",
       "sources": "Sources",
       "notes": "Notes"
@@ -97,8 +98,7 @@
       "death": "Décès",
       "children": "Enfants",
       "missingBorn": "Naissance non renseignée",
-      "missingDeath": "Décès non renseigné",
-      "addEvent": "Ajouter un événement"
+      "missingDeath": "Décès non renseigné"
     },
     "media": {
       "title": "Médias",

@@ -4,7 +4,6 @@ import { vars } from '$/design/theme.css';
 import { formatLifeYears } from '$lib/personSummary';
 import { Icon, type IconName } from '../icon';
 import { Avatar } from '../ui/avatar';
-import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import * as card from '../ui/card.css';
 import { DataChip } from '../ui/data-chip';
@@ -78,14 +77,6 @@ export function LifeSpine({
           />
         )
       )}
-      <div className={card.row}>
-        {/* Event creation lands with the Events tab; the affordance ships inert
-            so the panel already reads the way the mockup does. */}
-        <Button variant="ghost" className={s.addEvent} disabled>
-          <Icon name="plus" size={14} />
-          {t('overview.milestone.addEvent')}
-        </Button>
-      </div>
     </Card>
   );
 }
