@@ -23,6 +23,7 @@ import { formatName } from '$db-tree/names';
 import type { IndividualsSortColumn } from '$db-tree/individuals';
 import type { EventWithDetails, IndividualWithDetails, Gender } from '$types/database';
 
+import { LoadMoreButton } from './load-more-button';
 import * as styles from './list-page.css';
 
 interface IndividualsPageProps {
@@ -211,11 +212,7 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
       </div>
 
       {hasNextPage && (
-        <div className={styles.loadMoreRow}>
-          <Button variant="ghost" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-            {isFetchingNextPage ? tCommon('table.loadingMore') : tCommon('table.loadMore')}
-          </Button>
-        </div>
+        <LoadMoreButton onLoadMore={() => fetchNextPage()} isLoading={isFetchingNextPage} />
       )}
 
       <PersonEditorDialog

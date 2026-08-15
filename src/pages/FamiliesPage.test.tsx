@@ -14,6 +14,7 @@ import {
 import { FamiliesPage } from './FamiliesPage';
 import { FamilyManager } from '$managers/FamilyManager';
 import { formatName } from '$db-tree/names';
+import { sortByKey } from '$lib/sortByKey';
 import type { FamiliesPageParams } from '$db-tree/families';
 import type { FamilyWithMembers, IndividualWithDetails, Name } from '$types/database';
 
@@ -201,19 +202,7 @@ function mockFamilies(families: FamilyWithMembers[]): void {
         const spouse = sortColumn === 'husband' ? f.husband : f.wife;
         return formatName(spouse?.primaryName ?? null).sortable || null;
       };
-      const factor = sortDirection === 'desc' ? -1 : 1;
-      const sorted = [...filtered].sort((a, b) => {
-        const ka = sortKey(a);
-        const kb = sortKey(b);
-        if (ka === null && kb === null) return 0;
-        if (ka === null) return 1;
-        if (kb === null) return -1;
-        const compared =
-          typeof ka === 'number' && typeof kb === 'number'
-            ? ka - kb
-            : String(ka).localeCompare(String(kb));
-        return compared * factor;
-      });
+      const sorted = sortByKey(filtered, sortKey, sortDirection);
 
       return Promise.resolve({ items: sorted, hasMore: false });
     }

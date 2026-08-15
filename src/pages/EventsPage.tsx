@@ -17,6 +17,7 @@ import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { principalsText } from '$lib/principals-text';
 import type { EventListEntry } from '$types/database';
 
+import { LoadMoreButton } from './load-more-button';
 import * as styles from './list-page.css';
 
 interface EventsPageProps {
@@ -125,11 +126,7 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
       </div>
 
       {hasNextPage && (
-        <div className={styles.loadMoreRow}>
-          <Button variant="ghost" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-            {isFetchingNextPage ? tCommon('table.loadingMore') : tCommon('table.loadMore')}
-          </Button>
-        </div>
+        <LoadMoreButton onLoadMore={() => fetchNextPage()} isLoading={isFetchingNextPage} />
       )}
     </div>
   );

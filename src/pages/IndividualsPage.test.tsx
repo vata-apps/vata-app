@@ -15,6 +15,7 @@ import i18n from '$/i18n/config';
 import { IndividualsPage } from './IndividualsPage';
 import { IndividualManager } from '$managers/IndividualManager';
 import { formatName } from '$db-tree/names';
+import { sortByKey } from '$lib/sortByKey';
 import type { IndividualsPageParams } from '$db-tree/individuals';
 import type { IndividualWithDetails, Name } from '$types/database';
 
@@ -158,15 +159,7 @@ function mockPeople(people: IndividualWithDetails[]): void {
         sortColumn === 'firstName'
           ? p.primaryName?.givenNames?.trim() || null
           : formatName(p.primaryName).sortable || null;
-      const factor = sortDirection === 'desc' ? -1 : 1;
-      const sorted = [...filtered].sort((a, b) => {
-        const ka = sortKey(a);
-        const kb = sortKey(b);
-        if (ka === null && kb === null) return 0;
-        if (ka === null) return 1;
-        if (kb === null) return -1;
-        return ka.localeCompare(kb) * factor;
-      });
+      const sorted = sortByKey(filtered, sortKey, sortDirection);
 
       return Promise.resolve({ items: sorted, hasMore: false });
     }

@@ -22,6 +22,7 @@ import { formatName } from '$db-tree/names';
 import type { FamiliesSortColumn } from '$db-tree/families';
 import type { FamilyWithMembers } from '$types/database';
 
+import { LoadMoreButton } from './load-more-button';
 import * as styles from './list-page.css';
 
 interface FamiliesPageProps {
@@ -150,11 +151,7 @@ export function FamiliesPage({ treeId }: FamiliesPageProps): JSX.Element {
       </div>
 
       {hasNextPage && (
-        <div className={styles.loadMoreRow}>
-          <Button variant="ghost" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
-            {isFetchingNextPage ? tCommon('table.loadingMore') : tCommon('table.loadMore')}
-          </Button>
-        </div>
+        <LoadMoreButton onLoadMore={() => fetchNextPage()} isLoading={isFetchingNextPage} />
       )}
     </div>
   );
