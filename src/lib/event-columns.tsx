@@ -17,12 +17,16 @@ export const EVENT_COLUMN_WIDTH = { type: '200px', date: '160px' } as const;
  * The event-type column: a keyboard-focusable router link (styled as plain
  * text) to the event's detail route, used as the table's row header. The
  * whole row is clickable via the table's derived row click. Shared by every
- * event table (the tree-wide Events page and a person's Events tab).
+ * event table (the tree-wide Events page and a person's Events tab). Pass
+ * `sortable: false` for a caller whose rows arrive pre-sorted from
+ * elsewhere (e.g. a paginated query) and can't offer a client-side re-sort.
  */
 export function eventTypeColumn<T extends EventWithDetails>(
   treeId: string,
-  t: TranslateFn
+  t: TranslateFn,
+  options: { sortable?: boolean } = {}
 ): EntityTableColumn<T> {
+  const sortable = options.sortable ?? true;
   return {
     key: 'type',
     header: t('table.columns.type'),
@@ -37,7 +41,7 @@ export function eventTypeColumn<T extends EventWithDetails>(
         {eventTypeLabel(event.eventType, t)}
       </RouterLink>
     ),
-    sortValue: (event) => eventTypeLabel(event.eventType, t) || null,
+    ...(sortable ? { sortValue: (event: T) => eventTypeLabel(event.eventType, t) || null } : {}),
   };
 }
 
@@ -70,12 +74,20 @@ export function eventDateColumn<T extends EventWithDetails>(
   };
 }
 
-/** The event-place column: the place name, or an em dash when none is recorded. */
-export function eventPlaceColumn<T extends EventWithDetails>(t: TranslateFn): EntityTableColumn<T> {
+/**
+ * The event-place column: the place name, or an em dash when none is
+ * recorded. Pass `sortable: false` for the same reason as
+ * {@link eventTypeColumn}.
+ */
+export function eventPlaceColumn<T extends EventWithDetails>(
+  t: TranslateFn,
+  options: { sortable?: boolean } = {}
+): EntityTableColumn<T> {
+  const sortable = options.sortable ?? true;
   return {
     key: 'place',
     header: t('table.columns.place'),
     cell: (event) => event.place?.name ?? '—',
-    sortValue: (event) => event.place?.name ?? null,
+    ...(sortable ? { sortValue: (event: T) => event.place?.name ?? null } : {}),
   };
 }

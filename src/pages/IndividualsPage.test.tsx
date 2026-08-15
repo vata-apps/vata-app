@@ -14,15 +14,17 @@ import {
 import i18n from '$/i18n/config';
 import { IndividualsPage } from './IndividualsPage';
 import { IndividualManager } from '$managers/IndividualManager';
+import { formatName } from '$db-tree/names';
+import type { IndividualsPageParams } from '$db-tree/individuals';
 import type { IndividualWithDetails, Name } from '$types/database';
 
 vi.mock('$managers/IndividualManager', () => ({
   IndividualManager: {
-    getAll: vi.fn(),
+    getPage: vi.fn(),
   },
 }));
 
-const mockedGetAll = IndividualManager.getAll as ReturnType<typeof vi.fn>;
+const mockedGetPage = IndividualManager.getPage as ReturnType<typeof vi.fn>;
 
 const TREE_ID = 'T-1';
 
@@ -124,9 +126,56 @@ function firstName(row: HTMLElement): string {
   return within(row).getAllByRole('cell')[1]?.textContent ?? '';
 }
 
+/**
+ * Wires `getPage` from a single fixture list, applying the same filter and
+ * sort semantics as the real SQL query (`getIndividualsPage`) so tests
+ * exercise the page's query-param wiring against a realistic result rather
+ * than a canned response. Mirrors `Table`'s own null-last sort behavior
+ * (see `table.tsx`'s `sortRows`), since that's exactly what the SQL
+ * `ORDER BY ... NULLS LAST` is designed to reproduce.
+ */
+function mockPeople(people: IndividualWithDetails[]): void {
+  mockedGetPage.mockImplementation(
+    ({
+      filters,
+      sortColumn,
+      sortDirection,
+    }: Pick<IndividualsPageParams, 'filters' | 'sortColumn' | 'sortDirection'>) => {
+      const query = filters.nameQuery.trim().toLowerCase();
+      const filtered = people.filter((p) => {
+        if (filters.sex !== 'all' && p.gender !== filters.sex) return false;
+        if (filters.status === 'living' && !p.isLiving) return false;
+        if (filters.status === 'deceased' && p.isLiving) return false;
+        if (query) {
+          const text =
+            `${p.primaryName?.givenNames ?? ''} ${p.primaryName?.surname ?? ''}`.toLowerCase();
+          if (!text.includes(query)) return false;
+        }
+        return true;
+      });
+
+      const sortKey = (p: IndividualWithDetails): string | null =>
+        sortColumn === 'firstName'
+          ? p.primaryName?.givenNames?.trim() || null
+          : formatName(p.primaryName).sortable || null;
+      const factor = sortDirection === 'desc' ? -1 : 1;
+      const sorted = [...filtered].sort((a, b) => {
+        const ka = sortKey(a);
+        const kb = sortKey(b);
+        if (ka === null && kb === null) return 0;
+        if (ka === null) return 1;
+        if (kb === null) return -1;
+        return ka.localeCompare(kb) * factor;
+      });
+
+      return Promise.resolve({ items: sorted, hasMore: false });
+    }
+  );
+}
+
 describe('IndividualsPage', () => {
   beforeEach(() => {
-    mockedGetAll.mockReset();
+    mockedGetPage.mockReset();
   });
 
   afterEach(async () => {
@@ -134,7 +183,7 @@ describe('IndividualsPage', () => {
   });
 
   it('sorts by surname ascending by default', async () => {
-    mockedGetAll.mockResolvedValue([
+    mockPeople([
       person({ id: 'I-2', primaryName: { surname: 'Zebra', givenNames: 'Anna' } }),
       person({ id: 'I-1', primaryName: { surname: 'Able', givenNames: 'Zoe' } }),
     ]);
@@ -148,7 +197,7 @@ describe('IndividualsPage', () => {
 
   it('toggles surname sort direction', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockPeople([
       person({ id: 'I-2', primaryName: { surname: 'Able', givenNames: 'Anna' } }),
       person({ id: 'I-1', primaryName: { surname: 'Zebra', givenNames: 'Zoe' } }),
     ]);
@@ -171,7 +220,7 @@ describe('IndividualsPage', () => {
 
   it('sorts by first name and announces aria-sort', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockPeople([
       person({ id: 'I-2', primaryName: { surname: 'B', givenNames: 'Zoe' } }),
       person({ id: 'I-1', primaryName: { surname: 'A', givenNames: 'Anna' } }),
     ]);
@@ -194,7 +243,7 @@ describe('IndividualsPage', () => {
 
   it('keeps unknown values at the bottom in both sort directions', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockPeople([
       person({ id: 'I-2', primaryName: { surname: 'Zebra', givenNames: 'Anna' } }),
       person({ id: 'I-unknown', primaryName: { surname: '', givenNames: '' } }),
       person({ id: 'I-1', primaryName: { surname: 'Able', givenNames: 'Zoe' } }),
@@ -216,7 +265,7 @@ describe('IndividualsPage', () => {
   });
 
   it('shows the empty-tree state with an add-person action', async () => {
-    mockedGetAll.mockResolvedValue([]);
+    mockPeople([]);
 
     renderPage();
 
@@ -229,9 +278,7 @@ describe('IndividualsPage', () => {
 
   it('shows the no-matches state with a clear-filters action', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
-      person({ id: 'I-1', primaryName: { surname: 'Doe', givenNames: 'John' } }),
-    ]);
+    mockPeople([person({ id: 'I-1', primaryName: { surname: 'Doe', givenNames: 'John' } })]);
 
     renderPage();
     await screen.findByRole('table', { name: 'People' });
@@ -246,7 +293,7 @@ describe('IndividualsPage', () => {
   });
 
   it('shows a distinct error state when loading fails', async () => {
-    mockedGetAll.mockRejectedValue(new Error('boom'));
+    mockedGetPage.mockRejectedValue(new Error('boom'));
 
     renderPage();
 
@@ -257,7 +304,7 @@ describe('IndividualsPage', () => {
 
   it('filters the list by gender', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockPeople([
       person({ id: 'I-1', gender: 'M', primaryName: { surname: 'Doe', givenNames: 'John' } }),
       person({ id: 'I-2', gender: 'F', primaryName: { surname: 'Doe', givenNames: 'Jane' } }),
     ]);
@@ -285,7 +332,7 @@ describe('IndividualsPage', () => {
 
   it('clears all active filters with the Clear-all button', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockPeople([
       person({ id: 'I-1', gender: 'M', primaryName: { surname: 'Doe', givenNames: 'John' } }),
       person({ id: 'I-2', gender: 'F', primaryName: { surname: 'Doe', givenNames: 'Jane' } }),
     ]);
@@ -320,9 +367,7 @@ describe('IndividualsPage', () => {
 
   it('activates a row by keyboard on the primary link', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
-      person({ id: 'I-1', primaryName: { surname: 'Doe', givenNames: 'John' } }),
-    ]);
+    mockPeople([person({ id: 'I-1', primaryName: { surname: 'Doe', givenNames: 'John' } })]);
 
     const router = makeRouter();
     renderPage(router);

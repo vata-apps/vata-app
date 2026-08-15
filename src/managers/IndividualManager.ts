@@ -4,9 +4,12 @@ import {
   getAllIndividuals,
   getIndividualById,
   getIndividualsByIds,
+  getIndividualsPage,
   searchIndividuals,
   updateIndividual,
+  type IndividualsPageParams,
 } from '$db-tree/individuals';
+import { reorderById } from '$/lib/reorderById';
 import {
   createName,
   deleteName,
@@ -332,6 +335,24 @@ export class IndividualManager {
     ]);
 
     return assembleIndividualsWithDetails(individuals, primaryNames, allNames, birthDeathEvents);
+  }
+
+  /**
+   * Get one windowed, filtered, sorted page of individuals with full
+   * details — the paginated counterpart to `getAll` (see issue #266).
+   * Resolves the page's ids in SQL via `getIndividualsPage`, then reuses
+   * `getByIds`'s batch enrichment scoped to just that page, reordering its
+   * result to match the SQL-determined sort order (`getByIds` itself
+   * returns rows in `id` order, which is not generally the requested sort).
+   */
+  static async getPage(
+    params: IndividualsPageParams
+  ): Promise<{ items: IndividualWithDetails[]; hasMore: boolean }> {
+    const { ids, hasMore } = await getIndividualsPage(params);
+    if (ids.length === 0) return { items: [], hasMore };
+
+    const enriched = await IndividualManager.getByIds(ids);
+    return { items: reorderById(enriched, ids), hasMore };
   }
 
   /**

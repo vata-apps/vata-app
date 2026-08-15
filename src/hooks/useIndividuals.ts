@@ -1,12 +1,39 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { queryKeys } from '$/lib/query-keys';
 import { IndividualManager } from '$managers/IndividualManager';
+import type { IndividualsPageFilters, IndividualsSortColumn } from '$db-tree/individuals';
 
 export function useIndividuals(options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: queryKeys.individuals,
     queryFn: () => IndividualManager.getAll(),
     enabled: options?.enabled ?? true,
+  });
+}
+
+/** How many individuals `useIndividualsPage` fetches per page. */
+export const INDIVIDUALS_PAGE_SIZE = 50;
+
+export interface IndividualsPageQuery {
+  filters: IndividualsPageFilters;
+  sortColumn: IndividualsSortColumn;
+  sortDirection: 'asc' | 'desc';
+}
+
+/**
+ * The People list's data source: a `LIMIT`/`OFFSET`-paginated, SQL-filtered
+ * and SQL-sorted query (see issue #266). `query` re-keys the cache on every
+ * filter/sort change — TanStack Query then refetches from the first page —
+ * while `fetchNextPage` walks forward within one filter/sort combination.
+ */
+export function useIndividualsPage(query: IndividualsPageQuery) {
+  return useInfiniteQuery({
+    queryKey: queryKeys.individualsPage(query),
+    queryFn: ({ pageParam }) =>
+      IndividualManager.getPage({ ...query, limit: INDIVIDUALS_PAGE_SIZE, offset: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasMore ? allPages.length * INDIVIDUALS_PAGE_SIZE : undefined,
   });
 }
 

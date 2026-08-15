@@ -897,6 +897,140 @@ export async function getAllMarriageEvents(): Promise<EventWithDetails[]> {
 }
 
 /**
+ * Get MARR events where any of the given families appears as a `principal`
+ * participant. Mirrors `getBirthDeathEventsForIndividuals`'s batch pattern,
+ * scoped to a known subset of families (e.g. a paginated Families page).
+ * Deduplicated the same way — an event is returned once even if it were
+ * somehow attached to more than one requested family.
+ */
+export async function getMarriageEventsForFamilies(
+  familyIds: string[]
+): Promise<EventWithDetails[]> {
+  if (familyIds.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = familyIds.map(parseEntityId);
+
+  const seen = new Set<number>();
+  const rows: RawEventWithType[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawEventWithType[]>(
+      `SELECT DISTINCT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+              et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+       FROM events e
+       INNER JOIN event_types et ON et.id = e.event_type_id
+       INNER JOIN event_participants ep ON ep.event_id = e.id
+       WHERE et.tag = 'MARR'
+         AND ep.role = 'principal'
+         AND ep.family_id IN (${placeholders})
+       ORDER BY e.id`,
+      idsChunk
+    );
+    for (const row of chunkRows) {
+      if (seen.has(row.id)) continue;
+      seen.add(row.id);
+      rows.push(row);
+    }
+  }
+
+  return assembleEventsWithDetails(rows);
+}
+
+/** Filters applied to a windowed page of the Events list, all AND-ed. */
+export interface EventsPageFilters {
+  /** Restrict to a single event-type id, or `'all'` for no restriction. */
+  eventTypeId: string;
+  /** Restrict to a single place id, or `'all'` for no restriction. */
+  placeId: string;
+}
+
+export interface EventsPageParams {
+  filters: EventsPageFilters;
+  limit: number;
+  offset: number;
+}
+
+export interface EventsPageResult {
+  events: EventWithDetails[];
+  hasMore: boolean;
+}
+
+/**
+ * Get one windowed, filtered page of events with full details — the SQL-side
+ * counterpart to the Events list's Type/Place filter toolbar (see issue
+ * #266). Always chronological (`date_sort` ascending, `id` tiebreaker),
+ * matching `getAllEventsWithDetails`'s order — the list has no other sort
+ * available on the paginated page (see `EventsPage`'s column setup for why).
+ * Fetches `limit + 1` rows to derive `hasMore` without a separate `COUNT(*)`.
+ */
+export async function getEventsPage(params: EventsPageParams): Promise<EventsPageResult> {
+  const { filters, limit, offset } = params;
+  const db = await getTreeDb();
+
+  const conditions: string[] = [];
+  const values: (string | number)[] = [];
+  let paramIndex = 1;
+
+  if (filters.eventTypeId !== 'all') {
+    conditions.push(`e.event_type_id = $${paramIndex++}`);
+    values.push(parseInt(filters.eventTypeId, 10));
+  }
+  if (filters.placeId !== 'all') {
+    conditions.push(`e.place_id = $${paramIndex++}`);
+    values.push(parseEntityId(filters.placeId));
+  }
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  const rows = await db.select<RawEventWithType[]>(
+    `SELECT e.id, e.event_type_id, e.date_original, e.date_sort, e.place_id, e.description, e.notes, e.created_at, e.updated_at,
+            et.id AS et_id, et.tag AS et_tag, et.category AS et_category, et.is_system AS et_is_system, et.custom_name AS et_custom_name, et.sort_order AS et_sort_order
+     FROM events e
+     INNER JOIN event_types et ON et.id = e.event_type_id
+     ${where}
+     ORDER BY e.date_sort NULLS LAST, e.id
+     LIMIT $${paramIndex++} OFFSET $${paramIndex}`,
+    [...values, limit + 1, offset]
+  );
+
+  const hasMore = rows.length > limit;
+  const events = await assembleEventsWithDetails(rows.slice(0, limit));
+  return { events, hasMore };
+}
+
+/**
+ * The event types that have at least one event, for the Events list's Type
+ * filter. Matches the pre-pagination behavior of offering only types
+ * actually present in the tree, without loading every event to derive it
+ * client-side (see issue #266).
+ */
+export async function getEventTypesInUse(): Promise<EventType[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<RawEventType[]>(
+    `SELECT DISTINCT et.id, et.tag, et.category, et.is_system, et.custom_name, et.sort_order
+     FROM event_types et
+     INNER JOIN events e ON e.event_type_id = et.id
+     ORDER BY et.sort_order, et.id`
+  );
+  return rows.map(mapToEventType);
+}
+
+/**
+ * The places referenced by at least one event, for the Events list's Place
+ * filter. Same reasoning as `getEventTypesInUse` — a single lightweight
+ * query instead of loading every event to derive this client-side.
+ */
+export async function getEventPlaceOptions(): Promise<{ id: string; name: string }[]> {
+  const db = await getTreeDb();
+  const rows = await db.select<{ id: number; name: string }[]>(
+    `SELECT DISTINCT p.id, p.name
+     FROM places p
+     INNER JOIN events e ON e.place_id = p.id
+     ORDER BY p.name`
+  );
+  return rows.map((row) => ({ id: formatEntityId('P', row.id), name: row.name }));
+}
+
+/**
  * Get the primary event of a specific type for a family
  * (e.g., get marriage event)
  */

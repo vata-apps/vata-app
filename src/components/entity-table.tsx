@@ -18,7 +18,11 @@ export interface EntityTableProps<T> {
   label: string;
   /** Column definitions, in display order. */
   columns: EntityTableColumn<T>[];
-  /** The rows to render (already sorted by the table when a sort is active). */
+  /**
+   * The rows to render. Sorted by the table itself when a sort is active in
+   * the default (uncontrolled) mode; expected to already be in `sort` order
+   * when {@link sort}/{@link onSortChange} are provided (controlled mode).
+   */
   rows: T[];
   /** Stable React key for a row. */
   getRowKey: (item: T) => string;
@@ -54,9 +58,20 @@ export interface EntityTableProps<T> {
   /**
    * Initial sort. The column must declare a `sortValue`. When omitted, rows
    * render in the order given and no header shows a sort indicator until the
-   * user clicks one. Sorting is managed internally by {@link Table}.
+   * user clicks one. Sorting is managed internally by {@link Table}. Ignored
+   * when {@link sort} is provided (controlled mode).
    */
   defaultSort?: EntityTableSort;
+  /**
+   * Externally-controlled sort — pass together with {@link onSortChange} when
+   * `rows` already arrive in sorted order from outside the table (e.g. a
+   * paginated query with a SQL `ORDER BY`). See {@link Table}'s `sort` prop
+   * for the full rationale. Omit both for the default, internally-managed
+   * client-side sort.
+   */
+  sort?: EntityTableSort;
+  /** Called with the next sort when a sortable header is clicked, in controlled mode. */
+  onSortChange?: (sort: EntityTableSort) => void;
 }
 
 const DEFAULT_SKELETON_ROWS = 8;
@@ -114,6 +129,8 @@ export function EntityTable<T>({
   isFiltered,
   skeletonRows = DEFAULT_SKELETON_ROWS,
   defaultSort,
+  sort,
+  onSortChange,
 }: EntityTableProps<T>): JSX.Element {
   const span = columns.length;
 
@@ -146,6 +163,8 @@ export function EntityTable<T>({
       rows={rows}
       getRowKey={getRowKey}
       defaultSort={defaultSort}
+      sort={sort}
+      onSortChange={onSortChange}
       bodyContent={bodyContent}
     />
   );

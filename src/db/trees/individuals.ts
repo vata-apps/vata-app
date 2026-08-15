@@ -174,6 +174,109 @@ export async function countLivingIndividuals(): Promise<number> {
   return rows[0]?.count ?? 0;
 }
 
+/** Filters applied to a windowed page of the People list, all AND-ed. */
+export interface IndividualsPageFilters {
+  /** Free-text query matched against the primary name only (given + surname); empty means no restriction. */
+  nameQuery: string;
+  /** Restrict to a single sex, or `'all'` for no restriction. */
+  sex: Gender | 'all';
+  /** Restrict by living status, or `'all'` for no restriction. */
+  status: 'all' | 'living' | 'deceased';
+}
+
+/** Which primary-name field a page is ordered by. */
+export type IndividualsSortColumn = 'surname' | 'firstName';
+
+export interface IndividualsPageParams {
+  filters: IndividualsPageFilters;
+  sortColumn: IndividualsSortColumn;
+  sortDirection: 'asc' | 'desc';
+  limit: number;
+  offset: number;
+}
+
+export interface IndividualsPageResult {
+  /** Individual ids for this page, already in the requested sort order. */
+  ids: string[];
+  /** Whether a further page exists past this one. */
+  hasMore: boolean;
+}
+
+/**
+ * Get one windowed, filtered, sorted page of individual ids — the SQL-side
+ * counterpart to the People list's filter toolbar and sortable Surname/First
+ * name columns (see issue #266). Joins to each individual's primary name
+ * (`is_primary = 1`) for both the name filter and the sort key; unlike the
+ * pre-pagination client-side filter, alternate names are not searched or
+ * sorted on.
+ *
+ * The sort key mirrors the pre-pagination client sort exactly. For the
+ * Surname column it matches `formatName(...).sortable`'s fallback: primarily
+ * by surname, falling back to given names for people who have only those,
+ * and pushing entirely nameless individuals to the end regardless of
+ * direction. For the First name column there is no such fallback — someone
+ * with a surname but no given names sorts into the same "nameless" bucket as
+ * someone with neither, exactly as the old `sortValue` did.
+ *
+ * Enrichment (names, birth/death events) is the caller's job — this only
+ * resolves which ids belong on the page, in order. Fetches `limit + 1` rows
+ * to derive `hasMore` without a separate `COUNT(*)`.
+ */
+export async function getIndividualsPage(
+  params: IndividualsPageParams
+): Promise<IndividualsPageResult> {
+  const { filters, sortColumn, sortDirection, limit, offset } = params;
+  const db = await getTreeDb();
+
+  const conditions: string[] = [];
+  const values: (string | number)[] = [];
+  let paramIndex = 1;
+
+  if (filters.sex !== 'all') {
+    conditions.push(`i.gender = $${paramIndex++}`);
+    values.push(filters.sex);
+  }
+  if (filters.status === 'living') {
+    conditions.push('i.is_living = 1');
+  } else if (filters.status === 'deceased') {
+    conditions.push('i.is_living = 0');
+  }
+  const trimmedQuery = filters.nameQuery.trim();
+  if (trimmedQuery) {
+    const escaped = trimmedQuery.replace(/[%_\\]/g, '\\$&');
+    conditions.push(
+      `(COALESCE(n.given_names, '') || ' ' || COALESCE(n.surname, '')) LIKE $${paramIndex++} ESCAPE '\\'`
+    );
+    values.push(`%${escaped}%`);
+  }
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  const dir = sortDirection === 'desc' ? 'DESC' : 'ASC';
+  const primaryKey =
+    sortColumn === 'firstName'
+      ? `NULLIF(TRIM(n.given_names), '')`
+      : `COALESCE(NULLIF(TRIM(n.surname), ''), NULLIF(TRIM(n.given_names), ''))`;
+  const tiebreaker = sortColumn === 'firstName' ? 'n.surname' : 'n.given_names';
+
+  const rows = await db.select<{ id: number }[]>(
+    `SELECT i.id
+     FROM individuals i
+     LEFT JOIN names n ON n.individual_id = i.id AND n.is_primary = 1
+     ${where}
+     ORDER BY ${primaryKey} COLLATE NOCASE ${dir} NULLS LAST,
+              ${tiebreaker} COLLATE NOCASE ${dir},
+              i.id ${dir}
+     LIMIT $${paramIndex++} OFFSET $${paramIndex}`,
+    [...values, limit + 1, offset]
+  );
+
+  const hasMore = rows.length > limit;
+  return {
+    ids: rows.slice(0, limit).map((row) => formatEntityId('I', row.id)),
+    hasMore,
+  };
+}
+
 /**
  * Search individuals by name (requires names table join)
  * Note: This searches across given_names and surname in the names table
