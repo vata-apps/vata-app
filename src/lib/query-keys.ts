@@ -1,4 +1,7 @@
 import type { EventCategory } from '$types/database';
+import type { IndividualsPageFilters, IndividualsSortColumn } from '$db-tree/individuals';
+import type { FamiliesPageFilters, FamiliesSortColumn } from '$db-tree/families';
+import type { EventsPageFilters } from '$db-tree/events';
 
 export const queryKeys = {
   trees: ['trees'] as const,
@@ -9,10 +12,23 @@ export const queryKeys = {
   individuals: ['individuals'] as const,
   individual: (id: string) => ['individuals', id] as const,
   individualSearch: (query: string) => ['individuals', 'search', query] as const,
+  /** One cache entry per distinct filter/sort combination — pagination itself lives inside the infinite query, not the key. */
+  individualsPage: (query: {
+    filters: IndividualsPageFilters;
+    sortColumn: IndividualsSortColumn;
+    sortDirection: 'asc' | 'desc';
+  }) => ['individuals', 'page', query] as const,
   families: ['families'] as const,
   family: (id: string) => ['families', id] as const,
+  familiesPage: (query: {
+    filters: FamiliesPageFilters;
+    sortColumn: FamiliesSortColumn;
+    sortDirection: 'asc' | 'desc';
+  }) => ['families', 'page', query] as const,
   events: ['events'] as const,
   event: (id: string) => ['events', id] as const,
+  eventsPage: (query: { filters: EventsPageFilters }) => ['events', 'page', query] as const,
+  eventFilterOptions: ['events', 'filterOptions'] as const,
   /** Category-keyed — `undefined` (all types) and `'individual'`/`'family'` are distinct cache entries, since callers deliberately ask for different subsets. `['eventTypes']` alone still prefix-invalidates every variant. */
   eventTypes: (category?: EventCategory) => ['eventTypes', category ?? 'all'] as const,
   places: ['places'] as const,

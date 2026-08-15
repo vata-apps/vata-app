@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { foldDiacritics } from '../sql-diacritics';
 import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import type {
   Family,
@@ -99,6 +100,32 @@ export async function getFamilyById(id: string): Promise<Family | null> {
 }
 
 /**
+ * Get the families matching a set of IDs. Uses a chunked `IN (...)` clause
+ * so the number of SQL statements is constant regardless of the number of
+ * ids. Mirrors `getIndividualsByIds`: the returned array is in `id` order
+ * and missing ids are silently omitted.
+ */
+export async function getFamiliesByIds(ids: string[]): Promise<Family[]> {
+  if (ids.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = ids.map(parseEntityId);
+
+  const rows: RawFamily[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawFamily[]>(
+      `SELECT id, notes, created_at, updated_at
+       FROM families
+       WHERE id IN (${placeholders})
+       ORDER BY id`,
+      idsChunk
+    );
+    rows.push(...chunkRows);
+  }
+  return rows.map(mapToFamily);
+}
+
+/**
  * Create a new family
  * @returns The formatted ID of the created family (e.g., "F-0001")
  */
@@ -182,6 +209,40 @@ export async function getAllFamilyMembers(): Promise<FamilyMember[]> {
        sort_order,
        id`
   );
+  return rows.map(mapToFamilyMember);
+}
+
+/**
+ * Get every family_member row for a specific set of families, in the same
+ * order as `getAllFamilyMembers`. Mirrors the `...ForIndividuals` bulk
+ * pattern used elsewhere (e.g. `getPrimaryNamesForIndividuals`), chunked so
+ * the number of SQL statements stays constant regardless of family count.
+ */
+export async function getFamilyMembersForFamilies(familyIds: string[]): Promise<FamilyMember[]> {
+  if (familyIds.length === 0) return [];
+  const db = await getTreeDb();
+  const dbIds = familyIds.map(parseEntityId);
+
+  const rows: RawFamilyMember[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<RawFamilyMember[]>(
+      `SELECT id, family_id, individual_id, role, pedigree, nature, certainty, note, sort_order, created_at
+       FROM family_members
+       WHERE family_id IN (${placeholders})
+       ORDER BY
+         family_id,
+         CASE role
+           WHEN 'husband' THEN 1
+           WHEN 'wife' THEN 2
+           WHEN 'child' THEN 3
+         END,
+         sort_order,
+         id`,
+      idsChunk
+    );
+    rows.push(...chunkRows);
+  }
   return rows.map(mapToFamilyMember);
 }
 
@@ -595,4 +656,133 @@ export async function countChildrenInFamily(familyId: string): Promise<number> {
   );
 
   return rows[0]?.count ?? 0;
+}
+
+// =============================================================================
+// Paginated List Query (Families list screen)
+// =============================================================================
+
+/** Filters applied to a windowed page of the Families list, all AND-ed. */
+export interface FamiliesPageFilters {
+  /** Free-text query matched against either spouse's primary name only (given + surname); empty means no restriction. */
+  nameQuery: string;
+  /** Restrict by which spouse slots are filled, or `'all'` for no restriction. */
+  spouses: 'all' | 'both' | 'missingHusband' | 'missingWife' | 'none';
+  /** Restrict by whether the family has children, or `'all'` for no restriction. */
+  children: 'all' | 'with' | 'without';
+}
+
+/** Which spouse's primary name (or the child count) a page is ordered by. */
+export type FamiliesSortColumn = 'husband' | 'wife' | 'children';
+
+export interface FamiliesPageParams {
+  filters: FamiliesPageFilters;
+  sortColumn: FamiliesSortColumn;
+  sortDirection: 'asc' | 'desc';
+  limit: number;
+  offset: number;
+}
+
+export interface FamiliesPageResult {
+  /** Family ids for this page, already in the requested sort order. */
+  ids: string[];
+  /** Whether a further page exists past this one. */
+  hasMore: boolean;
+}
+
+/**
+ * Get one windowed, filtered, sorted page of family ids — the SQL-side
+ * counterpart to the Families list's filter toolbar and sortable
+ * Husband/Wife/Children columns (see issue #266). A `family_info` CTE joins
+ * each family to its husband's and wife's `family_members` row and primary
+ * name, and precomputes its child count once, so the outer query can filter
+ * and order on those derived columns without recomputing them.
+ *
+ * As with `getIndividualsPage`, spouse name filtering and sorting reads only
+ * the primary name — alternate names are not considered — and both the sort
+ * key and the name filter go through {@link foldDiacritics} for the same
+ * reason: `COLLATE NOCASE`/`LIKE` alone only fold ASCII case.
+ *
+ * Enrichment (member individuals, marriage event) is the caller's job — this
+ * only resolves which ids belong on the page, in order. Fetches `limit + 1`
+ * rows to derive `hasMore` without a separate `COUNT(*)`.
+ */
+export async function getFamiliesPage(params: FamiliesPageParams): Promise<FamiliesPageResult> {
+  const { filters, sortColumn, sortDirection, limit, offset } = params;
+  const db = await getTreeDb();
+
+  const conditions: string[] = [];
+  const values: (string | number)[] = [];
+  let paramIndex = 1;
+
+  const spouseCondition: Record<FamiliesPageFilters['spouses'], string | null> = {
+    all: null,
+    both: 'husband_id IS NOT NULL AND wife_id IS NOT NULL',
+    missingHusband: 'husband_id IS NULL AND wife_id IS NOT NULL',
+    missingWife: 'husband_id IS NOT NULL AND wife_id IS NULL',
+    none: 'husband_id IS NULL AND wife_id IS NULL',
+  };
+  const spouseClause = spouseCondition[filters.spouses];
+  if (spouseClause) conditions.push(spouseClause);
+
+  if (filters.children === 'with') conditions.push('children_count > 0');
+  if (filters.children === 'without') conditions.push('children_count = 0');
+
+  const trimmedQuery = filters.nameQuery.trim();
+  if (trimmedQuery) {
+    const escaped = trimmedQuery.replace(/[%_\\]/g, '\\$&');
+    const husbandParam = paramIndex++;
+    const wifeParam = paramIndex++;
+    const husbandExpr = foldDiacritics(
+      `(COALESCE(husband_given, '') || ' ' || COALESCE(husband_surname, ''))`
+    );
+    const wifeExpr = foldDiacritics(
+      `(COALESCE(wife_given, '') || ' ' || COALESCE(wife_surname, ''))`
+    );
+    conditions.push(
+      `(${husbandExpr} LIKE ${foldDiacritics(`$${husbandParam}`)} ESCAPE '\\'` +
+        ` OR ${wifeExpr} LIKE ${foldDiacritics(`$${wifeParam}`)} ESCAPE '\\')`
+    );
+    const pattern = `%${escaped}%`;
+    values.push(pattern, pattern);
+  }
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  const dir = sortDirection === 'desc' ? 'DESC' : 'ASC';
+  let orderBy: string;
+  if (sortColumn === 'children') {
+    orderBy = `children_count ${dir}, id ${dir}`;
+  } else {
+    const prefix = sortColumn === 'husband' ? 'husband' : 'wife';
+    const primaryKey = foldDiacritics(
+      `COALESCE(NULLIF(TRIM(${prefix}_surname), ''), NULLIF(TRIM(${prefix}_given), ''))`
+    );
+    const tiebreaker = foldDiacritics(`${prefix}_given`);
+    orderBy = `${primaryKey} COLLATE NOCASE ${dir} NULLS LAST, ${tiebreaker} COLLATE NOCASE ${dir}, id ${dir}`;
+  }
+
+  const rows = await db.select<{ id: number }[]>(
+    `WITH family_info AS (
+       SELECT f.id,
+              h.individual_id AS husband_id, hn.surname AS husband_surname, hn.given_names AS husband_given,
+              w.individual_id AS wife_id, wn.surname AS wife_surname, wn.given_names AS wife_given,
+              (SELECT COUNT(*) FROM family_members c WHERE c.family_id = f.id AND c.role = 'child') AS children_count
+       FROM families f
+       LEFT JOIN family_members h ON h.family_id = f.id AND h.role = 'husband'
+       LEFT JOIN names hn ON hn.individual_id = h.individual_id AND hn.is_primary = 1
+       LEFT JOIN family_members w ON w.family_id = f.id AND w.role = 'wife'
+       LEFT JOIN names wn ON wn.individual_id = w.individual_id AND wn.is_primary = 1
+     )
+     SELECT id FROM family_info
+     ${where}
+     ORDER BY ${orderBy}
+     LIMIT $${paramIndex++} OFFSET $${paramIndex}`,
+    [...values, limit + 1, offset]
+  );
+
+  const hasMore = rows.length > limit;
+  return {
+    ids: rows.slice(0, limit).map((row) => formatEntityId('F', row.id)),
+    hasMore,
+  };
 }

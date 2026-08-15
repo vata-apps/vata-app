@@ -1,7 +1,10 @@
 import {
   getAllFamilies,
   getAllFamilyMembers,
+  getFamiliesByIds,
+  getFamiliesPage,
   getFamilyById,
+  getFamilyMembersForFamilies,
   createFamily,
   updateFamily,
   deleteFamily,
@@ -12,17 +15,21 @@ import {
   updateFamilyMember,
   getParentFamilies,
   getSpouseFamilies,
+  type FamiliesPageParams,
 } from '$db-tree/families';
 import {
   deleteEvent,
   getAllMarriageEvents,
   getEventsByFamilyId,
   getFamilyEventByType,
+  getMarriageEventsForFamilies,
 } from '$db-tree/events';
 import { IndividualManager } from './IndividualManager';
+import { reorderById } from '$/lib/reorderById';
 import type {
   CreateFamilyInput,
   EventWithDetails,
+  Family,
   UpdateFamilyInput,
   FamilyMember,
   FamilyRole,
@@ -131,6 +138,83 @@ export function resolveSpouseRoles(
   return { individualRole, spouseRole: otherRole(individualRole) };
 }
 
+/**
+ * Build `FamilyWithMembers[]` from batch-fetched families, family_members,
+ * and marriage-event data. Shared between `getAll` and `getByIds` so both
+ * paths apply the same member-role and marriage-event resolution — mirrors
+ * `IndividualManager`'s `assembleIndividualsWithDetails`.
+ */
+async function assembleFamiliesWithMembers(
+  families: Family[],
+  members: FamilyMember[],
+  marriageEvents: EventWithDetails[]
+): Promise<FamilyWithMembers[]> {
+  const referencedIndividualIds = Array.from(new Set(members.map((m) => m.individualId)));
+  const individuals = await IndividualManager.getByIds(referencedIndividualIds);
+
+  const individualById = new Map<string, IndividualWithDetails>();
+  for (const individual of individuals) {
+    individualById.set(individual.id, individual);
+  }
+
+  const marriageEventByFamily = new Map<string, EventWithDetails>();
+  for (const event of marriageEvents) {
+    if (event.eventType.tag !== 'MARR') continue;
+    for (const participant of event.participants) {
+      if (participant.role !== 'principal' || participant.familyId === null) continue;
+      if (!marriageEventByFamily.has(participant.familyId)) {
+        marriageEventByFamily.set(participant.familyId, event);
+      }
+    }
+  }
+
+  const membersByFamily = new Map<
+    string,
+    {
+      husband: IndividualWithDetails | null;
+      wife: IndividualWithDetails | null;
+      children: IndividualWithDetails[];
+    }
+  >();
+  for (const member of members) {
+    const entry = membersByFamily.get(member.familyId) ?? {
+      husband: null,
+      wife: null,
+      children: [] as IndividualWithDetails[],
+    };
+    const individual = individualById.get(member.individualId);
+    if (individual) {
+      switch (member.role) {
+        case 'husband':
+          entry.husband = individual;
+          break;
+        case 'wife':
+          entry.wife = individual;
+          break;
+        case 'child':
+          entry.children.push(individual);
+          break;
+      }
+    }
+    membersByFamily.set(member.familyId, entry);
+  }
+
+  return families.map((family) => {
+    const entry = membersByFamily.get(family.id) ?? {
+      husband: null,
+      wife: null,
+      children: [] as IndividualWithDetails[],
+    };
+    return {
+      ...family,
+      husband: entry.husband,
+      wife: entry.wife,
+      children: entry.children,
+      marriageEvent: marriageEventByFamily.get(family.id) ?? null,
+    };
+  });
+}
+
 export class FamilyManager {
   /**
    * Create a family with optional husband and wife.
@@ -236,71 +320,43 @@ export class FamilyManager {
       getAllFamilyMembers(),
       getAllMarriageEvents(),
     ]);
+    return assembleFamiliesWithMembers(families, members, marriageEvents);
+  }
 
-    const referencedIndividualIds = Array.from(new Set(members.map((m) => m.individualId)));
-    const individuals = await IndividualManager.getByIds(referencedIndividualIds);
+  /**
+   * Get enriched details for a specific subset of families.
+   * Uses the same three-query batch pattern as `getAll` but filtered to the
+   * given id list, so callers that already know which families they need
+   * (e.g. a paginated Families page) don't pay for loading every family in
+   * the tree. Mirrors `IndividualManager.getByIds`.
+   */
+  static async getByIds(familyIds: string[]): Promise<FamilyWithMembers[]> {
+    if (familyIds.length === 0) return [];
+    const uniqueIds = Array.from(new Set(familyIds));
 
-    const individualById = new Map<string, IndividualWithDetails>();
-    for (const individual of individuals) {
-      individualById.set(individual.id, individual);
-    }
+    const [families, members, marriageEvents] = await Promise.all([
+      getFamiliesByIds(uniqueIds),
+      getFamilyMembersForFamilies(uniqueIds),
+      getMarriageEventsForFamilies(uniqueIds),
+    ]);
+    return assembleFamiliesWithMembers(families, members, marriageEvents);
+  }
 
-    const marriageEventByFamily = new Map<string, EventWithDetails>();
-    for (const event of marriageEvents) {
-      if (event.eventType.tag !== 'MARR') continue;
-      for (const participant of event.participants) {
-        if (participant.role !== 'principal' || participant.familyId === null) continue;
-        if (!marriageEventByFamily.has(participant.familyId)) {
-          marriageEventByFamily.set(participant.familyId, event);
-        }
-      }
-    }
+  /**
+   * Get one windowed, filtered, sorted page of families with full details —
+   * the paginated counterpart to `getAll` (see issue #266). Resolves the
+   * page's ids in SQL via `getFamiliesPage`, then reuses `getByIds`'s batch
+   * enrichment scoped to just that page, reordering its result to match the
+   * SQL-determined sort order (`getByIds` itself returns rows in `id` order).
+   */
+  static async getPage(
+    params: FamiliesPageParams
+  ): Promise<{ items: FamilyWithMembers[]; hasMore: boolean }> {
+    const { ids, hasMore } = await getFamiliesPage(params);
+    if (ids.length === 0) return { items: [], hasMore };
 
-    const membersByFamily = new Map<
-      string,
-      {
-        husband: IndividualWithDetails | null;
-        wife: IndividualWithDetails | null;
-        children: IndividualWithDetails[];
-      }
-    >();
-    for (const member of members) {
-      const entry = membersByFamily.get(member.familyId) ?? {
-        husband: null,
-        wife: null,
-        children: [] as IndividualWithDetails[],
-      };
-      const individual = individualById.get(member.individualId);
-      if (individual) {
-        switch (member.role) {
-          case 'husband':
-            entry.husband = individual;
-            break;
-          case 'wife':
-            entry.wife = individual;
-            break;
-          case 'child':
-            entry.children.push(individual);
-            break;
-        }
-      }
-      membersByFamily.set(member.familyId, entry);
-    }
-
-    return families.map((family) => {
-      const entry = membersByFamily.get(family.id) ?? {
-        husband: null,
-        wife: null,
-        children: [] as IndividualWithDetails[],
-      };
-      return {
-        ...family,
-        husband: entry.husband,
-        wife: entry.wife,
-        children: entry.children,
-        marriageEvent: marriageEventByFamily.get(family.id) ?? null,
-      };
-    });
+    const enriched = await FamilyManager.getByIds(ids);
+    return { items: reorderById(enriched, ids), hasMore };
   }
 
   /**

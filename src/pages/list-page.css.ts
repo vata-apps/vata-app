@@ -49,3 +49,14 @@ export const tableWrapper = style({
   borderRadius: vars.radius.sm,
   background: vars.color.surface.card,
 });
+
+/**
+ * The "Load more" affordance below a paginated table — always visible
+ * (outside the scrollable {@link tableWrapper}) rather than requiring a
+ * scroll to the bottom of the current page to find it.
+ */
+export const loadMoreRow = style({
+  display: 'flex',
+  justifyContent: 'center',
+  flexShrink: 0,
+});

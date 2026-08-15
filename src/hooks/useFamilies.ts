@@ -1,11 +1,29 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { queryKeys } from '$/lib/query-keys';
 import { FamilyManager } from '$managers/FamilyManager';
+import type { FamiliesPageFilters, FamiliesSortColumn } from '$db-tree/families';
 
-export function useFamilies() {
-  return useQuery({
-    queryKey: queryKeys.families,
-    queryFn: () => FamilyManager.getAll(),
+/** How many families `useFamiliesPage` fetches per page. */
+export const FAMILIES_PAGE_SIZE = 50;
+
+export interface FamiliesPageQuery {
+  filters: FamiliesPageFilters;
+  sortColumn: FamiliesSortColumn;
+  sortDirection: 'asc' | 'desc';
+}
+
+/**
+ * The Families list's data source: a `LIMIT`/`OFFSET`-paginated, SQL-filtered
+ * and SQL-sorted query (see issue #266). Mirrors `useIndividualsPage`.
+ */
+export function useFamiliesPage(query: FamiliesPageQuery) {
+  return useInfiniteQuery({
+    queryKey: queryKeys.familiesPage(query),
+    queryFn: ({ pageParam }) =>
+      FamilyManager.getPage({ ...query, limit: FAMILIES_PAGE_SIZE, offset: pageParam }),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.hasMore ? allPages.length * FAMILIES_PAGE_SIZE : undefined,
   });
 }
 

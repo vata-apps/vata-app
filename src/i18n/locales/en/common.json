@@ -7,6 +7,10 @@
     "clear": "Clear",
     "clearSearch": "Clear search"
   },
+  "table": {
+    "loadMore": "Load more",
+    "loadingMore": "Loading more…"
+  },
   "nav": {
     "home": "Home",
     "individuals": "People",

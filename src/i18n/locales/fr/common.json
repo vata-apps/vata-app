@@ -7,6 +7,10 @@
     "clear": "Effacer",
     "clearSearch": "Effacer la recherche"
   },
+  "table": {
+    "loadMore": "Charger plus",
+    "loadingMore": "Chargement…"
+  },
   "nav": {
     "home": "Accueil",
     "individuals": "Personnes",

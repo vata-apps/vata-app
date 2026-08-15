@@ -67,9 +67,24 @@ export interface TableProps<T> {
   /**
    * Initial sort. The column must declare a `sortValue`. When omitted, rows
    * render in the order given and no header shows a sort indicator until the
-   * user clicks one. Sorting is managed internally from here on.
+   * user clicks one. Sorting is managed internally from here on. Ignored
+   * when {@link sort} is provided (controlled mode).
    */
   defaultSort?: TableSort;
+  /**
+   * Externally-controlled sort. When provided together with
+   * {@link onSortChange}, the table stops sorting `rows` itself — it renders
+   * them in the order given and reports header clicks through the callback
+   * instead of managing sort state internally. Meant for a caller whose
+   * `rows` are already sorted by a source of truth outside the table (e.g. a
+   * SQL `ORDER BY` behind a paginated query), where re-sorting only the
+   * currently-loaded rows client-side would misrepresent the full,
+   * not-fully-loaded list. Columns without a `sortValue` are unaffected
+   * either way — they never rendered a sort control to begin with.
+   */
+  sort?: TableSort;
+  /** Called with the next sort when a sortable header is clicked, in controlled mode. Required together with {@link sort}. */
+  onSortChange?: (sort: TableSort) => void;
   /**
    * Optional content to render inside `<tbody>` instead of the mapped rows.
    * Used by {@link EntityTable} for skeleton, empty, and error states while
@@ -147,20 +162,34 @@ export function Table<T>({
   rows,
   getRowKey,
   defaultSort,
+  sort: controlledSort,
+  onSortChange,
   bodyContent,
 }: TableProps<T>): JSX.Element {
-  const [sort, setSort] = useState<TableSort | undefined>(defaultSort);
+  const isControlled = controlledSort !== undefined;
+  const [internalSort, setInternalSort] = useState<TableSort | undefined>(defaultSort);
+  const sort = isControlled ? controlledSort : internalSort;
 
-  const sortedRows = useMemo(() => sortRows(rows, columns, sort), [rows, columns, sort]);
+  // Controlled mode trusts `rows` to already be in `sort` order (e.g. a SQL
+  // ORDER BY) and skips the client-side re-sort entirely.
+  const sortedRows = useMemo(
+    () => (isControlled ? rows : sortRows(rows, columns, sort)),
+    [isControlled, rows, columns, sort]
+  );
   const rowLinkColumn = useMemo(() => columns.some((column) => column.rowHeader), [columns]);
 
   // Same column → flip direction; new column → start ascending.
-  const toggleSort = (columnKey: string): void =>
-    setSort((current) =>
-      current?.columnKey === columnKey
-        ? { columnKey, direction: current.direction === 'asc' ? 'desc' : 'asc' }
-        : { columnKey, direction: 'asc' }
-    );
+  const toggleSort = (columnKey: string): void => {
+    const next: TableSort =
+      sort?.columnKey === columnKey
+        ? { columnKey, direction: sort.direction === 'asc' ? 'desc' : 'asc' }
+        : { columnKey, direction: 'asc' };
+    if (isControlled) {
+      onSortChange?.(next);
+    } else {
+      setInternalSort(next);
+    }
+  };
 
   return (
     <table className={styles.table} aria-label={label}>

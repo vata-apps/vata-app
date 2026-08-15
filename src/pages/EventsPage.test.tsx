@@ -17,11 +17,44 @@ import type { EventListEntry, EventType, Place } from '$types/database';
 
 vi.mock('$managers/EventManager', () => ({
   EventManager: {
-    getAll: vi.fn(),
+    getPage: vi.fn(),
+    getFilterOptions: vi.fn(),
   },
 }));
 
-const mockedGetAll = EventManager.getAll as ReturnType<typeof vi.fn>;
+const mockedGetPage = EventManager.getPage as ReturnType<typeof vi.fn>;
+const mockedGetFilterOptions = EventManager.getFilterOptions as ReturnType<typeof vi.fn>;
+
+/**
+ * Wires both mocked queries from a single fixture list, mirroring how the
+ * real DB layer derives the Type/Place filter options from what's actually
+ * in the tree: `getPage` filters the fixture by the params it receives (the
+ * page is expected to translate its filter state into these params
+ * correctly); `getFilterOptions` offers every type/place present in the
+ * fixture, deduplicated.
+ */
+function mockEvents(events: EventListEntry[]): void {
+  mockedGetPage.mockImplementation(
+    ({ filters }: { filters: { eventTypeId: string; placeId: string } }) =>
+      Promise.resolve({
+        items: events.filter(
+          (e) =>
+            (filters.eventTypeId === 'all' || e.eventType.id === filters.eventTypeId) &&
+            (filters.placeId === 'all' || e.place?.id === filters.placeId)
+        ),
+        hasMore: false,
+      })
+  );
+
+  const typesById = new Map(events.map((e) => [e.eventType.id, e.eventType]));
+  const placesById = new Map(
+    events.flatMap((e) => (e.place ? [[e.place.id, e.place] as const] : []))
+  );
+  mockedGetFilterOptions.mockResolvedValue({
+    types: Array.from(typesById.values()),
+    places: Array.from(placesById.values()).map((p) => ({ id: p.id, name: p.name })),
+  });
+}
 
 const TREE_ID = 'T-1';
 
@@ -129,23 +162,26 @@ function typeCell(row: HTMLElement): string {
 
 describe('EventsPage', () => {
   beforeEach(() => {
-    mockedGetAll.mockReset();
+    mockedGetPage.mockReset();
+    mockedGetFilterOptions.mockReset();
   });
 
   it('renders the expected columns', async () => {
-    mockedGetAll.mockResolvedValue([event()]);
+    mockEvents([event()]);
 
     renderPage();
 
     const table = await screen.findByRole('table', { name: 'Events' });
-    expect(within(table).getByRole('button', { name: 'Type' })).toBeInTheDocument();
+    // Type and Place are unsortable on the paginated list (see EventsPage's
+    // column setup), so they render as plain headers, not sort buttons.
+    expect(within(table).getByRole('columnheader', { name: 'Type' })).toBeInTheDocument();
     expect(within(table).getByRole('columnheader', { name: 'Date' })).toBeInTheDocument();
     expect(within(table).getByRole('columnheader', { name: 'Principals' })).toBeInTheDocument();
     expect(within(table).getByRole('columnheader', { name: 'Place' })).toBeInTheDocument();
   });
 
   it('preserves the chronological order by default', async () => {
-    mockedGetAll.mockResolvedValue([
+    mockEvents([
       event({ id: 'E-1', eventType: BIRTH_TYPE, dateSort: '1900-01-01' }),
       event({ id: 'E-2', eventType: MARRIAGE_TYPE, dateSort: '1950-06-15' }),
     ]);
@@ -159,7 +195,7 @@ describe('EventsPage', () => {
 
   it('filters by event type', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockEvents([
       event({ id: 'E-1', eventType: BIRTH_TYPE }),
       event({ id: 'E-2', eventType: MARRIAGE_TYPE }),
     ]);
@@ -183,7 +219,7 @@ describe('EventsPage', () => {
 
   it('filters by place', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockEvents([
       event({ id: 'E-1', place: PLACE_BOSTON }),
       event({ id: 'E-2', place: { ...PLACE_BOSTON, id: 'P-2', name: 'Chicago' } }),
     ]);
@@ -206,7 +242,7 @@ describe('EventsPage', () => {
 
   it('shows a no-matches state with a clear action', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockEvents([
       event({ id: 'E-1', eventType: BIRTH_TYPE, place: PLACE_BOSTON }),
       event({
         id: 'E-2',

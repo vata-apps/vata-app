@@ -13,15 +13,18 @@ import {
 
 import { FamiliesPage } from './FamiliesPage';
 import { FamilyManager } from '$managers/FamilyManager';
+import { formatName } from '$db-tree/names';
+import { sortByKey } from '$lib/sortByKey';
+import type { FamiliesPageParams } from '$db-tree/families';
 import type { FamilyWithMembers, IndividualWithDetails, Name } from '$types/database';
 
 vi.mock('$managers/FamilyManager', () => ({
   FamilyManager: {
-    getAll: vi.fn(),
+    getPage: vi.fn(),
   },
 }));
 
-const mockedGetAll = FamilyManager.getAll as ReturnType<typeof vi.fn>;
+const mockedGetPage = FamilyManager.getPage as ReturnType<typeof vi.fn>;
 
 const TREE_ID = 'T-1';
 
@@ -152,13 +155,67 @@ function husband(row: HTMLElement): string {
   return within(row).getByRole('rowheader').textContent ?? '';
 }
 
+/**
+ * Wires `getPage` from a single fixture list, applying the same filter and
+ * sort semantics as the real SQL query (`getFamiliesPage`) so tests
+ * exercise the page's query-param wiring against a realistic result rather
+ * than a canned response. Mirrors `Table`'s own null-last sort behavior
+ * (see `table.tsx`'s `sortRows`), since that's exactly what the SQL
+ * `ORDER BY ... NULLS LAST` is designed to reproduce.
+ */
+function mockFamilies(families: FamilyWithMembers[]): void {
+  mockedGetPage.mockImplementation(
+    ({
+      filters,
+      sortColumn,
+      sortDirection,
+    }: Pick<FamiliesPageParams, 'filters' | 'sortColumn' | 'sortDirection'>) => {
+      const query = filters.nameQuery.trim().toLowerCase();
+      const filtered = families.filter((f) => {
+        const hasHusband = f.husband !== null;
+        const hasWife = f.wife !== null;
+        const spouseOk: Record<typeof filters.spouses, boolean> = {
+          all: true,
+          both: hasHusband && hasWife,
+          missingHusband: !hasHusband && hasWife,
+          missingWife: hasHusband && !hasWife,
+          none: !hasHusband && !hasWife,
+        };
+        if (!spouseOk[filters.spouses]) return false;
+
+        const hasChildren = f.children.length > 0;
+        if (filters.children === 'with' && !hasChildren) return false;
+        if (filters.children === 'without' && hasChildren) return false;
+
+        if (query) {
+          const husbandText =
+            `${f.husband?.primaryName?.givenNames ?? ''} ${f.husband?.primaryName?.surname ?? ''}`.toLowerCase();
+          const wifeText =
+            `${f.wife?.primaryName?.givenNames ?? ''} ${f.wife?.primaryName?.surname ?? ''}`.toLowerCase();
+          if (!husbandText.includes(query) && !wifeText.includes(query)) return false;
+        }
+        return true;
+      });
+
+      const sortKey = (f: FamilyWithMembers): string | number | null => {
+        if (sortColumn === 'children') return f.children.length;
+        const spouse = sortColumn === 'husband' ? f.husband : f.wife;
+        return formatName(spouse?.primaryName ?? null).sortable || null;
+      };
+      const sorted = sortByKey(filtered, sortKey, sortDirection);
+
+      return Promise.resolve({ items: sorted, hasMore: false });
+    }
+  );
+}
+
 describe('FamiliesPage', () => {
   beforeEach(() => {
-    mockedGetAll.mockReset();
+    mockedGetPage.mockReset();
   });
 
   it('renders the expected columns', async () => {
-    mockedGetAll.mockResolvedValue([family()]);
+    mockFamilies([family()]);
 
     renderPage();
 
@@ -169,7 +226,7 @@ describe('FamiliesPage', () => {
   });
 
   it('sorts by husband ascending by default', async () => {
-    mockedGetAll.mockResolvedValue([
+    mockFamilies([
       family({ id: 'F-2', husband: { surname: 'Zebra' } }),
       family({ id: 'F-1', husband: { surname: 'Able' } }),
     ]);
@@ -183,7 +240,7 @@ describe('FamiliesPage', () => {
 
   it('filters by spouse name search', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockFamilies([
       family({ id: 'F-1', husband: { surname: 'Doe', givenNames: 'John' } }),
       family({ id: 'F-2', wife: { surname: 'Doe', givenNames: 'Jane' } }),
       family({ id: 'F-3', husband: { surname: 'Able', givenNames: 'Zoe' } }),
@@ -205,7 +262,7 @@ describe('FamiliesPage', () => {
 
   it('filters by spouse completeness', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([
+    mockFamilies([
       family({ id: 'F-1', husband: { surname: 'Doe' }, wife: { surname: 'Smith' } }),
       family({ id: 'F-2', husband: { surname: 'Able' }, wife: null }),
     ]);
@@ -225,7 +282,7 @@ describe('FamiliesPage', () => {
 
   it('shows a no-matches state with a clear action', async () => {
     const user = userEvent.setup();
-    mockedGetAll.mockResolvedValue([family()]);
+    mockFamilies([family()]);
 
     renderPage();
     await screen.findByRole('table', { name: 'Families' });

@@ -2,7 +2,12 @@ import { useMemo, useState } from 'react';
 import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-import { EntityTable, rowLink, type EntityTableColumn } from '$components/entity-table';
+import {
+  EntityTable,
+  rowLink,
+  type EntityTableColumn,
+  type EntityTableSort,
+} from '$components/entity-table';
 import { Icon, type IconName } from '$components/icon';
 import { PersonEditorDialog } from '$components/individuals/person-editor-dialog';
 import {
@@ -13,10 +18,12 @@ import {
 import { Button } from '$components/ui/button';
 import { Typography } from '$components/ui/typography';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
-import { useIndividuals } from '$hooks/useIndividuals';
-import { formatName, nameMatchesQuery } from '$db-tree/names';
-import type { EventWithDetails, Gender, IndividualWithDetails } from '$types/database';
+import { useIndividualsPage } from '$hooks/useIndividuals';
+import { formatName } from '$db-tree/names';
+import type { IndividualsSortColumn } from '$db-tree/individuals';
+import type { EventWithDetails, IndividualWithDetails, Gender } from '$types/database';
 
+import { LoadMoreButton } from './load-more-button';
 import * as styles from './list-page.css';
 
 interface IndividualsPageProps {
@@ -65,25 +72,24 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
   const { t } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');
   const navigate = useNavigate();
-  const { data, isLoading, isError, refetch } = useIndividuals();
 
   const [filters, setFilters] = useState(DEFAULT_INDIVIDUAL_FILTERS);
   const debouncedName = useDebouncedValue(filters.name, 200);
+  const [sort, setSort] = useState<EntityTableSort>({ columnKey: 'surname', direction: 'asc' });
   const [createOpen, setCreateOpen] = useState(false);
 
-  // Filter the already-loaded list client-side over the same fields the
-  // backend can express: every name, sex, and living status (all AND-ed).
-  // Ordering is handled by the table (sortable headers); see `defaultSort`.
-  const visibleRows = useMemo(() => {
-    const query = debouncedName.trim().toLowerCase();
-    return (data ?? []).filter((person) => {
-      if (filters.sex !== 'all' && person.gender !== filters.sex) return false;
-      if (filters.status === 'living' && !person.isLiving) return false;
-      if (filters.status === 'deceased' && person.isLiving) return false;
-      if (query && !nameMatchesQuery(person.names, query)) return false;
-      return true;
+  // Filtering, sorting, and paging all happen in SQL (see issue #266) — the
+  // page only shapes the query params and flattens the loaded pages.
+  const sortColumn: IndividualsSortColumn =
+    sort.columnKey === 'firstName' ? 'firstName' : 'surname';
+  const { data, isLoading, isError, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useIndividualsPage({
+      filters: { nameQuery: debouncedName, sex: filters.sex, status: filters.status },
+      sortColumn,
+      sortDirection: sort.direction,
     });
-  }, [data, filters.sex, filters.status, debouncedName]);
+
+  const rows = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
 
   const columns = useMemo<EntityTableColumn<IndividualWithDetails>[]>(
     () => [
@@ -184,7 +190,7 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
         <EntityTable
           label={tCommon('nav.individuals')}
           columns={columns}
-          rows={visibleRows}
+          rows={rows}
           getRowKey={(person) => person.id}
           isLoading={isLoading}
           isError={isError}
@@ -200,9 +206,14 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
             onClick: () => setFilters(DEFAULT_INDIVIDUAL_FILTERS),
           }}
           isFiltered={filtered}
-          defaultSort={{ columnKey: 'surname', direction: 'asc' }}
+          sort={sort}
+          onSortChange={setSort}
         />
       </div>
+
+      {hasNextPage && (
+        <LoadMoreButton onLoadMore={() => fetchNextPage()} isLoading={isFetchingNextPage} />
+      )}
 
       <PersonEditorDialog
         mode="create"

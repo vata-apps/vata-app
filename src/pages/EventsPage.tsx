@@ -11,36 +11,17 @@ import {
 import { Icon } from '$components/icon';
 import { Button } from '$components/ui/button';
 import { Typography } from '$components/ui/typography';
-import { useEvents } from '$hooks/useEvents';
+import { useEventFilterOptions, useEventsPage } from '$hooks/useEvents';
 import { eventDateColumn, eventPlaceColumn, eventTypeColumn } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { principalsText } from '$lib/principals-text';
 import type { EventListEntry } from '$types/database';
 
+import { LoadMoreButton } from './load-more-button';
 import * as styles from './list-page.css';
 
 interface EventsPageProps {
   treeId: string;
-}
-
-/**
- * Build the select options for a filter: project each event to a
- * `[value, label]` pair (or `null` to skip it), dedupe on the value, and
- * sort by label. Both the Type and Place filters list only the values that
- * actually occur in the loaded events.
- */
-function toSortedOptions(
-  events: EventListEntry[],
-  project: (event: EventListEntry) => [string, string] | null
-): EventFilterOption[] {
-  const byId = new Map<string, string>();
-  for (const event of events) {
-    const pair = project(event);
-    if (pair) byId.set(pair[0], pair[1]);
-  }
-  return Array.from(byId, ([value, label]) => ({ value, label })).sort((a, b) =>
-    a.label.localeCompare(b.label)
-  );
 }
 
 /**
@@ -50,56 +31,52 @@ function toSortedOptions(
 export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
   const { t } = useTranslation('events');
   const { t: tCommon } = useTranslation('common');
-  const { data, isLoading, isError } = useEvents();
 
   const [filters, setFilters] = useState(DEFAULT_EVENT_FILTERS);
 
-  // The Type filter offers every event type present in the loaded events,
-  // by label; deduped on the type id.
+  // Filtering and paging happen in SQL (see issue #266): the list arrives
+  // chronological, ordered on the SQL side, so the page has no interactive
+  // column sort — see the columns below.
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useEventsPage({
+      filters: { eventTypeId: filters.type, placeId: filters.place },
+    });
+  const rows = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
+
+  // The Type and Place filters list only the values actually present in the
+  // tree, resolved by a lightweight dedicated query rather than derived from
+  // the (now partial) loaded page.
+  const { data: filterOptions } = useEventFilterOptions();
   const typeOptions = useMemo<EventFilterOption[]>(
     () =>
-      toSortedOptions(data ?? [], (event) => [
-        event.eventType.id,
-        eventTypeLabel(event.eventType, t),
-      ]),
-    [data, t]
+      (filterOptions?.types ?? [])
+        .map((type) => ({ value: type.id, label: eventTypeLabel(type, t) }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [filterOptions, t]
   );
-
-  // The Place filter offers every place present on the loaded events.
   const placeOptions = useMemo<EventFilterOption[]>(
     () =>
-      toSortedOptions(data ?? [], (event) =>
-        event.place ? [event.place.id, event.place.name] : null
-      ),
-    [data]
+      (filterOptions?.places ?? [])
+        .map((place) => ({ value: place.id, label: place.name }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [filterOptions]
   );
-
-  // Filter the already-loaded list client-side by type and place (AND-ed).
-  // The list arrives chronological from the manager; the Date column is not
-  // sortable, so that natural order is preserved.
-  const visibleRows = useMemo(() => {
-    return (data ?? []).filter((event) => {
-      if (filters.type !== 'all' && event.eventType.id !== filters.type) return false;
-      if (filters.place !== 'all' && event.place?.id !== filters.place) return false;
-      return true;
-    });
-  }, [data, filters.type, filters.place]);
 
   const columns = useMemo<EntityTableColumn<EventListEntry>[]>(() => {
     const unknownPrincipal = t('table.unknownPrincipal');
     return [
-      eventTypeColumn(treeId, t),
-      // The list arrives chronological from the manager, so the Date column
-      // stays unsortable to preserve that natural order.
-      eventDateColumn(t),
+      // Sortable in principle, but a keyset/offset-paginated page can only
+      // ever sort the rows it has loaded — re-sorting them client-side would
+      // misrepresent the full, not-fully-loaded list, so every column here
+      // stays unsortable and the chronological SQL order is authoritative.
+      eventTypeColumn(treeId, t, { sortable: false }),
+      eventDateColumn(t, { sortable: false }),
       {
         key: 'principals',
         header: t('table.columns.principals'),
         cell: (event) => principalsText(event.principals, unknownPrincipal),
-        sortValue: (event) =>
-          event.principals.length === 0 ? null : principalsText(event.principals, unknownPrincipal),
       },
-      eventPlaceColumn(t),
+      eventPlaceColumn(t, { sortable: false }),
     ];
   }, [t, treeId]);
 
@@ -133,7 +110,7 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
         <EntityTable
           label={tCommon('nav.events')}
           columns={columns}
-          rows={visibleRows}
+          rows={rows}
           getRowKey={(event) => event.id}
           isLoading={isLoading}
           isError={isError}
@@ -147,6 +124,10 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
           isFiltered={filtered}
         />
       </div>
+
+      {hasNextPage && (
+        <LoadMoreButton onLoadMore={() => fetchNextPage()} isLoading={isFetchingNextPage} />
+      )}
     </div>
   );
 }
