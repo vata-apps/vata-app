@@ -1,0 +1,26 @@
+src/i18n/locales/en/individuals.json
+  s_f6e652d6a25e7d::t_2b7e75fc4ad20c 98
+src/components/person-overview/record-rail.tsx
+  s_f6e652d6a25e7d::t_68883af39d8bde 121,125,127-129
+src/i18n/locales/fr/individuals.json
+  s_f6e652d6a25e7d::t_45de9394271b53 98
+src/components/person-overview/record-rail.css.ts
+  s_f6e652d6a25e7d::t_7e52b0dd976aa3 14,16-19
+  s_f6e652d6a25e7d::t_5a1889ffb4a2f5 20-23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "97aff0c98ff9d4d1300453af11aa6957da7e378c",
+  "prompts": {},
+  "sessions": {
+    "s_f6e652d6a25e7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23165849-c52e-49b8-9f7e-31281b9d37ae",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
