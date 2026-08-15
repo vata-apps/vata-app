@@ -98,8 +98,7 @@
       "death": "Décès",
       "children": "Enfants",
       "missingBorn": "Naissance non renseignée",
-      "missingDeath": "Décès non renseigné",
-      "addEvent": "Ajouter un événement"
+      "missingDeath": "Décès non renseigné"
     },
     "media": {
       "title": "Médias",

@@ -98,8 +98,7 @@
       "death": "Died",
       "children": "Children",
       "missingBorn": "Birth not recorded",
-      "missingDeath": "Death not recorded",
-      "addEvent": "Add an event"
+      "missingDeath": "Death not recorded"
     },
     "media": {
       "title": "Media",

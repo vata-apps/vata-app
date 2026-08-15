@@ -118,13 +118,15 @@ function NameRow({ name }: { name: OverviewName }): JSX.Element {
   const { t } = useTranslation('individuals');
   return (
     <div className={`${card.row} ${s.nameRow}`}>
-      <div className={s.nameRowHead}>
+      <div className={s.nameRowText}>
         <Typography size="xs" tone="muted">
           {t(`overview.names.types.${name.type}`)}
         </Typography>
-        {name.isPrimary && <Badge>{t('overview.names.primary')}</Badge>}
+        <Typography size="md">{name.text}</Typography>
       </div>
-      <Typography size="md">{name.text}</Typography>
+      {name.isPrimary && (
+        <Badge className={s.namePrimaryBadge}>{t('overview.names.primary')}</Badge>
+      )}
     </div>
   );
 }
