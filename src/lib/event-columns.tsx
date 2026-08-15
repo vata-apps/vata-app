@@ -57,20 +57,21 @@ export function eventDateDisplay(event: EventWithDetails): string | null {
 
 /**
  * The event-date column: the verbatim original date, falling back to the
- * sortable year, then an unknown label. Pass `sortable` to make the header sort
- * by the sortable date; omit it to preserve a caller-supplied order.
+ * sortable year, then an unknown label. Pass `sortable: false` for the same
+ * reason as {@link eventTypeColumn}.
  */
 export function eventDateColumn<T extends EventWithDetails>(
   t: TranslateFn,
   options: { sortable?: boolean } = {}
 ): EntityTableColumn<T> {
+  const sortable = options.sortable ?? true;
   const dateUnknown = t('table.dateUnknown');
   return {
     key: 'date',
     header: t('table.columns.date'),
     width: EVENT_COLUMN_WIDTH.date,
     cell: (event) => eventDateDisplay(event) ?? dateUnknown,
-    ...(options.sortable ? { sortValue: (event: T) => event.dateSort ?? null } : {}),
+    ...(sortable ? { sortValue: (event: T) => event.dateSort ?? null } : {}),
   };
 }
 

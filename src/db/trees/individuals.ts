@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { foldDiacritics } from '../sql-diacritics';
 import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import type {
   Individual,
@@ -216,7 +217,11 @@ export interface IndividualsPageResult {
  * and pushing entirely nameless individuals to the end regardless of
  * direction. For the First name column there is no such fallback — someone
  * with a surname but no given names sorts into the same "nameless" bucket as
- * someone with neither, exactly as the old `sortValue` did.
+ * someone with neither, exactly as the old `sortValue` did. Both the sort
+ * key and the name filter are passed through {@link foldDiacritics} —
+ * SQLite's `COLLATE NOCASE`/`LIKE` only fold ASCII case, so an unfolded
+ * comparison would sort "Côté" after every plain-ASCII surname and miss it
+ * entirely in a search for "cote".
  *
  * Enrichment (names, birth/death events) is the caller's job — this only
  * resolves which ids belong on the page, in order. Fetches `limit + 1` rows
@@ -244,19 +249,21 @@ export async function getIndividualsPage(
   const trimmedQuery = filters.nameQuery.trim();
   if (trimmedQuery) {
     const escaped = trimmedQuery.replace(/[%_\\]/g, '\\$&');
-    conditions.push(
-      `(COALESCE(n.given_names, '') || ' ' || COALESCE(n.surname, '')) LIKE $${paramIndex++} ESCAPE '\\'`
+    const namesExpr = foldDiacritics(
+      `(COALESCE(n.given_names, '') || ' ' || COALESCE(n.surname, ''))`
     );
+    conditions.push(`${namesExpr} LIKE ${foldDiacritics(`$${paramIndex++}`)} ESCAPE '\\'`);
     values.push(`%${escaped}%`);
   }
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
   const dir = sortDirection === 'desc' ? 'DESC' : 'ASC';
-  const primaryKey =
+  const primaryKey = foldDiacritics(
     sortColumn === 'firstName'
       ? `NULLIF(TRIM(n.given_names), '')`
-      : `COALESCE(NULLIF(TRIM(n.surname), ''), NULLIF(TRIM(n.given_names), ''))`;
-  const tiebreaker = sortColumn === 'firstName' ? 'n.surname' : 'n.given_names';
+      : `COALESCE(NULLIF(TRIM(n.surname), ''), NULLIF(TRIM(n.given_names), ''))`
+  );
+  const tiebreaker = foldDiacritics(sortColumn === 'firstName' ? 'n.surname' : 'n.given_names');
 
   const rows = await db.select<{ id: number }[]>(
     `SELECT i.id

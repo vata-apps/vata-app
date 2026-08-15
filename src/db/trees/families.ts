@@ -1,5 +1,6 @@
 import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
+import { foldDiacritics } from '../sql-diacritics';
 import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import type {
   Family,
@@ -698,7 +699,9 @@ export interface FamiliesPageResult {
  * and order on those derived columns without recomputing them.
  *
  * As with `getIndividualsPage`, spouse name filtering and sorting reads only
- * the primary name — alternate names are not considered.
+ * the primary name — alternate names are not considered — and both the sort
+ * key and the name filter go through {@link foldDiacritics} for the same
+ * reason: `COLLATE NOCASE`/`LIKE` alone only fold ASCII case.
  *
  * Enrichment (member individuals, marriage event) is the caller's job — this
  * only resolves which ids belong on the page, in order. Fetches `limit + 1`
@@ -730,9 +733,15 @@ export async function getFamiliesPage(params: FamiliesPageParams): Promise<Famil
     const escaped = trimmedQuery.replace(/[%_\\]/g, '\\$&');
     const husbandParam = paramIndex++;
     const wifeParam = paramIndex++;
+    const husbandExpr = foldDiacritics(
+      `(COALESCE(husband_given, '') || ' ' || COALESCE(husband_surname, ''))`
+    );
+    const wifeExpr = foldDiacritics(
+      `(COALESCE(wife_given, '') || ' ' || COALESCE(wife_surname, ''))`
+    );
     conditions.push(
-      `((COALESCE(husband_given, '') || ' ' || COALESCE(husband_surname, '')) LIKE $${husbandParam} ESCAPE '\\'` +
-        ` OR (COALESCE(wife_given, '') || ' ' || COALESCE(wife_surname, '')) LIKE $${wifeParam} ESCAPE '\\')`
+      `(${husbandExpr} LIKE ${foldDiacritics(`$${husbandParam}`)} ESCAPE '\\'` +
+        ` OR ${wifeExpr} LIKE ${foldDiacritics(`$${wifeParam}`)} ESCAPE '\\')`
     );
     const pattern = `%${escaped}%`;
     values.push(pattern, pattern);
@@ -745,8 +754,11 @@ export async function getFamiliesPage(params: FamiliesPageParams): Promise<Famil
     orderBy = `children_count ${dir}, id ${dir}`;
   } else {
     const prefix = sortColumn === 'husband' ? 'husband' : 'wife';
-    const primaryKey = `COALESCE(NULLIF(TRIM(${prefix}_surname), ''), NULLIF(TRIM(${prefix}_given), ''))`;
-    orderBy = `${primaryKey} COLLATE NOCASE ${dir} NULLS LAST, ${prefix}_given COLLATE NOCASE ${dir}, id ${dir}`;
+    const primaryKey = foldDiacritics(
+      `COALESCE(NULLIF(TRIM(${prefix}_surname), ''), NULLIF(TRIM(${prefix}_given), ''))`
+    );
+    const tiebreaker = foldDiacritics(`${prefix}_given`);
+    orderBy = `${primaryKey} COLLATE NOCASE ${dir} NULLS LAST, ${tiebreaker} COLLATE NOCASE ${dir}, id ${dir}`;
   }
 
   const rows = await db.select<{ id: number }[]>(

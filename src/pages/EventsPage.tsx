@@ -70,7 +70,7 @@ export function EventsPage({ treeId }: EventsPageProps): JSX.Element {
       // misrepresent the full, not-fully-loaded list, so every column here
       // stays unsortable and the chronological SQL order is authoritative.
       eventTypeColumn(treeId, t, { sortable: false }),
-      eventDateColumn(t),
+      eventDateColumn(t, { sortable: false }),
       {
         key: 'principals',
         header: t('table.columns.principals'),
