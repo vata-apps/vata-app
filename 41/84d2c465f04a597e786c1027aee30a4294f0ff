@@ -1,0 +1,43 @@
+src/pages/PersonNamesPage.tsx
+  s_f6e652d6a25e7d::t_1cb98bdf9f714c 254
+  s_f6e652d6a25e7d::t_e64eecff23f7a5 21
+src/pages/IndividualOverviewPage.tsx
+  s_f6e652d6a25e7d::t_8a1394019084d5 2
+  s_f6e652d6a25e7d::t_2c0f7b523dac11 40-50
+src/components/person-overview/record-rail.tsx
+  s_f6e652d6a25e7d::t_8ef54acf8b9a8a 5
+  s_f6e652d6a25e7d::t_9a7c2a4931e2b1 125
+src/components/person-overview/places-panel.tsx
+  s_f6e652d6a25e7d::t_05ce85363a570b 2,14,20-21
+  s_f6e652d6a25e7d::t_bd9bdadca96d73 37,49
+src/components/ui/card.css.ts
+  s_f6e652d6a25e7d::t_dd716e7a3736c8 47
+src/routes/tree/$treeId/individual/$individualId/places.tsx
+  s_f6e652d6a25e7d::t_a8ed5d692b2ca3 1-6
+src/components/person-overview/identity-header.tsx
+  s_f6e652d6a25e7d::t_1c10029ab1986c 143
+src/i18n/locales/fr/individuals.json
+  s_f6e652d6a25e7d::t_66878154a9ed7d 49
+src/components/person-overview/panel.tsx
+  s_f6e652d6a25e7d::t_72a6d8b53d29b6 13-14
+src/i18n/locales/en/individuals.json
+  s_f6e652d6a25e7d::t_c7c2fb207ea67b 49
+src/pages/PersonPlacesPage.tsx
+  s_f6e652d6a25e7d::t_4c4e48aa43c8f4 1-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "4184d2c465f04a597e786c1027aee30a4294f0ff",
+  "prompts": {},
+  "sessions": {
+    "s_f6e652d6a25e7d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "23165849-c52e-49b8-9f7e-31281b9d37ae",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
