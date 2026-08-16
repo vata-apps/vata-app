@@ -1,0 +1,20 @@
+src/hooks/useIndividuals.ts
+  s_d36b53722c32aa::t_5ab20e684340bd 33
+  s_d36b53722c32aa::t_8d18eeff1a19c9 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "4ea6b8510ef52fd9fe9504e1bccdef96d295c2dc",
+  "prompts": {},
+  "sessions": {
+    "s_d36b53722c32aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a0a8224-4df0-430d-8c44-740e55c62ed8",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
