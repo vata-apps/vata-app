@@ -11,7 +11,7 @@ import { validate } from '@vata-apps/gedcom-parser';
 import { updateTreeStats, markTreeOpened } from '$/db/system/trees';
 import { countLivingIndividuals } from '$db-tree/individuals';
 import { getTreeDb } from '$/db/connection';
-import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { readTextFile, writeTextFile, size } from '@tauri-apps/plugin-fs';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import { TreeManager } from '$managers/TreeManager';
 
@@ -44,12 +44,59 @@ export interface ScanResult {
   repositories: number;
   errors: string[];
   warnings: string[];
+  /**
+   * Count of errors/warnings beyond `validate()`'s per-severity cap that
+   * were dropped from `errors`/`warnings` respectively (see the
+   * gedcom-parser `validate` doc comment). Both 0 when nothing was
+   * truncated.
+   */
+  truncatedErrors: number;
+  truncatedWarnings: number;
+}
+
+/**
+ * Hard ceiling on a GEDCOM file read from disk. `readTextFile` has no
+ * built-in size limit and would otherwise slurp an arbitrarily large file
+ * into a single JS string. A GEDCOM record runs on the order of a few
+ * hundred bytes (a name plus a handful of dated events), so 500 MB
+ * comfortably covers even a multi-hundred-thousand-individual export
+ * while still catching a mis-selected file (video, disk image, etc.)
+ * before the read even starts.
+ */
+export const GEDCOM_MAX_FILE_SIZE_BYTES = 500 * 1024 * 1024;
+
+/** Thrown by {@link GedcomManager.readFile} when the selected file exceeds {@link GEDCOM_MAX_FILE_SIZE_BYTES}. */
+export class GedcomFileTooLargeError extends Error {
+  constructor(
+    public readonly sizeBytes: number,
+    public readonly maxBytes: number = GEDCOM_MAX_FILE_SIZE_BYTES
+  ) {
+    super(`GEDCOM file is ${sizeBytes} bytes, exceeding the ${maxBytes}-byte limit`);
+    this.name = 'GedcomFileTooLargeError';
+  }
 }
 
 /**
  * Manages GEDCOM import/export operations.
  */
 export class GedcomManager {
+  /**
+   * Read a GEDCOM file from disk, rejecting anything over
+   * {@link GEDCOM_MAX_FILE_SIZE_BYTES} before the read starts. Shared by
+   * {@link importFromFile} and the Import GEDCOM modal's drag-and-drop
+   * scan path — both read a file straight off disk before any DB or
+   * parser code sees it.
+   *
+   * @throws {GedcomFileTooLargeError} if the file exceeds the size ceiling
+   */
+  static async readFile(filePath: string): Promise<string> {
+    const fileSize = await size(filePath);
+    if (fileSize > GEDCOM_MAX_FILE_SIZE_BYTES) {
+      throw new GedcomFileTooLargeError(fileSize);
+    }
+    return readTextFile(filePath);
+  }
+
   /**
    * Import a GEDCOM file into a new tree.
    *
@@ -68,7 +115,7 @@ export class GedcomManager {
 
     // Read file content
     const filePath = selected as string;
-    const content = await readTextFile(filePath);
+    const content = await GedcomManager.readFile(filePath);
 
     // Extract tree name from filename
     const filename = filePath.split('/').pop() ?? 'imported';
@@ -223,6 +270,8 @@ export class GedcomManager {
       repositories: result.stats.repositories,
       errors,
       warnings,
+      truncatedErrors: result.truncated.errors,
+      truncatedWarnings: result.truncated.warnings,
     };
   }
 

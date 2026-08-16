@@ -87,6 +87,10 @@
     "warningsLabel_one": "{{count}} warning",
     "warningsLabel_other": "{{count}} warnings",
     "errorsLabel": "Errors",
+    "moreErrorsLabel_one": "+{{count}} more error not shown",
+    "moreErrorsLabel_other": "+{{count}} more errors not shown",
+    "moreWarningsLabel_one": "+{{count}} more warning not shown",
+    "moreWarningsLabel_other": "+{{count}} more warnings not shown",
     "nameLabel": "Tree name",
     "namePlaceholder": "e.g., Bourgoin family",
     "optionsLabel": "Options",
@@ -99,6 +103,7 @@
     "soonLabel": "Soon",
     "closeLabel": "Close",
     "errorScan": "Failed to read GEDCOM file.",
+    "errorFileTooLarge": "This file is too large to import ({{size}}). The maximum supported size is {{maxSize}}.",
     "errorGeneric": "Failed to import GEDCOM."
   },
   "downloadTree": {
