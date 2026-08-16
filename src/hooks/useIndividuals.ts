@@ -2,6 +2,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { queryKeys } from '$/lib/query-keys';
 import { IndividualManager } from '$managers/IndividualManager';
 import { formatNameSimple } from '$db-tree/names';
+import { sortByKey } from '$lib/sortByKey';
 import type { IndividualsPageFilters, IndividualsSortColumn } from '$db-tree/individuals';
 import type { IndividualWithDetails } from '$types/database';
 
@@ -29,9 +30,7 @@ export function useIndividuals(options?: {
 export function sortIndividualsByName(
   individuals: IndividualWithDetails[]
 ): IndividualWithDetails[] {
-  return [...individuals].sort((a, b) =>
-    formatNameSimple(a.primaryName).localeCompare(formatNameSimple(b.primaryName))
-  );
+  return sortByKey(individuals, (individual) => formatNameSimple(individual.primaryName));
 }
 
 /** How many individuals `useIndividualsPage` fetches per page. */
