@@ -87,6 +87,10 @@
     "warningsLabel_one": "{{count}} avertissement",
     "warningsLabel_other": "{{count}} avertissements",
     "errorsLabel": "Erreurs",
+    "moreErrorsLabel_one": "+{{count}} autre erreur non affichée",
+    "moreErrorsLabel_other": "+{{count}} autres erreurs non affichées",
+    "moreWarningsLabel_one": "+{{count}} autre avertissement non affiché",
+    "moreWarningsLabel_other": "+{{count}} autres avertissements non affichés",
     "nameLabel": "Nom de l'arbre",
     "namePlaceholder": "ex. Famille Bourgoin",
     "optionsLabel": "Options",
@@ -99,6 +103,7 @@
     "soonLabel": "Bientôt",
     "closeLabel": "Fermer",
     "errorScan": "Échec de la lecture du fichier GEDCOM.",
+    "errorFileTooLarge": "Ce fichier est trop volumineux pour être importé ({{size}}). La taille maximale prise en charge est de {{maxSize}}.",
     "errorGeneric": "Échec de l'importation GEDCOM."
   },
   "downloadTree": {

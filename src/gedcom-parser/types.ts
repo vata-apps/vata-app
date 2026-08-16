@@ -225,8 +225,18 @@ export interface ValidationError {
 export interface ValidationResult {
   /** Whether the document is valid */
   valid: boolean;
-  /** List of errors/warnings */
+  /** List of errors/warnings, capped per severity — see `truncated` */
   errors: ValidationError[];
+  /**
+   * Count of additional errors/warnings beyond the cap that were dropped
+   * from `errors`, split by severity so a huge run of one kind (e.g.
+   * thousands of "undefined XREF" warnings) can't crowd out the other.
+   * Both 0 when nothing was truncated.
+   */
+  truncated: {
+    errors: number;
+    warnings: number;
+  };
   /** Statistics */
   stats: {
     individuals: number;

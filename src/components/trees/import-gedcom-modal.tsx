@@ -19,7 +19,12 @@ import {
 import { Dropzone } from '$components/dropzone';
 import { Icon } from '$components/icon';
 import { StatCell } from '$components/trees/stat-cell';
-import { GedcomManager, type ImportResult, type ScanResult } from '$managers/GedcomManager';
+import {
+  GedcomFileTooLargeError,
+  GedcomManager,
+  type ImportResult,
+  type ScanResult,
+} from '$managers/GedcomManager';
 import { formatBytes } from '$lib/format';
 import { queryKeys } from '$lib/query-keys';
 
@@ -67,16 +72,6 @@ export interface ImportGedcomModalProps {
 /** Default `importTree` implementation — wraps `GedcomManager.importFromContent`. */
 const defaultImportTree = (content: string, treeName: string): Promise<ImportResult> =>
   GedcomManager.importFromContent(content, treeName);
-
-/**
- * Read a GEDCOM file's contents from disk via Tauri's filesystem
- * plugin. The plugin import is lazy so non-Tauri test contexts can
- * still load this module without resolving the native dependency.
- */
-async function readGedcomFile(path: string): Promise<string> {
-  const { readTextFile } = await import('@tauri-apps/plugin-fs');
-  return readTextFile(path);
-}
 
 /**
  * Strip the extension and any leading directory off a filename to get
@@ -148,7 +143,7 @@ export function ImportGedcomModal({
     setScanError(null);
     setScanning(file.name);
     try {
-      const content = await readGedcomFile(file.path);
+      const content = await GedcomManager.readFile(file.path);
       if (scanId !== scanIdRef.current) return;
       // GedcomManager.scan is synchronous and can block the main thread
       // for hundreds of ms on large files. Yield once so React commits
@@ -165,6 +160,15 @@ export function ImportGedcomModal({
       setName(deriveTreeName(file.name));
     } catch (err) {
       if (scanId !== scanIdRef.current) return;
+      if (err instanceof GedcomFileTooLargeError) {
+        setScanError(
+          t('importGedcom.errorFileTooLarge', {
+            size: formatBytes(err.sizeBytes),
+            maxSize: formatBytes(err.maxBytes),
+          })
+        );
+        return;
+      }
       // Raw parser/Tauri errors are not translated — log them, surface
       // a generic localized message in the UI instead.
       console.error('Failed to read or scan GEDCOM file:', err);
@@ -247,14 +251,19 @@ export function ImportGedcomModal({
                 {selected.scan.warnings.length > 0 && (
                   <WarningList
                     warnings={selected.scan.warnings}
+                    truncatedCount={selected.scan.truncatedWarnings}
                     label={t('importGedcom.warningsLabel', {
-                      count: selected.scan.warnings.length,
+                      count: selected.scan.warnings.length + selected.scan.truncatedWarnings,
                     })}
                   />
                 )}
 
                 {selected.scan.errors.length > 0 && (
-                  <ErrorList errors={selected.scan.errors} label={t('importGedcom.errorsLabel')} />
+                  <ErrorList
+                    errors={selected.scan.errors}
+                    truncatedCount={selected.scan.truncatedErrors}
+                    label={t('importGedcom.errorsLabel')}
+                  />
                 )}
 
                 <Flex direction="column" gap="1">
@@ -380,8 +389,21 @@ function ScanGrid({ scan }: { scan: ScanResult }): JSX.Element {
  * Collapsible list of non-fatal scan warnings. Renders inside a
  * `<details>` so the user can expand individual messages without the
  * panel dominating the modal when there are many warnings.
+ *
+ * `warnings` is already capped by `validate()` — `truncatedCount` says how
+ * many more exist beyond that cap so a huge file doesn't silently look
+ * complete.
  */
-function WarningList({ warnings, label }: { warnings: string[]; label: string }): JSX.Element {
+function WarningList({
+  warnings,
+  truncatedCount,
+  label,
+}: {
+  warnings: string[];
+  truncatedCount: number;
+  label: string;
+}): JSX.Element {
+  const { t } = useTranslation('trees');
   return (
     <Callout.Root color="amber">
       <Box asChild>
@@ -397,6 +419,11 @@ function WarningList({ warnings, label }: { warnings: string[]; label: string })
                 {message}
               </Text>
             ))}
+            {truncatedCount > 0 && (
+              <Text size="1" color="gray">
+                {t('importGedcom.moreWarningsLabel', { count: truncatedCount })}
+              </Text>
+            )}
           </Flex>
         </details>
       </Box>
@@ -408,8 +435,21 @@ function WarningList({ warnings, label }: { warnings: string[]; label: string })
  * Always-visible list of fatal scan errors. Rendered as `role="alert"`
  * so assistive tech announces it; the modal's submit button stays
  * disabled while there are entries here.
+ *
+ * `errors` is already capped by `validate()` — `truncatedCount` says how
+ * many more exist beyond that cap so a huge file doesn't silently look
+ * complete.
  */
-function ErrorList({ errors, label }: { errors: string[]; label: string }): JSX.Element {
+function ErrorList({
+  errors,
+  truncatedCount,
+  label,
+}: {
+  errors: string[];
+  truncatedCount: number;
+  label: string;
+}): JSX.Element {
+  const { t } = useTranslation('trees');
   return (
     <Callout.Root color="red" role="alert">
       <Flex direction="column" gap="1">
@@ -421,6 +461,11 @@ function ErrorList({ errors, label }: { errors: string[]; label: string }): JSX.
             {message}
           </Text>
         ))}
+        {truncatedCount > 0 && (
+          <Text size="1" color="gray">
+            {t('importGedcom.moreErrorsLabel', { count: truncatedCount })}
+          </Text>
+        )}
       </Flex>
     </Callout.Root>
   );
