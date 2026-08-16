@@ -1,0 +1,32 @@
+src/managers/IndividualManager.test.ts
+  s_d36b53722c32aa::t_f11018b854139c 473,480,489
+src/db/trees/individuals.test.ts
+  s_d36b53722c32aa::t_074d572080c2c6 203
+  s_d36b53722c32aa::t_32f002dfebec71 226
+  s_d36b53722c32aa::t_eb25d67f63b066 215
+  s_d36b53722c32aa::t_ae2cdbd9ddd8a0 191
+src/db/trees/individuals.ts
+  s_d36b53722c32aa::t_ee9f40bef9b178 288-294,296,307
+  s_d36b53722c32aa::t_81211bd6b9fff1 305-306
+src/managers/IndividualManager.ts
+  s_d36b53722c32aa::t_d35c4f8b755c31 410-412,414,417
+  s_d36b53722c32aa::t_9a561807d4bbd0 409
+src/hooks/useIndividuals.ts
+  s_d36b53722c32aa::t_050876daec96f7 48-61,66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "850abed6e98cc2d811ca99c325eeecbea2ab41c0",
+  "prompts": {},
+  "sessions": {
+    "s_d36b53722c32aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a0a8224-4df0-430d-8c44-740e55c62ed8",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
