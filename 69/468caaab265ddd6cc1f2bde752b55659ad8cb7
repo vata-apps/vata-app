@@ -1,0 +1,25 @@
+src/components/individuals/person-picker.tsx
+  s_d36b53722c32aa::t_d77b636a5968e1 1,62-84,86-91
+src/components/person-events/event-participant-picker.tsx
+  s_d36b53722c32aa::t_e8ab73018d4c5f 10,58-72,74-91,93-109
+src/hooks/useIndividualBrowseOrSearch.ts
+  s_d36b53722c32aa::t_fca2a7dc919a91 2,12,37-40
+src/hooks/useIndividuals.ts
+  s_d36b53722c32aa::t_75bfbf4e5fdce3 4,6,8-12,17,21-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "69468caaab265ddd6cc1f2bde752b55659ad8cb7",
+  "prompts": {},
+  "sessions": {
+    "s_d36b53722c32aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a0a8224-4df0-430d-8c44-740e55c62ed8",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
