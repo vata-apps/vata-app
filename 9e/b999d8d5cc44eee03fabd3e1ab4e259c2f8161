@@ -1,0 +1,31 @@
+src-tauri/tauri.dev.conf.json
+  s_306c21b2291c5e::t_c300df21fd4ea3 1-8
+src-tauri/src/lib.rs
+  s_306c21b2291c5e::t_21388ad08c5f92 142-146
+.claude/skills/tauri-standards/SKILL.md
+  s_306c21b2291c5e::t_eeb211c0d91300 42
+src-tauri/capabilities/mcp-bridge.json
+  s_306c21b2291c5e::t_15bd13123bb5f5 1-7
+src-tauri/capabilities/default.json
+  s_306c21b2291c5e::t_6973b6e5f9e7d4 24
+src-tauri/tauri.conf.json
+  s_306c21b2291c5e::t_257a14126a7e98 27-28
+package.json
+  s_306c21b2291c5e::t_bac76fab36b103 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9eb999d8d5cc44eee03fabd3e1ab4e259c2f8161",
+  "prompts": {},
+  "sessions": {
+    "s_306c21b2291c5e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c043633-134d-45b9-8dc8-bb9bbdf773eb",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
