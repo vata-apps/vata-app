@@ -139,15 +139,11 @@ pub fn run() {
     //
     // The plugin itself (and its WebSocket server, and its execute_js/
     // execute_command handlers) is only ever registered here, in a debug
-    // build — a release binary contains none of it, regardless of what
-    // `capabilities/default.json`'s `mcp-bridge:default` entry nominally
-    // grants. That capability line staying in the one shared capability
-    // file for release builds too is a cosmetic gap, not a live one: Tauri
-    // has no built-in debug/release capability split (only `platforms`,
-    // which is OS- not profile-scoped — checked the capability schema), so
-    // closing it for real needs custom build tooling (e.g. a build.rs step
-    // swapping capability files by profile), tracked separately rather than
-    // guessed at here.
+    // build — a release binary contains none of it. The `mcp-bridge:default`
+    // permission mirrors that: it lives in the separate
+    // `capabilities/mcp-bridge.json`, which `tauri.conf.json`'s
+    // `app.security.capabilities` excludes by default, and only
+    // `tauri.dev.conf.json` (merged in via `pnpm tauri:dev`) re-enables.
     #[cfg(debug_assertions)]
     {
         builder = builder.plugin(tauri_plugin_mcp_bridge::init_with_config(

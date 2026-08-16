@@ -36,7 +36,7 @@
     "typecheck:node": "tsc -p tsconfig.node.json --noEmit",
     "verify": "pnpm lint && pnpm format:check && pnpm build && pnpm typecheck:node && pnpm vitest run",
     "tauri": "tauri",
-    "tauri:dev": "tauri dev",
+    "tauri:dev": "tauri dev --config src-tauri/tauri.dev.conf.json",
     "tauri:build": "tauri build",
     "prepare": "husky && git config core.hooksPath .husky"
   },

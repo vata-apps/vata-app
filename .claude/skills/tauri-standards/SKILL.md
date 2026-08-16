@@ -39,7 +39,7 @@ Capabilities are defined in `src-tauri/capabilities/`. Each capability file gran
 - **Format**: JSON files in `src-tauri/capabilities/`. Each file has `identifier`, `windows`, and `permissions` fields.
 - **Scoping**: grant specific `allow-*` permissions, never blanket `allow-all`.
 
-The project has a **single** capability file — `src-tauri/capabilities/default.json`. Read it for the canonical, current permission set rather than trusting an inline example here (an example drifts; the file does not).
+The project has two capability files: `default.json` (everything the shipped app needs) and `mcp-bridge.json` (the debug-only MCP bridge permission — see `tauri.conf.json`'s `app.security.capabilities` and `tauri.dev.conf.json` for how it's excluded from release builds). Read them for the canonical, current permission set rather than trusting an inline example here (an example drifts; the files do not).
 
 ---
 
