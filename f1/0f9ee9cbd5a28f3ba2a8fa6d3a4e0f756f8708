@@ -1,0 +1,25 @@
+src/components/person-rail/collapsed-people-rail.tsx
+  s_d36b53722c32aa::t_3b805a35423051 89
+  s_d36b53722c32aa::t_8bb8a994d3c328 57
+docs/ui/design-system.md
+  s_d36b53722c32aa::t_c9bc48efafe324 58-59
+src/components/person-rail/expanded-people-list.tsx
+  s_d36b53722c32aa::t_1d9df64cebcc39 74
+  s_d36b53722c32aa::t_6a4d7fe4cd546f 117
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "f10f9ee9cbd5a28f3ba2a8fa6d3a4e0f756f8708",
+  "prompts": {},
+  "sessions": {
+    "s_d36b53722c32aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a0a8224-4df0-430d-8c44-740e55c62ed8",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
