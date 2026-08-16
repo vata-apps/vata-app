@@ -1,14 +1,37 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { queryKeys } from '$/lib/query-keys';
 import { IndividualManager } from '$managers/IndividualManager';
+import { formatNameSimple } from '$db-tree/names';
 import type { IndividualsPageFilters, IndividualsSortColumn } from '$db-tree/individuals';
+import type { IndividualWithDetails } from '$types/database';
 
-export function useIndividuals(options?: { enabled?: boolean }) {
+export function useIndividuals(options?: {
+  enabled?: boolean;
+  /** Derives the query's exposed `data` — see {@link sortIndividualsByName} for why a stable reference matters. */
+  select?: (individuals: IndividualWithDetails[]) => IndividualWithDetails[];
+}) {
   return useQuery({
     queryKey: queryKeys.individuals,
     queryFn: () => IndividualManager.getAll(),
     enabled: options?.enabled ?? true,
+    select: options?.select,
   });
+}
+
+/**
+ * Sorts by primary name. Exported as a stable top-level reference (rather
+ * than an inline arrow at each call site) so TanStack Query's `select`
+ * memoizes the sorted array per observer and only recomputes it when the
+ * underlying `['individuals']` fetch actually changes — not on every render,
+ * which is what let the relation/participant pickers each re-sort the full
+ * tree per keystroke before issue #269.
+ */
+export function sortIndividualsByName(
+  individuals: IndividualWithDetails[]
+): IndividualWithDetails[] {
+  return [...individuals].sort((a, b) =>
+    formatNameSimple(a.primaryName).localeCompare(formatNameSimple(b.primaryName))
+  );
 }
 
 /** How many individuals `useIndividualsPage` fetches per page. */

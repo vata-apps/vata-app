@@ -1,5 +1,5 @@
 import { useDebouncedValue } from './useDebouncedValue';
-import { useIndividualSearch, useIndividuals } from './useIndividuals';
+import { sortIndividualsByName, useIndividualSearch, useIndividuals } from './useIndividuals';
 import type { IndividualWithDetails } from '$types/database';
 
 const SEARCH_DEBOUNCE_MS = 200;
@@ -9,7 +9,7 @@ export interface IndividualBrowseOrSearch {
   isTyping: boolean;
   /** Whether the debounced query has caught up with what's typed — guards a "no matches" flash mid-debounce. */
   debounceSettled: boolean;
-  /** The full unfiltered list, fetched only while not typing. */
+  /** The full unfiltered list, fetched only while not typing — pre-sorted by name (see {@link sortIndividualsByName}). */
   browseResults: IndividualWithDetails[];
   /** Debounced name-search results, fetched only once typing starts. */
   searchResults: IndividualWithDetails[];
@@ -34,7 +34,10 @@ export function useIndividualBrowseOrSearch(
   const debouncedQuery = useDebouncedValue(trimmedQuery, SEARCH_DEBOUNCE_MS);
   const debounceSettled = debouncedQuery === trimmedQuery;
 
-  const browseQuery = useIndividuals({ enabled: enabled && !isTyping });
+  const browseQuery = useIndividuals({
+    enabled: enabled && !isTyping,
+    select: sortIndividualsByName,
+  });
   const searchQuery = useIndividualSearch(debouncedQuery, {
     enabled: enabled && debouncedQuery.length > 0,
   });

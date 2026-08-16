@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { EntityPicker, type EntityPickerItem } from '$components/ui/entity-picker';
 import { Icon } from '$components/icon';
 import { useIndividualBrowseOrSearch } from '$hooks/useIndividualBrowseOrSearch';
-import { formatNameSimple } from '$db-tree/names';
 import { formatLifeYears, initialsFromDisplayName } from '$lib/personSummary';
 import { personDisplayFields, splitDisplayName } from './person-display';
 import type { Gender, IndividualWithDetails } from '$types/database';
@@ -60,20 +59,36 @@ export function PersonPicker({
   const { trimmedQuery, isTyping, debounceSettled, browseResults, searchResults, isFetching } =
     useIndividualBrowseOrSearch(query, { enabled: open });
 
-  const excluded = new Set(excludeIds ?? []);
-  function toDisplay(person: IndividualWithDetails): PersonPickerSelection & { id: string } {
-    return { id: person.id, gender: person.gender, ...personDisplayFields(person, t) };
-  }
+  /**
+   * A disabled `useIndividuals` query still exposes whatever `['individuals']`
+   * holds in cache (see issue #269), so `open` has to gate this component's
+   * own work too, not just the query. Skips filtering/mapping entirely while
+   * closed, and cuts to `MAX_RESULTS` before mapping to display fields since
+   * that step (unlike the filter) runs `t()`/date formatting per row.
+   * `browseResults` arrives pre-sorted by name via the query's `select`.
+   */
+  const { results, hiddenCount, noMatches } = useMemo((): {
+    results: (PersonPickerSelection & { id: string })[];
+    hiddenCount: number;
+    noMatches: boolean;
+  } => {
+    if (!open) return { results: [], hiddenCount: 0, noMatches: false };
 
-  const matches = isTyping
-    ? searchResults
-    : [...browseResults].sort((a, b) =>
-        formatNameSimple(a.primaryName).localeCompare(formatNameSimple(b.primaryName))
-      );
-  const filtered = matches.filter((person) => !excluded.has(person.id)).map(toDisplay);
-  const results = filtered.slice(0, MAX_RESULTS);
-  const hiddenCount = filtered.length - results.length;
-  const noMatches = results.length === 0 && !isFetching && (!isTyping || debounceSettled);
+    const matches = isTyping ? searchResults : browseResults;
+    const excluded = new Set(excludeIds ?? []);
+    const filtered = matches.filter((person) => !excluded.has(person.id));
+    const sliced = filtered.slice(0, MAX_RESULTS).map((person: IndividualWithDetails) => ({
+      id: person.id,
+      gender: person.gender,
+      ...personDisplayFields(person, t),
+    }));
+
+    return {
+      results: sliced,
+      hiddenCount: filtered.length - sliced.length,
+      noMatches: sliced.length === 0 && !isFetching && (!isTyping || debounceSettled),
+    };
+  }, [open, isTyping, searchResults, browseResults, excludeIds, isFetching, debounceSettled, t]);
 
   function handleOpenChange(next: boolean): void {
     setOpen(next);
