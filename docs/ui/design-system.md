@@ -55,3 +55,5 @@ The project commits to **WCAG 2.1 AA**:
 3. **Keyboard** — full keyboard navigation.
 4. **Labels** — every input has an associated label.
 5. **Errors** — descriptive error messages associated with their fields.
+
+**Virtualized lists** (e.g. the people rail, see issue #267) are a bounded exception to full keyboard reachability: only rows/items near the viewport are mounted, so `Tab` reaches what's currently windowed rather than the entire underlying list. This is the standard tradeoff of windowing (the same one VS Code's and GitHub's own virtualized lists accept), not an oversight — pair any windowed list with a search or filter control that narrows the list to a keyboard-reachable size.

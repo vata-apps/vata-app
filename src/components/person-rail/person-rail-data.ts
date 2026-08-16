@@ -91,38 +91,52 @@ const SORT_KEY: Record<
 };
 
 /**
- * Builds the comparator for the people rail: accent-insensitive on text
- * fields (`Intl.Collator`), numeric on the year fields, direction-aware, with
- * a stable "surname + given" tie-break so equal keys don't reorder on every
- * render.
+ * Sorts the people rail: accent-insensitive on text fields (`Intl.Collator`),
+ * numeric on the year fields, direction-aware, with a stable "surname +
+ * given" tie-break so equal keys don't reorder on every render.
+ *
+ * Every person's sort key and tie-break key are computed once up front
+ * (a decorate-sort-undecorate pass) rather than inside the comparator, which
+ * `Array.prototype.sort` calls O(n log n) times — recomputing `formatName()`
+ * per comparison instead of per person is what turned the rail's first mount
+ * into ~1.7M `formatName` calls at 100k people.
  */
-export function buildPeopleRailComparator(
+export function sortPeopleRail(
+  people: IndividualWithDetails[],
   sort: PeopleRailSort,
   locale: string
-): (a: IndividualWithDetails, b: IndividualWithDetails) => number {
+): IndividualWithDetails[] {
   const collator = new Intl.Collator(locale, { sensitivity: 'base' });
-  const key = SORT_KEY[sort.field];
+  const keyOf = SORT_KEY[sort.field];
   const direction = sort.direction === 'asc' ? 1 : -1;
 
-  return (a, b) => {
-    const keyA = key(a);
-    const keyB = key(b);
+  const decorated = people.map((person) => {
+    const tieBreakKey = formatName(person.primaryName).sortable;
+    return {
+      person,
+      // Sorting by surname already computes this exact value — reuse it
+      // instead of calling `formatName()` a second time per person.
+      primaryKey: sort.field === 'surname' ? tieBreakKey : keyOf(person),
+      tieBreakKey,
+    };
+  });
+
+  decorated.sort((a, b) => {
     let primary: number;
-    if (typeof keyA === 'number' || typeof keyB === 'number') {
-      const numA = Number(keyA);
-      const numB = Number(keyB);
+    if (typeof a.primaryKey === 'number' || typeof b.primaryKey === 'number') {
+      const numA = Number(a.primaryKey);
+      const numB = Number(b.primaryKey);
       // `Infinity - Infinity` is NaN — compare for equality first so two
       // people with no year fall through to the name tie-break below.
       primary = numA === numB ? 0 : numA - numB;
     } else {
-      primary = collator.compare(String(keyA), String(keyB));
+      primary = collator.compare(String(a.primaryKey), String(b.primaryKey));
     }
     if (primary !== 0) return primary * direction;
-    return (
-      collator.compare(formatName(a.primaryName).sortable, formatName(b.primaryName).sortable) *
-      direction
-    );
-  };
+    return collator.compare(a.tieBreakKey, b.tieBreakKey) * direction;
+  });
+
+  return decorated.map((decoratedPerson) => decoratedPerson.person);
 }
 
 /** Display date for an event: the original (as-entered) date, else the sort year, else an em dash. */

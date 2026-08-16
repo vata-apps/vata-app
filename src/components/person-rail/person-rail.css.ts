@@ -47,10 +47,26 @@ export const collapsedAvatars = style({
   minHeight: 0,
   width: '100%',
   overflow: 'auto',
+  position: 'relative',
+});
+
+// The virtualizer's sizer: its height is set inline to the full (unrendered)
+// list's total extent so the scrollbar reflects every person, while only the
+// rows in `avatarRow` below are actually mounted.
+export const avatarsSizer = style({ position: 'relative', width: '100%' });
+
+// One virtualized avatar slot, positioned via an inline `translateY`. Height
+// matches `AVATAR_ROW_HEIGHT` in collapsed-people-rail.tsx (the size="sm"
+// avatar plus the column's former gap, now baked into the row itself since
+// absolutely-positioned children ignore the parent's `gap`).
+export const avatarRow = style({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
   display: 'flex',
-  flexDirection: 'column',
   alignItems: 'center',
-  gap: vars.space['4'],
+  justifyContent: 'center',
 });
 
 export const collapsedAvatarButton = style({
@@ -156,9 +172,24 @@ export const rows = style({
   minHeight: 0,
   overflow: 'auto',
   padding: `${vars.space['1']} ${vars.space['4']} ${vars.space['5']}`,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: vars.space['1'],
+});
+
+// The virtualizer's sizer: its height is set inline to the full (unrendered)
+// list's total extent so the scrollbar reflects every person, while only the
+// rows in `virtualRow` below are actually mounted.
+export const rowsSizer = style({ position: 'relative', width: '100%' });
+
+// One virtualized row, positioned via an inline `translateY` and measured by
+// the virtualizer (`measureElement`) rather than assumed fixed-height. The
+// bottom padding stands in for the list's former flex `gap`, which
+// absolutely-positioned children don't participate in.
+export const virtualRow = style({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  boxSizing: 'border-box',
+  paddingBottom: vars.space['1'],
 });
 
 export const row = style({
