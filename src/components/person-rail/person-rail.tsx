@@ -7,7 +7,7 @@ import { useAppStore } from '$/store/app-store';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { CollapsedPeopleRail } from './collapsed-people-rail';
 import { ExpandedPeopleList } from './expanded-people-list';
-import { buildPeopleRailComparator, filterPeopleRail } from './person-rail-data';
+import { filterPeopleRail, sortPeopleRail } from './person-rail-data';
 
 interface PersonRailProps {
   treeId: string;
@@ -37,7 +37,7 @@ export function PersonRail({ treeId, activeIndividualId }: PersonRailProps): JSX
 
   const visiblePeople = useMemo(() => {
     const filtered = filterPeopleRail(allPeople ?? [], filters, debouncedQuery);
-    return filtered.sort(buildPeopleRailComparator(sort, i18n.language));
+    return sortPeopleRail(filtered, sort, i18n.language);
   }, [allPeople, filters, debouncedQuery, sort, i18n.language]);
 
   if (!allPeople) return null;
