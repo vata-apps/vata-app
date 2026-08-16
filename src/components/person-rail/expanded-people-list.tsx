@@ -71,6 +71,7 @@ export function ExpandedPeopleList({
     count: visiblePeople.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => ROW_HEIGHT_ESTIMATE,
+    getItemKey: (index) => visiblePeople[index].id,
     overscan: 8,
   });
 
@@ -113,7 +114,7 @@ export function ExpandedPeopleList({
               const person = visiblePeople[virtualRow.index];
               return (
                 <div
-                  key={person.id}
+                  key={virtualRow.key}
                   ref={virtualizer.measureElement}
                   data-index={virtualRow.index}
                   className={styles.virtualRow}

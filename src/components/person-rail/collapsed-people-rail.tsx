@@ -54,6 +54,7 @@ export function CollapsedPeopleRail({
     count: people.length,
     getScrollElement: () => scrollRef.current,
     estimateSize: () => AVATAR_ROW_HEIGHT,
+    getItemKey: (index) => people[index].id,
     overscan: 8,
   });
 
@@ -85,7 +86,7 @@ export function CollapsedPeopleRail({
             const person = people[virtualItem.index];
             return (
               <div
-                key={person.id}
+                key={virtualItem.key}
                 className={styles.avatarRow}
                 style={{
                   height: AVATAR_ROW_HEIGHT,
