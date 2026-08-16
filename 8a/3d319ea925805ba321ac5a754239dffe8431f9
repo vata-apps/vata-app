@@ -1,0 +1,39 @@
+src/managers/GedcomManager.ts
+  s_d36b53722c32aa::t_cff88cd1e4f128 47-52,83
+  s_d36b53722c32aa::t_03825c3ca0304c 84-99,118
+  s_d36b53722c32aa::t_2cc061b86fb4bf 14,53-76
+  s_d36b53722c32aa::t_8c755b45b3762a 273-274
+src/i18n/locales/fr/trees.json
+  s_d36b53722c32aa::t_fe354af14cd559 90-93,106
+src/gedcom-parser/types.ts
+  s_d36b53722c32aa::t_2c885a94b27dbb 228,230-239
+src/gedcom-parser/validate.ts
+  s_d36b53722c32aa::t_d2cbead87efcfd 187-190,195
+  s_d36b53722c32aa::t_55259db887e559 11-20,29-32,38-54,60,67,75,84
+  s_d36b53722c32aa::t_f5649f39a8dbbe 10,102,109,122,129,168,180
+src/i18n/locales/en/trees.json
+  s_d36b53722c32aa::t_1f95ee5c52d39d 90-93,106
+src-tauri/capabilities/default.json
+  s_d36b53722c32aa::t_19475a94b01337 17
+src/components/trees/import-gedcom-modal.tsx
+  s_d36b53722c32aa::t_8930bebd16b5a7 254,256,262-266
+  s_d36b53722c32aa::t_28217493c041a2 146,163-171
+  s_d36b53722c32aa::t_6f6673060eea99 22-27
+  s_d36b53722c32aa::t_2d50d9cba2aed6 392-395,397-406,422-426,438-441,443-452,464-468
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "8a3d319ea925805ba321ac5a754239dffe8431f9",
+  "prompts": {},
+  "sessions": {
+    "s_d36b53722c32aa": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a0a8224-4df0-430d-8c44-740e55c62ed8",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
