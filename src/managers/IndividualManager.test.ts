@@ -470,14 +470,14 @@ describe('IndividualManager.update', () => {
 describe('IndividualManager.search', () => {
   it('returns an empty array for a blank query', async () => {
     await IndividualManager.create({ name: { givenNames: 'John', surname: 'Doe' } });
-    expect(await IndividualManager.search('   ')).toEqual([]);
+    expect(await IndividualManager.search('   ', 50)).toEqual([]);
   });
 
   it('returns name-enriched matches for given names or surname', async () => {
     const johnId = await IndividualManager.create({ name: { givenNames: 'John', surname: 'Doe' } });
     await IndividualManager.create({ name: { givenNames: 'Jane', surname: 'Smith' } });
 
-    const results = await IndividualManager.search('John');
+    const results = await IndividualManager.search('John', 50);
 
     expect(results).toHaveLength(1);
     expect(results[0].id).toBe(johnId);
@@ -486,6 +486,6 @@ describe('IndividualManager.search', () => {
 
   it('returns no matches for a name nobody has', async () => {
     await IndividualManager.create({ name: { givenNames: 'John', surname: 'Doe' } });
-    expect(await IndividualManager.search('Nonexistent')).toEqual([]);
+    expect(await IndividualManager.search('Nonexistent', 50)).toEqual([]);
   });
 });

@@ -285,10 +285,15 @@ export async function getIndividualsPage(
 }
 
 /**
- * Search individuals by name (requires names table join)
- * Note: This searches across given_names and surname in the names table
+ * Search individuals by name (requires names table join). Matches
+ * `given_names`/`surname` independently with a leading-wildcard `LIKE`, so
+ * neither `idx_names_given` nor `idx_names_surname` can serve it — this is
+ * always a full scan of `names` (see issue #268's FTS5 follow-up, #279).
+ * `limit` doesn't shrink that scan; it bounds the result set the caller
+ * enriches afterward, which is what made an unbounded query expensive (see
+ * `useIndividualSearch`'s `SEARCH_RESULTS_LIMIT` for how callers size it).
  */
-export async function searchIndividuals(query: string): Promise<Individual[]> {
+export async function searchIndividuals(query: string, limit: number): Promise<Individual[]> {
   const db = await getTreeDb();
   const escaped = query.replace(/[%_\\]/g, '\\$&');
   const searchPattern = `%${escaped}%`;
@@ -297,8 +302,9 @@ export async function searchIndividuals(query: string): Promise<Individual[]> {
      FROM individuals i
      JOIN names n ON n.individual_id = i.id
      WHERE n.given_names LIKE $1 ESCAPE '\\' OR n.surname LIKE $2 ESCAPE '\\'
-     ORDER BY i.id`,
-    [searchPattern, searchPattern]
+     ORDER BY i.id
+     LIMIT $3`,
+    [searchPattern, searchPattern, limit]
   );
   return rows.map(mapToIndividual);
 }

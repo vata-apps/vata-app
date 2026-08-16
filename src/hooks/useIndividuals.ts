@@ -45,11 +45,25 @@ export function useIndividual(id: string, options?: { enabled?: boolean }) {
   });
 }
 
+/**
+ * Cap on `useIndividualSearch` results. Its only callers (`PersonPicker`,
+ * `EventParticipantPicker`, via `useIndividualBrowseOrSearch`) display at
+ * most 8 results and show a "+N more, refine your search" hint for the
+ * rest — but both also filter out already-picked people (`excludeIds`)
+ * *after* the search runs, and `searchIndividuals` orders by id, not
+ * relevance, so a narrow query whose lowest-id matches are mostly excluded
+ * needs real headroom to still surface 8 real results. 200 clears that
+ * margin while staying inside `IndividualManager.getByIds`'s single
+ * `IN (...)` chunk (`SQLITE_IN_CLAUSE_LIMIT`), so enrichment cost is
+ * unaffected by the choice (issue #268).
+ */
+export const SEARCH_RESULTS_LIMIT = 200;
+
 /** Name search for pickers (e.g. the Person editor's relation picker). Blank queries are disabled by the caller. */
 export function useIndividualSearch(query: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: queryKeys.individualSearch(query),
-    queryFn: () => IndividualManager.search(query),
+    queryFn: () => IndividualManager.search(query, SEARCH_RESULTS_LIMIT),
     enabled: options?.enabled ?? true,
   });
 }

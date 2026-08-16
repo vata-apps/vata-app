@@ -406,12 +406,15 @@ export class IndividualManager {
   /**
    * Search individuals by name, enriched with details for display (e.g. the
    * Person editor's relation picker). Returns an empty list for a blank
-   * query instead of matching everyone.
+   * query instead of matching everyone. Enrichment is scoped to exactly the
+   * `limit` ids `searchIndividuals` returns, not the full match set — that
+   * unbounded enrichment is what made this expensive on large trees (issue
+   * #268).
    */
-  static async search(query: string): Promise<IndividualWithDetails[]> {
+  static async search(query: string, limit: number): Promise<IndividualWithDetails[]> {
     const trimmed = query.trim();
     if (!trimmed) return [];
-    const matches = await searchIndividuals(trimmed);
+    const matches = await searchIndividuals(trimmed, limit);
     return IndividualManager.getByIds(matches.map((m) => m.id));
   }
 }

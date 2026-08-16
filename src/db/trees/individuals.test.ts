@@ -188,7 +188,7 @@ describe('searchIndividuals', () => {
       `INSERT INTO names (individual_id, given_names, surname, is_primary) VALUES (${dbId}, 'John', 'Doe', 1)`
     );
 
-    const results = await searchIndividuals('John');
+    const results = await searchIndividuals('John', 50);
     expect(results).toHaveLength(1);
     expect(results[0].id).toBe(id);
   });
@@ -200,7 +200,7 @@ describe('searchIndividuals', () => {
       `INSERT INTO names (individual_id, given_names, surname, is_primary) VALUES (${dbId}, 'Jane', 'Smith', 1)`
     );
 
-    const results = await searchIndividuals('Smith');
+    const results = await searchIndividuals('Smith', 50);
     expect(results).toHaveLength(1);
     expect(results[0].id).toBe(id);
   });
@@ -212,7 +212,7 @@ describe('searchIndividuals', () => {
       `INSERT INTO names (individual_id, given_names, surname, is_primary) VALUES (${dbId}, 'John', 'Doe', 1)`
     );
 
-    const results = await searchIndividuals('NonExistent');
+    const results = await searchIndividuals('NonExistent', 50);
     expect(results).toHaveLength(0);
   });
 
@@ -223,7 +223,7 @@ describe('searchIndividuals', () => {
       `INSERT INTO names (individual_id, given_names, surname, is_primary) VALUES (${dbId}, 'Jonathan', 'Doerr', 1)`
     );
 
-    const results = await searchIndividuals('Jon');
+    const results = await searchIndividuals('Jon', 50);
     expect(results).toHaveLength(1);
   });
 });
