@@ -84,9 +84,15 @@ export const useAppStore = create<AppState>()(
   )
 );
 
+// Stable reference so callers memoizing on this value (e.g. EventParticipantPicker's
+// useMemo, see issue #269) don't see a new array on every render before any pick exists.
+const EMPTY_RECENT_IDS: string[] = [];
+
 /** This tree's recently-picked event participants — `[]` outside a tree or before any pick. */
 export function useRecentEventParticipantIds(): string[] {
   return useAppStore((state) =>
-    state.currentTreeId ? (state.recentEventParticipantIdsByTree[state.currentTreeId] ?? []) : []
+    state.currentTreeId
+      ? (state.recentEventParticipantIdsByTree[state.currentTreeId] ?? EMPTY_RECENT_IDS)
+      : EMPTY_RECENT_IDS
   );
 }
