@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "mcp-bridge",
+  "description": "Debug-only: grants the MCP bridge plugin, which `lib.rs` registers solely under `#[cfg(debug_assertions)]`. Excluded from release builds via `app.security.capabilities` in `tauri.conf.json`; re-enabled for `pnpm tauri:dev` via `tauri.dev.conf.json`.",
+  "windows": ["main"],
+  "permissions": ["mcp-bridge:default"]
+}

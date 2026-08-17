@@ -21,7 +21,6 @@
     },
     "dialog:default",
     "dialog:allow-open",
-    "dialog:allow-save",
-    "mcp-bridge:default"
+    "dialog:allow-save"
   ]
 }
