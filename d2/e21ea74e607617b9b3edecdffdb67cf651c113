@@ -1,0 +1,21 @@
+src/components/person-relations/relation-detail.tsx
+  s_40c8d6b6360acb::t_642dff1a52155e 115-116
+  s_40c8d6b6360acb::t_50d99bf664c01f 114,117-121
+  s_40c8d6b6360acb::t_aac9369007b80b 4-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d2e21ea74e607617b9b3edecdffdb67cf651c113",
+  "prompts": {},
+  "sessions": {
+    "s_40c8d6b6360acb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9053e652-937d-4741-9952-698d83846c45",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
