@@ -514,7 +514,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
         });
         savedId = props.individualId;
       }
-      await FamilyManager.saveRelations(savedId, form.gender, buildRelationsPayload(form));
+      await FamilyManager.saveRelations(savedId, buildRelationsPayload(form));
       return savedId;
     },
     onSuccess: (savedId) => {

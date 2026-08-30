@@ -42,12 +42,3 @@ export function useParentFamily(individualId: string, options?: { enabled?: bool
     enabled: options?.enabled ?? true,
   });
 }
-
-/** Every family in which the individual is a spouse (husband or wife). */
-export function useSpouseFamilies(individualId: string, options?: { enabled?: boolean }) {
-  return useQuery({
-    queryKey: queryKeys.spouseFamilies(individualId),
-    queryFn: () => FamilyManager.getSpouseFamiliesWithMembers(individualId),
-    enabled: options?.enabled ?? true,
-  });
-}

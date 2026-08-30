@@ -14,7 +14,6 @@ import {
   removeFamilyMemberById,
   updateFamilyMember,
   getParentFamilies,
-  getSpouseFamilies,
   type FamiliesPageParams,
 } from '$db-tree/families';
 import {
@@ -53,20 +52,10 @@ export interface RelationPersonInput {
   gender?: Gender;
 }
 
-export interface FamilyRelationInput {
-  /** Existing family id — omit for a family introduced in this edit session. */
-  id?: string;
-  /** `null` clears the spouse slot; `undefined` leaves it untouched. */
-  spouse?: RelationPersonInput | null;
-  /** Full desired-state list — children not represented here are unlinked. */
-  children: RelationPersonInput[];
-}
-
 export interface PersonRelationsInput {
   /** `null` removes the father link; `undefined` leaves it untouched. */
   father?: RelationPersonInput | null;
   mother?: RelationPersonInput | null;
-  families?: FamilyRelationInput[];
 }
 
 /**
@@ -416,16 +405,6 @@ export class FamilyManager {
   }
 
   /**
-   * Get every family in which the individual is a spouse (husband or wife),
-   * enriched with members.
-   */
-  static async getSpouseFamiliesWithMembers(individualId: string): Promise<FamilyWithMembers[]> {
-    const families = await getSpouseFamilies(individualId);
-    const enriched = await Promise.all(families.map((family) => FamilyManager.getById(family.id)));
-    return enriched.filter((family): family is FamilyWithMembers => family !== null);
-  }
-
-  /**
    * Set (or replace) an individual's father or mother, creating their parent
    * family on first use. `role` maps to the schema's `husband`/`wife` slot —
    * see the sqlite-standards note: family-member role is a positional slot,
@@ -520,61 +499,36 @@ export class FamilyManager {
   }
 
   /**
-   * Reconcile an individual's full relations against `input`: father, mother,
-   * and every spouse family with its children. Each `RelationPersonInput`
-   * without an `id` is materialized via {@link IndividualManager.create}
-   * first, so "create new person" picks in the Person editor resolve to a
-   * real individual before being linked.
+   * Reconcile an individual's father and mother against `input`. Each
+   * `RelationPersonInput` without an `id` is materialized via
+   * {@link IndividualManager.create} first, so "create new person" picks in
+   * the Person editor resolve to a real individual before being linked.
    *
    * Not wrapped in a DB transaction — see the note on
    * {@link IndividualManager.create}. Each write commits on its own.
    */
-  static async saveRelations(
-    individualId: string,
-    individualGender: Gender,
-    input: PersonRelationsInput
-  ): Promise<void> {
-    if (input.father !== undefined || input.mother !== undefined) {
-      async function applyParent(
-        memberRole: 'husband' | 'wife',
-        value: RelationPersonInput | null | undefined
-      ): Promise<void> {
-        if (value === undefined) return;
-        if (value === null) {
-          const familyId = (await getParentFamilies(individualId))[0]?.id;
-          if (familyId) await replaceRoleMember(familyId, memberRole, null);
-          return;
-        }
-        await replaceRoleMember(
-          await ensureParentFamily(individualId),
-          memberRole,
-          await resolvePersonId(value)
-        );
+  static async saveRelations(individualId: string, input: PersonRelationsInput): Promise<void> {
+    if (input.father === undefined && input.mother === undefined) return;
+
+    async function applyParent(
+      memberRole: 'husband' | 'wife',
+      value: RelationPersonInput | null | undefined
+    ): Promise<void> {
+      if (value === undefined) return;
+      if (value === null) {
+        const familyId = (await getParentFamilies(individualId))[0]?.id;
+        if (familyId) await replaceRoleMember(familyId, memberRole, null);
+        return;
       }
-
-      await applyParent('husband', input.father);
-      await applyParent('wife', input.mother);
+      await replaceRoleMember(
+        await ensureParentFamily(individualId),
+        memberRole,
+        await resolvePersonId(value)
+      );
     }
 
-    if (!input.families) return;
-
-    // Snapshot pre-existing spouse families before the loop can create new ones,
-    // so removal reconciliation only targets unions the caller dropped.
-    const priorSpouseFamilyIds = (await getSpouseFamilies(individualId)).map((family) => family.id);
-    const keptFamilyIds = new Set(
-      input.families.map((family) => family.id).filter((id): id is string => id !== undefined)
-    );
-
-    for (const familyInput of input.families) {
-      await saveSpouseFamily(individualId, individualGender, familyInput);
-    }
-
-    // A pre-existing spouse family no longer listed was removed in the
-    // editor: delete the union (cascades to its member links and any
-    // attached event; the individuals remain).
-    for (const familyId of priorSpouseFamilyIds) {
-      if (!keptFamilyIds.has(familyId)) await FamilyManager.delete(familyId);
-    }
+    await applyParent('husband', input.father);
+    await applyParent('wife', input.mother);
   }
 }
 
@@ -585,72 +539,4 @@ export async function resolvePersonId(ref: RelationPersonInput): Promise<string>
     gender: ref.createNew?.gender,
     name: { givenNames: ref.createNew?.givenNames, surname: ref.createNew?.surname },
   });
-}
-
-/**
- * Reconcile one spouse-family row: create it if new and non-empty, replace
- * the spouse slot, and reconcile children to the exact desired set.
- *
- * The husband/wife slot pair is resolved differently depending on whether
- * the family already exists: an *existing* family's roles were already fixed
- * when it was created, so the individual's own slot is read back off their
- * current membership rather than re-guessed (re-guessing from gender here
- * could pick a slot pair that doesn't match what's actually stored, breaking
- * the spouse-slot lookup below). Only a brand-new family gets its slots from
- * {@link resolveSpouseRoles}.
- */
-async function saveSpouseFamily(
-  individualId: string,
-  individualGender: Gender,
-  familyInput: FamilyRelationInput
-): Promise<void> {
-  const hasContent = familyInput.spouse || familyInput.children.length > 0;
-  if (!familyInput.id && !hasContent) return;
-
-  let familyId = familyInput.id;
-  let individualRole: FamilyRole;
-  let existingMembers: FamilyMember[];
-
-  if (familyId) {
-    existingMembers = await getFamilyMembers(familyId);
-    const ownRole = existingMembers.find((m) => m.individualId === individualId)?.role;
-    individualRole = ownRole === 'wife' ? 'wife' : 'husband';
-  } else {
-    ({ individualRole } = resolveSpouseRoles(individualGender, familyInput.spouse?.gender ?? 'U'));
-    familyId = await createFamily({});
-    await addFamilyMember({ familyId, individualId, role: individualRole });
-    existingMembers = [];
-  }
-  const spouseRole: FamilyRole = otherRole(individualRole);
-
-  if (familyInput.spouse !== undefined) {
-    const existingSpouse = existingMembers.find((m) => m.role === spouseRole);
-    if (existingSpouse) await removeFamilyMemberById(existingSpouse.id);
-    if (familyInput.spouse) {
-      await addFamilyMember({
-        familyId,
-        individualId: await resolvePersonId(familyInput.spouse),
-        role: spouseRole,
-      });
-    }
-  }
-
-  const existingChildIds = existingMembers
-    .filter((m) => m.role === 'child')
-    .map((m) => m.individualId);
-  const desiredChildIds = new Set<string>();
-  for (const child of familyInput.children) {
-    desiredChildIds.add(await resolvePersonId(child));
-  }
-
-  for (const childId of existingChildIds) {
-    if (!desiredChildIds.has(childId)) {
-      await FamilyManager.removeChild(familyId, childId);
-    }
-  }
-  for (const childId of desiredChildIds) {
-    if (!existingChildIds.includes(childId)) {
-      await FamilyManager.addChild(familyId, childId);
-    }
-  }
 }
