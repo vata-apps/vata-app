@@ -10,6 +10,11 @@ import { primitiveStyle } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
 
 export const root = primitiveStyle({
+  // Base UI renders Switch.Root as a <span>; without an explicit display it
+  // stays `inline` and the width/height below collapse to 0 unless the span
+  // happens to be a flex/grid item.
+  display: 'inline-block',
+  verticalAlign: 'middle',
   width: 38,
   height: 22,
   borderRadius: 99,
