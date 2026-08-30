@@ -12,9 +12,3 @@ export const typeAndNature = style({
   gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
   gap: vars.space['5'],
 });
-
-export const typeStatic = style({
-  display: 'flex',
-  alignItems: 'center',
-  minHeight: 34,
-});

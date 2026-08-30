@@ -1,7 +1,8 @@
 /**
  * The fields of one relation record, rendered inside the shared record panel.
  *
- * "Type de lien" is always static text, never a select: which slot a relation
+ * "Type de lien" is a disabled select — shaped like the Nature/Certitude
+ * fields for visual consistency, but never openable. Which slot a relation
  * fills (father vs. mother, sibling, spouse, child) is decided by which "add"
  * picker the user opened, not editable afterward — changing it would mean
  * moving the person to a different `family_members` role, a structural
@@ -21,7 +22,6 @@ import { RecordSources, type RecordSourcesProps } from '../record-panel/record-s
 import { Field } from '../ui/field';
 import { Select } from '../ui/select';
 import { TextField } from '../ui/text-field';
-import { Typography } from '../ui/typography';
 import * as s from './relation-detail.css';
 import { CERTAINTY_OPTIONS, type RelationDetailsForm } from './relation-form';
 import type { RelationCertainty, RelationNature } from '$types/database';
@@ -111,9 +111,14 @@ export function RelationDetail({
     <div className={s.body}>
       <div className={s.typeAndNature}>
         <Field label={t('relationsTab.fields.type')}>
-          <div className={s.typeStatic}>
-            <Typography>{relationLabel}</Typography>
-          </div>
+          <Select.Root value={relationLabel} disabled>
+            <Select.Trigger>
+              <Select.Value>{relationLabel}</Select.Value>
+              <Select.Icon>
+                <Icon name="chevron-down" size={14} />
+              </Select.Icon>
+            </Select.Trigger>
+          </Select.Root>
         </Field>
 
         <Field label={t('relationsTab.fields.nature')} htmlFor={`${id}-nature`}>
