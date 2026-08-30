@@ -1,0 +1,25 @@
+src/components/ui/text-field.tsx
+  s_572473f353ed48::t_12463b1800c3fb 32,41
+  s_572473f353ed48::t_26a93d6f9ef794 11
+src/components/ui/search-input.tsx
+  s_572473f353ed48::t_9808ea4e7ef741 36-43
+  s_572473f353ed48::t_7b68d7c22aea36 9
+src/components/ui/field-attrs.ts
+  s_572473f353ed48::t_aa7c20f8ccaaed 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "64245ff2a63f4afe5dbcf666f0c974c25ab260f0",
+  "prompts": {},
+  "sessions": {
+    "s_572473f353ed48": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a5c0540-505b-4e1f-a3e9-39d9c68d3d41",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
