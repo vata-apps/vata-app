@@ -1,0 +1,20 @@
+src/design/theme.css.ts
+  s_40c8d6b6360acb::t_292e027fccbb94 391-397,399,401
+  s_40c8d6b6360acb::t_487b711c8255cf 389-390,398,400,402
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "d74db268f711d1fb5aa9a064284d3fdb0f336e9e",
+  "prompts": {},
+  "sessions": {
+    "s_40c8d6b6360acb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9053e652-937d-4741-9952-698d83846c45",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
