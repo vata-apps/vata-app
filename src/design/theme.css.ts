@@ -386,3 +386,17 @@ globalStyle(':root:not([data-theme])', {
 
 globalStyle(':root[data-theme="light"]', { vars: assignVars(vars, light) });
 globalStyle(':root[data-theme="dark"]', { vars: assignVars(vars, dark), colorScheme: 'dark' });
+
+/**
+ * App-wide scrollbar treatment — a thin `text.subtle` thumb on a transparent
+ * track, so a scroll container reads as content rather than chrome (replacing
+ * the OS default's wide, opaque gutter). Standards-only: once `scrollbar-color`
+ * is set, WebKit — the Tauri webview's engine — ignores `::-webkit-scrollbar`
+ * anyway. `scrollbar-width` is not inherited, so it goes on `*`, not `:root`;
+ * `scrollbar-color` does inherit but rides the same rule. Both tokens flip
+ * with the theme.
+ */
+globalStyle('*', {
+  scrollbarWidth: 'thin',
+  scrollbarColor: `${vars.color.text.subtle} transparent`,
+});

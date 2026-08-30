@@ -79,20 +79,6 @@ export const mbody = style({
   minHeight: 0,
   overflow: 'auto',
   padding: '14px 18px 18px',
-  // Local for now (first VE screen); promote to the design layer when a second
-  // VE screen needs a styled scroll container instead of copying this block.
-  selectors: {
-    '&::-webkit-scrollbar': { width: 14, height: 14 },
-    '&::-webkit-scrollbar-track': { background: 'transparent' },
-    // Inset thumb (transparent border + padding-box clip) that sits on the theme.
-    '&::-webkit-scrollbar-thumb': {
-      background: vars.color.text.subtle,
-      borderRadius: vars.radius.full,
-      border: '4px solid transparent',
-      backgroundClip: 'padding-box',
-    },
-    '&::-webkit-scrollbar-thumb:hover': { background: vars.color.text.muted },
-  },
 });
 export const mfoot = style({
   display: 'flex',
