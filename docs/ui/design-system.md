@@ -2,7 +2,7 @@
 
 The UI foundation is **Base UI** (`@base-ui/react`) for behavior and **Vanilla Extract** (`@vanilla-extract/css`) for styling. Base UI owns the expensive, generic parts of each component — focus management, keyboard navigation, accessibility, portalling — with no imposed chrome. Vanilla Extract turns the visual identity into a typed, zero-runtime token contract in [`src/design/theme.css.ts`](../../src/design/theme.css.ts). The decision and its rationale are in [ADR-0005](../adr/0005-headless-baseui-vanilla-extract.md).
 
-Shared primitives live in [`src/components/ui/`](../../src/components/ui/). Each file is a thin wrapper: it imports a Base UI part, maps its states to data attributes, and styles it from `vars.*`. These are **behavior-owning primitives** — they add no application logic. New primitives are added only when a Base UI part is needed on multiple screens and the styling belongs to the shared contract.
+Shared primitives live in [`src/components/ui/`](../../src/components/ui/). Each file is a thin wrapper: it imports a Base UI part, maps its states to data attributes, and styles it from `vars.*`. These are **behavior-owning primitives** — they add no application logic. New primitives are added only when a Base UI part is needed on multiple screens and the styling belongs to the shared contract. Every primitive carries a colocated `*.stories.tsx` — see [Storybook](./storybook.md).
 
 Internal components under [`src/components/`](../../src/components/) (outside `ui/`) are reserved for **application organisms** — components used across the app that compose primitives and add applicative behavior (e.g. `tree-shell.tsx`, `tree-nav.tsx`, `app-status-bar.tsx`, `preferences-popover.tsx`, `dropzone.tsx`). Never a restyled atom or molecule.
 

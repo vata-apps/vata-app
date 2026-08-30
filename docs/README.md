@@ -34,6 +34,7 @@ Desktop application for managing genealogical trees. Local-first, GEDCOM 5.5.1 c
 ## User Interface
 
 - [Design System](./ui/design-system.md) — Base UI + Vanilla Extract foundation, brand tokens, design principles, accessibility
+- [Storybook](./ui/storybook.md) — Running Storybook, where stories live, the theme/locale toolbars
 - [Layouts](./ui/layouts.md) — Layout modes
 - Screens: [Home](./ui/screens/home.md) · [Tree View](./ui/screens/tree-view.md) · [Individual View](./ui/screens/individual-view.md) · [Family View](./ui/screens/family-view.md)
 

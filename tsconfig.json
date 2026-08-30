@@ -32,6 +32,6 @@
       "@vata-apps/gedcom-date": ["src/gedcom-date"]
     }
   },
-  "include": ["src"],
+  "include": ["src", ".storybook"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
