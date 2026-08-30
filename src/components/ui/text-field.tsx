@@ -8,6 +8,7 @@
  */
 import * as React from 'react';
 
+import { noAutofillProps } from './field-attrs';
 import * as styles from './text-field.css';
 
 interface TextFieldInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -28,6 +29,7 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
         <textarea
           ref={ref as React.ForwardedRef<HTMLTextAreaElement>}
           className={classes}
+          {...noAutofillProps}
           {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       );
@@ -36,6 +38,7 @@ export const TextField = React.forwardRef<HTMLInputElement | HTMLTextAreaElement
       <input
         ref={ref as React.ForwardedRef<HTMLInputElement>}
         className={classes}
+        {...noAutofillProps}
         {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
       />
     );

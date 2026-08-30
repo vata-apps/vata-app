@@ -6,6 +6,7 @@
 import * as React from 'react';
 
 import { Icon } from '$components/icon';
+import { noAutofillProps } from './field-attrs';
 import * as styles from './search-input.css';
 
 export interface SearchInputProps extends Omit<
@@ -32,7 +33,14 @@ export function SearchInput({
   return (
     <div className={`${styles.root} ${className}`.trim()}>
       <Icon name="search" size={13} />
-      <input type="text" className={styles.input} value={value} onChange={onChange} {...props} />
+      <input
+        type="text"
+        className={styles.input}
+        value={value}
+        onChange={onChange}
+        {...noAutofillProps}
+        {...props}
+      />
       {value.length > 0 && onClear && (
         <button
           type="button"
