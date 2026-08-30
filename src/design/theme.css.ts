@@ -173,9 +173,10 @@ export const vars = createGlobalThemeContract(
 );
 
 /**
- * The one focus treatment: a halo plus a darker border. Spread the halo into
- * a `:focus-visible` selector and pair it with `border: vars.color.border.focus`
- * on the control; every focusable control in the app wears the same one.
+ * The focus halo: spread into a `:focus-visible` selector, paired with
+ * `border: vars.color.border.focus` on controls that carry a border. Every
+ * pressable control (buttons, menu rows, segmented control) wears this 3px
+ * halo; form fields wear the tighter {@link fieldFocusRing} below.
  * `ring` is opaque (not alpha-mixed) so the halo alone clears the 3:1
  * non-text contrast floor on controls that have no paired border color.
  * Forced-colors mode (Windows High Contrast) drops box-shadows entirely, so
@@ -190,6 +191,19 @@ export const focusRing = {
       boxShadow: 'none',
     },
   },
+} as const;
+
+/**
+ * Focus treatment for form fields — text inputs, the multiline textarea, the
+ * select trigger, the search field. A tighter 2px halo than {@link focusRing}
+ * (a field is a quieter surface than a button) plus the `border.focus`
+ * border-color shift the bordered field chrome expects. Spread into a
+ * `:focus-visible` (or `:focus-within`) selector.
+ */
+export const fieldFocusRing = {
+  ...focusRing,
+  boxShadow: `0 0 0 2px ${vars.color.ring}`,
+  borderColor: vars.color.border.focus,
 } as const;
 
 const font = {

@@ -7,7 +7,7 @@
 import { recipe } from '@vanilla-extract/recipes';
 
 import { primitive, transitionFast } from '$/design/primitive-layer';
-import { focusRing, vars } from '$/design/theme.css';
+import { fieldFocusRing, vars } from '$/design/theme.css';
 
 export const textField = recipe({
   base: primitive({
@@ -22,10 +22,7 @@ export const textField = recipe({
     selectors: {
       '&:hover:not(:disabled)': { borderColor: vars.color.border.strong },
       '&::placeholder': { color: vars.color.text.subtle },
-      '&:focus-visible': {
-        ...focusRing,
-        borderColor: vars.color.border.focus,
-      },
+      '&:focus-visible': fieldFocusRing,
       '&:disabled': {
         background: vars.color.surface.sunken,
         color: vars.color.text.muted,

@@ -2,7 +2,7 @@
  * SearchInput primitive styles — filter-as-you-type field for a list pane.
  */
 import { primitiveStyle } from '$/design/primitive-layer';
-import { focusRing, vars } from '$/design/theme.css';
+import { fieldFocusRing, focusRing, vars } from '$/design/theme.css';
 
 export const root = primitiveStyle({
   display: 'flex',
@@ -16,7 +16,7 @@ export const root = primitiveStyle({
   boxSizing: 'border-box',
   color: vars.color.text.subtle,
   selectors: {
-    '&:focus-within': { ...focusRing, borderColor: vars.color.border.focus },
+    '&:focus-within': fieldFocusRing,
   },
 });
 

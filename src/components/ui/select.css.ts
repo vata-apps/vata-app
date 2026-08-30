@@ -6,7 +6,7 @@
  * highlighted/selected item states.
  */
 import { primitiveStyle, transitionFast } from '$/design/primitive-layer';
-import { focusRing, vars } from '$/design/theme.css';
+import { fieldFocusRing, vars } from '$/design/theme.css';
 
 /** See {@link vars.zIndex.popover} for why the z-index sits on the positioner. */
 export const positioner = primitiveStyle({ zIndex: vars.zIndex.popover });
@@ -29,7 +29,7 @@ export const trigger = primitiveStyle({
   transition: transitionFast('border-color', 'box-shadow'),
   selectors: {
     '&:hover:not(:disabled)': { borderColor: vars.color.border.strong },
-    '&:focus-visible': { ...focusRing, borderColor: vars.color.border.focus },
+    '&:focus-visible': fieldFocusRing,
     '&:disabled': { cursor: 'default', opacity: 0.6 },
   },
 });
