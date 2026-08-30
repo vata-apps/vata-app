@@ -6,7 +6,7 @@ import { vars } from '$/design/theme.css';
 import { Icon, type IconName } from '../icon';
 import { Avatar } from '../ui/avatar';
 import { Badge } from '../ui/badge';
-import { IconButton } from '../ui/icon-button';
+import { Button } from '../ui/button';
 import { Typography } from '../ui/typography';
 import * as s from './identity-header.css';
 import type { OverviewPerson } from './overview-types';
@@ -121,9 +121,7 @@ export function IdentityHeader({
         </div>
       </div>
 
-      <IconButton aria-label={t('personEditor.editButtonAria')} onClick={onEdit}>
-        <Icon name="pencil" />
-      </IconButton>
+      <Button onClick={onEdit}>{t('personEditor.editButton')}</Button>
     </div>
   );
 }
