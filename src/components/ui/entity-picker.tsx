@@ -76,6 +76,7 @@ export function EntityPicker({
             <div className={styles.search}>
               <SearchInput
                 autoFocus
+                className={styles.searchFlatFocus}
                 value={query}
                 onChange={(event) => onQueryChange(event.target.value)}
                 onClear={() => onQueryChange('')}

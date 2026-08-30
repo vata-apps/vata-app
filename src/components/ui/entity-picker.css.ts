@@ -3,6 +3,8 @@
  * Built on the `ui/popover` and `ui/search-input` primitives; this file only
  * styles the picker's own search wrap, result rows and create footer.
  */
+import { style } from '@vanilla-extract/css';
+
 import { primitiveStyle, transitionFast } from '$/design/primitive-layer';
 import { focusRing, vars } from '$/design/theme.css';
 
@@ -17,6 +19,20 @@ export const search = primitiveStyle({
   borderBottom: `1px solid ${vars.color.border.subtle}`,
   borderTopLeftRadius: vars.radius.md,
   borderTopRightRadius: vars.radius.md,
+});
+
+/**
+ * Passed to the popover's {@link SearchInput}: the field autofocuses on open,
+ * so the app-wide focus halo lands the instant the popover appears and reads
+ * as a heavy slab against the popup edge. This drops the halo — the border
+ * darkening alone marks focus on a surface this small. Unlayered on purpose,
+ * so it overrides the primitive's own `:focus-within` without a specificity
+ * fight (see `src/design/primitive-layer.ts`).
+ */
+export const searchFlatFocus = style({
+  selectors: {
+    '&:focus-within': { boxShadow: 'none' },
+  },
 });
 
 export const list = primitiveStyle({
@@ -50,7 +66,7 @@ export const rowBody = primitiveStyle({ minWidth: 0, flex: 1 });
 export const rowTitle = primitiveStyle({
   display: 'block',
   fontSize: vars.text.md,
-  fontWeight: vars.weight.semibold,
+  fontWeight: vars.weight.medium,
   lineHeight: '1.25',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
