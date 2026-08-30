@@ -1,0 +1,24 @@
+src/i18n/locales/fr/individuals.json
+  s_5fcb77a12f1720::t_8fbd24dce078d2 401
+src/i18n/locales/en/individuals.json
+  s_5fcb77a12f1720::t_150c946fef539f 401
+src/components/person-overview/identity-header.tsx
+  s_5fcb77a12f1720::t_77288d86cf25d6 9
+  s_5fcb77a12f1720::t_17c08b21af299a 124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "0fdde2538594268b65d26ff094fa3ed7325c401b",
+  "prompts": {},
+  "sessions": {
+    "s_5fcb77a12f1720": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "beefb32d-c1bd-4db4-b7ed-6e0fadad4532",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
