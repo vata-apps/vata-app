@@ -1,0 +1,26 @@
+src/components/ui/entity-picker.css.ts
+  s_40c8d6b6360acb::t_0ba06eb647f9af 24,31
+  s_40c8d6b6360acb::t_420249a063c1db 25-30,32-35
+  s_40c8d6b6360acb::t_7b5192eae668bc 69
+  s_40c8d6b6360acb::t_b00d9cdb3a6341 7
+  s_40c8d6b6360acb::t_ac4ee9085f11bd 6
+  s_40c8d6b6360acb::t_40978e4519bf69 36-37
+src/components/ui/entity-picker.tsx
+  s_40c8d6b6360acb::t_d737a4eb482001 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "9bce97537ac774c0bc170744431d193d233467d3",
+  "prompts": {},
+  "sessions": {
+    "s_40c8d6b6360acb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9053e652-937d-4741-9952-698d83846c45",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
