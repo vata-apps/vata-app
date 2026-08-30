@@ -13,6 +13,7 @@
 import * as React from 'react';
 
 import * as styles from './card.css';
+import { Typography } from './typography';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** How the card carries its padding. */
@@ -27,3 +28,26 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   }
 );
 Card.displayName = 'Card';
+
+/**
+ * The head strip of a `layout="sectioned"` Card: the section title, then
+ * whatever the caller puts beside it — a count badge next to the title, a
+ * trailing action pinned to the far edge (its own class carries
+ * `margin-left: auto`).
+ */
+export function PanelHead({
+  title,
+  children,
+}: {
+  title: string;
+  children?: React.ReactNode;
+}): JSX.Element {
+  return (
+    <div className={styles.head}>
+      <Typography as="h2" size="md" weight="strong">
+        {title}
+      </Typography>
+      {children}
+    </div>
+  );
+}

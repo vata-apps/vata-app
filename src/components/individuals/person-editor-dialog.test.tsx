@@ -22,7 +22,6 @@ vi.mock('$managers/EventManager', () => ({
 vi.mock('$managers/FamilyManager', () => ({
   FamilyManager: {
     getParentFamily: vi.fn(),
-    getSpouseFamiliesWithMembers: vi.fn(),
     saveRelations: vi.fn(),
   },
 }));
@@ -96,7 +95,6 @@ describe('PersonEditorDialog', () => {
     vi.clearAllMocks();
     vi.mocked(EventManager.getEventTypes).mockResolvedValue([BIRT_TYPE, CHR_TYPE, DEAT_TYPE]);
     vi.mocked(FamilyManager.getParentFamily).mockResolvedValue(null);
-    vi.mocked(FamilyManager.getSpouseFamiliesWithMembers).mockResolvedValue([]);
     vi.mocked(FamilyManager.saveRelations).mockResolvedValue(undefined);
     vi.mocked(IndividualManager.search).mockResolvedValue([]);
     vi.mocked(IndividualManager.getAll).mockResolvedValue([]);
@@ -217,100 +215,5 @@ describe('PersonEditorDialog', () => {
 
     await user.click(screen.getByRole('button', { name: 'Remove this relation' }));
     expect(screen.getByRole('button', { name: 'Add father' })).toBeInTheDocument();
-  });
-
-  it('creates a new spouse inline and saves relations alongside the person', async () => {
-    const user = userEvent.setup();
-    vi.mocked(IndividualManager.create).mockResolvedValue('I-0001');
-    renderDialog({ mode: 'create' });
-
-    await user.type(screen.getByLabelText('Given names'), 'Harry');
-    await user.click(screen.getByRole('button', { name: 'Add spouse' }));
-    await user.type(screen.getByPlaceholderText('Search by name…'), 'Ginny Weasley');
-    await user.click(screen.getByRole('button', { name: 'Create "Ginny Weasley"' }));
-    expect(screen.getByText('Ginny Weasley')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Save person' }));
-
-    await waitFor(() => expect(FamilyManager.saveRelations).toHaveBeenCalledTimes(1));
-    expect(FamilyManager.saveRelations).toHaveBeenCalledWith(
-      'I-0001',
-      'U',
-      expect.objectContaining({
-        families: [
-          expect.objectContaining({
-            spouse: {
-              createNew: { givenNames: 'Ginny', surname: 'Weasley', gender: undefined },
-              gender: 'U',
-            },
-            children: [],
-          }),
-        ],
-      })
-    );
-  });
-
-  it('adds a child to a family and removes it', async () => {
-    const user = userEvent.setup();
-    renderDialog({ mode: 'create' });
-
-    await user.click(screen.getByRole('button', { name: 'Add child' }));
-    await user.type(screen.getByPlaceholderText('Search by name…'), 'New Kid');
-    await user.click(screen.getByRole('button', { name: 'Create "New Kid"' }));
-
-    expect(screen.getByText('New Kid')).toBeInTheDocument();
-
-    await user.click(screen.getByRole('button', { name: 'Remove this relation' }));
-    expect(screen.queryByText('New Kid')).not.toBeInTheDocument();
-  });
-
-  it('adds another family row', async () => {
-    const user = userEvent.setup();
-    renderDialog({ mode: 'create' });
-
-    expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(1);
-    await user.click(screen.getByRole('button', { name: 'Add another family' }));
-    expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(2);
-  });
-
-  it('removes a family from the form', async () => {
-    const user = userEvent.setup();
-    renderDialog({ mode: 'create' });
-
-    await user.click(screen.getByRole('button', { name: 'Add another family' }));
-    expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(2);
-
-    const removeButtons = screen.getAllByRole('button', { name: 'Remove this family' });
-    expect(removeButtons).toHaveLength(2);
-    await user.click(removeButtons[0]);
-
-    expect(screen.getAllByRole('button', { name: 'Add spouse' })).toHaveLength(1);
-  });
-
-  it('confirms before removing a family that has children', async () => {
-    const user = userEvent.setup();
-    renderDialog({ mode: 'create' });
-
-    // Give the family a child so removing it would detach someone.
-    await user.click(screen.getByRole('button', { name: 'Add child' }));
-    await user.type(screen.getByPlaceholderText('Search by name…'), 'New Kid');
-    await user.click(screen.getByRole('button', { name: 'Create "New Kid"' }));
-    expect(screen.getByText('New Kid')).toBeInTheDocument();
-
-    // Removing now asks for confirmation rather than dropping the family immediately.
-    await user.click(screen.getByRole('button', { name: 'Remove this family' }));
-    expect(screen.getByText('Remove this family?')).toBeInTheDocument();
-    expect(screen.getByText('New Kid')).toBeInTheDocument();
-
-    // Keeping the family dismisses the dialog and leaves the row intact.
-    await user.click(screen.getByRole('button', { name: 'Keep family' }));
-    expect(screen.queryByText('Remove this family?')).not.toBeInTheDocument();
-    expect(screen.getByText('New Kid')).toBeInTheDocument();
-
-    // Confirming removes the family for good.
-    await user.click(screen.getByRole('button', { name: 'Remove this family' }));
-    await user.click(screen.getByRole('button', { name: 'Remove family' }));
-    expect(screen.queryByText('Remove this family?')).not.toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Add spouse' })).not.toBeInTheDocument();
   });
 });

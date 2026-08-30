@@ -435,13 +435,6 @@
       "motherLabel": "Mother",
       "addFather": "Add father",
       "addMother": "Add mother",
-      "spouse": "Spouse",
-      "children": "Children",
-      "familyLabel": "Family",
-      "addSpouse": "Add spouse",
-      "addChild": "Add child",
-      "addFamily": "Add another family",
-      "removeFamilyAria": "Remove this family",
       "removeAria": "Remove this relation"
     },
     "picker": {
@@ -453,6 +446,7 @@
     "notes": {
       "label": "Notes"
     },
+    "nameRequired": "Enter at least a given name or a surname.",
     "actions": {
       "close": "Close",
       "cancel": "Cancel",
@@ -466,14 +460,6 @@
       "discard": "Discard changes",
       "keepEditing": "Keep editing",
       "indicator": "Unsaved changes"
-    },
-    "removeFamilyConfirm": {
-      "title": "Remove this family?",
-      "description_one": "This family has {{count}} child. Removing the family will unlink them; the person stays in your tree.",
-      "description_other": "This family has {{count}} children. Removing the family will unlink them; the people stay in your tree.",
-      "marriageWarning": "This will also delete the recorded marriage event.",
-      "confirm": "Remove family",
-      "keepFamily": "Keep family"
     }
   },
   "records": {

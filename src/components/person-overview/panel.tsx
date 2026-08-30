@@ -1,9 +1,6 @@
 import { Link } from '@tanstack/react-router';
-import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import * as card from '../ui/card.css';
-import { Typography } from '../ui/typography';
 import * as s from './panel.css';
 
 /** The person tabs an Overview panel can hand off to via its "view all" action. */
@@ -12,29 +9,6 @@ type PanelTabRoute =
   | '/tree/$treeId/individual/$individualId/events'
   | '/tree/$treeId/individual/$individualId/relations'
   | '/tree/$treeId/individual/$individualId/places';
-
-/**
- * The head strip of a sectioned Overview card: the section title, then whatever
- * the panel puts beside it — a count badge next to the title, a
- * {@link ViewAllLink} or {@link ViewAllUnavailable} pinned to the far edge (the
- * action classes carry their own `margin-left: auto`).
- */
-export function PanelHead({
-  title,
-  children,
-}: {
-  title: string;
-  children?: ReactNode;
-}): JSX.Element {
-  return (
-    <div className={card.head}>
-      <Typography as="h2" size="md" weight="strong">
-        {title}
-      </Typography>
-      {children}
-    </div>
-  );
-}
 
 /** Hands off to the tab that owns the section's records in full. */
 export function ViewAllLink({

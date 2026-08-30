@@ -435,13 +435,6 @@
       "motherLabel": "Mère",
       "addFather": "Ajouter le père",
       "addMother": "Ajouter la mère",
-      "spouse": "Conjoint",
-      "children": "Enfants",
-      "familyLabel": "Famille",
-      "addSpouse": "Ajouter un conjoint",
-      "addChild": "Ajouter un enfant",
-      "addFamily": "Ajouter une autre famille",
-      "removeFamilyAria": "Retirer cette famille",
       "removeAria": "Retirer cette relation"
     },
     "picker": {
@@ -453,6 +446,7 @@
     "notes": {
       "label": "Notes"
     },
+    "nameRequired": "Saisissez au moins un prénom ou un nom.",
     "actions": {
       "close": "Fermer",
       "cancel": "Annuler",
@@ -466,14 +460,6 @@
       "discard": "Abandonner les modifications",
       "keepEditing": "Continuer l'édition",
       "indicator": "Modifications non enregistrées"
-    },
-    "removeFamilyConfirm": {
-      "title": "Retirer cette famille?",
-      "description_one": "Cette famille compte {{count}} enfant. Retirer la famille le dissociera; la personne demeure dans votre arbre.",
-      "description_other": "Cette famille compte {{count}} enfants. Retirer la famille les dissociera; les personnes demeurent dans votre arbre.",
-      "marriageWarning": "L'événement de mariage enregistré sera aussi supprimé.",
-      "confirm": "Retirer la famille",
-      "keepFamily": "Conserver la famille"
     }
   },
   "records": {

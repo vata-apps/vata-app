@@ -3,7 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '$components/ui/button';
-import { Caption } from '$components/ui/caption';
+import { Card, PanelHead } from '$components/ui/card';
+import * as card from '$components/ui/card.css';
 import { Dialog } from '$components/ui/dialog';
 import { Field } from '$components/ui/field';
 import { IconButton } from '$components/ui/icon-button';
@@ -14,7 +15,7 @@ import { TextField } from '$components/ui/text-field';
 import { Typography } from '$components/ui/typography';
 import { Icon } from '$components/icon';
 import { useEventTypes } from '$hooks/useEvents';
-import { useParentFamily, useSpouseFamilies } from '$hooks/useFamilies';
+import { useParentFamily } from '$hooks/useFamilies';
 import { useIndividual } from '$hooks/useIndividuals';
 import { usePersonEvents } from '$hooks/usePersonEvents';
 import { eventTypeLabel, type TranslateFn } from '$lib/eventTypeLabel';
@@ -74,16 +75,6 @@ interface RelationPersonRef {
   gender: Gender;
 }
 
-interface FamilyRelationRow {
-  /** Stable React key — the family id for existing families, a local id for one added in this session. */
-  key: string;
-  id?: string;
-  spouse: RelationPersonRef | null;
-  children: RelationPersonRef[];
-  /** Whether this family has a recorded marriage event — removing it deletes that event too. */
-  hasMarriageEvent: boolean;
-}
-
 interface FormState {
   prefix: string;
   givenNames: string;
@@ -97,7 +88,6 @@ interface FormState {
   events: EventRow[];
   father: RelationPersonRef | null;
   mother: RelationPersonRef | null;
-  families: FamilyRelationRow[];
 }
 
 /**
@@ -128,10 +118,6 @@ function emptyEventRows(): EventRow[] {
   ];
 }
 
-function emptyFamilyRow(): FamilyRelationRow {
-  return { key: nextLocalKey('family'), spouse: null, children: [], hasMarriageEvent: false };
-}
-
 function emptyForm(): FormState {
   return {
     prefix: '',
@@ -146,7 +132,6 @@ function emptyForm(): FormState {
     events: emptyEventRows(),
     father: null,
     mother: null,
-    families: [emptyFamilyRow()],
   };
 }
 
@@ -160,30 +145,10 @@ function personRef(individual: IndividualWithDetails, t: TranslateFn): RelationP
   };
 }
 
-/** One row per existing spouse family; at least one (empty) row so "Add spouse" is always reachable. */
-function buildFamilyRows(
-  families: FamilyWithMembers[],
-  individualId: string,
-  t: TranslateFn
-): FamilyRelationRow[] {
-  if (families.length === 0) return [emptyFamilyRow()];
-  return families.map((family) => {
-    const spouse = family.husband?.id === individualId ? family.wife : family.husband;
-    return {
-      key: family.id,
-      id: family.id,
-      spouse: spouse ? personRef(spouse, t) : null,
-      children: family.children.map((child) => personRef(child, t)),
-      hasMarriageEvent: family.marriageEvent !== null,
-    };
-  });
-}
-
 function buildEditForm(
   individual: IndividualWithDetails,
   principalEvents: PersonEventEntry[],
   parentFamily: FamilyWithMembers | null,
-  spouseFamilies: FamilyWithMembers[],
   t: TranslateFn
 ): FormState {
   const primary = individual.primaryName;
@@ -228,7 +193,6 @@ function buildEditForm(
     events: eventRows,
     father: parentFamily?.husband ? personRef(parentFamily.husband, t) : null,
     mother: parentFamily?.wife ? personRef(parentFamily.wife, t) : null,
-    families: buildFamilyRows(spouseFamilies, individual.id, t),
   };
 }
 
@@ -243,21 +207,7 @@ function buildRelationsPayload(form: FormState): PersonRelationsInput {
   return {
     father: toRelationInput(form.father),
     mother: toRelationInput(form.mother),
-    families: form.families.map((row) => ({
-      id: row.id,
-      spouse: toRelationInput(row.spouse),
-      children: row.children
-        .map((child) => toRelationInput(child))
-        .filter((child): child is RelationPersonInput => child !== null),
-    })),
   };
-}
-
-/** The gender to seed a brand-new spouse with, guessed from the edited person's own gender. Unknown when theirs is unknown too. */
-function spouseGenderGuess(gender: Gender): Gender | undefined {
-  if (gender === 'M') return 'F';
-  if (gender === 'F') return 'M';
-  return undefined;
 }
 
 function buildPersonFields(form: FormState) {
@@ -479,9 +429,11 @@ export type PersonEditorDialogProps = {
  * anywhere (the People list and the Person Overview). Covers identity
  * (primary + alternate names, sex, living status), a generic typed life-events
  * list (dates only — a place picker lands later, see the Person editor PRD),
- * notes, and relations (parents, spouse families, children) via the
- * search-or-create {@link PersonPicker}. Styled from the grayscale tokens
- * (ADR-0005).
+ * notes, and parents via the search-or-create {@link PersonPicker}. Spouses,
+ * children, and siblings are edited from the Relations tab instead — this
+ * modal only owns the person's own identity and their parent slots. Styled
+ * from the grayscale tokens (ADR-0005), reusing the same `Card`/`PanelHead`
+ * chrome as the Person Overview so its sections match the record's own cards.
  */
 export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element {
   const { open, onOpenChange, onSaved } = props;
@@ -497,15 +449,12 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
   const parentFamilyQuery = useParentFamily(individualId ?? '', {
     enabled: mode === 'edit' && open,
   });
-  const spouseFamiliesQuery = useSpouseFamilies(individualId ?? '', {
-    enabled: mode === 'edit' && open,
-  });
 
   const [form, setForm] = useState<FormState>(() => emptyForm());
   const [hydrated, setHydrated] = useState(false);
   const [addEventMenuOpen, setAddEventMenuOpen] = useState(false);
   const [confirmDiscardOpen, setConfirmDiscardOpen] = useState(false);
-  const [confirmRemoveFamilyKey, setConfirmRemoveFamilyKey] = useState<string | null>(null);
+  const [attemptedSave, setAttemptedSave] = useState(false);
   const initialSnapshotRef = useRef('');
 
   useEffect(() => {
@@ -513,7 +462,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
       setHydrated(false);
       setAddEventMenuOpen(false);
       setConfirmDiscardOpen(false);
-      setConfirmRemoveFamilyKey(null);
+      setAttemptedSave(false);
       return;
     }
     if (mode === 'create') {
@@ -523,18 +472,12 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
       setHydrated(true);
       return;
     }
-    if (
-      individualQuery.data &&
-      eventsQuery.data &&
-      parentFamilyQuery.isSuccess &&
-      spouseFamiliesQuery.data
-    ) {
+    if (individualQuery.data && eventsQuery.data && parentFamilyQuery.isSuccess) {
       const principalEvents = eventsQuery.data.filter((e) => e.scope === 'principal');
       const initial = buildEditForm(
         individualQuery.data,
         principalEvents,
         parentFamilyQuery.data,
-        spouseFamiliesQuery.data,
         t
       );
       setForm(initial);
@@ -549,7 +492,6 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
     eventsQuery.data,
     parentFamilyQuery.isSuccess,
     parentFamilyQuery.data,
-    spouseFamiliesQuery.data,
     t,
   ]);
 
@@ -588,7 +530,6 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
         queryClient.invalidateQueries({ queryKey: queryKeys.personRelations(savedId) });
         queryClient.invalidateQueries({ queryKey: queryKeys.ancestors(savedId) });
         queryClient.invalidateQueries({ queryKey: queryKeys.parentFamily(savedId) });
-        queryClient.invalidateQueries({ queryKey: queryKeys.spouseFamilies(savedId) });
       }
     },
     onError: (err) => {
@@ -626,6 +567,10 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
     if (mutation.isPending) return;
+    if (!hasName) {
+      setAttemptedSave(true);
+      return;
+    }
     mutation.mutate();
   }
 
@@ -685,59 +630,6 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
     setForm((prev) => ({ ...prev, [role]: null }));
   }
 
-  function updateFamilyRow(
-    key: string,
-    patch: Partial<FamilyRelationRow> | ((row: FamilyRelationRow) => Partial<FamilyRelationRow>)
-  ): void {
-    setForm((prev) => ({
-      ...prev,
-      families: prev.families.map((row) =>
-        row.key === key ? { ...row, ...(typeof patch === 'function' ? patch(row) : patch) } : row
-      ),
-    }));
-  }
-
-  function pickSpouse(rowKey: string, selection: PersonPickerSelection): void {
-    updateFamilyRow(rowKey, { spouse: toRelationRef(selection) });
-  }
-
-  function removeSpouse(rowKey: string): void {
-    updateFamilyRow(rowKey, { spouse: null });
-  }
-
-  function addChild(rowKey: string, selection: PersonPickerSelection): void {
-    updateFamilyRow(rowKey, (row) => ({ children: [...row.children, toRelationRef(selection)] }));
-  }
-
-  function removeChild(rowKey: string, childKey: string): void {
-    updateFamilyRow(rowKey, (row) => ({
-      children: row.children.filter((c) => c.key !== childKey),
-    }));
-  }
-
-  function addFamily(): void {
-    setForm((prev) => ({ ...prev, families: [...prev.families, emptyFamilyRow()] }));
-  }
-
-  function removeFamily(key: string): void {
-    setForm((prev) => ({ ...prev, families: prev.families.filter((row) => row.key !== key) }));
-  }
-
-  // Removing a family with children detaches those children, and removing
-  // one with a marriage event deletes that event — confirm first either way.
-  function requestRemoveFamily(row: FamilyRelationRow): void {
-    if (row.children.length > 0 || row.hasMarriageEvent) {
-      setConfirmRemoveFamilyKey(row.key);
-      return;
-    }
-    removeFamily(row.key);
-  }
-
-  function confirmRemoveFamily(): void {
-    if (confirmRemoveFamilyKey) removeFamily(confirmRemoveFamilyKey);
-    setConfirmRemoveFamilyKey(null);
-  }
-
   const eventTypesByTag = new Map(
     (eventTypesQuery.data ?? []).map((et) => [et.tag ?? '', et] as const)
   );
@@ -762,22 +654,8 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
   const showForm = mode === 'create' || hydrated;
   const subtitle = `${form.givenNames} ${form.surname}`.trim();
   const excludeSelf = individualId ? [individualId] : undefined;
-  const familyPendingRemoval = form.families.find((row) => row.key === confirmRemoveFamilyKey);
-  // Composed from independent clauses, not concatenated unconditionally —
-  // a marriage-only removal (0 children) must not read "This family has 0
-  // children", it should show only the marriage warning.
-  const removeFamilyWarning = [
-    familyPendingRemoval && familyPendingRemoval.children.length > 0
-      ? t('personEditor.removeFamilyConfirm.description', {
-          count: familyPendingRemoval.children.length,
-        })
-      : null,
-    familyPendingRemoval?.hasMarriageEvent
-      ? t('personEditor.removeFamilyConfirm.marriageWarning')
-      : null,
-  ]
-    .filter(Boolean)
-    .join(' ');
+  const hasName = !!(form.givenNames.trim() || form.surname.trim());
+  const nameInvalid = attemptedSave && !hasName;
 
   return (
     <>
@@ -821,328 +699,273 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                   <div className={s.cols}>
                     {/* Left column: names, life events, notes */}
                     <div className={s.col}>
-                      <div className={s.ecard}>
-                        <Caption className={s.sectionCaption}>
-                          {t('personEditor.sections.names')}
-                        </Caption>
-                        <div className={s.fgridC2}>
-                          <Field
-                            label={t('personEditor.fields.givenNames')}
-                            htmlFor="person-given-names"
-                          >
-                            <TextField
-                              id="person-given-names"
-                              value={form.givenNames}
-                              disabled={mutation.isPending}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, givenNames: e.target.value }))
-                              }
-                            />
-                          </Field>
-                          <Field label={t('personEditor.fields.surname')} htmlFor="person-surname">
-                            <TextField
-                              id="person-surname"
-                              value={form.surname}
-                              disabled={mutation.isPending}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, surname: e.target.value }))
-                              }
-                            />
-                          </Field>
-                        </div>
-                        <div className={s.fgrid3Gap}>
-                          <Field label={t('personEditor.fields.prefix')} htmlFor="person-prefix">
-                            <TextField
-                              id="person-prefix"
-                              value={form.prefix}
-                              disabled={mutation.isPending}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, prefix: e.target.value }))
-                              }
-                            />
-                          </Field>
-                          <Field label={t('personEditor.fields.suffix')} htmlFor="person-suffix">
-                            <TextField
-                              id="person-suffix"
-                              value={form.suffix}
-                              disabled={mutation.isPending}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, suffix: e.target.value }))
-                              }
-                            />
-                          </Field>
-                          <Field
-                            label={t('personEditor.fields.nickname')}
-                            htmlFor="person-nickname"
-                          >
-                            <TextField
-                              id="person-nickname"
-                              value={form.nickname}
-                              disabled={mutation.isPending}
-                              onChange={(e) =>
-                                setForm((prev) => ({ ...prev, nickname: e.target.value }))
-                              }
-                            />
-                          </Field>
-                        </div>
-
-                        <div className={`${s.subhead} ${s.subheadMt}`}>
-                          {t('personEditor.sections.otherNames')}
-                        </div>
-                        <div className={s.stack}>
-                          {form.alternateNames.map((row) => (
-                            <div key={row.key} className={s.altrow}>
+                      <Card layout="sectioned">
+                        <PanelHead title={t('personEditor.sections.names')} />
+                        <div className={card.row}>
+                          <div className={s.fgridC2}>
+                            <Field
+                              label={t('personEditor.fields.givenNames')}
+                              htmlFor="person-given-names"
+                            >
                               <TextField
-                                placeholder={t('personEditor.fields.givenNames')}
-                                value={row.givenNames}
+                                id="person-given-names"
+                                value={form.givenNames}
                                 disabled={mutation.isPending}
+                                aria-invalid={nameInvalid || undefined}
                                 onChange={(e) =>
-                                  updateAltName(row.key, { givenNames: e.target.value })
+                                  setForm((prev) => ({ ...prev, givenNames: e.target.value }))
                                 }
                               />
+                            </Field>
+                            <Field
+                              label={t('personEditor.fields.surname')}
+                              htmlFor="person-surname"
+                            >
                               <TextField
-                                placeholder={t('personEditor.fields.surname')}
-                                value={row.surname}
+                                id="person-surname"
+                                value={form.surname}
                                 disabled={mutation.isPending}
+                                aria-invalid={nameInvalid || undefined}
                                 onChange={(e) =>
-                                  updateAltName(row.key, { surname: e.target.value })
+                                  setForm((prev) => ({ ...prev, surname: e.target.value }))
                                 }
                               />
-                              <NameTypeSelect
-                                value={row.type}
+                            </Field>
+                          </div>
+                          <div className={s.fgrid3Gap}>
+                            <Field label={t('personEditor.fields.prefix')} htmlFor="person-prefix">
+                              <TextField
+                                id="person-prefix"
+                                value={form.prefix}
                                 disabled={mutation.isPending}
-                                onValueChange={(type) => updateAltName(row.key, { type })}
+                                onChange={(e) =>
+                                  setForm((prev) => ({ ...prev, prefix: e.target.value }))
+                                }
                               />
-                              <IconButton
-                                type="button"
+                            </Field>
+                            <Field label={t('personEditor.fields.suffix')} htmlFor="person-suffix">
+                              <TextField
+                                id="person-suffix"
+                                value={form.suffix}
                                 disabled={mutation.isPending}
-                                aria-label={t('personEditor.otherNames.removeAria')}
-                                onClick={() => removeAltName(row.key)}
-                              >
-                                <Icon name="x" size={16} />
-                              </IconButton>
-                            </div>
-                          ))}
-                          <Button
-                            type="button"
-                            variant="dashed"
-                            disabled={mutation.isPending}
-                            onClick={addAltName}
-                          >
-                            <Icon name="plus" size={14} />
-                            {t('personEditor.otherNames.addButton')}
-                          </Button>
-                        </div>
-                      </div>
+                                onChange={(e) =>
+                                  setForm((prev) => ({ ...prev, suffix: e.target.value }))
+                                }
+                              />
+                            </Field>
+                            <Field
+                              label={t('personEditor.fields.nickname')}
+                              htmlFor="person-nickname"
+                            >
+                              <TextField
+                                id="person-nickname"
+                                value={form.nickname}
+                                disabled={mutation.isPending}
+                                onChange={(e) =>
+                                  setForm((prev) => ({ ...prev, nickname: e.target.value }))
+                                }
+                              />
+                            </Field>
+                          </div>
+                          {nameInvalid && (
+                            <Typography
+                              as="div"
+                              tone="danger"
+                              size="xs"
+                              className={s.nameErrorSpacing}
+                            >
+                              {t('personEditor.nameRequired')}
+                            </Typography>
+                          )}
 
-                      <div className={s.ecard}>
-                        <Caption className={s.sectionCaption}>
-                          {t('personEditor.sections.lifeEvents')}
-                        </Caption>
-                        <div className={s.eventlist}>
-                          {timelineEvents.map((row) => (
-                            <EventDateRow
-                              key={row.key}
-                              label={eventRowLabel(row.tag, eventTypesByTag, t)}
-                              dateOriginal={row.dateOriginal}
-                              disabled={mutation.isPending}
-                              onChangeDate={(value) => updateEventDate(row.key, value)}
-                              onRemove={row.removable ? () => removeEvent(row.key) : undefined}
-                            />
-                          ))}
-                        </div>
-
-                        <div className={s.addWrap}>
-                          <Button
-                            type="button"
-                            variant="dashed"
-                            disabled={mutation.isPending}
-                            onClick={() => setAddEventMenuOpen((v) => !v)}
-                          >
-                            <Icon name="plus" size={14} />
-                            {t('personEditor.lifeEvents.addButton')}
-                          </Button>
-                          {addEventMenuOpen && (
-                            <div className={s.typegrid}>
-                              {pickableEventTypes.map((et) => (
-                                <button
-                                  key={et.id}
+                          <div className={`${s.subhead} ${s.subheadMt}`}>
+                            {t('personEditor.sections.otherNames')}
+                          </div>
+                          <div className={s.stack}>
+                            {form.alternateNames.map((row) => (
+                              <div key={row.key} className={s.altrow}>
+                                <TextField
+                                  placeholder={t('personEditor.fields.givenNames')}
+                                  value={row.givenNames}
+                                  disabled={mutation.isPending}
+                                  onChange={(e) =>
+                                    updateAltName(row.key, { givenNames: e.target.value })
+                                  }
+                                />
+                                <TextField
+                                  placeholder={t('personEditor.fields.surname')}
+                                  value={row.surname}
+                                  disabled={mutation.isPending}
+                                  onChange={(e) =>
+                                    updateAltName(row.key, { surname: e.target.value })
+                                  }
+                                />
+                                <NameTypeSelect
+                                  value={row.type}
+                                  disabled={mutation.isPending}
+                                  onValueChange={(type) => updateAltName(row.key, { type })}
+                                />
+                                <IconButton
                                   type="button"
-                                  className={s.typegridBtn}
-                                  onClick={() => addEvent(et)}
+                                  disabled={mutation.isPending}
+                                  aria-label={t('personEditor.otherNames.removeAria')}
+                                  onClick={() => removeAltName(row.key)}
                                 >
-                                  {eventTypeLabel(et, t)}
-                                </button>
-                              ))}
+                                  <Icon name="x" size={16} />
+                                </IconButton>
+                              </div>
+                            ))}
+                            <Button
+                              type="button"
+                              variant="dashed"
+                              disabled={mutation.isPending}
+                              onClick={addAltName}
+                            >
+                              <Icon name="plus" size={14} />
+                              {t('personEditor.otherNames.addButton')}
+                            </Button>
+                          </div>
+                        </div>
+                      </Card>
+
+                      <Card layout="sectioned">
+                        <PanelHead title={t('personEditor.sections.lifeEvents')} />
+                        <div className={card.row}>
+                          <div className={s.eventlist}>
+                            {timelineEvents.map((row) => (
+                              <EventDateRow
+                                key={row.key}
+                                label={eventRowLabel(row.tag, eventTypesByTag, t)}
+                                dateOriginal={row.dateOriginal}
+                                disabled={mutation.isPending}
+                                onChangeDate={(value) => updateEventDate(row.key, value)}
+                                onRemove={row.removable ? () => removeEvent(row.key) : undefined}
+                              />
+                            ))}
+                          </div>
+
+                          <div className={s.addWrap}>
+                            <Button
+                              type="button"
+                              variant="dashed"
+                              disabled={mutation.isPending}
+                              onClick={() => setAddEventMenuOpen((v) => !v)}
+                            >
+                              <Icon name="plus" size={14} />
+                              {t('personEditor.lifeEvents.addButton')}
+                            </Button>
+                            {addEventMenuOpen && (
+                              <div className={s.typegrid}>
+                                {pickableEventTypes.map((et) => (
+                                  <button
+                                    key={et.id}
+                                    type="button"
+                                    className={s.typegridBtn}
+                                    onClick={() => addEvent(et)}
+                                  >
+                                    {eventTypeLabel(et, t)}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {deathRow && (
+                            <div className={s.deathGroup}>
+                              <div className={s.statusrow}>
+                                <Switch.Root
+                                  checked={!form.isLiving}
+                                  disabled={mutation.isPending}
+                                  aria-label={t('personEditor.status.deceased')}
+                                  onCheckedChange={(checked) => setDeceased(checked)}
+                                >
+                                  <Switch.Thumb />
+                                </Switch.Root>
+                                <span className={s.switchLabel}>
+                                  {t('personEditor.status.deceased')}
+                                </span>
+                              </div>
+                              <EventDateRow
+                                label={eventRowLabel(deathRow.tag, eventTypesByTag, t)}
+                                dateOriginal={deathRow.dateOriginal}
+                                disabled={mutation.isPending || form.isLiving}
+                                onChangeDate={(value) => updateEventDate(deathRow.key, value)}
+                              />
                             </div>
                           )}
                         </div>
+                      </Card>
 
-                        {deathRow && (
-                          <div className={s.deathGroup}>
-                            <div className={s.statusrow}>
-                              <Switch.Root
-                                checked={!form.isLiving}
-                                disabled={mutation.isPending}
-                                aria-label={t('personEditor.status.deceased')}
-                                onCheckedChange={(checked) => setDeceased(checked)}
-                              >
-                                <Switch.Thumb />
-                              </Switch.Root>
-                              <span className={s.switchLabel}>
-                                {t('personEditor.status.deceased')}
-                              </span>
-                            </div>
-                            <EventDateRow
-                              label={eventRowLabel(deathRow.tag, eventTypesByTag, t)}
-                              dateOriginal={deathRow.dateOriginal}
-                              disabled={mutation.isPending || form.isLiving}
-                              onChangeDate={(value) => updateEventDate(deathRow.key, value)}
-                            />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={s.ecard}>
-                        <Caption className={s.sectionCaption}>
-                          {t('personEditor.sections.notes')}
-                        </Caption>
-                        <TextField
-                          multiline
-                          aria-label={t('personEditor.sections.notes')}
-                          value={form.notes}
-                          disabled={mutation.isPending}
-                          onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
-                        />
-                      </div>
+                      <Card layout="sectioned">
+                        <PanelHead title={t('personEditor.sections.notes')} />
+                        <div className={card.row}>
+                          <TextField
+                            multiline
+                            aria-label={t('personEditor.sections.notes')}
+                            value={form.notes}
+                            disabled={mutation.isPending}
+                            onChange={(e) =>
+                              setForm((prev) => ({ ...prev, notes: e.target.value }))
+                            }
+                          />
+                        </div>
+                      </Card>
                     </div>
 
                     {/* Right column: sex, relations */}
                     <div className={s.col}>
-                      <div className={s.ecard}>
-                        <Caption className={s.sectionCaption}>
-                          {t('personEditor.sex.label')}
-                        </Caption>
-                        <SegmentedControl
-                          aria-label={t('personEditor.sex.label')}
-                          value={form.gender}
-                          onValueChange={(value) => setForm((prev) => ({ ...prev, gender: value }))}
-                          disabled={mutation.isPending}
-                          options={SEX_VALUES.map((value) => ({
-                            value,
-                            label: t(`table.sex.${value}`),
-                          }))}
-                        />
-                      </div>
-
-                      <div className={s.ecard}>
-                        <Caption className={s.sectionCaption}>
-                          {t('personEditor.sections.relations')}
-                        </Caption>
-
-                        <div className={s.subhead}>{t('overview.parents.title')}</div>
-                        <div className={s.relrow2}>
-                          <span className={s.relLabel}>
-                            {t('personEditor.relations.fatherLabel')}
-                          </span>
-                          <RelationSlot
-                            label={t('personEditor.relations.addFather')}
-                            person={form.father}
-                            disabled={mutation.isPending}
-                            excludeIds={excludeSelf}
-                            newPersonGender="M"
-                            onPick={(selection) => setParentSlot('father', selection)}
-                            onRemove={() => removeParentSlot('father')}
-                          />
-                        </div>
-                        <div className={s.relrow2}>
-                          <span className={s.relLabel}>
-                            {t('personEditor.relations.motherLabel')}
-                          </span>
-                          <RelationSlot
-                            label={t('personEditor.relations.addMother')}
-                            person={form.mother}
-                            disabled={mutation.isPending}
-                            excludeIds={excludeSelf}
-                            newPersonGender="F"
-                            onPick={(selection) => setParentSlot('mother', selection)}
-                            onRemove={() => removeParentSlot('mother')}
-                          />
-                        </div>
-
-                        {form.families.map((row, index) => (
-                          <div
-                            key={row.key}
-                            className={
-                              index === 0 ? `${s.familyCard} ${s.familyCardFirst}` : s.familyCard
+                      <Card layout="sectioned">
+                        <PanelHead title={t('personEditor.sex.label')} />
+                        <div className={card.row}>
+                          <SegmentedControl
+                            aria-label={t('personEditor.sex.label')}
+                            value={form.gender}
+                            onValueChange={(value) =>
+                              setForm((prev) => ({ ...prev, gender: value }))
                             }
-                          >
-                            <div className={s.familyHead}>
-                              <span className={s.familyTitle}>
-                                {t('personEditor.relations.familyLabel')}
-                              </span>
-                              <span className={s.grow} />
-                              <IconButton
-                                type="button"
-                                disabled={mutation.isPending}
-                                aria-label={t('personEditor.relations.removeFamilyAria')}
-                                onClick={() => requestRemoveFamily(row)}
-                              >
-                                <Icon name="x" size={16} />
-                              </IconButton>
-                            </div>
-                            <div className={s.relrow2}>
-                              <span className={s.relLabel}>
-                                {t('personEditor.relations.spouse')}
-                              </span>
-                              <RelationSlot
-                                label={t('personEditor.relations.addSpouse')}
-                                person={row.spouse}
-                                disabled={mutation.isPending}
-                                excludeIds={excludeSelf}
-                                newPersonGender={spouseGenderGuess(form.gender)}
-                                onPick={(selection) => pickSpouse(row.key, selection)}
-                                onRemove={() => removeSpouse(row.key)}
-                              />
-                            </div>
-                            <div className={s.relrow2}>
-                              <span className={s.relLabel}>
-                                {t('personEditor.relations.children')}
-                              </span>
-                              <div className={s.childstack}>
-                                {row.children.map((child) => (
-                                  <RelationSlot
-                                    key={child.key}
-                                    label=""
-                                    person={child}
-                                    disabled={mutation.isPending}
-                                    onRemove={() => removeChild(row.key, child.key)}
-                                  />
-                                ))}
-                                <RelationSlot
-                                  label={t('personEditor.relations.addChild')}
-                                  person={null}
-                                  disabled={mutation.isPending}
-                                  excludeIds={excludeSelf}
-                                  onPick={(selection) => addChild(row.key, selection)}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-
-                        <div className={s.familyActions}>
-                          <Button
-                            type="button"
-                            variant="dashed"
                             disabled={mutation.isPending}
-                            onClick={addFamily}
-                          >
-                            <Icon name="plus" size={14} />
-                            {t('personEditor.relations.addFamily')}
-                          </Button>
+                            options={SEX_VALUES.map((value) => ({
+                              value,
+                              label: t(`table.sex.${value}`),
+                            }))}
+                          />
                         </div>
-                      </div>
+                      </Card>
+
+                      <Card layout="sectioned">
+                        <PanelHead title={t('personEditor.sections.relations')} />
+                        <div className={card.row}>
+                          <div className={s.subhead}>{t('overview.parents.title')}</div>
+                          <div className={s.relrow2}>
+                            <span className={s.relLabel}>
+                              {t('personEditor.relations.fatherLabel')}
+                            </span>
+                            <RelationSlot
+                              label={t('personEditor.relations.addFather')}
+                              person={form.father}
+                              disabled={mutation.isPending}
+                              excludeIds={excludeSelf}
+                              newPersonGender="M"
+                              onPick={(selection) => setParentSlot('father', selection)}
+                              onRemove={() => removeParentSlot('father')}
+                            />
+                          </div>
+                          <div className={s.relrow2}>
+                            <span className={s.relLabel}>
+                              {t('personEditor.relations.motherLabel')}
+                            </span>
+                            <RelationSlot
+                              label={t('personEditor.relations.addMother')}
+                              person={form.mother}
+                              disabled={mutation.isPending}
+                              excludeIds={excludeSelf}
+                              newPersonGender="F"
+                              onPick={(selection) => setParentSlot('mother', selection)}
+                              onRemove={() => removeParentSlot('mother')}
+                            />
+                          </div>
+                        </div>
+                      </Card>
                     </div>
                   </div>
 
@@ -1199,31 +1022,6 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
               </Button>
               <Button type="button" variant="danger" onClick={reallyClose}>
                 {t('personEditor.unsavedChanges.discard')}
-              </Button>
-            </div>
-          </Dialog.Popup>
-        </Dialog.Portal>
-      </Dialog.Root>
-
-      <Dialog.Root
-        open={confirmRemoveFamilyKey !== null}
-        onOpenChange={(nextOpen) => {
-          if (!nextOpen) setConfirmRemoveFamilyKey(null);
-        }}
-      >
-        <Dialog.Portal>
-          <Dialog.Backdrop layer="alert" />
-          <Dialog.Popup layer="alert" className={s.alertPopup}>
-            <Dialog.Title className={s.alertTitle}>
-              {t('personEditor.removeFamilyConfirm.title')}
-            </Dialog.Title>
-            <Dialog.Description className={s.alertDesc}>{removeFamilyWarning}</Dialog.Description>
-            <div className={s.alertActions}>
-              <Button type="button" variant="ghost" onClick={() => setConfirmRemoveFamilyKey(null)}>
-                {t('personEditor.removeFamilyConfirm.keepFamily')}
-              </Button>
-              <Button type="button" variant="danger" onClick={confirmRemoveFamily}>
-                {t('personEditor.removeFamilyConfirm.confirm')}
               </Button>
             </div>
           </Dialog.Popup>

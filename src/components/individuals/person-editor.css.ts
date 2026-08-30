@@ -140,22 +140,6 @@ export const cols = style({
   '@media': { 'screen and (max-width: 900px)': { gridTemplateColumns: '1fr' } },
 });
 export const col = style({ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 });
-export const ecard = style({
-  background: vars.color.surface.card,
-  border: `1px solid ${vars.color.border.default}`,
-  borderRadius: vars.radius.md,
-  padding: '14px 15px',
-});
-export const familyCard = style({
-  border: `1px solid ${vars.color.border.default}`,
-  borderRadius: vars.radius.md,
-  padding: '12px 13px',
-  marginTop: 4,
-});
-/** The first family sits below the Parents rows and wants a clearer break from them. */
-export const familyCardFirst = style({ marginTop: 16 });
-/** Spacing for a {@link Caption} used as a form-section title. */
-export const sectionCaption = style({ marginBottom: 12 });
 export const subhead = style({
   fontSize: vars.text.xs,
   fontWeight: vars.weight.strong,
@@ -176,6 +160,8 @@ export const fgridC3 = style({
 export const stack = style({ display: 'flex', flexDirection: 'column', gap: 8 });
 /** The prefix/suffix/nickname grid, spaced below the given/surname grid. */
 export const fgrid3Gap = style([fgridC3, { marginTop: 10 }]);
+/** Spacing for the inline validation message shown under the name fields when neither given names nor surname is filled in — the message itself is a `Typography tone="danger"`. */
+export const nameErrorSpacing = style({ marginTop: 8 });
 /**
  * The Deceased toggle and the always-present Death row. A top hairline sets them
  * apart from the events above while keeping the rows flush-left with Birth (no
@@ -189,13 +175,6 @@ export const deathGroup = style({
   flexDirection: 'column',
   gap: 10,
 });
-/** The "Add another family" action, spaced below the last family. */
-export const familyActions = style({ marginTop: 12 });
-/** Header of a family card: a label and the remove control. */
-export const familyHead = style({ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 });
-/** Same type ramp as {@link subhead}; the flex header owns the spacing, so drop its margin. */
-export const familyTitle = style([subhead, { margin: 0 }]);
-
 export const statusrow = style({ display: 'flex', alignItems: 'center', gap: 10 });
 export const switchLabel = style({ fontSize: vars.text.sm, fontWeight: vars.weight.semibold });
 
@@ -275,7 +254,6 @@ export const relLabel = style({
   color: vars.color.text.body,
   paddingTop: 12,
 });
-export const childstack = style({ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 });
 export const relslot = style({
   minHeight: 44,
   border: `1px dashed ${vars.color.border.strong}`,

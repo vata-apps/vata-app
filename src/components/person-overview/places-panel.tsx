@@ -5,13 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { PlacesMap, type MapPoint } from '$components/map/places-map';
 import { Badge } from '../ui/badge';
-import { Card } from '../ui/card';
+import { Card, PanelHead } from '../ui/card';
 import * as card from '../ui/card.css';
 import { EmptyState } from '../ui/empty-state';
 import { Typography } from '../ui/typography';
 import { PlaceLink } from './entity-links';
 import type { OverviewPlaceLived } from './overview-types';
-import { PanelHead } from './panel';
 import * as s from './places-panel.css';
 
 interface PlacesPanelProps {

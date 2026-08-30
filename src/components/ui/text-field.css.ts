@@ -31,6 +31,7 @@ export const textField = recipe({
         color: vars.color.text.muted,
         cursor: 'not-allowed',
       },
+      '&[aria-invalid="true"]': { borderColor: vars.color.status.err.text },
     },
   }),
   variants: {

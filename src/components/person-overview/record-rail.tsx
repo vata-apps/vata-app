@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { vars } from '$/design/theme.css';
 import { Icon } from '../icon';
 import { Badge } from '../ui/badge';
-import { Card } from '../ui/card';
+import { Card, PanelHead } from '../ui/card';
 import * as card from '../ui/card.css';
 import { EmptyState } from '../ui/empty-state';
 import { Typography } from '../ui/typography';
 import type { OverviewName, OverviewParents, PersonRefData } from './overview-types';
-import { PanelHead, ViewAllLink, ViewAllUnavailable } from './panel';
+import { ViewAllLink, ViewAllUnavailable } from './panel';
 import { PersonRef } from './person-ref';
 import * as s from './record-rail.css';
 
