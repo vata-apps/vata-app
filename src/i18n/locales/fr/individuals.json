@@ -398,7 +398,7 @@
   "personEditor": {
     "createTitle": "Ajouter une personne",
     "editTitle": "Modifier la personne",
-    "editButtonAria": "Modifier la personne",
+    "editButton": "Modifier",
     "sections": {
       "names": "Noms",
       "otherNames": "Autres noms",
