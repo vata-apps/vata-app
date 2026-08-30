@@ -1,0 +1,24 @@
+src/managers/FamilyManager.ts
+  s_40c8d6b6360acb::t_b1d7c3600d1ec0 502-505,510-521,523-527,530-531
+src/components/individuals/person-editor-dialog.tsx
+  s_40c8d6b6360acb::t_7a940a28e5f1aa 517
+src/managers/FamilyManager.test.ts
+  s_40c8d6b6360acb::t_7c2569cc40b968 236,253,264
+  s_40c8d6b6360acb::t_0f47fd432dd7e9 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "77eb31f74ce19300e027f66872bafaded7f06b1a",
+  "prompts": {},
+  "sessions": {
+    "s_40c8d6b6360acb": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9053e652-937d-4741-9952-698d83846c45",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
