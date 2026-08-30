@@ -1,0 +1,29 @@
+src/design/theme.css.ts
+  s_572473f353ed48::t_2ca6050cb77e5a 176-179,196-206
+  s_572473f353ed48::t_1357cd4a6ca9e8 207-208
+src/components/ui/text-field.css.ts
+  s_572473f353ed48::t_b4b3f70f68a882 10
+  s_572473f353ed48::t_040eb695f60db8 25
+src/components/ui/select.css.ts
+  s_572473f353ed48::t_f8a56d1343adee 9
+  s_572473f353ed48::t_119fd65fcea831 32
+src/components/ui/search-input.css.ts
+  s_572473f353ed48::t_0af41cd29fdb51 5
+  s_572473f353ed48::t_6a009d6e178813 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "8ca47c1c866639218cc90d0e67c47594930e9f85",
+  "prompts": {},
+  "sessions": {
+    "s_572473f353ed48": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a5c0540-505b-4e1f-a3e9-39d9c68d3d41",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
