@@ -37,8 +37,7 @@
     "verify": "pnpm lint && pnpm format:check && pnpm build && pnpm typecheck:node && pnpm vitest run",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "tauri": "tauri",
-    "tauri:dev": "tauri dev --config src-tauri/tauri.dev.conf.json",
+    "tauri": "tauri dev --config src-tauri/tauri.dev.conf.json",
     "tauri:build": "tauri build",
     "prepare": "husky && git config core.hooksPath .husky"
   },

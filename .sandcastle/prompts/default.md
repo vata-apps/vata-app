@@ -28,7 +28,7 @@ This runs `pnpm lint`, `pnpm format:check`, `pnpm build`, and `pnpm vitest run` 
 
 These are particular to this CI run and are **not** in `CLAUDE.md`:
 
-- The Tauri desktop app cannot be launched here (no display server). `pnpm tauri:dev` / `pnpm tauri:build` are unavailable. UI verification is performed manually by the maintainer after you finish.
+- The Tauri desktop app cannot be launched here (no display server). `pnpm tauri` / `pnpm tauri:build` are unavailable. UI verification is performed manually by the maintainer after you finish.
 - Do not modify anything under `.sandcastle/` or `.github/workflows/agent-run.yml` unless the issue is explicitly about the agent workflow itself.
 
 # Commit before completing

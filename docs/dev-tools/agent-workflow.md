@@ -13,7 +13,7 @@ Use the agent flow when **all** of these are true:
 Do **not** use it for:
 
 - Exploratory work where the design is still moving
-- Any change that needs you to feel the UX in `pnpm tauri:dev` while iterating
+- Any change that needs you to feel the UX in `pnpm tauri` while iterating
 - Quick one-line fixes — faster to do yourself than label-and-wait
 
 ## Labels at a glance
@@ -52,7 +52,7 @@ There is no escalation label anymore: the author always runs on Sonnet, and the 
         └─ failed → review run errored, comment linking to logs
         │
         ▼
-[you review the PR, manually verify UI in pnpm tauri:dev, merge]
+[you review the PR, manually verify UI in pnpm tauri, merge]
 ```
 
 ## Retrying after a failure or partial
@@ -100,7 +100,7 @@ Notes:
 
 - Writing the PRD (Claude Pro/Max / `to-prd` / `grill-with-docs`)
 - Setting the initial label `agent:ready`
-- Reviewing the PR — code _and_ UI in `pnpm tauri:dev`
+- Reviewing the PR — code _and_ UI in `pnpm tauri`
 - Resolving review threads after the agent addresses them
 - Merging
 - Amending the PRD on retry
@@ -132,7 +132,7 @@ The workflow's job is the boring middle: read, execute, check, package as a PR. 
 
 ## Limits and known issues
 
-- **No UI verification in CI.** A green pipeline does not mean the feature works visually. Manual QA in `pnpm tauri:dev` is non-optional.
+- **No UI verification in CI.** A green pipeline does not mean the feature works visually. Manual QA in `pnpm tauri` is non-optional.
 - **Out-of-scope edits.** The agent may touch files outside the PRD's scope. Review the diff for unexpected churn before merging.
 - **Stuck `agent:running`.** If a job dies without cleanup (rare), the label may stay on. Remove it manually and re-label `agent:ready` to restart.
 - **Vendor lock on `@ai-hero/sandcastle`.** A future major version could require migrating the `.sandcastle/` scripts. Pin the version in `package.json` until a deliberate upgrade.

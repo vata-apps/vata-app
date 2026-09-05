@@ -44,7 +44,7 @@ cd vata-app
 pnpm install
 
 # Run the desktop app in development mode
-pnpm tauri:dev
+pnpm tauri
 ```
 
 The app opens a native window. A `system.db` file is created automatically on first launch.
@@ -53,7 +53,7 @@ The app opens a native window. A `system.db` file is created automatically on fi
 
 | Command              | Description                       |
 | -------------------- | --------------------------------- |
-| `pnpm tauri:dev`     | Full Tauri desktop app (dev mode) |
+| `pnpm tauri`         | Full Tauri desktop app (dev mode) |
 | `pnpm dev`           | Vite dev server only (port 1420)  |
 | `pnpm build`         | TypeScript check + Vite build     |
 | `pnpm tauri:build`   | Build distributable desktop app   |
