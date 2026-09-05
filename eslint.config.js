@@ -47,12 +47,7 @@ export default [
     },
   },
   {
-    files: [
-      'vite.config.ts',
-      'vitest.config.ts',
-      '.storybook/**/*.{ts,tsx}',
-      '.sandcastle/**/*.ts',
-    ],
+    files: ['vite.config.ts', 'vitest.config.ts', '.storybook/**/*.{ts,tsx}'],
     languageOptions: {
       globals: {
         ...globals.node,

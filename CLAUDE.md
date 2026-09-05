@@ -34,7 +34,7 @@ GitHub Issues (`gh` CLI); external PRs are not a triage surface. See `docs/agent
 
 ### Triage labels
 
-Only `ready-for-agent` maps to an existing label (`agent:ready`); the other four canonical roles have no label in this repo. See `docs/agents/triage-labels.md`.
+None of the five canonical roles map to an existing label in this repo. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
