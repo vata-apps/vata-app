@@ -1,0 +1,28 @@
+eslint.config.js
+  s_101786f978dde0::t_503823f7e0d6ba 50
+tsconfig.node.json
+  s_101786f978dde0::t_ab726296b1fbe7 12
+vitest.config.ts
+  s_101786f978dde0::t_e63d6e721df08e 39-40
+docs/agents/triage-labels.md
+  s_101786f978dde0::t_bf512f50e776c0 9-11,13
+  s_101786f978dde0::t_9b4d0f2b0f1495 6-8
+CLAUDE.md
+  s_101786f978dde0::t_1ab291d9db1a64 37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.2",
+  "base_commit_sha": "3e0e30d2739ed2638eb0b5a888dbc512b2cf73d9",
+  "prompts": {},
+  "sessions": {
+    "s_101786f978dde0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b4599f65-e60c-4914-87fd-bdabbf728120",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
