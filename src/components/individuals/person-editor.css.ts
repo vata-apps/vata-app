@@ -14,13 +14,16 @@ import { focusRing, vars } from '$/design/theme.css';
 
 /* ---- dialog chrome -------------------------------------------------- */
 
+// Height is fixed, not capped: a centered popup that grows when its body swaps
+// the loading placeholder for the hydrated form visibly jumps from the middle
+// out. The body (`mbody`) scrolls internally instead.
 export const modal = style({
   width: 'calc(100vw - 44px)',
   maxWidth: 1180,
   display: 'flex',
   flexDirection: 'column',
   overflow: 'hidden',
-  maxHeight: 'calc(100vh - 54px)',
+  height: 'min(680px, calc(100vh - 54px))',
 });
 
 export const mhead = style({

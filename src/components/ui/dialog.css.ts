@@ -10,7 +10,7 @@
  */
 import { recipe } from '@vanilla-extract/recipes';
 
-import { primitive } from '$/design/primitive-layer';
+import { primitive, transitionFast } from '$/design/primitive-layer';
 import { vars } from '$/design/theme.css';
 
 export const backdrop = recipe({
@@ -18,6 +18,10 @@ export const backdrop = recipe({
     position: 'fixed',
     inset: 0,
     background: vars.color.scrim,
+    transition: transitionFast('opacity'),
+    selectors: {
+      '&[data-starting-style], &[data-ending-style]': { opacity: 0 },
+    },
   }),
   variants: {
     layer: {
@@ -42,6 +46,13 @@ export const popup = recipe({
     border: `1px solid ${vars.color.border.default}`,
     borderRadius: vars.radius.lg,
     boxShadow: vars.shadow.xl,
+    transition: transitionFast('opacity', 'transform'),
+    selectors: {
+      '&[data-starting-style], &[data-ending-style]': {
+        opacity: 0,
+        transform: 'translate(-50%, -50%) scale(0.96)',
+      },
+    },
   }),
   variants: {
     layer: {
