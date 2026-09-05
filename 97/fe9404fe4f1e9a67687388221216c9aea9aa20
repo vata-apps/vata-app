@@ -1,0 +1,29 @@
+src-tauri/capabilities/mcp-bridge.json
+  s_101786f978dde0::t_9df5cebd84e642 4
+.sandcastle/prompts/default.md
+  s_101786f978dde0::t_2e947daaf59887 31
+src-tauri/tauri.dev.conf.json
+  s_101786f978dde0::t_e7022ebc2cac6c 3-4,6-17
+docs/dev-tools/agent-workflow.md
+  s_101786f978dde0::t_2e947daaf59887 16,55,103,135
+README.md
+  s_101786f978dde0::t_cc8d993dc6c41b 47,56
+package.json
+  s_101786f978dde0::t_bb8cdc6cfe9935 40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "97fe9404fe4f1e9a67687388221216c9aea9aa20",
+  "prompts": {},
+  "sessions": {
+    "s_101786f978dde0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b4599f65-e60c-4914-87fd-bdabbf728120",
+        "model": "claude-sonnet-5"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
