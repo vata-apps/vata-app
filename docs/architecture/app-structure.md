@@ -1,6 +1,6 @@
 # Application Structure
 
-> **TL;DR for AI agents.** Vata is a single-tree-at-a-time desktop project editor. The app has two **contexts**: an **outside** picker at URL `/` for choosing and managing tree files, and an **inside** shell at URL `/tree/$treeId/...` for working in one tree. The boundary is enforced by `src/routes/tree/$treeId.tsx`, which opens the tree database on mount and closes it on unmount. Never call `getTreeDb()` from an outside route — it throws.
+> **TL;DR** Vata is a single-tree-at-a-time desktop project editor. The app has two **contexts**: an **outside** picker at URL `/` for choosing and managing tree files, and an **inside** shell at URL `/tree/$treeId/...` for working in one tree. The boundary is enforced by `src/routes/tree/$treeId.tsx`, which opens the tree database on mount and closes it on unmount. Never call `getTreeDb()` from an outside route — it throws.
 
 ---
 
@@ -73,29 +73,3 @@ Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Fin
 - **Primary (planned):** native macOS menu `File > Close Tree` (`⌘W`). When wired, the menu event maps to a router navigation back to `/` and to `closeTreeDb()`.
 - **Effect today:** when the layout route `src/routes/tree/$treeId.tsx` unmounts, its cleanup effect calls `closeTreeDb()`. So navigating away from `/tree/$treeId/...` already closes the tree DB correctly.
 - **Fallback affordance** (discrete, not first-class): location TBD during visual work — candidates include the command palette, a Settings menu item, or the tree-name area in the top nav.
-
-### Switch
-
-Not a separate operation. Switching to another tree = close (return to picker) + open (pick another). Maintains single-tree-at-a-time.
-
-## Invariants for AI Agents
-
-Anything that breaks one of these breaks the contract.
-
-1. **Never call `getTreeDb()` from an outside route.** It throws (`"No tree database is currently open"`). Code that reads tree data must live under `/tree/$treeId/...`.
-2. **Never bypass `TreeManager`** for tree-level operations (open / close / create / future rename / delete / duplicate / import / export). The manager keeps `closeTreeDb()` and the Zustand `currentTreeId` in sync.
-3. **Boot starts at `/`.** Do not add auto-resume of the last tree without an explicit decision (currently a non-goal).
-4. **One tree at a time.** Do not add tabs, multi-window, or background "open" of a second tree's DB.
-5. **Inside the tree shell, `src/routes/tree/$treeId.tsx` owns the DB lifecycle.** Do not open or close the tree DB from page components or hooks; trust the route layout. (`TreeManager` remains the authority for tree-level actions from the picker — see invariant 2.)
-6. **Never `SELECT *`** (general SQLite rule, particularly relevant when adding system-DB queries for picker stats — see `docs/architecture/database-schema.md`).
-
-## Where to Look Next
-
-| Question                                                | Doc                                                                              |
-| ------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| What does each layout look like in detail?              | [`docs/ui/layouts.md`](../ui/layouts.md)                                         |
-| What's in the picker / tree dashboard / module screens? | [`docs/ui/screens/`](../ui/screens/)                                             |
-| How are layers connected (UI → Hooks → Manager → DB)?   | [`docs/architecture/overview.md`](./overview.md)                                 |
-| What's in `system.db` vs `tree.db`?                     | [`docs/architecture/database-schema.md`](./database-schema.md)                   |
-| What's the database CRUD contract?                      | [`docs/api/database-layer.md`](../api/database-layer.md)                         |
-| Why two databases?                                      | [`docs/adr/0003-database-architecture.md`](../adr/0003-database-architecture.md) |

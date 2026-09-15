@@ -33,12 +33,6 @@ This document is a map of the technologies in use. It does **not** reproduce con
 
 The Rust shell is a plugin-composition layer with no custom commands. Plugins used: `tauri-plugin-sql` (SQLite from the frontend — client-side `BEGIN`/`COMMIT` across separate calls isn't safe with this plugin's connection pool, see [ADR-006](../adr/0006-no-client-side-transactions.md)), `tauri-plugin-fs` (file I/O for GEDCOM and media), `tauri-plugin-dialog` (native file/confirm dialogs), `tauri-plugin-store` (persistent key/value). Versions and feature flags are in `src-tauri/Cargo.toml`; permissions are in `src-tauri/capabilities/`.
 
-## Non-obvious notes
-
-- **No CSS framework.** `src/styles/app.css` is just the `@radix-ui/themes/styles.css` import plus a global `box-sizing: border-box` reset and `html`/`body`/`#root` height rules. There is no Tailwind, no PostCSS chain, no `@theme` block. Brand fonts (IBM Plex Sans, IBM Plex Mono, Spectral) are self-hosted via `@fontsource*` imports in `src/design/fonts.ts`, not `app.css`.
-- **Vitest is pinned to v2** for compatibility with Vite 5. Test config is in `vitest.config.ts`, kept separate from `vite.config.ts` to avoid version conflicts.
-- **Path aliases** (`$/*`, `$lib/*`, `$db`, …) are documented in `CLAUDE.md` and must be declared in _both_ `vite.config.ts` and `vitest.config.ts`.
-
 ## UI foundation
 
 Shared, behavior-owning wrappers live in `src/components/ui/`, built on Base UI for behavior and Vanilla Extract (`src/design/theme.css.ts`) for tokens. Radix Themes still coexists for screens not yet migrated. See [Design System](../ui/design-system.md) and [ADR-005](../adr/0005-headless-baseui-vanilla-extract.md).

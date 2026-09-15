@@ -107,7 +107,6 @@ docs/             # Product specs, architecture, decisions
 
 All project documentation lives in [`docs/`](docs/):
 
-- [Documentation index](docs/README.md)
 - [Product Requirements](docs/product/prd.md)
 - [Architecture Overview](docs/architecture/overview.md)
 - [Tech Stack](docs/architecture/tech-stack.md)
