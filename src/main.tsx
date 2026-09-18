@@ -10,6 +10,7 @@ import { AppTheme } from '$components/app-theme';
 import { Toast } from '$components/ui/toast';
 import { queryClient } from './lib/query-client';
 import { routeTree } from './routeTree.gen';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 
 const router = createRouter({ routeTree });
 
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <AppTheme>
         <Toast.Provider>
           <RouterProvider router={router} />
+          <TanStackRouterDevtools initialIsOpen={false} router={router} />
           <Toast.Viewport />
         </Toast.Provider>
       </AppTheme>

@@ -16,6 +16,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
+    "types": ["vite/client"],
     "paths": {
       "$/*": ["src/*"],
       "$lib/*": ["src/lib/*"],
@@ -29,9 +30,9 @@
       "$types": ["src/types"],
       "$types/*": ["src/types/*"],
       "@vata-apps/gedcom-parser": ["src/gedcom-parser"],
-      "@vata-apps/gedcom-date": ["src/gedcom-date"]
-    }
+      "@vata-apps/gedcom-date": ["src/gedcom-date"],
+    },
   },
   "include": ["src", ".storybook"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
 }
