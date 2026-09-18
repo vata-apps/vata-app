@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import { TreeHeader } from './tree-header';
+import { TreeHeader } from './tree-header/tree-header';
 import { TreeNav } from './tree-nav/tree-nav';
 import * as styles from './tree-shell.css';
 
