@@ -1,0 +1,28 @@
+src/components/tree-nav/tree-nav-item.css.ts
+  h_15be8797f78b7d 1-31
+src/components/tree-nav/tree-nav-item.tsx
+  h_15be8797f78b7d 1-2,5,7-9,11,13,17,20-21,24-38,40-45
+src/components/tree-nav/tree-nav.css.ts
+  h_15be8797f78b7d 4,10-13
+src/components/tree-nav/tree-nav.tsx
+  h_15be8797f78b7d 1-27
+src/components/tree-shell.tsx
+  h_15be8797f78b7d 4
+src/i18n/locales/en/common.json
+  h_15be8797f78b7d 20
+src/i18n/locales/fr/common.json
+  h_15be8797f78b7d 20
+src/lib/nav-sections.ts
+  h_15be8797f78b7d 6,18-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "df36cba19b10d57326adf4c2661a5547bb2b147e",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
