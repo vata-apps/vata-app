@@ -3,7 +3,7 @@ import type { IconName } from '$components/icon';
 /**
  * Identifier of a top-level navigation section of the in-tree shell.
  */
-export type NavSectionId = 'home' | 'people' | 'families' | 'events' | 'places';
+export type NavSectionId = 'home' | 'people' | 'families' | 'events' | 'places' | 'settings';
 
 /**
  * A section shown in the in-tree navigation bar.
@@ -15,12 +15,8 @@ export interface NavSection {
   readonly icon: IconName;
   /** i18n key (in the `common` namespace) for the section label. */
   readonly labelKey: string;
-  /**
-   * Route the section links to, with `$treeId` filled from the active
-   * tree, or `null` when the section has no route yet. A `null` section
-   * renders as a disabled, non-navigable item.
-   */
-  readonly to: string | null;
+  /** Route the section links to. */
+  readonly to: string;
 }
 
 /**
