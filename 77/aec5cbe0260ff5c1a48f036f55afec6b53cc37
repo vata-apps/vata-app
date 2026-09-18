@@ -1,0 +1,34 @@
+src/components/tree-header/tree-header.css.ts
+  h_15be8797f78b7d 1-18
+src/components/tree-header/tree-header.tsx
+  h_15be8797f78b7d 2,6-7,9-13
+src/components/tree-shell.tsx
+  h_15be8797f78b7d 3
+src/components/ui/breadcrumb/breadcrumb.css.ts
+  h_15be8797f78b7d 2,4,7-8,11-14,17-24
+src/components/ui/breadcrumb/breadcrumb.tsx
+  h_15be8797f78b7d 1-44
+src/routes/tree/$treeId/events.tsx
+  h_15be8797f78b7d 3-4,11-13
+src/routes/tree/$treeId/families.tsx
+  h_15be8797f78b7d 3-4,11-13
+src/routes/tree/$treeId/index.tsx
+  h_15be8797f78b7d 3-4,11-13
+src/routes/tree/$treeId/individual/$individualId.tsx
+  h_15be8797f78b7d 3-6,13-29
+src/routes/tree/$treeId/individuals.tsx
+  h_15be8797f78b7d 3-4,11-13
+src/routes/tree/$treeId/places.tsx
+  h_15be8797f78b7d 3-4,11-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "77aec5cbe0260ff5c1a48f036f55afec6b53cc37",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
