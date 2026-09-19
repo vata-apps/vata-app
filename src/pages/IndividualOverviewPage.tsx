@@ -42,7 +42,7 @@ export function IndividualOverviewPage({
           treeId={treeId}
           viewAll={
             <ViewAllLink
-              to="/tree/$treeId/individual/$individualId/places"
+              to="/tree/$treeId/individuals/$individualId/places"
               treeId={treeId}
               individualId={individualId}
             />

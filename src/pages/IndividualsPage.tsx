@@ -15,8 +15,6 @@ import {
   hasActiveFilters,
   IndividualsFilterToolbar,
 } from '$components/individuals-filters';
-import { Button } from '$components/ui/button';
-import { Typography } from '$components/ui/typography';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { useIndividualsPage } from '$hooks/useIndividuals';
 import { formatName } from '$db-tree/names';
@@ -120,7 +118,7 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
         // click from this same link.
         cell: (person) => (
           <RouterLink
-            to="/tree/$treeId/individual/$individualId"
+            to="/tree/$treeId/individuals/$individualId"
             params={{ treeId, individualId: person.id }}
             className={rowLink}
           >
@@ -169,19 +167,6 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.title}>
-          <Icon name="user" size={28} />
-          <Typography as="h1" size="lg" weight="strong">
-            {tCommon('nav.individuals')}
-          </Typography>
-        </div>
-        <Button onClick={() => setCreateOpen(true)}>
-          <Icon name="plus" />
-          {t('page.addPerson')}
-        </Button>
-      </header>
-
       <div className={styles.toolbar}>
         <IndividualsFilterToolbar value={filters} onChange={setFilters} />
       </div>
@@ -223,7 +208,7 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
           setCreateOpen(false);
           void refetch();
           navigate({
-            to: '/tree/$treeId/individual/$individualId',
+            to: '/tree/$treeId/individuals/$individualId',
             params: { treeId, individualId },
           });
         }}

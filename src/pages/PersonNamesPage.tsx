@@ -49,7 +49,7 @@ function matchesNameFilter(name: PersonName, filter: PersonNameFilter): boolean 
  */
 export function PersonNamesPage(): JSX.Element {
   const { individualId } = useParams({
-    from: '/tree/$treeId/individual/$individualId/names',
+    from: '/tree/$treeId/individuals/$individualId/names',
   });
   const { t } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');

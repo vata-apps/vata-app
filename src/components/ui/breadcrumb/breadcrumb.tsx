@@ -1,38 +1,39 @@
-import { Link, LinkComponentProps, useMatches } from '@tanstack/react-router';
+import { Link, useMatches } from '@tanstack/react-router';
 import * as styles from './breadcrumb.css';
 import { Fragment } from 'react/jsx-runtime';
-
-export interface BreadcrumpLoaderData {
-  breadcrumb: { label: string; route: LinkComponentProps | null }[];
-}
 
 export function Breadcrumb() {
   const matches = useMatches();
 
   const breadcrumb = matches
     .filter((match) => match.loaderData?.breadcrumb)
-    .flatMap((match) => match.loaderData?.breadcrumb);
+    .map((match) => ({
+      label: match.loaderData?.breadcrumb.label,
+      pathname: match.pathname,
+    }));
 
   return (
     <div className={styles.root}>
       {breadcrumb.map((item, index) => {
-        if (!item) return null;
+        if (!item || !item.label) return null;
 
-        if (item.route) {
+        const isLast = breadcrumb.length === index + 1;
+
+        if (!isLast) {
           return (
-            <Fragment key={item.label}>
-              <Link className={styles.link} {...item.route}>
+            <Fragment key={item.pathname}>
+              <Link className={styles.link} to={item.pathname}>
                 {item.label}
               </Link>
-              {breadcrumb.length !== index + 1 && '/'}
+              {!isLast && '/'}
             </Fragment>
           );
         }
 
         return (
-          <Fragment key={item.label}>
+          <Fragment key={item.pathname}>
             <span className={styles.item}>{item.label}</span>
-            {breadcrumb.length !== index + 1 && '/'}
+            {!isLast && '/'}
           </Fragment>
         );
       })}

@@ -1,14 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { TreeViewPage } from '$/pages/TreeView';
+import { TreeDashboard } from '$/pages/TreeView';
 import { t } from 'i18next';
-import { BreadcrumpLoaderData } from '$/components/ui/breadcrumb/breadcrumb';
+import { RouterLoaderData } from '$/types/router';
 
 export const Route = createFileRoute('/tree/$treeId/')({
   component: function TreeViewRoute() {
     const { treeId } = Route.useParams();
-    return <TreeViewPage treeId={treeId} />;
+    return <TreeDashboard treeId={treeId} />;
   },
-  loader: (): BreadcrumpLoaderData => ({
-    breadcrumb: [{ label: t('nav.home'), route: null }],
+
+  loader: (): RouterLoaderData => ({
+    breadcrumb: { label: t('nav.home') },
   }),
 });

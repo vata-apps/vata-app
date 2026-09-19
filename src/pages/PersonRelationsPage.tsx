@@ -116,7 +116,7 @@ type TranslateFn = (key: string, options?: Record<string, unknown>) => string;
  */
 export function PersonRelationsPage(): JSX.Element {
   const { individualId } = useParams({
-    from: '/tree/$treeId/individual/$individualId/relations',
+    from: '/tree/$treeId/individuals/$individualId/relations',
   });
   const { t } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');

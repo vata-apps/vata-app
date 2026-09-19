@@ -62,7 +62,7 @@ export function LifeSpine({
     <Card layout="sectioned">
       <PanelHead title={t('overview.milestone.title')}>
         <ViewAllLink
-          to="/tree/$treeId/individual/$individualId/events"
+          to="/tree/$treeId/individuals/$individualId/events"
           treeId={treeId}
           individualId={individualId}
         />

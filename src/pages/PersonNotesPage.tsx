@@ -170,7 +170,7 @@ function noteExcerpt(text: string, t: TranslateFn): string {
  */
 export function PersonNotesPage(): JSX.Element {
   const { individualId } = useParams({
-    from: '/tree/$treeId/individual/$individualId/notes',
+    from: '/tree/$treeId/individuals/$individualId/notes',
   });
   const { t } = useTranslation('individuals');
   const { t: tCommon } = useTranslation('common');

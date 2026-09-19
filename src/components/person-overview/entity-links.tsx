@@ -16,7 +16,7 @@ export function IndividualLink({
 }): JSX.Element {
   return (
     <Link
-      to="/tree/$treeId/individual/$individualId"
+      to="/tree/$treeId/individuals/$individualId"
       params={{ treeId, individualId }}
       style={plainLinkStyle}
     >

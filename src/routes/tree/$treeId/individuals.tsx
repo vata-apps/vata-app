@@ -1,14 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router';
-import { IndividualsPage } from '$/pages/IndividualsPage';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
 import { t } from 'i18next';
-import { BreadcrumpLoaderData } from '$/components/ui/breadcrumb/breadcrumb';
+import { RouterLoaderData } from '$/types/router';
 
 export const Route = createFileRoute('/tree/$treeId/individuals')({
   component: function IndividualsRoute() {
-    const { treeId } = Route.useParams();
-    return <IndividualsPage treeId={treeId} />;
+    return <Outlet />;
   },
-  loader: (): BreadcrumpLoaderData => ({
-    breadcrumb: [{ label: t('nav.individuals'), route: null }],
+
+  loader: (): RouterLoaderData => ({
+    breadcrumb: { label: t('nav.individuals') },
   }),
 });

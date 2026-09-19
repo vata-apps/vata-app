@@ -5,10 +5,10 @@ import * as s from './panel.css';
 
 /** The person tabs an Overview panel can hand off to via its "view all" action. */
 type PanelTabRoute =
-  | '/tree/$treeId/individual/$individualId/names'
-  | '/tree/$treeId/individual/$individualId/events'
-  | '/tree/$treeId/individual/$individualId/relations'
-  | '/tree/$treeId/individual/$individualId/places';
+  | '/tree/$treeId/individuals/$individualId/names'
+  | '/tree/$treeId/individuals/$individualId/events'
+  | '/tree/$treeId/individuals/$individualId/relations'
+  | '/tree/$treeId/individuals/$individualId/places';
 
 /** Hands off to the tab that owns the section's records in full. */
 export function ViewAllLink({

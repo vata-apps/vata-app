@@ -12,7 +12,7 @@ import { usePersonOverview } from '$hooks/usePersonOverview';
  */
 export function PersonPlacesPage(): JSX.Element | null {
   const { treeId, individualId } = useParams({
-    from: '/tree/$treeId/individual/$individualId/places',
+    from: '/tree/$treeId/individuals/$individualId/places',
   });
   const { data } = usePersonOverview(individualId);
 

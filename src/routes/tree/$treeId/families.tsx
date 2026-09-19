@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { FamiliesPage } from '$/pages/FamiliesPage';
-import { BreadcrumpLoaderData } from '$/components/ui/breadcrumb/breadcrumb';
+import { RouterLoaderData } from '$/types/router';
 import { t } from 'i18next';
 
 export const Route = createFileRoute('/tree/$treeId/families')({
@@ -8,7 +8,8 @@ export const Route = createFileRoute('/tree/$treeId/families')({
     const { treeId } = Route.useParams();
     return <FamiliesPage treeId={treeId} />;
   },
-  loader: (): BreadcrumpLoaderData => ({
-    breadcrumb: [{ label: t('nav.families'), route: null }],
+
+  loader: (): RouterLoaderData => ({
+    breadcrumb: { label: t('nav.families') },
   }),
 });

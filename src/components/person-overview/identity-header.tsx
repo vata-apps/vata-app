@@ -134,14 +134,14 @@ export function IdentityHeader({
  * "Pedigree" stays reserved for the parent–child link type; see `CONTEXT.md`.
  */
 const OVERVIEW_TABS = [
-  { id: 'overview', to: '/tree/$treeId/individual/$individualId' },
-  { id: 'names', to: '/tree/$treeId/individual/$individualId/names' },
-  { id: 'ancestors', to: '/tree/$treeId/individual/$individualId/ancestors' },
-  { id: 'events', to: '/tree/$treeId/individual/$individualId/events' },
-  { id: 'places', to: '/tree/$treeId/individual/$individualId/places' },
-  { id: 'relations', to: '/tree/$treeId/individual/$individualId/relations' },
-  { id: 'sources', to: '/tree/$treeId/individual/$individualId/sources' },
-  { id: 'notes', to: '/tree/$treeId/individual/$individualId/notes' },
+  { id: 'overview', to: '/tree/$treeId/individuals/$individualId' },
+  { id: 'names', to: '/tree/$treeId/individuals/$individualId/names' },
+  { id: 'ancestors', to: '/tree/$treeId/individuals/$individualId/ancestors' },
+  { id: 'events', to: '/tree/$treeId/individuals/$individualId/events' },
+  { id: 'places', to: '/tree/$treeId/individuals/$individualId/places' },
+  { id: 'relations', to: '/tree/$treeId/individuals/$individualId/relations' },
+  { id: 'sources', to: '/tree/$treeId/individuals/$individualId/sources' },
+  { id: 'notes', to: '/tree/$treeId/individuals/$individualId/notes' },
 ] as const;
 
 /**

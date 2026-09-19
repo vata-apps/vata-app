@@ -48,7 +48,7 @@ function ParentsPanel({
     <Card layout="sectioned">
       <PanelHead title={t('overview.parents.title')}>
         <ViewAllLink
-          to="/tree/$treeId/individual/$individualId/relations"
+          to="/tree/$treeId/individuals/$individualId/relations"
           treeId={treeId}
           individualId={individualId}
         />
@@ -102,7 +102,7 @@ function NamesPanel({
     <Card layout="sectioned">
       <PanelHead title={t('overview.names.title')}>
         <ViewAllLink
-          to="/tree/$treeId/individual/$individualId/names"
+          to="/tree/$treeId/individuals/$individualId/names"
           treeId={treeId}
           individualId={individualId}
         />

@@ -104,7 +104,7 @@ function draftLabel(
  */
 export function PersonEventsPage(): JSX.Element {
   const { individualId } = useParams({
-    from: '/tree/$treeId/individual/$individualId/events',
+    from: '/tree/$treeId/individuals/$individualId/events',
   });
   const { t } = useTranslation('individuals');
   const { t: tEvents } = useTranslation('events');
