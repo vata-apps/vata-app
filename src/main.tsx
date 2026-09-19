@@ -11,6 +11,7 @@ import { Toast } from '$components/ui/toast';
 import { queryClient } from './lib/query-client';
 import { routeTree } from './routeTree.gen';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const router = createRouter({ routeTree });
 
@@ -30,6 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Toast.Viewport />
         </Toast.Provider>
       </AppTheme>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>
 );
