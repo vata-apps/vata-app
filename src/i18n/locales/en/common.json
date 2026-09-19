@@ -24,8 +24,7 @@
   },
   "header": {
     "search": "Search everywhere…",
-    "searchShortcut": "⌘K",
-    "create": "Create"
+    "searchShortcut": "⌘K"
   },
   "errors": {
     "generic": "Something went wrong",

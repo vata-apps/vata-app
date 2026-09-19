@@ -24,8 +24,7 @@
   },
   "header": {
     "search": "Rechercher partout…",
-    "searchShortcut": "⌘K",
-    "create": "Créer"
+    "searchShortcut": "⌘K"
   },
   "errors": {
     "generic": "Une erreur est survenue",

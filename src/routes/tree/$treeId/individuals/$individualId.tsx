@@ -16,6 +16,7 @@ export const Route = createFileRoute('/tree/$treeId/individuals/$individualId')(
 
     return {
       breadcrumb: { label: formatName(person?.primaryName || null).full },
+      edit: { labelKey: 'page.edit' },
     };
   },
 });

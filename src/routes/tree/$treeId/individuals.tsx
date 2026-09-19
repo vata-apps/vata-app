@@ -9,5 +9,6 @@ export const Route = createFileRoute('/tree/$treeId/individuals')({
 
   loader: (): RouterLoaderData => ({
     breadcrumb: { label: t('nav.individuals') },
+    create: { labelKey: 'page.create' },
   }),
 });

@@ -1,7 +1,8 @@
 {
   "heading": "Individu {{individualId}}",
   "page": {
-    "addPerson": "Ajouter une personne"
+    "create": "Ajouter une personne",
+    "edit": "Modifier"
   },
   "filters": {
     "name": {

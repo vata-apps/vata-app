@@ -14,5 +14,6 @@ export const root = style({
 export const actions = style({
   marginLeft: 'auto',
   display: 'flex',
+  alignItems: 'center',
   gap: '0.5rem',
 });
