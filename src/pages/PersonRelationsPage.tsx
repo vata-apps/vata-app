@@ -405,7 +405,7 @@ export function PersonRelationsPage(): JSX.Element {
         <PersonPicker
           label={t('relationsTab.add.secondParent')}
           excludeIds={[individualId, ...union.children.map((child) => child.personId)]}
-          triggerClassName={button({ variant: 'ghost' })}
+          triggerClassName={button({ variant: 'secondary' })}
           onSelect={(selection) =>
             startDraft({ kind: 'secondParent', familyId: union.familyId }, selection)
           }
@@ -426,7 +426,7 @@ export function PersonRelationsPage(): JSX.Element {
       label={t('relationsTab.add.father')}
       newPersonGender="M"
       excludeIds={[individualId, ...(data.mother ? [data.mother.id] : [])]}
-      triggerClassName={button({ variant: 'ghost' })}
+      triggerClassName={button({ variant: 'secondary' })}
       onSelect={(selection) => startDraft({ kind: 'father' }, selection)}
     />
   ) : null;
@@ -435,7 +435,7 @@ export function PersonRelationsPage(): JSX.Element {
       label={t('relationsTab.add.mother')}
       newPersonGender="F"
       excludeIds={[individualId, ...(data.father ? [data.father.id] : [])]}
-      triggerClassName={button({ variant: 'ghost' })}
+      triggerClassName={button({ variant: 'secondary' })}
       onSelect={(selection) => startDraft({ kind: 'mother' }, selection)}
     />
   ) : null;
@@ -448,7 +448,7 @@ export function PersonRelationsPage(): JSX.Element {
         ...(data.father ? [data.father.id] : []),
         ...(data.mother ? [data.mother.id] : []),
       ]}
-      triggerClassName={button({ variant: 'ghost' })}
+      triggerClassName={button({ variant: 'secondary' })}
       onSelect={(selection) => startDraft({ kind: 'sibling' }, selection)}
     />
   );
@@ -459,7 +459,7 @@ export function PersonRelationsPage(): JSX.Element {
         individualId,
         ...rows.unions.flatMap((union) => (union.spouse ? [union.spouse.personId] : [])),
       ]}
-      triggerClassName={button({ variant: 'ghost' })}
+      triggerClassName={button({ variant: 'secondary' })}
       onSelect={(selection) => startDraft({ kind: 'union' }, selection)}
     />
   );
@@ -537,7 +537,7 @@ export function PersonRelationsPage(): JSX.Element {
                         ...(union.spouse ? [union.spouse.personId] : []),
                         ...union.children.map((child) => child.personId),
                       ]}
-                      triggerClassName={button({ variant: 'ghost' })}
+                      triggerClassName={button({ variant: 'secondary' })}
                       onSelect={(selection) =>
                         startDraft({ kind: 'child', familyId: union.familyId }, selection)
                       }

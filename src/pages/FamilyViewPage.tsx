@@ -12,7 +12,7 @@ export function FamilyViewPage({ treeId, familyId }: FamilyViewPageProps): JSX.E
   const { t } = useTranslation('families');
   return (
     <Box p="5">
-      <Button asChild variant="ghost" color="gray" size="1">
+      <Button asChild color="gray" size="1">
         <Link to="/tree/$treeId/families" params={{ treeId }}>
           {tCommon('nav.back')}
         </Link>

@@ -12,7 +12,7 @@ export function EventViewPage({ treeId, eventId }: EventViewPageProps): JSX.Elem
   const { t } = useTranslation('events');
   return (
     <Box p="5">
-      <Button asChild variant="ghost" color="gray" size="1">
+      <Button asChild size="1">
         <Link to="/tree/$treeId/events" params={{ treeId }}>
           {tCommon('nav.back')}
         </Link>

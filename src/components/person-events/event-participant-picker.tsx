@@ -165,7 +165,7 @@ export function EventParticipantPicker({
           {t('eventsTab.participants.add')}
         </>
       }
-      triggerClassName={button({ variant: 'ghost' })}
+      triggerClassName={button({ variant: 'secondary' })}
       disabled={disabled}
       query={query}
       onQueryChange={setQuery}

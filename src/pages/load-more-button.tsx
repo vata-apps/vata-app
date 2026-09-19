@@ -21,7 +21,7 @@ export function LoadMoreButton({ onLoadMore, isLoading }: LoadMoreButtonProps): 
   const { t } = useTranslation('common');
   return (
     <div className={styles.loadMoreRow}>
-      <Button variant="ghost" onClick={onLoadMore} disabled={isLoading}>
+      <Button onClick={onLoadMore} disabled={isLoading}>
         {isLoading ? t('table.loadingMore') : t('table.loadMore')}
       </Button>
     </div>

@@ -59,7 +59,7 @@ export function DraftFooter({
       <Typography className={s.draftStatus} size="xs" tone="muted">
         {t('records.notSaved')}
       </Typography>
-      <Button variant="ghost" onClick={onCancel} disabled={isCreating}>
+      <Button onClick={onCancel} disabled={isCreating}>
         {t('records.cancel')}
       </Button>
       <Button onClick={onCreate} disabled={!canCreate || isCreating}>
@@ -97,7 +97,7 @@ export function InlineDelete({
           <Typography className={s.confirmQuestion} size="xs">
             {question}
           </Typography>
-          <Button variant="ghost" onClick={() => setConfirming(false)} disabled={isDeleting}>
+          <Button onClick={() => setConfirming(false)} disabled={isDeleting}>
             {t('records.cancel')}
           </Button>
           <Button variant="danger" onClick={onDelete} disabled={isDeleting}>
@@ -105,7 +105,7 @@ export function InlineDelete({
           </Button>
         </div>
       ) : (
-        <Button variant="ghost" className={s.deleteTrigger} onClick={() => setConfirming(true)}>
+        <Button className={s.deleteTrigger} onClick={() => setConfirming(true)}>
           <Icon name="trash" size={14} />
           {triggerLabel}
         </Button>

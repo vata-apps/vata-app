@@ -817,7 +817,6 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                             ))}
                             <Button
                               type="button"
-                              variant="dashed"
                               disabled={mutation.isPending}
                               onClick={addAltName}
                             >
@@ -847,7 +846,6 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                           <div className={s.addWrap}>
                             <Button
                               type="button"
-                              variant="dashed"
                               disabled={mutation.isPending}
                               onClick={() => setAddEventMenuOpen((v) => !v)}
                             >
@@ -981,7 +979,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
             <div className={s.mfoot}>
               <Button
                 type="submit"
-                variant="solid"
+                variant="primary"
                 form="person-editor-form"
                 disabled={!showForm || mutation.isPending}
               >
@@ -989,12 +987,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
                   ? t('personEditor.actions.saveNew')
                   : t('personEditor.actions.save')}
               </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={attemptClose}
-                disabled={mutation.isPending}
-              >
+              <Button type="button" onClick={attemptClose} disabled={mutation.isPending}>
                 {t('personEditor.actions.cancel')}
               </Button>
               <span className={s.grow} />
@@ -1017,7 +1010,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
               {t('personEditor.unsavedChanges.description')}
             </Dialog.Description>
             <div className={s.alertActions}>
-              <Button type="button" variant="ghost" onClick={() => setConfirmDiscardOpen(false)}>
+              <Button type="button" onClick={() => setConfirmDiscardOpen(false)}>
                 {t('personEditor.unsavedChanges.keepEditing')}
               </Button>
               <Button type="button" variant="danger" onClick={reallyClose}>

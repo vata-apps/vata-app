@@ -1,12 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button, Callout, Dialog, Flex, Grid, Switch, Text, TextField } from '@radix-ui/themes';
+import { Callout, Dialog, Flex, Grid, Switch, Text, TextField } from '@radix-ui/themes';
 
 import { StatCell } from '$components/trees/stat-cell';
 import { TreeManager } from '$managers/TreeManager';
 import { GedcomManager } from '$managers/GedcomManager';
 import { queryKeys } from '$lib/query-keys';
+import { Button } from '../ui/button';
 
 /**
  * Lightweight projection of {@link Tree} carrying just what the modal
@@ -205,10 +206,10 @@ export function DeleteTreeModal({
         </form>
 
         <Flex gap="3" mt="4" justify="end">
-          <Button variant="soft" color="gray" onClick={closeModal} disabled={mutation.isPending}>
+          <Button onClick={closeModal} disabled={mutation.isPending}>
             {t('deleteTree.cancel')}
           </Button>
-          <Button type="submit" form={formId} color="red" disabled={!canSubmit}>
+          <Button type="submit" form={formId} disabled={!canSubmit}>
             {t('deleteTree.submit')}
           </Button>
         </Flex>

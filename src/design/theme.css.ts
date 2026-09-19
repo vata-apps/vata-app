@@ -212,7 +212,7 @@ const font = {
   mono: `'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace`,
 };
 
-const radius = { sm: '5px', md: '8px', lg: '12px', full: '999px' };
+const radius = { sm: '6px', md: '8px', lg: '12px', full: '999px' };
 
 const motion = {
   ease: { standard: 'cubic-bezier(0.2, 0, 0, 1)' },

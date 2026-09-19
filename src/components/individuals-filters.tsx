@@ -129,7 +129,7 @@ export function IndividualsFilterToolbar({
       </div>
 
       {active && (
-        <Button variant="ghost" onClick={() => onChange(DEFAULT_INDIVIDUAL_FILTERS)}>
+        <Button onClick={() => onChange(DEFAULT_INDIVIDUAL_FILTERS)}>
           <Icon name="x" size={14} />
           {tCommon('filters.clear')}
         </Button>

@@ -355,7 +355,7 @@ export function PersonNotesPage(): JSX.Element {
   }
 
   const addPersonButton = (
-    <Button variant="ghost" onClick={startPersonDraft}>
+    <Button onClick={startPersonDraft}>
       <Icon name="plus" size={15} />
       {t('notesTab.add.person')}
     </Button>
@@ -365,7 +365,7 @@ export function PersonNotesPage(): JSX.Element {
     <NoteTargetPicker
       label={t('notesTab.add.event')}
       options={eventPickerOptions}
-      triggerClassName={button({ variant: 'ghost' })}
+      triggerClassName={button({ variant: 'secondary' })}
       onSelect={(option) => {
         const event = eventById.get(option.id);
         if (!event) return;
@@ -382,7 +382,7 @@ export function PersonNotesPage(): JSX.Element {
     <NoteTargetPicker
       label={t('notesTab.add.relation')}
       options={relationPickerOptions}
-      triggerClassName={button({ variant: 'ghost' })}
+      triggerClassName={button({ variant: 'secondary' })}
       onSelect={(option) => {
         const relation = relationByOptionId.get(option.id);
         if (!relation) return;

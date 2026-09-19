@@ -12,7 +12,7 @@ export function PlaceViewPage({ treeId, placeId }: PlaceViewPageProps): JSX.Elem
   const { t } = useTranslation('places');
   return (
     <Box p="5">
-      <Button asChild variant="ghost" color="gray" size="1">
+      <Button asChild color="gray" size="1">
         <Link to="/tree/$treeId/places" params={{ treeId }}>
           {tCommon('nav.back')}
         </Link>

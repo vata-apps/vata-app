@@ -177,7 +177,7 @@ export function PersonNamesPage(): JSX.Element {
   }
 
   const addButton = (
-    <Button variant="ghost" onClick={startDraft}>
+    <Button onClick={startDraft}>
       <Icon name="plus" size={15} />
       {t('namesTab.add')}
     </Button>

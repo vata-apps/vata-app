@@ -132,7 +132,7 @@ export function FamiliesFilterToolbar({
       </div>
 
       {active && (
-        <Button variant="ghost" onClick={() => onChange(DEFAULT_FAMILY_FILTERS)}>
+        <Button onClick={() => onChange(DEFAULT_FAMILY_FILTERS)}>
           <Icon name="x" size={14} />
           {tCommon('filters.clear')}
         </Button>

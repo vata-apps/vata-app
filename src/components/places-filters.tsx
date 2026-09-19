@@ -110,7 +110,7 @@ export function PlacesFilterToolbar({
       </div>
 
       {active && (
-        <Button variant="ghost" onClick={() => onChange(DEFAULT_PLACE_FILTERS)}>
+        <Button onClick={() => onChange(DEFAULT_PLACE_FILTERS)}>
           <Icon name="x" size={14} />
           {tCommon('filters.clear')}
         </Button>

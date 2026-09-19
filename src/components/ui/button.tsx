@@ -2,10 +2,13 @@
  * Button primitive — a styled `<button>` with four variants.
  *
  * Use `variant` to choose the visual weight:
- * - `solid` (default): primary actions like "Save".
- * - `ghost`: secondary actions like "Cancel".
+ * - `primary`: primary actions like "Save".
+ * - `secondary` (default): secondary actions like "Cancel".
  * - `danger`: destructive confirmations like "Discard" or "Delete".
- * - `dashed`: the "add another row" affordance inside a form section.
+ *
+ * Use `size` to choose the size:
+ * - `sm`: actions inside another components
+ * - `md` (default): main actions in the page
  *
  * The component forwards refs and native button attributes; disabled and
  * focus states are handled by the stylesheet.
@@ -16,18 +19,21 @@ import * as styles from './button.css';
 
 type ButtonElement = HTMLButtonElement;
 
+export const BUTTON_SIZES = ['sm', 'md'] as const;
+export const BUTTON_VARIANTS = ['primary', 'secondary', 'danger'] as const;
+
 export interface ButtonProps extends React.ButtonHTMLAttributes<ButtonElement> {
-  /** Visual weight of the button. */
-  variant?: 'solid' | 'ghost' | 'danger' | 'dashed';
+  size?: (typeof BUTTON_SIZES)[number];
+  variant?: (typeof BUTTON_VARIANTS)[number];
 }
 
 export const Button = React.forwardRef<ButtonElement, ButtonProps>(
-  ({ variant = 'solid', type = 'button', className = '', ...props }, ref) => {
+  ({ size = 'md', variant = 'secondary', type = 'button', className = '', ...props }, ref) => {
     return (
       <button
         ref={ref}
         type={type}
-        className={`${styles.button({ variant })} ${className}`.trim()}
+        className={`${styles.button({ size, variant })} ${className}`.trim()}
         {...props}
       />
     );

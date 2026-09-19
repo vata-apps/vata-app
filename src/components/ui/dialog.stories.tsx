@@ -36,7 +36,7 @@ export const Default: Story = {
             Change the recorded name, dates and notes for this individual.
           </Dialog.Description>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 20 }}>
-            <Dialog.Close render={<Button variant="ghost">Cancel</Button>} />
+            <Dialog.Close render={<Button>Cancel</Button>} />
             <Dialog.Close render={<Button>Save</Button>} />
           </div>
         </Dialog.Popup>
@@ -60,7 +60,7 @@ export const AlertLayer: Story = {
             The unsaved name and dates will be lost.
           </Dialog.Description>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 20 }}>
-            <Dialog.Close render={<Button variant="ghost">Keep editing</Button>} />
+            <Dialog.Close render={<Button>Keep editing</Button>} />
             <Dialog.Close render={<Button variant="danger">Discard</Button>} />
           </div>
         </Dialog.Popup>

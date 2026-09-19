@@ -129,7 +129,7 @@ export function EventsFilterToolbar({
       </div>
 
       {active && (
-        <Button variant="ghost" onClick={() => onChange(DEFAULT_EVENT_FILTERS)}>
+        <Button onClick={() => onChange(DEFAULT_EVENT_FILTERS)}>
           <Icon name="x" size={14} />
           {tCommon('filters.clear')}
         </Button>

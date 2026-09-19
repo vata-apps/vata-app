@@ -1,9 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Icon } from '$components/icon';
-import { Button } from './button';
-
-const VARIANTS = ['solid', 'ghost', 'danger', 'dashed'] as const;
+import { Button, BUTTON_SIZES, BUTTON_VARIANTS } from './button';
 
 const meta = {
   title: 'UI/Button',
@@ -12,7 +10,9 @@ const meta = {
   parameters: { layout: 'centered' },
   args: { children: 'Save person' },
   argTypes: {
-    variant: { control: 'inline-radio', options: VARIANTS },
+    disabled: { control: 'boolean' },
+    size: { control: 'inline-radio', options: BUTTON_SIZES },
+    variant: { control: 'inline-radio', options: BUTTON_VARIANTS },
   },
 } satisfies Meta<typeof Button>;
 
@@ -20,15 +20,17 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const Solid: Story = { args: { variant: 'solid' } };
+export const Primary: Story = { args: { variant: 'primary' } };
 
-export const Ghost: Story = { args: { variant: 'ghost', children: 'Cancel' } };
+export const Secondary: Story = { args: { variant: 'secondary', children: 'Cancel' } };
 
 export const Danger: Story = { args: { variant: 'danger', children: 'Discard changes' } };
 
-export const Dashed: Story = { args: { variant: 'dashed', children: 'Add another name' } };
-
 export const Disabled: Story = { args: { disabled: true } };
+
+export const Sm: Story = { args: { size: 'sm' } };
+
+export const Md: Story = { args: { size: 'md' } };
 
 export const WithIcon: Story = {
   args: {
@@ -44,12 +46,30 @@ export const WithIcon: Story = {
 /** Every variant side by side for a visual pass against the design system. */
 export const Matrix: Story = {
   render: (args) => (
-    <div style={{ display: 'flex', gap: 12 }}>
-      {VARIANTS.map((variant) => (
-        <Button {...args} key={variant} variant={variant}>
-          {variant}
-        </Button>
-      ))}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', gap: 12 }}>
+        {BUTTON_VARIANTS.map((variant) => (
+          <Button {...args} key={variant} variant={variant}>
+            {variant}
+          </Button>
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: 12 }}>
+        {BUTTON_VARIANTS.map((variant) => (
+          <Button {...args} key={variant} disabled variant={variant}>
+            {variant}
+          </Button>
+        ))}
+      </div>
+      <div style={{ display: 'flex', gap: 12 }}>
+        {BUTTON_SIZES.map((size) => (
+          <div key={size}>
+            <Button {...args} size={size}>
+              {size}
+            </Button>
+          </div>
+        ))}
+      </div>
     </div>
   ),
 };

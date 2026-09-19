@@ -28,7 +28,6 @@ export function TreeHeader(): JSX.Element {
             onClick={() => {
               // TODO: Handle edit click
             }}
-            variant="dashed"
           >
             {t(editButton.labelKey)}
           </Button>
@@ -39,6 +38,7 @@ export function TreeHeader(): JSX.Element {
             onClick={() => {
               // TODO: Handle create click
             }}
+            variant="primary"
           >
             {t(createButton.labelKey)}
           </Button>
