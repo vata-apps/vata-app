@@ -1,0 +1,72 @@
+src/components/person-overview/entity-links.tsx
+  h_15be8797f78b7d 19
+src/components/person-overview/identity-header.tsx
+  h_15be8797f78b7d 137-144
+src/components/person-overview/life-spine.tsx
+  h_15be8797f78b7d 65
+src/components/person-overview/panel.tsx
+  h_15be8797f78b7d 8-11
+src/components/person-overview/record-rail.tsx
+  h_15be8797f78b7d 51,105
+src/components/ui/breadcrumb/breadcrumb.tsx
+  h_15be8797f78b7d 1,10-13,18-20,22,24-25,28,34,36
+src/pages/IndividualOverviewPage.tsx
+  h_15be8797f78b7d 45
+src/pages/IndividualsPage.tsx
+  h_15be8797f78b7d 121,211
+src/pages/PersonEventsPage.tsx
+  h_15be8797f78b7d 107
+src/pages/PersonNamesPage.tsx
+  h_15be8797f78b7d 52
+src/pages/PersonNotesPage.tsx
+  h_15be8797f78b7d 173
+src/pages/PersonPlacesPage.tsx
+  h_15be8797f78b7d 15
+src/pages/PersonRelationsPage.tsx
+  h_15be8797f78b7d 119
+src/pages/TreeView.tsx
+  h_15be8797f78b7d 1,5-6
+src/routes/tree/$treeId/events.tsx
+  h_15be8797f78b7d 3,11-13
+src/routes/tree/$treeId/families.tsx
+  h_15be8797f78b7d 3,11-13
+src/routes/tree/$treeId/index.tsx
+  h_15be8797f78b7d 2,4,9,11-13
+src/routes/tree/$treeId/individuals.tsx
+  h_15be8797f78b7d 1,3,7,9-11
+src/routes/tree/$treeId/individuals/$individualId.tsx
+  h_15be8797f78b7d 5,7,12-13,18
+src/routes/tree/$treeId/individuals/$individualId/ancestors.tsx
+  h_15be8797f78b7d 4
+src/routes/tree/$treeId/individuals/$individualId/events.tsx
+  h_15be8797f78b7d 4
+src/routes/tree/$treeId/individuals/$individualId/index.tsx
+  h_15be8797f78b7d 4
+src/routes/tree/$treeId/individuals/$individualId/names.tsx
+  h_15be8797f78b7d 4
+src/routes/tree/$treeId/individuals/$individualId/notes.tsx
+  h_15be8797f78b7d 4
+src/routes/tree/$treeId/individuals/$individualId/places.tsx
+  h_15be8797f78b7d 4
+src/routes/tree/$treeId/individuals/$individualId/relations.tsx
+  h_15be8797f78b7d 4
+src/routes/tree/$treeId/individuals/$individualId/sources.tsx
+  h_15be8797f78b7d 4
+src/routes/tree/$treeId/individuals/index.tsx
+  h_15be8797f78b7d 1-9
+src/routes/tree/$treeId/places.tsx
+  h_15be8797f78b7d 3,11-13
+src/types/router.ts
+  h_15be8797f78b7d 1-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "a0794ac440a526c87c571107cbf0bba309ab0c8f",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
