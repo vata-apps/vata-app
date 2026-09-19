@@ -21,8 +21,6 @@ export function TreeHeader(): JSX.Element {
       <Breadcrumb />
 
       <div className={styles.actions}>
-        <div>Search Input</div>
-
         {editButton && (
           <Button
             onClick={() => {
