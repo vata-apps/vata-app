@@ -1,0 +1,30 @@
+src/components/tree-header/tree-header.css.ts
+  h_15be8797f78b7d 17
+src/components/tree-header/tree-header.tsx
+  h_15be8797f78b7d 3-11,14-18,25-45
+src/i18n/locales/en/common.json
+  h_15be8797f78b7d 27
+src/i18n/locales/en/individuals.json
+  h_15be8797f78b7d 4-5
+src/i18n/locales/fr/common.json
+  h_15be8797f78b7d 27
+src/i18n/locales/fr/individuals.json
+  h_15be8797f78b7d 4-5
+src/routes/tree/$treeId/individuals.tsx
+  h_15be8797f78b7d 12
+src/routes/tree/$treeId/individuals/$individualId.tsx
+  h_15be8797f78b7d 19
+src/types/router.ts
+  h_15be8797f78b7d 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "840754d28ffd03e20b8f7938187a746ef922924c",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
