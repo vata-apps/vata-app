@@ -15,11 +15,9 @@ export function Breadcrumb() {
   return (
     <div className={styles.root}>
       {breadcrumb.map((item, index) => {
-        console.log({ length: breadcrumb.length, index });
         if (!item) return null;
 
         if (item.route) {
-          console.log(item.route);
           return (
             <>
               <Link className={styles.link} key={item.label} {...item.route}>
