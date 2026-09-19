@@ -1,5 +1,6 @@
 import { Link, LinkComponentProps, useMatches } from '@tanstack/react-router';
 import * as styles from './breadcrumb.css';
+import { Fragment } from 'react/jsx-runtime';
 
 export interface BreadcrumpLoaderData {
   breadcrumb: { label: string; route: LinkComponentProps | null }[];
@@ -19,22 +20,20 @@ export function Breadcrumb() {
 
         if (item.route) {
           return (
-            <>
-              <Link className={styles.link} key={item.label} {...item.route}>
+            <Fragment key={item.label}>
+              <Link className={styles.link} {...item.route}>
                 {item.label}
               </Link>
               {breadcrumb.length !== index + 1 && '/'}
-            </>
+            </Fragment>
           );
         }
 
         return (
-          <>
-            <span className={styles.item} key={item.label}>
-              {item.label}
-            </span>
+          <Fragment key={item.label}>
+            <span className={styles.item}>{item.label}</span>
             {breadcrumb.length !== index + 1 && '/'}
-          </>
+          </Fragment>
         );
       })}
     </div>
