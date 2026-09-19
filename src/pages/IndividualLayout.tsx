@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import { CenteredMessage } from '$components/centered-message';
 import { PersonEditorDialog } from '$components/individuals/person-editor-dialog';
-import { PersonRail } from '$components/person-rail/person-rail';
 import { IdentityHeader, OverviewTabs } from '$components/person-overview/identity-header';
 import { usePersonOverview } from '$hooks/usePersonOverview';
 import * as styles from './individual-layout.css';
@@ -53,8 +52,6 @@ export function IndividualLayout({ treeId, individualId }: IndividualLayoutProps
 
   return (
     <div className={styles.shell}>
-      <PersonRail treeId={treeId} activeIndividualId={individualId} />
-
       <div className={styles.main}>{mainContent}</div>
 
       <PersonEditorDialog
