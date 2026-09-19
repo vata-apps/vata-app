@@ -1,0 +1,14 @@
+src/components/ui/breadcrumb/breadcrumb.tsx
+  h_15be8797f78b7d 3,23-24,28,33-34,36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "bc1a8f79fe6805c2cb6012672711b72f5eb4b5bf",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
