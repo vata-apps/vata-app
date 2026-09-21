@@ -1,5 +1,10 @@
-import { createRootRoute, Outlet, type ErrorComponentProps } from '@tanstack/react-router';
 import { Button, Code, Flex, Heading } from '@radix-ui/themes';
+import { QueryClient } from '@tanstack/react-query';
+import {
+  createRootRouteWithContext,
+  Outlet,
+  type ErrorComponentProps,
+} from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 function RootErrorComponent({ error }: ErrorComponentProps): JSX.Element {
@@ -24,7 +29,11 @@ function RootComponent(): JSX.Element {
   return <Outlet />;
 }
 
-export const Route = createRootRoute({
+export interface RouterContext {
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
   errorComponent: RootErrorComponent,
 });

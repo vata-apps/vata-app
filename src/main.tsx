@@ -1,19 +1,22 @@
-import './styles/app.css';
-import '$/design/theme.css';
 import '$/design/fonts';
-import './i18n/config';
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider, createRouter } from '@tanstack/react-router';
+import '$/design/theme.css';
 import { AppTheme } from '$components/app-theme';
 import { Toast } from '$components/ui/toast';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { RouterProvider, createRouter } from '@tanstack/react-router';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './i18n/config';
 import { queryClient } from './lib/query-client';
 import { routeTree } from './routeTree.gen';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import './styles/app.css';
 
-const router = createRouter({ routeTree });
+const router = createRouter({
+  context: { queryClient },
+  routeTree,
+});
 
 declare module '@tanstack/react-router' {
   interface Register {

@@ -31,6 +31,7 @@ export function TreeNavItem({ section }: TreeNavItemProps) {
             activeOptions={{ exact: true }}
             aria-label={label}
             aria-current={isActive ? 'page' : undefined}
+            preload="render"
           >
             {t(section.labelKey)[0]}
           </Link>
