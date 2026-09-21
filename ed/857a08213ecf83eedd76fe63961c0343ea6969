@@ -1,0 +1,20 @@
+src/pages/tree/individuals/IndividualsList.css.ts
+  h_15be8797f78b7d 1-109
+src/pages/tree/individuals/IndividualsList.queries.ts
+  h_15be8797f78b7d 1-29
+src/pages/tree/individuals/IndividualsList.tsx
+  h_15be8797f78b7d 1-83
+src/routes/tree/$treeId/individuals/index.tsx
+  h_15be8797f78b7d 1,5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "ed857a08213ecf83eedd76fe63961c0343ea6969",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
