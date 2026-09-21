@@ -1,0 +1,20 @@
+src/components/tree-nav/tree-nav-item.tsx
+  h_15be8797f78b7d 34
+src/main.tsx
+  h_15be8797f78b7d 2,5-11,14,16-19
+src/routes/__root.tsx
+  h_15be8797f78b7d 2-7,32-36
+src/routes/tree/$treeId/individuals.tsx
+  h_15be8797f78b7d 1-2,11-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d10265c0fbe14e69395ff1640984f8a1dbb3df99",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
