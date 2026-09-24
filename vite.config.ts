@@ -1,10 +1,11 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import stylex from '@stylexjs/unplugin';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
+import react from '@vitejs/plugin-react';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { defineConfig } from 'vite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const pkg = JSON.parse(readFileSync(path.resolve(__dirname, 'package.json'), 'utf-8')) as {
@@ -16,6 +17,16 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
   plugins: [
+    stylex.vite({
+      aliases: {
+        '$/*': [path.join(__dirname, 'src/*')],
+      },
+      useCSSLayers: true,
+      unstable_moduleResolution: {
+        type: 'commonJS',
+        rootDir: path.resolve(__dirname),
+      },
+    }),
     TanStackRouterVite({
       routesDirectory: 'src/routes',
       generatedRouteTree: 'src/routeTree.gen.ts',
