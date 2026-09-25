@@ -1,0 +1,14 @@
+src/main.tsx
+  h_15be8797f78b7d 29-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "5486bcca246f40785a1d0ecb8c93402189dee7b9",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
