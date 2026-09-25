@@ -1,22 +1,3 @@
-/**
- * Vata design tokens — the single source of visual truth (ADR-0005).
- *
- * A typed, zero-runtime Vanilla Extract contract. Every styled component reads
- * `vars.*`; raw color/size values live ONLY here. Grayscale identity: no hue
- * anywhere in the product — contrast and weight carry meaning instead. Spectral
- * (serif) is reserved for person names, drafts and empty states; IBM Plex Sans
- * is the UI/body face; IBM Plex Mono is for structured data (dates, ids,
- * coordinates, counts).
- *
- * Ported from the "Vata Design System" Claude Design project, itself derived
- * from the "Personnes" reference mockup — that mockup is the ultimate source
- * of truth. Lean by intent (ADR-0005): the contract holds what the product
- * uses today and grows as screens demand it.
- *
- * Light is the default on `:root`; dark applies via `:root[data-theme="dark"]`
- * (set from the resolved app appearance) and, as a fallback, via
- * `prefers-color-scheme` when no attribute is present.
- */
 import {
   assignVars,
   createGlobalThemeContract,
@@ -329,61 +310,6 @@ const light = {
   space,
 };
 
-const dark = {
-  color: {
-    surface: {
-      app: 'oklch(0.155 0 0)',
-      card: 'oklch(0.195 0 0)',
-      panel: 'oklch(0.175 0 0)',
-      sunken: 'oklch(0.145 0 0)',
-      hover: 'oklch(0.245 0 0)',
-      active: 'oklch(0.285 0 0)',
-    },
-    text: {
-      strong: 'oklch(0.97 0 0)',
-      body: 'oklch(0.92 0 0)',
-      muted: 'oklch(0.74 0 0)',
-      subtle: 'oklch(0.62 0 0)',
-      onBrand: 'oklch(0.145 0 0)',
-    },
-    border: {
-      subtle: 'oklch(0.27 0 0)',
-      default: 'oklch(0.33 0 0)',
-      strong: 'oklch(0.44 0 0)',
-      focus: 'oklch(0.85 0 0)',
-    },
-    brand: {
-      base: 'oklch(0.92 0 0)',
-      hover: 'oklch(0.97 0 0)',
-      active: '#ffffff',
-      subtleBg: 'oklch(0.285 0 0)',
-      subtleBorder: 'oklch(0.40 0 0)',
-    },
-    ring: 'oklch(0.85 0 0)',
-    scrim: 'oklch(0 0 0 / 0.70)',
-    status: {
-      warn: { fg: 'oklch(0.98 0 0)', bg: 'oklch(0.34 0 0)' },
-      // `bg` sits well below `brand.base` (0.92) — a near-white danger fill
-      // would otherwise be ~2% off brand's and read as the same button.
-      err: { fg: 'oklch(0.145 0 0)', bg: 'oklch(0.60 0 0)', text: 'oklch(0.96 0 0)' },
-    },
-  },
-  radius,
-  shadow: {
-    sm: '0 1px 2px rgba(0, 0, 0, 0.40), 0 1px 1px rgba(0, 0, 0, 0.30)',
-    lg: '0 10px 28px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.40)',
-    xl: '0 20px 56px rgba(0, 0, 0, 0.65), 0 6px 14px rgba(0, 0, 0, 0.45)',
-  },
-  motion,
-  font,
-  text,
-  leading,
-  weight,
-  tracking,
-  zIndex,
-  space,
-};
-
 globalStyle(':root', { vars: assignVars(vars, light) });
 
 // The app font lives on `.radix-themes`, but Base UI surfaces (select popups,
@@ -391,15 +317,6 @@ globalStyle(':root', { vars: assignVars(vars, light) });
 // UA serif default. Anchor the sans stack on <body> so every portalled surface
 // inherits it; `.radix-themes` still wins inside the main tree by specificity.
 globalStyle('body', { fontFamily: vars.font.sans });
-
-globalStyle(':root:not([data-theme])', {
-  '@media': {
-    '(prefers-color-scheme: dark)': { vars: assignVars(vars, dark), colorScheme: 'dark' },
-  },
-});
-
-globalStyle(':root[data-theme="light"]', { vars: assignVars(vars, light) });
-globalStyle(':root[data-theme="dark"]', { vars: assignVars(vars, dark), colorScheme: 'dark' });
 
 /**
  * App-wide scrollbar treatment — a thin `text.subtle` thumb on a transparent

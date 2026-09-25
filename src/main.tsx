@@ -1,6 +1,5 @@
 import '$/design/fonts';
 import '$/design/theme.css';
-import { AppTheme } from '$components/app-theme';
 import { Toast } from '$components/ui/toast';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -27,13 +26,11 @@ declare module '@tanstack/react-router' {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <AppTheme>
-        <Toast.Provider>
-          <RouterProvider router={router} />
-          <TanStackRouterDevtools initialIsOpen={false} router={router} />
-          <Toast.Viewport />
-        </Toast.Provider>
-      </AppTheme>
+      <Toast.Provider>
+        <RouterProvider router={router} />
+        <TanStackRouterDevtools initialIsOpen={false} router={router} />
+        <Toast.Viewport />
+      </Toast.Provider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </React.StrictMode>
