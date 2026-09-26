@@ -18,6 +18,11 @@ export const colorTokens = defineVars({
   actionPrimary: colorPrimitives.olive500,
   actionPrimaryHover: colorPrimitives.olive600,
   actionPrimaryActive: colorPrimitives.olive700,
+
+  actionSubtle: colorPrimitives.sand400,
+  actionSubtleHover: colorPrimitives.sand500,
+  actionSubtleActive: colorPrimitives.sand600,
+
   actionAccent: colorPrimitives.ochre500,
   actionAccentHover: colorPrimitives.ochre600,
   actionAccentActive: colorPrimitives.ochre700,

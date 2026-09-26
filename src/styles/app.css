@@ -1,24 +1,55 @@
-@import '@radix-ui/themes/styles.css';
+@layer reset, priority1, priority2, priority3;
 
-/*
- * Global box-sizing reset. Radix Themes scopes its own reset to `.radix-themes`,
- * so Base UI surfaces portaled outside that scope (dialogs, popovers) fall back
- * to the `content-box` default — their padded inputs then render wider than
- * their grid tracks and overflow into neighbouring cells. A global reset keeps
- * every surface on border-box, matching the Person editor prototype (ADR-0005).
- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
 
-html,
-body,
-#root {
-  height: 100%;
-}
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
 
-body {
-  margin: 0;
+  body {
+    margin: 0;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    appearance: none;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    line-height: inherit;
+    text-align: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  button,
+  [type='button'],
+  [type='submit'],
+  [type='reset'] {
+    -webkit-appearance: none;
+  }
+
+  button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
 }

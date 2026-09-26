@@ -1,8 +1,9 @@
 import { getTreeIdFromPath, NavSection, resolveNavSection } from '$/lib/nav-sections';
 import { Tooltip } from '$components/ui/tooltip';
+import { props } from '@stylexjs/stylex';
 import { Link, useRouterState } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import * as styles from './tree-nav-item.css';
+import { styles } from './tree-nav-item.styles';
 
 interface TreeNavItemProps {
   section: NavSection;
@@ -27,7 +28,7 @@ export function TreeNavItem({ section }: TreeNavItemProps) {
           <Link
             to={section.to}
             params={{ treeId }}
-            className={styles.item({ isActive })}
+            {...props(styles.root, styles[isActive ? 'active' : 'inactive'])}
             activeOptions={{ exact: true }}
             aria-label={label}
             aria-current={isActive ? 'page' : undefined}

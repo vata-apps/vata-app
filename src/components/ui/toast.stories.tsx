@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { toastManager } from '$lib/toast';
-import { Button } from './button';
+import { Button } from './button/button';
 
 const meta = {
   title: 'UI/Toast',
@@ -38,7 +38,6 @@ export const Success: Story = {
 export const Error: Story = {
   render: () => (
     <Button
-      variant="danger"
       onClick={() =>
         toastManager.add({
           type: 'error',

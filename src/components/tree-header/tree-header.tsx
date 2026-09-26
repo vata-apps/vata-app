@@ -1,8 +1,10 @@
-import * as styles from './tree-header.css';
-import { Breadcrumb } from '../ui/breadcrumb/breadcrumb';
+import { shellContainer } from '$/styles/shared/shellContainer.stylex';
+import { props } from '@stylexjs/stylex';
 import { useMatches } from '@tanstack/react-router';
-import { Button } from '../ui/button';
 import { useTranslation } from 'react-i18next';
+import { Breadcrumb } from '../ui/breadcrumb/breadcrumb';
+import { Button } from '../ui/button/button';
+import { styles } from './tree-header.styles';
 
 function useButton(key: 'create' | 'edit') {
   return useMatches()
@@ -17,10 +19,10 @@ export function TreeHeader(): JSX.Element {
   const editButton = useButton('edit');
 
   return (
-    <header className={styles.root}>
+    <header {...props(shellContainer.base, shellContainer.borderBlockEnd, styles.root)}>
       <Breadcrumb />
 
-      <div className={styles.actions}>
+      <div {...props(styles.actions)}>
         {editButton && (
           <Button
             onClick={() => {
