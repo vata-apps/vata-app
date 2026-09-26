@@ -1,24 +1,27 @@
-import { useEffect, useRef, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '$components/ui/button';
+import { Button } from '$/components/ui/button/button';
+import { Icon } from '$components/icon';
 import { Card, PanelHead } from '$components/ui/card';
 import * as card from '$components/ui/card.css';
 import { Dialog } from '$components/ui/dialog';
 import { Field } from '$components/ui/field';
 import { IconButton } from '$components/ui/icon-button';
-import { Select } from '$components/ui/select';
 import { SegmentedControl } from '$components/ui/segmented-control';
+import { Select } from '$components/ui/select';
 import { Switch } from '$components/ui/switch';
 import { TextField } from '$components/ui/text-field';
 import { Typography } from '$components/ui/typography';
-import { Icon } from '$components/icon';
+import { NAME_TYPES } from '$db-tree/names';
+import type { PersonEventEntry } from '$db-tree/person-events';
 import { useEventTypes } from '$hooks/useEvents';
 import { useParentFamily } from '$hooks/useFamilies';
 import { useIndividual } from '$hooks/useIndividuals';
 import { usePersonEvents } from '$hooks/usePersonEvents';
 import { eventTypeLabel, type TranslateFn } from '$lib/eventTypeLabel';
+import { formatLifeYears, initialsFromDisplayName } from '$lib/personSummary';
 import { queryKeys } from '$lib/query-keys';
 import {
   FamilyManager,
@@ -34,12 +37,9 @@ import type {
   Name,
   NameType,
 } from '$types/database';
-import { NAME_TYPES } from '$db-tree/names';
-import type { PersonEventEntry } from '$db-tree/person-events';
-import { formatLifeYears, initialsFromDisplayName } from '$lib/personSummary';
 import { personDisplayFields } from './person-display';
-import { PersonPicker, type PersonPickerSelection } from './person-picker';
 import * as s from './person-editor.css';
+import { PersonPicker, type PersonPickerSelection } from './person-picker';
 
 const SEX_VALUES: Gender[] = ['F', 'M', 'U'];
 
@@ -1013,7 +1013,7 @@ export function PersonEditorDialog(props: PersonEditorDialogProps): JSX.Element 
               <Button type="button" onClick={() => setConfirmDiscardOpen(false)}>
                 {t('personEditor.unsavedChanges.keepEditing')}
               </Button>
-              <Button type="button" variant="danger" onClick={reallyClose}>
+              <Button type="button" onClick={reallyClose}>
                 {t('personEditor.unsavedChanges.discard')}
               </Button>
             </div>

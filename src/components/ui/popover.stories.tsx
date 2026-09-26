@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { Icon } from '$components/icon';
-import { Button } from './button';
+import { Button } from './button/button';
 import { Popover } from './popover';
 import { Typography } from './typography';
 

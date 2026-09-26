@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Button } from './button';
+import { Button } from './button/button';
 import { Dialog } from './dialog';
 
 const meta = {
@@ -49,7 +49,7 @@ export const Default: Story = {
 export const AlertLayer: Story = {
   render: () => (
     <Dialog.Root>
-      <Dialog.Trigger render={<Button variant="danger">Discard draft</Button>} />
+      <Dialog.Trigger render={<Button>Discard draft</Button>} />
       <Dialog.Portal>
         <Dialog.Backdrop layer="alert" />
         <Dialog.Popup layer="alert" style={{ width: 320, padding: 20 }}>
@@ -61,7 +61,7 @@ export const AlertLayer: Story = {
           </Dialog.Description>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 20 }}>
             <Dialog.Close render={<Button>Keep editing</Button>} />
-            <Dialog.Close render={<Button variant="danger">Discard</Button>} />
+            <Dialog.Close render={<Button>Discard</Button>} />
           </div>
         </Dialog.Popup>
       </Dialog.Portal>

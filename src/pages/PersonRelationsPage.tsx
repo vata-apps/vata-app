@@ -1,9 +1,14 @@
-import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { useParams } from '@tanstack/react-router';
+import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { CenteredMessage } from '$components/centered-message';
 import { PersonPicker, type PersonPickerSelection } from '$components/individuals/person-picker';
+import {
+  PersonRelationsFilterToolbar,
+  type PersonRelationFilter,
+} from '$components/person-relations-filters';
+import { RelationDetail } from '$components/person-relations/relation-detail';
 import {
   CHILD_NATURE_OPTIONS,
   isSameRelationDetailsForm,
@@ -12,18 +17,12 @@ import {
   toRelationDetailsPayload,
   type RelationDetailsForm,
 } from '$components/person-relations/relation-form';
-import { RelationDetail } from '$components/person-relations/relation-detail';
 import {
   childLabel,
   siblingLabel,
   spouseLabel,
   type RelationLabelKey,
 } from '$components/person-relations/relation-label';
-import {
-  PersonRelationsFilterToolbar,
-  type PersonRelationFilter,
-} from '$components/person-relations-filters';
-import { button } from '$components/ui/button.css';
 import {
   deleteQuestionWithNoteCount,
   DraftFooter,
@@ -32,26 +31,26 @@ import {
 import { DRAFT_ID, RecordPanel } from '$components/record-panel/record-panel';
 import { RecordRow } from '$components/record-panel/record-row';
 import { Typography } from '$components/ui/typography';
+import { formatName } from '$db-tree/names';
+import type { RelatedPersonWithGender, RelationDetails } from '$db-tree/person-relations';
+import { useIndividual } from '$hooks/useIndividuals';
+import { useRelationNoteCount } from '$hooks/usePersonNotes';
 import {
   useAddChildToUnion,
   useAddSibling,
   useCreateUnion,
+  usePersonRelations,
   useRelationCitations,
   useRemoveChildFromUnion,
   useRemoveParent,
   useRemoveSibling,
   useRemoveSpouse,
-  usePersonRelations,
   useSetParent,
   useSetSecondParent,
   useUpdateRelationDetails,
   type PersonRelationsResult,
   type RelationPersonInput,
 } from '$hooks/usePersonRelations';
-import { useIndividual } from '$hooks/useIndividuals';
-import { useRelationNoteCount } from '$hooks/usePersonNotes';
-import { formatName } from '$db-tree/names';
-import type { RelatedPersonWithGender, RelationDetails } from '$db-tree/person-relations';
 import { formatLifeYears } from '$lib/personSummary';
 import { resetBufferOnError } from '$lib/toast';
 import type { RelationCertainty, RelationNature } from '$types/database';
@@ -405,7 +404,7 @@ export function PersonRelationsPage(): JSX.Element {
         <PersonPicker
           label={t('relationsTab.add.secondParent')}
           excludeIds={[individualId, ...union.children.map((child) => child.personId)]}
-          triggerClassName={button({ variant: 'secondary' })}
+          // triggerClassName={button({ variant: 'secondary' })}
           onSelect={(selection) =>
             startDraft({ kind: 'secondParent', familyId: union.familyId }, selection)
           }
@@ -426,7 +425,7 @@ export function PersonRelationsPage(): JSX.Element {
       label={t('relationsTab.add.father')}
       newPersonGender="M"
       excludeIds={[individualId, ...(data.mother ? [data.mother.id] : [])]}
-      triggerClassName={button({ variant: 'secondary' })}
+      // triggerClassName={button({ variant: 'secondary' })}
       onSelect={(selection) => startDraft({ kind: 'father' }, selection)}
     />
   ) : null;
@@ -435,7 +434,7 @@ export function PersonRelationsPage(): JSX.Element {
       label={t('relationsTab.add.mother')}
       newPersonGender="F"
       excludeIds={[individualId, ...(data.father ? [data.father.id] : [])]}
-      triggerClassName={button({ variant: 'secondary' })}
+      // triggerClassName={button({ variant: 'secondary' })}
       onSelect={(selection) => startDraft({ kind: 'mother' }, selection)}
     />
   ) : null;
@@ -448,7 +447,7 @@ export function PersonRelationsPage(): JSX.Element {
         ...(data.father ? [data.father.id] : []),
         ...(data.mother ? [data.mother.id] : []),
       ]}
-      triggerClassName={button({ variant: 'secondary' })}
+      // triggerClassName={button({ variant: 'secondary' })}
       onSelect={(selection) => startDraft({ kind: 'sibling' }, selection)}
     />
   );
@@ -459,7 +458,7 @@ export function PersonRelationsPage(): JSX.Element {
         individualId,
         ...rows.unions.flatMap((union) => (union.spouse ? [union.spouse.personId] : [])),
       ]}
-      triggerClassName={button({ variant: 'secondary' })}
+      // triggerClassName={button({ variant: 'secondary' })}
       onSelect={(selection) => startDraft({ kind: 'union' }, selection)}
     />
   );
@@ -537,7 +536,7 @@ export function PersonRelationsPage(): JSX.Element {
                         ...(union.spouse ? [union.spouse.personId] : []),
                         ...union.children.map((child) => child.personId),
                       ]}
-                      triggerClassName={button({ variant: 'secondary' })}
+                      // triggerClassName={button({ variant: 'secondary' })}
                       onSelect={(selection) =>
                         startDraft({ kind: 'child', familyId: union.familyId }, selection)
                       }

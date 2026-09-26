@@ -10,8 +10,8 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '../ui/button';
 import { Icon } from '../icon';
+import { Button } from '../ui/button/button';
 import { Typography } from '../ui/typography';
 import * as s from './record-actions.css';
 
@@ -100,7 +100,7 @@ export function InlineDelete({
           <Button onClick={() => setConfirming(false)} disabled={isDeleting}>
             {t('records.cancel')}
           </Button>
-          <Button variant="danger" onClick={onDelete} disabled={isDeleting}>
+          <Button onClick={onDelete} disabled={isDeleting}>
             {t('records.delete')}
           </Button>
         </div>

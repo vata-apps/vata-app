@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-import { Select } from '$components/ui/select';
-import { Button } from '$components/ui/button';
+import { Button } from '$/components/ui/button/button';
 import { Icon } from '$components/icon';
+import { Select } from '$components/ui/select';
 
 /** The set of filters applied to the Events list, all combined with AND. */
 export interface EventFilters {

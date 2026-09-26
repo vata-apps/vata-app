@@ -1,15 +1,20 @@
-import { Fragment, useState, type ReactNode } from 'react';
 import { useParams } from '@tanstack/react-router';
+import { Fragment, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Button } from '$/components/ui/button/button';
+import { useAppStore } from '$/store/app-store';
 import { CenteredMessage } from '$components/centered-message';
 import { Icon } from '$components/icon';
+import {
+  PersonEventsFilterToolbar,
+  type PersonEventFilter,
+} from '$components/person-events-filters';
 import {
   EventDetail,
   type EventDetailContext,
   type EventDetailParticipants,
 } from '$components/person-events/event-detail';
-import type { EventParticipantSelection } from '$components/person-events/event-participant-picker';
 import {
   affectsTreeWideDisplay,
   emptyEventForm,
@@ -20,10 +25,7 @@ import {
   toEventPayload,
   type EventForm,
 } from '$components/person-events/event-form';
-import {
-  PersonEventsFilterToolbar,
-  type PersonEventFilter,
-} from '$components/person-events-filters';
+import type { EventParticipantSelection } from '$components/person-events/event-participant-picker';
 import {
   deleteQuestionWithNoteCount,
   DraftFooter,
@@ -31,7 +33,6 @@ import {
 } from '$components/record-panel/record-actions';
 import { DRAFT_ID, RecordPanel } from '$components/record-panel/record-panel';
 import { RecordRow } from '$components/record-panel/record-row';
-import { Button } from '$components/ui/button';
 import { Typography } from '$components/ui/typography';
 import { useEventTypes } from '$hooks/useEvents';
 import {
@@ -51,7 +52,6 @@ import { eventDateDisplay } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { principalsText } from '$lib/principals-text';
 import { resetBufferOnError } from '$lib/toast';
-import { useAppStore } from '$/store/app-store';
 import type { ParticipantRole } from '$types/database';
 
 type EventGroup = 'personal' | 'other';

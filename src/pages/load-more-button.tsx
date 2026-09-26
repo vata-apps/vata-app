@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { Button } from '$components/ui/button';
+import { Button } from '$/components/ui/button/button';
 
 import * as styles from './list-page.css';
 

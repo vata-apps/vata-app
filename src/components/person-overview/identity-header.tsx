@@ -1,12 +1,12 @@
 import { Link, useMatchRoute } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
-import type { Gender } from '$types/database';
 import { vars } from '$/design/theme.css';
+import type { Gender } from '$types/database';
 import { Icon, type IconName } from '../icon';
 import { Avatar } from '../ui/avatar';
 import { Badge } from '../ui/badge';
-import { Button } from '../ui/button';
+import { Button } from '../ui/button/button';
 import { Typography } from '../ui/typography';
 import * as s from './identity-header.css';
 import type { OverviewPerson } from './overview-types';

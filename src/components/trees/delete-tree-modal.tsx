@@ -1,13 +1,13 @@
+import { Callout, Dialog, Flex, Grid, Switch, Text, TextField } from '@radix-ui/themes';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Callout, Dialog, Flex, Grid, Switch, Text, TextField } from '@radix-ui/themes';
 
 import { StatCell } from '$components/trees/stat-cell';
-import { TreeManager } from '$managers/TreeManager';
-import { GedcomManager } from '$managers/GedcomManager';
 import { queryKeys } from '$lib/query-keys';
-import { Button } from '../ui/button';
+import { GedcomManager } from '$managers/GedcomManager';
+import { TreeManager } from '$managers/TreeManager';
+import { Button } from '../ui/button/button';
 
 /**
  * Lightweight projection of {@link Tree} carrying just what the modal

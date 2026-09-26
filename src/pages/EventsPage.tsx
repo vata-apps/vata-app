@@ -1,15 +1,15 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Button } from '$/components/ui/button/button';
 import { EntityTable, type EntityTableColumn } from '$components/entity-table';
 import {
   DEFAULT_EVENT_FILTERS,
   EventsFilterToolbar,
-  type EventFilterOption,
   hasActiveFilters,
+  type EventFilterOption,
 } from '$components/events-filters';
 import { Icon } from '$components/icon';
-import { Button } from '$components/ui/button';
 import { Typography } from '$components/ui/typography';
 import { useEventFilterOptions, useEventsPage } from '$hooks/useEvents';
 import { eventDateColumn, eventPlaceColumn, eventTypeColumn } from '$lib/event-columns';
@@ -17,8 +17,8 @@ import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { principalsText } from '$lib/principals-text';
 import type { EventListEntry } from '$types/database';
 
-import { LoadMoreButton } from './load-more-button';
 import * as styles from './list-page.css';
+import { LoadMoreButton } from './load-more-button';
 
 interface EventsPageProps {
   treeId: string;

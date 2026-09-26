@@ -1,9 +1,11 @@
-import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { useParams } from '@tanstack/react-router';
+import { Fragment, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Button } from '$/components/ui/button/button';
 import { CenteredMessage } from '$components/centered-message';
 import { Icon, type IconName } from '$components/icon';
+import { PersonNotesFilterToolbar, type PersonNoteFilter } from '$components/person-notes-filters';
 import { NoteDetail, type NoteTargetInfo } from '$components/person-notes/note-detail';
 import {
   emptyNoteForm,
@@ -17,25 +19,22 @@ import {
   NoteTargetPicker,
   type NoteTargetOption,
 } from '$components/person-notes/note-target-picker';
-import { PersonNotesFilterToolbar, type PersonNoteFilter } from '$components/person-notes-filters';
 import {
   childLabel,
   siblingLabel,
   spouseLabel,
   type RelationLabelKey,
 } from '$components/person-relations/relation-label';
-import * as card from '$components/ui/card.css';
-import { button } from '$components/ui/button.css';
 import { DraftFooter, InlineDelete } from '$components/record-panel/record-actions';
 import { DRAFT_ID, RecordPanel } from '$components/record-panel/record-panel';
 import { RecordRow } from '$components/record-panel/record-row';
-import { Button } from '$components/ui/button';
+import * as card from '$components/ui/card.css';
 import { Typography } from '$components/ui/typography';
-import { useCreateNote, useDeleteNote, usePersonNotes, useUpdateNote } from '$hooks/usePersonNotes';
+import { formatName } from '$db-tree/names';
 import { useIndividual } from '$hooks/useIndividuals';
 import { usePersonEvents, type PersonEventRow } from '$hooks/usePersonEvents';
+import { useCreateNote, useDeleteNote, usePersonNotes, useUpdateNote } from '$hooks/usePersonNotes';
 import { usePersonRelations, type PersonRelationsResult } from '$hooks/usePersonRelations';
-import { formatName } from '$db-tree/names';
 import { eventDateDisplay } from '$lib/event-columns';
 import { eventTypeLabel } from '$lib/eventTypeLabel';
 import { resetBufferOnError } from '$lib/toast';
@@ -365,7 +364,7 @@ export function PersonNotesPage(): JSX.Element {
     <NoteTargetPicker
       label={t('notesTab.add.event')}
       options={eventPickerOptions}
-      triggerClassName={button({ variant: 'secondary' })}
+      // triggerClassName={button({ variant: 'secondary' })}
       onSelect={(option) => {
         const event = eventById.get(option.id);
         if (!event) return;
@@ -382,7 +381,7 @@ export function PersonNotesPage(): JSX.Element {
     <NoteTargetPicker
       label={t('notesTab.add.relation')}
       options={relationPickerOptions}
-      triggerClassName={button({ variant: 'secondary' })}
+      // triggerClassName={button({ variant: 'secondary' })}
       onSelect={(option) => {
         const relation = relationByOptionId.get(option.id);
         if (!relation) return;

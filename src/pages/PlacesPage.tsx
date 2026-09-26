@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
 import { Link as RouterLink } from '@tanstack/react-router';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Button } from '$/components/ui/button/button';
 import { EntityTable, rowLink, type EntityTableColumn } from '$components/entity-table';
 import { Icon } from '$components/icon';
 import {
@@ -10,7 +11,6 @@ import {
   PlacesFilterToolbar,
   type PlaceTypeOption,
 } from '$components/places-filters';
-import { Button } from '$components/ui/button';
 import { Typography } from '$components/ui/typography';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { usePlaces } from '$hooks/usePlaces';

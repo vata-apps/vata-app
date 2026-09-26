@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
 import { Link as RouterLink } from '@tanstack/react-router';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Button } from '$/components/ui/button/button';
 import {
   EntityTable,
   rowLink,
@@ -14,16 +15,15 @@ import {
   hasActiveFilters,
 } from '$components/families-filters';
 import { Icon } from '$components/icon';
-import { Button } from '$components/ui/button';
 import { Typography } from '$components/ui/typography';
+import type { FamiliesSortColumn } from '$db-tree/families';
+import { formatName } from '$db-tree/names';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { useFamiliesPage } from '$hooks/useFamilies';
-import { formatName } from '$db-tree/names';
-import type { FamiliesSortColumn } from '$db-tree/families';
 import type { FamilyWithMembers } from '$types/database';
 
-import { LoadMoreButton } from './load-more-button';
 import * as styles from './list-page.css';
+import { LoadMoreButton } from './load-more-button';
 
 interface FamiliesPageProps {
   treeId: string;

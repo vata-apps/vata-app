@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 
-import { Select } from '$components/ui/select';
-import { SearchInput } from '$components/ui/search-input';
-import { Button } from '$components/ui/button';
+import { Button } from '$/components/ui/button/button';
 import { Icon } from '$components/icon';
+import { SearchInput } from '$components/ui/search-input';
+import { Select } from '$components/ui/select';
 
 /** The set of filters applied to the Families list, all combined with AND. */
 export interface FamilyFilters {

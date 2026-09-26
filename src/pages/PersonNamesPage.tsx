@@ -1,9 +1,11 @@
-import { Fragment, useState, type ReactNode } from 'react';
 import { useParams } from '@tanstack/react-router';
+import { Fragment, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { Button } from '$/components/ui/button/button';
 import { CenteredMessage } from '$components/centered-message';
 import { Icon } from '$components/icon';
+import { PersonNamesFilterToolbar, type PersonNameFilter } from '$components/person-names-filters';
 import { NameDetail } from '$components/person-names/name-detail';
 import {
   emptyNameForm,
@@ -14,13 +16,12 @@ import {
   toNamePayload,
   type NameForm,
 } from '$components/person-names/name-form';
-import { PersonNamesFilterToolbar, type PersonNameFilter } from '$components/person-names-filters';
 import { DraftFooter, InlineDelete } from '$components/record-panel/record-actions';
 import { DRAFT_ID, RecordPanel } from '$components/record-panel/record-panel';
 import { RecordRow } from '$components/record-panel/record-row';
 import { Badge } from '$components/ui/badge';
-import { Button } from '$components/ui/button';
 import { Typography } from '$components/ui/typography';
+import { formatName } from '$db-tree/names';
 import {
   useCreateName,
   useDeleteName,
@@ -30,7 +31,6 @@ import {
   useUpdateName,
   type PersonName,
 } from '$hooks/usePersonNames';
-import { formatName } from '$db-tree/names';
 import { resetBufferOnError } from '$lib/toast';
 
 function matchesNameFilter(name: PersonName, filter: PersonNameFilter): boolean {

@@ -22,13 +22,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = { args: { variant: 'primary' } };
 
-export const Secondary: Story = { args: { variant: 'secondary', children: 'Cancel' } };
-
-export const Danger: Story = { args: { variant: 'danger', children: 'Discard changes' } };
-
 export const Disabled: Story = { args: { disabled: true } };
-
-export const Sm: Story = { args: { size: 'sm' } };
 
 export const Md: Story = { args: { size: 'md' } };
 

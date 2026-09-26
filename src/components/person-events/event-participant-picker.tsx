@@ -10,14 +10,13 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { useRecentEventParticipantIds } from '$/store/app-store';
 import { Icon } from '$components/icon';
 import { personDisplayFields, splitDisplayName } from '$components/individuals/person-display';
-import { button } from '$components/ui/button.css';
 import { EntityPicker, type EntityPickerItem } from '$components/ui/entity-picker';
 import { SegmentedControl } from '$components/ui/segmented-control';
 import { useIndividualBrowseOrSearch } from '$hooks/useIndividualBrowseOrSearch';
 import { formatLifeYears, initialsFromDisplayName } from '$lib/personSummary';
-import { useRecentEventParticipantIds } from '$/store/app-store';
 import type { IndividualWithDetails } from '$types/database';
 
 const MAX_RESULTS = 8;
@@ -165,7 +164,7 @@ export function EventParticipantPicker({
           {t('eventsTab.participants.add')}
         </>
       }
-      triggerClassName={button({ variant: 'secondary' })}
+      // triggerClassName={button({ variant: 'secondary' })}
       disabled={disabled}
       query={query}
       onQueryChange={setQuery}

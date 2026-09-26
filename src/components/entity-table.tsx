@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 
-import { Button } from '$components/ui/button';
+import { Button } from '$/components/ui/button/button';
 import { EmptyState } from '$components/ui/empty-state';
 import { Skeleton } from '$components/ui/skeleton';
 import { Table, type TableColumn, type TableSort } from '$components/ui/table';
