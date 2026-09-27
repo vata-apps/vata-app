@@ -1,13 +1,13 @@
-import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
+import { TreeShell } from '$/components/tree-shell/tree-shell';
+import { closeTreeDb, getCurrentTreePath, isTreeDbOpen, openTreeDb } from '$/db/connection';
+import { getTreeById } from '$/db/system/trees';
+import { queryKeys } from '$lib/query-keys';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
+import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router';
 import { invoke } from '@tauri-apps/api/core';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { getTreeById } from '$/db/system/trees';
-import { openTreeDb, closeTreeDb, isTreeDbOpen, getCurrentTreePath } from '$/db/connection';
-import { TreeShell } from '$components/tree-shell';
-import { queryKeys } from '$lib/query-keys';
+import { useTranslation } from 'react-i18next';
 
 // DEV-only: lazy-loaded so the module is never bundled in production builds.
 const DebugDrawer = import.meta.env.DEV

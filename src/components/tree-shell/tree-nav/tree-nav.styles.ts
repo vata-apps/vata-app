@@ -11,4 +11,8 @@ export const styles = create({
     gap: '0.625rem',
     padding: `0.625rem 0`,
   },
+
+  settings: {
+    marginTop: 'auto',
+  },
 });

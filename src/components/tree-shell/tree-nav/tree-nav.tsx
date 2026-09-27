@@ -5,15 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { TreeNavItem } from './tree-nav-item';
 import { styles } from './tree-nav.styles';
 
+const settingsSection: NavSection = {
+  icon: 'settings',
+  id: 'settings',
+  labelKey: 'nav.settings',
+  to: '/settings',
+};
+
 export function TreeNav(): JSX.Element | null {
   const { t } = useTranslation('common');
-
-  const settingsSection: NavSection = {
-    icon: 'settings',
-    id: 'settings',
-    labelKey: 'nav.settings',
-    to: '/settings',
-  };
 
   return (
     <nav
@@ -24,7 +24,7 @@ export function TreeNav(): JSX.Element | null {
         <TreeNavItem key={section.id} section={section} />
       ))}
 
-      <div style={{ marginTop: 'auto' }}>
+      <div {...props(styles.settings)}>
         <TreeNavItem section={settingsSection} />
       </div>
     </nav>

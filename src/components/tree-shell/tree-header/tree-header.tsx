@@ -2,8 +2,9 @@ import { shellContainer } from '$/styles/shared/shellContainer.stylex';
 import { props } from '@stylexjs/stylex';
 import { useMatches } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Breadcrumb } from '../ui/breadcrumb/breadcrumb';
-import { Button } from '../ui/button/button';
+
+import { Breadcrumb } from '$/components/ui/breadcrumb/breadcrumb';
+import { Button } from '$/components/ui/button/button';
 import { styles } from './tree-header.styles';
 
 function useButton(key: 'create' | 'edit') {
