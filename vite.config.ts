@@ -13,6 +13,11 @@ const pkg = JSON.parse(readFileSync(path.resolve(__dirname, 'package.json'), 'ut
 };
 
 export default defineConfig({
+  cacheDir: path.resolve(__dirname, 'node_modules/.vite-tauri'),
+  optimizeDeps: {
+    entries: ['index.html'],
+    holdUntilCrawlEnd: false,
+  },
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },

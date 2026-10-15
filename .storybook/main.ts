@@ -1,4 +1,9 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import stylex from '@stylexjs/unplugin';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const projectRoot = fileURLToPath(new URL('..', import.meta.url));
 
 const config: StorybookConfig = {
   framework: '@storybook/react-vite',
@@ -14,15 +19,32 @@ const config: StorybookConfig = {
     // every Storybook start). Vanilla Extract and the path aliases flow through
     // the `...viteConfig` spread untouched, so `.css.ts` imports and `$…`
     // aliases work in stories with no extra wiring.
+    const plugins = (viteConfig.plugins ?? []).flat().filter((plugin) => {
+      if (!plugin || typeof plugin !== 'object') return true;
+      const name = 'name' in plugin && typeof plugin.name === 'string' ? plugin.name : '';
+      if (name.startsWith('vite:react')) return false;
+      if (name.startsWith('tanstack-router') || name.startsWith('tanstack:router')) return false;
+      if (name.toLowerCase().includes('stylex')) return false;
+      return true;
+    });
+
     return {
       ...viteConfig,
-      plugins: (viteConfig.plugins ?? []).flat().filter((plugin) => {
-        if (!plugin || typeof plugin !== 'object') return true;
-        const name = 'name' in plugin && typeof plugin.name === 'string' ? plugin.name : '';
-        if (name.startsWith('vite:react')) return false;
-        if (name.startsWith('tanstack-router') || name.startsWith('tanstack:router')) return false;
-        return true;
-      }),
+      cacheDir: path.join(projectRoot, 'node_modules/.vite-storybook'),
+      plugins: [
+        stylex.vite({
+          aliases: {
+            '$/*': [path.join(projectRoot, 'src/*')],
+          },
+          useCSSLayers: true,
+          cssInjectionTarget: (fileName) => /(?:^|\/)iframe(?:-[\w-]+)?\.css$/.test(fileName),
+          unstable_moduleResolution: {
+            type: 'commonJS',
+            rootDir: projectRoot,
+          },
+        }),
+        ...plugins,
+      ],
     };
   },
 };

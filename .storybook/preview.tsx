@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import type { Preview } from '@storybook/react-vite';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
+import type { Preview } from '@storybook/react-vite';
+import { useEffect } from 'react';
 
 import { Toast } from '../src/components/ui/toast';
+import '../src/design/fonts';
+import '../src/design/theme.css';
 import i18n from '../src/i18n/config';
 import '../src/styles/app.css';
-import '../src/design/theme.css';
-import '../src/design/fonts';
 import './preview.css';
 
 const preview: Preview = {
