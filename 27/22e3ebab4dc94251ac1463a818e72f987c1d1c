@@ -1,0 +1,14 @@
+src/routes/index.tsx
+  h_15be8797f78b7d 1-7,10,12-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "2722e3ebab4dc94251ac1463a818e72f987c1d1c",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
