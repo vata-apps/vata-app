@@ -1,0 +1,29 @@
+vite.config.ts
+  s_3f315666eeef21::t_260e38d2c9d273 19
+  s_3f315666eeef21::t_aadb0ecdd0548e 16
+  s_3f315666eeef21::t_6708ac8c558e80 17-18,20
+.storybook/preview-head.html
+  s_3f315666eeef21::t_1bfb9fefe83c99 1-3
+.storybook/main.ts
+  s_3f315666eeef21::t_a92534e37b60cc 2-6,22,29-30
+  s_3f315666eeef21::t_d7da83ccca6d2a 27,34-47
+  s_3f315666eeef21::t_969dd5efc38cb1 33
+  s_3f315666eeef21::t_db14782b0f87a9 23-26
+  s_3f315666eeef21::t_61bf8b4b2af8fe 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "dad5befd08b156c843913a1d5c324c7cc0bc4701",
+  "prompts": {},
+  "sessions": {
+    "s_3f315666eeef21": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "d28d6e3f-8836-4d4b-9199-f39fe7931d85",
+        "model": "copilot/auto"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
