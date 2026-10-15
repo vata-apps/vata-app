@@ -1,0 +1,38 @@
+index.html
+  h_15be8797f78b7d 6
+src/components/tree-header/tree-header.styles.ts
+  h_15be8797f78b7d 1-19
+src/components/tree-header/tree-header.tsx
+  h_15be8797f78b7d 1-2,5-7,22,25
+src/components/tree-nav/tree-nav-item.styles.ts
+  h_15be8797f78b7d 1-4,6-7,13,18-37,39-42
+src/components/tree-nav/tree-nav-item.tsx
+  h_15be8797f78b7d 3,6,31
+src/components/tree-nav/tree-nav.styles.ts
+  h_15be8797f78b7d 1,3-13
+src/components/tree-nav/tree-nav.tsx
+  h_15be8797f78b7d 1,3-4,6,19-22
+src/components/ui/toast.stories.tsx
+  h_15be8797f78b7d 4
+src/styles/app.css
+  h_15be8797f78b7d 1,3-49,51-54
+src/styles/shared/shellContainer.stylex.ts
+  h_15be8797f78b7d 1-20
+src/styles/tokens/border.primitives.stylex.ts
+  h_15be8797f78b7d 1-13
+src/styles/tokens/colorTokens.stylex.ts
+  h_15be8797f78b7d 21-25
+src/styles/tokens/semantics.stylex.ts
+  h_15be8797f78b7d 1-3,5-6,9-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c771c3152d3e9c28e504e38e3ca6e2587c9c2cba",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
