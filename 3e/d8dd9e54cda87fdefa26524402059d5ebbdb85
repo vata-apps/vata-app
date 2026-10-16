@@ -1,0 +1,19 @@
+.vscode/mcp.json
+  s_3f315666eeef21::t_4910f8440262a1 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "3ed8dd9e54cda87fdefa26524402059d5ebbdb85",
+  "prompts": {},
+  "sessions": {
+    "s_3f315666eeef21": {
+      "agent_id": {
+        "tool": "github-copilot",
+        "id": "d28d6e3f-8836-4d4b-9199-f39fe7931d85",
+        "model": "copilot/auto"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
