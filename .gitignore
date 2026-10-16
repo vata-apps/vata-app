@@ -19,7 +19,6 @@ src/routeTree.gen.ts
 .env.*.local
 
 # Editor directories and files
-.vscode/*
 !.vscode/extensions.json
 .idea/
 *.suo
