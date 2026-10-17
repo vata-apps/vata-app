@@ -1,72 +1,84 @@
 import { Icon } from '$/components/icon';
 import { Avatar } from '$/components/ui/avatar';
+import { SortValue } from '$/components/ui/SortBy/SortBy';
+import { IndividualsSortColumn } from '$/db/trees/individuals';
 import { formatName } from '$/db/trees/names';
+import { shellContainer } from '$/styles/shared/shellContainer.stylex';
+import { colorPrimitives } from '$/styles/tokens/colorPrimitives.stylex';
+import { create, props } from '@stylexjs/stylex';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import * as styles from './IndividualsList.css';
 import { DEFAULT_QUERY, individualsQuery } from './IndividualsList.queries';
+import { IndividualsListHeader } from './IndividualsListHeader';
 
-const query = DEFAULT_QUERY;
+const newStyle = create({
+  filters: {
+    overflowY: 'auto',
+    width: '13.75rem',
+    height: '100%',
+    padding: '0.75rem',
+  },
+
+  list: {
+    padding: '1rem 1.5rem',
+    flex: 1,
+    overflowY: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    backgroundColor: colorPrimitives.sand50,
+  },
+});
 
 export function IndividualsList() {
-  const { data } = useQuery(individualsQuery(query));
+  const [sort, setSort] = useState<SortValue<IndividualsSortColumn>>({
+    column: DEFAULT_QUERY.sortColumn,
+    direction: DEFAULT_QUERY.sortDirection,
+  });
 
-  const rows = data?.items ?? [];
+  const query = useQuery(
+    individualsQuery({
+      filters: {
+        nameQuery: '',
+        sex: 'all',
+        status: 'all',
+      },
+      sortColumn: sort.column,
+      sortDirection: sort.direction,
+    })
+  );
+
+  const rows = query.data?.items ?? [];
 
   return (
     <div className={styles.root}>
       <div className={styles.body}>
-        <div className={styles.filters}>
+        <div {...props(shellContainer.base, shellContainer.borderInlineEnd, newStyle.filters)}>
           <div>Filters</div>
         </div>
 
-        <div className={styles.list}>
-          <div className={styles.header}>
-            <div className={styles.headerCount}>{data?.items.length} people</div>
-            <div className={styles.headerSort}>
-              <span>Trier par</span>
-              {/* TODO: Create a real Select/Filters component */}
-              {/* <Select.Root value={value} onValueChange={setValue}>
-                <Select.Trigger>
-                  <Select.Value />
-                  <Select.Icon>
-                    <Icon name="chevron-down" size={16} />
-                  </Select.Icon>
-                </Select.Trigger>
-                <Select.Portal>
-                  <Select.Positioner>
-                    <Select.Popup style={{ padding: '8px' }}>
-                      <Select.List>
-                        {[...Array(25)].map((_, index) => (
-                          <Select.Item value={`Option ${index + 1}`}>
-                            <Select.ItemText>Option {index + 1}</Select.ItemText>
-                          </Select.Item>
-                        ))}
-                      </Select.List>
-                    </Select.Popup>
-                  </Select.Positioner>
-                </Select.Portal>
-              </Select.Root> */}
-            </div>
-          </div>
+        <div {...props(newStyle.list)}>
+          <IndividualsListHeader
+            count={rows.length}
+            sort={{
+              column: sort.column,
+              direction: sort.direction,
+              onChange: setSort,
+            }}
+          />
 
           <div className={styles.rows}>
             {rows.map((row) => (
               <button className={styles.row} key={row.id}>
                 <div className={styles.rowName}>
                   <Avatar.Root>
-                    {/* TODO: Support image */}
-                    <Avatar.Image />
                     <Avatar.Fallback>
                       {row.primaryName?.givenNames?.[0]}
                       {row.primaryName?.surname?.[0]}
                     </Avatar.Fallback>
                   </Avatar.Root>
                   <span>{formatName(row.primaryName).full}</span>
-                </div>
-                <div className={styles.rowMeta}>
-                  <span>XXXX-XXXX</span>
-                  <span>X children</span>
-                  <span>X sources</span>
                 </div>
                 <div className={styles.rowChevron}>
                   <Icon name="chevron-right" />

@@ -1,29 +1,37 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 
-import { SortBy } from './SortBy';
+import { SortBy, SortOption } from './SortBy';
+
+type Column = 'surname' | 'firstName';
 
 const OPTIONS = [
-  { label: 'Surname', value: 'surname' },
-  { label: 'First name', value: 'firstName' },
-  { label: 'Birth date', value: 'birthDate' },
-  { label: 'Death date', value: 'deathDate' },
-];
+  { label: 'Surname (A-Z)', column: 'surname', direction: 'asc' },
+  { label: 'Surname (Z-A)', column: 'surname', direction: 'desc' },
+  { label: 'First name (A-Z)', column: 'firstName', direction: 'asc' },
+  { label: 'First name (Z-A)', column: 'firstName', direction: 'desc' },
+] satisfies SortOption<Column>[];
 
 const meta = {
   title: 'UI/SortBy',
   component: SortBy,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },
+
   args: {
+    ...OPTIONS[1],
     options: OPTIONS,
     onChange: console.log,
-    value: 'surname',
   },
-  argTypes: {},
-  render: (args) => {
-    const [value, setValue] = useState<string | null>(args.value);
-    return <SortBy {...args} value={value} onChange={setValue} />;
+
+  argTypes: {
+    column: { control: false },
+    direction: { control: false },
+  },
+
+  render: ({ column, direction, ...args }) => {
+    const [values, setValues] = useState({ column, direction });
+    return <SortBy {...args} {...values} onChange={setValues} />;
   },
 } satisfies Meta<typeof SortBy>;
 

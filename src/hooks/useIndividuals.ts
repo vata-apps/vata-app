@@ -1,10 +1,11 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { queryKeys } from '$/lib/query-keys';
-import { IndividualManager } from '$managers/IndividualManager';
+import { SortDirection } from '$/types/sort';
+import type { IndividualsPageFilters, IndividualsSortColumn } from '$db-tree/individuals';
 import { formatNameSimple } from '$db-tree/names';
 import { sortByKey } from '$lib/sortByKey';
-import type { IndividualsPageFilters, IndividualsSortColumn } from '$db-tree/individuals';
+import { IndividualManager } from '$managers/IndividualManager';
 import type { IndividualWithDetails } from '$types/database';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 export function useIndividuals(options?: {
   enabled?: boolean;
@@ -34,12 +35,12 @@ export function sortIndividualsByName(
 }
 
 /** How many individuals `useIndividualsPage` fetches per page. */
-export const INDIVIDUALS_PAGE_SIZE = 50;
+export const INDIVIDUALS_PAGE_SIZE = 100;
 
 export interface IndividualsPageQuery {
   filters: IndividualsPageFilters;
   sortColumn: IndividualsSortColumn;
-  sortDirection: 'asc' | 'desc';
+  sortDirection: SortDirection;
 }
 
 /**

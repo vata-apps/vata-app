@@ -1,9 +1,6 @@
-import { IndividualsPageQuery } from '$/hooks/useIndividuals';
+import { INDIVIDUALS_PAGE_SIZE, IndividualsPageQuery } from '$/hooks/useIndividuals';
 import { queryKeys } from '$/lib/query-keys';
 import { IndividualManager } from '$/managers/IndividualManager';
-
-// TODO: Handle more than 100 results
-export const INDIVIDUALS_PAGE_SIZE = 100;
 
 export const DEFAULT_QUERY = {
   filters: {

@@ -14,43 +14,6 @@ export const body = style({
   overflow: 'hidden',
 });
 
-export const header = style({ display: 'flex' });
-export const headerCount = style({
-  color: 'rgb(138, 138, 138)',
-  fontSize: '0.875rem',
-  fontWeight: 'bold',
-});
-export const headerSort = style({
-  color: 'rgb(138, 138, 138)',
-  fontSize: '0.875rem',
-  fontWeight: 'bold',
-  textWrap: 'nowrap',
-
-  marginLeft: 'auto',
-
-  display: 'flex',
-  alignItems: 'center',
-  gap: '0.75rem',
-});
-
-export const filters = style({
-  overflowY: 'auto',
-  width: '13.75rem',
-  height: '100%',
-  padding: '0.75rem',
-  backgroundColor: 'rgb(247, 247, 247)',
-  borderRight: '1px solid rgb(226, 226, 226)',
-});
-
-export const list = style({
-  padding: '1rem 1.5rem',
-  flex: 1,
-  overflowY: 'auto',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '1rem',
-});
-
 export const rows = style({
   display: 'flex',
   flexDirection: 'column',
@@ -76,16 +39,6 @@ export const rowName = style({
 
   fontSize: '1rem',
   color: 'rgb(26, 26, 26)',
-
-  width: '50%',
-});
-
-export const rowMeta = style({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-evenly',
-
-  fontSize: '0.875rem',
 
   width: '50%',
 });

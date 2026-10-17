@@ -25,15 +25,15 @@ export const styles = create({
 
     // --- Sizes ---
     height: '28px',
-    fontSize: '12px',
+    fontSize: '14px',
     gap: '8px',
     paddingInlineStart: '12px',
     paddingInlineEnd: '8px',
   },
 
   label: {
-    fontSize: '12px',
-    color: colorPrimitives.gray500,
+    fontSize: '14px',
+    color: colorPrimitives.gray600,
   },
 
   value: {
@@ -56,7 +56,6 @@ export const styles = create({
     borderRadius: '0.5rem',
     boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08)',
     padding: '0.5rem',
-    // minWidth: 160,
     maxHeight: 260,
     overflow: 'auto',
   },
@@ -71,14 +70,9 @@ export const styles = create({
     display: 'flex',
     alignItems: 'center',
     borderRadius: '0.5rem',
-    fontSize: '12px',
+    fontSize: '14px',
     gap: '6px',
-
-    paddingInlineStart: {
-      default: '8px',
-      ':not([data-selected])': '30px',
-    },
-    paddingInlineEnd: '8px',
+    paddingInline: '8px',
     paddingBlock: '4px',
 
     color: {
