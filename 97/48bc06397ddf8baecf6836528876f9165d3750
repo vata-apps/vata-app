@@ -1,0 +1,24 @@
+.vscode/settings.json
+  s_aa52cc55038023::t_11f9e9f78a6154 2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9748bc06397ddf8baecf6836528876f9165d3750",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_aa52cc55038023": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "2925dbea-7b2f-4d63-834e-5cda48bb0bee",
+        "model": "unknown"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
