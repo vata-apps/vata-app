@@ -1,0 +1,14 @@
+src/components/ui/button/button.styles.ts
+  h_15be8797f78b7d 1-2,4,9-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f53c16c387269e3fb6abac98d7aa37a50be452a8",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
