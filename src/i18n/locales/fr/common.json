@@ -7,6 +7,15 @@
     "clear": "Effacer",
     "clearSearch": "Effacer la recherche"
   },
+  "sort": {
+    "label": "Filtrer par",
+    "field": {
+      "surnameAsc": "Nom de famille (A-Z)",
+      "surnameDesc": "Nom de famille (Z-A)",
+      "firstNameAsc": "Prénom (A-Z)",
+      "firstNameDesc": "Prénom (Z-A)"
+    }
+  },
   "table": {
     "loadMore": "Charger plus",
     "loadingMore": "Chargement…"

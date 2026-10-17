@@ -7,6 +7,15 @@
     "clear": "Clear",
     "clearSearch": "Clear search"
   },
+  "sort": {
+    "label": "Sort by",
+    "field": {
+      "surnameAsc": "Surname (A-Z)",
+      "surnameDesc": "Surname (Z-A)",
+      "firstNameAsc": "First name (A-Z)",
+      "firstNameDesc": "First name (Z-A)"
+    }
+  },
   "table": {
     "loadMore": "Load more",
     "loadingMore": "Loading more…"

@@ -2,6 +2,7 @@ import * as stylex from '@stylexjs/stylex';
 
 export const colorPrimitives = stylex.defineVars({
   transparent: 'transparent',
+  white: { default: '#ffffff' },
 
   olive50: { default: '#e9eae3' },
   olive100: { default: '#c8cbba' },
