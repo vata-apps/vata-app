@@ -1,11 +1,11 @@
-import type { TranslateFn } from './eventTypeLabel';
 import type { Name } from '$types/database';
+import type { TranslateFn } from './eventTypeLabel';
 
 export type { TranslateFn };
 
 export interface LifeYearsInput {
-  bornYear?: number;
-  deathYear?: number;
+  bornYear?: number | null;
+  deathYear?: number | null;
 }
 
 /**

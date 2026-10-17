@@ -1,15 +1,23 @@
 import { Icon } from '$/components/icon';
 import { Avatar } from '$/components/ui/avatar';
 import { formatName } from '$/db/trees/names';
+import { extractYear } from '$/db/trees/person-overview';
+import { formatLifeYears } from '$/lib/personSummary';
 import { colorPrimitives } from '$/styles/tokens/colorPrimitives.stylex';
 import { IndividualWithDetails } from '$/types/database';
 import { create, props } from '@stylexjs/stylex';
+import { useTranslation } from 'react-i18next';
 
 interface IndividialsListRowProps {
   row: IndividualWithDetails;
 }
 
 export function IndividualsListRow({ row }: IndividialsListRowProps) {
+  const { t } = useTranslation('individuals');
+
+  const bornYear = extractYear(row.birthEvent);
+  const deathYear = extractYear(row.deathEvent);
+
   return (
     <button {...props(styles.root)} key={row.id}>
       <div {...props(styles.name)}>
@@ -22,7 +30,7 @@ export function IndividualsListRow({ row }: IndividialsListRowProps) {
         <span>{formatName(row.primaryName).full}</span>
       </div>
 
-      <div {...props(styles.data)}>TODO</div>
+      <div {...props(styles.data)}>{formatLifeYears({ bornYear, deathYear }, t)}</div>
       <div {...props(styles.data)}>TODO</div>
       <div {...props(styles.data)}>TODO</div>
 
