@@ -1,0 +1,16 @@
+src/lib/personSummary.ts
+  h_15be8797f78b7d 2,7-8
+src/pages/tree/individuals/IndividualsListRow.tsx
+  h_15be8797f78b7d 4-5,9,16-20,33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c67ed5142656022875f2d44bf7ad8ff71a98da27",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
