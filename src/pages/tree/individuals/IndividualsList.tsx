@@ -1,8 +1,5 @@
-import { Icon } from '$/components/icon';
-import { Avatar } from '$/components/ui/avatar';
 import { SortValue } from '$/components/ui/SortBy/SortBy';
 import { IndividualsSortColumn } from '$/db/trees/individuals';
-import { formatName } from '$/db/trees/names';
 import { shellContainer } from '$/styles/shared/shellContainer.stylex';
 import { colorPrimitives } from '$/styles/tokens/colorPrimitives.stylex';
 import { create, props } from '@stylexjs/stylex';
@@ -11,6 +8,7 @@ import { useState } from 'react';
 import * as styles from './IndividualsList.css';
 import { DEFAULT_QUERY, individualsQuery } from './IndividualsList.queries';
 import { IndividualsListHeader } from './IndividualsListHeader';
+import { IndividualsListRow } from './IndividualsListRow';
 
 const newStyle = create({
   filters: {
@@ -69,20 +67,7 @@ export function IndividualsList() {
 
           <div className={styles.rows}>
             {rows.map((row) => (
-              <button className={styles.row} key={row.id}>
-                <div className={styles.rowName}>
-                  <Avatar.Root>
-                    <Avatar.Fallback>
-                      {row.primaryName?.givenNames?.[0]}
-                      {row.primaryName?.surname?.[0]}
-                    </Avatar.Fallback>
-                  </Avatar.Root>
-                  <span>{formatName(row.primaryName).full}</span>
-                </div>
-                <div className={styles.rowChevron}>
-                  <Icon name="chevron-right" />
-                </div>
-              </button>
+              <IndividualsListRow key={row.id} row={row} />
             ))}
           </div>
         </div>
