@@ -1,10 +1,14 @@
+import { borderPrimitives } from '$/styles/tokens/border.primitives.stylex';
+import { colorPrimitives } from '$/styles/tokens/colorPrimitives.stylex';
 import { colorTokens } from '$/styles/tokens/colorTokens.stylex';
-import { borders } from '$/styles/tokens/semantics.stylex';
+
 import { create } from '@stylexjs/stylex';
 
 export const styles = create({
   base: {
-    border: borders.transparent,
+    borderWidth: borderPrimitives.width1px,
+    borderStyle: borderPrimitives.styleSolid,
+    borderColor: colorPrimitives.transparent,
 
     display: 'inline-flex',
     alignItems: 'center',
@@ -34,7 +38,6 @@ export const styles = create({
   md: {
     borderRadius: '0.5rem',
     fontSize: '14px',
-    fontWeight: '600',
     gap: '6px',
     padding: '0.5rem 1rem',
   },
