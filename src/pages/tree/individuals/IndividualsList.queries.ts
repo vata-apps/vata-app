@@ -8,9 +8,11 @@ export const DEFAULT_QUERY = {
     sex: 'all',
     status: 'all',
   },
-  sortColumn: 'firstName',
-  sortDirection: 'asc',
-} as const;
+  sort: {
+    column: 'firstName',
+    direction: 'asc',
+  },
+} satisfies IndividualsPageQuery;
 
 export function individualsQuery(query: IndividualsPageQuery) {
   return {

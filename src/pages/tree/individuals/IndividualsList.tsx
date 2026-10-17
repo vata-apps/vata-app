@@ -33,8 +33,8 @@ const newStyle = create({
 
 export function IndividualsList() {
   const [sort, setSort] = useState<SortValue<IndividualsSortColumn>>({
-    column: DEFAULT_QUERY.sortColumn,
-    direction: DEFAULT_QUERY.sortDirection,
+    column: DEFAULT_QUERY.sort.column,
+    direction: DEFAULT_QUERY.sort.direction,
   });
 
   const query = useQuery(
@@ -44,8 +44,7 @@ export function IndividualsList() {
         sex: 'all',
         status: 'all',
       },
-      sortColumn: sort.column,
-      sortDirection: sort.direction,
+      sort,
     })
   );
 

@@ -1,13 +1,14 @@
-import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
-import { foldDiacritics } from '../sql-diacritics';
-import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
+import { SortDirection } from '$/types/sort';
 import type {
-  Individual,
-  Gender,
   CreateIndividualInput,
+  Gender,
+  Individual,
   UpdateIndividualInput,
 } from '$types/database';
+import { getTreeDb } from '../connection';
+import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
+import { foldDiacritics } from '../sql-diacritics';
 
 // =============================================================================
 // Raw database row type (snake_case as in SQLite)
@@ -190,10 +191,12 @@ export type IndividualsSortColumn = 'surname' | 'firstName';
 
 export interface IndividualsPageParams {
   filters: IndividualsPageFilters;
-  sortColumn: IndividualsSortColumn;
-  sortDirection: 'asc' | 'desc';
   limit: number;
   offset: number;
+  sort: {
+    column: IndividualsSortColumn;
+    direction: SortDirection;
+  };
 }
 
 export interface IndividualsPageResult {
@@ -230,7 +233,7 @@ export interface IndividualsPageResult {
 export async function getIndividualsPage(
   params: IndividualsPageParams
 ): Promise<IndividualsPageResult> {
-  const { filters, sortColumn, sortDirection, limit, offset } = params;
+  const { filters, limit, offset, sort } = params;
   const db = await getTreeDb();
 
   const conditions: string[] = [];
@@ -257,13 +260,13 @@ export async function getIndividualsPage(
   }
   const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-  const dir = sortDirection === 'desc' ? 'DESC' : 'ASC';
+  const dir = sort.direction === 'desc' ? 'DESC' : 'ASC';
   const primaryKey = foldDiacritics(
-    sortColumn === 'firstName'
+    sort.column === 'firstName'
       ? `NULLIF(TRIM(n.given_names), '')`
       : `COALESCE(NULLIF(TRIM(n.surname), ''), NULLIF(TRIM(n.given_names), ''))`
   );
-  const tiebreaker = foldDiacritics(sortColumn === 'firstName' ? 'n.surname' : 'n.given_names');
+  const tiebreaker = foldDiacritics(sort.column === 'firstName' ? 'n.surname' : 'n.given_names');
 
   const rows = await db.select<{ id: number }[]>(
     `SELECT i.id

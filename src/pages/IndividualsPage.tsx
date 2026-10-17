@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
 import { Link as RouterLink, useNavigate } from '@tanstack/react-router';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -9,20 +9,20 @@ import {
   type EntityTableSort,
 } from '$components/entity-table';
 import { Icon, type IconName } from '$components/icon';
-import { PersonEditorDialog } from '$components/individuals/person-editor-dialog';
 import {
   DEFAULT_INDIVIDUAL_FILTERS,
   hasActiveFilters,
   IndividualsFilterToolbar,
 } from '$components/individuals-filters';
+import { PersonEditorDialog } from '$components/individuals/person-editor-dialog';
+import type { IndividualsSortColumn } from '$db-tree/individuals';
+import { formatName } from '$db-tree/names';
 import { useDebouncedValue } from '$hooks/useDebouncedValue';
 import { useIndividualsPage } from '$hooks/useIndividuals';
-import { formatName } from '$db-tree/names';
-import type { IndividualsSortColumn } from '$db-tree/individuals';
-import type { EventWithDetails, IndividualWithDetails, Gender } from '$types/database';
+import type { EventWithDetails, Gender, IndividualWithDetails } from '$types/database';
 
-import { LoadMoreButton } from './load-more-button';
 import * as styles from './list-page.css';
+import { LoadMoreButton } from './load-more-button';
 
 interface IndividualsPageProps {
   treeId: string;
@@ -83,8 +83,10 @@ export function IndividualsPage({ treeId }: IndividualsPageProps): JSX.Element {
   const { data, isLoading, isError, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useIndividualsPage({
       filters: { nameQuery: debouncedName, sex: filters.sex, status: filters.status },
-      sortColumn,
-      sortDirection: sort.direction,
+      sort: {
+        column: sortColumn,
+        direction: sort.direction,
+      },
     });
 
   const rows = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);

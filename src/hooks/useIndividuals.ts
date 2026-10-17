@@ -39,8 +39,10 @@ export const INDIVIDUALS_PAGE_SIZE = 100;
 
 export interface IndividualsPageQuery {
   filters: IndividualsPageFilters;
-  sortColumn: IndividualsSortColumn;
-  sortDirection: SortDirection;
+  sort: {
+    column: IndividualsSortColumn;
+    direction: SortDirection;
+  };
 }
 
 /**
@@ -52,11 +54,19 @@ export interface IndividualsPageQuery {
 export function useIndividualsPage(query: IndividualsPageQuery) {
   return useInfiniteQuery({
     queryKey: queryKeys.individualsPage(query),
-    queryFn: ({ pageParam }) =>
-      IndividualManager.getPage({ ...query, limit: INDIVIDUALS_PAGE_SIZE, offset: pageParam }),
+    queryFn: ({ pageParam }) => {
+      return IndividualManager.getPage({
+        ...query,
+        limit: INDIVIDUALS_PAGE_SIZE,
+        offset: pageParam,
+      });
+    },
+
     initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.hasMore ? allPages.length * INDIVIDUALS_PAGE_SIZE : undefined,
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.hasMore) return undefined;
+      return allPages.length * INDIVIDUALS_PAGE_SIZE;
+    },
   });
 }
 

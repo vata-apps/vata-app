@@ -1,7 +1,8 @@
-import type { EventCategory } from '$types/database';
-import type { IndividualsPageFilters, IndividualsSortColumn } from '$db-tree/individuals';
-import type { FamiliesPageFilters, FamiliesSortColumn } from '$db-tree/families';
+import { SortDirection } from '$/types/sort';
 import type { EventsPageFilters } from '$db-tree/events';
+import type { FamiliesPageFilters, FamiliesSortColumn } from '$db-tree/families';
+import type { IndividualsPageFilters, IndividualsSortColumn } from '$db-tree/individuals';
+import type { EventCategory } from '$types/database';
 
 export const queryKeys = {
   trees: ['trees'] as const,
@@ -15,8 +16,7 @@ export const queryKeys = {
   /** One cache entry per distinct filter/sort combination — pagination itself lives inside the infinite query, not the key. */
   individualsPage: (query: {
     filters: IndividualsPageFilters;
-    sortColumn: IndividualsSortColumn;
-    sortDirection: 'asc' | 'desc';
+    sort: { column: IndividualsSortColumn; direction: SortDirection };
   }) => ['individuals', 'page', query] as const,
   families: ['families'] as const,
   family: (id: string) => ['families', id] as const,

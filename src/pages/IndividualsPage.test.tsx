@@ -1,6 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   createMemoryHistory,
@@ -10,14 +7,17 @@ import {
   Outlet,
   RouterProvider,
 } from '@tanstack/react-router';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import i18n from '$/i18n/config';
-import { IndividualsPage } from './IndividualsPage';
-import { IndividualManager } from '$managers/IndividualManager';
+import type { IndividualsPageParams } from '$db-tree/individuals';
 import { formatName } from '$db-tree/names';
 import { sortByKey } from '$lib/sortByKey';
-import type { IndividualsPageParams } from '$db-tree/individuals';
+import { IndividualManager } from '$managers/IndividualManager';
 import type { IndividualWithDetails, Name } from '$types/database';
+import { IndividualsPage } from './IndividualsPage';
 
 vi.mock('$managers/IndividualManager', () => ({
   IndividualManager: {
@@ -137,11 +137,7 @@ function firstName(row: HTMLElement): string {
  */
 function mockPeople(people: IndividualWithDetails[]): void {
   mockedGetPage.mockImplementation(
-    ({
-      filters,
-      sortColumn,
-      sortDirection,
-    }: Pick<IndividualsPageParams, 'filters' | 'sortColumn' | 'sortDirection'>) => {
+    ({ filters, sort }: Pick<IndividualsPageParams, 'filters' | 'sort'>) => {
       const query = filters.nameQuery.trim().toLowerCase();
       const filtered = people.filter((p) => {
         if (filters.sex !== 'all' && p.gender !== filters.sex) return false;
@@ -156,10 +152,10 @@ function mockPeople(people: IndividualWithDetails[]): void {
       });
 
       const sortKey = (p: IndividualWithDetails): string | null =>
-        sortColumn === 'firstName'
+        sort.column === 'firstName'
           ? p.primaryName?.givenNames?.trim() || null
           : formatName(p.primaryName).sortable || null;
-      const sorted = sortByKey(filtered, sortKey, sortDirection);
+      const sorted = sortByKey(filtered, sortKey, sort.direction);
 
       return Promise.resolve({ items: sorted, hasMore: false });
     }
