@@ -1,23 +1,24 @@
-import { getTreeDb } from '../connection';
 import { formatEntityId, parseEntityId } from '$/lib/entityId';
-import { foldDiacritics } from '../sql-diacritics';
-import { SQLITE_IN_CLAUSE_LIMIT, buildInClausePlaceholders, chunkArray } from '../sql-chunk';
 import type {
-  Family,
   CreateFamilyInput,
-  UpdateFamilyInput,
-  FamilyMember,
   CreateFamilyMemberInput,
+  Family,
+  FamilyMember,
   FamilyRole,
-  Pedigree,
-  RelationNature,
-  RelationCertainty,
-  UpdateFamilyMemberDetailsInput,
   FamilyWithMembers,
+  IndividualsChildrenCount,
   IndividualWithDetails,
+  Pedigree,
+  RelationCertainty,
+  RelationNature,
+  UpdateFamilyInput,
+  UpdateFamilyMemberDetailsInput,
 } from '$types/database';
+import { getTreeDb } from '../connection';
+import { buildInClausePlaceholders, chunkArray, SQLITE_IN_CLAUSE_LIMIT } from '../sql-chunk';
+import { foldDiacritics } from '../sql-diacritics';
 import { getIndividualById } from './individuals';
-import { getPrimaryName, getNamesByIndividualId } from './names';
+import { getNamesByIndividualId, getPrimaryName } from './names';
 
 // =============================================================================
 // Raw database row types (snake_case as in SQLite)
@@ -41,6 +42,11 @@ interface RawFamilyMember {
   note: string | null;
   sort_order: number;
   created_at: string;
+}
+
+interface RawIndividualsChildrenCount {
+  individual_id: number;
+  count: number;
 }
 
 // =============================================================================
@@ -68,6 +74,13 @@ function mapToFamilyMember(raw: RawFamilyMember): FamilyMember {
     note: raw.note,
     sortOrder: raw.sort_order,
     createdAt: raw.created_at,
+  };
+}
+
+function mapToIndividualChildrenCount(raw: RawIndividualsChildrenCount): IndividualsChildrenCount {
+  return {
+    individualId: formatEntityId('I', raw.individual_id),
+    count: raw.count,
   };
 }
 
@@ -460,6 +473,31 @@ export async function getParentFamilies(individualId: string): Promise<Family[]>
 }
 
 /**
+ * Get children count for a specific set of individuals.
+ */
+export async function getChildrenCountsForIndividuals(
+  individualIds: string[]
+): Promise<{ individualId: string; count: number }[]> {
+  const db = await getTreeDb();
+  const dbIds = individualIds.map(parseEntityId);
+
+  const rows: { individual_id: number; count: number }[] = [];
+  for (const idsChunk of chunkArray(dbIds, SQLITE_IN_CLAUSE_LIMIT)) {
+    const placeholders = buildInClausePlaceholders(idsChunk.length);
+    const chunkRows = await db.select<{ individual_id: number; count: number }[]>(
+      `SELECT parent.individual_id AS individual_id, COUNT(DISTINCT child.individual_id) AS count
+       FROM family_members AS parent
+       JOIN family_members AS child ON child.family_id = parent.family_id AND child.role = 'child'
+       WHERE parent.role IN ('husband', 'wife') AND parent.individual_id IN (${placeholders})
+       GROUP BY parent.individual_id;`,
+      idsChunk
+    );
+    rows.push(...chunkRows);
+  }
+  return rows.map(mapToIndividualChildrenCount);
+}
+
+/**
  * Check if an individual is already a member of a family with a specific role
  */
 export async function isMemberOfFamily(
@@ -508,6 +546,7 @@ export async function getFamilyWithMembers(familyId: string): Promise<FamilyWith
 
     const primaryName = await getPrimaryName(member.individualId);
     const names = await getNamesByIndividualId(member.individualId);
+    const [{ count: childrenCount }] = await getChildrenCountsForIndividuals([member.individualId]);
 
     const enrichedIndividual: IndividualWithDetails = {
       ...individual,
@@ -515,6 +554,7 @@ export async function getFamilyWithMembers(familyId: string): Promise<FamilyWith
       names,
       birthEvent: null, // TODO: Events not loaded yet
       deathEvent: null,
+      childrenCount,
     };
 
     switch (member.role) {

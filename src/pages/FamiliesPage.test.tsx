@@ -1,6 +1,3 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   createMemoryHistory,
@@ -10,13 +7,16 @@ import {
   Outlet,
   RouterProvider,
 } from '@tanstack/react-router';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { FamiliesPage } from './FamiliesPage';
-import { FamilyManager } from '$managers/FamilyManager';
+import type { FamiliesPageParams } from '$db-tree/families';
 import { formatName } from '$db-tree/names';
 import { sortByKey } from '$lib/sortByKey';
-import type { FamiliesPageParams } from '$db-tree/families';
+import { FamilyManager } from '$managers/FamilyManager';
 import type { FamilyWithMembers, IndividualWithDetails, Name } from '$types/database';
+import { FamiliesPage } from './FamiliesPage';
 
 vi.mock('$managers/FamilyManager', () => ({
   FamilyManager: {
@@ -64,6 +64,7 @@ function person(
     ...overrides,
     primaryName: name({ individualId: id, ...primaryNameOverride }),
     names: overrides.names ?? [name({ individualId: id, ...primaryNameOverride })],
+    childrenCount: 0,
   };
 }
 

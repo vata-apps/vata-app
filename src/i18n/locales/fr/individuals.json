@@ -20,6 +20,12 @@
       "deceased": "Décédé"
     }
   },
+
+  "list": {
+    "children_one": "{{count}} enfant",
+    "children_other": "{{count}} enfants"
+  },
+
   "table": {
     "columns": {
       "sex": "Genre",
@@ -58,6 +64,10 @@
       "bornAndDied": "n. {{born}} – {{died}}",
       "born": "n. {{born}}",
       "died": "d. {{died}}"
+    },
+    "children": {
+      "count_one": "{{count}} enfant",
+      "count_other": "{{count}} enfants"
     },
     "viewAll": "Voir tout",
     "vital": {

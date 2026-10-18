@@ -20,6 +20,12 @@
       "deceased": "Deceased"
     }
   },
+
+  "list": {
+    "children_one": "{{count}} child",
+    "children_other": "{{count}} children"
+  },
+
   "table": {
     "columns": {
       "sex": "Gender",

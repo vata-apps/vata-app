@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('$managers/IndividualManager', () => ({
   IndividualManager: {
@@ -29,9 +29,9 @@ vi.mock('$db-tree/person-events', () => ({
   getPersonEvents: vi.fn(),
 }));
 
-import { IndividualManager } from '$managers/IndividualManager';
 import { EventManager } from '$managers/EventManager';
 import { FamilyManager } from '$managers/FamilyManager';
+import { IndividualManager } from '$managers/IndividualManager';
 import { PersonEditorDialog } from './person-editor-dialog';
 
 const BIRT_TYPE = {
@@ -202,6 +202,7 @@ describe('PersonEditorDialog', () => {
         names: [],
         birthEvent: null,
         deathEvent: null,
+        childrenCount: 0,
       },
     ]);
     renderDialog({ mode: 'create' });

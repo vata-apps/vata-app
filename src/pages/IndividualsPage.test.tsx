@@ -65,6 +65,7 @@ function person(
     ...overrides,
     primaryName: name({ individualId: id, ...primaryNameOverride }),
     names: overrides.names ?? [name({ individualId: id, ...primaryNameOverride })],
+    childrenCount: 0,
   };
 }
 

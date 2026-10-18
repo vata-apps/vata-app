@@ -1,3 +1,14 @@
+import { getChildrenCountsForIndividuals } from '$/db/trees/families';
+import { reorderById } from '$/lib/reorderById';
+import {
+  createEventWithParticipant,
+  deleteEvent,
+  getAllBirthDeathEvents,
+  getBirthDeathEventsForIndividuals,
+  getEventTypes,
+  getEventsByIndividualIdWithDetails,
+  updateEvent,
+} from '$db-tree/events';
 import {
   createIndividual,
   deleteIndividual,
@@ -9,7 +20,6 @@ import {
   updateIndividual,
   type IndividualsPageParams,
 } from '$db-tree/individuals';
-import { reorderById } from '$/lib/reorderById';
 import {
   createName,
   deleteName,
@@ -21,15 +31,6 @@ import {
   getPrimaryNamesForIndividuals,
   updateName,
 } from '$db-tree/names';
-import {
-  createEventWithParticipant,
-  deleteEvent,
-  getAllBirthDeathEvents,
-  getBirthDeathEventsForIndividuals,
-  getEventTypes,
-  getEventsByIndividualIdWithDetails,
-  updateEvent,
-} from '$db-tree/events';
 import type {
   CreateIndividualInput,
   EventWithDetails,
@@ -205,7 +206,8 @@ function assembleIndividualsWithDetails(
   individuals: Individual[],
   primaryNames: Name[],
   allNames: Name[],
-  birthDeathEvents: EventWithDetails[]
+  birthDeathEvents: EventWithDetails[],
+  individualsChildrenCount?: { individualId: string; count: number }[]
 ): IndividualWithDetails[] {
   const primaryNameByIndividual = new Map<string, Name>();
   for (const name of primaryNames) {
@@ -236,12 +238,18 @@ function assembleIndividualsWithDetails(
     }
   }
 
+  const childrenCountByIndividual = new Map<string, number>();
+  for (const { individualId, count } of individualsChildrenCount || []) {
+    childrenCountByIndividual.set(individualId, count);
+  }
+
   return individuals.map((individual) => ({
     ...individual,
     primaryName: primaryNameByIndividual.get(individual.id) ?? null,
     names: namesByIndividual.get(individual.id) ?? [],
     birthEvent: birthEventByIndividual.get(individual.id) ?? null,
     deathEvent: deathEventByIndividual.get(individual.id) ?? null,
+    childrenCount: childrenCountByIndividual.get(individual.id) ?? 0,
   }));
 }
 
@@ -282,6 +290,7 @@ export class IndividualManager {
     const primaryName = await getPrimaryName(id);
     const names = await getNamesByIndividualId(id);
     const events = await getEventsByIndividualIdWithDetails(id);
+    const [{ count: childrenCount }] = await getChildrenCountsForIndividuals([id]);
 
     const birthEvent = findPrincipalLifeEvent(events, id, 'BIRT');
     const deathEvent = findPrincipalLifeEvent(events, id, 'DEAT');
@@ -292,6 +301,7 @@ export class IndividualManager {
       names,
       birthEvent,
       deathEvent,
+      childrenCount,
     };
   }
 
@@ -307,6 +317,7 @@ export class IndividualManager {
       getAllPrimaryNames(),
       getAllNames(),
       getAllBirthDeathEvents(),
+      // TODO: Add individuals children count
     ]);
 
     return assembleIndividualsWithDetails(individuals, primaryNames, allNames, birthDeathEvents);
@@ -327,14 +338,22 @@ export class IndividualManager {
     if (ids.length === 0) return [];
     const uniqueIds = Array.from(new Set(ids));
 
-    const [individuals, primaryNames, allNames, birthDeathEvents] = await Promise.all([
-      getIndividualsByIds(uniqueIds),
-      getPrimaryNamesForIndividuals(uniqueIds),
-      getNamesForIndividuals(uniqueIds),
-      getBirthDeathEventsForIndividuals(uniqueIds),
-    ]);
+    const [individuals, primaryNames, allNames, birthDeathEvents, childrenCount] =
+      await Promise.all([
+        getIndividualsByIds(uniqueIds),
+        getPrimaryNamesForIndividuals(uniqueIds),
+        getNamesForIndividuals(uniqueIds),
+        getBirthDeathEventsForIndividuals(uniqueIds),
+        getChildrenCountsForIndividuals(uniqueIds),
+      ]);
 
-    return assembleIndividualsWithDetails(individuals, primaryNames, allNames, birthDeathEvents);
+    return assembleIndividualsWithDetails(
+      individuals,
+      primaryNames,
+      allNames,
+      birthDeathEvents,
+      childrenCount
+    );
   }
 
   /**

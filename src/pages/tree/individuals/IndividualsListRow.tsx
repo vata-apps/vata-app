@@ -31,7 +31,7 @@ export function IndividualsListRow({ row }: IndividialsListRowProps) {
       </div>
 
       <div {...props(styles.data)}>{formatLifeYears({ bornYear, deathYear }, t)}</div>
-      <div {...props(styles.data)}>TODO</div>
+      <div {...props(styles.data)}>{t('list.children', { count: row.childrenCount })}</div>
       <div {...props(styles.data)}>TODO</div>
 
       <div {...props(styles.chevron)}>

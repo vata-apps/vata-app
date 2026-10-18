@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('$managers/IndividualManager', () => ({
   IndividualManager: {
@@ -55,6 +55,7 @@ const JOHN = {
   names: [],
   birthEvent: null,
   deathEvent: null,
+  childrenCount: 0,
 };
 
 const JANE = {
@@ -84,7 +85,12 @@ describe('PersonPicker', () => {
   it('shows life dates next to existing people who have birth and death years', async () => {
     const user = userEvent.setup();
     vi.mocked(IndividualManager.getAll).mockResolvedValue([
-      { ...JOHN, birthEvent: datedEvent('abt 1881'), deathEvent: datedEvent('1997') },
+      {
+        ...JOHN,
+        birthEvent: datedEvent('abt 1881'),
+        deathEvent: datedEvent('1997'),
+        childrenCount: 0,
+      },
     ]);
     renderPicker();
 

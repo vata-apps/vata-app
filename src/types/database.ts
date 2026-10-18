@@ -353,6 +353,7 @@ export interface IndividualWithDetails extends Individual {
   names: Name[];
   birthEvent: EventWithDetails | null;
   deathEvent: EventWithDetails | null;
+  childrenCount: number;
 }
 
 export interface FamilyWithMembers extends Family {
@@ -360,6 +361,11 @@ export interface FamilyWithMembers extends Family {
   wife: IndividualWithDetails | null;
   children: IndividualWithDetails[];
   marriageEvent: EventWithDetails | null;
+}
+
+export interface IndividualsChildrenCount {
+  individualId: string;
+  count: number;
 }
 
 // =============================================================================
