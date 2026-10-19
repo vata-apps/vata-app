@@ -1,0 +1,14 @@
+.mcp.json
+  h_15be8797f78b7d 6-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3b6208717949da5b01c378e3008ef3498ea56fe7",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
