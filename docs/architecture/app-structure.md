@@ -50,7 +50,7 @@ Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Fin
 
 **Where it lives:**
 
-- Layout route (the context boundary): `src/routes/tree/$treeId.tsx` — opens the DB before rendering children, closes it on unmount.
+- Layout route (the context boundary): `src/routes/tree/$treeId.tsx` — its `beforeLoad` opens the DB before child loaders run; the layout closes it on unmount.
 - Tree dashboard (in-tree "home"): `src/pages/TreeView.tsx` — the landing page after opening, accessed via the Home button in the top nav.
 - Entity routes under `src/routes/tree/$treeId/`: `individuals.tsx`, `families.tsx`, plus detail routes (`individual/$individualId`, `family/$familyId`). Events and Places appear in the nav but have no route yet; Sources and Repositories keep their DB layer (`src/db/trees/`) but no longer have screens.
 - Tree DB queries: `src/db/trees/*`.
@@ -64,8 +64,8 @@ Vata is in the spirit of desktop project editors like VS Code, Logic Pro, or Fin
 
 1. User clicks "Open" on a tree card in the picker.
 2. Router navigates to `/tree/$treeId/`.
-3. `src/routes/tree/$treeId.tsx` fetches the tree row from system DB, then calls `openTreeDb(tree.path)`.
-4. Children render (`<Outlet />`) once the DB is ready.
+3. `src/routes/tree/$treeId.tsx` fetches the tree row from system DB and awaits `openTreeDb(tree.path)` in `beforeLoad`, before any child loader can query tree data.
+4. The layout's mount effect confirms the connection is ready; children render (`<Outlet />`) afterward.
 5. When the open is initiated through `TreeManager.open(treeId)`, it also marks `last_opened_at` in system DB and updates the Zustand `currentTreeId`.
 
 ### Close

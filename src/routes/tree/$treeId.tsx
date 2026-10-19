@@ -15,6 +15,17 @@ const DebugDrawer = import.meta.env.DEV
   : null;
 
 export const Route = createFileRoute('/tree/$treeId')({
+  beforeLoad: async ({ params, context }) => {
+    const tree = await context.queryClient.ensureQueryData({
+      queryKey: queryKeys.tree(params.treeId),
+      queryFn: () => getTreeById(params.treeId),
+    });
+
+    if (tree) {
+      await openTreeDb(tree.path);
+    }
+  },
+
   component: function TreeLayout() {
     const { t } = useTranslation(['common', 'trees']);
     const { treeId } = Route.useParams();
@@ -47,18 +58,19 @@ export const Route = createFileRoute('/tree/$treeId')({
 
     useEffect(() => {
       if (!tree) return;
+      const treePath = tree.path;
       setDbReady(false);
       setDbError(false);
       let cancelled = false;
 
       async function ensureDbOpen(): Promise<void> {
         try {
-          if (isTreeDbOpen() && getCurrentTreePath() === tree!.path) {
+          if (isTreeDbOpen() && getCurrentTreePath() === treePath) {
             if (!cancelled) setDbReady(true);
             return;
           }
 
-          await openTreeDb(tree!.path);
+          await openTreeDb(treePath);
           if (!cancelled) setDbReady(true);
         } catch (err) {
           console.error('Failed to open tree database:', err);
