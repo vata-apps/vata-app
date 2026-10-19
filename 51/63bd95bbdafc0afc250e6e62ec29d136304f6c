@@ -1,0 +1,33 @@
+src/routes/tree/$treeId.tsx
+  s_7671fcac271acb::t_281524eb47fc14 68
+  s_7671fcac271acb::t_d3d90827e14140 61,73
+  s_7671fcac271acb::t_441bc1cd92ee8d 18-28
+src/routes/tree/-$treeId.test.ts
+  s_7671fcac271acb::t_fbada7cc7f02b2 14-15
+  s_7671fcac271acb::t_4161589b7c8b4d 1-13,16-41,43-46,54-57,60-61,65,68-69,76-91
+  s_7671fcac271acb::t_3430729767f5cd 47-53,72-73
+  s_7671fcac271acb::t_c951fcb90339a1 42,58-59,62-64,66-67,70-71,74-75
+docs/architecture/app-structure.md
+  s_7671fcac271acb::t_3430729767f5cd 53,67-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5163bd95bbdafc0afc250e6e62ec29d136304f6c",
+  "prompts": {},
+  "humans": {
+    "h_15be8797f78b7d": {
+      "author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  },
+  "sessions": {
+    "s_7671fcac271acb": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "3bd10b9d-bb10-4e4a-b61c-8c64498c3da9",
+        "model": "unknown"
+      },
+      "human_author": "Steve Bourgoin <stiv.aw@gmail.com>"
+    }
+  }
+}
