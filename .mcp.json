@@ -3,6 +3,17 @@
     "storybook": {
       "type": "http",
       "url": "http://localhost:6006/mcp"
+    },
+    "tauri": {
+      "type": "local",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@hypothesi/tauri-mcp-server"
+      ],
+      "tools": [
+        "*"
+      ]
     }
   }
 }
